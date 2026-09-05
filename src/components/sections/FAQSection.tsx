@@ -3,20 +3,40 @@ import { Link } from 'react-router'
 import { Section, SectionHeader } from './Section'
 import { FaqAccordion } from './FaqAccordion'
 import { Reveal } from '@/components/motion/Reveal'
-import { faqs } from '@/content/faq'
+import { faqs, type FaqItem } from '@/content/faq'
 
-export function FAQSection() {
+interface FAQSectionProps {
+  id?: string
+  tone?: 'white' | 'off'
+  items?: FaqItem[]
+  eyebrow?: string
+  title?: string
+  lead?: string
+  /** Link para a lista completa, quando a seção mostra só uma parte. */
+  more?: { to: string; label: string }
+}
+
+export function FAQSection({
+  id = 'faq',
+  tone = 'white',
+  items = faqs,
+  eyebrow = 'Perguntas frequentes',
+  title = 'O que as empresas [[perguntam antes]] de escolher.',
+  lead = 'Respostas diretas sobre abrangência, eSocial, ponto, NATI, segurança e implantação.',
+  more,
+}: FAQSectionProps) {
   return (
-    <Section id="faq" tone="white" aria-labelledby="faq-title">
+    <Section id={id} tone={tone} aria-labelledby={`${id}-title`}>
       <div className="container grid gap-10 lg:grid-cols-[1fr_1.6fr] lg:gap-16">
         <div className="lg:sticky lg:top-32 lg:self-start">
-          <SectionHeader
-            id="faq-title"
-            eyebrow="Perguntas frequentes"
-            title="O que as empresas [[perguntam antes]] de escolher."
-            lead="Respostas diretas sobre abrangência, eSocial, ponto, NATI, segurança e implantação."
-          />
-          <Reveal delay={0.3} className="mt-8">
+          <SectionHeader id={`${id}-title`} eyebrow={eyebrow} title={title} lead={lead} />
+          <Reveal delay={0.3} className="mt-8 flex flex-col gap-3">
+            {more && (
+              <Link to={more.to} className="group inline-flex items-center gap-2 text-[15px] font-semibold text-brand-purple">
+                {more.label}
+                <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5" />
+              </Link>
+            )}
             <Link to="#contato" className="group inline-flex items-center gap-2 text-[15px] font-semibold text-brand-purple">
               Não encontrou a sua dúvida? Fale com a gente
               <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5" />
@@ -25,7 +45,7 @@ export function FAQSection() {
         </div>
 
         <Reveal delay={0.15}>
-          <FaqAccordion items={faqs} />
+          <FaqAccordion items={items} />
         </Reveal>
       </div>
     </Section>

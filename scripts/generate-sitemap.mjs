@@ -10,7 +10,11 @@ const today = new Date().toISOString().slice(0, 10)
 
 const urls = [
   { loc: '/', priority: '1.0', changefreq: 'weekly' },
+  { loc: '/sistema', priority: '0.9', changefreq: 'weekly' },
   { loc: '/modulos', priority: '0.9', changefreq: 'weekly' },
+  { loc: '/seguranca', priority: '0.7', changefreq: 'monthly' },
+  { loc: '/sobre', priority: '0.7', changefreq: 'monthly' },
+  { loc: '/contato', priority: '0.8', changefreq: 'monthly' },
   { loc: '/jornada-da-contratacao', priority: '0.8', changefreq: 'monthly' },
   ...registry.map((m) => ({ loc: `/modulos/${m.slug}`, priority: '0.8', changefreq: 'monthly' })),
   { loc: '/segmentos', priority: '0.9', changefreq: 'monthly' },

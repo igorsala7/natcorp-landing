@@ -5,10 +5,10 @@
     { "source": "/sistema-de-gestao-de-rh-completo", "destination": "/modulos", "permanent": true },
     { "source": "/sistema-de-rh-completo-2-0", "destination": "/modulos", "permanent": true },
     { "source": "/folha-de-pagamento", "destination": "/modulos/folha-de-pagamento", "permanent": true },
-    { "source": "/sobre-nos", "destination": "/#reconhecimento", "permanent": true },
-    { "source": "/servicos", "destination": "/#servicos", "permanent": true },
-    { "source": "/fale-conosco", "destination": "/#contato", "permanent": true },
-    { "source": "/fale-conosco-2", "destination": "/#contato", "permanent": true }
+    { "source": "/sobre-nos", "destination": "/sobre", "permanent": true },
+    { "source": "/servicos", "destination": "/sobre#servicos", "permanent": true },
+    { "source": "/fale-conosco", "destination": "/contato", "permanent": true },
+    { "source": "/fale-conosco-2", "destination": "/contato", "permanent": true }
   ],
   "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
 }

@@ -16,6 +16,10 @@ const ModulePage = lazy(() => import('@/pages/ModulePage'))
 const HiringJourneyPage = lazy(() => import('@/pages/HiringJourneyPage'))
 const SegmentsIndexPage = lazy(() => import('@/pages/SegmentsIndexPage'))
 const SegmentPage = lazy(() => import('@/pages/SegmentPage'))
+const SystemPage = lazy(() => import('@/pages/SystemPage'))
+const SecurityPage = lazy(() => import('@/pages/SecurityPage'))
+const AboutPage = lazy(() => import('@/pages/AboutPage'))
+const ContactPage = lazy(() => import('@/pages/ContactPage'))
 const NotFoundPage = lazy(() => import('@/pages/NotFoundPage'))
 
 /** HashRouter apenas para prévias hospedadas fora da raiz de um domínio (VITE_ROUTER=hash). */
@@ -40,6 +44,14 @@ function AppRoutes() {
     <AnimatePresence mode="wait" initial={false}>
       <Routes location={location} key={location.pathname}>
         <Route path="/" element={<LandingPage />} />
+        {[
+          ['/sistema', <SystemPage />],
+          ['/seguranca', <SecurityPage />],
+          ['/sobre', <AboutPage />],
+          ['/contato', <ContactPage />],
+        ].map(([path, element]) => (
+          <Route key={path as string} path={path as string} element={<Suspense fallback={<PageFallback />}>{element}</Suspense>} />
+        ))}
         <Route
           path="/modulos"
           element={

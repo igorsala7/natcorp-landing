@@ -34,6 +34,10 @@ npm run lint     # oxlint
 | `/modulos/:slug` | Página dedicada de cada módulo (31 páginas) |
 | `/segmentos` | Índice dos 9 segmentos atendidos |
 | `/segmentos/:slug` | Página por segmento: realidade, dores, respostas e o paralelo com todos os módulos |
+| `/sistema` | O sistema em sete frentes (abas por grupo com telas), People Analytics, NatPonto, portais, multiplataforma, comparativo, personas e FAQ |
+| `/seguranca` | Segurança e infraestrutura: nuvem Oracle, ambientes, backups, SaaS e LGPD |
+| `/sobre` | Sobre a Natcorp: história, missão, visão e valores, reconhecimentos e clientes, serviços e vídeos |
+| `/contato` | Canais de contato, formulário, escritórios e como funciona o atendimento |
 | `/jornada-da-contratacao` | Jornada do colaborador em 21 etapas e 4 fases, contada como um exemplo do dia a dia, com fluxograma que acompanha a rolagem |
 | qualquer outra | Página 404 |
 
@@ -42,7 +46,8 @@ precisa devolver `index.html` para qualquer caminho: já estão incluídos `verc
 (Netlify/Cloudflare Pages). Em outros provedores, configure o "SPA fallback" equivalente.
 
 Os mesmos dois arquivos trazem **redirecionamentos permanentes (301)** dos endereços do site anterior em WordPress
-(`/solucao-de-rh/`, `/sobre-nos/`, `/fale-conosco/`, `/servicos/`, `/folha-de-pagamento/` etc.) para as rotas novas,
+(`/solucao-de-rh/` → `/modulos`, `/sobre-nos/` → `/sobre`, `/fale-conosco/` → `/contato`, `/servicos/` → `/sobre#servicos`,
+`/folha-de-pagamento/` → `/modulos/folha-de-pagamento` etc.) para as rotas novas,
 para que os links já indexados pelo Google e salvos por clientes continuem funcionando. O `/blog/` ficou de fora:
 depende de onde o WordPress vai continuar publicado.
 

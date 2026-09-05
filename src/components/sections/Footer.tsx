@@ -2,8 +2,20 @@ import { ArrowUp, Mail, MapPin, MessageCircle, Phone } from 'lucide-react'
 import { Link } from 'react-router'
 import { Logo } from '@/components/brand/Logo'
 import { groups } from '@/content/modulePages'
-import { journeyPath, navLinks, siteConfig } from '@/content/site'
+import { paths, siteConfig } from '@/content/site'
 import { segmentPath, segmentRegistry, segmentsPath } from '@/content/segments'
+
+const footerLinks = [
+  { to: paths.home, label: 'Início' },
+  { to: paths.system, label: 'O sistema' },
+  { to: paths.modules, label: 'Todos os módulos' },
+  { to: paths.nati, label: 'NATI' },
+  { to: paths.segments, label: 'Segmentos' },
+  { to: paths.journey, label: 'Jornada do colaborador' },
+  { to: paths.security, label: 'Segurança e infraestrutura' },
+  { to: paths.about, label: 'Sobre a Natcorp' },
+  { to: paths.contact, label: 'Contato' },
+]
 
 export function Footer() {
   return (
@@ -25,25 +37,15 @@ export function Footer() {
           <nav aria-label="Seções do site">
             <p className="text-[12px] font-semibold uppercase tracking-[0.16em] text-white/50">Navegue</p>
             <ul className="mt-4 space-y-2.5">
-              <li>
-                <Link to="/" className="text-sm font-medium text-white/80 transition-colors hover:text-white">
-                  Início
-                </Link>
-              </li>
-              <li>
-                <Link to={journeyPath} className="text-sm font-medium text-white/80 transition-colors hover:text-white">
-                  Jornada do colaborador
-                </Link>
-              </li>
-              {navLinks.map((l) => (
-                <li key={l.hash}>
-                  <Link to={{ pathname: '/', hash: l.hash }} className="text-sm font-medium text-white/80 transition-colors hover:text-white">
+              {footerLinks.map((l) => (
+                <li key={l.to}>
+                  <Link to={l.to} className="text-sm font-medium text-white/80 transition-colors hover:text-white">
                     {l.label}
                   </Link>
                 </li>
               ))}
               <li>
-                <Link to="#contato" className="text-sm font-medium text-white/80 transition-colors hover:text-white">
+                <Link to="#contato" className="text-sm font-semibold text-white transition-colors hover:text-[#E4A9C4]">
                   Agendar demonstração
                 </Link>
               </li>
@@ -55,13 +57,13 @@ export function Footer() {
             <ul className="mt-4 space-y-2.5">
               {groups.map((g) => (
                 <li key={g.id}>
-                  <Link to={`/modulos#${g.id}`} className="text-sm font-medium text-white/80 transition-colors hover:text-white">
+                  <Link to={`${paths.modules}#${g.id}`} className="text-sm font-medium text-white/80 transition-colors hover:text-white">
                     {g.name}
                   </Link>
                 </li>
               ))}
               <li>
-                <Link to="/modulos" className="text-sm font-semibold text-white transition-colors hover:text-[#E4A9C4]">
+                <Link to={paths.modules} className="text-sm font-semibold text-white transition-colors hover:text-[#E4A9C4]">
                   Todos os módulos
                 </Link>
               </li>

@@ -19,18 +19,28 @@ const envs = [
   { name: 'Contingência', desc: 'Recuperação de desastres' },
 ]
 
-export function SecuritySection() {
-  return (
-    <Section id="seguranca" tone="off" aria-labelledby="seguranca-title">
-      <div className="container">
-        <SectionHeader
-          id="seguranca-title"
-          eyebrow="Segurança e infraestrutura"
-          title="Nuvem segura, com [[plano de contingência]]."
-          lead="A operação de RH não pode parar. Por isso a Natcorp roda na infraestrutura Oracle Cloud, com ambientes separados para produção e homologação e um serviço de contingência pronto para assumir."
-        />
+interface SecuritySectionProps {
+  id?: string
+  tone?: 'white' | 'off'
+  /** Sem o cabeçalho, para páginas em que o título já está no topo. */
+  withHeader?: boolean
+}
 
-        <Reveal delay={0.2} className="mt-12 overflow-hidden rounded-3xl bg-brand-blue p-6 text-white sm:p-8 lg:mt-16">
+export function SecuritySection({ id = 'seguranca', tone = 'off', withHeader = true }: SecuritySectionProps) {
+  return (
+    <Section id={id} tone={tone} aria-labelledby={withHeader ? `${id}-title` : undefined} className={withHeader ? undefined : 'pt-0 sm:pt-0 lg:pt-0'}>
+      <div className="container">
+        {!withHeader && <h2 className="sr-only">Infraestrutura, ambientes e camadas de proteção</h2>}
+        {withHeader && (
+          <SectionHeader
+            id={`${id}-title`}
+            eyebrow="Segurança e infraestrutura"
+            title="Nuvem segura, com [[plano de contingência]]."
+            lead="A operação de RH não pode parar. Por isso a Natcorp roda na infraestrutura Oracle Cloud, com ambientes separados para produção e homologação e um serviço de contingência pronto para assumir."
+          />
+        )}
+
+        <Reveal delay={0.2} className={withHeader ? 'mt-12 overflow-hidden rounded-3xl bg-brand-blue p-6 text-white sm:p-8 lg:mt-16' : 'overflow-hidden rounded-3xl bg-brand-blue p-6 text-white sm:p-8'}>
           <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
             <div className="lg:max-w-xs">
               <p className="text-[12px] font-semibold uppercase tracking-[0.16em] text-white/60">Oracle Cloud Infrastructure</p>

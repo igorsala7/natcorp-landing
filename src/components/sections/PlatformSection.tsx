@@ -1,4 +1,9 @@
 import { m } from 'motion/react'
+import { ArrowRight } from 'lucide-react'
+import { Link } from 'react-router'
+import { Button } from '@/components/ui/button'
+import { Reveal } from '@/components/motion/Reveal'
+import { paths } from '@/content/site'
 import { Database, LayoutPanelTop, UserRound } from 'lucide-react'
 import { Section, SectionHeader } from './Section'
 import { Stagger, StaggerItem } from '@/components/motion/Reveal'
@@ -60,6 +65,17 @@ export function PlatformSection() {
               </StaggerItem>
             ))}
           </Stagger>
+          <Reveal delay={0.35} className="mt-10 flex flex-wrap gap-3">
+            <Button asChild size="lg">
+              <Link to={paths.system}>
+                Conhecer o sistema, frente por frente
+                <ArrowRight className="transition-transform duration-300 group-hover/btn:translate-x-0.5" />
+              </Link>
+            </Button>
+            <Button asChild size="lg" variant="secondary">
+              <Link to={paths.modules}>Ver os 31 módulos</Link>
+            </Button>
+          </Reveal>
         </div>
 
         <div className="relative mx-auto w-full max-w-[520px]">

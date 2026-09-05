@@ -1,4 +1,4 @@
-import heroRh from '@/assets/people/hero-rh.jpg'
+import heroOffice from '@/assets/people/hero-office.jpg'
 import personaChro from '@/assets/people/persona-chro.jpg'
 import personaCfo from '@/assets/people/persona-cfo.jpg'
 import personaCto from '@/assets/people/persona-cto.jpg'
@@ -21,9 +21,8 @@ export interface Portrait {
 
 export const people = {
   hero: {
-    src: heroRh,
-    alt: 'Foto ilustrativa: profissional de RH sorrindo, com um notebook nas mãos, envolvida pelo símbolo da Natcorp',
-    frame: { y: -2.55, scale: 1.06 },
+    src: heroOffice,
+    alt: 'Foto ilustrativa: profissional de RH sentada em um escritório envidraçado, sorrindo para a câmera',
   },
   chro: { src: personaChro, alt: 'Foto ilustrativa: diretora de RH sorrindo', frame: { y: -0.6 } },
   cfo: { src: personaCfo, alt: 'Foto ilustrativa: executivo de óculos em um escritório', frame: { y: -0.3 } },

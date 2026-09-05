@@ -34,11 +34,46 @@ export const offices = [
 /** Página da jornada do colaborador (história etapa por etapa). */
 export const journeyPath = '/jornada-da-contratacao'
 
-/** Links do menu principal. `hash` aponta para seções da página inicial. */
-export const navLinks = [
-  { hash: '#plataforma', label: 'Plataforma' },
-  { hash: '#nati', label: 'NATI' },
-  { hash: '#seguranca', label: 'Segurança' },
-  { hash: '#por-que-natcorp', label: 'Por que Natcorp' },
-  { hash: '#faq', label: 'FAQ' },
-] as const
+/** Caminhos das páginas principais. */
+export const paths = {
+  home: '/',
+  system: '/sistema',
+  modules: '/modulos',
+  security: '/seguranca',
+  about: '/sobre',
+  contact: '/contato',
+  journey: journeyPath,
+  segments: '/segmentos',
+  nati: '/modulos/nati',
+} as const
+
+export interface NavLink {
+  to: string
+  label: string
+  short?: string
+}
+
+/** Menu "Sistema": entradas gerais, antes das colunas de módulos por grupo. */
+export const systemLinks: NavLink[] = [
+  { to: paths.system, label: 'Visão geral do sistema', short: 'As sete frentes, com telas e módulos' },
+  { to: paths.modules, label: 'Todos os módulos', short: 'Mais de 30, cada um com a sua página' },
+  { to: paths.security, label: 'Segurança e infraestrutura', short: 'Nuvem Oracle, contingência e LGPD' },
+  { to: `${paths.system}#portais`, label: 'Portais e autoatendimento', short: 'Gestor, colaborador e candidato' },
+]
+
+/** Produtos com nome próprio dentro do sistema. */
+export const appLinks: NavLink[] = [
+  { to: paths.nati, label: 'NATI', short: 'A inteligência artificial do RH' },
+  { to: '/modulos/natponto', label: 'NatPonto', short: 'App de ponto com reconhecimento facial' },
+  { to: '/modulos/natpay', label: 'NatPay', short: 'Adiantamento salarial via WhatsApp e Pix' },
+  { to: '/modulos/people-analytics', label: 'People Analytics', short: 'Painéis prontos e gráficos próprios' },
+]
+
+/** Menu "Empresa". */
+export const companyLinks: NavLink[] = [
+  { to: paths.about, label: 'Sobre a Natcorp', short: '35 anos, missão, visão e valores' },
+  { to: `${paths.about}#reconhecimento`, label: 'Reconhecimentos e clientes', short: 'Prêmios e quem usa o sistema' },
+  { to: `${paths.about}#servicos`, label: 'Serviços', short: 'Implantação, BPO, treinamento e suporte' },
+  { to: `${paths.about}#videos`, label: 'Vídeos', short: 'O canal da Natcorp' },
+  { to: paths.contact, label: 'Contato', short: 'Telefone, WhatsApp, e-mail e escritórios' },
+]
