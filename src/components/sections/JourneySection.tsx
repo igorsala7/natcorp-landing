@@ -71,7 +71,7 @@ const features: Feature[] = [
 
 export function JourneySection() {
   return (
-    <Section id="jornada" tone="off" aria-labelledby="jornada-title">
+    <Section id="jornada" tone="off" className="overflow-hidden" aria-labelledby="jornada-title">
       <div className="container">
         <SectionHeader
           id="jornada-title"

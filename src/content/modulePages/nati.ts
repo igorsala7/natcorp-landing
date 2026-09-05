@@ -14,7 +14,7 @@ const page: ModulePage = {
   },
   highlights: [
     { value: '10', label: 'frentes do RH analisadas por um único motor' },
-    { value: '24/7', label: 'respostas padronizadas e confidenciais ao colaborador' },
+    { value: '24/7', label: 'no sistema, no WhatsApp e no Microsoft Teams' },
     { value: '120+', label: 'idiomas disponíveis na plataforma Natcorp' },
     { value: '4', label: 'etapas por resposta: análise, diagnóstico, alerta e sugestão' },
   ],
