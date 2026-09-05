@@ -76,7 +76,7 @@ src/
                 PeopleAnalyticsModulePage (páginas dedicadas com as telas do produto), HiringJourneyPage, NotFoundPage
   components/
     brand/      Logo.tsx (símbolo + wordmark em vetor), logo-paths.ts (geometria gerada do manual),
-                NatiAvatar, EmployeeAvatar e NatPontoIcon (avatares e ícone em vetor)
+                NatiAvatar e EmployeeAvatar (os personagens 3D em disco claro, com anel opcional), NatPontoIcon (ícone em vetor)
                 HumanModule.tsx: fotografia recortada pelos módulos do símbolo, gradiente da marca por cima e
                 linhas de luz nas arestas (hero, banner "Por que Natcorp", retratos das personas)
     motion/     Intro (abertura), SmoothScroll, ScrollManager (rotas + âncoras), PageTransition,
@@ -100,6 +100,9 @@ src/
     ui/         primitivos shadcn/ui
   content/      textos e dados (módulos da landing, FAQ, personas, navegação e contato em site.ts, reconhecimentos, vídeos),
                 hiringJourney.ts (as 21 etapas da jornada), modulePages/ (páginas de módulo) e segments/ (páginas por segmento)
+  assets/avatars nati.png (a NATI, personagem 3D oficial, renderizada em alta resolução a partir do avatar do material
+                da Natcorp) e ana.png (a colaboradora Ana, no mesmo estilo 3D); PNG com fundo transparente, 512 px.
+                Para usar o arquivo original, basta substituir nati.png
   assets/videos miniaturas dos vídeos (960x540), servidas pelo próprio site
   assets/people fotos provisórias de banco (Unsplash) para o hero, o banner, as personas e as capas dos segmentos;
                 substituir por fotos da Natcorp (créditos em CREDITS.md)

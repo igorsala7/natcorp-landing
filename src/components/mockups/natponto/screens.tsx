@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import type { ReactNode } from 'react'
-import { m } from 'motion/react'
+import { AnimatePresence, m, useReducedMotion } from 'motion/react'
 import {
   ArrowDown,
   ArrowLeft,
@@ -17,6 +17,7 @@ import {
 } from 'lucide-react'
 import { Logo } from '@/components/brand/Logo'
 import { EmployeeAvatar } from '@/components/brand/EmployeeAvatar'
+import ana from '@/assets/avatars/ana.png'
 import { NatPontoIcon } from '@/components/brand/NatPontoIcon'
 import { NatPontoFrame } from './NatPontoFrame'
 import { cn } from '@/lib/utils'
@@ -142,10 +143,38 @@ export function NatPontoSplash() {
 
 /** Tela de reconhecimento facial, com sobreposição opcional (ex.: confirmação). */
 export function NatPontoFace({ overlay, clock = '18:36' }: { overlay?: ReactNode; clock?: string }) {
+  const reduced = useReducedMotion()
+  const [count, setCount] = useState(3)
+  const [confirmed, setConfirmed] = useState(false)
+
+  // Ciclo da marcação: 3, 2, 1, confirmada, e recomeça. Parado com prefers-reduced-motion ou com sobreposição.
+  useEffect(() => {
+    if (reduced || overlay) return
+    let timers: number[] = []
+    const cycle = () => {
+      timers.forEach((t) => window.clearTimeout(t))
+      timers = []
+      setConfirmed(false)
+      setCount(3)
+      timers.push(window.setTimeout(() => setCount(2), 1000))
+      timers.push(window.setTimeout(() => setCount(1), 2000))
+      timers.push(window.setTimeout(() => setConfirmed(true), 3000))
+      timers.push(window.setTimeout(cycle, 6200))
+    }
+    cycle()
+    return () => timers.forEach((t) => window.clearTimeout(t))
+  }, [reduced, overlay])
+
+  const frame = confirmed ? '#34D399' : '#D6679A'
+
   return (
     <NatPontoFrame
       clock={clock}
-      label={overlay ? 'App NatPonto: marcação registrada, será sincronizada posteriormente' : 'App NatPonto: reconhecimento facial com o rosto no centro da moldura e contagem regressiva'}
+      label={
+        overlay
+          ? 'App NatPonto: marcação registrada, será sincronizada posteriormente'
+          : 'App NatPonto: reconhecimento facial com o rosto no centro da moldura, contagem regressiva de três segundos e marcação confirmada'
+      }
     >
       <div className="flex h-full flex-col">
         <div className="px-4 pb-3 pt-4">
@@ -160,22 +189,80 @@ export function NatPontoFace({ overlay, clock = '18:36' }: { overlay?: ReactNode
             </span>
             <div>
               <p className="text-[15px] font-bold text-[#A8386B]">Reconhecimento Facial</p>
-              <p className="text-[11px] text-brand-graphite">Posicione seu rosto no centro e aguarde</p>
+              <p className="text-[11px] text-brand-graphite">{confirmed ? 'Rosto reconhecido. Marcação registrada.' : 'Posicione seu rosto no centro e aguarde'}</p>
             </div>
           </div>
         </div>
 
         <div className="relative flex-1 overflow-hidden bg-[radial-gradient(50%_40%_at_30%_20%,#EEE2D2,transparent_70%),radial-gradient(45%_45%_at_80%_35%,#C9AE93,transparent_70%),linear-gradient(180deg,#D9C7B3_0%,#8D7561_60%,#2A2230_100%)]">
-          <p className="absolute inset-x-0 top-5 text-center text-[24px] font-extrabold text-[#E07AA9] drop-shadow-[0_2px_6px_rgba(0,0,0,0.35)]">Não se mexa</p>
-          <span className="absolute right-3 top-4 rounded-full bg-brand-ink/80 px-2.5 py-1 text-[11px] font-bold tabular text-white">58s</span>
-
-          <div className="absolute left-1/2 top-[54%] h-[62%] w-[70%] -translate-x-1/2 -translate-y-1/2">
-            <m.div
-              className="absolute inset-0 overflow-hidden rounded-[50%] border-[3px] border-[#D6679A] bg-[#E9DDD0]/60"
-              animate={{ boxShadow: ['0 0 0 0 rgba(214,103,154,0.0)', '0 0 0 8px rgba(214,103,154,0.18)', '0 0 0 0 rgba(214,103,154,0.0)'] }}
-              transition={{ duration: 2.2, repeat: Infinity, ease: 'easeInOut' }}
+          <AnimatePresence mode="wait" initial={false}>
+            <m.p
+              key={confirmed ? 'ok' : 'hold'}
+              className={cn('absolute inset-x-0 top-5 text-center text-[22px] font-extrabold drop-shadow-[0_2px_6px_rgba(0,0,0,0.35)]', confirmed ? 'text-emerald-300' : 'text-[#E07AA9]')}
+              initial={{ opacity: 0, y: -6 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 6 }}
+              transition={{ duration: 0.3 }}
             >
-              <EmployeeAvatar className="absolute left-1/2 top-[6%] w-[150%] -translate-x-1/2" />
+              {confirmed ? 'Marcação confirmada' : 'Não se mexa'}
+            </m.p>
+          </AnimatePresence>
+          {!confirmed && <span className="absolute right-3 top-4 rounded-full bg-brand-ink/80 px-2.5 py-1 text-[11px] font-bold tabular text-white">58s</span>}
+
+          {/* Moldura oval com o rosto centralizado */}
+          <div className="absolute left-1/2 top-[52%] h-[62%] w-[70%] -translate-x-1/2 -translate-y-1/2">
+            {/* pulso: anéis que se expandem a partir da moldura */}
+            {!reduced &&
+              !confirmed &&
+              [0, 0.7].map((delay) => (
+                <m.span
+                  key={delay}
+                  className="pointer-events-none absolute inset-0 rounded-[50%] border-2"
+                  style={{ borderColor: frame }}
+                  initial={{ opacity: 0.6, scale: 1 }}
+                  animate={{ opacity: 0, scale: 1.16 }}
+                  transition={{ duration: 1.4, repeat: Infinity, ease: 'easeOut', delay }}
+                  aria-hidden
+                />
+              ))}
+            <m.div
+              className="absolute inset-0 overflow-hidden rounded-[50%] border-[3px] bg-[#E9DDD0]/70"
+              animate={{ borderColor: frame, scale: confirmed ? [1, 1.04, 1] : 1, boxShadow: confirmed ? '0 0 0 6px rgba(52,211,153,0.25)' : '0 0 0 0px rgba(214,103,154,0)' }}
+              transition={{ duration: 0.5, ease: EASE }}
+            >
+              <img src={ana} alt="" draggable={false} className="absolute left-1/2 top-1/2 w-[96%] -translate-x-1/2 -translate-y-[46%]" />
+              {/* linha de varredura */}
+              {!reduced && !confirmed && (
+                <m.span
+                  className="pointer-events-none absolute inset-x-0 h-8 bg-gradient-to-b from-transparent via-[#E07AA9]/45 to-transparent"
+                  initial={{ top: '-12%' }}
+                  animate={{ top: ['-12%', '100%'] }}
+                  transition={{ duration: 1.5, repeat: Infinity, ease: 'linear' }}
+                  aria-hidden
+                />
+              )}
+              {/* confirmação */}
+              <AnimatePresence>
+                {confirmed && (
+                  <m.span
+                    key="ok"
+                    className="absolute inset-0 flex items-center justify-center bg-emerald-500/20"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    <m.span
+                      className="flex h-16 w-16 items-center justify-center rounded-full bg-emerald-500 text-white shadow-lift"
+                      initial={{ scale: 0.4, opacity: 0 }}
+                      animate={{ scale: 1, opacity: 1 }}
+                      transition={{ type: 'spring', stiffness: 320, damping: 18 }}
+                    >
+                      <Check className="h-8 w-8" strokeWidth={3} />
+                    </m.span>
+                  </m.span>
+                )}
+              </AnimatePresence>
             </m.div>
             {[
               'left-[-14px] top-[6%] border-l-[3px] border-t-[3px] rounded-tl-md',
@@ -183,17 +270,39 @@ export function NatPontoFace({ overlay, clock = '18:36' }: { overlay?: ReactNode
               'left-[-14px] bottom-[6%] border-l-[3px] border-b-[3px] rounded-bl-md',
               'right-[-14px] bottom-[6%] border-r-[3px] border-b-[3px] rounded-br-md',
             ].map((c) => (
-              <span key={c} className={cn('absolute h-7 w-7 border-[#D6679A]', c)} aria-hidden />
+              <m.span key={c} className={cn('absolute h-7 w-7', c)} animate={{ borderColor: frame }} transition={{ duration: 0.4 }} aria-hidden />
             ))}
           </div>
 
-          <m.span
-            className="absolute bottom-5 left-1/2 flex h-14 w-14 -translate-x-1/2 items-center justify-center rounded-full bg-[linear-gradient(180deg,#6A2E8E,#B4568F)] text-[26px] font-bold text-white shadow-lift"
-            animate={{ scale: [1, 1.08, 1] }}
-            transition={{ duration: 1, repeat: Infinity, ease: 'easeInOut' }}
-          >
-            1
-          </m.span>
+          {/* contagem 3, 2, 1 e o horário confirmado */}
+          <div className="absolute bottom-5 left-1/2 -translate-x-1/2">
+            <AnimatePresence mode="wait" initial={false}>
+              {confirmed ? (
+                <m.span
+                  key="time"
+                  className="flex items-center gap-2 rounded-full bg-emerald-700 px-4 py-2 text-[15px] font-bold tabular text-white shadow-lift"
+                  initial={{ opacity: 0, y: 8, scale: 0.9 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.9 }}
+                  transition={{ duration: 0.3, ease: EASE }}
+                >
+                  <Check className="h-4 w-4" strokeWidth={3} />
+                  Entrada {clock}
+                </m.span>
+              ) : (
+                <m.span
+                  key={count}
+                  className="flex h-14 w-14 items-center justify-center rounded-full bg-[linear-gradient(180deg,#6A2E8E,#B4568F)] text-[26px] font-bold text-white shadow-lift"
+                  initial={{ scale: 0.6, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  exit={{ scale: 1.3, opacity: 0 }}
+                  transition={{ duration: 0.28, ease: EASE }}
+                >
+                  {count}
+                </m.span>
+              )}
+            </AnimatePresence>
+          </div>
 
           {overlay}
         </div>
