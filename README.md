@@ -71,6 +71,8 @@ src/
   components/
     brand/      Logo.tsx (símbolo + wordmark em vetor), logo-paths.ts (geometria gerada do manual),
                 NatiAvatar, EmployeeAvatar e NatPontoIcon (avatares e ícone em vetor)
+                HumanModule.tsx: fotografia recortada pelos módulos do símbolo, gradiente da marca por cima e
+                linhas de luz nas arestas (hero, banner "Por que Natcorp", retratos das personas)
     motion/     Intro (abertura), SmoothScroll, ScrollManager (rotas + âncoras), PageTransition,
                 Reveal/Stagger, SplitText, Counter, Marquee, Magnetic, SpotlightCard, Parallax, ScrollProgress
     mockups/    Telas do produto construídas em código: dashboard, DevicesShowcase (notebook, tablet e
@@ -87,6 +89,8 @@ src/
   content/      textos e dados (módulos da landing, FAQ, personas, navegação e contato em site.ts, reconhecimentos, vídeos),
                 hiringJourney.ts (as 21 etapas da jornada), modulePages/ (páginas de módulo) e segments/ (páginas por segmento)
   assets/videos miniaturas dos vídeos (960x540), servidas pelo próprio site
+  assets/people fotos provisórias de banco (Unsplash) para as composições com o símbolo; substituir por fotos da
+                Natcorp (créditos em CREDITS.md)
   hooks/        useMediaQuery, useScrolled, useIntroDone, useBrandGradientId, useSeo
   lib/          motion.ts (curvas e variantes), lenisStore.ts, leadSchema.ts, submitLead.ts, utils.ts
 scripts/        generate-sitemap.mjs

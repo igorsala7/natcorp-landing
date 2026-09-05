@@ -1,20 +1,24 @@
 import { useRef } from 'react'
 import { m, useReducedMotion, useScroll, useTransform } from 'motion/react'
-import { ArrowRight, ChevronDown, Sparkles } from 'lucide-react'
+import { ArrowRight, ChevronDown, ScanFace, Sparkles, Wallet } from 'lucide-react'
 import { Link } from 'react-router'
 import { Button } from '@/components/ui/button'
 import { LogoOutline } from '@/components/brand/Logo'
+import { HumanModule, type HumanChip } from '@/components/brand/HumanModule'
 import { SplitText } from '@/components/motion/SplitText'
 import { Magnetic } from '@/components/motion/Magnetic'
 import { useIntroDone } from '@/hooks/useIntroDone'
-import { DashboardMockup } from '@/components/mockups/DashboardMockup'
-import { ScaledFrame } from '@/components/motion/ScaledFrame'
-import { NATPONTO_SIZE } from '@/components/mockups/natponto/NatPontoFrame'
-import { NatPontoPhone } from '@/components/mockups/natponto/screens'
+import { people } from '@/content/people'
 import { EASE } from '@/lib/motion'
 import { scrollToElement } from '@/components/motion/ScrollManager'
 
 const trust = ['+30 módulos integrados', '2.500 folhas por minuto', 'NATI, a IA do RH', 'Nuvem Oracle com contingência']
+
+const chips: HumanChip[] = [
+  { icon: Sparkles, label: 'NATI', value: 'Respondeu 42 dúvidas hoje', at: 'tr', desktopOnly: true },
+  { icon: Wallet, label: 'Folha', value: 'Fechada em 6 minutos', at: 'l', desktopOnly: true },
+  { icon: ScanFace, label: 'NatPonto', value: 'Ponto registrado às 08:02', at: 'br' },
+]
 
 export function Hero() {
   const done = useIntroDone()
@@ -23,8 +27,7 @@ export function Hero() {
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end start'] })
   const yText = useTransform(scrollYProgress, [0, 1], [0, -80])
   const opacityText = useTransform(scrollYProgress, [0, 0.55], [1, 0])
-  const yMock = useTransform(scrollYProgress, [0, 1], [0, 90])
-  const yPhone = useTransform(scrollYProgress, [0, 1], [0, 40])
+  const yVisual = useTransform(scrollYProgress, [0, 1], [0, 70])
 
   const show = (delay: number) => ({
     initial: { opacity: 0, y: 20 },
@@ -36,17 +39,17 @@ export function Hero() {
     <section
       ref={ref}
       id="top"
-      className="on-dark relative isolate overflow-visible bg-brand-gradient text-white"
+      className="on-dark relative isolate overflow-hidden bg-brand-gradient text-white"
       aria-labelledby="hero-title"
     >
-      <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden>
-        <LogoOutline className="absolute -right-[16%] -top-[34%] h-[150%] w-auto text-white/[0.28]" />
+      <div className="pointer-events-none absolute inset-0" aria-hidden>
+        <LogoOutline className="absolute -left-[22%] -bottom-[48%] h-[150%] w-auto text-white/[0.16]" />
         <div className="absolute inset-0 bg-[radial-gradient(70%_55%_at_18%_8%,rgba(201,87,136,0.32),transparent_62%)]" />
         <div className="absolute inset-0 bg-[radial-gradient(50%_40%_at_85%_90%,rgba(27,18,56,0.55),transparent_70%)]" />
       </div>
 
-      <div className="container relative pt-[calc(var(--nav-h)+3.5rem)] sm:pt-[calc(var(--nav-h)+5rem)]">
-        <m.div style={{ y: reduced ? 0 : yText, opacity: reduced ? 1 : opacityText }} className="mx-auto max-w-4xl text-center">
+      <div className="container relative grid grid-cols-1 items-center gap-12 pb-16 pt-[calc(var(--nav-h)+3rem)] sm:pt-[calc(var(--nav-h)+4rem)] lg:grid-cols-[1.02fr_0.98fr] lg:gap-10 lg:pb-24 lg:pt-[calc(var(--nav-h)+3.5rem)] xl:gap-16">
+        <m.div style={{ y: reduced ? 0 : yText, opacity: reduced ? 1 : opacityText }} className="max-w-2xl">
           <m.p
             {...show(0.05)}
             className="inline-flex items-center gap-2 whitespace-nowrap rounded-full border border-white/20 bg-white/10 px-3.5 py-1.5 text-[11px] font-semibold uppercase tracking-[0.1em] text-white/90 backdrop-blur-sm sm:px-4 sm:text-[12px] sm:tracking-[0.14em]"
@@ -63,16 +66,16 @@ export function Hero() {
             delay={0.15}
             stagger={0.08}
             text="Todo o RH. Um único sistema."
-            className="mt-6 text-[2.75rem] font-extrabold leading-[1.02] sm:text-6xl lg:text-7xl xl:text-[5.5rem]"
+            className="mt-6 text-[2.75rem] font-extrabold leading-[1.02] sm:text-6xl lg:text-[4rem] xl:text-[4.6rem]"
           />
 
-          <m.p {...show(0.55)} className="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-white/80 sm:text-xl">
+          <m.p {...show(0.55)} className="mt-6 max-w-xl text-lg leading-relaxed text-white/80 sm:text-xl">
             Folha, ponto, eSocial, admissão digital, saúde e segurança do trabalho, talentos e People Analytics.
             Mais de 30 módulos integrados, com a NATI, nossa inteligência artificial, trabalhando dentro do sistema.
             Para grandes empresas que querem um RH protagonista.
           </m.p>
 
-          <m.div {...show(0.7)} className="mt-9 flex flex-wrap items-center justify-center gap-3">
+          <m.div {...show(0.7)} className="mt-9 flex flex-wrap items-center gap-3">
             <Magnetic>
               <Button asChild variant="inverse" size="xl">
                 <Link to="#contato">
@@ -86,7 +89,7 @@ export function Hero() {
             </Button>
           </m.div>
 
-          <m.ul {...show(0.85)} className="mt-10 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-[13px] font-medium text-white/70">
+          <m.ul {...show(0.85)} className="mt-10 flex flex-wrap items-center gap-x-6 gap-y-2 text-[13px] font-medium text-white/70">
             {trust.map((t) => (
               <li key={t} className="flex items-center gap-2">
                 <span className="h-1.5 w-1.5 rounded-full bg-[#E4A9C4]" aria-hidden />
@@ -97,25 +100,25 @@ export function Hero() {
         </m.div>
 
         <m.div
-          initial={{ opacity: 0, y: 60, scale: 0.97 }}
-          animate={done ? { opacity: 1, y: 0, scale: 1 } : { opacity: 0, y: 60, scale: 0.97 }}
-          transition={{ duration: 1.1, ease: EASE, delay: 0.9 }}
-          className="relative z-20 mx-auto mt-14 max-w-5xl sm:mt-20"
+          style={{ y: reduced ? 0 : yVisual }}
+          initial={{ opacity: 0, y: 40, scale: 0.96 }}
+          animate={done ? { opacity: 1, y: 0, scale: 1 } : { opacity: 0, y: 40, scale: 0.96 }}
+          transition={{ duration: 1.1, ease: EASE, delay: 0.5 }}
+          className="relative mx-auto w-full max-w-[380px] sm:max-w-[460px] lg:max-w-none lg:justify-self-end xl:max-w-[560px]"
         >
-          <m.div style={{ y: reduced ? 0 : yMock }}>
-            <DashboardMockup />
-          </m.div>
-          <m.div
-            style={{ y: reduced ? 0 : yPhone }}
-            className="absolute -bottom-12 -right-2 hidden md:block lg:-right-16 xl:-right-24"
-            initial={{ opacity: 0, y: 40, rotate: -4 }}
-            animate={done ? { opacity: 1, y: 0, rotate: -4 } : { opacity: 0, y: 40, rotate: -4 }}
-            transition={{ duration: 1, ease: EASE, delay: 1.3 }}
+          <HumanModule
+            src={people.hero.src}
+            alt={people.hero.alt}
+            frame={people.hero.frame}
+            chips={chips}
+            loading="eager"
+          />
+          <m.p
+            {...show(1.1)}
+            className="mt-4 text-center text-[12px] font-medium text-white/55 lg:absolute lg:-bottom-8 lg:left-1/2 lg:mt-0 lg:-translate-x-1/2 lg:whitespace-nowrap"
           >
-            <ScaledFrame width={NATPONTO_SIZE.width} height={NATPONTO_SIZE.height} className="w-[200px] lg:w-[230px]">
-              <NatPontoPhone screen="home" />
-            </ScaledFrame>
-          </m.div>
+            Gente no centro. O sistema em volta.
+          </m.p>
         </m.div>
       </div>
 
@@ -128,7 +131,7 @@ export function Hero() {
           scrollToElement(el)
         }}
         aria-label="Rolar para a próxima seção"
-        className="absolute bottom-6 left-1/2 hidden -translate-x-1/2 text-white/60 transition-colors hover:text-white lg:block"
+        className="absolute bottom-5 left-1/2 hidden -translate-x-1/2 text-white/60 transition-colors hover:text-white lg:block"
         initial={{ opacity: 0 }}
         animate={done ? { opacity: 1 } : { opacity: 0 }}
         transition={{ delay: 1.8, duration: 0.8 }}
@@ -141,9 +144,6 @@ export function Hero() {
           <ChevronDown className="h-6 w-6" />
         </m.span>
       </m.a>
-
-      {/* respiro para o mockup sobrepor a próxima seção */}
-      <div className="h-24 sm:h-32" aria-hidden />
     </section>
   )
 }

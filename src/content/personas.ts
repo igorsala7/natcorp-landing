@@ -1,5 +1,6 @@
 import type { LucideIcon } from 'lucide-react'
 import { Briefcase, Calculator, ServerCog, Users } from 'lucide-react'
+import { people, type Portrait } from './people'
 
 export interface Persona {
   id: string
@@ -7,6 +8,8 @@ export interface Persona {
   headline: string
   points: string[]
   icon: LucideIcon
+  /** Retrato (foto provisória de banco, ver src/content/people.ts). */
+  portrait: Portrait
 }
 
 export const personas: Persona[] = [
@@ -20,6 +23,7 @@ export const personas: Persona[] = [
       'Carreira, sucessão, avaliações e metas na mesma base da folha.',
     ],
     icon: Users,
+    portrait: people.chro,
   },
   {
     id: 'cfo',
@@ -31,6 +35,7 @@ export const personas: Persona[] = [
       'Jurídico trabalhista integrado para reduzir passivos e surpresas.',
     ],
     icon: Calculator,
+    portrait: people.cfo,
   },
   {
     id: 'cto',
@@ -42,6 +47,7 @@ export const personas: Persona[] = [
       'Um cadastro, uma base, um fornecedor. Menos integrações frágeis para manter.',
     ],
     icon: ServerCog,
+    portrait: people.cto,
   },
   {
     id: 'rh',
@@ -53,5 +59,6 @@ export const personas: Persona[] = [
       'A NATI responde dúvidas de colaboradores e gestores antes de virarem chamado.',
     ],
     icon: Briefcase,
+    portrait: people.rh,
   },
 ]

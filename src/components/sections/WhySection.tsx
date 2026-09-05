@@ -1,4 +1,8 @@
-import { Check, ClipboardCheck, Code2, GraduationCap, Handshake, Headset, Users, X } from 'lucide-react'
+import { ArrowRight, Check, ClipboardCheck, Code2, GraduationCap, Handshake, Headset, Users, X } from 'lucide-react'
+import { Link } from 'react-router'
+import { Button } from '@/components/ui/button'
+import { HumanModule } from '@/components/brand/HumanModule'
+import { people } from '@/content/people'
 import { Section, SectionHeader } from './Section'
 import { Reveal, Stagger, StaggerItem } from '@/components/motion/Reveal'
 import { Logo } from '@/components/brand/Logo'
@@ -158,12 +162,30 @@ export function WhySection() {
           </Stagger>
         </div>
 
-        <Reveal delay={0.2} className="relative mt-16 overflow-hidden rounded-3xl bg-brand-gradient px-6 py-12 text-center text-white sm:px-12 sm:py-16 lg:mt-24">
-          <Logo variant="symbol" tone="white" decorative className="absolute -right-10 -top-10 h-48 w-48 opacity-[0.08]" />
-          <p className="mx-auto max-w-3xl text-2xl font-extrabold leading-snug sm:text-3xl lg:text-4xl">
-            Foque no que importa: o negócio e a gestão. Deixe a parte mecânica e operacional com o sistema.
-          </p>
-          <p className="mt-4 text-sm font-medium text-white/70">Soluções inteligentes para organizações que levam a gestão de pessoas a sério. Do C-Level ao estagiário.</p>
+        <Reveal delay={0.2} className="on-dark relative mt-16 overflow-hidden rounded-3xl bg-brand-gradient text-white lg:mt-24">
+          <Logo variant="symbol" tone="white" decorative className="absolute -left-12 -top-12 h-56 w-56 opacity-[0.07]" />
+          <div className="relative grid grid-cols-1 items-center gap-8 px-6 py-12 sm:px-12 sm:py-14 lg:grid-cols-[1fr_auto] lg:gap-14">
+            <div className="max-w-2xl">
+              <p className="text-2xl font-extrabold leading-snug sm:text-3xl lg:text-4xl">
+                Foque no que importa: o negócio e as pessoas. Deixe a parte mecânica e operacional com o sistema.
+              </p>
+              <p className="mt-4 text-[15px] font-medium text-white/70">Soluções inteligentes para organizações que levam a gestão de pessoas a sério. Do C-Level ao estagiário.</p>
+              <Button asChild variant="inverse" size="lg" className="mt-8">
+                <Link to="#contato">
+                  Agendar demonstração
+                  <ArrowRight className="transition-transform duration-300 group-hover/btn:translate-x-0.5" />
+                </Link>
+              </Button>
+            </div>
+            <HumanModule
+              shape="module"
+              src={people.time.src}
+              alt={people.time.alt}
+              frame={people.time.frame}
+              tint={0.4}
+              className="mx-auto w-[240px] sm:w-[280px] lg:w-[300px]"
+            />
+          </div>
         </Reveal>
       </div>
     </Section>

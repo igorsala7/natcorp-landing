@@ -13,7 +13,7 @@ const stats = [
 
 export function ProofStrip() {
   return (
-    <section id="numeros" className="relative z-10 bg-white pt-8 sm:pt-12" aria-label="Natcorp em números">
+    <section id="numeros" className="relative z-10 bg-white" aria-label="Natcorp em números">
       <div className="container">
         <Stagger className="grid grid-cols-2 gap-x-6 gap-y-10 border-b border-brand-mist py-12 lg:grid-cols-4 lg:py-16">
           {stats.map((s) => (
