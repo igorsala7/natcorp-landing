@@ -3,12 +3,13 @@ import { Link } from 'react-router'
 import { Logo } from '@/components/brand/Logo'
 import { groups } from '@/content/modulePages'
 import { journeyPath, navLinks, siteConfig } from '@/content/site'
+import { segmentPath, segmentRegistry, segmentsPath } from '@/content/segments'
 
 export function Footer() {
   return (
     <footer className="on-dark bg-brand-blue pb-8 pt-16 text-white sm:pt-20">
       <div className="container">
-        <div className="grid gap-12 lg:grid-cols-[1.3fr_1fr_1fr_1fr]">
+        <div className="grid gap-12 sm:grid-cols-2 lg:grid-cols-[1.3fr_1fr_1fr_1fr_1fr]">
           <div>
             <Logo variant="vertical" tone="white" className="h-24 w-auto" />
             <p className="mt-6 max-w-xs text-[15px] font-semibold leading-snug">{siteConfig.tagline}</p>
@@ -62,6 +63,24 @@ export function Footer() {
               <li>
                 <Link to="/modulos" className="text-sm font-semibold text-white transition-colors hover:text-[#E4A9C4]">
                   Todos os módulos
+                </Link>
+              </li>
+            </ul>
+          </nav>
+
+          <nav aria-label="Segmentos">
+            <p className="text-[12px] font-semibold uppercase tracking-[0.16em] text-white/50">Segmentos</p>
+            <ul className="mt-4 space-y-2.5">
+              {segmentRegistry.map((s) => (
+                <li key={s.slug}>
+                  <Link to={segmentPath(s.slug)} className="text-sm font-medium text-white/80 transition-colors hover:text-white">
+                    {s.label}
+                  </Link>
+                </li>
+              ))}
+              <li>
+                <Link to={segmentsPath} className="text-sm font-semibold text-white transition-colors hover:text-[#E4A9C4]">
+                  Todos os segmentos
                 </Link>
               </li>
             </ul>

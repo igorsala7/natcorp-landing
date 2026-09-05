@@ -1,0 +1,11 @@
+[
+  { "slug": "bens-industriais", "name": "Bens Industriais", "label": "Bens Industriais", "icon": "factory", "short": "Turnos, NRs, EPIs e banco de horas de fábrica na mesma base da folha." },
+  { "slug": "bens-de-consumo", "name": "Bens de Consumo", "label": "Bens de Consumo", "icon": "package", "short": "Fábrica, centro de distribuição e força de vendas em campo, com sazonalidade." },
+  { "slug": "servicos-ao-consumidor", "name": "Serviços ao Consumidor", "label": "Serviços ao Consumidor", "icon": "handshake", "short": "Atendimento em escala, turnos, alto giro e equipes remotas ou híbridas." },
+  { "slug": "saude-e-ciencias-biologicas", "name": "Saúde e Ciências Biológicas", "label": "Saúde e Ciências Biológicas", "icon": "heart-pulse", "short": "Plantões 12x36, múltiplos vínculos, NR-32 e SESMT dentro do RH." },
+  { "slug": "recursos-naturais", "name": "Recursos Naturais", "label": "Recursos Naturais", "icon": "globe", "short": "Campo, embarque, safra e áreas remotas, com ponto que funciona sem sinal." },
+  { "slug": "setor-publico-e-social", "name": "Setor Público e Social", "label": "Setor Público e Social", "icon": "landmark", "short": "Transparência, auditoria, progressões e regimes diferentes no mesmo sistema." },
+  { "slug": "servicos-financeiros", "name": "Serviços Financeiros", "label": "Serviços Financeiros", "icon": "credit-card", "short": "Jornada bancária, remuneração variável, auditoria e dados sob controle." },
+  { "slug": "varejo", "name": "Varejo", "label": "Soluções de Varejo", "icon": "shopping-cart", "short": "Loja a loja: escalas de shopping, admissão em massa e ponto no tablet da loja." },
+  { "slug": "telecom", "name": "Telecom", "label": "Telecom", "icon": "radio-tower", "short": "Técnicos em campo, operação 24 horas, terceiros e periculosidade sob controle." }
+]

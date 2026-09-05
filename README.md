@@ -32,6 +32,8 @@ npm run lint     # oxlint
 | `/` | Landing page institucional |
 | `/modulos` | Índice com os 7 grupos e todos os módulos |
 | `/modulos/:slug` | Página dedicada de cada módulo (31 páginas) |
+| `/segmentos` | Índice dos 9 segmentos atendidos |
+| `/segmentos/:slug` | Página por segmento: realidade, dores, respostas e o paralelo com todos os módulos |
 | `/jornada-da-contratacao` | Jornada do colaborador em 21 etapas e 4 fases, contada como um exemplo do dia a dia, com fluxograma que acompanha a rolagem |
 | qualquer outra | Página 404 |
 

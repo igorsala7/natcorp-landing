@@ -1,0 +1,138 @@
+import type { SegmentPage } from './types'
+
+const page: SegmentPage = {
+  slug: 'bens-de-consumo',
+  name: 'Bens de Consumo',
+  tagline: 'Da linha de produção à gôndola: fábrica, CD e promotores [[no mesmo RH]].',
+  summary:
+    'Fábrica com turnos, centro de distribuição com alto giro e promotores na rua, em dezenas de cidades. A Natcorp apura o ponto do CD e do ponto de venda, calcula PLR por região, admite temporários em volume e entrega benefícios em cada praça, com o gestor aprovando pelo celular.',
+  seo: {
+    title: 'RH para bens de consumo: fábrica, CD e campo | Natcorp',
+    description:
+      'RH para bens de consumo: turnos no CD, ponto com geolocalização para promotores, temporários na sazonalidade, PLR por região e benefícios em cada cidade.',
+  },
+  context: [
+    'Em bens de consumo, a operação de pessoas se divide em três mundos. A fábrica roda em turnos com NRs e EPIs. O centro de distribuição tem alto giro, escalas noturnas e picos de expedição. A força de vendas e os promotores passam o dia na rua, em supermercados e pontos de venda de dezenas de cidades, com gestores regionais que raramente pisam na matriz.',
+    'A sazonalidade multiplica tudo: temporários no fim de ano, na Páscoa e nas campanhas, cada um com admissão, exame, EPI e desligamento em poucas semanas. PLR e metas de vendas variam por região, o vale-transporte e a alimentação mudam de cidade para cidade, e a folha precisa reunir CNPJs e sindicatos de fábrica, logística e comércio sem que o RH digite nada duas vezes.',
+  ],
+  facts: [
+    { value: 'Fábrica, CD e rua', label: 'turnos na produção, noite na expedição e ponto com local na rota do promotor' },
+    { value: 'Sazonalidade', label: 'temporários admitidos em volume pelo celular e desligados no mesmo fluxo' },
+    { value: 'PLR por região', label: 'metas de vendas por praça e canal, apuradas e pagas na folha sem planilha' },
+  ],
+  pains: [
+    { icon: 'map-pin', title: 'Ponto de quem passa o dia na rua', text: 'Vendedores e promotores começam o dia no primeiro cliente e terminam no último. Sem local e hora confiáveis, a jornada externa vira discussão de hora extra e a empresa não prova nada.' },
+    { icon: 'refresh', title: 'Alto giro no CD e temporários na sazonalidade', text: 'A expedição troca de gente o ano inteiro e dobra na campanha de fim de ano. Cada temporário exige admissão, exame, EPI e rescisão em semanas, e o RH não dá conta em papel.' },
+    { icon: 'trending-up', title: 'PLR e metas de vendas diferentes em cada região', text: 'A meta do Nordeste não é a do Sul, o promotor tem um múltiplo e o operador do CD tem outro. Apurar em planilha atrasa o pagamento e abre discussão com o sindicato e com a equipe.' },
+    { icon: 'receipt', title: 'Benefícios e convenções em dezenas de cidades', text: 'Vale-transporte com tarifa de cada município, alimentação por praça, convenção da indústria na fábrica e do comércio ou da logística no CD. Cada exceção manual vira erro na folha.' },
+    { icon: 'hard-hat', title: 'NR-36, boas práticas e EPI da fábrica à expedição', text: 'Linha de alimentos com NR-36 e boas práticas de fabricação, empilhadeira e altura no CD, EPIs e treinamentos que vencem. Um treinamento vencido para a linha ou expõe a empresa.' },
+    { icon: 'smartphone', title: 'Gestor regional longe da matriz, decidindo pelo celular', text: 'O supervisor de vendas aprova férias, abono e vaga entre uma visita e outra. O líder do CD aprova troca de escala no meio da madrugada. Se depende de e-mail para o RH, a fila cresce.' },
+  ],
+  answers: [
+    {
+      pain: 'Ponto em campo',
+      title: 'NatPonto com rosto e local para a rota, tablet no CD e escala apurada na folha',
+      text: 'O promotor marca o ponto no próprio celular, com reconhecimento facial e o endereço da marcação registrado, mesmo sem sinal no estoque do cliente. No CD, um tablet em modo multiusuário atende a equipe do turno. O Ponto Eletrônico aplica escalas, adicional noturno e banco de horas e manda tudo para a folha.',
+      modules: ['natponto', 'ponto-eletronico', 'folha-de-pagamento'],
+    },
+    {
+      pain: 'Sazonalidade',
+      title: 'Temporários admitidos pelo celular e desligados no mesmo fluxo',
+      text: 'A requisição de pessoal abre a vaga, o candidato faz a admissão pelo celular com documentos e contrato assinado, e o cadastro nasce na folha, no ponto e no SESMT. No fim da campanha, a Requisição de Desligamento abre o Offboarding com rescisão, banco de horas e bloqueio de acessos em uma tela.',
+      modules: ['recrutamento-e-selecao', 'admissao-digital', 'offboarding', 'requisicoes-com-workflow'],
+    },
+    {
+      pain: 'PLR e metas',
+      title: 'Metas por região e canal, PLR apurada e enviada para a folha',
+      text: 'O ciclo define elegibilidade por filial, centro de custo e cargo, com múltiplos por grupo salarial e regras para admitidos, desligados e afastados. O gestor regional propõe as metas, o vendedor concorda no portal, o resultado é apurado com feedback e o valor vai para a Folha de Pagamento sem planilha.',
+      modules: ['metas-e-resultados', 'folha-de-pagamento', 'portais', 'avaliacoes-e-feedbacks'],
+    },
+    {
+      pain: 'Benefícios por cidade',
+      title: 'Vale-transporte por tarifa, alimentação por praça e convenções na mesma folha',
+      text: 'O vale-transporte tem tarifas e operadoras por município, com reajuste automático e arquivos para as operadoras. Alimentação e convênios seguem regras por tipo de família e praça. A folha trata múltiplos vínculos e sindicatos sem limite de CNPJs, e os benefícios viram rubricas sem redigitar.',
+      modules: ['gestao-de-beneficios', 'folha-de-pagamento', 'conexao-com-outros-sistemas'],
+    },
+    {
+      pain: 'NR-36 e EPIs',
+      title: 'EPIs com CA validado e treinamentos com validade da linha ao CD',
+      text: 'O SESMT controla estoque, entrega e substituição de EPIs, com CA consultado na base do Governo Federal e ficha assinada na tela. Treinamentos obrigatórios têm validade com alerta e entram nos checklists de NR. O PGR por ambiente alimenta o GHE e o PCMSO da fábrica e da expedição.',
+      modules: ['seguranca-do-trabalho', 'treinamento-e-desenvolvimento', 'medicina-ocupacional'],
+    },
+    {
+      pain: 'Gestor regional',
+      title: 'Portal do Gestor no celular e a NATI respondendo à equipe da rua',
+      text: 'Férias, abono, troca de escala, vaga e desligamento são aprovados pelo celular, com alçadas por região e suplente automático. O vendedor consulta holerite, metas e benefícios no portal ou pergunta à NATI no WhatsApp, e o NatPay adianta salário com limite pelos dias trabalhados no ponto.',
+      modules: ['portais', 'requisicoes-com-workflow', 'nati', 'natpay'],
+    },
+  ],
+  moduleNotes: {
+    'folha-de-pagamento': 'Fábrica, CD e vendas com sindicatos e CNPJs diferentes na mesma folha, com PLR por região calculada no mesmo motor.',
+    'administracao-de-pessoal': 'Headcount por planta, CD e regional de vendas, com temporários planejados no orçamento da campanha.',
+    'cargos-e-salarios': 'Faixas de vendedor, promotor e operador de CD por região, com teto do cargo filtrando a seleção da temporada.',
+    'gestao-de-beneficios': 'Vale-transporte com tarifa por município, alimentação por praça e plano de saúde com fatura conferida.',
+    natpay: 'Adiantamento pelo WhatsApp para promotores e temporários, com limite pelos dias trabalhados e desconto na folha.',
+    esocial: 'Admissões e desligamentos da campanha enviados no prazo, com validador de divergências antes de cada envio.',
+    'juridico-trabalhista': 'Marcações com local e hora do promotor e espelhos assinados como prova em ações de jornada externa.',
+    'ponto-eletronico': 'Escalas noturnas do CD, jornada externa da rua e turnos da fábrica apurados com banco de horas por sindicato.',
+    natponto: 'Ponto no celular do promotor com rosto e endereço, funciona sem sinal, e tablet multiusuário no CD.',
+    'medicina-ocupacional': 'Exames admissionais em volume na sazonalidade e PCMSO da linha de alimentos ligado ao GHE.',
+    'seguranca-do-trabalho': 'EPIs da fábrica e do CD com CA validado, checklists de NR e PGR por ambiente, da linha à expedição.',
+    'recrutamento-e-selecao': 'Processos em volume para CD e campanha, com banco de talentos por cidade e matching da NATI.',
+    'quadro-de-vagas': 'Vagas de promotor, vendedor e operador de CD publicadas por cidade com a marca da empresa.',
+    'admissao-digital': 'Temporário admitido pelo celular, com documentos e contrato assinado, cadastrado na folha e no ponto no primeiro dia.',
+    onboarding: 'Boas práticas de fabricação, regras do CD e roteiro do promotor no celular desde o primeiro dia.',
+    offboarding: 'Desligamentos de fim de campanha com rescisão, banco de horas e bloqueio de acessos em uma tela, conferidos pela NATI.',
+    'avaliacoes-e-feedbacks': 'Feedback do supervisor de vendas registrado pelo celular depois da visita e pesquisa de clima por regional.',
+    'metas-e-resultados': 'Metas de vendas por região e canal, múltiplos por grupo salarial e PLR enviada para a folha sem planilha.',
+    'treinamento-e-desenvolvimento': 'NR-36, boas práticas de fabricação e empilhadeira com validade controlada, e trilha de vendas para promotores.',
+    'carreira-e-sucessao': 'Trilha de promotor a supervisor de vendas e sucessores para gerente regional e de CD, com prontidão.',
+    portais: 'Portal do Gestor no celular do supervisor regional e do líder do CD, e Portal do Colaborador com holerite e metas.',
+    'requisicoes-com-workflow': 'Troca de escala, abono, férias e vaga com alçadas por região, CD e planta, e suplente automático.',
+    'chamado-interno': 'Dúvidas de comissão, vale-transporte e escala de todas as praças em fila com prazo, sem e-mail perdido.',
+    'blog-corporativo': 'Lançamentos, campanhas de vendas e avisos de pico de expedição na timeline do portal, no celular da rua.',
+    'assinatura-eletronica': 'Contratos de temporários, aditivos e espelhos de ponto assinados pelo celular, com validade jurídica.',
+    ged: 'Documentos de temporários e promotores enviados pelo celular e guardados por pessoa, sem papel nas regionais.',
+    'people-analytics': 'Turnover do CD, horas extras por regional e custo por praça cruzados com o botão Ações, em tempo real.',
+    'business-intelligence': 'Painéis comparando fábrica, CD e regionais de vendas, com alerta por e-mail quando o headcount sai do orçado.',
+    nati: 'Responde ao promotor pelo WhatsApp fora do horário e confere a folha da campanha antes do fechamento.',
+    'conexao-com-outros-sistemas': 'Conecta com o sistema de vendas para comissões, com o ERP e com a catraca do CD e da fábrica.',
+    'infraestrutura-e-seguranca': 'Nuvem com contingência para fábrica, CD e regionais, acesso por filial e trilha de auditoria.',
+  },
+  spotlight: ['natponto', 'ponto-eletronico', 'metas-e-resultados', 'admissao-digital', 'gestao-de-beneficios', 'folha-de-pagamento'],
+  compliance: [
+    'NR-36 e boas práticas de fabricação na indústria de alimentos, quando aplicável',
+    'Convenções coletivas da indústria, da logística e do comércio por município',
+    'Jornada externa e controle de ponto conforme a CLT e a Portaria do ponto eletrônico',
+    'eSocial: admissões e desligamentos de temporários dentro do prazo',
+    'NR-06 para EPIs da fábrica e do centro de distribuição',
+    'LGPD nos dados de localização e de candidatos',
+  ],
+  personas: [
+    { role: 'Supervisor regional de vendas', text: 'Aprova férias, abono e vaga pelo celular entre uma visita e outra e acompanha as metas da equipe no painel.' },
+    { role: 'Líder do centro de distribuição', text: 'Vê quem chegou no turno da noite, aprova troca de escala pelo celular e recebe o temporário já cadastrado no ponto.' },
+    { role: 'Promotor de vendas', text: 'Marca o ponto no celular no primeiro cliente, vê a meta e o holerite no portal e pergunta à NATI no WhatsApp.' },
+  ],
+  faq: [
+    {
+      q: 'O ponto de vendedores e promotores em campo é confiável?',
+      a: 'Sim. O NatPonto registra a marcação com reconhecimento facial e geolocalização, com o endereço visível na tela. Funciona sem internet e sincroniza depois. As marcações chegam ao Ponto Eletrônico em segundos, e o espelho de ponto assinado digitalmente serve de prova para a empresa e para o colaborador.',
+    },
+    {
+      q: 'Como fica a admissão de temporários na campanha de fim de ano?',
+      a: 'A requisição de pessoal do gestor abre a vaga, o candidato preenche dados e documentos pelo celular e assina o contrato eletronicamente. Aprovada a admissão, o cadastro nasce na folha, no ponto, nos benefícios e no SESMT. No fim da campanha, o desligamento segue o mesmo caminho, com rescisão e banco de horas calculados.',
+    },
+    {
+      q: 'Dá para ter PLR com metas diferentes por região?',
+      a: 'Sim. A elegibilidade é definida por filial, centro de custo e cargo, e cada grupo salarial tem seu múltiplo. As metas podem ser da empresa, da área ou individuais, negociadas no portal. O sistema apura, gera a planilha de conferência e integra o valor à Folha de Pagamento.',
+    },
+    {
+      q: 'O vale-transporte funciona com tarifas de cidades diferentes?',
+      a: 'Sim. O módulo de benefícios cadastra tarifas e operadoras por município, reajusta as tarifas automaticamente e gera os arquivos para as operadoras. Os valores viram rubricas na folha sem planilha paralela.',
+    },
+  ],
+  visual: 'natponto',
+  related: ['varejo', 'bens-industriais'],
+}
+
+export default page

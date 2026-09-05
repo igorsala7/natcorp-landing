@@ -5,6 +5,7 @@ import { resolve } from 'node:path'
 const root = resolve(import.meta.dirname, '..')
 const siteUrl = (process.env.VITE_SITE_URL || 'https://natcorp.com.br').replace(/\/$/, '')
 const registry = JSON.parse(readFileSync(resolve(root, 'src/content/modulePages/registry.json'), 'utf8'))
+const segments = JSON.parse(readFileSync(resolve(root, 'src/content/segments/registry.json'), 'utf8'))
 const today = new Date().toISOString().slice(0, 10)
 
 const urls = [
@@ -12,6 +13,8 @@ const urls = [
   { loc: '/modulos', priority: '0.9', changefreq: 'weekly' },
   { loc: '/jornada-da-contratacao', priority: '0.8', changefreq: 'monthly' },
   ...registry.map((m) => ({ loc: `/modulos/${m.slug}`, priority: '0.8', changefreq: 'monthly' })),
+  { loc: '/segmentos', priority: '0.9', changefreq: 'monthly' },
+  ...segments.map((s) => ({ loc: `/segmentos/${s.slug}`, priority: '0.8', changefreq: 'monthly' })),
 ]
 
 const xml = `<?xml version="1.0" encoding="UTF-8"?>

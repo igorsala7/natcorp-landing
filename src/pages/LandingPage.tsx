@@ -13,6 +13,7 @@ import { ResponsiveSection } from '@/components/sections/ResponsiveSection'
 import { SecuritySection } from '@/components/sections/SecuritySection'
 import { WhySection } from '@/components/sections/WhySection'
 import { PersonasSection } from '@/components/sections/PersonasSection'
+import { SegmentsSection } from '@/components/sections/SegmentsSection'
 import { FAQSection } from '@/components/sections/FAQSection'
 import { CTASection } from '@/components/sections/CTASection'
 import { PageTransition } from '@/components/motion/PageTransition'
@@ -38,6 +39,7 @@ export default function LandingPage() {
       <SecuritySection />
       <WhySection />
       <PersonasSection />
+      <SegmentsSection />
       <FAQSection />
       <CTASection />
     </PageTransition>

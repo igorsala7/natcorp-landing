@@ -1,0 +1,138 @@
+import type { SegmentPage } from './types'
+
+const page: SegmentPage = {
+  slug: 'recursos-naturais',
+  name: 'Recursos Naturais',
+  tagline: 'O RH que chega [[onde não há sinal]]: campo, embarque, mina e safra.',
+  summary:
+    'Mineração, óleo e gás, energia, agronegócio, papel e celulose: equipes em regime de campo e embarque, turnos ininterruptos, áreas remotas e safra com temporários. A Natcorp apura escalas longas, registra o ponto sem internet, controla NRs, LTCAT e PPP e fecha a folha com os sindicatos rurais.',
+  seo: {
+    title: 'RH para mineração, agro e energia: campo e safra | Natcorp',
+    description:
+      'RH para recursos naturais: escalas de campo e embarque, ponto que funciona sem sinal, safra com temporários, NR-22, NR-31, LTCAT, PPP e CAT no prazo.',
+  },
+  context: [
+    'Em recursos naturais, a equipe está longe da sede. Na mina, na plataforma, na usina ou na lavoura, o regime é de campo e embarque, com escalas de revezamento longas e turnos que não param. A área muitas vezes não tem sinal, o alojamento e o deslocamento fazem parte da jornada, e a safra multiplica contratos temporários em poucas semanas, cada um com o sindicato rural da região.',
+    'O RH carrega obrigações que não perdoam atraso. NR-22 na mineração, NR-31 no agro, NR-33 em espaços confinados, NR-35 em altura e NR-10 em eletricidade exigem treinamentos válidos e EPIs certos. Insalubridade, periculosidade, LTCAT e PPP definem a aposentadoria especial, e um acidente pede CAT no prazo. Terceirizados e contratadas convivem com o quadro próprio na mesma frente de trabalho.',
+  ],
+  facts: [
+    { value: 'Campo e embarque', label: 'escalas de revezamento longas, turnos ininterruptos e sobreaviso apurados' },
+    { value: 'Sem sinal', label: 'ponto no celular ou no tablet que funciona offline e sincroniza quando reconecta' },
+    { value: 'NR-22 e NR-31', label: 'treinamentos com validade, EPIs com CA e LTCAT e PPP para aposentadoria especial' },
+  ],
+  pains: [
+    { icon: 'map-pin', title: 'Ponto em área remota, sem internet', text: 'A frente de lavra, a plataforma e a lavoura não têm sinal. Sem um ponto que funcione offline, a marcação vira papel, e o papel vira hora extra discutida na Justiça anos depois.' },
+    { icon: 'calendar', title: 'Escalas de revezamento longas e turnos ininterruptos', text: 'Regimes de campo e embarque com dias seguidos de trabalho e folga, turnos que viram a noite e sobreaviso. Cada regime tem sua regra de descanso, adicional e compensação, e a apuração manual não dá conta.' },
+    { icon: 'hard-hat', title: 'NRs, EPIs e treinamentos que vencem na operação', text: 'NR-22, NR-31, NR-33, NR-35 e NR-10 exigem capacitação válida e EPI com CA. Um treinamento vencido para a frente de trabalho e expõe a empresa na fiscalização e no acidente.' },
+    { icon: 'file-text', title: 'Insalubridade, periculosidade, LTCAT e PPP', text: 'Agentes nocivos precisam estar no laudo, no adicional da folha e no PPP de cada pessoa. Quando o histórico de exposição está espalhado, a aposentadoria especial vira disputa e o S-2240 sai errado.' },
+    { icon: 'refresh', title: 'Safra, temporários e sindicatos rurais', text: 'A colheita contrata centenas de pessoas por safra, com contrato por prazo, convenção rural de cada região e desligamento em massa no fim. Admissão em papel atrasa o início, e a rescisão sai errada.' },
+    { icon: 'users', title: 'Terceirizados e contratadas na mesma frente', text: 'Empresas contratadas trabalham lado a lado com o quadro próprio, com acesso à área, EPI e treinamento exigidos. O RH precisa enxergar quem está na frente sem tratar terceiro como CLT.' },
+  ],
+  answers: [
+    {
+      pain: 'Sem sinal',
+      title: 'NatPonto marca sem internet e sincroniza quando o sinal volta',
+      text: 'O NatPonto registra o ponto com reconhecimento facial e geolocalização no celular ou no tablet da frente de trabalho, mesmo sem conexão. As marcações ficam guardadas no aparelho e sincronizam sozinhas quando a internet volta. Nenhum registro se perde, e o Ponto Eletrônico apura sem correção manual.',
+      modules: ['natponto', 'ponto-eletronico'],
+    },
+    {
+      pain: 'Escalas longas',
+      title: 'Regimes de campo e embarque parametrizados, apurados e enviados à folha',
+      text: 'O Ponto Eletrônico trata jornadas fixas, flexíveis e variáveis, plantões rotativos, sobreaviso e folgas variáveis, com limites legais e sindicais. Banco de horas, DSR e adicional noturno são apurados sozinhos, por sindicato ou centro de custo, e viram eventos da folha sem digitação. Hora extra e abono passam pelo workflow.',
+      modules: ['ponto-eletronico', 'folha-de-pagamento', 'requisicoes-com-workflow'],
+    },
+    {
+      pain: 'NRs e EPIs',
+      title: 'Treinamentos com validade, EPIs com CA validado e checklists de NR',
+      text: 'Os treinamentos de NR-22, NR-31, NR-33, NR-35 e NR-10 têm validade controlada e alerta antes de vencer. Os EPIs são entregues com o CA validado na base do Governo Federal e ficha assinada na tela. Checklists de NR, inspeções e brigadas rodam no tablet, em campo, e a NATI aponta lacunas de conformidade.',
+      modules: ['treinamento-e-desenvolvimento', 'seguranca-do-trabalho', 'nati'],
+    },
+    {
+      pain: 'LTCAT e PPP',
+      title: 'Do PGR ao PPP: um dado, todos os documentos',
+      text: 'O risco mapeado no PGR alimenta o GHE, o PCMSO, o LTCAT e o PPP. O LTCAT guarda as atividades que ensejam aposentadoria especial, e o PPP eletrônico é gerado na hora a partir do histórico de exposição. A periculosidade fica parametrizada no cargo, e o S-2240 sai do próprio SESMT, validado antes do envio.',
+      modules: ['seguranca-do-trabalho', 'medicina-ocupacional', 'cargos-e-salarios', 'esocial'],
+    },
+    {
+      pain: 'Safra',
+      title: 'Admissão em massa pelo celular e desligamento da safra em uma tela',
+      text: 'A requisição de pessoal abre o processo seletivo, o candidato faz a admissão pelo celular e assina o contrato com validade jurídica. A folha trata os sindicatos rurais de cada região na mesma base, e o fim da safra passa pela Requisição de Desligamento, com rescisão calculada e eSocial enviado.',
+      modules: ['recrutamento-e-selecao', 'admissao-digital', 'folha-de-pagamento', 'offboarding', 'esocial'],
+    },
+    {
+      pain: 'Terceiros',
+      title: 'Terceiros cadastrados por requisição, com acesso por perfil e EPI em campo',
+      text: 'Serviços de terceiros e autônomos entram por requisição eletrônica, com acesso por perfil e histórico. O SESMT entrega EPI com ficha assinada, roda checklists e registra incidentes em campo, pelo tablet, e as marcações da catraca e do controle de acesso da área chegam ao sistema por integração.',
+      modules: ['requisicoes-com-workflow', 'seguranca-do-trabalho', 'conexao-com-outros-sistemas', 'administracao-de-pessoal'],
+    },
+  ],
+  moduleNotes: {
+    'folha-de-pagamento': 'Insalubridade, periculosidade e adicional noturno apurados do ponto, com sindicatos rurais e safra na mesma folha.',
+    'administracao-de-pessoal': 'Posições por frente, unidade e projeto, custo de pessoal previsto e realizado por safra e cadastro de terceiros.',
+    'cargos-e-salarios': 'Periculosidade e progressão parametrizadas no cargo, com funções ligadas ao CBO e requisitos de admissão para o campo.',
+    'gestao-de-beneficios': 'Alimentação com postos de entrega, cesta básica com estoque e vale-transporte por trajeto até a unidade remota.',
+    natpay: 'Adiantamento pelo WhatsApp e Pix, com limite pelos dias trabalhados, para quem está embarcado ou na safra.',
+    esocial: 'S-2240 dos agentes nocivos do PGR, S-2210 da CAT em até 24 horas e admissões e desligamentos da safra no prazo.',
+    'juridico-trabalhista': 'Fichas de EPI, laudos versionados e espelhos de ponto de campo formam a defesa em ações de adicional e jornada.',
+    'ponto-eletronico': 'Regimes de campo e embarque, turnos rotativos, sobreaviso e folgas variáveis, com banco de horas por sindicato.',
+    natponto: 'Marcação com rosto e local no celular ou no tablet, funciona sem sinal na mina, na lavoura ou na plataforma.',
+    'medicina-ocupacional': 'PCMSO ligado ao GHE de cada frente, ASO por risco com alerta de vencimento e afastamentos refletidos no ponto e na folha.',
+    'seguranca-do-trabalho': 'PGR, EPIs com CA validado, checklists de NR-22, NR-31, NR-33 e NR-35, LTCAT, PPP, CAT e brigadas no tablet em campo.',
+    'recrutamento-e-selecao': 'Processos seletivos por safra, projeto e região, com banco de talentos para chamar de novo quem já trabalhou.',
+    'quadro-de-vagas': 'Vagas de campo, operação e safra publicadas com a marca da empresa, com candidatura pelo celular na região.',
+    'admissao-digital': 'Admissão em massa da safra pelo celular, com documentos e contrato assinados e cadastro nascendo na folha e no SESMT.',
+    onboarding: 'Integração de segurança, regras do alojamento e orientações da frente de trabalho no celular antes do primeiro embarque.',
+    offboarding: 'Desligamento em massa no fim da safra pelo workflow, com rescisão calculada, banco de horas tratado e eSocial enviado.',
+    'avaliacoes-e-feedbacks': 'Feedback do supervisor registrado pelo celular na frente de trabalho e pesquisa de clima com resposta anônima.',
+    'metas-e-resultados': 'Metas e PLR por unidade, frente e projeto, com regras para admitidos na safra, desligados e afastados.',
+    'treinamento-e-desenvolvimento': 'Treinamentos de NR-22, NR-31, NR-33, NR-35 e NR-10 com validade controlada e alerta antes de vencer.',
+    'carreira-e-sucessao': 'Sucessores para supervisor de campo e gerente de unidade, com prontidão, risco de perda e PDI acompanhados.',
+    portais: 'Escala de embarque, espelho de ponto e holerite no celular do colaborador; aprovações do supervisor de onde estiver.',
+    'requisicoes-com-workflow': 'Hora extra, abono, escala, afastamento, PPP, acidente e cadastro de terceiros com alçadas por unidade e projeto.',
+    'chamado-interno': 'Dúvidas de quem está embarcado ou no campo registradas com prazo e respondidas sem ir até a sede.',
+    'blog-corporativo': 'Alertas de segurança, campanhas de prevenção e comunicados de safra na timeline que a equipe abre no celular.',
+    'assinatura-eletronica': 'Fichas de EPI, contratos de safra, termos de aceite de plantão e espelhos de ponto assinados na tela.',
+    ged: 'Documentos de admissão e fichas de EPI guardados por pessoa, na nuvem, sem arquivo físico na unidade remota.',
+    'people-analytics': 'Horas extras, absenteísmo e turnover cruzados por unidade, frente, regime e safra, sem depender de TI.',
+    'business-intelligence': 'Painéis de custo de pessoal, escalas e acidentes por unidade e projeto, com alerta por e-mail ao sair da faixa.',
+    nati: 'Aponta lacunas nas NRs e no uso de EPIs, confere adicionais na folha e responde ao colaborador no WhatsApp.',
+    'conexao-com-outros-sistemas': 'Catracas e controle de acesso da área, relógios de ponto e ERP conectados, com arquivos para sistemas legados.',
+    'infraestrutura-e-seguranca': 'Nuvem com contingência para unidades espalhadas pelo país, acesso por perfil e por unidade e dados criptografados.',
+  },
+  spotlight: ['natponto', 'ponto-eletronico', 'seguranca-do-trabalho', 'treinamento-e-desenvolvimento', 'folha-de-pagamento', 'esocial'],
+  compliance: [
+    'NR-22 (mineração) e NR-31 (agricultura), com treinamentos de validade controlada',
+    'NR-33 (espaços confinados), NR-35 (altura) e NR-10 (eletricidade) nos checklists do SESMT',
+    'LTCAT e PPP para aposentadoria especial, com o evento S-2240 do eSocial',
+    'CAT e S-2210 em até 24 horas após o acidente',
+    'Convenções coletivas e sindicatos rurais por região e safra',
+    'Ponto eletrônico conforme a Portaria 671, com arquivos AFD e AEJ',
+  ],
+  personas: [
+    { role: 'Supervisor de campo', text: 'Vê quem embarcou, aprova hora extra e troca de turno pelo celular e recebe alerta de treinamento vencido antes de escalar alguém.' },
+    { role: 'SESMT da unidade', text: 'Entrega EPI com CA validado, roda checklists de NR no tablet, abre a CAT em campo e mantém LTCAT e PPP atualizados a partir do PGR.' },
+    { role: 'Operador embarcado', text: 'Marca o ponto sem sinal, consulta a escala de embarque e o holerite quando reconecta e pede adiantamento pelo WhatsApp.' },
+  ],
+  faq: [
+    {
+      q: 'O ponto funciona em área sem internet?',
+      a: 'Sim. O NatPonto guarda as marcações no aparelho quando não há sinal e sincroniza automaticamente assim que a conexão volta. O reconhecimento facial e a geolocalização registram quem marcou e onde, e nenhum registro se perde.',
+    },
+    {
+      q: 'O sistema trata escalas de revezamento e regime de embarque?',
+      a: 'Sim. O Ponto Eletrônico trata jornadas fixas, flexíveis e variáveis, plantões rotativos, sobreaviso e folgas variáveis, com limites legais e sindicais. Banco de horas, DSR e adicional noturno são apurados automaticamente e seguem para a folha.',
+    },
+    {
+      q: 'Como fica o controle de NRs, EPIs e aposentadoria especial?',
+      a: 'Os treinamentos de NR têm validade controlada e alerta de vencimento. Os EPIs são entregues com CA validado na base do Governo Federal e ficha assinada digitalmente. O LTCAT guarda as atividades de aposentadoria especial, e o PPP é gerado a partir do histórico de riscos do PGR.',
+    },
+    {
+      q: 'Dá para admitir e desligar centenas de pessoas na safra?',
+      a: 'Sim. A admissão é feita pelo celular do candidato, com documentos e contrato assinado, e o cadastro nasce na folha e no ponto. A folha trata os sindicatos rurais de cada região, e o desligamento em massa passa pela Requisição de Desligamento, com rescisão e eSocial no mesmo fluxo.',
+    },
+  ],
+  visual: 'natponto',
+  related: ['bens-industriais', 'telecom'],
+}
+
+export default page
