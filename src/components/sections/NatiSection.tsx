@@ -1,23 +1,22 @@
 import { useState } from 'react'
 import { Link } from 'react-router'
 import { m } from 'motion/react'
-import { ArrowRight, Brain, Check, MessageSquare, Sparkles, Zap } from 'lucide-react'
+import { ArrowRight, Check } from 'lucide-react'
 import { Section, Eyebrow } from './Section'
 import { TypedText } from '@/components/motion/TypedText'
 import { NatiAvatar } from '@/components/brand/NatiAvatar'
 import { Reveal, Stagger, StaggerItem } from '@/components/motion/Reveal'
 import { LogoOutline } from '@/components/brand/Logo'
+import { NeuralHub } from '@/components/nati/NeuralHub'
+import { InsightStream } from '@/components/nati/InsightStream'
+import { NetworkField } from '@/components/nati/NetworkField'
+import { NatiStats } from '@/components/nati/NatiStats'
+import { capabilities } from '@/content/nati'
+import { paths } from '@/content/site'
 import { Conversation, NatiAnswerFooter, NatiBubble, NatiChatWindow, UserBubble } from '@/components/mockups/nati/NatiChatWindow'
 import { NatiTable, type LedgerRow } from '@/components/mockups/nati/NatiTable'
 import { cn } from '@/lib/utils'
 import { EASE } from '@/lib/motion'
-
-const pillars = [
-  { icon: MessageSquare, title: 'Assistente inteligente', text: 'Responde dúvidas, agiliza consultas e processa informações em linguagem natural.' },
-  { icon: Brain, title: 'Análises estratégicas', text: 'Leituras automáticas sobre tendências, turnover e desempenho da equipe.' },
-  { icon: Zap, title: 'Processamento rápido', text: 'A folha de 2.500 colaboradores calculada em um minuto.' },
-  { icon: Sparkles, title: 'Modelos de linguagem de última geração', text: 'Não é um chatbot de respostas prontas: conversa natural, análises complexas e aprendizado contínuo.' },
-]
 
 const rule = ['Análise', 'Diagnóstico', 'Pontos de atenção', 'Sugestão']
 
@@ -110,59 +109,90 @@ export function NatiSection() {
   return (
     <Section id="nati" tone="dark" className="overflow-hidden" aria-labelledby="nati-title">
       <div className="pointer-events-none absolute inset-0" aria-hidden>
-        <LogoOutline className="absolute -bottom-[40%] -left-[14%] h-[130%] w-auto text-white/[0.12]" />
-        <div className="absolute inset-0 bg-[radial-gradient(55%_50%_at_80%_20%,rgba(154,64,138,0.35),transparent_65%)]" />
+        <NetworkField density={0.7} className="opacity-70" />
+        <LogoOutline className="absolute -bottom-[40%] -left-[14%] h-[130%] w-auto text-white/[0.10]" />
+        <div className="absolute inset-0 bg-[radial-gradient(55%_50%_at_80%_15%,rgba(154,64,138,0.4),transparent_65%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(40%_40%_at_10%_90%,rgba(201,87,136,0.18),transparent_70%)]" />
       </div>
 
       <div className="container relative">
         {/* A NATI se apresenta: o título é uma mensagem dela, digitada */}
         <div className="max-w-3xl">
           <Reveal y={12} duration={0.5}>
-            <Eyebrow tone="white">NATI · Sua agente digital de RH</Eyebrow>
+            <Eyebrow tone="white">NATI · agente de IA especialista em RH</Eyebrow>
           </Reveal>
           <Reveal delay={0.1} className="mt-6 flex items-start gap-3 sm:gap-4">
             <NatiAvatar ring className="h-12 w-12 shrink-0 sm:h-14 sm:w-14" />
             <div className="relative rounded-3xl rounded-tl-lg bg-white px-5 py-4 text-brand-ink shadow-lift sm:px-6 sm:py-5">
               <h2 id="nati-title" className="text-xl font-extrabold leading-snug sm:text-2xl lg:text-[1.75rem]">
-                <TypedText text="Oi, eu sou a NATI. Trabalho dentro do sistema, respondo o RH em linguagem natural e faço a parte chata por você." />
+                <TypedText text="Oi, eu sou a NATI. Leio os 31 módulos do sistema, cruzo folha, ponto, SESMT e talentos e respondo em segundos, com análise e sugestão." />
               </h2>
               <span className="mt-2 block text-[11px] font-semibold uppercase tracking-[0.12em] text-brand-graphite">agora · no sistema, no WhatsApp e no Teams</span>
             </div>
           </Reveal>
           <Reveal delay={0.25}>
             <p className="mt-6 text-lg leading-relaxed text-white/75 sm:text-xl">
-              A NATI gera relatórios e gráficos na hora e analisa folha, ponto, benefícios e talentos. Cada resposta traz análise, diagnóstico, pontos de atenção e sugestão.
+              Não é um chat de respostas prontas. É um agente treinado em cada frente do RH, que enxerga a operação inteira e transforma dado em decisão: análise, diagnóstico, pontos de atenção e sugestão, com as fontes citadas.
             </p>
           </Reveal>
         </div>
 
-        <div className="mt-12 grid items-start gap-10 lg:mt-16 lg:grid-cols-[1fr_1.15fr] lg:gap-14">
-          <div className="min-w-0">
-            <Stagger className="grid gap-3 sm:grid-cols-2 lg:grid-cols-1" stagger={0.08}>
-              {pillars.map(({ icon: Icon, title, text }) => (
-                <StaggerItem key={title} className="flex gap-4 rounded-2xl border border-white/12 bg-white/[0.06] p-5 backdrop-blur-sm">
-                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-white/10 text-[#E4A9C4]">
-                    <Icon className="h-5 w-5" strokeWidth={1.7} />
-                  </span>
-                  <div>
-                    <h3 className="font-bold">{title}</h3>
-                    <p className="mt-1 text-[14.5px] leading-relaxed text-white/70">{text}</p>
-                  </div>
-                </StaggerItem>
-              ))}
-            </Stagger>
+        {/* O sistema inteiro fluindo para a NATI, e a NATI analisando */}
+        <div className="mt-12 grid grid-cols-1 items-center gap-10 lg:mt-16 lg:grid-cols-[1.1fr_1fr] lg:gap-12">
+          <Reveal delay={0.15} className="mx-auto w-full max-w-[560px] lg:max-w-none">
+            <NeuralHub />
+            <p className="mt-3 text-center text-[12.5px] text-white/55">Sete frentes, 31 módulos, um único agente lendo tudo ao mesmo tempo.</p>
+          </Reveal>
+          <Reveal delay={0.25} className="min-w-0">
+            <InsightStream />
+          </Reveal>
+        </div>
 
-            <Reveal delay={0.3} className="mt-6 flex flex-wrap items-center gap-2">
+        <Reveal delay={0.1} className="mt-14 lg:mt-20">
+          <NatiStats tone="dark" />
+        </Reveal>
+
+        {/* Cinco capacidades */}
+        <Stagger className="mt-12 grid grid-cols-2 gap-x-6 gap-y-6 border-t border-white/10 pt-8 sm:grid-cols-3 lg:grid-cols-5" stagger={0.08}>
+          {capabilities.map((c) => (
+            <StaggerItem key={c.id}>
+              <p className="text-[12px] font-extrabold uppercase tracking-[0.14em] text-[#E4A9C4]">{c.name}</p>
+              <p className="mt-1.5 text-[14px] leading-snug text-white/75">{c.text}</p>
+            </StaggerItem>
+          ))}
+        </Stagger>
+
+        {/* E quando alguém pergunta */}
+        <div className="mt-16 grid items-start gap-10 lg:mt-20 lg:grid-cols-[1fr_1.15fr] lg:gap-14">
+          <div className="min-w-0">
+            <Reveal y={12} duration={0.5}>
+              <p className="text-[12px] font-semibold uppercase tracking-[0.16em] text-[#E4A9C4]">E quando alguém pergunta</p>
+            </Reveal>
+            <Reveal delay={0.08}>
+              <h3 className="mt-3 text-2xl font-extrabold leading-tight sm:text-3xl">Pergunte como perguntaria a uma pessoa. Receba o que uma equipe inteira levaria dias para montar.</h3>
+            </Reveal>
+            <Reveal delay={0.16}>
+              <p className="mt-4 text-[15.5px] leading-relaxed text-white/70">
+                Colaborador, gestor e RH falam com a mesma NATI, cada um vendo só o que o seu perfil permite. Toda resposta segue a regra da casa:
+              </p>
+            </Reveal>
+            <Reveal delay={0.24} className="mt-5 flex flex-wrap items-center gap-2">
               {rule.map((r, i) => (
                 <span key={r} className="flex items-center gap-2 text-[13px] font-semibold">
                   <span className="rounded-full border border-white/20 bg-white/10 px-3 py-1">{r}</span>
-                  {i < rule.length - 1 && <span className="text-white/40" aria-hidden>→</span>}
+                  {i < rule.length - 1 && <ArrowRight className="h-3.5 w-3.5 text-white/40" aria-hidden />}
                 </span>
               ))}
             </Reveal>
-
+            <Reveal delay={0.3} className="mt-6 flex flex-wrap items-center gap-2">
+              {channels.map((c) => (
+                <span key={c} className="rounded-full border border-white/15 bg-white/[0.06] px-3.5 py-1.5 text-[13px] font-semibold text-white/85">
+                  {c}
+                </span>
+              ))}
+            </Reveal>
             <Reveal delay={0.4} className="mt-8">
-              <Link to="/modulos/nati" className="group inline-flex items-center gap-2 text-[15px] font-semibold text-white">
+              <Link to={paths.nati} className="group inline-flex items-center gap-2 text-[15px] font-semibold text-white">
                 Conhecer a NATI em detalhes
                 <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5" aria-hidden />
               </Link>
@@ -195,14 +225,6 @@ export function NatiSection() {
             </Reveal>
           </div>
         </div>
-
-        <Reveal delay={0.2} className="mt-12 flex flex-wrap items-center justify-center gap-2 lg:mt-16">
-          {channels.map((c) => (
-            <span key={c} className="rounded-full border border-white/15 bg-white/[0.06] px-3.5 py-1.5 text-[13px] font-semibold text-white/85">
-              {c}
-            </span>
-          ))}
-        </Reveal>
       </div>
     </Section>
   )

@@ -86,9 +86,12 @@ src/
                 do app) e analytics/ (Painel do Operador: indicadores de medicina, comparativo financeiro em
                 gráfico e tabela, modal de recrutamento, gráficos SVG reutilizáveis)
     journey/    Página da jornada: JourneyMap (mapa lateral e barra de fases), EffectivationHub, visuals (mini mockups por etapa)
+    nati/       A NATI como agente: NeuralHub (a NATI no centro, 7 frentes e 31 módulos com pulsos de dados), InsightStream
+                (análises cruzando módulos, digitadas), NetworkField (fundo de rede em canvas), FrontsMatrix (7 frentes x 5
+                capacidades), NatiStats, NatiPipeline; conteúdo em content/nati.ts
     sections/   Navbar (menus Sistema, Segmentos e Empresa), Hero (foto em tela cheia + HeroSymbol), ProofStrip (números e
                 prêmios), Problem (pergunta em fundo escuro + cena "hoje / com a Natcorp"), Platform (símbolo interativo por
-                área), Journey (história da Ana com tela fixa que troca ao rolar), Nati (a NATI se apresenta digitando),
+                área), Journey (história da Ana com tela fixa que troca ao rolar), NatiTeaser (prévia da NATI logo após os números), Nati (a NATI se apresenta digitando, hub neural, análise contínua, números, capacidades e chat),
                 Segments (faixa de fotos com a dor de cada segmento), Why (manifesto tipográfico + "o que não cobramos" +
                 banner humano), Comparison, Services, Recognition, Videos, Modules, GroupTabs, Analytics, NatPonto, Portals,
                 Responsive, Security, Personas, FAQ (com itens e link "ver todas"), FaqAccordion, CTA (+ LeadForm lazy,
