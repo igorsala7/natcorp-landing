@@ -2,7 +2,9 @@ import { useState } from 'react'
 import { Link } from 'react-router'
 import { m } from 'motion/react'
 import { ArrowRight, Brain, Check, MessageSquare, Sparkles, Zap } from 'lucide-react'
-import { Section, SectionHeader } from './Section'
+import { Section, Eyebrow } from './Section'
+import { TypedText } from '@/components/motion/TypedText'
+import { NatiAvatar } from '@/components/brand/NatiAvatar'
 import { Reveal, Stagger, StaggerItem } from '@/components/motion/Reveal'
 import { LogoOutline } from '@/components/brand/Logo'
 import { Conversation, NatiAnswerFooter, NatiBubble, NatiChatWindow, UserBubble } from '@/components/mockups/nati/NatiChatWindow'
@@ -113,13 +115,26 @@ export function NatiSection() {
       </div>
 
       <div className="container relative">
-        <SectionHeader
-          id="nati-title"
-          tone="dark"
-          eyebrow="NATI · Sua agente digital de RH"
-          title="Conheça a NATI. A IA que trabalha [[dentro do sistema]]."
-          lead="Integrada ao sistema e disponível no WhatsApp e no Teams, a NATI responde em linguagem natural, gera relatórios e gráficos na hora e analisa folha, ponto, benefícios e talentos. Cada resposta traz análise, diagnóstico, pontos de atenção e sugestão."
-        />
+        {/* A NATI se apresenta: o título é uma mensagem dela, digitada */}
+        <div className="max-w-3xl">
+          <Reveal y={12} duration={0.5}>
+            <Eyebrow tone="white">NATI · Sua agente digital de RH</Eyebrow>
+          </Reveal>
+          <Reveal delay={0.1} className="mt-6 flex items-start gap-3 sm:gap-4">
+            <NatiAvatar ring className="h-12 w-12 shrink-0 sm:h-14 sm:w-14" />
+            <div className="relative rounded-3xl rounded-tl-lg bg-white px-5 py-4 text-brand-ink shadow-lift sm:px-6 sm:py-5">
+              <h2 id="nati-title" className="text-xl font-extrabold leading-snug sm:text-2xl lg:text-[1.75rem]">
+                <TypedText text="Oi, eu sou a NATI. Trabalho dentro do sistema, respondo o RH em linguagem natural e faço a parte chata por você." />
+              </h2>
+              <span className="mt-2 block text-[11px] font-semibold uppercase tracking-[0.12em] text-brand-graphite">agora · no sistema, no WhatsApp e no Teams</span>
+            </div>
+          </Reveal>
+          <Reveal delay={0.25}>
+            <p className="mt-6 text-lg leading-relaxed text-white/75 sm:text-xl">
+              A NATI gera relatórios e gráficos na hora e analisa folha, ponto, benefícios e talentos. Cada resposta traz análise, diagnóstico, pontos de atenção e sugestão.
+            </p>
+          </Reveal>
+        </div>
 
         <div className="mt-12 grid items-start gap-10 lg:mt-16 lg:grid-cols-[1fr_1.15fr] lg:gap-14">
           <div className="min-w-0">

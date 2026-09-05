@@ -1,12 +1,16 @@
 import { ArrowRight } from 'lucide-react'
 import { Link } from 'react-router'
-import { Section, SectionHeader } from './Section'
-import { Reveal, Stagger, StaggerItem } from '@/components/motion/Reveal'
+import { m } from 'motion/react'
+import { Section, Eyebrow } from './Section'
+import { Reveal } from '@/components/motion/Reveal'
 import { Logo } from '@/components/brand/Logo'
 import { Button } from '@/components/ui/button'
 import { HumanModule } from '@/components/brand/HumanModule'
 import { people } from '@/content/people'
+import { comparison } from '@/content/recognition'
 import { paths } from '@/content/site'
+import { DUR, EASE, viewportOnce } from '@/lib/motion'
+import { cn } from '@/lib/utils'
 
 /* Os quatro pilares da marca (Manual de Identidade, seção 01). */
 const pillars = [
@@ -16,42 +20,123 @@ const pillars = [
   { big: '1:1', title: 'Proximidade', text: 'Acompanhamento próximo, atenção e agilidade de resposta. Um time que conhece a sua operação pelo nome.' },
 ]
 
+/* O que a Natcorp não cobra; a frase de apoio vem do comparativo oficial (content/recognition). */
+const noCharge = [
+  { label: 'por usuário', feature: 'Cobrança por usuário' },
+  { label: 'por CNPJ', feature: 'Cobrança por CNPJ' },
+  { label: 'por histórico', feature: 'Histórico de dados' },
+].map((item) => ({ ...item, detail: comparison.find((row) => row.feature === item.feature)?.natcorp ?? '' }))
+
+interface ManifestoWordProps {
+  text: string
+  className?: string
+  delay?: number
+}
+
+/**
+ * Palavra do manifesto: sobe de dentro de um recorte ao entrar na tela.
+ * A folga do recorte (0,3em) evita cortar descendentes com a entrelinha de 0,95.
+ */
+function ManifestoWord({ text, className, delay = 0 }: ManifestoWordProps) {
+  return (
+    <h3 className={cn('leading-[0.95]', className)}>
+      <span className="-mb-[0.3em] -mt-[0.1em] inline-block overflow-hidden pb-[0.3em] pr-[0.04em] pt-[0.1em] align-bottom">
+        <m.span
+          className="inline-block will-change-transform"
+          initial={{ y: '115%', opacity: 0 }}
+          whileInView={{ y: '0%', opacity: 1 }}
+          viewport={viewportOnce}
+          transition={{ duration: DUR.scene, ease: EASE, delay }}
+        >
+          {text}
+        </m.span>
+      </span>
+    </h3>
+  )
+}
+
 export function WhySection() {
   return (
-    <Section id="por-que-natcorp" tone="white" aria-labelledby="porque-title">
+    <Section id="por-que-natcorp" tone="off" aria-labelledby="porque-title">
       <div className="container">
-        <SectionHeader
-          id="porque-title"
-          align="center"
-          eyebrow="Por que Natcorp"
-          title="Por que as grandes empresas [[escolhem a Natcorp]]."
-          lead="Não é só a quantidade de funcionalidades. É a combinação de abrangência, solidez, inteligência e um time que responde rápido."
-        />
-
-        <Stagger className="mt-14 grid gap-4 sm:grid-cols-2 lg:mt-20 lg:grid-cols-4" stagger={0.1}>
-          {pillars.map((p) => (
-            <StaggerItem
-              key={p.title}
-              className="group relative overflow-hidden rounded-3xl border border-brand-mist bg-white p-7 transition-[transform,box-shadow,border-color] duration-500 ease-brand hover:-translate-y-1.5 hover:border-brand-purple/30 hover:shadow-lift"
-            >
-              <span className="pointer-events-none absolute -right-8 -top-8 h-32 w-32 rounded-full bg-brand-off-white transition-transform duration-700 ease-brand group-hover:scale-[1.6]" aria-hidden />
-              <p className="relative text-4xl font-extrabold tracking-brand text-brand-purple">{p.big}</p>
-              <h3 className="relative mt-5 text-xl font-bold text-brand-ink">{p.title}</h3>
-              <p className="relative mt-2 text-[15px] leading-relaxed text-brand-graphite">{p.text}</p>
-            </StaggerItem>
-          ))}
-        </Stagger>
-
-        <Reveal delay={0.1} className="mt-8 flex flex-wrap items-center justify-center gap-x-8 gap-y-2 text-[15px] font-semibold text-brand-purple">
-          <Link to={`${paths.system}#comparativo`} className="group inline-flex items-center gap-2">
-            Ver o comparativo com outros sistemas
-            <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5" aria-hidden />
-          </Link>
-          <Link to={`${paths.about}#servicos`} className="group inline-flex items-center gap-2">
-            Conhecer os serviços que acompanham o sistema
-            <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5" aria-hidden />
-          </Link>
+        <h2 id="porque-title" className="sr-only">
+          Por que as grandes empresas escolhem a Natcorp
+        </h2>
+        <Reveal y={12} duration={0.5}>
+          <Eyebrow>Por que Natcorp</Eyebrow>
         </Reveal>
+
+        {/* Manifesto: os quatro pilares como palavras, uma por linha, com ritmo alternado. */}
+        <ul role="list" className="mt-12 space-y-12 sm:space-y-14 lg:mt-16 lg:space-y-16">
+          {pillars.map((p, i) => {
+            const shifted = i % 2 === 1
+            return (
+              <li
+                key={p.title}
+                className={cn('flex flex-col gap-5 lg:flex-row lg:flex-wrap lg:items-end lg:gap-x-10 lg:gap-y-5', shifted && 'lg:ml-[18%]')}
+              >
+                <div>
+                  <Reveal y={10} duration={0.5}>
+                    <p className="text-[12px] font-semibold uppercase tracking-[0.14em] text-brand-purple">{p.big}</p>
+                  </Reveal>
+                  <ManifestoWord
+                    text={p.title}
+                    delay={0.08}
+                    className={cn(
+                      'mt-3 text-5xl font-extrabold tracking-brand sm:text-7xl lg:text-[6.5rem]',
+                      shifted ? 'text-brand-purple' : 'text-brand-ink',
+                    )}
+                  />
+                </div>
+                <Reveal delay={0.3} y={12} className="max-w-xs lg:w-80 lg:shrink-0 lg:pb-[0.35rem]">
+                  <p className="text-[15px] leading-relaxed text-brand-graphite">{p.text}</p>
+                </Reveal>
+              </li>
+            )
+          })}
+        </ul>
+
+        {/* O que a Natcorp não cobra: três linhas grandes, cada uma riscada em rosa ao rolar. */}
+        <div className="mt-20 lg:mt-28">
+          <Reveal y={12} duration={0.5}>
+            <Eyebrow tone="purple" trail={false}>
+              O que a Natcorp não cobra
+            </Eyebrow>
+          </Reveal>
+          <ul role="list" className="mt-6 space-y-6 sm:mt-8 sm:space-y-7">
+            {noCharge.map((item, i) => (
+              <li key={item.label} className="flex flex-col gap-2 sm:flex-row sm:items-baseline sm:gap-10">
+                <Reveal y={12} delay={i * 0.08} className="shrink-0">
+                  <span className="relative inline-block text-3xl font-extrabold leading-none tracking-brand text-brand-ink sm:text-5xl">
+                    {item.label}
+                    <m.span
+                      aria-hidden
+                      className="pointer-events-none absolute left-0 top-[0.61em] h-[4px] w-full origin-left -translate-y-1/2 rounded-full bg-brand-pink sm:h-[6px]"
+                      initial={{ scaleX: 0 }}
+                      whileInView={{ scaleX: 1 }}
+                      viewport={viewportOnce}
+                      transition={{ duration: 0.6 + i * 0.12, ease: EASE, delay: 0.3 + i * 0.15 }}
+                    />
+                  </span>
+                </Reveal>
+                <Reveal y={10} delay={0.35 + i * 0.1} duration={0.5} className="max-w-sm">
+                  <p className="text-[15px] leading-relaxed text-brand-graphite">{item.detail}</p>
+                </Reveal>
+              </li>
+            ))}
+          </ul>
+
+          <Reveal delay={0.1} className="mt-10 flex flex-wrap items-center gap-x-8 gap-y-2 text-[15px] font-semibold text-brand-purple">
+            <Link to={`${paths.system}#comparativo`} className="group inline-flex items-center gap-2">
+              Ver o comparativo com outros sistemas
+              <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5" aria-hidden />
+            </Link>
+            <Link to={`${paths.about}#servicos`} className="group inline-flex items-center gap-2">
+              Conhecer os serviços que acompanham o sistema
+              <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5" aria-hidden />
+            </Link>
+          </Reveal>
+        </div>
 
         <Reveal delay={0.2} className="on-dark relative mt-16 overflow-hidden rounded-3xl bg-brand-gradient text-white lg:mt-24">
           <Logo variant="symbol" tone="white" decorative className="absolute -left-12 -top-12 h-56 w-56 opacity-[0.07]" />
