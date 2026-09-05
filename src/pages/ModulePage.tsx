@@ -24,6 +24,7 @@ import NotFoundPage from './NotFoundPage'
 
 const NatiModulePage = lazy(() => import('./NatiModulePage'))
 const NatPontoModulePage = lazy(() => import('./NatPontoModulePage'))
+const PeopleAnalyticsModulePage = lazy(() => import('./PeopleAnalyticsModulePage'))
 
 interface Loaded {
   slug: string
@@ -67,6 +68,13 @@ export default function ModulePage() {
     return (
       <Suspense fallback={<ModuleSkeleton />}>
         <NatPontoModulePage entry={entry} page={page} />
+      </Suspense>
+    )
+  }
+  if (entry.slug === 'people-analytics') {
+    return (
+      <Suspense fallback={<ModuleSkeleton />}>
+        <PeopleAnalyticsModulePage entry={entry} page={page} />
       </Suspense>
     )
   }

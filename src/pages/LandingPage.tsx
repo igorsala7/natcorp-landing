@@ -6,6 +6,7 @@ import { PlatformSection } from '@/components/sections/PlatformSection'
 import { ModulesSection } from '@/components/sections/ModulesSection'
 import { JourneySection } from '@/components/sections/JourneySection'
 import { NatiSection } from '@/components/sections/NatiSection'
+import { AnalyticsSection } from '@/components/sections/AnalyticsSection'
 import { NatPontoSection } from '@/components/sections/NatPontoSection'
 import { PortalsSection } from '@/components/sections/PortalsSection'
 import { ResponsiveSection } from '@/components/sections/ResponsiveSection'
@@ -30,6 +31,7 @@ export default function LandingPage() {
       <ModulesSection />
       <JourneySection />
       <NatiSection />
+      <AnalyticsSection />
       <NatPontoSection />
       <PortalsSection />
       <ResponsiveSection />

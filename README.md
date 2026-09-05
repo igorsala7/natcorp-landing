@@ -59,19 +59,21 @@ escrito a partir das 33 apresentações comerciais de natcorprh.app e do briefin
 
 ```
 src/
-  pages/        LandingPage, ModulesIndexPage, ModulePage (template data-driven), NatiModulePage e
-                NatPontoModulePage (páginas dedicadas com as telas do produto), NotFoundPage
+  pages/        LandingPage, ModulesIndexPage, ModulePage (template data-driven), NatiModulePage, NatPontoModulePage e
+                PeopleAnalyticsModulePage (páginas dedicadas com as telas do produto), HiringJourneyPage, NotFoundPage
   components/
     brand/      Logo.tsx (símbolo + wordmark em vetor), logo-paths.ts (geometria gerada do manual),
                 NatiAvatar, EmployeeAvatar e NatPontoIcon (avatares e ícone em vetor)
     motion/     Intro (abertura), SmoothScroll, ScrollManager (rotas + âncoras), PageTransition,
                 Reveal/Stagger, SplitText, Counter, Marquee, Magnetic, SpotlightCard, Parallax, ScrollProgress
     mockups/    Telas do produto construídas em código: dashboard, DevicesShowcase (notebook, tablet e
-                celular), nati/ (chat, gráficos, WhatsApp, painel do operador) e natponto/ (as cinco telas
-                do app: início, abertura, reconhecimento facial, confirmação e comprovante)
+                celular), nati/ (chat, gráficos, WhatsApp, painel do operador), natponto/ (as cinco telas
+                do app) e analytics/ (Painel do Operador: indicadores de medicina, comparativo financeiro em
+                gráfico e tabela, modal de recrutamento, gráficos SVG reutilizáveis)
     journey/    Página da jornada: JourneyMap (mapa lateral e barra de fases), EffectivationHub, visuals (mini mockups por etapa)
     sections/   Navbar (mega-menu de módulos), Hero, ProofStrip, Recognition (prêmios e clientes), Problem, Platform, Modules,
-                Journey, Nati, NatPonto, Portals, Responsive, Security, Why (comparativo), Personas, FAQ, FaqAccordion,
+                Journey, Nati, Analytics (People Analytics), NatPonto, Portals, Responsive, Security, Why (comparativo),
+                Personas, FAQ, FaqAccordion,
                 CTA (+ LeadForm lazy), Footer
     seo/        JsonLd, Breadcrumb
     ui/         primitivos shadcn/ui
