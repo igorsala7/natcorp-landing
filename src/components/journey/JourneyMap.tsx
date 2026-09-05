@@ -3,7 +3,7 @@ import { m } from 'motion/react'
 import { Check, Sparkles } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { EASE } from '@/lib/motion'
-import { phases, steps, type PhaseNumber } from '@/content/hiringJourney'
+import { EFFECTIVATION_AFTER, phases, steps, type PhaseNumber } from '@/content/hiringJourney'
 
 export const EFFECTIVATION_ID = 'efetivacao'
 
@@ -15,13 +15,13 @@ export interface MapRow {
   special?: boolean
 }
 
-/** Linhas do mapa: 21 etapas mais o momento da efetivação, na ordem da história. */
+/** Linhas do mapa: 24 etapas mais o momento da efetivação, na ordem da história. */
 export function useMapRows(): MapRow[] {
   return useMemo(() => {
     const rows: MapRow[] = []
     for (const s of steps) {
       rows.push({ id: s.id, label: s.name, phase: s.phase, n: s.n })
-      if (s.n === 12) rows.push({ id: EFFECTIVATION_ID, label: 'Efetivação automática', phase: 2, special: true })
+      if (s.n === EFFECTIVATION_AFTER) rows.push({ id: EFFECTIVATION_ID, label: 'Efetivação automática', phase: 2, special: true })
     }
     return rows
   }, [])

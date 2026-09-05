@@ -121,7 +121,7 @@ export function JourneySection() {
           </Reveal>
           <Reveal delay={0.1}>
             <h2 id="jornada-title" className="mt-5 text-3xl font-extrabold leading-[1.1] text-brand-ink sm:text-4xl lg:text-5xl">
-              Uma vaga nasce numa segunda-feira. Três semanas depois, <span className="text-brand-purple">a Ana bate o ponto.</span>
+              Uma vaga nasce e, em poucos cliques, <span className="text-brand-purple">a Ana já está contratada.</span>
             </h2>
           </Reveal>
           <Reveal delay={0.2}>
@@ -238,7 +238,7 @@ export function JourneySection() {
           >
             <span>
               <span className="block text-[12px] font-semibold uppercase tracking-[0.16em] text-[#E4A9C4]">A história completa, etapa por etapa</span>
-              <span className="mt-2 block text-xl font-extrabold leading-snug sm:text-2xl">As 21 etapas da jornada da Ana, da requisição da vaga à promoção.</span>
+              <span className="mt-2 block text-xl font-extrabold leading-snug sm:text-2xl">As 24 etapas da jornada da Ana, da requisição da vaga à promoção. Em história ou em diagrama.</span>
               <span className="mt-2 block max-w-2xl text-[15px] leading-relaxed text-white/70">Com o fluxograma que acompanha a rolagem e os módulos que entram em cada etapa.</span>
             </span>
             <span className="inline-flex shrink-0 items-center gap-2 rounded-lg bg-white px-5 py-3 text-sm font-semibold text-brand-purple transition-colors duration-300 group-hover:bg-[#F3DCE7]">

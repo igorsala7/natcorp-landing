@@ -57,7 +57,7 @@ export interface NavLink {
 /** Menu "Sistema": entradas gerais, antes das colunas de módulos por grupo. */
 export const systemLinks: NavLink[] = [
   { to: paths.modules, label: 'Todos os módulos', short: 'Mais de 30, cada um com a sua página' },
-  { to: paths.journey, label: 'Jornada do colaborador', short: 'As 21 etapas, da vaga ao primeiro dia' },
+  { to: paths.journey, label: 'Jornada do colaborador', short: 'As 24 etapas, da vaga à promoção' },
   { to: paths.security, label: 'Segurança e infraestrutura', short: 'Nuvem Oracle, contingência e LGPD' },
   { to: paths.portals, label: 'Portais e autoatendimento', short: 'Gestor, colaborador e candidato' },
 ]

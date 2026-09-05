@@ -39,7 +39,7 @@ npm run lint     # oxlint
 | `/sobre` | Sobre a Natcorp: história, missão, visão e valores, reconhecimentos e clientes, serviços e vídeos |
 | `/contato` | Canais de contato, formulário, escritórios e como funciona o atendimento |
 | `/portais` | Portais do Gestor, do Colaborador e do Candidato, requisições com workflow, módulos de autoatendimento e multiplataforma |
-| `/jornada-da-contratacao` | Jornada do colaborador em 21 etapas e 4 fases, contada como um exemplo do dia a dia, com fluxograma que acompanha a rolagem |
+| `/jornada-da-contratacao` | Jornada do colaborador em 24 etapas e 4 fases, em uma indústria fictícia. Duas visões (`?modo=pratico` alterna): a história completa, com personagens 3D, mini mockups e o mapa que acompanha a rolagem, e a visão prática, um diagrama por raias (gestor, candidato, colaborador, RH, SESMT, sistema). Fecha com o diagrama animado dos módulos se integrando |
 | qualquer outra | Página 404 |
 
 O roteamento é feito no cliente com [React Router](https://reactrouter.com) (`BrowserRouter`). Por isso o servidor
@@ -85,7 +85,9 @@ src/
                 celular), nati/ (chat, gráficos, WhatsApp, painel do operador), natponto/ (as cinco telas
                 do app) e analytics/ (Painel do Operador: indicadores de medicina, comparativo financeiro em
                 gráfico e tabela, modal de recrutamento, gráficos SVG reutilizáveis)
-    journey/    Página da jornada: JourneyMap (mapa lateral e barra de fases), EffectivationHub, visuals (mini mockups por etapa)
+    journey/    Página da jornada: JourneyMap (mapa lateral e barra de fases), EffectivationHub, visuals (mini mockups por etapa),
+                Cast (avatares e figuras 3D dos personagens), JourneyDiagram (visão prática por raias, com conectores medidos
+                por useNodeRects) e IntegrationDiagram (SVG dos módulos se integrando; geometria em integration-layout.ts)
     nati/       A NATI como agente: NeuralHub (a NATI no centro, 7 frentes e 31 módulos com pulsos de dados), InsightStream
                 (análises cruzando módulos, digitadas), NetworkField (fundo de rede em canvas), FrontsMatrix (7 frentes x 5
                 capacidades), NatiStats, NatiPipeline; conteúdo em content/nati.ts
@@ -99,10 +101,14 @@ src/
     seo/        JsonLd, Breadcrumb
     ui/         primitivos shadcn/ui
   content/      textos e dados (módulos da landing, FAQ, personas, navegação e contato em site.ts, reconhecimentos, vídeos),
-                hiringJourney.ts (as 21 etapas da jornada), modulePages/ (páginas de módulo) e segments/ (páginas por segmento)
+                hiringJourney.ts (as 24 etapas da jornada, com ator e personagem por etapa), journeyArt.ts (figuras, retratos e
+                cenas opcionais, descobertos pelo nome do arquivo), modulePages/ (páginas de módulo) e segments/ (páginas por segmento)
   assets/avatars nati.png (a NATI, personagem 3D oficial, renderizada em alta resolução a partir do avatar do material
                 da Natcorp) e ana.png (a colaboradora Ana, no mesmo estilo 3D); PNG com fundo transparente, 512 px.
                 Para usar o arquivo original, basta substituir nati.png
+  assets/journey figure-<personagem>.png (corpo inteiro, recortado), bust-<personagem>.png (retrato) e scene-<etapa>.jpg (cena,
+                opcional) dos personagens da jornada, no mesmo estilo 3D da NATI. Basta adicionar um arquivo com esse nome
+                para ele aparecer na página; personagens sem retrato mostram as iniciais
   assets/videos miniaturas dos vídeos (960x540), servidas pelo próprio site
   assets/people fotos provisórias de banco (Unsplash) para o hero, o banner, as personas e as capas dos segmentos;
                 substituir por fotos da Natcorp (créditos em CREDITS.md)

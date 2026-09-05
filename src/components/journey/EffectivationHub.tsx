@@ -20,7 +20,7 @@ const rowVariants = {
 
 /** O momento em que a aprovação da admissão atualiza vários módulos de uma vez. */
 export function EffectivationHub({ id }: { id: string }) {
-  const { when, title, text, targets, base } = effectivation
+  const { when, title, text, by, targets, base } = effectivation
   const targetEntries = targets.map((t) => ({ ...t, entry: getModuleEntry(t.slug) })).filter((t) => t.entry)
   const n = targetEntries.length
   const baseEntry = getModuleEntry(base.slug)
@@ -57,8 +57,8 @@ export function EffectivationHub({ id }: { id: string }) {
             <Check className="h-5 w-5" strokeWidth={3} aria-hidden />
           </span>
           <p className="mt-4 text-[11px] font-semibold uppercase tracking-[0.14em] text-white/60">Admissão Digital</p>
-          <p className="mt-1 text-lg font-extrabold leading-tight">Admissão aprovada</p>
-          <p className="mt-2 text-[12.5px] text-white/70">Beatriz Lima · Departamento Pessoal · {when.time}</p>
+          <p className="mt-1 text-lg font-extrabold leading-tight">Admissão confirmada</p>
+          <p className="mt-2 text-[12.5px] text-white/70">{by} · {when.time}</p>
         </m.div>
 
         <div className="hidden sm:block" aria-hidden>
