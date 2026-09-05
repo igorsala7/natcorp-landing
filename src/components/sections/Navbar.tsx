@@ -12,6 +12,7 @@ import {
   Menu,
   PieChart,
   PlayCircle,
+  Route,
   ScanFace,
   ShieldCheck,
   Sparkles,
@@ -25,7 +26,7 @@ import { Link, useLocation } from 'react-router'
 import { Button } from '@/components/ui/button'
 import { Logo } from '@/components/brand/Logo'
 import { useScrolled } from '@/hooks/useScrolled'
-import { appLinks, companyLinks, paths, systemLinks, type NavLink } from '@/content/site'
+import { companyLinks, paths, systemLinks, type NavLink } from '@/content/site'
 import { getGroup, groups, modulePath, modulesByGroup } from '@/content/modulePages'
 import { segmentIcons, segmentPath, segmentRegistry, segmentsPath } from '@/content/segments'
 import { moduleIcons } from '@/content/modulePages/icons'
@@ -47,7 +48,8 @@ const linkIcons: Record<string, LucideIcon> = {
   [paths.system]: LayoutGrid,
   [paths.modules]: SquareStack,
   [paths.security]: ShieldCheck,
-  [`${paths.system}#portais`]: Users,
+  [paths.portals]: Users,
+  [paths.journey]: Route,
   [paths.nati]: Sparkles,
   '/modulos/natponto': ScanFace,
   '/modulos/natpay': Banknote,
@@ -231,10 +233,10 @@ export function Navbar() {
             NATI
           </Link>
           {megaButton('segmentos')}
-          <Link to={paths.journey} onClick={closeAll} className={linkClass}>
-            Jornada
-          </Link>
           {megaButton('empresa')}
+          <Link to={paths.contact} onClick={closeAll} className={linkClass}>
+            Contato
+          </Link>
         </nav>
 
         <div className="hidden items-center gap-3 lg:flex">
@@ -267,20 +269,12 @@ export function Navbar() {
           <m.div key="mega-sistema" {...panelProps('sistema')}>
             <div className="container py-7">
               <div className="grid grid-cols-[15.5rem_1fr] gap-x-8">
-                <div className="space-y-6 border-r border-brand-mist pr-6">
+                <div className="border-r border-brand-mist pr-6">
                   <div>
                     <p className="mb-2 px-3 text-[11px] font-semibold uppercase tracking-[0.14em] text-brand-purple">O sistema</p>
                     <div className="space-y-0.5">
                       {systemLinks.map((l) => (
                         <MenuLinkCard key={l.to} link={l} onClick={closeAll} />
-                      ))}
-                    </div>
-                  </div>
-                  <div>
-                    <p className="mb-2 px-3 text-[11px] font-semibold uppercase tracking-[0.14em] text-brand-purple">Produtos com nome próprio</p>
-                    <div className="space-y-0.5">
-                      {appLinks.map((l) => (
-                        <MenuLinkCard key={l.to} link={l} onClick={closeAll} compact />
                       ))}
                     </div>
                   </div>
@@ -326,8 +320,8 @@ export function Navbar() {
               </div>
               <div className="mt-6 flex items-center justify-between border-t border-brand-mist pt-4">
                 <p className="text-sm text-brand-graphite">Mais de 30 módulos. Um único sistema, uma única base de dados.</p>
-                <Link to={paths.system} onClick={closeAll} className="group inline-flex items-center gap-1.5 text-sm font-semibold text-brand-purple">
-                  Conhecer o sistema
+                <Link to={paths.modules} onClick={closeAll} className="group inline-flex items-center gap-1.5 text-sm font-semibold text-brand-purple">
+                  Ver todos os módulos
                   <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5" aria-hidden />
                 </Link>
               </div>
@@ -412,7 +406,7 @@ export function Navbar() {
                   'sistema',
                   <>
                     <ul>
-                      {[...systemLinks, ...appLinks].map((l) => (
+                      {systemLinks.map((l) => (
                         <li key={l.to}>
                           <Link to={l.to} onClick={closeAll} className={mobileSub}>
                             {l.label}
@@ -468,11 +462,6 @@ export function Navbar() {
                 )}
               </li>
               <li>
-                <Link to={paths.journey} onClick={closeAll} className={mobileItem}>
-                  Jornada do colaborador
-                </Link>
-              </li>
-              <li>
                 {mobileToggle('empresa')}
                 {mobilePanel(
                   'empresa',
@@ -486,6 +475,11 @@ export function Navbar() {
                     ))}
                   </ul>,
                 )}
+              </li>
+              <li>
+                <Link to={paths.contact} onClick={closeAll} className={mobileItem}>
+                  Contato
+                </Link>
               </li>
             </ul>
             <Button asChild size="lg" className="mt-4 w-full">

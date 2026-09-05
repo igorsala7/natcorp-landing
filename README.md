@@ -34,10 +34,11 @@ npm run lint     # oxlint
 | `/modulos/:slug` | Página dedicada de cada módulo (31 páginas) |
 | `/segmentos` | Índice dos 9 segmentos atendidos |
 | `/segmentos/:slug` | Página por segmento: realidade, dores, respostas e o paralelo com todos os módulos |
-| `/sistema` | O sistema em sete frentes (abas por grupo com telas), People Analytics, NatPonto, portais, multiplataforma, comparativo, personas e FAQ |
+| `/sistema` | Visão geral (fora do menu por enquanto): sete frentes em abas com telas, People Analytics, NatPonto, multiplataforma, comparativo, personas e FAQ completo |
 | `/seguranca` | Segurança e infraestrutura: nuvem Oracle, ambientes, backups, SaaS e LGPD |
 | `/sobre` | Sobre a Natcorp: história, missão, visão e valores, reconhecimentos e clientes, serviços e vídeos |
 | `/contato` | Canais de contato, formulário, escritórios e como funciona o atendimento |
+| `/portais` | Portais do Gestor, do Colaborador e do Candidato, requisições com workflow, módulos de autoatendimento e multiplataforma |
 | `/jornada-da-contratacao` | Jornada do colaborador em 21 etapas e 4 fases, contada como um exemplo do dia a dia, com fluxograma que acompanha a rolagem |
 | qualquer outra | Página 404 |
 

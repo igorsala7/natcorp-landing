@@ -42,6 +42,7 @@ export const paths = {
   security: '/seguranca',
   about: '/sobre',
   contact: '/contato',
+  portals: '/portais',
   journey: journeyPath,
   segments: '/segmentos',
   nati: '/modulos/nati',
@@ -55,13 +56,16 @@ export interface NavLink {
 
 /** Menu "Sistema": entradas gerais, antes das colunas de módulos por grupo. */
 export const systemLinks: NavLink[] = [
-  { to: paths.system, label: 'Visão geral do sistema', short: 'As sete frentes, com telas e módulos' },
   { to: paths.modules, label: 'Todos os módulos', short: 'Mais de 30, cada um com a sua página' },
+  { to: paths.journey, label: 'Jornada do colaborador', short: 'As 21 etapas, da vaga ao primeiro dia' },
   { to: paths.security, label: 'Segurança e infraestrutura', short: 'Nuvem Oracle, contingência e LGPD' },
-  { to: `${paths.system}#portais`, label: 'Portais e autoatendimento', short: 'Gestor, colaborador e candidato' },
+  { to: paths.portals, label: 'Portais e autoatendimento', short: 'Gestor, colaborador e candidato' },
 ]
 
-/** Produtos com nome próprio dentro do sistema. */
+/** Visão geral do sistema (/sistema): escondida do menu por enquanto, mas a página continua no ar. */
+export const systemOverviewLink: NavLink = { to: paths.system, label: 'Visão geral do sistema', short: 'As sete frentes, com telas e módulos' }
+
+/** Produtos com nome próprio dentro do sistema (escondidos do menu por enquanto). */
 export const appLinks: NavLink[] = [
   { to: paths.nati, label: 'NATI', short: 'A inteligência artificial do RH' },
   { to: '/modulos/natponto', label: 'NatPonto', short: 'App de ponto com reconhecimento facial' },
@@ -75,5 +79,4 @@ export const companyLinks: NavLink[] = [
   { to: `${paths.about}#reconhecimento`, label: 'Reconhecimentos e clientes', short: 'Prêmios e quem usa o sistema' },
   { to: `${paths.about}#servicos`, label: 'Serviços', short: 'Implantação, BPO, treinamento e suporte' },
   { to: `${paths.about}#videos`, label: 'Vídeos', short: 'O canal da Natcorp' },
-  { to: paths.contact, label: 'Contato', short: 'Telefone, WhatsApp, e-mail e escritórios' },
 ]

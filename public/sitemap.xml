@@ -37,6 +37,12 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://natcorp.com.br/portais</loc>
+    <lastmod>2026-09-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://natcorp.com.br/jornada-da-contratacao</loc>
     <lastmod>2026-09-05</lastmod>
     <changefreq>monthly</changefreq>

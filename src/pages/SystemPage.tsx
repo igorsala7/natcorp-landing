@@ -5,7 +5,6 @@ import { GroupTabs } from '@/components/sections/GroupTabs'
 import { PlatformSection } from '@/components/sections/PlatformSection'
 import { AnalyticsSection } from '@/components/sections/AnalyticsSection'
 import { NatPontoSection } from '@/components/sections/NatPontoSection'
-import { PortalsSection } from '@/components/sections/PortalsSection'
 import { ResponsiveSection } from '@/components/sections/ResponsiveSection'
 import { ComparisonSection } from '@/components/sections/ComparisonSection'
 import { PersonasSection } from '@/components/sections/PersonasSection'
@@ -85,7 +84,6 @@ export default function SystemPage() {
       <PlatformSection />
       <AnalyticsSection />
       <NatPontoSection />
-      <PortalsSection />
       <ResponsiveSection tone="off" />
       <ComparisonSection id="comparativo" />
       <PersonasSection />

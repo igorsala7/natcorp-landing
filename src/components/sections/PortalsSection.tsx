@@ -25,19 +25,30 @@ const portals = [
   },
 ]
 
-export function PortalsSection() {
-  return (
-    <Section id="portais" tone="white" aria-labelledby="portais-title">
-      <div className="container">
-        <SectionHeader
-          id="portais-title"
-          align="center"
-          eyebrow="Portais e mobilidade"
-          title="Cada pessoa com o [[seu portal]]."
-          lead="Gestor, colaborador e candidato acessam o que precisam, no celular ou no computador, com a mesma linguagem. O RH define o que cada perfil vê e faz."
-        />
+interface PortalsSectionProps {
+  id?: string
+  tone?: 'white' | 'off'
+  /** Sem o cabeçalho, para páginas em que o título já está no topo. */
+  withHeader?: boolean
+}
 
-        <Stagger className="mt-14 grid gap-5 md:grid-cols-3 lg:mt-20">
+export function PortalsSection({ id = 'portais', tone = 'white', withHeader = true }: PortalsSectionProps) {
+  return (
+    <Section id={id} tone={tone} aria-labelledby={withHeader ? `${id}-title` : undefined} className={withHeader ? undefined : 'pt-0 sm:pt-0 lg:pt-0'}>
+      <div className="container">
+        {withHeader ? (
+          <SectionHeader
+            id={`${id}-title`}
+            align="center"
+            eyebrow="Portais e mobilidade"
+            title="Cada pessoa com o [[seu portal]]."
+            lead="Gestor, colaborador e candidato acessam o que precisam, no celular ou no computador, com a mesma linguagem. O RH define o que cada perfil vê e faz."
+          />
+        ) : (
+          <h2 className="sr-only">Os três portais</h2>
+        )}
+
+        <Stagger className={withHeader ? 'mt-14 grid gap-5 md:grid-cols-3 lg:mt-20' : 'grid gap-5 md:grid-cols-3'}>
           {portals.map(({ icon: Icon, title, text, items }) => (
             <StaggerItem
               key={title}

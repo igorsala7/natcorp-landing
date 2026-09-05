@@ -67,13 +67,13 @@ export function PlatformSection() {
           </Stagger>
           <Reveal delay={0.35} className="mt-10 flex flex-wrap gap-3">
             <Button asChild size="lg">
-              <Link to={paths.system}>
-                Conhecer o sistema, frente por frente
+              <Link to={paths.modules}>
+                Ver os 31 módulos
                 <ArrowRight className="transition-transform duration-300 group-hover/btn:translate-x-0.5" />
               </Link>
             </Button>
             <Button asChild size="lg" variant="secondary">
-              <Link to={paths.modules}>Ver os 31 módulos</Link>
+              <Link to={paths.portals}>Portais e autoatendimento</Link>
             </Button>
           </Reveal>
         </div>

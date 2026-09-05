@@ -20,6 +20,7 @@ const SystemPage = lazy(() => import('@/pages/SystemPage'))
 const SecurityPage = lazy(() => import('@/pages/SecurityPage'))
 const AboutPage = lazy(() => import('@/pages/AboutPage'))
 const ContactPage = lazy(() => import('@/pages/ContactPage'))
+const PortalsPage = lazy(() => import('@/pages/PortalsPage'))
 const NotFoundPage = lazy(() => import('@/pages/NotFoundPage'))
 
 /** HashRouter apenas para prévias hospedadas fora da raiz de um domínio (VITE_ROUTER=hash). */
@@ -49,6 +50,7 @@ function AppRoutes() {
           ['/seguranca', <SecurityPage />],
           ['/sobre', <AboutPage />],
           ['/contato', <ContactPage />],
+          ['/portais', <PortalsPage />],
         ].map(([path, element]) => (
           <Route key={path as string} path={path as string} element={<Suspense fallback={<PageFallback />}>{element}</Suspense>} />
         ))}

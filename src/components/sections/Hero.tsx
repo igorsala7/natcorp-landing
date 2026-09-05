@@ -114,7 +114,7 @@ export function Hero() {
               </Button>
             </Magnetic>
             <Button asChild variant="outline-inverse" size="xl">
-              <Link to={paths.system}>Conhecer o sistema</Link>
+              <Link to={paths.modules}>Conhecer os módulos</Link>
             </Button>
           </m.div>
 

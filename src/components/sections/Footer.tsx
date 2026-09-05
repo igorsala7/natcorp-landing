@@ -7,8 +7,8 @@ import { segmentPath, segmentRegistry, segmentsPath } from '@/content/segments'
 
 const footerLinks = [
   { to: paths.home, label: 'Início' },
-  { to: paths.system, label: 'O sistema' },
   { to: paths.modules, label: 'Todos os módulos' },
+  { to: paths.portals, label: 'Portais e autoatendimento' },
   { to: paths.nati, label: 'NATI' },
   { to: paths.segments, label: 'Segmentos' },
   { to: paths.journey, label: 'Jornada do colaborador' },
@@ -23,7 +23,7 @@ export function Footer() {
       <div className="container">
         <div className="grid gap-12 sm:grid-cols-2 lg:grid-cols-[1.3fr_1fr_1fr_1fr_1fr]">
           <div>
-            <Logo variant="vertical" tone="white" className="h-24 w-auto" />
+            <Logo variant="horizontal" tone="white" className="h-10 w-auto" />
             <p className="mt-6 max-w-xs text-[15px] font-semibold leading-snug">{siteConfig.tagline}</p>
             <p className="mt-2 max-w-xs text-sm leading-relaxed text-white/60">
               HR Tech brasileira. Há mais de 35 anos, tecnologia para a gestão de pessoas de grandes empresas:
