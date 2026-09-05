@@ -15,7 +15,15 @@ const bullets = [
   'Sem compromisso e sem letra miúda',
 ]
 
-export function CTASection() {
+interface CTASectionProps {
+  title?: string
+  text?: string
+}
+
+export function CTASection({
+  title = 'Veja a Natcorp com os dados da sua empresa.',
+  text = 'Conte um pouco sobre a sua operação de RH e agende uma conversa com quem entende de folha, ponto, eSocial e SESMT de grandes empresas. Respondemos em até 1 dia útil.',
+}: CTASectionProps) {
   const ref = useRef<HTMLDivElement>(null)
   const near = useInView(ref, { once: true, margin: '800px 0px' })
 
@@ -36,14 +44,11 @@ export function CTASection() {
               <SplitText
                 as="h2"
                 id="contato-title"
-                text="Veja a Natcorp com os dados da sua empresa."
+                text={title}
                 className="mt-5 text-3xl font-extrabold leading-[1.08] sm:text-4xl lg:text-5xl"
               />
               <Reveal delay={0.25}>
-                <p className="mt-5 max-w-md text-lg leading-relaxed text-white/80">
-                  Conte um pouco sobre a sua operação de RH e agende uma conversa com quem entende de folha, ponto,
-                  eSocial e SESMT de grandes empresas. Respondemos em até 1 dia útil.
-                </p>
+                <p className="mt-5 max-w-md text-lg leading-relaxed text-white/80">{text}</p>
               </Reveal>
               <Reveal delay={0.35}>
                 <ul className="mt-8 space-y-3">

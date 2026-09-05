@@ -1,6 +1,7 @@
 import { useRef } from 'react'
 import { m, useReducedMotion, useScroll, useTransform } from 'motion/react'
 import { ArrowRight, ChevronDown, Sparkles } from 'lucide-react'
+import { Link } from 'react-router'
 import { Button } from '@/components/ui/button'
 import { LogoOutline } from '@/components/brand/Logo'
 import { SplitText } from '@/components/motion/SplitText'
@@ -9,6 +10,7 @@ import { useIntroDone } from '@/hooks/useIntroDone'
 import { DashboardMockup } from '@/components/mockups/DashboardMockup'
 import { PhoneMockup } from '@/components/mockups/PhoneMockup'
 import { EASE } from '@/lib/motion'
+import { scrollToElement } from '@/components/motion/ScrollManager'
 
 const trust = ['+30 módulos integrados', '2.500 folhas por minuto', 'NATI, a IA do RH', 'Nuvem Oracle com contingência']
 
@@ -71,14 +73,14 @@ export function Hero() {
           <m.div {...show(0.7)} className="mt-9 flex flex-wrap items-center justify-center gap-3">
             <Magnetic>
               <Button asChild variant="inverse" size="xl">
-                <a href="#contato">
+                <Link to="#contato">
                   Agendar demonstração
                   <ArrowRight className="transition-transform duration-300 group-hover/btn:translate-x-0.5" />
-                </a>
+                </Link>
               </Button>
             </Magnetic>
             <Button asChild variant="outline-inverse" size="xl">
-              <a href="#modulos">Conhecer os módulos</a>
+              <Link to="#modulos">Conhecer os módulos</Link>
             </Button>
           </m.div>
 
@@ -115,6 +117,12 @@ export function Hero() {
 
       <m.a
         href="#numeros"
+        onClick={(e) => {
+          const el = document.getElementById('numeros')
+          if (!el) return
+          e.preventDefault()
+          scrollToElement(el)
+        }}
         aria-label="Rolar para a próxima seção"
         className="absolute bottom-6 left-1/2 hidden -translate-x-1/2 text-white/60 transition-colors hover:text-white lg:block"
         initial={{ opacity: 0 }}

@@ -1,54 +1,92 @@
+import { Suspense, lazy, useEffect } from 'react'
+import { AnimatePresence } from 'motion/react'
+import { BrowserRouter, HashRouter, Route, Routes, useLocation } from 'react-router'
 import { Toaster } from '@/components/ui/sonner'
 import { MotionProvider } from '@/components/motion/MotionProvider'
 import { IntroProvider } from '@/components/motion/Intro'
 import { SmoothScroll } from '@/components/motion/SmoothScroll'
 import { ScrollProgress } from '@/components/motion/ScrollProgress'
+import { ScrollManager } from '@/components/motion/ScrollManager'
 import { Navbar } from '@/components/sections/Navbar'
-import { Hero } from '@/components/sections/Hero'
-import { ProofStrip } from '@/components/sections/ProofStrip'
-import { ProblemSection } from '@/components/sections/ProblemSection'
-import { PlatformSection } from '@/components/sections/PlatformSection'
-import { ModulesSection } from '@/components/sections/ModulesSection'
-import { JourneySection } from '@/components/sections/JourneySection'
-import { NatiSection } from '@/components/sections/NatiSection'
-import { PortalsSection } from '@/components/sections/PortalsSection'
-import { SecuritySection } from '@/components/sections/SecuritySection'
-import { WhySection } from '@/components/sections/WhySection'
-import { PersonasSection } from '@/components/sections/PersonasSection'
-import { FAQSection } from '@/components/sections/FAQSection'
-import { CTASection } from '@/components/sections/CTASection'
 import { Footer } from '@/components/sections/Footer'
+import LandingPage from '@/pages/LandingPage'
+
+const ModulesIndexPage = lazy(() => import('@/pages/ModulesIndexPage'))
+const ModulePage = lazy(() => import('@/pages/ModulePage'))
+const NotFoundPage = lazy(() => import('@/pages/NotFoundPage'))
+
+/** HashRouter apenas para prévias hospedadas fora da raiz de um domínio (VITE_ROUTER=hash). */
+const Router = import.meta.env.VITE_ROUTER === 'hash' ? HashRouter : BrowserRouter
+
+function PageFallback() {
+  return <div className="min-h-[70vh] bg-brand-off-white" aria-busy="true" aria-live="polite" />
+}
+
+function AppRoutes() {
+  const location = useLocation()
+
+  useEffect(() => {
+    // Pré-carrega o template de módulo logo após a primeira renderização.
+    const t = window.setTimeout(() => {
+      void import('@/pages/ModulePage')
+    }, 1200)
+    return () => window.clearTimeout(t)
+  }, [])
+
+  return (
+    <AnimatePresence mode="wait" initial={false}>
+      <Routes location={location} key={location.pathname}>
+        <Route path="/" element={<LandingPage />} />
+        <Route
+          path="/modulos"
+          element={
+            <Suspense fallback={<PageFallback />}>
+              <ModulesIndexPage />
+            </Suspense>
+          }
+        />
+        <Route
+          path="/modulos/:slug"
+          element={
+            <Suspense fallback={<PageFallback />}>
+              <ModulePage />
+            </Suspense>
+          }
+        />
+        <Route
+          path="*"
+          element={
+            <Suspense fallback={<PageFallback />}>
+              <NotFoundPage />
+            </Suspense>
+          }
+        />
+      </Routes>
+    </AnimatePresence>
+  )
+}
 
 function App() {
   return (
     <MotionProvider>
       <IntroProvider>
-        <a
-          href="#conteudo"
-          className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[80] focus:rounded-lg focus:bg-white focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-brand-purple focus:shadow-lift"
-        >
-          Pular para o conteúdo
-        </a>
-        <SmoothScroll />
-        <ScrollProgress />
-        <Navbar />
-        <main id="conteudo">
-          <Hero />
-          <ProofStrip />
-          <ProblemSection />
-          <PlatformSection />
-          <ModulesSection />
-          <JourneySection />
-          <NatiSection />
-          <PortalsSection />
-          <SecuritySection />
-          <WhySection />
-          <PersonasSection />
-          <FAQSection />
-          <CTASection />
-        </main>
-        <Footer />
-        <Toaster position="bottom-right" />
+        <Router>
+          <a
+            href="#conteudo"
+            className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[80] focus:rounded-lg focus:bg-white focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-brand-purple focus:shadow-lift"
+          >
+            Pular para o conteúdo
+          </a>
+          <SmoothScroll />
+          <ScrollProgress />
+          <ScrollManager />
+          <Navbar />
+          <main id="conteudo">
+            <AppRoutes />
+          </main>
+          <Footer />
+          <Toaster position="bottom-right" />
+        </Router>
       </IntroProvider>
     </MotionProvider>
   )

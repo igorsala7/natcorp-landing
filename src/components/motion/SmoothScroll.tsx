@@ -1,10 +1,11 @@
 import { useEffect } from 'react'
 import Lenis from 'lenis'
 import { useReducedMotion } from 'motion/react'
+import { lenisStore } from '@/lib/lenisStore'
 
 /**
  * Rolagem suave com Lenis. Desligada quando o usuário prefere menos movimento.
- * Âncoras (#secao) passam a rolar suavemente com compensação da barra fixa.
+ * A navegação por âncoras é tratada pelo ScrollManager (rotas + hash).
  */
 export function SmoothScroll() {
   const reduced = useReducedMotion()
@@ -15,10 +16,13 @@ export function SmoothScroll() {
       lerp: 0.1,
       wheelMultiplier: 1,
       touchMultiplier: 1.4,
-      anchors: { offset: -88 },
       autoRaf: true,
     })
-    return () => lenis.destroy()
+    lenisStore.current = lenis
+    return () => {
+      lenis.destroy()
+      lenisStore.current = null
+    }
   }, [reduced])
 
   return null

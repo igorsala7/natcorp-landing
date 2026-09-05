@@ -25,25 +25,58 @@ npm run preview  # serve o build localmente
 npm run lint     # oxlint
 ```
 
+## Páginas e rotas
+
+| Rota | Página |
+| --- | --- |
+| `/` | Landing page institucional |
+| `/modulos` | Índice com os 7 grupos e todos os módulos |
+| `/modulos/:slug` | Página dedicada de cada módulo (30 páginas) |
+| qualquer outra | Página 404 |
+
+O roteamento é feito no cliente com [React Router](https://reactrouter.com) (`BrowserRouter`). Por isso o servidor
+precisa devolver `index.html` para qualquer caminho: já estão incluídos `vercel.json` (Vercel) e `public/_redirects`
+(Netlify/Cloudflare Pages). Em outros provedores, configure o "SPA fallback" equivalente.
+
+`npm run build` roda antes `scripts/generate-sitemap.mjs`, que gera `public/sitemap.xml` e `public/robots.txt`
+a partir de `src/content/modulePages/registry.json` (use `VITE_SITE_URL` para o domínio final).
+
+## Conteúdo dos módulos
+
+Cada módulo é um arquivo em `src/content/modulePages/<slug>.ts` que exporta um objeto `ModulePage`
+(tipo em `types.ts`): título, resumo, SEO, números de destaque, benefícios, funcionalidades (com ícone de
+`icons.ts`), fluxo "como funciona", conformidade, personas, perguntas e módulos relacionados. O conteúdo foi
+escrito a partir das 33 apresentações comerciais de natcorprh.app e do briefing; o campo `sources` registra quais.
+
+- `registry.json` define slug, nome, grupo, ícone e resumo curto de cada módulo. É a fonte do mega-menu, do
+  índice, do rodapé e do sitemap.
+- Para adicionar um módulo: inclua a entrada no `registry.json`, crie `<slug>.ts` e, se quiser, aponte itens
+  de `src/content/modules.ts` (cards da landing) para ele com `slug` e `hash`.
+- O conteúdo de cada módulo é carregado sob demanda (um chunk por página).
+
 ## Estrutura
 
 ```
 src/
+  pages/        LandingPage, ModulesIndexPage, ModulePage (template data-driven), NotFoundPage
   components/
     brand/      Logo.tsx (símbolo + wordmark em vetor), logo-paths.ts (geometria gerada do manual)
-    motion/     Intro (abertura), SmoothScroll, Reveal/Stagger, SplitText, Counter, Marquee,
-                Magnetic, SpotlightCard, Parallax, ScrollProgress, MotionProvider
+    motion/     Intro (abertura), SmoothScroll, ScrollManager (rotas + âncoras), PageTransition,
+                Reveal/Stagger, SplitText, Counter, Marquee, Magnetic, SpotlightCard, Parallax, ScrollProgress
     mockups/    Telas do produto construídas em código (dashboard, NatPonto, NATI, fluxos)
-    sections/   Navbar, Hero, ProofStrip, Problem, Platform, Modules, Journey, Nati, Portals,
-                Security, Why, Personas, FAQ, CTA (+ LeadForm lazy), Footer
+    sections/   Navbar (mega-menu de módulos), Hero, ProofStrip, Problem, Platform, Modules, Journey, Nati,
+                Portals, Security, Why, Personas, FAQ, FaqAccordion, CTA (+ LeadForm lazy), Footer
+    seo/        JsonLd, Breadcrumb
     ui/         primitivos shadcn/ui
-  content/      textos e dados (módulos, FAQ, personas, navegação)
-  hooks/        useMediaQuery, useScrolled, useIntroDone, useBrandGradientId
-  lib/          motion.ts (curvas e variantes), leadSchema.ts, submitLead.ts, utils.ts
+  content/      textos e dados (módulos da landing, FAQ, personas, navegação) e modulePages/ (páginas de módulo)
+  hooks/        useMediaQuery, useScrolled, useIntroDone, useBrandGradientId, useSeo
+  lib/          motion.ts (curvas e variantes), lenisStore.ts, leadSchema.ts, submitLead.ts, utils.ts
+scripts/        generate-sitemap.mjs
 public/
   brand/        SVGs oficiais gerados (horizontal, vertical, símbolo; colorido, chapado, negativo)
   fonts/        Manrope woff2 (latin, latin-ext)
   favicon.svg / favicon.png / apple-touch-icon.png / icon-512.png / og-image.png / site.webmanifest
+  sitemap.xml / robots.txt (gerados) · _redirects (SPA fallback)
 ```
 
 ## Identidade visual
@@ -73,6 +106,7 @@ Tokens do **Manual de Identidade Visual Natcorp v1.2** (setembro de 2026), defin
 - Abertura: os módulos do símbolo se encaixam, o wordmark surge e a cortina sobe (uma vez por sessão).
 - Revelações por palavra com máscara (`SplitText`), blocos escalonados (`Stagger`), contadores, parallax leve,
   seção de módulos com navegação fixa que acompanha a rolagem, chat da NATI que troca por perfil, faixa contínua.
+- Transição de cena entre rotas (`PageTransition`) e rolagem para âncoras entre páginas (`ScrollManager`).
 - Cursor: botões magnéticos e foco de luz nos cartões apenas com `pointer: fine`.
 - `prefers-reduced-motion`: sem abertura, sem Lenis, sem parallax/transform; faixas viram listas estáticas.
 
@@ -101,8 +135,9 @@ Payload:
 ## SEO e acessibilidade
 
 - `index.html` com título, descrição, Open Graph/Twitter, canonical, tema, manifest e JSON-LD (Organization,
-  WebSite, SoftwareApplication); FAQ com JSON-LD `FAQPage` gerado a partir de `src/content/faq.ts`.
-- Antes de publicar, ajuste a URL canônica e as URLs absolutas de `og:image` em `index.html` para o domínio final.
+  WebSite, SoftwareApplication). Cada rota atualiza título, descrição, canonical e Open Graph (`useSeo`) e injeta
+  JSON-LD próprio: `FAQPage` (landing e módulos) e `BreadcrumbList` (módulos).
+- Antes de publicar, ajuste o domínio em `src/content/site.ts` (`url`) e as URLs absolutas em `index.html`.
 - Marcação semântica (landmarks, cabeçalhos por seção, `aria-labelledby`), link "Pular para o conteúdo", foco visível,
   tabs com `role="tablist"`, textos animados com `aria-label` completo, mockups com descrição alternativa.
 

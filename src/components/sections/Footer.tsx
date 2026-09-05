@@ -1,6 +1,7 @@
 import { ArrowUp, Mail, MapPin } from 'lucide-react'
+import { Link } from 'react-router'
 import { Logo } from '@/components/brand/Logo'
-import { moduleGroups } from '@/content/modules'
+import { groups } from '@/content/modulePages'
 import { navLinks, siteConfig } from '@/content/site'
 
 export function Footer() {
@@ -23,17 +24,22 @@ export function Footer() {
           <nav aria-label="Seções do site">
             <p className="text-[12px] font-semibold uppercase tracking-[0.16em] text-white/50">Navegue</p>
             <ul className="mt-4 space-y-2.5">
+              <li>
+                <Link to="/" className="text-sm font-medium text-white/80 transition-colors hover:text-white">
+                  Início
+                </Link>
+              </li>
               {navLinks.map((l) => (
-                <li key={l.href}>
-                  <a href={l.href} className="text-sm font-medium text-white/80 transition-colors hover:text-white">
+                <li key={l.hash}>
+                  <Link to={{ pathname: '/', hash: l.hash }} className="text-sm font-medium text-white/80 transition-colors hover:text-white">
                     {l.label}
-                  </a>
+                  </Link>
                 </li>
               ))}
               <li>
-                <a href="#contato" className="text-sm font-medium text-white/80 transition-colors hover:text-white">
+                <Link to="#contato" className="text-sm font-medium text-white/80 transition-colors hover:text-white">
                   Agendar demonstração
-                </a>
+                </Link>
               </li>
             </ul>
           </nav>
@@ -41,13 +47,18 @@ export function Footer() {
           <nav aria-label="Módulos">
             <p className="text-[12px] font-semibold uppercase tracking-[0.16em] text-white/50">Módulos</p>
             <ul className="mt-4 space-y-2.5">
-              {moduleGroups.map((g) => (
+              {groups.map((g) => (
                 <li key={g.id}>
-                  <a href={`#${g.id}`} className="text-sm font-medium text-white/80 transition-colors hover:text-white">
+                  <Link to={`/modulos#${g.id}`} className="text-sm font-medium text-white/80 transition-colors hover:text-white">
                     {g.name}
-                  </a>
+                  </Link>
                 </li>
               ))}
+              <li>
+                <Link to="/modulos" className="text-sm font-semibold text-white transition-colors hover:text-[#E4A9C4]">
+                  Todos os módulos
+                </Link>
+              </li>
             </ul>
           </nav>
 
@@ -76,10 +87,10 @@ export function Footer() {
         <div className="mt-14 flex flex-col gap-4 border-t border-white/10 pt-6 text-xs text-white/50 md:flex-row md:items-center md:justify-between">
           <p>© {new Date().getFullYear()} Natcorp. Todos os direitos reservados.</p>
           <p>Dados tratados em conformidade com a LGPD (Lei nº 13.709/2018).</p>
-          <a href="#top" className="inline-flex items-center gap-1.5 font-semibold text-white/70 transition-colors hover:text-white">
+          <Link to="#top" className="inline-flex items-center gap-1.5 font-semibold text-white/70 transition-colors hover:text-white">
             Voltar ao topo
             <ArrowUp className="h-3.5 w-3.5" aria-hidden />
-          </a>
+          </Link>
         </div>
       </div>
     </footer>

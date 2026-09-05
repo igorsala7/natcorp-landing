@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://natcorp.com.br/sitemap.xml
