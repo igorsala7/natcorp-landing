@@ -2,7 +2,6 @@ import { Link } from 'react-router'
 import { ArrowRight } from 'lucide-react'
 import { Section, Eyebrow } from '@/components/sections/Section'
 import { GroupTabs } from '@/components/sections/GroupTabs'
-import { PlatformSection } from '@/components/sections/PlatformSection'
 import { AnalyticsSection } from '@/components/sections/AnalyticsSection'
 import { NatPontoSection } from '@/components/sections/NatPontoSection'
 import { ResponsiveSection } from '@/components/sections/ResponsiveSection'
@@ -19,7 +18,7 @@ import { Button } from '@/components/ui/button'
 import { useSeo } from '@/hooks/useSeo'
 
 const stats = [
-  { value: '30+', label: 'módulos integrados' },
+  { value: '31', label: 'módulos integrados' },
   { value: '7', label: 'frentes do RH' },
   { value: '1', label: 'cadastro, uma base, uma experiência' },
 ]
@@ -53,7 +52,7 @@ export default function SystemPage() {
               <Reveal delay={0.25}>
                 <p className="mt-6 max-w-2xl text-lg leading-relaxed text-brand-graphite sm:text-xl">
                   O Departamento Pessoal, o RH e a Medicina e Segurança do Trabalho operando na mesma base, com a NATI dentro de tudo. Não é
-                  integração entre produtos: é um sistema só, com mais de 30 módulos que crescem com a sua empresa.
+                  integração entre produtos: é um sistema só, com 31 módulos que crescem com a sua empresa.
                 </p>
               </Reveal>
               <Reveal delay={0.35} className="mt-8 flex flex-wrap gap-3">
@@ -81,7 +80,6 @@ export default function SystemPage() {
       </Section>
 
       <GroupTabs id="frentes" />
-      <PlatformSection />
       <AnalyticsSection />
       <NatPontoSection />
       <ResponsiveSection tone="off" />

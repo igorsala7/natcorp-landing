@@ -39,6 +39,9 @@ npm run lint     # oxlint
 | `/sobre` | Sobre a Natcorp: história, missão, visão e valores, reconhecimentos e clientes, serviços e vídeos |
 | `/contato` | Canais de contato, formulário, escritórios e como funciona o atendimento |
 | `/portais` | Portais do Gestor, do Colaborador e do Candidato, requisições com workflow, módulos de autoatendimento e multiplataforma |
+| `/grupos` | Para grupos com várias empresas e filiais: três jeitos de operar (empresa única, holding com RH central, RH em cada filial), o que muda no sistema, como a matriz fecha a folha e FAQ |
+| `/perguntas-frequentes` | Todas as perguntas frequentes, gerais e para grupos, com atalhos para as páginas que aprofundam |
+| `/modelo-comercial` | Sem cobrança por usuário, CNPJ ou histórico: o que está incluído, comparativo com outros sistemas, como funciona a contratação |
 | `/jornada-da-contratacao` | Jornada do colaborador em 24 etapas e 4 fases, em uma indústria fictícia. Duas visões (`?modo=pratico` alterna): a história completa, com personagens 3D, mini mockups e o mapa que acompanha a rolagem, e a visão prática, um diagrama por raias (gestor, candidato, colaborador, RH, SESMT, sistema). Fecha com o diagrama animado dos módulos se integrando |
 | qualquer outra | Página 404 |
 

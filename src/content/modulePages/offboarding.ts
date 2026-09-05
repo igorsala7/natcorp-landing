@@ -14,8 +14,7 @@ const page: ModulePage = {
   },
   highlights: [
     { value: '1 tela', label: 'para cálculos, bloqueios de acesso e documentos rescisórios' },
-    { value: '0', label: 'saldo de banco de horas calculado à mão na rescisão' },
-    { value: '100%', label: 'rastreável, da requisição ao fechamento' },
+    { value: '6 passos', label: 'da requisição ao encerramento, com histórico de cada um' },
   ],
   benefits: [
     {
@@ -58,7 +57,7 @@ const page: ModulePage = {
     },
     {
       title: 'Documentos rescisórios',
-      text: 'Documentos da rescisão gerados no mesmo fluxo, com documentação auditável no fechamento do ciclo.',
+      text: 'Documentos da rescisão gerados no mesmo fluxo e assinados eletronicamente, com documentação auditável no fechamento do ciclo.',
       icon: 'file-text',
     },
     {
@@ -68,7 +67,7 @@ const page: ModulePage = {
     },
     {
       title: 'eSocial integrado',
-      text: 'Os dados validados da rescisão alimentam o eSocial de forma integrada, sem retrabalho.',
+      text: 'Os dados validados da rescisão geram o evento S-2299 de desligamento no eSocial de forma integrada, por empresa, sem retrabalho.',
       icon: 'send',
     },
     {
@@ -82,9 +81,9 @@ const page: ModulePage = {
       icon: 'history',
     },
     {
-      title: 'Pelo celular também',
-      text: 'A rescisão pode ser processada do smartphone, de qualquer lugar, com a mesma segurança.',
-      icon: 'smartphone',
+      title: 'Desligamentos em volume',
+      text: 'Desligamentos em volume, inclusive coletivos, com documentação, assinatura e cálculo rescisório em fila. O RH acompanha cada caso por empresa e filial até o fechamento, no computador ou no celular.',
+      icon: 'layers',
     },
   ],
   flow: {
@@ -94,13 +93,13 @@ const page: ModulePage = {
       { title: 'Aprovação no workflow', text: 'A requisição passa pelas alçadas definidas. Tudo registrado.' },
       { title: 'Cálculo da rescisão', text: 'Verbas rescisórias e saldo do banco de horas calculados automaticamente.' },
       { title: 'Bloqueios e documentos', text: 'Acessos bloqueados e documentos rescisórios gerados na mesma tela.' },
-      { title: 'Conferência e eSocial', text: 'A NATI confere o cálculo e os dados validados seguem para o eSocial.' },
+      { title: 'Conferência e eSocial', text: 'A NATI confere o cálculo e os dados validados geram o S-2299 no eSocial.' },
       { title: 'Encerramento humano', text: 'Com a burocracia resolvida, o RH conduz a entrevista de desligamento com tempo e respeito.' },
     ],
   },
-  compliance: ['CLT: verbas rescisórias e regras de desligamento aplicadas automaticamente', 'eSocial: dados da rescisão enviados de forma integrada', 'LGPD: acesso por perfil e trilha de auditoria'],
+  compliance: ['CLT: verbas rescisórias e regras de desligamento aplicadas automaticamente', 'eSocial: evento S-2299 de desligamento gerado da rescisão validada', 'LGPD: acesso por perfil e trilha de auditoria'],
   personas: [
-    { role: 'RH e Departamento Pessoal', text: 'Calcula, bloqueia e documenta em uma tela, com a NATI conferindo. Ganha tempo para a conversa de saída.' },
+    { role: 'RH e Departamento Pessoal', text: 'Calcula, bloqueia e documenta em uma tela, com a NATI conferindo, um desligamento ou dezenas em fila. Ganha tempo para a conversa de saída.' },
     { role: 'Gestor', text: 'Abre a Requisição de Desligamento pelo portal e acompanha o status até o fechamento, sem trocar e-mails com o RH.' },
     { role: 'Colaborador que sai', text: 'Passa por uma transição organizada e respeitosa, com documentos e prazos corretos.' },
   ],
@@ -118,8 +117,8 @@ const page: ModulePage = {
       a: 'Sim. Os bloqueios de acesso fazem parte do fluxo de Offboarding e ficam na mesma tela dos cálculos e dos documentos rescisórios.',
     },
     {
-      q: 'O Offboarding ajuda a reduzir passivo trabalhista?',
-      a: 'Sim. A automação garante o cumprimento das obrigações legais, a NATI confere a rescisão antes do fechamento e todo o processo fica rastreável e auditável, da requisição ao encerramento.',
+      q: 'O sistema dá conta de um desligamento coletivo?',
+      a: 'Sim. Desligamentos em volume, inclusive coletivos, entram em fila com documentação, assinatura eletrônica e cálculo rescisório de cada pessoa, com o saldo do banco de horas tratado automaticamente. A NATI confere as rescisões antes do fechamento e os eventos S-2299 do eSocial saem por empresa, a partir dos dados validados. Tudo fica rastreável e auditável, da requisição ao encerramento.',
     },
   ],
   related: ['requisicoes-com-workflow', 'folha-de-pagamento', 'ponto-eletronico', 'administracao-de-pessoal'],

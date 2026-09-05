@@ -14,8 +14,6 @@ const page: ModulePage = {
   },
   highlights: [
     { value: '100%', label: 'digital, da requisição de vaga à contratação' },
-    { value: '0', label: 'redigitação: o aprovado vai direto para a Admissão Digital' },
-    { value: 'NATI', label: 'faz o matching entre o banco de talentos e as vagas' },
   ],
   benefits: [
     {

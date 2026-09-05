@@ -22,7 +22,7 @@ export function FAQSection({
   items = faqs,
   eyebrow = 'Perguntas frequentes',
   title = 'O que as empresas [[perguntam antes]] de escolher.',
-  lead = 'Respostas diretas sobre abrangência, eSocial, ponto, NATI, segurança e implantação.',
+  lead = 'Respostas diretas sobre abrangência, estrutura, volume, eSocial, ponto, NATI, segurança e implantação.',
   more,
 }: FAQSectionProps) {
   return (

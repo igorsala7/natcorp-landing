@@ -6,22 +6,22 @@ const page: ModulePage = {
   group: 'pessoal-e-folha',
   tagline: 'Folha calculada a [[2.500 colaboradores por minuto]], conferida pela NATI.',
   summary:
-    'Ponto, benefícios, admissões e afastamentos chegam prontos à folha, sem redigitar. O cálculo roda em minutos, a NATI aponta inconsistências antes do fechamento e o eSocial recebe os dados validados. Férias, 13º, rescisões e DIRF no mesmo motor.',
+    'Ponto, benefícios, admissões e afastamentos chegam prontos à folha, sem redigitar. O cálculo roda em minutos, a NATI aponta inconsistências antes do fechamento e o eSocial recebe os dados validados. Férias, 13º, rescisões e EFD-Reinf no mesmo motor.',
   seo: {
     title: 'Folha de Pagamento para grandes empresas | Natcorp',
     description:
-      'Folha de pagamento integrada a ponto, benefícios e eSocial: 2.500 colaboradores por minuto, conferência por IA antes do fechamento e 13º e DIRF automáticos.',
+      'Folha de pagamento integrada a ponto, benefícios e eSocial: 2.500 colaboradores por minuto, folha por empresa e conferência por IA antes do fechamento.',
   },
   highlights: [
     { value: '2.500', label: 'colaboradores calculados por minuto' },
     { value: '80%', label: 'mais rápido no fechamento da folha' },
-    { value: '4 : 1.000', label: 'operadores por colaboradores na Administração de Pessoal' },
+    { value: '4 : 1.000', label: 'operadores para 1.000 colaboradores; mais um a cada 1.000' },
     { value: '100%', label: 'da folha auditada pela IA, sem conferência por amostragem' },
   ],
   benefits: [
     {
       title: 'Fechamento em minutos, não em dias',
-      text: 'O motor calcula 2.500 colaboradores por minuto. Reprocessar e simular tem reflexo imediato, e o fechamento da folha fica até 80% mais rápido.',
+      text: 'O motor calcula 2.500 colaboradores por minuto e roda a folha de cada empresa do grupo. Reprocessar e simular tem reflexo imediato, e o fechamento fica até 80% mais rápido.',
     },
     {
       title: 'Erros encontrados antes de pagar',
@@ -29,7 +29,7 @@ const page: ModulePage = {
     },
     {
       title: 'Equipe enxuta, mesmo crescendo',
-      text: 'Com ponto, benefícios e admissões chegando prontos, 4 operadores cuidam de 1.000 colaboradores. A cada 1.000 novos, entra só mais um operador.',
+      text: 'Com ponto, benefícios e admissões chegando prontos, são 4 operadores para 1.000 colaboradores; a cada 1.000 novos, mais um.',
     },
     {
       title: 'Menos risco trabalhista e fiscal',
@@ -39,7 +39,7 @@ const page: ModulePage = {
   features: [
     {
       title: 'Cálculo em alta velocidade',
-      text: 'Folha mensal, adiantamentos, férias, 13º, PLR e rescisões processados a 2.500 colaboradores por minuto, com reprocessamento instantâneo.',
+      text: 'Folha mensal, adiantamentos, férias, 13º, PLR (participação nos lucros e resultados) e rescisões processados a 2.500 colaboradores por minuto, com reprocessamento instantâneo.',
       icon: 'zap',
     },
     {
@@ -63,14 +63,19 @@ const page: ModulePage = {
       icon: 'sparkles',
     },
     {
-      title: 'Múltiplos vínculos e sindicatos',
-      text: 'Tratamento simultâneo de vários vínculos trabalhistas e acordos sindicais diferentes na mesma empresa, cada um com suas próprias regras.',
-      icon: 'layers',
+      title: 'Várias empresas, CNPJs e sindicatos',
+      text: 'Várias empresas e CNPJs na mesma base, cada uma com as suas convenções e o seu calendário de fechamento; a matriz vê o consolidado. Vários vínculos e acordos sindicais tratados ao mesmo tempo.',
+      icon: 'building',
+    },
+    {
+      title: 'Fechamento por empresa',
+      text: 'Calendário de fechamento por empresa. As pendências de cada filial ficam visíveis para a matriz antes do corte, a conferência é por unidade e a folha roda por empresa, com a contabilização de cada CNPJ.',
+      icon: 'calendar',
     },
     {
       title: 'Rotinas anuais automatizadas',
-      text: 'Férias, 13º salário, PLR e DIRF rodam no mesmo motor, com as regras já parametrizadas e o histórico preservado.',
-      icon: 'calendar',
+      text: 'Férias, 13º salário, PLR e as obrigações acessórias pelo eSocial e pela EFD-Reinf rodam no mesmo motor, com as regras já parametrizadas e o histórico preservado.',
+      icon: 'refresh',
     },
     {
       title: 'Contabilização com provisões',
@@ -82,26 +87,22 @@ const page: ModulePage = {
       text: 'Os eventos do eSocial saem dos dados já validados da folha, com envio automático e acompanhamento do retorno de cada layout.',
       icon: 'send',
     },
-    {
-      title: 'Folha no celular',
-      text: 'Cálculo de folha, rescisões, férias e eSocial podem ser processados pelo smartphone. O colaborador consulta o holerite no portal ou no app.',
-      icon: 'smartphone',
-    },
   ],
   flow: {
     title: 'Do ponto batido ao eSocial',
     steps: [
       { title: 'Entradas digitais', text: 'Admissões, alterações, férias, afastamentos e benefícios entram por requisições eletrônicas aprovadas no workflow.' },
       { title: 'Ponto apurado', text: 'As marcações do NatPonto são apuradas e as variáveis de frequência seguem para a folha automaticamente.' },
-      { title: 'Cálculo da folha', text: 'O motor calcula a folha a 2.500 colaboradores por minuto. Simule e reprocesse com reflexo imediato.' },
+      { title: 'Pendências por unidade', text: 'A matriz vê o que ainda está aberto em cada filial antes do corte e confere por unidade.' },
+      { title: 'Cálculo da folha', text: 'O motor roda a folha de cada empresa a 2.500 colaboradores por minuto. Simule e reprocesse com reflexo imediato.' },
       { title: 'Conferência pela NATI', text: 'A IA cruza frequência, benefícios e impostos e aponta inconsistências com sugestão de correção.' },
-      { title: 'Fechamento e envio', text: 'Dados validados vão para o eSocial, para a contabilização com provisões e para os créditos de pagamento.' },
+      { title: 'Fechamento e envio', text: 'Dados validados vão para o eSocial, para a contabilização de cada CNPJ com provisões e para os créditos de pagamento.' },
     ],
   },
   compliance: [
     'eSocial: eventos gerados a partir da folha validada',
+    'EFD-Reinf e demais obrigações acessórias',
     'CLT e legislação trabalhista sempre atualizada',
-    'DIRF e demais obrigações anuais',
     'LGPD: acesso por perfil e trilha de auditoria',
   ],
   personas: [
@@ -119,15 +120,15 @@ const page: ModulePage = {
       a: 'A NATI lê regras, cálculos e comparativos históricos, cruza frequência, benefícios e impostos e devolve análise, diagnóstico, pontos de atenção e sugestão de correção antes do fechamento. A decisão de corrigir continua com a equipe.',
     },
     {
-      q: 'O sistema aguenta o volume de uma grande empresa?',
-      a: 'Sim. O motor processa 2.500 colaboradores por minuto, trata múltiplos vínculos e acordos sindicais e roda em nuvem Oracle, com ambientes de produção, homologação e contingência para a folha não parar.',
+      q: 'O sistema aguenta a folha de 20 mil colaboradores em várias empresas?',
+      a: 'Sim. O motor calcula 2.500 colaboradores por minuto: cerca de 8 minutos para 20 mil. A folha roda por empresa, cada uma com o seu calendário de fechamento e as suas convenções, e a NATI confere cada uma antes do corte. O sistema trata múltiplos vínculos e sindicatos e roda em nuvem Oracle, com ambientes de produção, homologação e contingência para a folha não parar.',
     },
     {
       q: 'Dá para fechar a folha fora do escritório?',
       a: 'Sim. O sistema é 100% web e responsivo. Cálculo de folha, rescisões, férias e gestão do eSocial podem ser processados pelo celular ou tablet, com os dados sincronizados em tempo real.',
     },
   ],
-  related: ['ponto-eletronico', 'gestao-de-beneficios', 'esocial', 'nati'],
+  related: ['ponto-eletronico', 'gestao-de-beneficios', 'esocial', 'natpay'],
   sources: ['pagadoria', 'csc-bpo', 'produtividade-de-rh', 'performance-e-seguranca', 'tecnologia', 'gestao-de-frequencia', 'gestao-de-beneficios', 'nati-ia'],
 }
 

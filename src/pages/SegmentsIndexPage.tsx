@@ -1,5 +1,5 @@
 import { Link } from 'react-router'
-import { ArrowRight, ChevronRight } from 'lucide-react'
+import { ArrowRight, ChevronRight, MessageCircle } from 'lucide-react'
 import { Section, Eyebrow, SectionHeader } from '@/components/sections/Section'
 import { CTASection } from '@/components/sections/CTASection'
 import { PageTransition } from '@/components/motion/PageTransition'
@@ -11,6 +11,7 @@ import { Button } from '@/components/ui/button'
 import { useSeo } from '@/hooks/useSeo'
 import { moduleRegistry } from '@/content/modulePages'
 import { segmentIcons, segmentPath, segmentRegistry, segmentsPath } from '@/content/segments'
+import { paths } from '@/content/site'
 
 const promises = [
   { t: 'As dores do segmento primeiro', d: 'Cada página começa pelo que tira o sono do RH daquele mercado: escalas, normas, sazonalidade, dispersão, turnover.' },
@@ -88,14 +89,35 @@ export default function SegmentsIndexPage() {
                     </span>
                     <span className="mt-5 flex items-center gap-1.5 text-xl font-bold text-brand-ink group-hover:text-brand-purple">
                       {s.label}
-                      <ChevronRight className="h-4 w-4 text-brand-gray transition-transform duration-300 group-hover:translate-x-0.5" aria-hidden />
+                      <ChevronRight className="h-4 w-4 text-brand-graphite transition-transform duration-300 group-hover:translate-x-0.5" aria-hidden />
                     </span>
                     <span className="mt-2 text-[15px] leading-relaxed text-brand-graphite">{s.short}</span>
                   </Link>
                 </StaggerItem>
               )
             })}
+            <StaggerItem>
+              <Link
+                to="#contato"
+                className="group flex h-full flex-col rounded-3xl border border-dashed border-brand-purple/40 bg-brand-off-white p-6 transition-[transform,box-shadow,border-color,background-color] duration-500 ease-brand hover:-translate-y-1.5 hover:border-brand-purple/60 hover:bg-white hover:shadow-lift"
+              >
+                <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-white text-brand-purple shadow-soft transition-colors duration-500 group-hover:bg-brand-purple group-hover:text-white">
+                  <MessageCircle className="h-6 w-6" strokeWidth={1.6} aria-hidden />
+                </span>
+                <span className="mt-5 flex items-center gap-1.5 text-xl font-bold text-brand-ink group-hover:text-brand-purple">
+                  Não achou o seu segmento?
+                  <ChevronRight className="h-4 w-4 text-brand-graphite transition-transform duration-300 group-hover:translate-x-0.5" aria-hidden />
+                </span>
+                <span className="mt-2 text-[15px] leading-relaxed text-brand-graphite">Grupos de serviços, construção, educação e tecnologia também operam na Natcorp. Fale com a gente.</span>
+              </Link>
+            </StaggerItem>
           </Stagger>
+          <Reveal delay={0.2} className="mt-8">
+            <Link to={paths.groups} className="group inline-flex items-center gap-2 text-[15px] font-semibold text-brand-purple">
+              Tem várias empresas e filiais? Veja o que muda
+              <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5" aria-hidden />
+            </Link>
+          </Reveal>
         </div>
       </Section>
 

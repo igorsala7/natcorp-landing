@@ -64,7 +64,7 @@ const page: ModulePage = {
     },
     {
       title: 'LGPD por desenho',
-      text: 'Controle de acesso por filial, restrição a dados confidenciais, anonimização quando aplicável e trilha de auditoria de cada ação.',
+      text: 'Perfis granulares por empresa e filial, restrição a dados confidenciais, anonimização quando aplicável e trilha de auditoria de cada ação.',
       icon: 'shield-check',
     },
     {
@@ -73,8 +73,8 @@ const page: ModulePage = {
       icon: 'history',
     },
     {
-      title: 'Em qualquer dispositivo',
-      text: 'Computador, tablet e celular, iOS e Android, com a mesma segurança. Interface responsiva e disponível em mais de 120 idiomas.',
+      title: 'A mesma segurança em qualquer dispositivo',
+      text: 'Computador, tablet e celular, iOS e Android, com o mesmo perfil, o mesmo segundo fator e a mesma trilha de auditoria. Interface responsiva e disponível em mais de 120 idiomas.',
       icon: 'smartphone',
     },
     {
@@ -109,7 +109,7 @@ const page: ModulePage = {
     },
     {
       q: 'Como o acesso é controlado?',
-      a: 'Por perfil e por filial, com login criptografado e autenticação em dois fatores. Cada usuário vê apenas o que a sua função permite, dados confidenciais têm restrição adicional e todas as ações ficam registradas em trilha de auditoria.',
+      a: 'Por perfis granulares por empresa e filial, com login criptografado e autenticação em dois fatores. Cada usuário vê apenas o que a sua função permite, o RH de cada filial vê só a sua filial, dados confidenciais têm restrição adicional e todas as ações ficam registradas em trilha de auditoria.',
     },
     {
       q: 'O sistema atende à LGPD?',

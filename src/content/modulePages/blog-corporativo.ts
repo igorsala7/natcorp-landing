@@ -6,17 +6,17 @@ const page: ModulePage = {
   group: 'autoatendimento',
   tagline: 'A comunicação da empresa em [[um canal único]], dentro do sistema de RH.',
   summary:
-    'Avisos, comunicados, vídeos, imagens e arquivos publicados em uma linha do tempo que o colaborador vê nos portais que já usa. O RH escreve, agenda a publicação e define quem recebe. Sem mural, sem e-mail perdido.',
+    'Avisos, comunicados, vídeos, imagens e arquivos publicados em uma linha do tempo que o colaborador vê nos portais que já usa. O RH escreve, agenda a publicação e define quem recebe: uma filial, uma empresa ou o grupo. Sem mural, sem e-mail perdido.',
   seo: {
     title: 'Blog Corporativo: intranet em timeline | Natcorp',
     description:
-      'Intranet em formato de timeline dentro do sistema de RH: avisos, comunicados, vídeos do YouTube, imagens e arquivos com agendamento e público por perfil.',
+      'Intranet em timeline dentro do sistema de RH: avisos, comunicados, vídeos, imagens e arquivos com agendamento e público por empresa, filial ou perfil.',
   },
   highlights: [],
   benefits: [
     {
       title: 'Todo mundo recebe a mesma mensagem',
-      text: 'Um canal único para a comunicação institucional. O comunicado sai do RH e chega igual para toda a empresa, no portal, sem depender de repasse.',
+      text: 'Um canal único para a comunicação institucional. O comunicado sai do RH e chega igual para toda a empresa, ou só para a unidade a que se destina, no portal, sem depender de repasse.',
     },
     {
       title: 'Engajamento desde o dia zero',
@@ -53,8 +53,8 @@ const page: ModulePage = {
       icon: 'calendar',
     },
     {
-      title: 'Público por perfil',
-      text: 'Escolha se o post aparece para toda a empresa ou só para um perfil, como gestores ou colaboradores, cada um no seu portal.',
+      title: 'Público por empresa, filial ou perfil',
+      text: 'Escolha se o post vai para o grupo inteiro, para uma empresa ou filial ou só para um perfil, como gestores ou colaboradores. Um comunicado para a unidade, outro para o grupo, cada um na timeline de quem deve ler.',
       icon: 'users',
     },
     {
@@ -77,12 +77,17 @@ const page: ModulePage = {
       text: 'A NATI personaliza e distribui lembretes de acordo com a etapa da jornada de cada colaborador.',
       icon: 'sparkles',
     },
+    {
+      title: 'Histórico na linha do tempo',
+      text: 'Comunicados antigos continuam na timeline, com data e público. Quem entrou depois encontra a política publicada meses atrás sem pedir ao RH.',
+      icon: 'history',
+    },
   ],
   flow: {
     title: 'Do rascunho à leitura no portal',
     steps: [
       { title: 'Criar o post', text: 'O RH escreve o texto e anexa vídeo, imagem ou arquivo.' },
-      { title: 'Definir público e data', text: 'Escolhe quem vai ver e agenda a publicação.' },
+      { title: 'Definir público e data', text: 'Escolhe se vai para uma filial, uma empresa, um perfil ou o grupo, e agenda a publicação.' },
       { title: 'Publicação automática', text: 'No dia marcado, o post entra na timeline dos portais.' },
       { title: 'Leitura onde a pessoa estiver', text: 'Colaboradores e gestores leem no celular ou no computador.' },
     ],
@@ -90,7 +95,7 @@ const page: ModulePage = {
   personas: [
     {
       role: 'RH e Comunicação Interna',
-      text: 'Publica uma vez e alcança toda a empresa. Agenda campanhas, comunicados e vídeos sem depender de TI nem de mural.',
+      text: 'Publica uma vez e alcança o grupo inteiro ou só uma unidade. Agenda campanhas, comunicados e vídeos sem depender de TI nem de mural.',
     },
     {
       role: 'Colaborador',
@@ -111,8 +116,8 @@ const page: ModulePage = {
       a: 'Sim. Você escreve o post, define a data e a hora, e ele entra na timeline automaticamente. Serve para campanhas, feriados e comunicados com data marcada.',
     },
     {
-      q: 'Onde o colaborador vê o blog?',
-      a: 'Nos portais internos do sistema, no celular ou no computador, com o mesmo login. Não é preciso instalar outra ferramenta nem lembrar outra senha.',
+      q: 'Consigo publicar um comunicado só para uma filial?',
+      a: 'Sim. O público de cada post é definido por empresa, filial ou perfil. Um aviso de mudança de horário vai só para a unidade afetada; um comunicado da diretoria vai para o grupo inteiro. Cada pessoa vê na timeline do portal, no celular ou no computador, só o que foi publicado para ela.',
     },
     {
       q: 'O blog substitui o e-mail?',

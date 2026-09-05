@@ -3,6 +3,8 @@ import type { SegmentPage } from './types'
 const page: SegmentPage = {
   slug: 'bens-industriais',
   name: 'Bens Industriais',
+  ctaContext: 'industrial',
+  journey: true,
   tagline: 'Turno de revezamento, adicional e NR: [[o chão de fábrica]] na mesma base da folha.',
   summary:
     'Fábricas com turnos de revezamento, várias unidades, sindicatos fortes e NRs pesadas. A Natcorp apura ponto, adicionais e banco de horas pela regra de cada acordo, liga PGR, GHE, EPIs, CAT e PPP à folha e ao eSocial e coloca o gestor de turno no celular, com o RH central enxergando cada planta.',
@@ -24,7 +26,7 @@ const page: SegmentPage = {
     { icon: 'clock', title: 'Turnos de revezamento e adicionais apurados na mão', text: 'Escala 6x2, 12x36 e terceiro turno na mesma planta, com adicional noturno, hora extra e DSR de regras diferentes. Apurado em planilha, o erro só aparece na folha ou na reclamação trabalhista.' },
     { icon: 'scale', title: 'Banco de horas e sindicato diferente em cada unidade', text: 'Metalúrgicos numa planta, químicos na outra, cada acordo coletivo com seu banco de horas, seu piso e seu adicional. A folha precisa aplicar a regra certa a cada CNPJ sem virar exceção manual.' },
     { icon: 'hard-hat', title: 'NRs pesadas, EPIs em massa e treinamento vencendo', text: 'NR-12 nas máquinas, NR-10, NR-33 e NR-35 nas atividades críticas. Centenas de EPIs entregues por mês e treinamentos com validade que vencem sem aviso. Sem controle, a fábrica opera fora da norma.' },
-    { icon: 'alert-triangle', title: 'CAT, exposição e o PPP da aposentadoria especial', text: 'O acidente exige CAT e S-2210 em 24 horas. O agente nocivo exige S-2240, LTCAT atualizado e PPP correto. Quando o histórico de exposição vive em papel, o PPP sai incompleto e o passivo cresce.' },
+    { icon: 'alert-triangle', title: 'CAT, exposição e o PPP da aposentadoria especial', text: 'O acidente exige CAT e S-2210 até o primeiro dia útil seguinte. O agente nocivo exige S-2240, LTCAT atualizado e PPP correto. Quando o histórico de exposição vive em papel, o PPP sai incompleto e o passivo cresce.' },
     { icon: 'users', title: 'Várias plantas, terceiros e gestor de turno sem mesa', text: 'O supervisor aprova troca de turno, abono e hora extra no chão de fábrica, sem computador. Terceiros entram pelo mesmo portão e precisam de cadastro, EPI e controle de acesso como qualquer um.' },
     { icon: 'bar-chart', title: 'Absenteísmo e hora extra que só aparecem no fechamento', text: 'Falta no terceiro turno vira hora extra de quem cobre. Atestado por CID se repete numa linha e ninguém cruza com o risco do GHE. Sem indicador por planta e turno, o custo só aparece na folha.' },
   ],
@@ -38,7 +40,7 @@ const page: SegmentPage = {
     {
       pain: 'Acordos e sindicatos',
       title: 'Uma folha para todas as plantas, com o banco de horas de cada acordo',
-      text: 'A folha trata múltiplos vínculos e acordos sindicais na mesma empresa, sem limite de CNPJs, com periculosidade parametrizada no cargo e os adicionais da convenção aplicados no cálculo. O banco de horas tem regra por sindicato, centro de custo ou colaborador, e o dissídio é simulado com o impacto real na folha antes de aprovar.',
+      text: 'A folha trata múltiplos vínculos e acordos sindicais de todas as plantas e CNPJs do grupo, com periculosidade parametrizada no cargo e os adicionais da convenção aplicados no cálculo. O banco de horas tem regra por sindicato, centro de custo ou colaborador, e o dissídio é simulado com o impacto real na folha antes de aprovar.',
       modules: ['folha-de-pagamento', 'ponto-eletronico', 'cargos-e-salarios', 'esocial'],
     },
     {
@@ -50,7 +52,7 @@ const page: SegmentPage = {
     {
       pain: 'CAT, LTCAT e PPP',
       title: 'Do risco no PGR ao PPP: CAT em 24 horas e exposição pronta para o eSocial',
-      text: 'O risco mapeado no PGR alimenta o GHE, o PCMSO, o LTCAT e o PPP. A CAT é aberta em poucos passos e o S-2210 sai em até 24 horas. O S-2240 nasce do PGR e o S-2220 do ASO, todos com validador antes do envio. O PPP é gerado na hora a partir do histórico de exposição, ou pedido por requisição.',
+      text: 'O risco mapeado no PGR alimenta o GHE, o PCMSO, o LTCAT e o PPP. A CAT é aberta em poucos passos e o S-2210 sai no prazo, até o primeiro dia útil seguinte ao acidente. O S-2240 nasce do PGR e o S-2220 do ASO, todos com validador antes do envio. O PPP é gerado na hora a partir do histórico de exposição, ou pedido por requisição.',
       modules: ['seguranca-do-trabalho', 'medicina-ocupacional', 'esocial', 'requisicoes-com-workflow'],
     },
     {
@@ -71,8 +73,8 @@ const page: SegmentPage = {
     'administracao-de-pessoal': 'Headcount e orçamento por planta, turno e centro de custo, com alerta quando a hora extra estoura o previsto.',
     'cargos-e-salarios': 'Periculosidade e cargo de confiança na ficha do cargo, pisos por sindicato e simulação do dissídio dos metalúrgicos.',
     'gestao-de-beneficios': 'Cesta básica com postos de entrega por planta, vale-transporte por unidade e plano de saúde com fatura conferida.',
-    natpay: 'Adiantamento pelo WhatsApp, com limite pelos dias trabalhados no ponto, para a equipe de turno não passar pelo DP.',
-    esocial: 'S-2210 em até 24 horas após a CAT, S-2240 nascido do PGR e S-2220 do ASO, com validador antes do envio.',
+    natpay: 'A equipe de turno pede o adiantamento sem sair da linha nem passar pelo DP; o valor cai por Pix e o desconto vai para a folha.',
+    esocial: 'S-2210 até o primeiro dia útil seguinte ao acidente, S-2240 nascido do PGR e S-2220 do ASO, com validador antes do envio.',
     'juridico-trabalhista': 'Espelhos de ponto, fichas de EPI e laudos formam a defesa em ações de hora extra, insalubridade e acidente.',
     'ponto-eletronico': 'Escalas 6x2, 12x36 e revezamento, adicional noturno, DSR e interjornada pela regra de cada sindicato, com AFD e AEJ.',
     natponto: 'Marcação pelo celular para manutenção e campo, com rosto e local, e marcações do relógio da planta na mesma base.',
@@ -95,7 +97,7 @@ const page: SegmentPage = {
     ged: 'Documentos de admissão, fichas de EPI assinadas e contratos guardados por pessoa, sem arquivo físico na planta.',
     'people-analytics': 'Horas extras, absenteísmo e atestados cruzados por planta, turno e GHE com o botão Ações, sem depender de TI.',
     'business-intelligence': 'Painéis de absenteísmo, horas extras e headcount por unidade, com alerta por e-mail quando o indicador sai da faixa.',
-    nati: 'Confere adicionais e horas extras antes do fechamento, aponta lacunas nas NRs e responde à equipe de turno pelo WhatsApp.',
+    nati: 'Aponta adicionais e horas extras fora da convenção de cada planta, lacunas nas NRs e responde à equipe do turno da noite pelo WhatsApp.',
     'conexao-com-outros-sistemas': 'Relógios de ponto, catracas e controle de acesso das plantas ligados ao ponto, e a folha contabilizada no ERP.',
     'infraestrutura-e-seguranca': 'Nuvem com contingência para todas as plantas, acesso por unidade e trilha de auditoria de cada alteração.',
   },
@@ -103,7 +105,7 @@ const page: SegmentPage = {
   compliance: [
     'NR-10, NR-12, NR-33 e NR-35 com checklists e treinamentos obrigatórios com validade',
     'PGR, GHE, PCMSO e LTCAT encadeados, com PPP para a aposentadoria especial',
-    'eSocial: S-2210 em até 24 horas, S-2220 e S-2240',
+    'eSocial: S-2210 até o primeiro dia útil seguinte ao acidente, S-2220 e S-2240',
     'NR-05 para a eleição da CIPA e NR-06 para EPIs com CA validado',
     'Acordos coletivos de metalúrgicos e químicos: banco de horas, adicionais e pisos',
     'Ponto eletrônico conforme a Portaria 671, com AFD e AEJ',

@@ -13,9 +13,7 @@ const page: ModulePage = {
       'Conecte o RH a ERPs, financeiro, operadoras de benefícios, relógios de ponto e login corporativo com APIs prontas, construtor de APIs, arquivos e webhooks.',
   },
   highlights: [
-    { value: 'minutos', label: 'para conectar com APIs prontas, em vez de meses' },
     { value: '4', label: 'caminhos de conexão: APIs, construtor, arquivos e eventos' },
-    { value: '0', label: 'digitação dupla: o dado entra uma vez e circula' },
   ],
   benefits: [
     {

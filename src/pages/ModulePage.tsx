@@ -1,7 +1,7 @@
 import { Suspense, lazy, useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router'
 import { m } from 'motion/react'
-import { ArrowRight, Check, Sparkles } from 'lucide-react'
+import { ArrowLeft, ArrowRight, CalendarCheck, Check, GraduationCap, Headset, LayoutGrid, Network, Route, ShieldCheck } from 'lucide-react'
 import { Section, SectionHeader, Eyebrow } from '@/components/sections/Section'
 import { CTASection } from '@/components/sections/CTASection'
 import { FaqAccordion } from '@/components/sections/FaqAccordion'
@@ -12,12 +12,14 @@ import { Parallax } from '@/components/motion/Parallax'
 import { Breadcrumb } from '@/components/seo/Breadcrumb'
 import { Logo, LogoOutline } from '@/components/brand/Logo'
 import { Button } from '@/components/ui/button'
-import { BenefitsGrid, FeaturesGrid, FlowSteps, PersonasGrid, PrevNext, RelatedModules } from '@/components/modules/blocks'
+import { BenefitsGrid, FeaturesGrid, FlowSteps, PersonasGrid, RelatedModules } from '@/components/modules/blocks'
 import { ResponsiveSection } from '@/components/sections/ResponsiveSection'
 import { useSeo } from '@/hooks/useSeo'
-import { getGroup, getModuleEntry, loadModulePage, moduleRegistry, type ModuleEntry } from '@/content/modulePages'
+import { getGroup, getModuleEntry, loadModulePage, modulePath, moduleRegistry, type ModuleEntry } from '@/content/modulePages'
 import { moduleIcons } from '@/content/modulePages/icons'
 import type { ModulePage as ModulePageData } from '@/content/modulePages/types'
+import type { FaqItem } from '@/content/faq'
+import { journeyPath, paths } from '@/content/site'
 import { cn } from '@/lib/utils'
 import { EASE } from '@/lib/motion'
 import NotFoundPage from './NotFoundPage'
@@ -90,10 +92,17 @@ export function moduleNeighbors(slug: string) {
   }
 }
 
+/* Colunas dos dados de prova do hero: funciona com 2, 3 ou 4 itens. */
+const highlightCols: Record<number, string> = {
+  2: 'grid-cols-2',
+  3: 'grid-cols-2 sm:grid-cols-3',
+  4: 'grid-cols-2 sm:grid-cols-4',
+}
+
 function ModuleContent({ entry, page }: { entry: ModuleEntry; page: ModulePageData }) {
   const group = getGroup(entry.group)
-  const { prev, next } = moduleNeighbors(entry.slug)
   const related = page.related.map(getModuleEntry).filter((r): r is ModuleEntry => Boolean(r))
+  const highlights = page.highlights.slice(0, 4)
 
   return (
     <PageTransition>
@@ -138,11 +147,13 @@ function ModuleContent({ entry, page }: { entry: ModuleEntry; page: ModulePageDa
                   <Link to="#funcionalidades">Ver funcionalidades</Link>
                 </Button>
               </Reveal>
-              {page.highlights.length > 0 && (
-                <Stagger className="mt-10 grid grid-cols-2 gap-x-6 gap-y-6 sm:grid-cols-3" delay={0.4}>
-                  {page.highlights.slice(0, 3).map((h) => (
+              {highlights.length > 0 && (
+                <Stagger className={cn('mt-10 grid gap-x-6 gap-y-6', highlightCols[Math.max(2, highlights.length)])} delay={0.4}>
+                  {highlights.map((h) => (
                     <StaggerItem key={h.label}>
-                      <p className="text-3xl font-extrabold tracking-brand text-brand-purple sm:text-4xl">{h.value}</p>
+                      <p className={cn('font-extrabold tracking-brand text-brand-purple', highlights.length === 4 ? 'text-2xl sm:text-3xl' : 'text-3xl sm:text-4xl')}>
+                        {h.value}
+                      </p>
                       <p className="mt-1 max-w-[14rem] text-sm leading-snug text-brand-graphite">{h.label}</p>
                     </StaggerItem>
                   ))}
@@ -159,7 +170,7 @@ function ModuleContent({ entry, page }: { entry: ModuleEntry; page: ModulePageDa
 
       <Section id="beneficios" tone="white" aria-labelledby="beneficios-title">
         <div className="container">
-          <SectionHeader id="beneficios-title" eyebrow="O que muda" title="O que muda para a [[sua empresa]]." />
+          <SectionHeader id="beneficios-title" eyebrow="O que muda" title={`O que muda com [[${page.name}]].`} />
           <BenefitsGrid items={page.benefits} />
         </div>
       </Section>
@@ -196,11 +207,11 @@ function ModuleContent({ entry, page }: { entry: ModuleEntry; page: ModulePageDa
                 <Eyebrow tone="white">Conformidade</Eyebrow>
               </Reveal>
               <Reveal delay={0.08}>
-                <h2 className="mt-4 text-3xl font-extrabold leading-tight sm:text-4xl">Feito para a regra brasileira.</h2>
+                <h2 className="mt-4 text-3xl font-extrabold leading-tight sm:text-4xl">O que {page.name} já atende.</h2>
               </Reveal>
               <Reveal delay={0.16}>
                 <p className="mt-4 max-w-md text-[17px] leading-relaxed text-white/75">
-                  Obrigações e normas que este módulo já atende, sem configuração extra.
+                  Obrigações e normas brasileiras cobertas por este módulo, sem configuração extra.
                 </p>
               </Reveal>
               <Stagger className="mt-7 flex flex-wrap gap-2" delay={0.2} stagger={0.05}>
@@ -221,12 +232,12 @@ function ModuleContent({ entry, page }: { entry: ModuleEntry; page: ModulePageDa
             </Reveal>
             <Reveal delay={0.08}>
               <h2 id="conexoes-title" className="mt-4 text-3xl font-extrabold leading-tight sm:text-4xl">
-                A mesma base de todos os outros módulos.
+                {page.name} na mesma base dos outros módulos.
               </h2>
             </Reveal>
             <Reveal delay={0.16}>
               <p className={cn('mt-4 text-[17px] leading-relaxed text-white/75', page.compliance?.length ? 'max-w-md' : 'mx-auto max-w-2xl')}>
-                Os dados de {page.name} alimentam e são alimentados por:
+                Sem importar nem sincronizar nada. Os dados de {page.name} alimentam e são alimentados por:
               </p>
             </Reveal>
             <RelatedModules items={related} />
@@ -237,7 +248,7 @@ function ModuleContent({ entry, page }: { entry: ModuleEntry; page: ModulePageDa
       {page.personas && page.personas.length > 0 && (
         <Section id="para-quem" tone="off" aria-labelledby="personas-title">
           <div className="container">
-            <SectionHeader id="personas-title" eyebrow="Para quem" title="Quem ganha com [[este módulo]]." />
+            <SectionHeader id="personas-title" eyebrow="Para quem" title={`Quem ganha com [[${page.name}]].`} />
             <PersonasGrid items={page.personas} />
           </div>
         </Section>
@@ -255,20 +266,169 @@ function ModuleContent({ entry, page }: { entry: ModuleEntry; page: ModulePageDa
             </Reveal>
           </div>
           <Reveal delay={0.15}>
-            <FaqAccordion items={page.faq} />
+            <ModuleFaqAccordion items={page.faq} />
           </Reveal>
         </div>
       </Section>
 
-      <nav aria-label="Outros módulos" className="border-t border-brand-mist bg-white">
-        <div className="container grid gap-3 py-8 sm:grid-cols-2">
-          <PrevNext entry={prev} direction="prev" />
-          <PrevNext entry={next} direction="next" />
-        </div>
-      </nav>
+      <ImplantationBlock tone="off" />
+      <SeeAlsoStrip tone="white" />
+      <ModuleNav slug={entry.slug} />
 
       <CTASection title={`Veja ${page.name} funcionando com os dados da sua empresa.`} />
     </PageTransition>
+  )
+}
+
+/* Pergunta que vale para todos os módulos: grupos com várias empresas e filiais. */
+const groupsFaq: FaqItem = {
+  q: 'Este módulo funciona para um grupo com várias empresas e filiais?',
+  a: 'Sim. Empresas, CNPJs e sindicatos são ilimitados na mesma base, e os perfis de acesso seguem a estrutura da organização: empresa, filial e centro de custo. Cada equipe vê e opera só o que é dela; a matriz consolida.',
+}
+
+/** Acordeão de perguntas de um módulo, com a pergunta sobre grupos no fim e o link para /grupos. */
+export function ModuleFaqAccordion({ items, className }: { items: FaqItem[]; className?: string }) {
+  return (
+    <div className={className}>
+      <FaqAccordion items={[...items, groupsFaq]} />
+      <p className="mt-5 text-[14.5px] leading-relaxed text-brand-graphite">
+        Tem várias empresas e filiais?{' '}
+        <Link to={paths.groups} className="group inline-flex items-center gap-1 font-semibold text-brand-purple">
+          Veja tudo o que muda para grupos
+          <ArrowRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-0.5" aria-hidden />
+        </Link>
+      </p>
+    </div>
+  )
+}
+
+const implantation = [
+  { icon: CalendarCheck, text: 'Planejamento por empresa e filial, migração do histórico sem limite de anos e homologação com a folha atual em paralelo.' },
+  { icon: GraduationCap, text: 'Treinamento das equipes da matriz e das filiais antes de entrar em produção.' },
+  { icon: Headset, text: 'Suporte por chamados com prazo, histórico e um time que conhece a sua operação.' },
+]
+
+/** Implantação e suporte: o mesmo bloco em todas as páginas de módulo. */
+export function ImplantationBlock({ id = 'implantacao', tone = 'off' }: { id?: string; tone?: 'white' | 'off' }) {
+  return (
+    <Section id={id} tone={tone} aria-labelledby={`${id}-title`}>
+      <div className="container grid gap-10 lg:grid-cols-[1fr_1.5fr] lg:items-start lg:gap-16">
+        <div>
+          <SectionHeader id={`${id}-title`} eyebrow="Implantação e suporte" title="Implantação planejada. [[Suporte que responde]]." />
+          <Reveal delay={0.25} className="mt-8 flex flex-col gap-3">
+            <Link to={`${paths.about}#servicos`} className="group inline-flex items-center gap-2 text-[15px] font-semibold text-brand-purple">
+              Ver implantação, suporte e serviços
+              <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5" aria-hidden />
+            </Link>
+            <Link to={paths.commercial} className="group inline-flex items-center gap-2 text-[15px] font-semibold text-brand-purple">
+              Ver o modelo comercial
+              <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5" aria-hidden />
+            </Link>
+          </Reveal>
+        </div>
+        <Stagger className="grid gap-3" delay={0.15}>
+          {implantation.map(({ icon: Icon, text }) => (
+            <StaggerItem
+              key={text}
+              className={cn('flex items-start gap-4 rounded-2xl border border-brand-mist p-5', tone === 'off' ? 'bg-white shadow-soft' : 'bg-brand-off-white/60')}
+            >
+              <span className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-brand-off-white text-brand-purple">
+                <Icon className="h-5 w-5" strokeWidth={1.7} aria-hidden />
+              </span>
+              <p className="text-[15.5px] leading-relaxed text-brand-ink">{text}</p>
+            </StaggerItem>
+          ))}
+        </Stagger>
+      </div>
+    </Section>
+  )
+}
+
+const seeAlso = [
+  { icon: LayoutGrid, to: paths.portals, title: 'Portais e autoatendimento', text: 'Gestor, colaborador e candidato resolvem sozinhos, no celular.' },
+  { icon: ShieldCheck, to: paths.security, title: 'Segurança e infraestrutura', text: 'Nuvem Oracle, contingência, backups e LGPD.' },
+  { icon: Route, to: journeyPath, title: 'Jornada do colaborador', text: 'As 24 etapas, da vaga à promoção, no mesmo sistema.' },
+  { icon: Network, to: paths.groups, title: 'Grupos com várias empresas e filiais', text: 'Multiempresa, perfis por filial e fechamento na matriz.' },
+]
+
+/** Faixa "Veja também": as quatro páginas que complementam qualquer módulo. */
+export function SeeAlsoStrip({ tone = 'white' }: { tone?: 'white' | 'off' }) {
+  return (
+    <Section tone={tone} flush className="py-12 sm:py-14 lg:py-16" aria-label="Veja também">
+      <div className="container">
+        <Reveal y={12} duration={0.5}>
+          <Eyebrow>Veja também</Eyebrow>
+        </Reveal>
+        <Stagger className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4" stagger={0.06}>
+          {seeAlso.map(({ icon: Icon, to, title, text }) => (
+            <StaggerItem key={to}>
+              <Link
+                to={to}
+                className={cn(
+                  'group flex h-full items-start gap-3 rounded-2xl border border-brand-mist p-4 transition-[border-color,background-color,transform,box-shadow] duration-300 ease-brand hover:-translate-y-0.5 hover:border-brand-purple/30 hover:shadow-soft',
+                  tone === 'white' ? 'bg-brand-off-white/40 hover:bg-white' : 'bg-white',
+                )}
+              >
+                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-white text-brand-purple shadow-soft transition-colors duration-300 group-hover:bg-brand-purple group-hover:text-white">
+                  <Icon className="h-4.5 w-4.5" strokeWidth={1.7} aria-hidden />
+                </span>
+                <span className="min-w-0 flex-1">
+                  <span className="flex items-center gap-1.5 text-[14.5px] font-bold leading-snug text-brand-ink">
+                    {title}
+                    <ArrowRight className="h-3.5 w-3.5 shrink-0 text-brand-purple opacity-0 transition-[opacity,transform] duration-300 group-hover:translate-x-0.5 group-hover:opacity-100" aria-hidden />
+                  </span>
+                  <span className="mt-0.5 block text-[13px] leading-snug text-brand-graphite">{text}</span>
+                </span>
+              </Link>
+            </StaggerItem>
+          ))}
+        </Stagger>
+      </div>
+    </Section>
+  )
+}
+
+/** Módulo anterior e próximo. Quando o vizinho é de outra frente, o nome dela aparece no cartão. */
+export function ModuleNav({ slug }: { slug: string }) {
+  const current = getModuleEntry(slug)
+  const { prev, next } = moduleNeighbors(slug)
+  return (
+    <nav aria-label="Outros módulos" className="border-t border-brand-mist bg-white">
+      <div className="container grid gap-3 py-8 sm:grid-cols-2">
+        <NeighborCard entry={prev} direction="prev" currentGroup={current?.group} />
+        <NeighborCard entry={next} direction="next" currentGroup={current?.group} />
+      </div>
+    </nav>
+  )
+}
+
+function NeighborCard({ entry, direction, currentGroup }: { entry: ModuleEntry; direction: 'prev' | 'next'; currentGroup?: ModuleEntry['group'] }) {
+  const Icon = moduleIcons[entry.icon]
+  const isNext = direction === 'next'
+  const crossGroup = currentGroup !== undefined && entry.group !== currentGroup
+  return (
+    <Link
+      to={modulePath(entry.slug)}
+      className={cn(
+        'group flex items-center gap-4 rounded-2xl border border-brand-mist p-4 transition-[border-color,background-color] duration-300 hover:border-brand-purple/30 hover:bg-brand-off-white',
+        isNext && 'sm:flex-row-reverse sm:text-right',
+      )}
+    >
+      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-brand-off-white text-brand-purple transition-colors group-hover:bg-white">
+        {isNext ? <ArrowRight className="h-5 w-5" aria-hidden /> : <ArrowLeft className="h-5 w-5" aria-hidden />}
+      </span>
+      <span className="min-w-0 flex-1">
+        <span className="block text-[11px] font-semibold uppercase tracking-[0.14em] text-brand-graphite">
+          {isNext ? 'Próximo módulo' : 'Módulo anterior'}
+          {crossGroup && <span className="text-brand-purple"> · {getGroup(entry.group).name}</span>}
+        </span>
+        <span className={cn('mt-0.5 flex items-center gap-2 font-bold text-brand-ink', isNext && 'sm:justify-end')}>
+          <Icon className="h-4 w-4 text-brand-purple" strokeWidth={1.6} aria-hidden />
+          {entry.name}
+        </span>
+        <span className="mt-0.5 block text-[13px] leading-snug text-brand-graphite">{entry.short}</span>
+      </span>
+    </Link>
   )
 }
 
@@ -328,7 +488,7 @@ function HeroCard({ entry, page, groupName }: { entry: ModuleEntry; page: Module
             ))}
           </m.ul>
 
-          {hl.length > 0 ? (
+          {hl.length > 0 && (
             <div className={cn('mt-4 grid gap-2', hl.length > 1 ? 'grid-cols-2' : 'grid-cols-1')}>
               {hl.map((h) => (
                 <div key={h.label} className="rounded-lg bg-brand-off-white/70 p-3">
@@ -336,11 +496,6 @@ function HeroCard({ entry, page, groupName }: { entry: ModuleEntry; page: Module
                   <p className="mt-0.5 text-[11px] leading-snug text-brand-graphite">{h.label}</p>
                 </div>
               ))}
-            </div>
-          ) : (
-            <div className="mt-4 flex items-start gap-2 rounded-lg border border-brand-purple/20 bg-brand-off-white/70 p-3 text-[12px] leading-snug text-brand-graphite">
-              <Sparkles className="mt-0.5 h-3.5 w-3.5 shrink-0 text-brand-purple" strokeWidth={1.8} />
-              A NATI acompanha este módulo com análise, diagnóstico, pontos de atenção e sugestão.
             </div>
           )}
         </div>

@@ -1,8 +1,9 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { Link, useSearchParams } from 'react-router'
-import { ArrowDown, ArrowRight, BookOpen, Check, Clock, GitBranch } from 'lucide-react'
+import { ArrowDown, ArrowRight, BookOpen, Building2, Check, Clock, GitBranch, LayoutGrid } from 'lucide-react'
 import { Section, Eyebrow, SectionHeader } from '@/components/sections/Section'
 import { CTASection } from '@/components/sections/CTASection'
+import { StructureSection } from '@/components/sections/StructureSection'
 import { PageTransition } from '@/components/motion/PageTransition'
 import { SplitText } from '@/components/motion/SplitText'
 import { Reveal, Stagger, StaggerItem } from '@/components/motion/Reveal'
@@ -12,12 +13,14 @@ import { LogoOutline } from '@/components/brand/Logo'
 import { Button } from '@/components/ui/button'
 import { useSeo } from '@/hooks/useSeo'
 import { cn } from '@/lib/utils'
+import { paths } from '@/content/site'
 import { getModuleEntry, groups, modulePath, moduleRegistry } from '@/content/modulePages'
 import { moduleIcons } from '@/content/modulePages/icons'
 import { actorMeta, castMember, company, EFFECTIVATION_AFTER, journeyModuleSlugs, journeyPath, outcomes, phases, steps, type JourneyStep } from '@/content/hiringJourney'
 import { hasFigure, scenes, sceneCaptions } from '@/content/journeyArt'
 import { EFFECTIVATION_ID, JourneyBar, JourneyMap, useMapRows } from '@/components/journey/JourneyMap'
 import { EffectivationHub } from '@/components/journey/EffectivationHub'
+import { VolumeAside } from '@/components/journey/VolumeAside'
 import { StepVisual } from '@/components/journey/visuals'
 import { CastAvatar, CastFigure, CastList } from '@/components/journey/Cast'
 import { JourneyDiagram } from '@/components/journey/JourneyDiagram'
@@ -222,6 +225,14 @@ export default function HiringJourneyPage() {
 
       {mode === 'historia' ? <StorySection go={go} mode={mode} onModeChange={setMode} /> : <PracticalSection onOpenStory={openStory} mode={mode} onModeChange={setMode} />}
 
+      <StructureSection
+        tone="off"
+        eyebrow="Para a sua estrutura"
+        title="A mesma jornada [[para o grupo inteiro]], com RH central ou em cada filial."
+        lead="A Vale Verde tem um RH central. Se o seu grupo tem RH em cada filial, o que muda é o perfil de quem lança e a alçada de quem aprova. As 24 etapas são as mesmas, e a matriz fecha a folha por empresa."
+        more
+      />
+
       {/* Fechamento: os módulos se integrando */}
       <Section id="integracao" tone="dark" className="overflow-hidden scroll-mt-20" aria-labelledby="jornada-fim-title">
         <LogoOutline className="pointer-events-none absolute -left-[10%] -top-[40%] h-[150%] w-auto text-white/[0.06]" />
@@ -280,7 +291,42 @@ export default function HiringJourneyPage() {
             </div>
           </Reveal>
 
-          <Reveal delay={0.2} className="mt-12 flex flex-wrap gap-3">
+          <Stagger className="mt-12 grid gap-4 sm:grid-cols-2" stagger={0.1} aria-label="Continue por aqui">
+            {[
+              {
+                to: paths.segments,
+                icon: LayoutGrid,
+                title: 'Ver o seu segmento',
+                text: 'Nove mercados, da indústria ao setor público: as dores de cada um e os módulos que respondem a elas.',
+              },
+              {
+                to: paths.groups,
+                icon: Building2,
+                title: 'Grupos com várias empresas e filiais',
+                text: 'Perfis por filial, alçadas por unidade e a folha fechando na matriz, por empresa e por CNPJ.',
+              },
+            ].map((c) => (
+              <StaggerItem key={c.to}>
+                <Link
+                  to={c.to}
+                  className="group flex h-full items-start gap-4 rounded-2xl border border-white/15 bg-white/[0.06] p-5 transition-colors duration-300 hover:border-white/40 hover:bg-white/10"
+                >
+                  <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/10 text-[#E4A9C4]">
+                    <c.icon className="h-5 w-5" strokeWidth={1.7} aria-hidden />
+                  </span>
+                  <span className="min-w-0">
+                    <span className="flex items-center gap-1.5 text-[16px] font-extrabold">
+                      {c.title}
+                      <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5" aria-hidden />
+                    </span>
+                    <span className="mt-1 block text-[13.5px] leading-snug text-white/75">{c.text}</span>
+                  </span>
+                </Link>
+              </StaggerItem>
+            ))}
+          </Stagger>
+
+          <Reveal delay={0.2} className="mt-8 flex flex-wrap gap-3">
             <Button asChild size="lg" variant="inverse">
               <Link to="#contato">
                 Ver essa jornada com os seus dados
@@ -288,7 +334,7 @@ export default function HiringJourneyPage() {
               </Link>
             </Button>
             <Button asChild size="lg" variant="outline-inverse">
-              <Link to="/modulos">Conhecer todos os módulos</Link>
+              <Link to={paths.modules}>Conhecer todos os módulos</Link>
             </Button>
           </Reveal>
         </div>
@@ -432,6 +478,7 @@ function StorySection({ go, mode, onModeChange }: { go: (id: string) => void; mo
                       {s.n === EFFECTIVATION_AFTER && (
                         <div className="py-10">
                           <EffectivationHub id={EFFECTIVATION_ID} />
+                          <VolumeAside className="mt-6" />
                         </div>
                       )}
                     </div>

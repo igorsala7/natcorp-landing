@@ -10,40 +10,39 @@ const page: ModulePage = {
   seo: {
     title: 'Segurança do Trabalho: PGR, EPIs, CAT e PPP | Natcorp',
     description:
-      'Segurança do trabalho integrada ao RH: PGR/GRO, EPIs com CA validado, CAT com S-2210 em até 24 h, LTCAT, PPP eletrônico, CIPA digital e checklists de NRs.',
+      'Segurança do trabalho integrada ao RH: PGR/GRO, EPIs com CA validado, CAT com S-2210 no prazo legal, LTCAT, PPP eletrônico, CIPA digital e checklists de NRs.',
   },
   highlights: [
-    { value: '24 h', label: 'para o S-2210 ser enviado após a abertura da CAT' },
+    { value: '1 dia útil', label: 'prazo do S-2210 após o acidente, com envio automático' },
     { value: '100%', label: 'digital: ficha de EPI, eleição da CIPA e checklists de NR' },
-    { value: 'CA', label: 'validado automaticamente na base do Governo Federal' },
   ],
   benefits: [
     {
       title: 'Passivo trabalhista sob controle',
-      text: 'Ficha de EPI assinada, checklists de NR, laudos versionados e histórico completo. Na ação trabalhista, a defesa sai da fonte, sem contradição.',
+      text: 'Ficha de EPI (equipamento de proteção individual) assinada, checklists de NR, laudos versionados e histórico completo. Na ação trabalhista, a defesa sai da fonte, sem contradição.',
     },
     {
       title: 'Prazo legal cumprido sem correria',
-      text: 'A CAT é aberta em poucos passos e o S-2210 sai em até 24 horas. O S-2240 nasce do PGR. Um validador confere tudo antes de enviar ao eSocial.',
+      text: 'A CAT (Comunicação de Acidente de Trabalho) é aberta em poucos passos e o S-2210 sai até o primeiro dia útil seguinte ao acidente. O S-2240 nasce do PGR (Programa de Gerenciamento de Riscos). Um validador confere tudo antes de enviar ao eSocial.',
     },
     {
       title: 'Um dado, vários documentos',
-      text: 'O risco mapeado no PGR alimenta o GHE, o PCMSO, o LTCAT e o PPP. Mudou a exposição, os documentos acompanham, sem redigitar.',
+      text: 'O risco mapeado no PGR alimenta o GHE (Grupo Homogêneo de Exposição), o PCMSO (Programa de Controle Médico de Saúde Ocupacional), o LTCAT (Laudo Técnico das Condições Ambientais do Trabalho) e o PPP (Perfil Profissiográfico Previdenciário). Mudou a exposição, os documentos acompanham, sem redigitar.',
     },
     {
       title: 'Prevenção que a NATI acompanha',
-      text: 'A NATI analisa o PGR e o uso de EPIs, aponta lacunas nas NRs e avisa vencimentos de treinamentos e ASOs antes que virem problema.',
+      text: 'A NATI analisa o PGR e o uso de EPIs, aponta lacunas nas NRs e avisa vencimentos de treinamentos e ASOs (Atestados de Saúde Ocupacional) antes que virem problema.',
     },
   ],
   features: [
     {
       title: 'PGR e GRO',
-      text: 'Mapeamento de perigos e agentes, matriz de severidade e probabilidade e plano de ação 5W2H dinâmico, focado na mitigação contínua.',
+      text: 'Programa de Gerenciamento de Riscos e Gerenciamento de Riscos Ocupacionais: mapeamento de perigos e agentes, matriz de severidade e probabilidade e plano de ação 5W2H dinâmico, focado na mitigação contínua.',
       icon: 'alert-triangle',
     },
     {
       title: 'EPIs com validação de CA',
-      text: 'Controle de estoque, entrega, substituição e devolução, com consulta automática do CA na base do Governo Federal e alerta de validade.',
+      text: 'Controle de estoque, entrega, substituição e devolução, com consulta automática do CA (Certificado de Aprovação) na base do Governo Federal e alerta de validade.',
       icon: 'hard-hat',
     },
     {
@@ -52,8 +51,8 @@ const page: ModulePage = {
       icon: 'file-signature',
     },
     {
-      title: 'CAT e S-2210 em até 24 horas',
-      text: 'Abertura simplificada de CAT para acidentes com ou sem afastamento, de trajeto e doenças, com disparo automático do S-2210 dentro do prazo legal.',
+      title: 'CAT e S-2210 no prazo legal',
+      text: 'Abertura simplificada de CAT para acidentes com ou sem afastamento, de trajeto e doenças, com disparo automático do S-2210 até o primeiro dia útil seguinte ao acidente.',
       icon: 'zap',
     },
     {
@@ -82,8 +81,8 @@ const page: ModulePage = {
       icon: 'message-square',
     },
     {
-      title: 'Em campo, no tablet ou no celular',
-      text: 'As mesmas funções do escritório na inspeção de campo. Entrega de EPI, checklist e registro de incidente feitos na hora.',
+      title: 'Inspeção em campo',
+      text: 'As mesmas funções do escritório na inspeção de campo, no tablet ou no celular. Entrega de EPI, checklist e registro de incidente feitos na hora.',
       icon: 'smartphone',
     },
   ],
@@ -94,11 +93,11 @@ const page: ModulePage = {
       { title: 'GHE e exposição', text: 'Colaboradores agrupados por exposição semelhante. LTCAT e PPP atualizados a partir daí.' },
       { title: 'Proteção entregue', text: 'EPIs com CA validado entregues e assinados digitalmente. Checklists de NR executados.' },
       { title: 'Ocorrência tratada', text: 'Acidente ou incidente registrado, CAT aberta e ações corretivas no plano.' },
-      { title: 'Validação e envio', text: 'S-2210 e S-2240 passam pelo validador de divergências e seguem ao eSocial, o S-2210 em até 24 horas.' },
+      { title: 'Validação e envio', text: 'S-2210 e S-2240 passam pelo validador de divergências e seguem ao eSocial, o S-2210 até o primeiro dia útil seguinte ao acidente.' },
     ],
   },
   compliance: [
-    'eSocial S-2210 (CAT) em até 24 horas',
+    'eSocial S-2210 (CAT) até o primeiro dia útil seguinte ao acidente',
     'eSocial S-2240 (agentes nocivos)',
     'PGR / GRO',
     'NR-05 (CIPA)',
@@ -118,7 +117,7 @@ const page: ModulePage = {
     },
     {
       q: 'Como funciona a CAT e o envio do S-2210?',
-      a: 'A CAT é aberta em poucos passos, para acidentes com ou sem afastamento, de trajeto e doenças ocupacionais. O evento S-2210 é disparado automaticamente em até 24 horas, cumprindo o prazo legal, depois de passar por um validador de divergências.',
+      a: 'A CAT é aberta em poucos passos, para acidentes com ou sem afastamento, de trajeto e doenças ocupacionais. O evento S-2210 é disparado automaticamente até o primeiro dia útil seguinte ao acidente, cumprindo o prazo legal, depois de passar por um validador de divergências.',
     },
     {
       q: 'A eleição da CIPA pode ser feita pelo sistema?',

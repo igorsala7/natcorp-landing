@@ -1,9 +1,8 @@
 import { Link } from 'react-router'
 import { m } from 'motion/react'
-import { ArrowRight, Check, Smartphone, Tablet, Users } from 'lucide-react'
+import { ArrowRight, Check, ClipboardCheck, MapPin, MapPinOff, Smartphone, Tablet, Users } from 'lucide-react'
 import { Section, SectionHeader, Eyebrow } from '@/components/sections/Section'
 import { CTASection } from '@/components/sections/CTASection'
-import { FaqAccordion } from '@/components/sections/FaqAccordion'
 import { PageTransition } from '@/components/motion/PageTransition'
 import { SplitText } from '@/components/motion/SplitText'
 import { Reveal, Stagger, StaggerItem } from '@/components/motion/Reveal'
@@ -12,19 +11,20 @@ import { Breadcrumb } from '@/components/seo/Breadcrumb'
 import { LogoOutline } from '@/components/brand/Logo'
 import { NatPontoIcon } from '@/components/brand/NatPontoIcon'
 import { Button } from '@/components/ui/button'
-import { BenefitsGrid, FeaturesGrid, PersonasGrid, PrevNext, RelatedModules } from '@/components/modules/blocks'
+import { BenefitsGrid, FeaturesGrid, PersonasGrid, RelatedModules } from '@/components/modules/blocks'
 import { NATPONTO_SIZE } from '@/components/mockups/natponto/NatPontoFrame'
 import { NatPontoPhone, type NatPontoScreen } from '@/components/mockups/natponto/screens'
-import { getGroup, getModuleEntry, type ModuleEntry } from '@/content/modulePages'
+import { getGroup, getModuleEntry, modulePath, type ModuleEntry } from '@/content/modulePages'
 import type { ModulePage as ModulePageData } from '@/content/modulePages/types'
+import { paths } from '@/content/site'
 import { EASE, viewportOnce } from '@/lib/motion'
-import { moduleNeighbors } from './ModulePage'
+import { ImplantationBlock, ModuleFaqAccordion, ModuleNav, SeeAlsoStrip } from './ModulePage'
 
 const journey: { screen: NatPontoScreen; title: string; text: string }[] = [
   { screen: 'home', title: 'Abrir o app', text: 'Relógio, dados da pessoa, escala do dia e o botão Registrar Ponto. Um toque para começar.' },
   { screen: 'face', title: 'Reconhecimento facial', text: 'O colaborador posiciona o rosto na moldura e aguarda a contagem. Sem cartão, sem senha.' },
   { screen: 'success', title: 'Marcação registrada', text: 'Com ou sem internet. Sem sinal, a marcação fica guardada e é sincronizada depois.' },
-  { screen: 'receipt', title: 'Comprovante', text: 'Código QR de verificação, hash SHA-256, registro no INPI e a geolocalização dentro do raio.' },
+  { screen: 'receipt', title: 'Comprovante', text: 'Código QR de verificação, hash SHA-256, registro de programa de computador no INPI e a geolocalização dentro do raio.' },
 ]
 
 const modes = [
@@ -33,9 +33,30 @@ const modes = [
   { icon: Users, title: 'Para quem opera o ponto', text: 'A marcação chega em segundos ao Ponto Eletrônico, com a apuração aplicando as regras da jornada.' },
 ]
 
+/* Como o app se comporta em um grupo com muitas unidades. */
+const units = [
+  {
+    icon: MapPin,
+    title: 'Um raio por unidade, uma pessoa em várias',
+    text: 'Cada filial tem o seu perímetro de marcação. Quem transita entre unidades marca em qualquer uma delas, e o comprovante registra onde foi.',
+    link: { to: paths.groups, label: 'Perfis e unidades para grupos' },
+  },
+  {
+    icon: MapPinOff,
+    title: 'Fora do raio, a marcação entra sinalizada',
+    text: 'O registro não se perde: entra no Ponto Eletrônico com a marca de fora do raio e vai para o gestor justificar pelo portal.',
+    link: { to: modulePath('portais'), label: 'Portal do Gestor' },
+  },
+  {
+    icon: ClipboardCheck,
+    title: 'Ajuste, abono e hora extra passam pela alçada da filial',
+    text: 'Cada unidade aprova o que é dela, no fluxo de requisições. O RH central vê a fila por unidade e fecha o ponto de todas.',
+    link: { to: modulePath('requisicoes-com-workflow'), label: 'Requisições com Workflow' },
+  },
+]
+
 export default function NatPontoModulePage({ entry, page }: { entry: ModuleEntry; page: ModulePageData }) {
   const group = getGroup(entry.group)
-  const { prev, next } = moduleNeighbors(entry.slug)
   const related = page.related.map(getModuleEntry).filter((r): r is ModuleEntry => Boolean(r))
 
   return (
@@ -75,7 +96,7 @@ export default function NatPontoModulePage({ entry, page }: { entry: ModuleEntry
                   <Link to="#jornada">Ver o app tela a tela</Link>
                 </Button>
               </Reveal>
-              <Stagger className="mt-10 grid grid-cols-3 gap-x-6 gap-y-6" delay={0.4}>
+              <Stagger className="mt-10 grid grid-cols-2 gap-x-6 gap-y-6 sm:grid-cols-3" delay={0.4}>
                 {page.highlights.map((h) => (
                   <StaggerItem key={h.label}>
                     <p className="text-2xl font-extrabold tracking-brand text-brand-purple sm:text-3xl">{h.value}</p>
@@ -97,7 +118,7 @@ export default function NatPontoModulePage({ entry, page }: { entry: ModuleEntry
 
       <Section id="beneficios" tone="white" aria-labelledby="beneficios-title">
         <div className="container">
-          <SectionHeader id="beneficios-title" eyebrow="O que muda" title="O que muda para a [[sua empresa]]." />
+          <SectionHeader id="beneficios-title" eyebrow="O que muda" title="O que muda com [[o NatPonto]]." />
           <BenefitsGrid items={page.benefits} />
         </div>
       </Section>
@@ -152,7 +173,34 @@ export default function NatPontoModulePage({ entry, page }: { entry: ModuleEntry
         </div>
       </Section>
 
-      <Section id="funcionalidades" tone="off" aria-labelledby="funcionalidades-title">
+      <Section id="unidades" tone="off" className="overflow-hidden" aria-labelledby="unidades-title">
+        <LogoOutline className="pointer-events-none absolute -left-[14%] -bottom-[40%] h-[120%] w-auto text-brand-purple/[0.08]" />
+        <div className="container relative">
+          <SectionHeader
+            id="unidades-title"
+            eyebrow="Em 25 unidades"
+            title="Um app para [[todas as filiais]]. Cada uma com o seu raio."
+            lead="Fábrica, loja, clínica ou obra: o NatPonto segue a estrutura da empresa. O raio é por unidade, a alçada é da filial e o fechamento é da matriz."
+          />
+          <Stagger className="mt-12 grid gap-4 md:grid-cols-3" stagger={0.1}>
+            {units.map(({ icon: Icon, title, text, link }) => (
+              <StaggerItem key={title} className="flex h-full flex-col rounded-2xl border border-brand-mist bg-white p-6 shadow-soft">
+                <span className="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-brand-off-white text-brand-purple">
+                  <Icon className="h-5 w-5" strokeWidth={1.6} aria-hidden />
+                </span>
+                <h3 className="mt-4 text-lg font-bold leading-snug text-brand-ink">{title}</h3>
+                <p className="mt-2 flex-1 text-[15px] leading-relaxed text-brand-graphite">{text}</p>
+                <Link to={link.to} className="group mt-5 inline-flex items-center gap-1.5 text-[14px] font-semibold text-brand-purple">
+                  {link.label}
+                  <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5" aria-hidden />
+                </Link>
+              </StaggerItem>
+            ))}
+          </Stagger>
+        </div>
+      </Section>
+
+      <Section id="funcionalidades" tone="white" aria-labelledby="funcionalidades-title">
         <div className="container">
           <SectionHeader id="funcionalidades-title" eyebrow="Funcionalidades" title="O que o NatPonto [[faz]]." lead="Funcionalidades que existem hoje no aplicativo, descritas na linguagem de quem usa." />
           <FeaturesGrid items={page.features} />
@@ -170,7 +218,7 @@ export default function NatPontoModulePage({ entry, page }: { entry: ModuleEntry
               <h2 className="mt-4 text-3xl font-extrabold leading-tight sm:text-4xl">Cada marcação com prova.</h2>
             </Reveal>
             <Stagger className="mt-6 space-y-3" delay={0.2}>
-              {['Comprovante com código QR de verificação', 'Hash SHA-256 de cada marcação', 'Registro no INPI', 'Geolocalização com raio permitido por unidade', ...(page.compliance ?? [])].map((c) => (
+              {[...(page.compliance ?? []), 'Geolocalização com o raio permitido de cada unidade'].map((c) => (
                 <StaggerItem key={c} className="flex items-start gap-3 text-[15px] text-white/85">
                   <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-white/10 text-[#E4A9C4]">
                     <Check className="h-3 w-3" strokeWidth={3} />
@@ -215,17 +263,14 @@ export default function NatPontoModulePage({ entry, page }: { entry: ModuleEntry
             </Reveal>
           </div>
           <Reveal delay={0.15}>
-            <FaqAccordion items={page.faq} />
+            <ModuleFaqAccordion items={page.faq} />
           </Reveal>
         </div>
       </Section>
 
-      <nav aria-label="Outros módulos" className="border-t border-brand-mist bg-white">
-        <div className="container grid gap-3 py-8 sm:grid-cols-2">
-          <PrevNext entry={prev} direction="prev" />
-          <PrevNext entry={next} direction="next" />
-        </div>
-      </nav>
+      <ImplantationBlock tone="off" />
+      <SeeAlsoStrip tone="white" />
+      <ModuleNav slug={entry.slug} />
 
       <CTASection title="Veja o NatPonto funcionando com a jornada da sua equipe." />
     </PageTransition>

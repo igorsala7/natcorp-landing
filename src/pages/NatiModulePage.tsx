@@ -6,11 +6,15 @@ import {
   Bookmark,
   Brain,
   Briefcase,
+  Building,
   Building2,
   Check,
   ChevronRight,
+  Cloud,
+  ClipboardList,
   Database,
   Download,
+  HeartPulse,
   History,
   Lightbulb,
   MessageSquare,
@@ -20,6 +24,7 @@ import {
   Plug,
   ScanSearch,
   ShieldCheck,
+  ShieldEllipsis,
   Sparkles,
   Stethoscope,
   ThumbsUp,
@@ -30,7 +35,6 @@ import {
 } from 'lucide-react'
 import { Section, SectionHeader, Eyebrow } from '@/components/sections/Section'
 import { CTASection } from '@/components/sections/CTASection'
-import { FaqAccordion } from '@/components/sections/FaqAccordion'
 import { PageTransition } from '@/components/motion/PageTransition'
 import { SplitText } from '@/components/motion/SplitText'
 import { TypedText } from '@/components/motion/TypedText'
@@ -49,7 +53,7 @@ import { NetworkField } from '@/components/nati/NetworkField'
 import { FrontsMatrix } from '@/components/nati/FrontsMatrix'
 import { NatiStats } from '@/components/nati/NatiStats'
 import { NatiPipeline } from '@/components/nati/NatiPipeline'
-import { BenefitsGrid, FeaturesGrid, FlowSteps, PersonasGrid, PrevNext, RelatedModules } from '@/components/modules/blocks'
+import { BenefitsGrid, FeaturesGrid, PersonasGrid, RelatedModules } from '@/components/modules/blocks'
 import { Conversation, NatiAnswerFooter, NatiBubble, NatiChatWindow, UserBubble } from '@/components/mockups/nati/NatiChatWindow'
 import { NatiChartCard } from '@/components/mockups/nati/NatiChartCard'
 import { NatiTable, type LedgerRow } from '@/components/mockups/nati/NatiTable'
@@ -57,10 +61,11 @@ import { WhatsAppMockup } from '@/components/mockups/nati/WhatsAppMockup'
 import { OperatorPanel, PANEL_SIZE } from '@/components/mockups/nati/OperatorPanel'
 import { capabilities } from '@/content/nati'
 import { getGroup, getModuleEntry, type ModuleEntry } from '@/content/modulePages'
+import { paths } from '@/content/site'
 import type { ModulePage as ModulePageData } from '@/content/modulePages/types'
 import { cn } from '@/lib/utils'
 import { EASE, fadeUp, staggerContainer, viewportOnce } from '@/lib/motion'
-import { moduleNeighbors } from './ModulePage'
+import { ImplantationBlock, ModuleFaqAccordion, ModuleNav, SeeAlsoStrip } from './ModulePage'
 
 /* Dados de exemplo (colaboradora fictícia), no formato em que a NATI responde. */
 const salaryHistory = {
@@ -119,6 +124,15 @@ const guardrails = [
   { icon: MessageSquare, title: 'Transparente sobre limites.', text: 'Toda conversa lembra que ela é uma IA, que pode cometer enganos e que as informações devem ser validadas.' },
 ]
 
+/* Governança de dados: o que a empresa pode exigir e o que a proposta confirma por escrito. */
+const governance = [
+  { icon: Cloud, text: 'A NATI roda na nuvem Oracle da Natcorp, a mesma infraestrutura do sistema de RH, com produção, homologação e contingência.' },
+  { icon: Database, text: 'Os dados da empresa ficam na base da empresa, com trilha de auditoria de cada consulta.' },
+  { icon: ShieldEllipsis, text: 'No sistema, no WhatsApp e no Teams, cada pessoa vê só o que o perfil dela permite. Dados pessoais só vão para a própria pessoa.' },
+  { icon: ClipboardList, text: 'O histórico das conversas pertence à empresa, com retenção conforme a política definida pelo RH.' },
+  { icon: HeartPulse, text: 'As análises de saúde seguem o sigilo do PCMSO: indicadores e vencimentos por setor, não o diagnóstico de cada pessoa.' },
+]
+
 /* Sub-navegação da página: as âncoras e a seção ativa. */
 const subnav = [
   { id: 'visao', label: 'Visão' },
@@ -168,6 +182,13 @@ const profiles = [
     question: 'Qual é o impacto do reajuste da convenção na folha?',
     answer: 'Simula o cenário com encargos, por centro de custo, e entrega o relatório pronto para a reunião.',
   },
+  {
+    icon: Building,
+    role: 'Para o RH da filial',
+    question: 'Tem alguém da minha filial com ponto pendente para o fechamento?',
+    answer: 'Responde só sobre a filial dela, com o prompt de conferência que a matriz salvou para todas as unidades.',
+    link: { to: paths.groups, label: 'Como funciona para grupos' },
+  },
 ]
 
 const inSystem = [
@@ -186,7 +207,6 @@ type DailyTabId = (typeof dailyTabs)[number]['id']
 
 export default function NatiModulePage({ entry, page }: { entry: ModuleEntry; page: ModulePageData }) {
   const group = getGroup(entry.group)
-  const { prev, next } = moduleNeighbors(entry.slug)
   const related = page.related.map(getModuleEntry).filter((r): r is ModuleEntry => Boolean(r))
   const [active, setActive] = useState<SubnavId>('visao')
 
@@ -408,8 +428,8 @@ export default function NatiModulePage({ entry, page }: { entry: ModuleEntry; pa
             <Reveal delay={0.08}>
               <h3 className="mt-4 max-w-3xl text-2xl font-extrabold leading-tight text-brand-ink sm:text-3xl">A mesma NATI. A profundidade que cada pessoa precisa.</h3>
             </Reveal>
-            <Stagger className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-              {profiles.map(({ icon: Icon, role, question, answer }) => (
+            <Stagger className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+              {profiles.map(({ icon: Icon, role, question, answer, link }) => (
                 <StaggerItem
                   key={role}
                   className="group flex h-full flex-col rounded-2xl border border-brand-mist bg-white p-6 transition-[border-color,box-shadow,transform] duration-500 ease-brand hover:-translate-y-1 hover:border-brand-purple/30 hover:shadow-lift"
@@ -425,6 +445,12 @@ export default function NatiModulePage({ entry, page }: { entry: ModuleEntry; pa
                     <NatiAvatar ring className="mt-0.5 h-5 w-5 shrink-0" />
                     {answer}
                   </p>
+                  {link && (
+                    <Link to={link.to} className="group/link mt-auto inline-flex items-center gap-1.5 pt-4 text-[13.5px] font-semibold text-brand-purple">
+                      {link.label}
+                      <ArrowRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover/link:translate-x-0.5" aria-hidden />
+                    </Link>
+                  )}
                 </StaggerItem>
               ))}
             </Stagger>
@@ -531,22 +557,12 @@ export default function NatiModulePage({ entry, page }: { entry: ModuleEntry; pa
             <NatiPipeline tone="light" />
           </Reveal>
 
-          {page.flow && (
-            <Reveal delay={0.1} className="mt-16 lg:mt-20">
-              <div className="rounded-3xl border border-brand-mist bg-white p-6 shadow-soft sm:p-8 lg:p-10">
-                <Eyebrow>Regra do sistema</Eyebrow>
-                <h3 className="mt-4 max-w-3xl text-2xl font-extrabold leading-tight text-brand-ink sm:text-3xl">{page.flow.title}</h3>
-                <FlowSteps steps={page.flow.steps} />
-              </div>
-            </Reveal>
-          )}
-
           <div className="mt-16 lg:mt-20">
             <Reveal y={12} duration={0.5}>
               <Eyebrow>O que muda</Eyebrow>
             </Reveal>
             <Reveal delay={0.08}>
-              <h3 className="mt-4 max-w-3xl text-2xl font-extrabold leading-tight text-brand-ink sm:text-3xl">O que muda para a sua empresa.</h3>
+              <h3 className="mt-4 max-w-3xl text-2xl font-extrabold leading-tight text-brand-ink sm:text-3xl">O que muda com a NATI.</h3>
             </Reveal>
             <BenefitsGrid items={page.benefits} />
           </div>
@@ -576,6 +592,38 @@ export default function NatiModulePage({ entry, page }: { entry: ModuleEntry; pa
               </StaggerItem>
             ))}
           </Stagger>
+
+          <div id="governanca" className="mt-16 grid gap-8 lg:mt-20 lg:grid-cols-[1fr_1.6fr] lg:gap-16">
+            <div>
+              <Reveal y={12} duration={0.5}>
+                <Eyebrow tone="white">Governança</Eyebrow>
+              </Reveal>
+              <Reveal delay={0.08}>
+                <h3 className="mt-4 text-2xl font-extrabold leading-tight sm:text-3xl">Governança de dados da NATI.</h3>
+              </Reveal>
+              <Reveal delay={0.16}>
+                <p className="mt-4 text-[15.5px] leading-relaxed text-white/75">
+                  Onde a NATI roda, de quem são os dados e quem vê o quê. Estes pontos são confirmados por escrito na proposta.
+                </p>
+              </Reveal>
+              <Reveal delay={0.24} className="mt-6">
+                <Link to={paths.security} className="group inline-flex items-center gap-2 text-[15px] font-semibold text-white">
+                  Ver segurança e infraestrutura
+                  <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5" aria-hidden />
+                </Link>
+              </Reveal>
+            </div>
+            <Stagger className="grid gap-3" stagger={0.06} delay={0.1}>
+              {governance.map(({ icon: Icon, text }) => (
+                <StaggerItem key={text} className="flex items-start gap-3 rounded-xl border border-white/10 bg-white/[0.05] p-4">
+                  <span className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-white/10 text-[#E4A9C4]">
+                    <Icon className="h-4 w-4" strokeWidth={1.7} aria-hidden />
+                  </span>
+                  <p className="text-[14.5px] leading-relaxed text-white/85">{text}</p>
+                </StaggerItem>
+              ))}
+            </Stagger>
+          </div>
 
           <div className="mt-16 lg:mt-20">
             <Reveal y={12} duration={0.5}>
@@ -644,7 +692,7 @@ export default function NatiModulePage({ entry, page }: { entry: ModuleEntry; pa
             </Reveal>
           </div>
           <Reveal delay={0.15}>
-            <FaqAccordion items={page.faq} />
+            <ModuleFaqAccordion items={page.faq} />
           </Reveal>
         </div>
       </Section>
@@ -673,12 +721,9 @@ export default function NatiModulePage({ entry, page }: { entry: ModuleEntry; pa
         </div>
       </Section>
 
-      <nav aria-label="Outros módulos" className="border-t border-brand-mist bg-white">
-        <div className="container grid gap-3 py-8 sm:grid-cols-2">
-          <PrevNext entry={prev} direction="prev" />
-          <PrevNext entry={next} direction="next" />
-        </div>
-      </nav>
+      <ImplantationBlock tone="off" />
+      <SeeAlsoStrip tone="white" />
+      <ModuleNav slug={entry.slug} />
 
       <CTASection title="Veja a NATI analisando os dados da sua empresa." />
     </PageTransition>
@@ -833,7 +878,7 @@ function DailyPanel({ tab }: { tab: DailyTabId }) {
                 </p>
                 <p className="mt-1.5">
                   A resposta baseia-se nas consultas executadas no sistema para a colaboradora{' '}
-                  <b>Ana Ribeiro (Matrícula 205818, Empresa 700 - Natcorp do Brasil)</b>:
+                  <b>Ana Ribeiro (Matrícula 205818, Empresa 700 - Vale Verde Alimentos)</b>:
                 </p>
                 <ul className="mt-1.5 list-disc space-y-1 pl-4">
                   <li>

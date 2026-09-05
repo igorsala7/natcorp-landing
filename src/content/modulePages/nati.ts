@@ -10,14 +10,10 @@ const page: ModulePage = {
   seo: {
     title: 'NATI: a inteligência artificial do RH | Natcorp',
     description:
-      'NATI, a IA da Natcorp: audita a folha antes do fechamento, analisa dez frentes do RH e responde a colaboradores 24/7 no sistema, WhatsApp e Teams.',
+      'NATI, a IA da Natcorp: audita a folha antes do fechamento, lê as sete frentes e os 31 módulos do RH e responde a colaboradores 24/7 no sistema, WhatsApp e Teams.',
   },
-  highlights: [
-    { value: '10', label: 'frentes do RH analisadas por um único motor' },
-    { value: '24/7', label: 'no sistema, no WhatsApp e no Microsoft Teams' },
-    { value: '120+', label: 'idiomas disponíveis na plataforma Natcorp' },
-    { value: '4', label: 'etapas por resposta: análise, diagnóstico, alerta e sugestão' },
-  ],
+  /* A página da NATI mostra os números nos contadores de "Poder analítico"; sem dados de prova duplicados no hero. */
+  highlights: [],
   benefits: [
     {
       title: 'Erros encontrados antes do fechamento',
@@ -88,16 +84,6 @@ const page: ModulePage = {
       icon: 'shield-check',
     },
   ],
-  flow: {
-    title: 'Como a NATI responde a qualquer pergunta',
-    steps: [
-      { title: 'Análise', text: 'Lê regras, processos, parametrizações e comparativos históricos.' },
-      { title: 'Diagnóstico', text: 'Identifica inconsistências, lacunas operacionais e falta de aderência legal.' },
-      { title: 'Pontos de atenção', text: 'Alerta sobre riscos financeiros ou de compliance antes do fechamento.' },
-      { title: 'Sugestão', text: 'Recomenda a correção ou o plano de ação para resolver.' },
-      { title: 'Decisão humana', text: 'O gestor ou o RH avalia e decide. A NATI não aprova nem executa.' },
-    ],
-  },
   compliance: [
     'LGPD: confidencialidade em todas as interações',
     'CLT e eSocial nas análises de folha e frequência',
@@ -120,7 +106,7 @@ const page: ModulePage = {
   faq: [
     {
       q: 'A NATI toma decisões pelo RH?',
-      a: 'Não. A atuação é analítica e orientativa. Ela não aprova solicitações, não executa demissões e não define políticas. A NATI analisa e sugere; o gestor humano decide.',
+      a: 'Não. A atuação é analítica e orientativa. Ela não aprova solicitações, não executa demissões e não define políticas. A NATI analisa, sugere e prepara o que foi pedido; só executa depois que uma pessoa aprova.',
     },
     {
       q: 'Por onde o colaborador fala com a NATI?',
@@ -128,7 +114,7 @@ const page: ModulePage = {
     },
     {
       q: 'O que a NATI analisa?',
-      a: 'Dez frentes do RH: folha de pagamento, administração de pessoal, frequência, benefícios, cargos e salários, medicina, segurança do trabalho, recrutamento, feedback e treinamento. Sempre com análise, diagnóstico, pontos de atenção e sugestão.',
+      a: 'As sete frentes do RH, nos 31 módulos: Pessoal e Folha, Ponto e Jornada, Saúde e Segurança, Talentos, Desenvolvimento, Autoatendimento e Dados, IA e Plataforma. Sempre com análise, diagnóstico, pontos de atenção e sugestão.',
     },
     {
       q: 'Como fica a LGPD nas conversas com a NATI?',

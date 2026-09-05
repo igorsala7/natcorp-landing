@@ -1,4 +1,5 @@
-import { Mail, MessageCircle, Phone } from 'lucide-react'
+import { ArrowRight, Mail, MessageCircle, Phone } from 'lucide-react'
+import { Link } from 'react-router'
 import { Section, Eyebrow, SectionHeader } from '@/components/sections/Section'
 import { CTASection } from '@/components/sections/CTASection'
 import { FAQSection } from '@/components/sections/FAQSection'
@@ -17,10 +18,17 @@ const channels = [
   { icon: Mail, label: 'E-mail', value: siteConfig.email, href: `mailto:${siteConfig.email}`, external: false, hint: 'Escreva para a gente. Respondemos em até 1 dia útil.' },
 ]
 
-const steps = [
-  { title: 'Conversa inicial', text: 'Entendemos a sua operação: unidades, sistemas atuais e o que mais pesa no dia a dia do RH.' },
+const steps: { title: string; text: string; links?: { label: string; to: string }[] }[] = [
+  { title: 'Conversa inicial', text: 'Entendemos a sua operação: empresas, unidades, sistemas atuais e o que mais pesa no dia a dia do RH.' },
   { title: 'Demonstração com a sua realidade', text: 'Mostramos o sistema com exemplos do seu segmento, com as regras e as rotinas que a sua equipe conhece.' },
-  { title: 'Proposta e implantação', text: 'Cronograma, marcos e o time que acompanha do início ao primeiro fechamento de folha.' },
+  {
+    title: 'Proposta e implantação',
+    text: 'A proposta considera o porte e os módulos da sua operação. Depois, cronograma, marcos e o time que acompanha do início ao primeiro fechamento de folha.',
+    links: [
+      { label: 'Como cobramos', to: paths.commercial },
+      { label: 'Como é a implantação', to: `${paths.about}#servicos` },
+    ],
+  },
 ]
 
 const contactFaqs: FaqItem[] = [
@@ -111,6 +119,18 @@ export default function ContactPage() {
                 <p className="relative text-4xl font-extrabold tracking-brand text-brand-purple">{String(i + 1).padStart(2, '0')}</p>
                 <h3 className="relative mt-5 text-xl font-bold text-brand-ink">{s.title}</h3>
                 <p className="relative mt-2 text-[15px] leading-relaxed text-brand-graphite">{s.text}</p>
+                {s.links && (
+                  <ul className="relative mt-4 flex flex-wrap gap-x-5 gap-y-1.5 text-[14px] font-semibold text-brand-purple">
+                    {s.links.map((l) => (
+                      <li key={l.to}>
+                        <Link to={l.to} className="group/link inline-flex items-center gap-1.5 underline-offset-4 hover:underline">
+                          {l.label}
+                          <ArrowRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover/link:translate-x-0.5" aria-hidden />
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                )}
               </StaggerItem>
             ))}
           </Stagger>
@@ -125,7 +145,7 @@ export default function ContactPage() {
         eyebrow="Dúvidas sobre o atendimento"
         title="Antes de falar com a gente, [[vale saber]]."
         lead="Prazos, abrangência e suporte: respostas diretas."
-        more={{ to: `${paths.system}#faq`, label: 'Ver todas as perguntas frequentes' }}
+        more={{ to: paths.faq, label: 'Ver todas as perguntas frequentes' }}
       />
     </PageTransition>
   )

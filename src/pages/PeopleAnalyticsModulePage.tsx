@@ -4,7 +4,6 @@ import { AnimatePresence, m } from 'motion/react'
 import { ArrowRight, BarChart3, Check, Database, Download, Filter, Layers, PieChart, Save, Sparkles, Table2 } from 'lucide-react'
 import { Section, SectionHeader, Eyebrow } from '@/components/sections/Section'
 import { CTASection } from '@/components/sections/CTASection'
-import { FaqAccordion } from '@/components/sections/FaqAccordion'
 import { PageTransition } from '@/components/motion/PageTransition'
 import { SplitText } from '@/components/motion/SplitText'
 import { Reveal, Stagger, StaggerItem } from '@/components/motion/Reveal'
@@ -12,7 +11,7 @@ import { ScaledFrame } from '@/components/motion/ScaledFrame'
 import { Breadcrumb } from '@/components/seo/Breadcrumb'
 import { LogoOutline } from '@/components/brand/Logo'
 import { Button } from '@/components/ui/button'
-import { BenefitsGrid, FeaturesGrid, PersonasGrid, PrevNext, RelatedModules } from '@/components/modules/blocks'
+import { BenefitsGrid, FeaturesGrid, PersonasGrid, RelatedModules } from '@/components/modules/blocks'
 import { OperatorPanel, PANEL_SIZE } from '@/components/mockups/nati/OperatorPanel'
 import { ANALYTICS_SIZE } from '@/components/mockups/analytics/shell'
 import { MedicineIndicators } from '@/components/mockups/analytics/MedicineIndicators'
@@ -22,7 +21,7 @@ import { getGroup, getModuleEntry, type ModuleEntry } from '@/content/modulePage
 import type { ModulePage as ModulePageData } from '@/content/modulePages/types'
 import { EASE } from '@/lib/motion'
 import { cn } from '@/lib/utils'
-import { moduleNeighbors } from './ModulePage'
+import { ImplantationBlock, ModuleFaqAccordion, ModuleNav, SeeAlsoStrip } from './ModulePage'
 
 const actions = [
   { icon: Filter, title: 'Filtrar e selecionar colunas', text: 'Mostre só o que importa: colaboradores ativos de um centro de custo, rubricas de um tipo, um período.' },
@@ -43,7 +42,6 @@ function Frame({ label, children, className }: { label: string; children: ReactN
 
 export default function PeopleAnalyticsModulePage({ entry, page }: { entry: ModuleEntry; page: ModulePageData }) {
   const group = getGroup(entry.group)
-  const { prev, next } = moduleNeighbors(entry.slug)
   const related = page.related.map(getModuleEntry).filter((r): r is ModuleEntry => Boolean(r))
   const [mode, setMode] = useState<ComparisonMode>('chart')
 
@@ -79,7 +77,7 @@ export default function PeopleAnalyticsModulePage({ entry, page }: { entry: Modu
                   <Link to="#criar">Ver como se monta um gráfico</Link>
                 </Button>
               </Reveal>
-              <Stagger className="mt-10 grid grid-cols-3 gap-x-6 gap-y-6" delay={0.4}>
+              <Stagger className="mt-10 grid grid-cols-2 gap-x-6 gap-y-6 sm:grid-cols-3" delay={0.4}>
                 {page.highlights.map((h) => (
                   <StaggerItem key={h.label}>
                     <p className="text-2xl font-extrabold tracking-brand text-brand-purple sm:text-3xl">{h.value}</p>
@@ -241,7 +239,7 @@ export default function PeopleAnalyticsModulePage({ entry, page }: { entry: Modu
 
       <Section id="beneficios" tone="off" aria-labelledby="beneficios-title">
         <div className="container">
-          <SectionHeader id="beneficios-title" eyebrow="O que muda" title="O que muda para a [[sua empresa]]." />
+          <SectionHeader id="beneficios-title" eyebrow="O que muda" title="O que muda com [[o People Analytics]]." />
           <BenefitsGrid items={page.benefits} />
         </div>
       </Section>
@@ -298,17 +296,14 @@ export default function PeopleAnalyticsModulePage({ entry, page }: { entry: Modu
             <SectionHeader id="perguntas-title" eyebrow="Perguntas frequentes" title="Dúvidas sobre [[o People Analytics]]." />
           </div>
           <div>
-            <FaqAccordion items={page.faq} />
+            <ModuleFaqAccordion items={page.faq} />
           </div>
         </div>
       </Section>
 
-      <nav aria-label="Outros módulos" className="border-t border-brand-mist bg-white">
-        <div className="container grid gap-3 py-8 sm:grid-cols-2">
-          <PrevNext entry={prev} direction="prev" />
-          <PrevNext entry={next} direction="next" />
-        </div>
-      </nav>
+      <ImplantationBlock tone="off" />
+      <SeeAlsoStrip tone="white" />
+      <ModuleNav slug={entry.slug} />
 
       <CTASection title="Veja o People Analytics com os indicadores da sua empresa." />
     </PageTransition>

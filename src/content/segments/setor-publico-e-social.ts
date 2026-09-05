@@ -3,6 +3,7 @@ import type { SegmentPage } from './types'
 const page: SegmentPage = {
   slug: 'setor-publico-e-social',
   name: 'Setor Público e Social',
+  ctaContext: 'no setor público e social',
   tagline: 'O RH que [[presta contas]]: cada servidor, cada cargo, cada alteração registrada.',
   summary:
     'Órgãos públicos, autarquias, fundações, hospitais filantrópicos e terceiro setor respondem ao controle externo por cada admissão, progressão e afastamento. A Natcorp registra quem alterou o quê, controla frequência e despesa com pessoal e alimenta o portal de transparência e o eSocial.',
@@ -56,7 +57,7 @@ const page: SegmentPage = {
     {
       pain: 'Afastamentos e terceiros',
       title: 'Licenças, pensionistas, estagiários e terceiros na mesma base',
-      text: 'Afastamentos e licenças entram por requisição, refletem no ponto, na folha e no eSocial e ficam no histórico do servidor. Pensionistas e serviços de terceiros e autônomos são mantidos por requisição eletrônica, com acesso por perfil. A folha trata vários vínculos na mesma base, do efetivo ao estagiário, sem limite de CNPJs.',
+      text: 'Afastamentos e licenças entram por requisição, refletem no ponto, na folha e no eSocial e ficam no histórico do servidor. Pensionistas e serviços de terceiros e autônomos são mantidos por requisição eletrônica, com acesso por perfil. A folha trata vários vínculos na mesma base, do efetivo ao estagiário, com todos os órgãos e entidades do grupo.',
       modules: ['requisicoes-com-workflow', 'medicina-ocupacional', 'folha-de-pagamento', 'administracao-de-pessoal'],
     },
     {
@@ -71,7 +72,7 @@ const page: SegmentPage = {
     'administracao-de-pessoal': 'Quadro de cargos previsto e realizado, despesa com pessoal dentro do limite e registro de quem alterou o quê.',
     'cargos-e-salarios': 'Cargo público e cargo de confiança com vigências, progressão automática por tempo de serviço e tabelas por carreira.',
     'gestao-de-beneficios': 'Auxílios, plano de saúde e vale-transporte com elegibilidade por cargo e regime, e fatura conferida antes de pagar.',
-    natpay: 'Adiantamento pelo WhatsApp com desconto automático na folha, quando a política do órgão ou da entidade permitir.',
+    natpay: 'Adiantamento com desconto automático no contracheque e histórico de cada pedido, quando a política do órgão ou da entidade permitir.',
     esocial: 'Eventos do órgão gerados da folha validada, com validador prévio, protocolo e retorno de cada layout acompanhados.',
     'juridico-trabalhista': 'Processos de celetistas e terceirizados com provisão por risco e S-2500 e S-2501 enviados direto do processo.',
     'ponto-eletronico': 'Jornadas e escalas por órgão e unidade, controle de frequência com abono por workflow e espelho assinado.',
@@ -95,7 +96,7 @@ const page: SegmentPage = {
     ged: 'Prontuário funcional digital por servidor, com acesso por perfil e evidências rastreáveis para auditoria.',
     'people-analytics': 'Servidores por cargo, regime, unidade e tempo de serviço em pivô e gráfico, exportados em Excel ou PDF.',
     'business-intelligence': 'Painéis de despesa com pessoal, quadro por unidade e absenteísmo, com alerta por e-mail quando sai da faixa.',
-    nati: 'Responde ao servidor sobre contracheque e frequência e aponta inconsistências na folha antes do fechamento.',
+    nati: 'Responde ao servidor sobre contracheque e frequência e aponta, antes de a folha rodar, o que não bate com o regime e a tabela do cargo.',
     'conexao-com-outros-sistemas': 'APIs e arquivos alimentam o portal de transparência, o ERP e o sistema orçamentário do órgão sem redigitar.',
     'infraestrutura-e-seguranca': 'Trilha de auditoria de cada ação, dois fatores, acesso por perfil e nuvem com contingência para a folha não parar.',
   },

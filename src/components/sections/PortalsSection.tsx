@@ -1,8 +1,10 @@
-import { Briefcase, Building2, ScanFace, UserRound, Users } from 'lucide-react'
+import { ArrowRight, Briefcase, Building2, MonitorSmartphone, ScanFace, UserRound, Users } from 'lucide-react'
 import { Link } from 'react-router'
 import { Section, SectionHeader } from './Section'
 import { Reveal, Stagger, StaggerItem } from '@/components/motion/Reveal'
 import { Logo } from '@/components/brand/Logo'
+import { modulePath } from '@/content/modulePages'
+import { paths } from '@/content/site'
 
 const portals = [
   {
@@ -22,6 +24,31 @@ const portals = [
     title: 'Portal do Candidato',
     text: 'Da candidatura à admissão digital, com a marca da sua empresa e uma experiência que já começa bem.',
     items: ['Quadro de Vagas com a sua marca', 'Currículo e banco de talentos', 'Acompanhamento do processo seletivo', 'Admissão digital e assinatura do contrato'],
+  },
+]
+
+/* O que sustenta os portais: o app de ponto, o acesso em qualquer tela e o controle por empresa e filial. */
+const extras = [
+  {
+    icon: ScanFace,
+    title: 'NatPonto',
+    text: 'App de marcação de ponto com reconhecimento facial e geolocalização, para iOS e Android. Funciona para equipes em campo, em várias unidades e em escala.',
+    links: [{ label: 'Conhecer o NatPonto', to: modulePath('natponto') }],
+  },
+  {
+    icon: MonitorSmartphone,
+    title: 'Multiplataforma',
+    text: 'Responsivo no celular, no tablet e no computador. A mesma tela, com as mesmas funções, em qualquer aparelho.',
+    links: [{ label: 'Veja o sistema em cada tela', to: modulePath('infraestrutura-e-seguranca', '#multiplataforma') }],
+  },
+  {
+    icon: Building2,
+    title: 'Multiempresa e multifilial',
+    text: 'Controle por empresa, filial e centro de custo, com perfis de acesso e alçadas por unidade. Cada equipe vê só o que é dela; a matriz consolida.',
+    links: [
+      { label: 'Como um grupo opera', to: paths.groups },
+      { label: 'Módulo Portais', to: modulePath('portais') },
+    ],
   },
 ]
 
@@ -80,33 +107,26 @@ export function PortalsSection({ id = 'portais', tone = 'white', withHeader = tr
           ))}
         </Stagger>
 
-        <Reveal delay={0.15} className="mt-6 grid gap-5 md:grid-cols-2">
-          <div className="flex items-start gap-4 rounded-2xl bg-brand-off-white p-6">
-            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white text-brand-purple shadow-soft">
-              <ScanFace className="h-5 w-5" strokeWidth={1.6} />
-            </span>
-            <div>
-              <h3 className="text-lg font-bold text-brand-ink">NatPonto</h3>
-              <p className="mt-1 text-[15px] leading-relaxed text-brand-graphite">
-                App de marcação de ponto com reconhecimento facial e geolocalização, para iOS e Android. Funciona para equipes em campo, em várias unidades e em escala.
-              </p>
+        <Reveal delay={0.15} className="mt-6 grid gap-5 md:grid-cols-3">
+          {extras.map(({ icon: Icon, title, text, links }) => (
+            <div key={title} className={`flex h-full flex-col rounded-2xl p-6 ${tone === 'off' ? 'border border-brand-mist bg-white shadow-soft' : 'bg-brand-off-white'}`}>
+              <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white text-brand-purple shadow-soft">
+                <Icon className="h-5 w-5" strokeWidth={1.6} />
+              </span>
+              <h3 className="mt-4 text-lg font-bold text-brand-ink">{title}</h3>
+              <p className="mt-1 flex-1 text-[15px] leading-relaxed text-brand-graphite">{text}</p>
+              <ul className="mt-4 flex flex-wrap gap-x-5 gap-y-1.5 text-[14px] font-semibold text-brand-purple" aria-label={`Saiba mais sobre ${title}`}>
+                {links.map((l) => (
+                  <li key={l.to}>
+                    <Link to={l.to} className="group/link inline-flex items-center gap-1.5 underline-offset-4 hover:underline">
+                      {l.label}
+                      <ArrowRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover/link:translate-x-0.5" aria-hidden />
+                    </Link>
+                  </li>
+                ))}
+              </ul>
             </div>
-          </div>
-          <div className="flex items-start gap-4 rounded-2xl bg-brand-off-white p-6">
-            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white text-brand-purple shadow-soft">
-              <Building2 className="h-5 w-5" strokeWidth={1.6} />
-            </span>
-            <div>
-              <h3 className="text-lg font-bold text-brand-ink">Multiplataforma e multiempresa</h3>
-              <p className="mt-1 text-[15px] leading-relaxed text-brand-graphite">
-                Responsivo no celular, no tablet e no computador. Controle por empresa, filial e centro de custo, com perfis de acesso para cada realidade.{' '}
-                <Link to="#multiplataforma" className="font-semibold text-brand-purple underline-offset-4 hover:underline">
-                  Veja o sistema em cada tela
-                </Link>
-                .
-              </p>
-            </div>
-          </div>
+          ))}
         </Reveal>
       </div>
     </Section>

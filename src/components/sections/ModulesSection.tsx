@@ -26,9 +26,9 @@ export function ModulesSection({ withHeader = true, id = 'modulos' }: ModulesSec
           <SectionHeader
             id="modulos-title"
             align="center"
-            eyebrow="Mais de 30 módulos"
+            eyebrow="31 módulos"
             title="Tudo o que o RH faz, [[em um só lugar]]."
-            lead="Sete frentes, mais de 30 módulos, uma única base de dados. Clique em um módulo para conhecer a página dele; o sistema cresce com a sua empresa."
+            lead="Sete frentes, 31 módulos, uma única base de dados. Clique em um módulo para conhecer a página dele; o sistema cresce com a sua empresa."
           />
         )}
 

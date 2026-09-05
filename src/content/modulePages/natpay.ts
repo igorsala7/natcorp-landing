@@ -12,11 +12,7 @@ const page: ModulePage = {
     description:
       'Adiantamento salarial pedido pelo WhatsApp, com limite calculado pelos dias trabalhados no ponto, pagamento instantâneo via Pix e desconto automático na folha.',
   },
-  highlights: [
-    { value: 'Pix', label: 'pagamento instantâneo na conta do colaborador' },
-    { value: 'WhatsApp', label: 'solicitação simples, sem formulário nem fila no DP' },
-    { value: '0', label: 'digitação: ponto e folha integrados automaticamente' },
-  ],
+  highlights: [],
   benefits: [
     {
       title: 'Menos turnover, mais permanência',
@@ -67,9 +63,14 @@ const page: ModulePage = {
       icon: 'history',
     },
     {
-      title: 'Sem papel, sem planilha',
+      title: 'Fluxo inteiro no sistema',
       text: 'Todo o fluxo acontece no celular do colaborador e dentro do sistema de RH. Nenhum formulário impresso, nenhuma planilha paralela de controle.',
       icon: 'smartphone',
+    },
+    {
+      title: 'Por empresa e unidade do grupo',
+      text: 'Cada colaborador é atendido no canal de RH da própria empresa, com o limite calculado pelo ponto dela e o desconto na folha do CNPJ dela. Pedidos e descontos ficam consultáveis por empresa, filial e período.',
+      icon: 'building',
     },
   ],
   flow: {
@@ -88,8 +89,8 @@ const page: ModulePage = {
   ],
   personas: [
     { role: 'Colaborador', text: 'Pede o adiantamento pelo WhatsApp, vê quanto pode adiantar, confirma e recebe por Pix na hora. Sem constrangimento, sem fila no DP.' },
-    { role: 'Departamento Pessoal', text: 'Deixa de receber pedidos por e-mail e de lançar descontos à mão. Acompanha cada adiantamento no sistema e fecha a folha com tudo conciliado.' },
-    { role: 'CFO e Financeiro', text: 'Vê os adiantamentos ligados aos dias já trabalhados e descontados automaticamente na folha, com histórico. Um benefício que reduz turnover sem controle paralelo.' },
+    { role: 'Departamento Pessoal', text: 'Deixa de receber pedidos por e-mail e de lançar descontos à mão. Acompanha cada adiantamento no sistema e fecha a folha de cada empresa com tudo conciliado.' },
+    { role: 'CFO e Financeiro', text: 'Vê os adiantamentos ligados aos dias já trabalhados e descontados automaticamente na folha, com histórico por empresa e unidade. Um benefício que reduz turnover sem controle paralelo.' },
   ],
   faq: [
     {
@@ -105,8 +106,8 @@ const page: ModulePage = {
       a: 'Automaticamente. O NatPay é integrado ao ponto e à folha de pagamento: cada adiantamento pago vira um desconto lançado na folha, sem digitação e com histórico do pedido, do valor e da data. O DP não precisa conciliar nada no fechamento.',
     },
     {
-      q: 'Por que o NatPay ajuda a reduzir o turnover?',
-      a: 'Porque dá ao colaborador acesso ao salário quando ele precisa, sem burocracia e sem constrangimento. É um benefício percebido no dia a dia, que mostra o cuidado da empresa e pesa na decisão de ficar.',
+      q: 'O NatPay funciona para um grupo com várias empresas?',
+      a: 'Sim. O limite de cada colaborador é calculado pelo ponto da empresa em que ele trabalha e o desconto entra na folha do CNPJ dele. Pedidos, valores e descontos ficam na mesma base, consultáveis por empresa, filial e período, e o DP fecha a folha de cada empresa com tudo conciliado.',
     },
   ],
   related: ['folha-de-pagamento', 'ponto-eletronico', 'nati', 'natponto'],

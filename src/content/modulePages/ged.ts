@@ -12,7 +12,7 @@ const page: ModulePage = {
     description:
       'Gestão eletrônica de documentos de colaboradores, candidatos e dependentes: envio pelo celular, busca instantânea, nuvem segura e acesso por perfil (LGPD).',
   },
-  highlights: [{ value: '0', label: 'arquivo físico: documentos na nuvem, sem extravio' }],
+  highlights: [],
   benefits: [
     {
       title: 'Fim do espaço físico e do extravio',
@@ -20,11 +20,11 @@ const page: ModulePage = {
     },
     {
       title: 'O documento nasce digital na admissão',
-      text: 'O candidato fotografa e envia RG, CPF e comprovantes pelo Portal do Candidato. O RH valida e o GED já está montado no primeiro dia.',
+      text: 'O candidato fotografa e envia RG, CPF e comprovantes pelo Portal do Candidato. O RH valida e o GED (Gestão Eletrônica de Documentos) já está montado no primeiro dia.',
     },
     {
       title: 'LGPD com acesso por perfil',
-      text: 'Cada pessoa vê apenas o que o seu perfil permite, com restrição por filial e aos dados confidenciais. As ações no sistema ficam auditadas.',
+      text: 'Cada pessoa vê apenas o que o seu perfil permite, com restrição por empresa e filial e aos dados confidenciais. As ações no sistema ficam auditadas.',
     },
     {
       title: 'Evidência pronta para o jurídico',
@@ -43,9 +43,9 @@ const page: ModulePage = {
       icon: 'users',
     },
     {
-      title: 'Envio pelo celular',
-      text: 'O candidato ou colaborador fotografa o documento e anexa pelo portal, de onde estiver. Sem levar cópia na empresa.',
-      icon: 'smartphone',
+      title: 'Pendências por admissão e por unidade',
+      text: 'O RH vê o que falta em cada admissão e em cada unidade, devolve a pendência a quem precisa completar e valida o que chegou. O envio é pelo portal, no celular ou no computador, sem cópia em papel.',
+      icon: 'list-checks',
     },
     {
       title: 'Busca instantânea',
@@ -59,7 +59,7 @@ const page: ModulePage = {
     },
     {
       title: 'Acesso por perfil e LGPD',
-      text: 'Controle de quem vê cada documento, com restrição por filial e aos dados confidenciais, conforme a LGPD.',
+      text: 'Controle de quem vê cada documento, com restrição por empresa e filial e aos dados confidenciais, conforme a LGPD.',
       icon: 'lock',
     },
     {
@@ -92,11 +92,11 @@ const page: ModulePage = {
       { title: 'Consulta por perfil', text: 'RH, gestor e o próprio colaborador acessam conforme o perfil, com auditoria das ações.' },
     ],
   },
-  compliance: ['LGPD: acesso por perfil, restrição por filial e a dados confidenciais'],
+  compliance: ['LGPD: acesso por perfil, restrição por empresa e filial e a dados confidenciais'],
   personas: [
     {
       role: 'RH e Departamento Pessoal',
-      text: 'Recebe, valida e localiza documentos sem manusear papel. Sabe na hora o que falta em cada admissão.',
+      text: 'Recebe, valida e localiza documentos sem manusear papel. Sabe na hora o que falta em cada admissão e em cada unidade.',
     },
     {
       role: 'Colaborador e candidato',
@@ -113,19 +113,19 @@ const page: ModulePage = {
       a: 'Documentos de colaboradores e candidatos, como RG, CPF, comprovante de endereço, CNH, reservista e currículo, e dos dependentes, como certidão de nascimento e de casamento. Contratos e termos assinados eletronicamente também ficam guardados.',
     },
     {
-      q: 'O candidato consegue enviar documentos pelo celular?',
-      a: 'Sim. Ele fotografa o documento e anexa pelo Portal do Candidato, no celular ou no computador. O RH valida e o arquivo já fica no GED, ligado ao cadastro.',
+      q: 'Como o RH sabe o que falta na documentação de uma admissão?',
+      a: 'Na própria tela de validação. O candidato fotografa e envia pelo Portal do Candidato, no celular ou no computador; o RH confere o que chegou, devolve a pendência para quem precisa completar e aprova quando está tudo certo. A visão é por pessoa e por unidade, e o arquivo já fica no GED ligado ao cadastro.',
     },
     {
       q: 'Quem tem acesso aos documentos?',
-      a: 'Quem o perfil permitir. O acesso pode ser restrito por filial e a dados confidenciais, conforme a LGPD, com auditoria das ações no sistema.',
+      a: 'Quem o perfil permitir. O acesso pode ser restrito por empresa, por filial e a dados confidenciais, conforme a LGPD, com auditoria das ações no sistema.',
     },
     {
       q: 'Os documentos assinados eletronicamente ficam no GED?',
       a: 'Sim. O documento assinado fica guardado com o original disponível para download e validação independente das assinaturas.',
     },
   ],
-  related: ['admissao-digital', 'assinatura-eletronica', 'portais', 'juridico-trabalhista'],
+  related: ['admissao-digital', 'assinatura-eletronica', 'infraestrutura-e-seguranca', 'juridico-trabalhista'],
   sources: [
     'admissao-digital',
     'automacao-de-processos',

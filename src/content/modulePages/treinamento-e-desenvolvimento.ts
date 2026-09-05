@@ -88,7 +88,7 @@ const page: ModulePage = {
     steps: [
       { title: 'Competências do cargo', text: 'Cada cargo tem as competências exigidas cadastradas em Cargos e Salários.' },
       { title: 'Gap identificado', text: 'A avaliação de desempenho e a matriz de competências mostram o que falta.' },
-      { title: 'PDI e inscrição', text: 'O plano de desenvolvimento gera a indicação; a inscrição passa pelo workflow e vira matrícula.' },
+      { title: 'PDI e inscrição', text: 'O PDI (plano de desenvolvimento individual) gera a indicação; a inscrição passa pelo workflow e vira matrícula.' },
       { title: 'Turma realizada', text: 'Presença, carga horária, prova e certificado registrados.' },
       { title: 'Eficácia medida', text: 'Pesquisa de reação, avaliação pós-treinamento e competências atualizadas no perfil.' },
     ],

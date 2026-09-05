@@ -12,10 +12,10 @@ export function PersonasSection() {
           id="paraquem-title"
           eyebrow="Para quem"
           title="Para quem decide e para [[quem opera]]."
-          lead="Da diretoria ao analista de Departamento Pessoal, cada pessoa ganha algo concreto quando o RH inteiro roda em um único sistema."
+          lead="Da diretoria ao RH da filial e à contabilidade, cada pessoa ganha algo concreto quando o RH inteiro roda em um único sistema."
         />
 
-        <Stagger className="mt-12 grid gap-5 md:grid-cols-2 lg:mt-16" stagger={0.1}>
+        <Stagger className="mt-12 grid gap-5 md:grid-cols-2 lg:mt-16 xl:grid-cols-3" stagger={0.1}>
           {personas.map(({ id, icon: Icon, role, headline, points, portrait }) => (
             <StaggerItem key={id}>
               <SpotlightCard className="h-full rounded-3xl border border-brand-mist bg-white p-7 shadow-soft transition-[border-color] duration-500 hover:border-brand-purple/30" color="rgba(154,64,138,0.10)">

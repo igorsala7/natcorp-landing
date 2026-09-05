@@ -101,7 +101,10 @@ export function IntegrationDiagram({ className }: { className?: string }) {
   return (
     <div className={cn('relative', className)}>
       <m.div
-        className="overflow-x-auto overflow-y-hidden"
+        className="overflow-x-auto overflow-y-hidden rounded-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#E4A9C4]"
+        role="group"
+        aria-label="Diagrama dos módulos se integrando. Em telas estreitas, rola na horizontal."
+        tabIndex={0}
         initial={animate ? 'hidden' : false}
         whileInView="visible"
         viewport={viewportOnce}

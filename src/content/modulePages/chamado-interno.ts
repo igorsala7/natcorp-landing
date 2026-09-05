@@ -67,7 +67,7 @@ const page: ModulePage = {
       icon: 'users',
     },
     {
-      title: 'Abertura pelo celular',
+      title: 'Abertura pelo portal ou pelo app',
       text: 'O colaborador abre o chamado com área, prioridade, descrição e anexo, e acompanha pelo portal ou app. O e-mail é identificado automaticamente.',
       icon: 'smartphone',
     },

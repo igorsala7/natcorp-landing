@@ -82,7 +82,7 @@ const page: ModulePage = {
     },
     {
       title: 'Evidências rastreáveis',
-      text: 'Fichas de EPI, espelhos de ponto e documentos no GED formam o prontuário da defesa, com histórico imutável de aprovações para auditoria.',
+      text: 'Fichas de EPI (equipamento de proteção individual), espelhos de ponto e documentos no GED (Gestão Eletrônica de Documentos) formam o prontuário da defesa, com histórico imutável de aprovações para auditoria.',
       icon: 'history',
     },
   ],

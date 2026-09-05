@@ -13,8 +13,8 @@ const page: ModulePage = {
       'People Analytics no sistema de RH: filtros, agrupamentos, pivô, cálculos, destaques e gráficos em tempo real, relatórios salvos e exportação para Excel e PDF.',
   },
   highlights: [
-    { value: '100%', label: 'dos dados em tempo real, sem exportar para o Excel' },
-    { value: '0', label: 'chamados para a TI: o usuário monta a própria análise' },
+    { value: '1 botão', label: 'Ações: filtre, agrupe, cruze, destaque e gere o gráfico' },
+    { value: '2 eixos', label: 'cruzados no pivô, com soma, contagem ou média' },
     { value: '3', label: 'formatos de exportação: CSV, Excel e PDF' },
   ],
   benefits: [
@@ -43,7 +43,7 @@ const page: ModulePage = {
     },
     {
       title: 'Quebra de controle',
-      text: 'Separe a lista em blocos visuais por filial, cargo ou empresa. Uma leitura limpa, pronta para a diretoria.',
+      text: 'Separe a lista em blocos visuais por filial, cargo ou empresa. A visão por filial e o consolidado do grupo na mesma tela, pronta para a diretoria.',
       icon: 'layers',
     },
     {
@@ -122,7 +122,7 @@ const page: ModulePage = {
     },
     {
       q: 'Consigo cruzar dados de módulos diferentes?',
-      a: 'Sim. O cruzamento é nativo: folha, ponto, benefícios, cargos, avaliações e SESMT podem entrar na mesma análise, porque compartilham o mesmo cadastro.',
+      a: 'Sim. O cruzamento é nativo: folha, ponto, benefícios, cargos, avaliações e SESMT podem entrar na mesma análise, porque compartilham o mesmo cadastro. O resultado sai por filial e consolidado para o grupo.',
     },
     {
       q: 'Como compartilho uma análise?',

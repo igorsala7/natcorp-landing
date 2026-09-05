@@ -6,7 +6,7 @@ const page: ModulePage = {
   group: 'desenvolvimento',
   tagline: 'Desempenho acompanhado [[o ano inteiro]], não só no fim dele.',
   summary:
-    'Ciclos de 90° a 360°, pesquisas de clima e feedback contínuo em um só lugar. O RH monta perguntas, pesos e escalas sem depender de TI. O resultado alimenta calibração, nine box, PDI, bônus e sucessão automaticamente.',
+    'Ciclos de 90° a 360°, pesquisas de clima e feedback contínuo em um só lugar. O RH monta perguntas, pesos e escalas sem depender de TI. O resultado alimenta calibração, a matriz nine box (desempenho x potencial), o plano de desenvolvimento, bônus e sucessão.',
   seo: {
     title: 'Avaliações, Pesquisas e Feedbacks | Natcorp',
     description:
@@ -14,8 +14,6 @@ const page: ModulePage = {
   },
   highlights: [
     { value: '90° a 360°', label: 'ciclos anuais, semestrais ou trimestrais, como o RH definir' },
-    { value: '0', label: 'código: o RH cria perguntas, pesos e escalas sozinho' },
-    { value: 'Nine box', label: 'potencial × desempenho para mapear talentos e sucessores' },
   ],
   benefits: [
     {
@@ -32,7 +30,7 @@ const page: ModulePage = {
     },
     {
       title: 'Ligado a metas, remuneração e carreira',
-      text: 'O resultado da avaliação alimenta o cálculo de bônus, o nine box, o PDI e o mapa de sucessão. Sem planilha, sem redigitar nota.',
+      text: 'O resultado da avaliação alimenta o cálculo de bônus, a matriz nine box, o PDI (plano de desenvolvimento individual) e o mapa de sucessão. Sem planilha, sem redigitar nota.',
     },
   ],
   features: [
@@ -77,7 +75,7 @@ const page: ModulePage = {
       icon: 'scale',
     },
     {
-      title: 'Nine box e PDI',
+      title: 'Matriz nine box e PDI',
       text: 'Cruza potencial e desempenho para achar talentos e sucessores. Planos de desenvolvimento, treinamentos e mentorias acompanhados em tempo real.',
       icon: 'layout-grid',
     },
@@ -93,7 +91,7 @@ const page: ModulePage = {
       { title: 'RH monta o ciclo', text: 'Define público, modelo, perguntas, pesos, escalas e prazos, sem depender de TI.' },
       { title: 'Todos avaliam', text: 'Gestor, pares, liderados e o próprio colaborador respondem no portal, com lembretes automáticos.' },
       { title: 'Calibração', text: 'Comitês comparam resultados entre áreas e registram os ajustes.' },
-      { title: 'Nine box e PDI', text: 'Talentos mapeados, planos de desenvolvimento criados e acompanhados.' },
+      { title: 'Matriz nine box e PDI', text: 'Talentos mapeados, planos de desenvolvimento criados e acompanhados.' },
       { title: 'Bônus, carreira e sucessão', text: 'O resultado alimenta a remuneração variável, o plano de carreira e o mapa de sucessão.' },
     ],
   },

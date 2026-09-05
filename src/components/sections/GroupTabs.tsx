@@ -238,7 +238,7 @@ export function GroupTabs({ id = 'frentes' }: GroupTabsProps) {
                   )}
                 >
                   {g.name}
-                  <span className={cn('text-xs tabular', selected ? 'text-white/70' : 'text-brand-gray')}>{modulesByGroup(g.id).length}</span>
+                  <span className={cn('text-xs tabular', selected ? 'text-white/70' : 'text-brand-graphite')}>{modulesByGroup(g.id).length}</span>
                 </button>
               )
             })}

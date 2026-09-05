@@ -6,21 +6,20 @@ const page: ModulePage = {
   group: 'pessoal-e-folha',
   tagline: 'Quem ocupa cada posição e quanto custa, [[em tempo real]].',
   summary:
-    'Estrutura, posições, vagas, movimentações e orçamento de pessoal no mesmo lugar. O gestor pede, a alçada financeira valida, o RH efetiva. Previsto e realizado lado a lado, com alerta quando o custo sai do orçado.',
+    'Estrutura, posições, vagas, movimentações e orçamento de pessoal no mesmo lugar. O gestor pede, a alçada financeira valida, o RH efetiva. Previsto e realizado lado a lado, por empresa e filial, com alerta quando o custo sai do orçado.',
   seo: {
     title: 'Administração de Pessoal e Headcount | Natcorp',
     description:
       'Administração de pessoal: headcount, posições, movimentações e orçamento previsto x realizado integrados à folha, com workflow de aprovação e alerta de desvio.',
   },
   highlights: [
-    { value: '4 : 1.000', label: 'operadores por colaboradores na Administração de Pessoal' },
-    { value: '+1', label: 'operador a cada novo bloco de 1.000 colaboradores' },
+    { value: '4 : 1.000', label: 'operadores para 1.000 colaboradores; mais um a cada 1.000' },
     { value: '5', label: 'status de posição, de planejada a ocupada, em tempo real' },
   ],
   benefits: [
     {
       title: 'RH, Finanças e Gestão com o mesmo número',
-      text: 'Acaba a planilha paralela. Posições, vagas e custo de pessoal ficam em uma única fonte de verdade, com o mesmo dado para quem contrata e para quem paga.',
+      text: 'Acaba a planilha paralela. Posições, vagas e custo de pessoal ficam em uma única fonte de verdade, por empresa, filial e centro de custo, com o consolidado para a matriz e o mesmo dado para quem contrata e para quem paga.',
     },
     {
       title: 'Desvio de orçamento descoberto na hora',
@@ -32,13 +31,13 @@ const page: ModulePage = {
     },
     {
       title: 'Equipe enxuta, mesmo com milhares de pessoas',
-      text: 'Com entradas digitais e efetivação automática, a Administração de Pessoal opera com até 4 profissionais para cada 1.000 colaboradores.',
+      text: 'Com entradas digitais e efetivação automática, a Administração de Pessoal opera com 4 operadores para 1.000 colaboradores; a cada 1.000 novos, mais um.',
     },
   ],
   features: [
     {
       title: 'Estrutura organizacional completa',
-      text: 'Empresas, áreas, departamentos, centros de custo, cargos e posições mapeados e vinculados ao organograma da sua empresa.',
+      text: 'Empresas, filiais, áreas, departamentos, centros de custo, cargos e posições mapeados e vinculados ao organograma do grupo. Headcount e orçamento por empresa, filial e centro de custo, consolidados para a matriz.',
       icon: 'building',
     },
     {
@@ -58,7 +57,7 @@ const page: ModulePage = {
     },
     {
       title: 'Orçamento previsto x realizado',
-      text: 'Salários, encargos e benefícios compõem o custo de cada posição. Compare quadro atual, planejado, orçado e realizado, por hora ou por mês.',
+      text: 'Salários, encargos e benefícios compõem o custo de cada posição. Compare quadro atual, planejado, orçado e realizado, por empresa, filial e centro de custo, por hora ou por mês.',
       icon: 'bar-chart',
     },
     {

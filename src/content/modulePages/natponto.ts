@@ -13,9 +13,9 @@ const page: ModulePage = {
       'App de ponto da Natcorp para iOS e Android: reconhecimento facial, geolocalização, modo multiusuário e uso offline, integrado ao Ponto Eletrônico e à folha.',
   },
   highlights: [
-    { value: 'segundos', label: 'para a marcação chegar ao sistema de ponto' },
-    { value: '0', label: 'marcações perdidas: funciona offline e sincroniza depois' },
-    { value: '2', label: 'plataformas, iOS e Android, em celulares e tablets' },
+    { value: '1 raio', label: 'por unidade: cada filial com o seu perímetro de marcação' },
+    { value: '0', label: 'marcações perdidas sem internet: guarda no aparelho e sincroniza depois' },
+    { value: 'REP-P', label: 'conforme a Portaria MTP 671/2021, com AFD, AEJ e espelho assinado' },
   ],
   benefits: [
     {
@@ -87,6 +87,13 @@ const page: ModulePage = {
       { title: 'Envio ao eSocial', text: 'Os dados validados são enviados ao eSocial sem intervenção manual.' },
     ],
   },
+  compliance: [
+    'Registro de ponto conforme a Portaria MTP 671/2021 (REP-P)',
+    'Arquivos AFD e AEJ e espelho de ponto assinado digitalmente',
+    'Comprovante de cada marcação com QR e código de verificação (hash)',
+    'Dados biométricos tratados como dados sensíveis (LGPD), com consentimento registrado e template facial criptografado',
+    'Registro de programa de computador no INPI',
+  ],
   personas: [
     { role: 'Colaborador', text: 'Marca o ponto no próprio celular em segundos, mesmo sem internet, e consulta o espelho e o banco de horas no portal.' },
     { role: 'Gestor', text: 'Acompanha entradas, saídas, horas extras e ocorrências da equipe em tempo real e aprova o que precisa pelo portal.' },
@@ -108,6 +115,14 @@ const page: ModulePage = {
     {
       q: 'Em quais aparelhos o app está disponível?',
       a: 'O NatPonto está disponível para iOS e Android e funciona em smartphones e tablets. O colaborador pode usar o próprio celular, e a empresa pode usar tablets compartilhados no modo multiusuário.',
+    },
+    {
+      q: 'O NatPonto atende à Portaria 671 (REP-P)?',
+      a: 'Sim. O NatPonto é um registrador eletrônico de ponto por programa (REP-P), conforme a Portaria MTP 671/2021, com registro de programa de computador no INPI. Cada marcação gera um comprovante com QR e código de verificação, e o Ponto Eletrônico gera o AFD, o AEJ e o espelho de ponto assinado digitalmente, prontos para a fiscalização.',
+    },
+    {
+      q: 'Como funciona em um grupo com 25 unidades?',
+      a: 'Cada unidade tem o seu raio de marcação, e quem transita entre filiais marca em qualquer uma delas. A marcação fora do raio entra sinalizada para o gestor justificar. Ajustes, abonos e horas extras seguem a alçada de cada filial, e o RH central vê a fila por unidade e fecha o ponto de todas.',
     },
   ],
   related: ['ponto-eletronico', 'folha-de-pagamento', 'portais', 'esocial'],

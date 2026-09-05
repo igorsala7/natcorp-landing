@@ -5,7 +5,7 @@
  * Empresa, pessoas, datas e valores são fictícios. As etapas e o que o sistema faz em cada uma são reais.
  */
 
-import { journeyPath } from './site'
+import { journeyPath, paths } from './site'
 
 export type PhaseNumber = 1 | 2 | 3 | 4
 
@@ -605,7 +605,7 @@ export const steps: JourneyStep[] = [
     ],
     system: [
       'Trilha de entrada por cargo, com matrícula automática na admissão.',
-      'Treinamentos de NR com validade controlada: sem habilitação, a mudança de cargo é bloqueada.',
+      'Treinamentos de NR com validade controlada: sem a habilitação em dia, a mudança de cargo fica pendente até a regularização.',
       'Presença, carga horária, prova e certificado registrados no perfil da pessoa.',
     ],
     modules: [
@@ -626,7 +626,7 @@ export const steps: JourneyStep[] = [
     actor: 'gestor',
     character: 'marcos',
     brief: 'Avaliações de experiência, desempenho, autoavaliação, 180º e 360º pelo celular. O histórico alimenta carreira, sucessão e treinamento.',
-    when: { day: 'Dia 45 e dia 90', date: 'Qui · 12/11 e Dom · 27/12', time: '' },
+    when: { day: 'Dia 45 e dia 90', date: 'Qui · 12/11 e Seg · 28/12', time: '' },
     title: 'Avaliar vira rotina, não evento',
     story: [
       'No dia 45, Marcos recebe no Portal do Gestor a avaliação do primeiro período de experiência de Ana. Preenche em dez minutos e registra um feedback sobre a organização do turno. No dia 90, a segunda avaliação, e o contrato passa a prazo indeterminado sem ninguém lembrar. Ao longo do ano, Ana faz a autoavaliação, participa do ciclo 180º com o gestor e, como supervisora, do 360º com a equipe. Tudo pelo celular.',
@@ -739,10 +739,11 @@ export const steps: JourneyStep[] = [
     when: { day: 'Todo mês', date: 'fechamento', time: '' },
     title: 'Enquanto Ana trabalha, o RH fecha 10.000 folhas em 4 minutos',
     story: [
-      'Em paralelo a toda a jornada de Ana, o time de RH da Vale Verde opera a empresa inteira. Paulo Mendes fecha o ponto das seis unidades, confere os benefícios e roda a folha dos 10.000 colaboradores: a 2.500 folhas por minuto, o cálculo termina em cerca de quatro minutos e já está pronto para conferência. A NATI cruza frequência, benefícios e impostos e aponta as inconsistências antes do pagamento, em segundos, o que levaria horas em planilha.',
+      'Em paralelo a toda a jornada de Ana, o time de RH da Vale Verde opera a empresa inteira. Cada uma das seis unidades conclui ponto, benefícios e movimentações até a data de corte do seu calendário de fechamento, e Paulo Mendes vê, numa fila só, o que ainda falta em cada filial. Fechado o ponto, ele confere os benefícios e roda a folha dos 10.000 colaboradores por empresa: a 2.500 folhas por minuto, o cálculo termina em cerca de quatro minutos e já está pronto para conferência. A NATI cruza frequência, benefícios e impostos e aponta as inconsistências antes do pagamento, em segundos, o que levaria horas em planilha.',
       'O eSocial recebe cada evento e devolve o retorno no mesmo lugar. Nos painéis de BI e People Analytics, a diretoria acompanha turnover, absenteísmo e custo por unidade. E as rescisões que viraram processo trabalhista são acompanhadas no Jurídico Trabalhista, com o histórico de ponto, ASO, EPIs e treinamentos pronto para a defesa.',
     ],
     system: [
+      'Calendário de fechamento por filial: cada unidade conclui ponto, benefícios e movimentações até a data de corte no seu perfil; a matriz vê as pendências por filial, confere e roda a folha por empresa, com a contabilização de cada CNPJ para o ERP.',
       'Folha calculada a 2.500 colaboradores por minuto: 10.000 colaboradores em cerca de 4 minutos.',
       'A NATI confere folha, ponto e benefícios e aponta inconsistências antes de pagar.',
       'eSocial, BI, People Analytics e Jurídico Trabalhista na mesma base, sem exportar planilha.',
@@ -812,10 +813,18 @@ export const effectivation = {
   base: { slug: 'infraestrutura-e-seguranca', note: 'Tudo em nuvem, com trilha de auditoria de quem viu e alterou cada dado.' },
 }
 
+/** E quando a admissão não é uma, mas centenas? O mesmo fluxo, em série (aparece logo depois da efetivação). */
+export const volume = {
+  title: 'E quando são 300 de uma vez?',
+  text: 'Na safra, a Vale Verde abre dezenas de requisições de uma vez, dispara os convites de admissão pelo portal, acompanha a fila de pendências por unidade e confirma as admissões em série. Cada evento do eSocial sai validado antes do primeiro dia.',
+  modules: ['admissao-digital', 'esocial'],
+  more: { to: paths.groups, label: 'Grupos com várias empresas e filiais' },
+}
+
 /** Números da história (para a abertura e o fechamento). */
 export const outcomes = [
   { value: '24', label: 'etapas, da vaga à promoção, em um único fluxo' },
-  { value: '0', label: 'folhas de papel, formulários por e-mail ou planilhas paralelas' },
+  { value: '0', label: 'formulários em papel na admissão, e nenhuma planilha paralela' },
   { value: '1 vez', label: 'cada dado foi digitado, por quem mais sabia dele' },
   { value: '4 min', label: 'para calcular a folha dos 10.000 colaboradores' },
 ]

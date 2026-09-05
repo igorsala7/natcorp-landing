@@ -3,6 +3,7 @@ import type { SegmentPage } from './types'
 const page: SegmentPage = {
   slug: 'varejo',
   name: 'Varejo',
+  ctaContext: 'de varejo',
   tagline: 'O RH que acompanha [[cada loja]], da escala de domingo à admissão da temporada.',
   summary:
     'Dezenas de lojas, cada uma com sua escala, sua convenção e seu gerente no chão de loja. A Natcorp coloca headcount, ponto, folha, benefícios e admissão na mesma base, por unidade e região, para que o RH central enxergue tudo e a loja resolva o dia a dia sozinha.',
@@ -44,7 +45,7 @@ const page: SegmentPage = {
     {
       pain: 'CNPJs e convenções',
       title: 'Uma folha para todas as bandeiras e convenções',
-      text: 'A folha trata múltiplos vínculos e sindicatos na mesma empresa, sem limite de CNPJs. Posições e orçamento são geridos por loja e centro de custo, o vale-transporte segue o trajeto de cada unidade e o eSocial recebe admissões e desligamentos no prazo.',
+      text: 'A folha trata múltiplos vínculos e sindicatos na mesma empresa, com todas as bandeiras e CNPJs da rede. Posições e orçamento são geridos por loja e centro de custo, o vale-transporte segue o trajeto de cada unidade e o eSocial recebe admissões e desligamentos no prazo.',
       modules: ['folha-de-pagamento', 'administracao-de-pessoal', 'gestao-de-beneficios', 'esocial'],
     },
     {
@@ -71,7 +72,7 @@ const page: SegmentPage = {
     'administracao-de-pessoal': 'Posições, vagas e orçamento por loja, região e centro de custo, com alerta de desvio.',
     'cargos-e-salarios': 'Pisos por convenção, faixas por bandeira e política de mérito aplicada em toda a rede.',
     'gestao-de-beneficios': 'Vale-transporte por trajeto e loja, alimentação e plano de saúde com elegibilidade por cargo.',
-    natpay: 'Adiantamento salarial pelo WhatsApp, com desconto automático na folha, para reduzir pedidos ao DP e o turnover.',
+    natpay: 'Adiantamento salarial por Pix, sem pedido ao DP da rede, com desconto automático na folha da loja.',
     esocial: 'Admissões e desligamentos em volume enviados no prazo, com validação antes do envio.',
     'juridico-trabalhista': 'Histórico de ponto, escala e pagamento pronto para responder reclamações de hora extra e domingo.',
     'ponto-eletronico': 'Escalas de shopping, folgas de domingo, tolerâncias e banco de horas pela regra de cada convenção.',
@@ -95,7 +96,7 @@ const page: SegmentPage = {
     ged: 'Documentos de admissão e fichas de EPI guardados por pessoa, sem arquivo físico na loja.',
     'people-analytics': 'Headcount, turnover, absenteísmo e horas extras por loja, região e bandeira.',
     'business-intelligence': 'Painéis comparando lojas e períodos, com exportação para as reuniões de resultado.',
-    nati: 'Responde à equipe de loja pelo WhatsApp fora do horário do RH e confere a folha antes do fechamento.',
+    nati: 'Responde à equipe de loja no domingo, quando o RH central está fechado, e confere a folha de cada CNPJ antes do fechamento.',
     'conexao-com-outros-sistemas': 'Conecta com o sistema de vendas para comissões e com a catraca e o ERP da rede.',
     'infraestrutura-e-seguranca': 'Nuvem com contingência para a rede inteira, acesso por perfil e por loja.',
   },

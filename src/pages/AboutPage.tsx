@@ -17,7 +17,7 @@ import { paths } from '@/content/site'
 const stats = [
   { value: '35 anos', label: 'de história dedicada ao RH' },
   { value: '+500 mil', label: 'colaboradores com os dados administrados' },
-  { value: '+30', label: 'módulos integrados' },
+  { value: '31', label: 'módulos integrados' },
   { value: '2.500', label: 'folhas por minuto' },
 ]
 
@@ -137,6 +137,16 @@ export default function AboutPage() {
               </ul>
             </StaggerItem>
           </Stagger>
+          <Reveal delay={0.1} className="mt-8 flex flex-wrap items-center gap-x-8 gap-y-2 text-[15px] font-semibold text-brand-purple">
+            <Link to={paths.groups} className="group inline-flex items-center gap-2">
+              Como atendemos grupos com várias empresas e filiais
+              <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5" aria-hidden />
+            </Link>
+            <Link to={paths.modules} className="group inline-flex items-center gap-2">
+              Conhecer os 31 módulos
+              <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5" aria-hidden />
+            </Link>
+          </Reveal>
         </div>
       </Section>
 

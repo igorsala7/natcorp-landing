@@ -6,7 +6,7 @@ const page: ModulePage = {
   group: 'desenvolvimento',
   tagline: 'Sucessor pronto [[antes de a vaga abrir]].',
   summary:
-    'Planos de carreira ligados aos requisitos de cada cargo, mapa de sucessão com prontidão e risco de perda, PDI acompanhado em tempo real. Tudo alimentado pelas avaliações e pelo nine box, sem redigitar nada.',
+    'Planos de carreira ligados aos requisitos de cada cargo, mapa de sucessão com prontidão e risco de perda, PDI (plano de desenvolvimento individual) acompanhado em tempo real. Tudo alimentado pelas avaliações e pela matriz nine box (desempenho x potencial).',
   seo: {
     title: 'Carreira e Sucessão com dados | Natcorp',
     description:
@@ -24,7 +24,7 @@ const page: ModulePage = {
     },
     {
       title: 'Decisão com dados, não com indicação',
-      text: 'Nine box, avaliações, competências e formação no mesmo lugar. A promoção segue a política de cargos e passa pelo workflow de aprovação.',
+      text: 'Matriz nine box, avaliações, competências e formação no mesmo lugar. A promoção segue a política de cargos e passa pelo workflow de aprovação.',
     },
     {
       title: 'Ligado a cargos, avaliações e treinamento',
@@ -48,7 +48,7 @@ const page: ModulePage = {
       icon: 'alert-triangle',
     },
     {
-      title: 'Nine box',
+      title: 'Matriz nine box',
       text: 'Cruza potencial e desempenho do ciclo de avaliação para localizar quem tem alto potencial e quem está pronto para o próximo passo.',
       icon: 'layout-grid',
     },
@@ -87,7 +87,7 @@ const page: ModulePage = {
     title: 'Da posição-chave ao sucessor pronto',
     steps: [
       { title: 'Posições-chave', text: 'O RH define quais cargos e posições não podem ficar sem sucessor.' },
-      { title: 'Talentos mapeados', text: 'Nine box e avaliações apontam alto desempenho e alto potencial.' },
+      { title: 'Talentos mapeados', text: 'A matriz nine box e as avaliações apontam alto desempenho e alto potencial.' },
       { title: 'Sucessores e prontidão', text: 'Cada posição ganha sucessores, com nível de prontidão e risco de perda.' },
       { title: 'PDI em andamento', text: 'Gaps viram trilhas, treinamentos e mentorias, acompanhados em tempo real.' },
       { title: 'Movimentação aprovada', text: 'A promoção passa pelo workflow e atualiza cargo, salário e headcount.' },
@@ -101,7 +101,7 @@ const page: ModulePage = {
   faq: [
     {
       q: 'Como o sistema identifica sucessores para as posições-chave?',
-      a: 'Com dados concretos: o nine box cruza potencial e desempenho do ciclo de avaliação, as competências e a formação vêm do cadastro de cargos, e cada sucessor recebe um nível de prontidão. O RH indica os sucessores e acompanha os PDIs até que estejam prontos.',
+      a: 'Com dados concretos: a matriz nine box cruza potencial e desempenho do ciclo de avaliação, as competências e a formação vêm do cadastro de cargos, e cada sucessor recebe um nível de prontidão. O RH indica os sucessores e acompanha os PDIs até que estejam prontos.',
     },
     {
       q: 'O que é risco de perda e de onde vem esse dado?',

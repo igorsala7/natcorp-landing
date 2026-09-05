@@ -6,7 +6,7 @@ const page: ModulePage = {
   group: 'desenvolvimento',
   tagline: 'Metas negociadas, bônus calculado, PLR [[direto na folha]].',
   summary:
-    'Metas de empresa, área e indivíduo no mesmo ciclo. Elegibilidade, múltiplos e regras de admitidos, desligados e afastados parametrizados pelo RH. O sistema apura, calcula bônus e PLR e envia o valor para a Folha de Pagamento.',
+    'Metas de empresa, área e indivíduo no mesmo ciclo. Elegibilidade, múltiplos e regras de admitidos, desligados e afastados parametrizados pelo RH. O sistema apura, calcula bônus e PLR (participação nos lucros e resultados) e envia o valor à Folha de Pagamento.',
   seo: {
     title: 'Metas, Bônus e PLR sem planilha | Natcorp',
     description:

@@ -38,6 +38,13 @@ export interface SegmentFaq {
 export interface SegmentPage {
   slug: string
   name: string
+  /**
+   * Complemento do CTA final, em minúsculas: "Veja a Natcorp com a realidade da sua operação {ctaContext}."
+   * Ex.: "de varejo", "industrial", "no setor público e social". Sem ele, usa "de {name}".
+   */
+  ctaContext?: string
+  /** Mostra o cartão que leva à jornada do colaborador (contada numa indústria de alimentos). */
+  journey?: boolean
   /** Frase de abertura; um trecho pode ser [[destacado]]. */
   tagline: string
   summary: string

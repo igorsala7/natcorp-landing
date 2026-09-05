@@ -12,7 +12,7 @@ import { paths } from '@/content/site'
 import { EASE } from '@/lib/motion'
 import { scrollToElement } from '@/components/motion/ScrollManager'
 
-const trust = ['+30 módulos integrados', '2.500 folhas por minuto', 'NATI, a IA do RH', 'Nuvem Oracle com contingência']
+const trust = ['31 módulos integrados', '2.500 folhas por minuto', 'NATI, a IA do RH', 'Nuvem Oracle com contingência', 'Várias empresas e CNPJs, uma base']
 
 /**
  * Abertura: fotografia real em tela cheia, véu no gradiente da marca à esquerda para o texto
@@ -73,11 +73,11 @@ export function Hero() {
           <HeroSymbol className="h-full w-auto" />
         </m.div>
         {/* véu para o texto: base no celular, lateral esquerda no desktop */}
-        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(44,26,99,0.35)_0%,rgba(44,26,99,0.15)_32%,rgba(44,26,99,0.92)_58%,#2C1A63_72%)] lg:bg-[linear-gradient(90deg,#2C1A63_0%,rgba(44,26,99,0.96)_24%,rgba(60,30,110,0.72)_46%,rgba(81,28,118,0.22)_66%,rgba(81,28,118,0)_100%)]" />
+        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(44,26,99,0.35)_0%,rgba(44,26,99,0.18)_18%,rgba(44,26,99,0.9)_40%,#2C1A63_52%)] lg:bg-[linear-gradient(90deg,#2C1A63_0%,rgba(44,26,99,0.96)_24%,rgba(60,30,110,0.72)_46%,rgba(81,28,118,0.22)_66%,rgba(81,28,118,0)_100%)]" />
         <div className="absolute inset-0 hidden bg-[linear-gradient(180deg,rgba(44,26,99,0.45)_0%,transparent_22%,transparent_78%,rgba(27,18,56,0.5)_100%)] lg:block" />
       </div>
 
-      <div className="container relative mt-auto flex flex-col pb-14 pt-[calc(var(--nav-h)+50svh)] sm:pt-[calc(var(--nav-h)+46svh)] lg:min-h-[min(760px,88vh)] lg:justify-center lg:py-[calc(var(--nav-h)+4rem)]">
+      <div className="container relative mt-auto flex flex-col pb-12 pt-[calc(var(--nav-h)+28svh)] sm:pb-14 sm:pt-[calc(var(--nav-h)+40svh)] lg:min-h-[min(760px,88vh)] lg:justify-center lg:py-[calc(var(--nav-h)+4rem)]">
         <m.div style={{ y: reduced ? 0 : yText, opacity: reduced ? 1 : opacityText }} className="max-w-2xl">
           <m.p
             {...show(0.05)}
@@ -95,16 +95,16 @@ export function Hero() {
             delay={0.15}
             stagger={0.08}
             text="Todo o RH. Um único sistema."
-            className="mt-6 text-[2.75rem] font-extrabold leading-[1.02] sm:text-6xl lg:text-[4.4rem] xl:text-[5rem]"
+            className="mt-5 text-[2.5rem] font-extrabold leading-[1.02] sm:mt-6 sm:text-6xl lg:text-[4.4rem] xl:text-[5rem]"
           />
 
-          <m.p {...show(0.55)} className="mt-6 max-w-xl text-lg leading-relaxed text-white/85 sm:text-xl">
+          <m.p {...show(0.55)} className="mt-5 max-w-xl text-[15.5px] leading-relaxed text-white/85 sm:mt-6 sm:text-xl">
             Folha, ponto, eSocial, admissão digital, saúde e segurança do trabalho, talentos e People Analytics.
-            Mais de 30 módulos integrados, com a NATI, nossa inteligência artificial, trabalhando dentro do sistema.
+            31 módulos integrados, com a NATI, nossa inteligência artificial, trabalhando dentro do sistema.
             Para grandes empresas que querem um RH protagonista.
           </m.p>
 
-          <m.div {...show(0.7)} className="mt-9 flex flex-wrap items-center gap-3">
+          <m.div {...show(0.7)} className="mt-7 flex flex-wrap items-center gap-3 sm:mt-9">
             <Magnetic>
               <Button asChild variant="inverse" size="xl">
                 <Link to="#contato">
@@ -118,7 +118,7 @@ export function Hero() {
             </Button>
           </m.div>
 
-          <m.ul {...show(0.85)} className="mt-10 flex flex-wrap items-center gap-x-6 gap-y-2 text-[13px] font-medium text-white/75">
+          <m.ul {...show(0.85)} className="mt-8 flex flex-wrap items-center gap-x-5 gap-y-2 text-[13px] font-medium text-white/75 sm:mt-10 sm:gap-x-6">
             {trust.map((t) => (
               <li key={t} className="flex items-center gap-2">
                 <span className="h-1.5 w-1.5 rounded-full bg-[#E4A9C4]" aria-hidden />

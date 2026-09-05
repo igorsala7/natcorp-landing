@@ -17,7 +17,7 @@ const points = [
   { icon: ScanFace, title: 'Reconhecimento facial', text: 'O rosto confirma quem está marcando. Sem cartão emprestado, sem senha compartilhada.' },
   { icon: MapPin, title: 'Geolocalização com raio', text: 'A marcação registra onde foi feita e se está dentro do raio permitido da unidade.' },
   { icon: WifiOff, title: 'Funciona sem internet', text: 'Sem sinal, a marcação fica guardada no aparelho e sincroniza sozinha depois.' },
-  { icon: QrCode, title: 'Comprovante verificável', text: 'Cada marcação gera comprovante com código QR, hash e registro no INPI.' },
+  { icon: QrCode, title: 'Comprovante verificável', text: 'Cada marcação gera comprovante com código QR, hash e registro de programa de computador no INPI.' },
 ]
 
 /** Resumo do NatPonto na home: três telas do app reproduzidas em HTML/CSS. */

@@ -8,7 +8,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
-import { cargoOptions, colaboradoresOptions, leadSchema, type LeadFormData } from '@/lib/leadSchema'
+import { cargoOptions, colaboradoresOptions, empresasOptions, leadSchema, organizacaoOptions, unidadesOptions, type LeadFormData } from '@/lib/leadSchema'
 import { submitLead } from '@/lib/submitLead'
 import { siteConfig } from '@/content/site'
 
@@ -17,7 +17,7 @@ export default function LeadForm() {
 
   const form = useForm<LeadFormData>({
     resolver: zodResolver(leadSchema),
-    defaultValues: { nome: '', email: '', telefone: '', empresa: '', cargo: '', colaboradores: '', mensagem: '', novidades: false },
+    defaultValues: { nome: '', email: '', telefone: '', empresa: '', cargo: '', colaboradores: '', empresas: '', unidades: '', organizacao: '', mensagem: '', novidades: false },
   })
 
   async function onSubmit(data: LeadFormData) {
@@ -153,6 +153,82 @@ export default function LeadForm() {
                 </FormControl>
                 <SelectContent>
                   {colaboradoresOptions.map((c) => (
+                    <SelectItem key={c} value={c}>
+                      {c}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <div className="grid gap-4 sm:grid-cols-2">
+          <FormField
+            control={form.control}
+            name="empresas"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Empresas ou CNPJs no grupo</FormLabel>
+                <Select onValueChange={field.onChange} value={field.value}>
+                  <FormControl>
+                    <SelectTrigger className={fieldClass}>
+                      <SelectValue placeholder="Selecione" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {empresasOptions.map((c) => (
+                      <SelectItem key={c} value={c}>
+                        {c}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="unidades"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Unidades ou filiais</FormLabel>
+                <Select onValueChange={field.onChange} value={field.value}>
+                  <FormControl>
+                    <SelectTrigger className={fieldClass}>
+                      <SelectValue placeholder="Selecione" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {unidadesOptions.map((c) => (
+                      <SelectItem key={c} value={c}>
+                        {c}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
+
+        <FormField
+          control={form.control}
+          name="organizacao"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Como o RH está organizado hoje (opcional)</FormLabel>
+              <Select onValueChange={field.onChange} value={field.value}>
+                <FormControl>
+                  <SelectTrigger className={fieldClass}>
+                    <SelectValue placeholder="Selecione" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  {organizacaoOptions.map((c) => (
                     <SelectItem key={c} value={c}>
                       {c}
                     </SelectItem>

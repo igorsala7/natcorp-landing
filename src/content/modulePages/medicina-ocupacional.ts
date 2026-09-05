@@ -19,7 +19,7 @@ const page: ModulePage = {
   benefits: [
     {
       title: 'Exame certo, na hora certa',
-      text: 'O PCMSO nasce do risco do GHE e gera o cronograma anual sozinho. O sistema agenda e avisa antes de vencer. Nenhum ASO vence sem ninguém ver.',
+      text: 'O PCMSO (Programa de Controle Médico de Saúde Ocupacional) nasce do risco do GHE (Grupo Homogêneo de Exposição) e gera o cronograma anual sozinho. O sistema agenda e avisa antes de vencer. Nenhum ASO (Atestado de Saúde Ocupacional) vence sem ninguém ver.',
     },
     {
       title: 'Afastamento sem efeito colateral na folha',
@@ -37,7 +37,7 @@ const page: ModulePage = {
   features: [
     {
       title: 'PCMSO ligado ao risco',
-      text: 'O programa de exames é montado a partir do PGR e do GHE de cada função. Agendamento automático e cronograma anual gerados pelo sistema.',
+      text: 'O programa de exames é montado a partir do PGR (Programa de Gerenciamento de Riscos) e do GHE de cada função. Agendamento automático e cronograma anual gerados pelo sistema.',
       icon: 'heart-pulse',
     },
     {

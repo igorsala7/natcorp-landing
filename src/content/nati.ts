@@ -6,7 +6,7 @@ export const capabilities = [
   { id: 'responde', name: 'Responde', text: 'Em linguagem natural, 24x7, para colaborador, gestor e RH.' },
   { id: 'analisa', name: 'Analisa', text: 'Cruza folha, ponto, SESMT e talentos em uma pergunta só.' },
   { id: 'alerta', name: 'Alerta', text: 'Aponta o desvio antes do fechamento, da auditoria e da multa.' },
-  { id: 'executa', name: 'Executa', text: 'Agenda, abre requisições e simula cenários, com a aprovação de quem decide.' },
+  { id: 'executa', name: 'Executa', text: 'Prepara o agendamento, a requisição e a simulação. Executa só o que uma pessoa aprovou.' },
   { id: 'reporta', name: 'Reporta', text: 'Gera gráfico, tabela e relatório na hora, com as fontes citadas.' },
 ] as const
 
@@ -25,14 +25,14 @@ export const matrix: Record<GroupId, Record<CapabilityId, string>> = {
     responde: 'saldo do banco de horas',
     analisa: 'horas extras por unidade e turno',
     alerta: 'marcação fora do padrão',
-    executa: 'abona com a justificativa aprovada',
+    executa: 'prepara o abono para a aprovação do gestor',
     reporta: 'absenteísmo por equipe',
   },
   'saude-e-seguranca': {
     responde: 'quando vence o meu ASO',
     analisa: 'afastamentos por CID e setor',
     alerta: 'exames e NRs a vencer',
-    executa: 'agenda os exames periódicos',
+    executa: 'prepara a agenda dos exames periódicos',
     reporta: 'indicadores do PGR e da CIPA',
   },
   talentos: {
@@ -53,7 +53,7 @@ export const matrix: Record<GroupId, Record<CapabilityId, string>> = {
     responde: 'dúvidas de RH, dia e noite',
     analisa: 'temas mais perguntados',
     alerta: 'chamado fora do prazo',
-    executa: 'abre e encaminha requisições',
+    executa: 'abre a requisição pedida e a leva ao fluxo de aprovação',
     reporta: 'SLA do atendimento',
   },
   'dados-ia-plataforma': {
@@ -86,8 +86,8 @@ export const insights: Insight[] = [
   {
     id: 'aso',
     modules: ['Medicina Ocupacional', 'Segurança do Trabalho', 'Treinamento e Desenvolvimento'],
-    text: '27 ASOs vencem em 15 dias na Unidade Guarulhos e 6 colaboradores estão sem treinamento de NR-35 válido para o cargo. Já agendei os exames e notifiquei os gestores.',
-    action: 'Abrir a agenda de exames',
+    text: '27 ASOs vencem em 15 dias na Unidade Guarulhos e 6 colaboradores estão sem treinamento de NR-35 válido para o cargo. Preparei o agendamento e o aviso aos gestores. Quer que eu envie?',
+    action: 'Aprovar agendamento',
     chart: { kind: 'bars', values: [4, 9, 27, 12, 6], labels: ['hoje', '7 d', '15 d', '30 d', '60 d'], unit: 'ASOs' },
   },
   {
@@ -128,5 +128,5 @@ export const pipeline = [
   { title: 'Consulta', text: 'Os 31 módulos e as fontes que o RH liberou.' },
   { title: 'Cruza', text: 'Folha com ponto, ponto com saúde, talentos com metas.' },
   { title: 'Responde', text: 'Análise, diagnóstico, pontos de atenção e sugestão, com as fontes.' },
-  { title: 'Executa', text: 'Agenda, abre a requisição, gera o relatório. Com a aprovação de quem decide.' },
+  { title: 'Executa', text: 'Agenda, abre a requisição, gera o relatório. Só depois que quem decide aprova.' },
 ]

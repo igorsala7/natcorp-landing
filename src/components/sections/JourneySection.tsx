@@ -1,13 +1,15 @@
-import { useEffect, useRef, useState } from 'react'
-import type { ComponentType } from 'react'
+import { Fragment, useEffect, useRef, useState } from 'react'
+import type { ComponentType, ReactNode } from 'react'
 import { AnimatePresence, m } from 'motion/react'
 import { ArrowRight, Check } from 'lucide-react'
 import { Link } from 'react-router'
 import { journeyPath } from '@/content/site'
+import { modulePath } from '@/content/modulePages'
 import { Section, Eyebrow } from './Section'
 import { Reveal, Stagger, StaggerItem } from '@/components/motion/Reveal'
 import { EmployeeAvatar } from '@/components/brand/EmployeeAvatar'
 import { AdmissionMockup } from '@/components/mockups/AdmissionMockup'
+import { DevelopmentMockup } from '@/components/mockups/DevelopmentMockup'
 import { FlowMockup } from '@/components/mockups/FlowMockup'
 import { RequestMockup } from '@/components/mockups/RequestMockup'
 import { SesmtMockup } from '@/components/mockups/SesmtMockup'
@@ -16,24 +18,35 @@ import { EASE } from '@/lib/motion'
 
 /**
  * A jornada com personalidade de história: o texto rola, a tela fica fixa e troca
- * a cada momento. Uma personagem (a Ana), quatro cenas, um sistema.
+ * a cada momento. Uma personagem (a Ana), cinco cenas, um sistema.
  */
+
+interface ModuleRef {
+  name: string
+  slug: string
+}
 
 interface Feature {
   id: string
-  eyebrow: string
+  /** Frente do sistema em que o momento acontece. */
+  group: string
+  /** Módulos que entram no momento; cada um leva à sua página. */
+  modules: ModuleRef[]
   moment: string
   title: string
-  text: string
+  text: ReactNode
   bullets: string[]
   mockup: ComponentType<{ className?: string }>
   label: string
 }
 
+const inlineLink = 'font-semibold text-brand-purple underline decoration-brand-purple/40 underline-offset-4 hover:decoration-brand-purple'
+
 const features: Feature[] = [
   {
     id: 'admissao',
-    eyebrow: 'Talentos · Admissão Digital',
+    group: 'Talentos',
+    modules: [{ name: 'Admissão Digital', slug: 'admissao-digital' }],
     moment: 'Semana 1',
     title: 'A admissão que leva minutos, não dias.',
     text: 'A Ana preenche os próprios dados no Portal do Candidato, anexa os documentos no GED e assina o contrato eletronicamente, com validade jurídica. O RH valida e admite em poucos cliques. Folha, ponto e benefícios já nascem prontos.',
@@ -47,10 +60,23 @@ const features: Feature[] = [
   },
   {
     id: 'ponto-folha',
-    eyebrow: 'Ponto e Jornada · Pessoal e Folha',
+    group: 'Ponto e Jornada',
+    modules: [
+      { name: 'Ponto Eletrônico', slug: 'ponto-eletronico' },
+      { name: 'Folha de Pagamento', slug: 'folha-de-pagamento' },
+    ],
     moment: 'Primeiro dia',
     title: 'O ponto chega certo. A folha fecha rápido.',
-    text: 'A marcação no NatPonto, com geolocalização e reconhecimento facial, ou no relógio da empresa é apurada conforme a jornada: fixa, flexível, variável ou 12x36. Os eventos vão direto para a folha, calculada a 2.500 colaboradores por minuto, e o eSocial é enviado e acompanhado no mesmo lugar.',
+    text: (
+      <>
+        A marcação no{' '}
+        <Link to={modulePath('natponto')} className={inlineLink}>
+          NatPonto
+        </Link>
+        , com geolocalização e reconhecimento facial, ou no relógio da empresa é apurada conforme a jornada: fixa, flexível, variável ou 12x36. Os
+        eventos vão direto para a folha, calculada a 2.500 colaboradores por minuto, e o eSocial é enviado e acompanhado no mesmo lugar.
+      </>
+    ),
     bullets: [
       'Banco de horas, DSR, adicional noturno e escalas por convenção',
       'Abono de marcações com workflow e comprovante anexado',
@@ -61,7 +87,8 @@ const features: Feature[] = [
   },
   {
     id: 'requisicoes',
-    eyebrow: 'Autoatendimento · Requisições com workflow',
+    group: 'Autoatendimento',
+    modules: [{ name: 'Requisições com Workflow', slug: 'requisicoes-com-workflow' }],
     moment: 'Primeiro mês',
     title: 'Aprovou, efetivou. Sem digitar de novo.',
     text: 'Férias, vaga, promoção, movimentação, desligamento, reembolso, atestado, abono: o pedido nasce no portal, o fluxo de aprovação roda e, aprovado, o sistema efetiva a informação automaticamente. A NATI e o Chamado Interno resolvem as dúvidas antes de virarem e-mail.',
@@ -74,8 +101,30 @@ const features: Feature[] = [
     label: 'Requisição de férias passando pelo fluxo de aprovação',
   },
   {
+    id: 'desenvolvimento',
+    group: 'Desenvolvimento',
+    modules: [
+      { name: 'Avaliações', slug: 'avaliacoes-e-feedbacks' },
+      { name: 'Carreira e Sucessão', slug: 'carreira-e-sucessao' },
+    ],
+    moment: 'Primeiro ano',
+    title: 'Avaliar, desenvolver e promover, sem planilha.',
+    text: 'Aos 45 e aos 90 dias, a avaliação de experiência da Ana já está no sistema. Depois vêm a autoavaliação, a avaliação 180º com a gestora e a 360º com os pares, as trilhas de treinamento, as metas e a PLR. No fim do ano, o mapa de sucessão aponta a Ana para a próxima posição, e a promoção sai do workflow direto para a folha.',
+    bullets: [
+      'Avaliação de experiência, autoavaliação, 180º e 360º no mesmo ciclo',
+      'Trilhas de treinamento, metas e PLR ligadas ao cargo e à equipe',
+      'Mapa de sucessão e promoção efetivada na folha, sem redigitar',
+    ],
+    mockup: DevelopmentMockup,
+    label: 'Painel de desenvolvimento: avaliações concluídas, mapa de sucessão e promoção efetivada',
+  },
+  {
     id: 'sesmt',
-    eyebrow: 'Saúde e Segurança · SESMT',
+    group: 'Saúde e Segurança',
+    modules: [
+      { name: 'Medicina Ocupacional', slug: 'medicina-ocupacional' },
+      { name: 'Segurança do Trabalho', slug: 'seguranca-do-trabalho' },
+    ],
     moment: 'Todo ano',
     title: 'Exames, riscos e documentos em dia, dentro do RH.',
     text: 'Medicina e Segurança do Trabalho operam na mesma base do RH: do PGR ao GHE, do PCMSO ao ASO digital. EPIs com CA validado, CAT, LTCAT e PPP eletrônico. Os eventos de SST do eSocial saem com validação prévia, sem multa por divergência.',
@@ -111,13 +160,13 @@ export function JourneySection() {
   const Active = features[active].mockup
 
   return (
-    <Section id="jornada" tone="white" className="overflow-x-clip" aria-labelledby="jornada-title">
+    <Section id="jornada" tone="off" className="overflow-x-clip" aria-labelledby="jornada-title">
       <div className="container">
         {/* Abertura em tom de história */}
         <div className="max-w-4xl">
           <Reveal y={12} duration={0.5} className="flex flex-wrap items-center gap-3">
             <EmployeeAvatar ring className="h-11 w-11" />
-            <Eyebrow trail={false}>A jornada da Ana · quatro momentos, um sistema</Eyebrow>
+            <Eyebrow trail={false}>A jornada da Ana · cinco momentos, um sistema</Eyebrow>
           </Reveal>
           <Reveal delay={0.1}>
             <h2 id="jornada-title" className="mt-5 text-3xl font-extrabold leading-[1.1] text-brand-ink sm:text-4xl lg:text-5xl">
@@ -162,7 +211,15 @@ export function JourneySection() {
                     <Reveal y={12} duration={0.5} className="flex flex-wrap items-center gap-x-3 gap-y-1">
                       <span className="rounded-full bg-brand-purple/10 px-2.5 py-1 text-[11px] font-bold uppercase tracking-[0.12em] text-brand-purple">{f.moment}</span>
                       <Eyebrow trail={false} className="text-brand-graphite">
-                        {f.eyebrow}
+                        {f.group} ·{' '}
+                        {f.modules.map((mod, j) => (
+                          <Fragment key={mod.slug}>
+                            {j > 0 && ', '}
+                            <Link to={modulePath(mod.slug)} className="underline decoration-brand-purple/30 underline-offset-4 transition-colors hover:text-brand-purple hover:decoration-brand-purple">
+                              {mod.name}
+                            </Link>
+                          </Fragment>
+                        ))}
                       </Eyebrow>
                     </Reveal>
                     <Reveal delay={0.08}>

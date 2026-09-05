@@ -3,6 +3,7 @@ import type { SegmentPage } from './types'
 const page: SegmentPage = {
   slug: 'saude-e-ciencias-biologicas',
   name: 'Saúde e Ciências Biológicas',
+  ctaContext: 'de saúde',
   tagline: 'O RH que não para, [[plantão após plantão]], do pronto-socorro ao laboratório.',
   summary:
     'Hospitais, clínicas, laboratórios e indústria farmacêutica funcionam 24 horas, com escalas 12x36, trocas de plantão e profissionais em mais de um vínculo. A Natcorp coloca ponto, folha, SESMT e treinamentos da NR-32 na mesma base, por unidade e setor, para o RH fechar o mês sem passivo.',
@@ -38,7 +39,7 @@ const page: SegmentPage = {
     {
       pain: 'Múltiplos vínculos',
       title: 'Uma folha para todos os vínculos, sindicatos e unidades',
-      text: 'A Folha de Pagamento trata vários vínculos e acordos sindicais na mesma empresa, cada um com suas regras, sem limite de CNPJs. Serviços de terceiros e autônomos entram por requisição, e o cargo carrega periculosidade e progressão parametrizadas. A NATI confere proventos e descontos antes do fechamento.',
+      text: 'A Folha de Pagamento trata vários vínculos e acordos sindicais na mesma empresa, cada um com suas regras, para quantas unidades e CNPJs a instituição tiver. Serviços de terceiros e autônomos entram por requisição, e o cargo carrega periculosidade e progressão parametrizadas. A NATI confere proventos e descontos antes do fechamento.',
       modules: ['folha-de-pagamento', 'administracao-de-pessoal', 'cargos-e-salarios', 'nati'],
     },
     {
@@ -49,8 +50,8 @@ const page: SegmentPage = {
     },
     {
       pain: 'CAT e eSocial',
-      title: 'CAT aberta em poucos passos, S-2210 em até 24 horas',
-      text: 'O acidente com perfurocortante é registrado no SESMT, a CAT é aberta em poucos passos e o evento S-2210 sai automaticamente em até 24 horas, depois do validador de divergências. O S-2220 nasce do ASO e o S-2240 do PGR. CIPA e brigadistas são geridos no mesmo módulo, com eleição digital.',
+      title: 'CAT aberta em poucos passos, S-2210 até o primeiro dia útil seguinte',
+      text: 'O acidente com perfurocortante é registrado no SESMT, a CAT é aberta em poucos passos e o evento S-2210 sai até o primeiro dia útil seguinte ao acidente, depois do validador de divergências. O S-2220 nasce do ASO e o S-2240 do PGR. CIPA e brigadistas são geridos no mesmo módulo, com eleição digital.',
       modules: ['seguranca-do-trabalho', 'esocial', 'medicina-ocupacional'],
     },
     {
@@ -71,8 +72,8 @@ const page: SegmentPage = {
     'administracao-de-pessoal': 'Posições por unidade e setor, custo dos plantões no orçamento e cadastro de autônomos e terceiros por requisição.',
     'cargos-e-salarios': 'Ficha do cargo com periculosidade, cargo de confiança e progressão automática, e piso por convenção de cada categoria.',
     'gestao-de-beneficios': 'Plano de saúde com coparticipação e fatura da operadora conferida, alimentação e vale-transporte por unidade.',
-    natpay: 'Adiantamento pelo WhatsApp com limite pelos dias trabalhados no ponto, para quem depende do plantão extra.',
-    esocial: 'S-2210 da CAT de perfurocortante em até 24 horas, S-2220 do ASO e S-2240 dos riscos biológicos do PGR.',
+    natpay: 'Adiantamento com limite pelos plantões já registrados no ponto, pago por Pix, para quem não pode esperar o quinto dia útil.',
+    esocial: 'S-2210 da CAT de perfurocortante até o primeiro dia útil seguinte, S-2220 do ASO e S-2240 dos riscos biológicos do PGR.',
     'juridico-trabalhista': 'Espelhos de plantão, termos de troca e histórico de adicionais prontos para responder ações de jornada.',
     'ponto-eletronico': 'Escalas 12x36 por setor, plantões rotativos, sobreaviso, troca de plantão com aceite e adicional noturno apurado.',
     natponto: 'Tablet multiusuário no posto de cada unidade, com reconhecimento facial, e celular para o atendimento domiciliar.',
@@ -95,7 +96,7 @@ const page: SegmentPage = {
     ged: 'Documentos de admissão, registros profissionais e fichas de EPI por pessoa, com acesso restrito por perfil.',
     'people-analytics': 'Absenteísmo, horas extras e plantões extras cruzados por unidade, setor e categoria, sem depender de TI.',
     'business-intelligence': 'Painéis de absenteísmo, escalas e custo de pessoal por unidade e setor, com alerta quando sai da faixa.',
-    nati: 'Responde a dúvidas de plantão e holerite no WhatsApp, 24 horas, e confere adicionais na folha antes do fechamento.',
+    nati: 'Responde a dúvidas de plantão e holerite a qualquer hora, inclusive de madrugada, e confere adicional noturno e insalubridade antes do pagamento.',
     'conexao-com-outros-sistemas': 'Conecta com catracas, relógios de ponto, ERP do hospital e operadoras de benefícios sem redigitar.',
     'infraestrutura-e-seguranca': 'Nuvem com contingência para a operação 24 horas, dados de saúde criptografados e acesso por perfil e unidade.',
   },
@@ -104,7 +105,7 @@ const page: SegmentPage = {
     'NR-32: segurança e saúde em serviços de saúde, com treinamentos de validade controlada',
     'Escala 12x36 e adicional noturno conforme a CLT e as convenções das categorias da saúde',
     'PCMSO e ASO por risco, com o evento S-2220 do eSocial',
-    'CAT de acidentes com perfurocortantes e S-2210 em até 24 horas',
+    'CAT de acidentes com perfurocortantes e S-2210 até o primeiro dia útil seguinte',
     'Ponto eletrônico conforme a Portaria 671, com arquivos AFD e AEJ',
     'LGPD no tratamento de dados de saúde dos profissionais',
   ],
@@ -128,7 +129,7 @@ const page: SegmentPage = {
     },
     {
       q: 'O que acontece quando há um acidente com perfurocortante?',
-      a: 'O SESMT registra o acidente e abre a CAT em poucos passos, pelo computador ou pelo tablet. O evento S-2210 passa pelo validador de divergências e é enviado ao eSocial em até 24 horas. Se houver afastamento, ele reflete no ponto e na folha.',
+      a: 'O SESMT registra o acidente e abre a CAT em poucos passos, pelo computador ou pelo tablet. O evento S-2210 passa pelo validador de divergências e é enviado ao eSocial dentro do prazo legal: até o primeiro dia útil seguinte ao acidente. Se houver afastamento, ele reflete no ponto e na folha.',
     },
   ],
   visual: 'medicine',

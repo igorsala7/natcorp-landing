@@ -3,6 +3,7 @@ import { ProofStrip } from '@/components/sections/ProofStrip'
 import { NatiTeaser } from '@/components/sections/NatiTeaser'
 import { ProblemSection } from '@/components/sections/ProblemSection'
 import { PlatformSection } from '@/components/sections/PlatformSection'
+import { StructureSection } from '@/components/sections/StructureSection'
 import { JourneySection } from '@/components/sections/JourneySection'
 import { NatiSection } from '@/components/sections/NatiSection'
 import { SegmentsSection } from '@/components/sections/SegmentsSection'
@@ -24,14 +25,15 @@ export default function LandingPage() {
       <NatiTeaser />
       <ProblemSection />
       <PlatformSection />
+      <StructureSection tone="white" />
       <JourneySection />
       <NatiSection />
       <SegmentsSection />
       <WhySection />
       <FAQSection
         items={faqs.slice(0, 4)}
-        lead="As quatro perguntas mais comuns. A lista completa está na página do sistema."
-        more={{ to: `${paths.system}#faq`, label: 'Ver todas as perguntas' }}
+        lead="As quatro perguntas mais comuns. A lista completa está na página de perguntas frequentes."
+        more={{ to: paths.faq, label: 'Ver todas as perguntas' }}
       />
       <CTASection />
     </PageTransition>

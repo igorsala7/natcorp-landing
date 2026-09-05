@@ -1,15 +1,17 @@
 import { useEffect, useRef, useState } from 'react'
 import { AnimatePresence, m, useInView, useReducedMotion } from 'motion/react'
-import { AlertTriangle, BarChart2, Unplug } from 'lucide-react'
+import { AlertTriangle, ArrowRight, BarChart2, Building2, Unplug } from 'lucide-react'
+import { Link } from 'react-router'
 import { Section, Eyebrow } from './Section'
 import { Reveal, Stagger, StaggerItem } from '@/components/motion/Reveal'
 import { Logo } from '@/components/brand/Logo'
+import { paths } from '@/content/site'
 import { cn } from '@/lib/utils'
 import { EASE } from '@/lib/motion'
 
 /**
  * O problema, com personalidade de afirmação: uma pergunta grande em fundo escuro,
- * três sintomas em texto corrido e um objeto de antes e depois que troca de cena.
+ * quatro sintomas em texto corrido e um objeto de antes e depois que troca de cena.
  */
 
 const pains = [
@@ -27,6 +29,11 @@ const pains = [
     icon: BarChart2,
     title: 'Decisão sem dado.',
     text: 'Turnover, custo de folha e headcount fechados semanas depois. A diretoria pergunta, o RH exporta para o Excel.',
+  },
+  {
+    icon: Building2,
+    title: 'Várias empresas e filiais, cada uma com a sua planilha de fechamento.',
+    text: 'A matriz recebe o fechamento de cada unidade por e-mail, consolida à mão e descobre a divergência depois de pagar.',
   },
 ]
 
@@ -96,6 +103,12 @@ export function ProblemSection() {
               </StaggerItem>
             ))}
           </Stagger>
+          <Reveal delay={0.3} className="mt-8">
+            <Link to={paths.groups} className="group inline-flex items-center gap-2 text-[15px] font-semibold text-white underline-offset-4 hover:underline">
+              Veja como um grupo fecha a folha na matriz
+              <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5" aria-hidden />
+            </Link>
+          </Reveal>
         </div>
 
         <Reveal delay={0.15} className="min-w-0">

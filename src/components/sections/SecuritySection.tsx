@@ -1,16 +1,44 @@
 import { m } from 'motion/react'
-import { Cable, Cloud, DatabaseBackup, Layers, Lock, ShieldCheck } from 'lucide-react'
+import { ArrowRight, Cable, Cloud, DatabaseBackup, Layers, Lock, ShieldCheck } from 'lucide-react'
+import { Link } from 'react-router'
 import { Section, SectionHeader } from './Section'
 import { Reveal, Stagger, StaggerItem } from '@/components/motion/Reveal'
+import { modulePath } from '@/content/modulePages'
+import { paths } from '@/content/site'
 import { viewportOnce } from '@/lib/motion'
 
-const items = [
+interface SecurityItem {
+  icon: typeof Cloud
+  title: string
+  text: string
+  /** Páginas que aprofundam o assunto. */
+  links?: { label: string; to: string }[]
+}
+
+const items: SecurityItem[] = [
   { icon: Cloud, title: 'Parceiro Oracle', text: 'Infraestrutura Oracle Cloud com servidores dedicados e alta disponibilidade para a sua operação de RH.' },
   { icon: Layers, title: 'Produção, homologação e contingência', text: 'Ambientes separados para validar mudanças antes de aplicar, e um serviço de recuperação de desastres pronto para assumir.' },
   { icon: DatabaseBackup, title: 'Backups diários', text: 'Dois backups por dia, guardados em ambiente isolado, para que nenhum dado do RH se perca.' },
-  { icon: Lock, title: 'Camadas de proteção', text: 'Criptografia, HTTPS, firewall de aplicação, autenticação em dois fatores e VPN, com auditoria de acessos e monitoramento 24 horas por um time especializado.' },
-  { icon: ShieldCheck, title: 'LGPD por desenho', text: 'Perfis de acesso granulares, anonimização, trilha de auditoria e controle por empresa e filial.' },
-  { icon: Cable, title: 'Conecta com o que você já usa', text: 'ERP, operadoras de benefícios, relógios de ponto, login corporativo (SSO): APIs prontas, construtor de APIs, arquivos e webhooks.' },
+  {
+    icon: Lock,
+    title: 'Camadas de proteção',
+    text: 'Criptografia, HTTPS, firewall de aplicação, autenticação em dois fatores e VPN, com auditoria de acessos e monitoramento 24 horas por um time especializado.',
+  },
+  {
+    icon: ShieldCheck,
+    title: 'LGPD por desenho',
+    text: 'Perfis de acesso granulares, anonimização, trilha de auditoria e controle por empresa e filial.',
+    links: [
+      { label: 'Infraestrutura e Segurança', to: modulePath('infraestrutura-e-seguranca') },
+      { label: 'Perfis por empresa e filial', to: paths.groups },
+    ],
+  },
+  {
+    icon: Cable,
+    title: 'Conecta com o que você já usa',
+    text: 'ERP, operadoras de benefícios, relógios de ponto, login corporativo (SSO): APIs prontas, construtor de APIs, arquivos e webhooks.',
+    links: [{ label: 'Conexão com Outros Sistemas', to: modulePath('conexao-com-outros-sistemas') }],
+  },
 ]
 
 const envs = [
@@ -45,6 +73,13 @@ export function SecuritySection({ id = 'seguranca', tone = 'off', withHeader = t
             <div className="lg:max-w-xs">
               <p className="text-[12px] font-semibold uppercase tracking-[0.16em] text-white/60">Oracle Cloud Infrastructure</p>
               <p className="mt-2 text-xl font-bold">Três ambientes, uma operação que não para.</p>
+              <Link
+                to={modulePath('infraestrutura-e-seguranca')}
+                className="group mt-3 inline-flex items-center gap-1.5 text-[13.5px] font-semibold text-white/85 underline-offset-4 hover:text-white hover:underline"
+              >
+                Ver o módulo Infraestrutura e Segurança
+                <ArrowRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-0.5" aria-hidden />
+              </Link>
             </div>
             <ul className="grid flex-1 grid-cols-1 gap-3 sm:grid-cols-3">
               {envs.map((e, i) => (
@@ -68,16 +103,28 @@ export function SecuritySection({ id = 'seguranca', tone = 'off', withHeader = t
         </Reveal>
 
         <Stagger className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {items.map(({ icon: Icon, title, text }) => (
+          {items.map(({ icon: Icon, title, text, links }) => (
             <StaggerItem
               key={title}
-              className="group rounded-2xl border border-brand-mist bg-white p-6 transition-[transform,box-shadow,border-color] duration-500 ease-brand hover:-translate-y-1 hover:border-brand-purple/30 hover:shadow-lift"
+              className="group flex h-full flex-col rounded-2xl border border-brand-mist bg-white p-6 transition-[transform,box-shadow,border-color] duration-500 ease-brand hover:-translate-y-1 hover:border-brand-purple/30 hover:shadow-lift"
             >
               <span className="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-brand-off-white text-brand-purple transition-colors duration-500 group-hover:bg-brand-purple group-hover:text-white">
                 <Icon className="h-5 w-5" strokeWidth={1.6} />
               </span>
               <h3 className="mt-4 text-lg font-bold text-brand-ink">{title}</h3>
-              <p className="mt-2 text-[15px] leading-relaxed text-brand-graphite">{text}</p>
+              <p className="mt-2 flex-1 text-[15px] leading-relaxed text-brand-graphite">{text}</p>
+              {links && (
+                <ul className="mt-4 flex flex-wrap gap-x-5 gap-y-1.5 text-[14px] font-semibold text-brand-purple" aria-label={`Saiba mais sobre ${title}`}>
+                  {links.map((l) => (
+                    <li key={l.to}>
+                      <Link to={l.to} className="group/link inline-flex items-center gap-1.5 underline-offset-4 hover:underline">
+                        {l.label}
+                        <ArrowRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover/link:translate-x-0.5" aria-hidden />
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              )}
             </StaggerItem>
           ))}
         </Stagger>

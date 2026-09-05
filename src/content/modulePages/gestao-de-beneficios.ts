@@ -13,7 +13,6 @@ const page: ModulePage = {
       'Gestão de benefícios: plano de saúde, VT, alimentação, previdência, empréstimos e bolsa de estudo com elegibilidade, fatura conferida e rubricas na folha.',
   },
   highlights: [
-    { value: '0', label: 'planilhas paralelas: rubricas vão direto para a folha' },
     { value: '24/7', label: 'a NATI responde dúvidas sobre descontos e regras' },
   ],
   benefits: [
@@ -77,7 +76,7 @@ const page: ModulePage = {
     },
     {
       title: 'Rubricas automáticas na folha',
-      text: 'Os valores calculados são exportados para a folha sem intervenção manual. Zero planilha, zero erro de digitação.',
+      text: 'Os valores calculados são exportados para a folha de cada empresa, dentro do calendário de fechamento dela, sem intervenção manual. Zero planilha, zero erro de digitação.',
       icon: 'wallet',
     },
     {
@@ -93,7 +92,8 @@ const page: ModulePage = {
       { title: 'Elegibilidade e aprovação', text: 'O sistema aplica as regras de elegibilidade da política e encaminha a aprovação no workflow.' },
       { title: 'Movimentação registrada', text: 'Inclusões, exclusões e alterações ficam no histórico e prontas para envio às operadoras.' },
       { title: 'Conferência da fatura', text: 'A fatura da operadora é conferida com a base ativa, os dependentes e a coparticipação.' },
-      { title: 'Rubrica na folha', text: 'Descontos e créditos são exportados automaticamente para a folha do mês.' },
+      { title: 'Conferência por unidade', text: 'Movimentações e faturas conferidas por empresa e filial, com as pendências visíveis para a matriz antes do corte da folha.' },
+      { title: 'Rubrica na folha', text: 'Descontos e créditos são exportados automaticamente para a folha de cada empresa no mês.' },
     ],
   },
   personas: [
@@ -119,7 +119,7 @@ const page: ModulePage = {
       a: 'A NATI analisa custos, regras de elegibilidade e taxas de utilização, identifica variações atípicas em contratos e sugere adequações. Também responde ao colaborador sobre descontos e regras, e avisa o RH quando uma dúvida se repete.',
     },
   ],
-  related: ['folha-de-pagamento', 'requisicoes-com-workflow', 'portais', 'nati'],
+  related: ['folha-de-pagamento', 'requisicoes-com-workflow', 'portais', 'natpay'],
   sources: ['gestao-de-beneficios', 'nati-gestores', 'produtividade-de-rh', 'nati-ia', 'gestao-de-requisicoes-eletronicas', 'csc-bpo'],
 }
 

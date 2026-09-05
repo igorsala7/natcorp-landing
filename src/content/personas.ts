@@ -1,5 +1,5 @@
 import type { LucideIcon } from 'lucide-react'
-import { Briefcase, Calculator, ServerCog, Users } from 'lucide-react'
+import { Briefcase, Building2, Calculator, FileSpreadsheet, ServerCog, Users } from 'lucide-react'
 import { people, type Portrait } from './people'
 
 export interface Persona {
@@ -60,5 +60,29 @@ export const personas: Persona[] = [
     ],
     icon: Briefcase,
     portrait: people.rh,
+  },
+  {
+    id: 'rh-filial',
+    role: 'RH da unidade ou filial',
+    headline: 'A sua unidade inteira, e só ela, em uma tela.',
+    points: [
+      'Vê e opera só a sua unidade: admissões, ponto, movimentações e benefícios dentro do seu perfil.',
+      'Alçadas locais para aprovar o que é da filial, seguindo as políticas da matriz.',
+      'Pendências da unidade resolvidas antes do corte, sem planilha para a matriz.',
+    ],
+    icon: Building2,
+    portrait: people.rhFilial,
+  },
+  {
+    id: 'financeiro',
+    role: 'Contabilidade e Financeiro',
+    headline: 'Folha contabilizada por empresa e CNPJ, pronta para o ERP.',
+    points: [
+      'Contabilização da folha por empresa, CNPJ e centro de custo.',
+      'Provisões de férias, 13º e encargos calculadas no mesmo fechamento.',
+      'Integração com o ERP pelo módulo de conexão, sem redigitar lançamentos.',
+    ],
+    icon: FileSpreadsheet,
+    portrait: people.financeiro,
   },
 ]

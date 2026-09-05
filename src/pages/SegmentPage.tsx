@@ -1,10 +1,11 @@
 import { useEffect, useState, type ReactNode } from 'react'
 import { Link, useParams } from 'react-router'
 import { m } from 'motion/react'
-import { ArrowRight, Check, ChevronRight, ShieldCheck, Star } from 'lucide-react'
+import { ArrowRight, Check, ChevronDown, ChevronRight, GitBranch, ShieldCheck, Star } from 'lucide-react'
 import { Section, SectionHeader, Eyebrow } from '@/components/sections/Section'
 import { CTASection } from '@/components/sections/CTASection'
 import { FaqAccordion } from '@/components/sections/FaqAccordion'
+import { StructureSection } from '@/components/sections/StructureSection'
 import { PageTransition } from '@/components/motion/PageTransition'
 import { SplitText } from '@/components/motion/SplitText'
 import { Reveal, Stagger, StaggerItem } from '@/components/motion/Reveal'
@@ -22,10 +23,11 @@ import { FinancialComparison } from '@/components/mockups/analytics/FinancialCom
 import { RecruitmentModal } from '@/components/mockups/analytics/RecruitmentModal'
 import { NATPONTO_SIZE } from '@/components/mockups/natponto/NatPontoFrame'
 import { NatPontoPhone } from '@/components/mockups/natponto/screens'
-import { getModuleEntry, groups, modulePath, moduleRegistry } from '@/content/modulePages'
+import { getModuleEntry, groups, modulePath, moduleRegistry, type ModuleEntry } from '@/content/modulePages'
 import { moduleIcons } from '@/content/modulePages/icons'
 import { getSegmentEntry, loadSegmentPage, segmentIcons, segmentPath, segmentRegistry, segmentsPath, type SegmentEntry } from '@/content/segments'
-import type { SegmentPage as SegmentPageData, SegmentVisual } from '@/content/segments/types'
+import type { SegmentFaq, SegmentPage as SegmentPageData, SegmentVisual } from '@/content/segments/types'
+import { journeyPath, paths } from '@/content/site'
 import { useSeo } from '@/hooks/useSeo'
 import { EASE } from '@/lib/motion'
 import { cn } from '@/lib/utils'
@@ -40,6 +42,12 @@ const visualLabels: Record<SegmentVisual, string> = {
   devices: 'O sistema no notebook, no tablet e no celular',
   whatsapp: 'Conversa com a NATI no WhatsApp: holerite em PDF e dados de férias',
   recruitment: 'Gráfico de candidatos por cargo gerado a partir da listagem de Recrutamento e Seleção',
+}
+
+/** Pergunta que todo grupo faz, acrescentada ao fim das perguntas de cada segmento. */
+const implantationFaq: SegmentFaq = {
+  q: 'Como é a implantação para um grupo com várias empresas e filiais neste segmento?',
+  a: 'Planejamento por empresa e filial, migração do histórico sem limite de anos, homologação com a folha atual em paralelo e treinamento das equipes da matriz e das filiais antes de entrar em produção. Depois, suporte por chamados com prazo e histórico.',
 }
 
 function Visual({ kind }: { kind: SegmentVisual }) {
@@ -129,7 +137,7 @@ function SegmentCard({ entry }: { entry: SegmentEntry }) {
       <span className="min-w-0">
         <span className="flex items-center gap-1.5 text-[15px] font-bold text-brand-ink group-hover:text-brand-purple">
           {entry.label}
-          <ChevronRight className="h-4 w-4 text-brand-gray transition-transform duration-300 group-hover:translate-x-0.5" aria-hidden />
+          <ChevronRight className="h-4 w-4 text-brand-graphite transition-transform duration-300 group-hover:translate-x-0.5" aria-hidden />
         </span>
         <span className="mt-1 block text-[13.5px] leading-snug text-brand-graphite">{entry.short}</span>
       </span>
@@ -169,6 +177,9 @@ function SegmentContent({ entry, page }: { entry: SegmentEntry; page: SegmentPag
   const Icon = segmentIcons[entry.icon]
   const related = page.related.map(getSegmentEntry).filter((r): r is SegmentEntry => Boolean(r))
   const spotlight = new Set(page.spotlight)
+  const spotlightMods = page.spotlight.map(getModuleEntry).filter((mod): mod is ModuleEntry => Boolean(mod))
+  const othersCount = moduleRegistry.length - spotlightMods.length
+  const faqItems = [...page.faq, implantationFaq]
 
   return (
     <PageTransition>
@@ -205,12 +216,17 @@ function SegmentContent({ entry, page }: { entry: SegmentEntry; page: SegmentPag
                   </Link>
                 </Button>
                 <Button asChild size="lg" variant="secondary">
-                  <Link to="#modulos">Ver o paralelo com os módulos</Link>
+                  <Link to="#respostas">Ver como respondemos a cada dor</Link>
                 </Button>
               </Reveal>
-              <Stagger className="mt-10 grid grid-cols-1 gap-3 sm:grid-cols-3" delay={0.4}>
+              <Reveal delay={0.4} className="mt-10">
+                <p id="facts-title" className="text-[11px] font-bold uppercase tracking-[0.14em] text-brand-graphite">
+                  Marcas do segmento
+                </p>
+              </Reveal>
+              <Stagger role="list" aria-labelledby="facts-title" className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-3" delay={0.45}>
                 {page.facts.map((f) => (
-                  <StaggerItem key={f.value} className="rounded-2xl border border-brand-mist bg-white p-4">
+                  <StaggerItem key={f.value} role="listitem" className="rounded-2xl border border-brand-mist bg-white p-4">
                     <p className="text-lg font-extrabold leading-tight tracking-brand text-brand-purple">{f.value}</p>
                     <p className="mt-1 text-[13px] leading-snug text-brand-graphite">{f.label}</p>
                   </StaggerItem>
@@ -312,7 +328,7 @@ function SegmentContent({ entry, page }: { entry: SegmentEntry; page: SegmentPag
         </div>
       </Section>
 
-      {/* Paralelo com todos os módulos */}
+      {/* Os 31 módulos: os que mais pesam abertos, os demais a um clique */}
       <Section id="modulos" tone="dark" className="overflow-hidden" aria-labelledby="modulos-title">
         <LogoOutline className="pointer-events-none absolute -left-[10%] -top-[40%] h-[150%] w-auto text-white/[0.06]" />
         <div className="container relative">
@@ -321,51 +337,114 @@ function SegmentContent({ entry, page }: { entry: SegmentEntry; page: SegmentPag
             tone="dark"
             eyebrow="O paralelo com todos os módulos"
             title={`Os ${moduleRegistry.length} módulos, [[aplicados a este segmento]].`}
-            lead="Como cada módulo se aplica à realidade deste segmento. Os marcados com estrela são os que mais pesam aqui."
+            lead="Os que mais pesam neste segmento ficam abertos, com a estrela. Os outros estão a um clique, na ordem dos grupos do sistema."
           />
-          <div className="mt-12 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
-            {groups.map((g) => {
-              const mods = moduleRegistry.filter((mod) => mod.group === g.id)
+          <ul className="mt-12 grid gap-4 sm:grid-cols-2 xl:grid-cols-3" aria-label="Os módulos que mais pesam neste segmento">
+            {spotlightMods.map((mod, i) => {
+              const MIcon = moduleIcons[mod.icon]
               return (
-                <Reveal key={g.id} delay={0.05} className="rounded-3xl border border-white/10 bg-white/[0.05] p-5">
-                  <p className="text-[11px] font-bold uppercase tracking-[0.14em] text-[#E4A9C4]">{g.name}</p>
-                  <ul className="mt-3 divide-y divide-white/10">
-                    {mods.map((mod) => {
-                      const MIcon = moduleIcons[mod.icon]
-                      const hot = spotlight.has(mod.slug)
-                      return (
-                        <li key={mod.slug} className="py-3">
-                          <Link to={modulePath(mod.slug)} className={cn('group flex items-start gap-3', hot && 'relative')}>
-                            <span className={cn('mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg', hot ? 'bg-[#E4A9C4] text-brand-blue' : 'bg-white/10 text-white')}>
-                              <MIcon className="h-4 w-4" strokeWidth={1.8} aria-hidden />
-                            </span>
-                            <span className="min-w-0">
-                              <span className="flex items-center gap-1.5 text-[14px] font-bold text-white group-hover:underline group-hover:underline-offset-4">
-                                {mod.name}
-                                {hot && <Star className="h-3.5 w-3.5 fill-[#E4A9C4] text-[#E4A9C4]" aria-label="Peso maior neste segmento" />}
-                              </span>
-                              <span className="block text-[13px] leading-snug text-white/75">{page.moduleNotes[mod.slug]}</span>
-                            </span>
-                          </Link>
-                        </li>
-                      )
-                    })}
-                  </ul>
-                </Reveal>
+                <li key={mod.slug}>
+                  <Reveal delay={0.05 + i * 0.05} className="h-full">
+                    <Link
+                      to={modulePath(mod.slug)}
+                      className="group flex h-full items-start gap-4 rounded-3xl border border-white/10 bg-white/[0.05] p-5 transition-colors duration-300 hover:border-white/30 hover:bg-white/[0.09]"
+                    >
+                      <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#E4A9C4] text-brand-blue">
+                        <MIcon className="h-5 w-5" strokeWidth={1.8} aria-hidden />
+                      </span>
+                      <span className="min-w-0">
+                        <span className="flex items-center gap-1.5 text-[16px] font-extrabold text-white group-hover:underline group-hover:underline-offset-4">
+                          {mod.name}
+                          <Star className="h-3.5 w-3.5 fill-[#E4A9C4] text-[#E4A9C4]" role="img" aria-label="Peso maior neste segmento" />
+                        </span>
+                        <span className="mt-1.5 block text-[14px] leading-snug text-white/75">{page.moduleNotes[mod.slug]}</span>
+                      </span>
+                    </Link>
+                  </Reveal>
+                </li>
               )
             })}
-          </div>
+          </ul>
+
+          <details className="group mt-8 rounded-3xl border border-white/10 bg-white/[0.04]">
+            <summary className="flex cursor-pointer list-none items-center justify-between gap-4 rounded-3xl px-6 py-5 text-[16px] font-bold text-white transition-colors duration-300 hover:bg-white/[0.04] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#E4A9C4] [&::-webkit-details-marker]:hidden">
+              <span className="group-open:hidden">Ver os outros {othersCount} módulos neste segmento</span>
+              <span className="hidden group-open:inline">Ocultar os outros {othersCount} módulos</span>
+              <ChevronDown className="h-5 w-5 shrink-0 text-[#E4A9C4] transition-transform duration-300 group-open:rotate-180" aria-hidden />
+            </summary>
+            <div className="grid gap-6 border-t border-white/10 px-6 pb-6 pt-6 md:grid-cols-2 xl:grid-cols-3">
+              {groups.map((g) => {
+                const mods = moduleRegistry.filter((mod) => mod.group === g.id && !spotlight.has(mod.slug))
+                if (mods.length === 0) return null
+                return (
+                  <div key={g.id}>
+                    <p className="text-[11px] font-bold uppercase tracking-[0.14em] text-[#E4A9C4]">{g.name}</p>
+                    <ul className="mt-3 divide-y divide-white/10">
+                      {mods.map((mod) => {
+                        const MIcon = moduleIcons[mod.icon]
+                        return (
+                          <li key={mod.slug} className="py-3">
+                            <Link to={modulePath(mod.slug)} className="group/mod flex items-start gap-3">
+                              <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-white/10 text-white">
+                                <MIcon className="h-4 w-4" strokeWidth={1.8} aria-hidden />
+                              </span>
+                              <span className="min-w-0">
+                                <span className="block text-[14px] font-bold text-white group-hover/mod:underline group-hover/mod:underline-offset-4">{mod.name}</span>
+                                <span className="block text-[13px] leading-snug text-white/75">{page.moduleNotes[mod.slug]}</span>
+                              </span>
+                            </Link>
+                          </li>
+                        )
+                      })}
+                    </ul>
+                  </div>
+                )
+              })}
+            </div>
+          </details>
         </div>
       </Section>
 
-      <Section id="para-quem" tone="off" aria-labelledby="personas-title">
+      <StructureSection
+        tone="off"
+        eyebrow="Para a sua estrutura"
+        title={`Uma base para [[o grupo inteiro]], também em ${entry.name}.`}
+        lead="Várias empresas, CNPJs, sindicatos e filiais no mesmo cadastro. Perfis, alçadas e trilha de auditoria por unidade; folha, headcount e orçamento consolidados para a matriz. Tudo o que está nesta página vale com RH central ou com RH em cada filial."
+      />
+
+      <Section id="para-quem" tone="white" aria-labelledby="personas-title">
         <div className="container">
           <SectionHeader id="personas-title" eyebrow="Para quem" title="Quem ganha [[neste segmento]]." />
           <PersonasGrid items={page.personas} />
+          {page.journey && (
+            <Reveal delay={0.2} className="mt-6">
+              <Link
+                to={journeyPath}
+                className="group flex flex-col gap-5 rounded-3xl border border-brand-mist bg-brand-off-white p-6 transition-[transform,box-shadow,border-color,background-color] duration-500 ease-brand hover:-translate-y-1 hover:border-brand-purple/30 hover:bg-white hover:shadow-lift sm:flex-row sm:items-center sm:p-7"
+              >
+                <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-brand-gradient text-white shadow-lift">
+                  <GitBranch className="h-6 w-6" strokeWidth={1.7} aria-hidden />
+                </span>
+                <span className="min-w-0 flex-1">
+                  <span className="text-[11px] font-bold uppercase tracking-[0.14em] text-brand-purple">Jornada do colaborador</span>
+                  <span className="mt-1 block text-xl font-extrabold leading-snug text-brand-ink group-hover:text-brand-purple">
+                    Veja a jornada completa numa indústria de alimentos de 10 mil colaboradores
+                  </span>
+                  <span className="mt-2 block text-[15px] leading-relaxed text-brand-graphite">
+                    Da requisição da vaga à promoção: 24 etapas, 6 unidades, 300 admissões por mês na safra e a folha de 10.000 pessoas calculada em cerca de 4 minutos.
+                  </span>
+                </span>
+                <span className="inline-flex shrink-0 items-center gap-2 text-[15px] font-semibold text-brand-purple">
+                  Ler a jornada
+                  <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5" aria-hidden />
+                </span>
+              </Link>
+            </Reveal>
+          )}
         </div>
       </Section>
 
-      <Section id="perguntas" tone="white" aria-labelledby="perguntas-title">
+      <Section id="perguntas" tone="off" aria-labelledby="perguntas-title">
         <div className="container grid grid-cols-1 gap-10 lg:grid-cols-[1fr_1.6fr] lg:gap-16">
           <div className="lg:sticky lg:top-32 lg:self-start">
             <SectionHeader id="perguntas-title" eyebrow="Perguntas frequentes" title="Dúvidas sobre a Natcorp [[neste segmento]]." />
@@ -377,13 +456,20 @@ function SegmentContent({ entry, page }: { entry: SegmentEntry; page: SegmentPag
             </Reveal>
           </div>
           <Reveal delay={0.15}>
-            <FaqAccordion items={page.faq} />
+            <FaqAccordion items={faqItems} />
+            <p className="mt-4 px-1 text-[14px] leading-snug text-brand-graphite">
+              Implantação, migração, treinamento e suporte, em detalhe:{' '}
+              <Link to={`${paths.about}#servicos`} className="group inline-flex items-center gap-1.5 font-semibold text-brand-purple">
+                Ver implantação, suporte e serviços
+                <ArrowRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-0.5" aria-hidden />
+              </Link>
+            </p>
           </Reveal>
         </div>
       </Section>
 
       {related.length > 0 && (
-        <section aria-labelledby="related-title" className="border-t border-brand-mist bg-brand-off-white">
+        <section aria-labelledby="related-title" className="border-t border-brand-mist bg-white">
           <div className="container py-12">
             <h2 id="related-title" className="text-[12px] font-semibold uppercase tracking-[0.16em] text-brand-graphite">
               Segmentos parecidos
@@ -392,7 +478,7 @@ function SegmentContent({ entry, page }: { entry: SegmentEntry; page: SegmentPag
               {related.map((r) => (
                 <SegmentCard key={r.slug} entry={r} />
               ))}
-              <Link to={segmentsPath} className="group flex items-center justify-center gap-2 rounded-2xl border border-dashed border-brand-purple/40 p-5 text-[15px] font-semibold text-brand-purple transition-colors hover:bg-white">
+              <Link to={segmentsPath} className="group flex items-center justify-center gap-2 rounded-2xl border border-dashed border-brand-purple/40 p-5 text-[15px] font-semibold text-brand-purple transition-colors hover:bg-brand-off-white">
                 Ver todos os {segmentRegistry.length} segmentos
                 <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5" aria-hidden />
               </Link>
@@ -401,7 +487,7 @@ function SegmentContent({ entry, page }: { entry: SegmentEntry; page: SegmentPag
         </section>
       )}
 
-      <CTASection title={`Veja a Natcorp com a realidade da sua operação em ${entry.name}.`} />
+      <CTASection title={`Veja a Natcorp com a realidade da sua operação ${page.ctaContext ?? `de ${entry.name}`}.`} />
     </PageTransition>
   )
 }

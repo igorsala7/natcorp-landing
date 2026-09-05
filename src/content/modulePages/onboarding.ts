@@ -12,11 +12,7 @@ const page: ModulePage = {
     description:
       'Onboarding digital integrado à admissão: vídeos, textos, imagens e arquivos no Portal do Colaborador para quem entra na empresa ou assume um novo cargo.',
   },
-  highlights: [
-    { value: '100%', label: 'digital e integrado à Admissão Digital' },
-    { value: 'Dia 1', label: 'o colaborador já encontra o onboarding no portal' },
-    { value: '0', label: 'papel, da admissão ao acolhimento' },
-  ],
+  highlights: [],
   benefits: [
     {
       title: 'Engajamento desde o primeiro dia',
@@ -52,9 +48,9 @@ const page: ModulePage = {
       icon: 'file-signature',
     },
     {
-      title: 'No Portal do Colaborador',
-      text: 'O onboarding fica no menu do portal, ao lado de ponto, requisições e feedbacks. Acesso pelo celular ou computador.',
-      icon: 'smartphone',
+      title: 'Por empresa, unidade, área ou cargo',
+      text: 'Conteúdo montado por empresa, unidade, área ou cargo. Quem entra na filial vê a rotina dela; quem assume um cargo novo vê as responsabilidades da função. Tudo no Portal do Colaborador, ao lado de ponto, requisições e feedbacks.',
+      icon: 'building',
     },
     {
       title: 'Instruções iniciais e lembretes',
@@ -68,7 +64,7 @@ const page: ModulePage = {
     },
     {
       title: 'Documentos no GED',
-      text: 'Os documentos do colaborador ficam no GED desde a admissão, e políticas e termos podem ser aceitos digitalmente.',
+      text: 'Os documentos do colaborador ficam no GED (Gestão Eletrônica de Documentos) desde a admissão, e políticas e termos podem ser aceitos digitalmente.',
       icon: 'folder',
     },
     {
@@ -82,8 +78,8 @@ const page: ModulePage = {
       icon: 'graduation-cap',
     },
     {
-      title: 'Dados validados pelo colaborador',
-      text: 'O colaborador confere e completa as próprias informações com autonomia, acompanhado pelo sistema.',
+      title: 'Acompanhamento de conclusão',
+      text: 'O RH vê quem já assistiu, leu e respondeu cada etapa, por unidade, e cobra só quem ficou para trás. No caminho, o colaborador confere e completa os próprios dados com autonomia.',
       icon: 'user-check',
     },
   ],
@@ -99,7 +95,7 @@ const page: ModulePage = {
   },
   personas: [
     { role: 'Novo colaborador', text: 'Chega sabendo onde encontrar informações, políticas e treinamentos, pelo celular, sem depender de alguém explicar tudo.' },
-    { role: 'RH e Departamento Pessoal', text: 'Monta o conteúdo uma vez e deixa o sistema entregar a cada admissão. Acompanha quem já concluiu cada etapa.' },
+    { role: 'RH e Departamento Pessoal', text: 'Monta o conteúdo uma vez e deixa o sistema entregar a cada admissão. Acompanha quem já concluiu cada etapa, por unidade.' },
     { role: 'Gestor', text: 'Recebe o novo integrante já orientado e acompanha a participação nos treinamentos de entrada pelo Portal do Gestor.' },
   ],
   faq: [
@@ -116,11 +112,11 @@ const page: ModulePage = {
       a: 'Não. O onboarding é integrado à Admissão Digital. Concluída a admissão, o colaborador já acessa o conteúdo com o mesmo login do portal.',
     },
     {
-      q: 'O colaborador acessa pelo celular?',
-      a: 'Sim. O Portal do Colaborador funciona no celular, no tablet e no computador, com a mesma experiência em todos.',
+      q: 'O RH sabe quem concluiu o onboarding?',
+      a: 'Sim. Cada etapa fica registrada: conteúdo visto, questionário respondido, termo aceito e treinamento concluído. O RH acompanha por empresa e unidade e o gestor vê a equipe dele no Portal do Gestor. O colaborador faz tudo no Portal do Colaborador, no celular, no tablet ou no computador.',
     },
   ],
-  related: ['admissao-digital', 'blog-corporativo', 'treinamento-e-desenvolvimento', 'portais'],
+  related: ['admissao-digital', 'blog-corporativo', 'treinamento-e-desenvolvimento', 'offboarding'],
   sources: ['admissao-digital', 'gestao-de-rh', 'performance-e-seguranca', 'abrangencia-do-sistema', 'apresentacao-natcorp', 'csc-bpo', 'gestao-de-treinamentos'],
 }
 

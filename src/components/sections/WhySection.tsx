@@ -14,7 +14,7 @@ import { cn } from '@/lib/utils'
 
 /* Os quatro pilares da marca (Manual de Identidade, seção 01). */
 const pillars = [
-  { big: '30+', title: 'Abrangência', text: 'Mais de 30 módulos. Tudo o que o RH faz, em um só lugar, com um único cadastro e uma única base.' },
+  { big: '31', title: 'Abrangência', text: '31 módulos. Tudo o que o RH faz, em um só lugar, com um único cadastro e uma única base.' },
   { big: '35+', title: 'Solidez', text: 'Mais de 35 anos de especialização exclusiva em RH, plataforma premiada, parceira Oracle e nuvem com contingência.' },
   { big: 'NATI', title: 'Inteligência', text: 'A NATI e o People Analytics transformando dado em decisão, dentro do sistema e sem depender de TI.' },
   { big: '1:1', title: 'Proximidade', text: 'Acompanhamento próximo, atenção e agilidade de resposta. Um time que conhece a sua operação pelo nome.' },
@@ -126,8 +126,18 @@ export function WhySection() {
             ))}
           </ul>
 
-          <Reveal delay={0.1} className="mt-10 flex flex-wrap items-center gap-x-8 gap-y-2 text-[15px] font-semibold text-brand-purple">
-            <Link to={`${paths.system}#comparativo`} className="group inline-flex items-center gap-2">
+          <Reveal delay={0.1} className="mt-10 max-w-xl">
+            <p className="text-[15px] leading-relaxed text-brand-graphite">
+              <strong className="font-bold text-brand-ink">Como cobramos:</strong> a proposta considera o porte e os módulos da sua operação.
+            </p>
+          </Reveal>
+
+          <Reveal delay={0.15} className="mt-5 flex flex-wrap items-center gap-x-8 gap-y-2 text-[15px] font-semibold text-brand-purple">
+            <Link to={paths.commercial} className="group inline-flex items-center gap-2">
+              Ver o modelo comercial
+              <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5" aria-hidden />
+            </Link>
+            <Link to={`${paths.commercial}#comparativo`} className="group inline-flex items-center gap-2">
               Ver o comparativo com outros sistemas
               <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5" aria-hidden />
             </Link>

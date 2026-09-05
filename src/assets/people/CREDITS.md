@@ -12,6 +12,8 @@ ser substituídas por fotografias do time e dos clientes da Natcorp antes da pub
 | persona-cto.jpg | https://images.unsplash.com/photo-1573164713988-8665fc963095 |
 | persona-rh.jpg | https://images.unsplash.com/photo-1573497019418-b400bb3ab074 |
 | banner-time.jpg | https://images.unsplash.com/photo-1543269865-cbf427effbad |
+| persona-rh-filial.jpg | https://images.unsplash.com/photo-1781559818983-c32838ee3d55 |
+| persona-financeiro.jpg | https://images.unsplash.com/photo-1610387879421-3839d64bcff4 |
 
 Fotos redimensionadas (JPEG, qualidade 80) para o tamanho em que são exibidas.
 

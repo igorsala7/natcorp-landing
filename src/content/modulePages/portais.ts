@@ -28,7 +28,7 @@ const page: ModulePage = {
     },
     {
       title: 'Segurança de quem vê o quê',
-      text: 'Cada usuário acessa só os módulos, dados e funções do seu contexto e perfil. Gestor vê a própria equipe, colaborador vê os próprios dados.',
+      text: 'Cada usuário acessa só os módulos, dados e funções do seu contexto e perfil. O gestor vê a própria equipe, o RH da filial vê a sua filial, o colaborador vê os próprios dados.',
     },
     {
       title: 'Uma experiência do candidato ao diretor',
@@ -58,7 +58,7 @@ const page: ModulePage = {
     },
     {
       title: 'Acesso por contexto e perfil',
-      text: 'Módulos e funções aparecem conforme o acesso de cada usuário. Perfis, alçadas e restrições por empresa, filial ou centro de custo.',
+      text: 'Módulos e funções aparecem conforme o acesso de cada usuário. Perfis, alçadas e restrições por empresa, filial e centro de custo: cada equipe vê e opera só o que é dela, e a matriz consolida.',
       icon: 'key',
     },
     {
@@ -100,13 +100,13 @@ const page: ModulePage = {
   compliance: ['LGPD: acesso por perfil, anonimização quando aplicável e trilha de auditoria', 'Logins criptografados e auditoria das ações no sistema'],
   personas: [
     { role: 'Gestor', text: 'Aprova ponto, férias e requisições, acompanha indicadores da equipe e pede vagas pelo portal, de onde estiver.' },
-    { role: 'Colaborador', text: 'Consulta holerite, espelho de ponto e benefícios, faz pedidos, aceita plantões e tira dúvidas com a NATI, sem procurar o RH.' },
-    { role: 'Candidato', text: 'Cadastra o currículo, acompanha as etapas da seleção e, aprovado, conclui a admissão no mesmo portal.' },
+    { role: 'RH da filial', text: 'Admite, trata o ponto e lança movimentações e benefícios da sua unidade, dentro do seu perfil e das suas alçadas. A matriz acompanha as pendências e consolida.' },
+    { role: 'Colaborador e candidato', text: 'O colaborador consulta holerite, espelho de ponto e benefícios, faz pedidos, aceita plantões e tira dúvidas com a NATI. O candidato acompanha a seleção e, aprovado, conclui a admissão no mesmo portal.' },
   ],
   faq: [
     {
-      q: 'O gestor consegue ver dados de outras equipes?',
-      a: 'Só se o perfil dele permitir. O acesso é por contexto: cada usuário vê apenas os módulos, dados e funções liberados para o seu perfil, empresa, filial ou centro de custo, com trilha de auditoria.',
+      q: 'O RH de cada filial vê só a sua filial?',
+      a: 'Sim. Os perfis seguem a estrutura da organização: empresa, filial e centro de custo. A equipe da filial admite, trata o ponto e lança movimentações dentro do seu perfil e das suas alçadas; o gestor vê só a própria equipe. A matriz enxerga o consolidado e as pendências de cada unidade, com trilha de auditoria de quem viu e alterou cada dado.',
     },
     {
       q: 'Os portais funcionam no celular?',
@@ -121,7 +121,7 @@ const page: ModulePage = {
       a: 'O candidato tem o Portal do Candidato, com cadastro, currículo, acompanhamento das etapas e envio de documentos. Quando é aprovado, faz a Admissão Digital nele e, admitido, passa a usar o Portal do Colaborador.',
     },
   ],
-  related: ['requisicoes-com-workflow', 'chamado-interno', 'nati', 'quadro-de-vagas'],
+  related: ['requisicoes-com-workflow', 'quadro-de-vagas', 'nati', 'blog-corporativo'],
   sources: ['paineis', 'paineis-inteligentes', 'gestao-de-rh', 'apresentacao-natcorp', 'nati-colaboradores', 'csc-bpo', 'produtividade-de-rh', 'gestao-de-frequencia', 'gestao-de-treinamentos'],
 }
 

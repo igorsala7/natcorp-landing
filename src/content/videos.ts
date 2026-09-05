@@ -19,7 +19,7 @@ export const videos: Video[] = [
   {
     id: 'mflaJIRfdkA',
     title: 'A inovação que o seu RH precisa',
-    text: 'Uma visão geral do sistema: mais de 30 módulos integrados, um único cadastro e a NATI trabalhando dentro do RH.',
+    text: 'Uma visão geral do sistema: 31 módulos integrados, um único cadastro e a NATI trabalhando dentro do RH.',
     tag: 'Institucional',
     thumb: thumbInovacao,
   },

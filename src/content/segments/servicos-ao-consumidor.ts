@@ -3,6 +3,7 @@ import type { SegmentPage } from './types'
 const page: SegmentPage = {
   slug: 'servicos-ao-consumidor',
   name: 'Serviços ao Consumidor',
+  ctaContext: 'de serviços ao consumidor',
   tagline: 'Atendimento em escala e equipe remota: o RH que responde [[a qualquer hora]].',
   summary:
     'Atendimento, serviços, hospitalidade e educação vivem de gente: escalas 6x1, home office, alto giro e metas de atendimento. A Natcorp recruta em volume, admite pelo celular, apura o ponto remoto com local e hora, paga a remuneração variável e deixa a NATI atender a equipe fora do horário.',
@@ -62,7 +63,7 @@ const page: SegmentPage = {
     {
       pain: 'Gestores e NATI',
       title: 'Portal do Gestor no celular e a NATI respondendo à equipe fora do horário',
-      text: 'Troca de escala, abono, férias e vaga são aprovados pelo celular, com alçada por operação e suplente automático. A NATI responde dúvidas de holerite, ponto e benefícios 24 horas por dia no WhatsApp, no Teams e no portal, e avisa o RH quando a mesma pergunta se repete. O que precisa de gente vira chamado com prazo.',
+      text: 'Troca de escala, abono, férias e vaga são aprovados pelo celular, com alçada por operação e suplente na folga do supervisor. A NATI responde dúvidas de holerite, ponto e benefícios 24 horas por dia no WhatsApp, no Teams e no portal, e avisa o RH quando a mesma pergunta se repete. O que precisa de gente vira chamado com prazo.',
       modules: ['portais', 'requisicoes-com-workflow', 'nati', 'chamado-interno'],
     },
   ],
@@ -71,7 +72,7 @@ const page: SegmentPage = {
     'administracao-de-pessoal': 'Headcount por operação, célula e turno, com reposição de turnover planejada no orçamento e alerta de desvio.',
     'cargos-e-salarios': 'Faixas de atendente, monitor e supervisor por operação, com requisitos do cargo filtrando a seleção em volume.',
     'gestao-de-beneficios': 'Vale-transporte por escala e cidade, alimentação e plano de saúde com elegibilidade por cargo e turno.',
-    natpay: 'Adiantamento pelo WhatsApp com limite pelos dias trabalhados, um motivo a mais para o atendente ficar.',
+    natpay: 'O atendente pede o adiantamento na madrugada, entre duas chamadas, e recebe por Pix: um motivo a mais para ficar.',
     esocial: 'Admissões e desligamentos em volume enviados no prazo, com afastamentos e S-2220 saindo dos dados do sistema.',
     'juridico-trabalhista': 'Marcações remotas, espelhos assinados e termos de aceite de escala como prova em ações de jornada e intervalo.',
     'ponto-eletronico': 'Escalas 6x1, turnos rotativos, folgas variáveis, DSR e intervalos apurados pela convenção, com AFD e AEJ.',
@@ -88,7 +89,7 @@ const page: SegmentPage = {
     'treinamento-e-desenvolvimento': 'Certificações de produto e atendimento com validade, turmas online e híbridas e trilha de novo produto.',
     'carreira-e-sucessao': 'Trilha de atendente a supervisor com prontidão, e risco de perda sinalizado antes do pedido de demissão.',
     portais: 'Portal do Gestor no celular de cada supervisor e Portal do Colaborador com escala, holerite e feedbacks.',
-    'requisicoes-com-workflow': 'Troca de escala, abono, férias, atestado e vaga com alçadas por operação e suplente automático.',
+    'requisicoes-com-workflow': 'Troca de escala, abono, férias, atestado e vaga com alçadas por operação; na folga do supervisor, o suplente aprova.',
     'chamado-interno': 'Dúvidas que a NATI não resolve viram chamado com prioridade, prazo e fila do operador de RH.',
     'blog-corporativo': 'Campanhas, mudanças de script e comunicados de escala na timeline do portal, também para quem está em casa.',
     'assinatura-eletronica': 'Contrato, termo de aceite de escala e espelho de ponto assinados pelo celular, com validade jurídica.',

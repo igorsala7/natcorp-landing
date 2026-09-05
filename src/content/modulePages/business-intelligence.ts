@@ -16,12 +16,11 @@ const page: ModulePage = {
     { value: '3.500+', label: 'telas customizáveis pelo próprio usuário' },
     { value: '1.800+', label: 'relatórios para extração e cruzamento de dados' },
     { value: '900+', label: 'gráficos gerenciais gerados na própria interface' },
-    { value: '0', label: 'dependência de TI para montar painéis e indicadores' },
   ],
   benefits: [
     {
       title: 'Cada nível vê o que precisa',
-      text: 'Visão executiva para a alta gestão, operacional para as lideranças e analítica para a equipe de RH. O mesmo dado, no nível certo de detalhe.',
+      text: 'Visão executiva para a alta gestão, operacional para as lideranças e analítica para a equipe de RH. O mesmo dado, no nível certo de detalhe, por empresa e filial ou consolidado para o grupo.',
     },
     {
       title: 'Decisão com o dado de agora',
@@ -39,7 +38,7 @@ const page: ModulePage = {
   features: [
     {
       title: 'Painéis por nível',
-      text: 'Visão executiva para a alta gestão, operacional para as lideranças e analítica para o RH, cada uma com os indicadores do seu público.',
+      text: 'Visão executiva para a alta gestão, operacional para as lideranças e analítica para o RH, cada uma com os indicadores do seu público. Painéis por empresa e filial e o consolidado do grupo para a matriz.',
       icon: 'layout-grid',
     },
     {

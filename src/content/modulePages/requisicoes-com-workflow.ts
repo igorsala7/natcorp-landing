@@ -15,16 +15,15 @@ const page: ModulePage = {
   highlights: [
     { value: '24/7', label: 'para abrir e acompanhar pedidos, pelo celular ou computador' },
     { value: '1 pedido', label: 'dispara dezenas de atualizações no sistema, sem redigitar' },
-    { value: '0', label: 'formulários em papel: tudo nasce como requisição eletrônica' },
   ],
   benefits: [
     {
       title: 'Aprovado é efetivado, sem redigitação',
-      text: 'Férias aprovadas viram programação. Promoção aprovada atualiza cargo e salário. Desligamento aprovado abre o offboarding. Ninguém lança de novo.',
+      text: 'Férias aprovadas viram programação. Promoção aprovada atualiza cargo e salário. Desligamento aprovado abre o Offboarding. Ninguém lança de novo.',
     },
     {
       title: 'Alçadas que seguem o seu organograma',
-      text: 'Aprovadores por centro de custo, hierarquia ou estrutura matricial, com suplente automático. A decisão é descentralizada; a rastreabilidade, não.',
+      text: 'Aprovadores por filial, área, centro de custo, hierarquia ou estrutura matricial, com suplente automático. A decisão é descentralizada; a rastreabilidade, não.',
     },
     {
       title: 'Fim do e-mail perdido e da planilha paralela',
@@ -43,7 +42,7 @@ const page: ModulePage = {
     },
     {
       title: 'Alçadas parametrizadas',
-      text: 'Grupos de aprovadores em sequência, alçada por centro de custo ou hierarquia, aprovadores globais e regras de exceção que sempre ou nunca aprovam.',
+      text: 'Grupos de aprovadores em sequência, alçada por filial, por área, por centro de custo ou por hierarquia, aprovadores globais e regras de exceção que sempre ou nunca aprovam.',
       icon: 'scale',
     },
     {
@@ -98,7 +97,7 @@ const page: ModulePage = {
       { title: 'Histórico', text: 'Registro permanente e rastreável de cada etapa.' },
     ],
   },
-  compliance: ['LGPD: dados sensíveis (atestados, PPP, admissões) tramitam com acesso restrito por perfil'],
+  compliance: ['LGPD: dados sensíveis, como atestados, o PPP (Perfil Profissiográfico Previdenciário) e admissões, tramitam com acesso restrito por perfil'],
   personas: [
     { role: 'Colaborador', text: 'Pede férias, reembolso, abono de ponto ou atualização de cadastro pelo celular e acompanha o status sem ligar para o RH.' },
     { role: 'Gestor', text: 'Aprova os pedidos da equipe na fila do Portal do Gestor. Pede vaga, indica promoção e desligamento com a alçada já definida.' },
@@ -111,7 +110,7 @@ const page: ModulePage = {
     },
     {
       q: 'Como funcionam as alçadas de aprovação?',
-      a: 'O RH parametriza grupos de aprovadores em sequência lógica, por centro de custo, hierarquia ou estrutura matricial. Há aprovadores globais, suplência automática e regras de exceção. A requisição de vaga ainda passa pela validação de alçada financeira.',
+      a: 'O RH parametriza grupos de aprovadores em sequência lógica, por filial, área, centro de custo, hierarquia ou estrutura matricial. Há aprovadores globais, suplência automática e regras de exceção. A requisição de vaga ainda passa pela validação de alçada financeira.',
     },
     {
       q: 'O que acontece quando a requisição é aprovada?',
@@ -122,7 +121,7 @@ const page: ModulePage = {
       a: 'A suplência ativa delega a aprovação automaticamente ao suplente definido, e o prazo da etapa continua sendo controlado. O pedido não fica parado esperando alguém voltar.',
     },
   ],
-  related: ['portais', 'chamado-interno', 'administracao-de-pessoal', 'ponto-eletronico'],
+  related: ['portais', 'chamado-interno', 'administracao-de-pessoal', 'offboarding'],
   sources: ['gestao-de-requisicoes-eletronicas', 'automacao-de-processos', 'gestao-de-cargos-e-remuneracoes', 'gestao-de-headcount', 'csc-bpo', 'abrangencia-do-sistema', 'apresentacao-natcorp'],
 }
 

@@ -9,10 +9,13 @@ const footerLinks = [
   { to: paths.home, label: 'Início' },
   { to: paths.modules, label: 'Todos os módulos' },
   { to: paths.portals, label: 'Portais e autoatendimento' },
+  { to: paths.groups, label: 'Grupos com várias empresas e filiais' },
   { to: paths.nati, label: 'NATI' },
   { to: paths.segments, label: 'Segmentos' },
   { to: paths.journey, label: 'Jornada do colaborador' },
   { to: paths.security, label: 'Segurança e infraestrutura' },
+  { to: paths.commercial, label: 'Modelo comercial' },
+  { to: paths.faq, label: 'Perguntas frequentes' },
   { to: paths.about, label: 'Sobre a Natcorp' },
   { to: paths.contact, label: 'Contato' },
 ]

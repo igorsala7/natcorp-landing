@@ -3,6 +3,7 @@ import type { SegmentPage } from './types'
 const page: SegmentPage = {
   slug: 'servicos-financeiros',
   name: 'Serviços Financeiros',
+  ctaContext: 'de serviços financeiros',
   tagline: 'Jornada de 6 horas, bônus por meta e trilha de auditoria [[na mesma base]].',
   summary:
     'Bancos, fintechs, seguradoras e cooperativas vivem sob regulação, auditoria e metas. A Natcorp apura a jornada de 6 horas e o cargo de confiança, calcula bônus e PLR por carteira, registra quem viu e alterou cada dado e entrega ao auditor a trilha pronta, do ponto remoto ao fechamento da folha.',
@@ -71,7 +72,7 @@ const page: SegmentPage = {
     'administracao-de-pessoal': 'Dados bancários e cadastrais alterados só por requisição, com registro de quem mudou, e headcount por agência e área.',
     'cargos-e-salarios': 'Cargo de confiança e progressão parametrizados por cargo, travas de política salarial e equidade analisada pela NATI.',
     'gestao-de-beneficios': 'Previdência privada, plano de saúde com coparticipação, seguro de vida e consignado com fatura conferida e rubricas na folha.',
-    natpay: 'Adiantamento salarial pelo WhatsApp com desconto automático na folha, um benefício a mais na disputa por talentos.',
+    natpay: 'Adiantamento salarial com limite definido pela política da instituição e desconto automático na folha, um benefício a mais na disputa por talentos.',
     esocial: 'Eventos de folha, afastamentos e processos trabalhistas com validador prévio, para não haver rejeição apontada em auditoria.',
     'juridico-trabalhista': 'Ações de hora extra e cargo de confiança defendidas com jornada e salários da própria folha, e termos de aceite versionados.',
     'ponto-eletronico': 'Escalas de 6 e 8 horas, tolerâncias e banco de horas pela convenção dos bancários, com AFD, AEJ e trilha em cada ajuste.',
@@ -95,7 +96,7 @@ const page: SegmentPage = {
     ged: 'Documentos com acesso restrito por perfil e por filial, prontos para auditoria interna e defesa trabalhista.',
     'people-analytics': 'Custo por agência, horas extras por cargo e turnover de tecnologia cruzados sem sair do sistema e sem perder o perfil de acesso.',
     'business-intelligence': 'Painéis executivos de custo de pessoal, headcount e desvio orçamentário, com alerta por e-mail quando o indicador sai da faixa.',
-    nati: 'Audita folha e horas extras antes do fechamento, aponta distorções de equidade e responde ao colaborador no Teams e no WhatsApp.',
+    nati: 'Audita a folha e as horas extras da jornada de 6 horas antes do fechamento, aponta distorções de equidade e responde ao colaborador no Teams.',
     'conexao-com-outros-sistemas': 'Login corporativo com Active Directory, contabilização da folha no ERP e catracas das agências no Ponto Eletrônico.',
     'infraestrutura-e-seguranca': 'Nuvem com produção, homologação e contingência, dados criptografados, dois fatores e trilha de auditoria de cada ação.',
   },

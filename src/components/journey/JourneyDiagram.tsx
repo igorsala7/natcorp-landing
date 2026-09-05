@@ -4,6 +4,7 @@ import { Link } from 'react-router'
 import { ArrowRight } from 'lucide-react'
 import { Eyebrow } from '@/components/sections/Section'
 import { EffectivationHub } from '@/components/journey/EffectivationHub'
+import { VolumeAside } from '@/components/journey/VolumeAside'
 import { useNodeRects, type NodeRect } from '@/components/journey/useNodeRects'
 import { moduleIcons } from '@/content/modulePages/icons'
 import { getModuleEntry, modulePath } from '@/content/modulePages'
@@ -122,6 +123,7 @@ function SwimlaneDiagram({ onOpenStory }: { onOpenStory?: (stepId: string) => vo
                       {s.n === EFFECTIVATION_AFTER && (
                         <li ref={setNodeRef(hubIndex)} className="relative z-20 col-span-6 my-2" aria-label="Efetivação automática">
                           <EffectivationHub id="efetivacao-pratico" />
+                          <VolumeAside compact idSuffix="-pratico" className="mt-3" />
                         </li>
                       )}
                     </Fragment>
@@ -214,6 +216,7 @@ function StackedList({ onOpenStory }: { onOpenStory?: (stepId: string) => void }
                 {s.n === EFFECTIVATION_AFTER && (
                   <li aria-label="Efetivação automática">
                     <EffectivationHub id="efetivacao-pratico-m" />
+                    <VolumeAside compact idSuffix="-pratico-m" className="mt-3" />
                     <span aria-hidden className="mx-auto block h-6 w-px border-l border-brand-mist" />
                   </li>
                 )}

@@ -43,7 +43,7 @@ export const segmentCovers: Record<string, SegmentCover> = {
   'saude-e-ciencias-biologicas': {
     photo: saude,
     alt: 'Foto ilustrativa: enfermeiro de jaleco azul sorrindo',
-    pain: 'Escala 12x36 em cinco hospitais. Folha fechada em um dia.',
+    pain: 'Escala 12x36 por setor e por unidade. Folha apurada sem planilha.',
     position: '50% 20%',
   },
   'recursos-naturais': {
@@ -67,13 +67,13 @@ export const segmentCovers: Record<string, SegmentCover> = {
   varejo: {
     photo: varejo,
     alt: 'Foto ilustrativa: atendente de camisa laranja ajudando um cliente no balcão',
-    pain: 'Domingo de shopping, cem lojas. Escalas e banco de horas certos na folha.',
+    pain: 'Escala de domingo e feriado loja a loja. Banco de horas certo na folha.',
     position: '60% 30%',
   },
   telecom: {
     photo: telecom,
     alt: 'Foto ilustrativa: profissional de tecnologia em uma sala de servidores',
-    pain: 'Terceiros, técnicos em campo e contratos que mudam todo mês.',
+    pain: 'Técnicos em campo e operação 24 horas. Ponto com geolocalização e periculosidade na folha.',
     position: '70% 40%',
   },
 }

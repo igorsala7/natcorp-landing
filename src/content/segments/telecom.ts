@@ -3,6 +3,7 @@ import type { SegmentPage } from './types'
 const page: SegmentPage = {
   slug: 'telecom',
   name: 'Telecom',
+  ctaContext: 'de telecom',
   tagline: 'O ponto que funciona [[onde não tem sinal]], do técnico em campo à central 24 horas.',
   summary:
     'Técnicos de instalação espalhados por dezenas de cidades, centrais de operação que não param e terceiros dentro da rede. A Natcorp registra o ponto sem sinal, apura sobreaviso e periculosidade, controla NR-10, NR-35 e EPIs e coloca a aprovação do gestor no celular, em todos os CNPJs.',
@@ -44,7 +45,7 @@ const page: SegmentPage = {
     {
       pain: 'NR-10 e NR-35',
       title: 'Treinamento válido, EPI com CA e CAT no prazo',
-      text: 'Treinamentos de NR-10 e NR-35 têm validade controlada e alerta antes de vencer, e a validade entra nos checklists do SESMT. EPIs de altura e eletricidade têm CA validado e ficha assinada pelo celular em campo. O PGR alimenta o LTCAT e o PPP, a CAT dispara o S-2210 em até 24 horas e a periculosidade fica na ficha do cargo.',
+      text: 'Treinamentos de NR-10 e NR-35 têm validade controlada e alerta antes de vencer, e a validade entra nos checklists do SESMT. EPIs de altura e eletricidade têm CA validado e ficha assinada pelo celular em campo. O PGR alimenta o LTCAT e o PPP, a CAT dispara o S-2210 até o primeiro dia útil seguinte ao acidente e a periculosidade fica na ficha do cargo.',
       modules: ['treinamento-e-desenvolvimento', 'seguranca-do-trabalho', 'medicina-ocupacional', 'esocial', 'cargos-e-salarios'],
     },
     {
@@ -56,7 +57,7 @@ const page: SegmentPage = {
     {
       pain: 'CNPJs e gestores',
       title: 'Uma folha para todos os CNPJs e o Portal do Gestor no celular',
-      text: 'A folha trata múltiplos vínculos e sindicatos, sem limite de CNPJs, com a regra de cada convenção aplicada a cada pessoa. O supervisor aprova hora extra, abono, férias e vaga pelo celular, com alçadas por centro de custo e suplente automático, e a NATI responde à equipe no WhatsApp fora do horário do RH.',
+      text: 'A folha trata múltiplos vínculos e sindicatos, um CNPJ por estado se for o caso, com a regra de cada convenção aplicada a cada pessoa. O supervisor aprova hora extra, abono, férias e vaga pelo celular, com alçadas por centro de custo e suplente na ausência, e a NATI responde à equipe no WhatsApp fora do horário do RH.',
       modules: ['folha-de-pagamento', 'portais', 'requisicoes-com-workflow', 'nati'],
     },
     {
@@ -71,8 +72,8 @@ const page: SegmentPage = {
     'administracao-de-pessoal': 'Posições e orçamento por cidade, base operacional e centro de custo, com alerta quando o custo de campo sai do orçado.',
     'cargos-e-salarios': 'Periculosidade parametrizada na ficha do cargo de técnico e faixas por região para reter instalador e operador de central.',
     'gestao-de-beneficios': 'Vale-transporte por trajeto e cidade, seguro de vida com sinistros acompanhados e plano de saúde com fatura conferida.',
-    natpay: 'Adiantamento pelo WhatsApp com limite pelos dias trabalhados no ponto, um motivo a mais para o atendente ficar.',
-    esocial: 'Admissões e desligamentos em volume, S-2210 em até 24 horas após a CAT e S-2240 gerado do PGR de campo.',
+    natpay: 'O técnico em campo pede o adiantamento pelo WhatsApp e recebe por Pix no mesmo dia, com limite pelos dias trabalhados no ponto.',
+    esocial: 'Admissões e desligamentos em volume, S-2210 até o primeiro dia útil seguinte ao acidente e S-2240 gerado do PGR de campo.',
     'juridico-trabalhista': 'Hora extra e periculosidade defendidas com jornada e fichas de EPI da própria base, e reclamante terceiro no vínculo exigido.',
     'ponto-eletronico': 'Turnos rotativos de central, sobreaviso, adicional noturno e banco de horas pelos limites de cada sindicato.',
     natponto: 'Ponto no celular do técnico com reconhecimento facial e geolocalização, guardado sem sinal e sincronizado depois.',
@@ -88,14 +89,14 @@ const page: SegmentPage = {
     'treinamento-e-desenvolvimento': 'NR-10 e NR-35 com validade controlada, alerta antes de vencer e presença registrada por turma.',
     'carreira-e-sucessao': 'Trilha de técnico a supervisor de campo e de atendente a líder de central, com sucessores mapeados.',
     portais: 'Portal do Gestor no celular do supervisor para aprovar hora extra, abono e vaga entre uma visita e outra.',
-    'requisicoes-com-workflow': 'Hora extra, abono, troca de plantão, terceiros e vaga com alçadas por centro de custo e suplente automático.',
+    'requisicoes-com-workflow': 'Hora extra, abono, troca de plantão, terceiros e vaga com alçadas por centro de custo e por CNPJ, com histórico de quem aprovou.',
     'chamado-interno': 'Dúvidas do técnico e do atendente em fila com SLA, abertas pelo celular e triadas pela NATI.',
     'blog-corporativo': 'Alertas de segurança, campanhas de prevenção e comunicados da operação na timeline de quem não abre e-mail.',
     'assinatura-eletronica': 'Termo de aceite de plantão, ficha de EPI e espelho de ponto assinados pelo celular, com validade jurídica.',
     ged: 'Documentos de técnicos e atendentes por pessoa, com acesso por perfil e por filial, sem pasta na base operacional.',
     'people-analytics': 'Horas extras, sobreaviso e turnover por cidade, filial e centro de custo cruzados na hora, sem depender de TI.',
     'business-intelligence': 'Painéis de absenteísmo, horas extras e escalas por filial e departamento, com alerta por e-mail ao sair da faixa.',
-    nati: 'Responde ao técnico no WhatsApp fora do horário do RH e aponta horas extras indevidas e lacunas de NR antes do fechamento.',
+    nati: 'Responde ao técnico no WhatsApp entre uma visita e outra e aponta sobreaviso e horas extras fora da regra antes de irem para a folha.',
     'conexao-com-outros-sistemas': 'Relógios de ponto e catracas das centrais no Ponto Eletrônico, ERP e avisos automáticos de admissões e desligamentos.',
     'infraestrutura-e-seguranca': 'Nuvem com contingência para uma operação que não para, acesso por perfil e por filial em cada CNPJ.',
   },
@@ -105,7 +106,7 @@ const page: SegmentPage = {
     'NR-06: EPIs com CA validado e ficha de entrega assinada',
     'Adicional de periculosidade para trabalho com eletricidade, conforme o laudo',
     'Ponto eletrônico conforme a Portaria 671, com AFD e AEJ para técnicos e centrais',
-    'eSocial: S-2210 em até 24 horas após a CAT e S-2240 para agentes nocivos',
+    'eSocial: S-2210 até o primeiro dia útil seguinte ao acidente e S-2240 para agentes nocivos',
     'Convenções coletivas de telecomunicações por estado e categoria',
   ],
   personas: [
@@ -128,7 +129,7 @@ const page: SegmentPage = {
     },
     {
       q: 'A folha atende vários CNPJs e sindicatos ao mesmo tempo?',
-      a: 'Sim. A folha trata múltiplos vínculos e acordos sindicais na mesma empresa, sem limite de CNPJs, cada um com suas regras. O ponto de cada unidade já chega apurado, e o eSocial recebe admissões e desligamentos validados.',
+      a: 'Sim. A folha trata múltiplos vínculos e acordos sindicais na mesma empresa, com quantos CNPJs a operadora tiver, cada um com suas regras. O ponto de cada unidade já chega apurado, e o eSocial recebe admissões e desligamentos validados.',
     },
   ],
   visual: 'natponto',

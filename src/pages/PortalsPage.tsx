@@ -2,6 +2,7 @@ import { Link } from 'react-router'
 import { ArrowRight, Check, ChevronRight } from 'lucide-react'
 import { Section, SectionHeader, Eyebrow } from '@/components/sections/Section'
 import { PortalsSection } from '@/components/sections/PortalsSection'
+import { StructureCards } from '@/components/sections/StructureSection'
 import { ResponsiveSection } from '@/components/sections/ResponsiveSection'
 import { FAQSection } from '@/components/sections/FAQSection'
 import { CTASection } from '@/components/sections/CTASection'
@@ -53,7 +54,11 @@ export default function PortalsPage() {
     path: paths.portals,
   })
   const modules = modulesByGroup('autoatendimento')
-  const faqItems = [...faqs.filter((f) => f.q.startsWith('Funciona no celular')), ...localFaq]
+  const faqItems = [
+    ...faqs.filter((f) => f.q.startsWith('Cada filial pode operar')),
+    ...faqs.filter((f) => f.q.startsWith('Funciona no celular')),
+    ...localFaq,
+  ]
 
   return (
     <PageTransition>
@@ -134,6 +139,22 @@ export default function PortalsPage() {
                 </StaggerItem>
               ))}
             </Stagger>
+            <Reveal delay={0.3} className="mt-7 rounded-2xl border border-brand-mist bg-white p-5 shadow-soft">
+              <p className="text-[15px] leading-relaxed text-brand-graphite">
+                <strong className="font-bold text-brand-ink">Em grupos com filiais:</strong> as filiais lançam dentro do seu perfil e das suas alçadas; a
+                matriz acompanha as pendências por unidade e fecha a folha.
+              </p>
+              <div className="mt-3 flex flex-wrap items-center gap-x-6 gap-y-2 text-[14px] font-semibold text-brand-purple">
+                <Link to={paths.groups} className="group inline-flex items-center gap-1.5">
+                  Como um grupo fecha a folha na matriz
+                  <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5" aria-hidden />
+                </Link>
+                <Link to={modulePath('requisicoes-com-workflow')} className="group inline-flex items-center gap-1.5">
+                  Módulo Requisições com Workflow
+                  <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5" aria-hidden />
+                </Link>
+              </div>
+            </Reveal>
           </div>
           <Reveal delay={0.2} className="min-w-0">
             <div role="img" aria-label="Tela de requisições: pedidos de férias, reembolso e movimentação seguindo o fluxo de aprovação" className="rounded-3xl border border-brand-mist bg-white p-4 shadow-soft sm:p-6">
@@ -183,12 +204,32 @@ export default function PortalsPage() {
 
       <ResponsiveSection tone="off" eyebrow="Os portais em qualquer tela" />
 
+      {/* Para a sua estrutura: empresa única, holding com RH central, grupo com RH em cada filial */}
+      <Section id="estrutura" tone="white" aria-labelledby="portais-estrutura-title">
+        <div className="container">
+          <SectionHeader
+            id="portais-estrutura-title"
+            eyebrow="Para a sua estrutura"
+            title="Os portais seguem a [[estrutura da sua empresa]]."
+            lead="Perfis por empresa, filial e centro de custo. Cada equipe vê só o que é dela; a matriz consolida."
+          />
+          <StructureCards tone="white" className="mt-12" />
+          <Reveal delay={0.2} className="mt-8">
+            <Link to={paths.groups} className="group inline-flex items-center gap-2 text-[15px] font-semibold text-brand-purple">
+              Ver tudo o que muda para grupos com várias empresas e filiais
+              <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5" aria-hidden />
+            </Link>
+          </Reveal>
+        </div>
+      </Section>
+
       <FAQSection
+        tone="off"
         items={faqItems}
         eyebrow="Perguntas sobre os portais"
         title="O que gestores e colaboradores [[perguntam]]."
         lead="Respostas curtas sobre o que cada perfil consegue fazer sozinho."
-        more={{ to: `${paths.system}#faq`, label: 'Ver todas as perguntas frequentes' }}
+        more={{ to: paths.faq, label: 'Ver todas as perguntas frequentes' }}
       />
 
       <CTASection

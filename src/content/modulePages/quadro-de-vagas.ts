@@ -12,11 +12,7 @@ const page: ModulePage = {
     description:
       'Job board whitelabel para grandes empresas: vagas publicadas direto do processo seletivo, candidatura pelo celular e acompanhamento das etapas pelo candidato.',
   },
-  highlights: [
-    { value: '100%', label: 'com a marca da sua empresa, do anúncio à candidatura' },
-    { value: '0', label: 'papel: currículo e documentos enviados pelo portal' },
-    { value: 'Celular', label: 'ou computador: o candidato se candidata de onde estiver' },
-  ],
+  highlights: [],
   benefits: [
     {
       title: 'Marca empregadora desde o primeiro contato',
@@ -47,9 +43,9 @@ const page: ModulePage = {
       icon: 'briefcase',
     },
     {
-      title: 'Candidatura pelo celular',
-      text: 'O candidato se cadastra e se candidata pelo celular, pelo tablet ou pelo computador, no seu tempo.',
-      icon: 'smartphone',
+      title: 'Vagas de todas as empresas e unidades',
+      text: 'As vagas de cada empresa e filial do grupo ficam no mesmo quadro, cada uma vinda do seu processo seletivo. O candidato vê as vagas abertas por empresa e unidade e usa um só cadastro para todas.',
+      icon: 'map-pin',
     },
     {
       title: 'Cadastro e currículo do candidato',
@@ -63,7 +59,7 @@ const page: ModulePage = {
     },
     {
       title: 'Documentos enviados online',
-      text: 'O candidato anexa documentos pelo portal. Se for aprovado, eles seguem para a Admissão Digital e para o GED.',
+      text: 'O candidato anexa documentos pelo portal. Se for aprovado, eles seguem para a Admissão Digital e para o GED (Gestão Eletrônica de Documentos).',
       icon: 'upload',
     },
     {
@@ -82,9 +78,9 @@ const page: ModulePage = {
       icon: 'link',
     },
     {
-      title: 'Dados do candidato protegidos',
-      text: 'Tratamento conforme a LGPD, com acesso por perfil e termos de aceite direcionados a candidatos.',
-      icon: 'shield-check',
+      title: 'Questionários na candidatura',
+      text: 'O processo seletivo pode incluir questionários personalizados e triagem automatizada já na inscrição, como definido em Recrutamento e Seleção. O RH recebe candidatos já classificados.',
+      icon: 'clipboard',
     },
   ],
   flow: {
@@ -97,7 +93,7 @@ const page: ModulePage = {
       { title: 'Aprovado, admissão aberta', text: 'O aprovado segue para a Admissão Digital sem repetir cadastro.' },
     ],
   },
-  compliance: ['LGPD: consentimento e acesso por perfil aos dados do candidato'],
+  compliance: ['LGPD: consentimento e acesso por perfil aos dados do candidato', 'Termos de aceite digitais direcionados a candidatos'],
   personas: [
     { role: 'Candidato', text: 'Encontra as vagas, se candidata pelo celular e acompanha cada etapa sem depender de retorno por e-mail.' },
     { role: 'RH e recrutadores', text: 'Publicam vagas a partir do processo seletivo e recebem currículos e documentos já organizados no sistema.' },
@@ -113,8 +109,8 @@ const page: ModulePage = {
       a: 'Não. A vaga nasce da requisição aprovada no workflow e do processo seletivo criado em Recrutamento e Seleção. A publicação usa esses dados, sem digitar de novo.',
     },
     {
-      q: 'O candidato consegue acompanhar o processo?',
-      a: 'Sim. No Portal do Candidato ele vê a inscrição, as etapas, as avaliações e o status, além de atualizar o currículo e enviar documentos pelo celular ou computador.',
+      q: 'Posso publicar vagas de várias empresas do grupo no mesmo quadro?',
+      a: 'Sim. O quadro reúne as vagas de todas as empresas e unidades do grupo, cada uma vinda do seu processo seletivo. O candidato vê as vagas abertas por empresa e unidade, acompanha as etapas pelo Portal do Candidato e usa o mesmo cadastro para concorrer a qualquer uma delas, pelo celular ou pelo computador.',
     },
     {
       q: 'O que acontece com os currículos de quem não foi aprovado?',

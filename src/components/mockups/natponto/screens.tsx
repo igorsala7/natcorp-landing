@@ -71,7 +71,7 @@ export function NatPontoHome() {
               <p className="truncate text-[15px] font-extrabold uppercase text-brand-ink">Ana Ribeiro</p>
               <p className="mt-0.5 flex items-center gap-1 text-[11px] uppercase text-brand-graphite">
                 <Building2 className="h-3 w-3" strokeWidth={2} />
-                Natcorp do Brasil
+                Vale Verde Alimentos
               </p>
             </div>
             <span className="inline-flex items-center gap-1 rounded-full border border-emerald-600/40 bg-emerald-50 px-2 py-0.5 text-[10px] font-bold text-emerald-700">
@@ -446,10 +446,10 @@ function MapMock() {
   )
 }
 
-/** Comprovante da marcação: QR, registro no INPI, hash e geolocalização. */
+/** Comprovante da marcação: QR, registro de programa de computador no INPI, hash e geolocalização. */
 export function NatPontoReceipt() {
   return (
-    <NatPontoFrame topBar="modal" title="Comprovante" clock="18:37" label="App NatPonto: comprovante da marcação com código de verificação, registro no INPI, hash SHA-256 e geolocalização dentro do raio">
+    <NatPontoFrame topBar="modal" title="Comprovante" clock="18:37" label="App NatPonto: comprovante da marcação com código de verificação, registro de programa de computador no INPI, hash SHA-256 e geolocalização dentro do raio">
       <div className="h-full overflow-hidden px-3 pt-3">
         <div className="rounded-2xl bg-white shadow-soft">
           <div className="flex items-start justify-between px-4 pt-4">
@@ -465,7 +465,7 @@ export function NatPontoReceipt() {
             </div>
           </div>
           <div className="mt-3 border-t border-brand-mist bg-[#F8F6FA] px-4 py-2.5">
-            <p className="text-[9px] font-bold uppercase tracking-wide text-brand-graphite">Registro no INPI</p>
+            <p className="text-[9px] font-bold uppercase tracking-wide text-brand-graphite">Registro de programa de computador no INPI</p>
             <p className="font-mono text-[12px] font-semibold tracking-wider text-brand-ink">BR 51 2024 001255 9</p>
           </div>
           <div className="border-t border-brand-mist px-4 py-2.5">

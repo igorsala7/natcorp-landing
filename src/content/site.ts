@@ -12,7 +12,7 @@ export const siteConfig = {
   youtube: 'https://www.youtube.com/@natcorpbr',
   defaultTitle: 'Natcorp — Todo o RH em um único sistema | Sistema de RH para grandes empresas',
   defaultDescription:
-    'Folha de pagamento, ponto eletrônico, eSocial, admissão digital, saúde e segurança do trabalho, people analytics e a NATI, nossa inteligência artificial: mais de 30 módulos integrados em um único sistema de RH para grandes empresas. Há mais de 30 anos.',
+    'Folha de pagamento, ponto eletrônico, eSocial, admissão digital, saúde e segurança do trabalho, people analytics e a NATI, nossa inteligência artificial: 31 módulos integrados em um único sistema de RH para grandes empresas. Há mais de 30 anos.',
 }
 
 /** Escritórios da Natcorp, como constam na página "Fale conosco" do site anterior. */
@@ -46,6 +46,9 @@ export const paths = {
   journey: journeyPath,
   segments: '/segmentos',
   nati: '/modulos/nati',
+  groups: '/grupos',
+  faq: '/perguntas-frequentes',
+  commercial: '/modelo-comercial',
 } as const
 
 export interface NavLink {
@@ -56,7 +59,8 @@ export interface NavLink {
 
 /** Menu "Sistema": entradas gerais, antes das colunas de módulos por grupo. */
 export const systemLinks: NavLink[] = [
-  { to: paths.modules, label: 'Todos os módulos', short: 'Mais de 30, cada um com a sua página' },
+  { to: paths.modules, label: 'Todos os módulos', short: '31 módulos, cada um com a sua página' },
+  { to: paths.groups, label: 'Grupos com várias empresas e filiais', short: 'Multiempresa, perfis por filial e fechamento na matriz' },
   { to: paths.journey, label: 'Jornada do colaborador', short: 'As 24 etapas, da vaga à promoção' },
   { to: paths.security, label: 'Segurança e infraestrutura', short: 'Nuvem Oracle, contingência e LGPD' },
   { to: paths.portals, label: 'Portais e autoatendimento', short: 'Gestor, colaborador e candidato' },
@@ -76,7 +80,8 @@ export const appLinks: NavLink[] = [
 /** Menu "Empresa". */
 export const companyLinks: NavLink[] = [
   { to: paths.about, label: 'Sobre a Natcorp', short: '35 anos, missão, visão e valores' },
-  { to: `${paths.about}#reconhecimento`, label: 'Reconhecimentos e clientes', short: 'Prêmios e quem usa o sistema' },
-  { to: `${paths.about}#servicos`, label: 'Serviços', short: 'Implantação, BPO, treinamento e suporte' },
+  { to: `${paths.about}#reconhecimento`, label: 'Clientes e reconhecimentos', short: 'Quem usa o sistema e os prêmios' },
+  { to: `${paths.about}#servicos`, label: 'Implantação, suporte e serviços', short: 'Implantação, migração, BPO, treinamento e suporte' },
+  { to: paths.commercial, label: 'Modelo comercial', short: 'Sem cobrança por usuário, CNPJ ou histórico' },
   { to: `${paths.about}#videos`, label: 'Vídeos', short: 'O canal da Natcorp' },
 ]
