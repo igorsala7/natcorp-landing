@@ -1,0 +1,142 @@
+@import './fonts.css';
+@import 'lenis/dist/lenis.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Natcorp — Manual de Identidade Visual v1.2 (tokens semânticos shadcn em HSL) */
+    --background: 0 0% 100%; /* branco: 40% da identidade */
+    --foreground: 254 51% 15%; /* Tinta #1B1238 */
+
+    --card: 0 0% 100%;
+    --card-foreground: 254 51% 15%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 254 51% 15%;
+
+    --primary: 275 62% 29%; /* Roxo Natcorp #511C76 */
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 264 24% 96%; /* Off-white #F4F2F7 */
+    --secondary-foreground: 275 62% 29%;
+
+    --muted: 260 30% 92%; /* Névoa #E9E5F1 */
+    --muted-foreground: 253 17% 32%; /* Grafite #4A4460 */
+
+    --accent: 334 51% 56%; /* Rosa Natcorp #C95788 */
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 260 30% 92%; /* Névoa */
+    --input: 260 30% 88%;
+    --ring: 275 62% 29%;
+
+    --radius: 0.5rem; /* 8 px — raio padrão de interface do manual */
+
+    /* Motion tokens */
+    --ease-brand: cubic-bezier(0.22, 1, 0.36, 1);
+    --ease-in-out-brand: cubic-bezier(0.65, 0, 0.35, 1);
+    --dur-fast: 180ms;
+    --dur-base: 320ms;
+    --dur-slow: 700ms;
+
+    --nav-h: 4.5rem;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  html {
+    -webkit-text-size-adjust: 100%;
+    scroll-padding-top: calc(var(--nav-h) + 1rem);
+  }
+  html:not(.lenis) {
+    scroll-behavior: smooth;
+  }
+  /* Com Lenis ativo, a compensação da barra fixa vem do offset das âncoras (evita somar as duas). */
+  html.lenis {
+    scroll-padding-top: 0;
+  }
+  body {
+    @apply bg-background font-sans text-foreground antialiased;
+    font-feature-settings: 'ss01' on, 'cv11' on;
+    text-rendering: optimizeLegibility;
+    overflow-x: clip;
+  }
+  ::selection {
+    background: #511c76;
+    color: #fff;
+  }
+  h1, h2, h3, h4 {
+    @apply tracking-brand;
+    text-wrap: balance;
+  }
+  p {
+    text-wrap: pretty;
+  }
+  :focus-visible {
+    outline: 2px solid #511c76;
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+  .on-dark :focus-visible {
+    outline-color: #fff;
+  }
+  .tabular {
+    font-variant-numeric: tabular-nums;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html:not(.lenis) {
+      scroll-behavior: auto;
+    }
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+@layer utilities {
+  /* Gradiente Natcorp: linear 135°, Ameixa 0% → Roxo 50% → Azul Profundo 100%. Nunca em texto pequeno. */
+  .bg-brand-gradient {
+    background-image: linear-gradient(135deg, #9a408a 0%, #511c76 50%, #2c1a63 100%);
+  }
+  .text-brand-gradient {
+    background-image: linear-gradient(135deg, #c95788 0%, #9a408a 45%, #511c76 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .text-balance {
+    text-wrap: balance;
+  }
+  /* Máscara para fades laterais de marquee */
+  .mask-fade-x {
+    -webkit-mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
+    mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
+  }
+  .mask-fade-b {
+    -webkit-mask-image: linear-gradient(180deg, #000 60%, transparent);
+    mask-image: linear-gradient(180deg, #000 60%, transparent);
+  }
+  /* Grafismo "contorno": símbolo em um traço, sangrando pelo canto — ver Logo.tsx */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .pause-on-hover:hover .animate-marquee {
+    animation-play-state: paused;
+  }
+}
