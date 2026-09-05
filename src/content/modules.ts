@@ -136,7 +136,7 @@ export const moduleGroups: ModuleGroup[] = [
       { name: 'NATI', slug: 'nati', desc: 'Agente de IA para autoatendimento, dúvidas e informações de colaboradores, gestores e RH.' },
       { name: 'Conexão com outros sistemas', slug: 'conexao-com-outros-sistemas', desc: 'O próprio usuário disponibiliza tabelas para enviar e receber dados de outros sistemas.' },
       { name: 'Nuvem segura', slug: 'infraestrutura-e-seguranca', desc: 'Infraestrutura Oracle Cloud com ambientes de produção, homologação e contingência.' },
-      { name: 'Multiplataforma', slug: 'infraestrutura-e-seguranca', hash: '#funcionalidades', desc: 'Responsivo: no celular, no tablet e no computador.' },
+      { name: 'Multiplataforma', slug: 'infraestrutura-e-seguranca', hash: '#multiplataforma', desc: 'Responsivo: no celular, no tablet e no computador.' },
     ],
   },
 ]

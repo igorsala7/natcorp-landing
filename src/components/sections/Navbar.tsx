@@ -97,7 +97,7 @@ export function Navbar() {
     >
       <div className="container flex h-[var(--nav-h)] items-center justify-between gap-6">
         <Link to="/" onClick={closeAll} className="flex shrink-0 items-center rounded-md" aria-label="Natcorp — página inicial">
-          <Logo tone={onDark ? 'white' : 'gradient'} className="h-8 w-auto transition-opacity duration-300" />
+          <Logo tone={onDark ? 'white' : 'gradient'} className="h-9 w-auto transition-opacity duration-300 lg:h-10" />
         </Link>
 
         <nav className="hidden items-center gap-1 lg:flex" aria-label="Navegação principal">

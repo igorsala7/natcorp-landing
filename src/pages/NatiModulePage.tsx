@@ -36,7 +36,7 @@ import { Conversation, NatiAnswerFooter, NatiBubble, NatiChatWindow, UserBubble 
 import { NatiChartCard } from '@/components/mockups/nati/NatiChartCard'
 import { NatiTable, type LedgerRow } from '@/components/mockups/nati/NatiTable'
 import { WhatsAppMockup } from '@/components/mockups/nati/WhatsAppMockup'
-import { OperatorPanel } from '@/components/mockups/nati/OperatorPanel'
+import { OperatorPanel, PANEL_SIZE } from '@/components/mockups/nati/OperatorPanel'
 import { getGroup, getModuleEntry, type ModuleEntry } from '@/content/modulePages'
 import type { ModulePage as ModulePageData } from '@/content/modulePages/types'
 import { EASE } from '@/lib/motion'
@@ -346,7 +346,7 @@ export default function NatiModulePage({ entry, page }: { entry: ModuleEntry; pa
             lead="No Painel do Operador, a NATI fica a um clique, sobre a tela em que você está trabalhando. Escolha a base de dados, salve os prompts que mais usa, consulte o histórico e fale por voz ou texto."
           />
           <Reveal delay={0.2} className="mt-12">
-            <ScaledFrame width={1180} height={720} className="rounded-xl">
+            <ScaledFrame width={PANEL_SIZE.desktop.width} height={PANEL_SIZE.desktop.height} className="rounded-xl">
               <OperatorPanel
                 overlay={
                   <NatiChatWindow bodyClassName="max-h-[300px] overflow-hidden">

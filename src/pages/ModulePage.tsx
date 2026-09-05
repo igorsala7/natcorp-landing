@@ -13,6 +13,7 @@ import { Breadcrumb } from '@/components/seo/Breadcrumb'
 import { Logo, LogoOutline } from '@/components/brand/Logo'
 import { Button } from '@/components/ui/button'
 import { BenefitsGrid, FeaturesGrid, FlowSteps, PersonasGrid, PrevNext, RelatedModules } from '@/components/modules/blocks'
+import { ResponsiveSection } from '@/components/sections/ResponsiveSection'
 import { useSeo } from '@/hooks/useSeo'
 import { getGroup, getModuleEntry, loadModulePage, moduleRegistry, type ModuleEntry } from '@/content/modulePages'
 import { moduleIcons } from '@/content/modulePages/icons'
@@ -147,7 +148,9 @@ function ModuleContent({ entry, page }: { entry: ModuleEntry; page: ModulePageDa
         </div>
       </Section>
 
-      <Section id="funcionalidades" tone="off" aria-labelledby="funcionalidades-title">
+      {entry.slug === 'infraestrutura-e-seguranca' && <ResponsiveSection id="multiplataforma" tone="off" eyebrow="Multiplataforma" />}
+
+      <Section id="funcionalidades" tone={entry.slug === 'infraestrutura-e-seguranca' ? 'white' : 'off'} aria-labelledby="funcionalidades-title">
         <div className="container">
           <SectionHeader
             id="funcionalidades-title"

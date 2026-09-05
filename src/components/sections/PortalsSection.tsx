@@ -1,4 +1,5 @@
 import { Briefcase, Building2, ScanFace, UserRound, Users } from 'lucide-react'
+import { Link } from 'react-router'
 import { Section, SectionHeader } from './Section'
 import { Reveal, Stagger, StaggerItem } from '@/components/motion/Reveal'
 import { Logo } from '@/components/brand/Logo'
@@ -87,7 +88,11 @@ export function PortalsSection() {
             <div>
               <h3 className="text-lg font-bold text-brand-ink">Multiplataforma e multiempresa</h3>
               <p className="mt-1 text-[15px] leading-relaxed text-brand-graphite">
-                Responsivo no celular, no tablet e no computador. Controle por empresa, filial e centro de custo, com perfis de acesso para cada realidade.
+                Responsivo no celular, no tablet e no computador. Controle por empresa, filial e centro de custo, com perfis de acesso para cada realidade.{' '}
+                <Link to="#multiplataforma" className="font-semibold text-brand-purple underline-offset-4 hover:underline">
+                  Veja o sistema em cada tela
+                </Link>
+                .
               </p>
             </div>
           </div>

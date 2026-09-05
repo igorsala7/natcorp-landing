@@ -10,7 +10,10 @@ interface ScaledFrameProps {
   className?: string
 }
 
-/** Renderiza um layout de desktop em tamanho fixo e o reduz proporcionalmente para caber no contêiner. */
+/**
+ * Renderiza um layout em tamanho fixo e o reduz proporcionalmente para caber no contêiner.
+ * O conteúdo é posicionado de forma absoluta para não influenciar a largura do layout (grids e flex).
+ */
 export function ScaledFrame({ width, height, children, className }: ScaledFrameProps) {
   const ref = useRef<HTMLDivElement>(null)
   const [scale, setScale] = useState(1)
@@ -26,8 +29,10 @@ export function ScaledFrame({ width, height, children, className }: ScaledFrameP
   }, [width])
 
   return (
-    <div ref={ref} className={cn('relative w-full overflow-hidden', className)} style={{ height: Math.round(height * scale) }}>
-      <div style={{ width, height, transform: `scale(${scale})`, transformOrigin: 'top left' }}>{children}</div>
+    <div ref={ref} className={cn('relative w-full min-w-0 overflow-hidden', className)} style={{ height: Math.round(height * scale) }}>
+      <div className="absolute left-0 top-0" style={{ width, height, transform: `scale(${scale})`, transformOrigin: 'top left' }}>
+        {children}
+      </div>
     </div>
   )
 }
