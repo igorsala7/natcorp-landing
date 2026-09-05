@@ -8,7 +8,7 @@ const stats = [
   { value: 35, prefix: '+', suffix: '', label: 'anos dedicados exclusivamente à tecnologia para gestão de pessoas' },
   { value: 30, prefix: '+', suffix: '', label: 'módulos integrados, do Departamento Pessoal ao SESMT' },
   { value: 2500, prefix: '', suffix: '', label: 'folhas de pagamento calculadas por minuto' },
-  { value: 4, prefix: '', suffix: ' : 1.000', label: 'operadores de RH para cada mil colaboradores geridos' },
+  { value: 500, prefix: '+', suffix: ' mil', label: 'colaboradores com os dados administrados no sistema' },
 ]
 
 export function ProofStrip() {

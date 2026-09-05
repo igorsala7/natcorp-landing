@@ -41,6 +41,11 @@ O roteamento é feito no cliente com [React Router](https://reactrouter.com) (`B
 precisa devolver `index.html` para qualquer caminho: já estão incluídos `vercel.json` (Vercel) e `public/_redirects`
 (Netlify/Cloudflare Pages). Em outros provedores, configure o "SPA fallback" equivalente.
 
+Os mesmos dois arquivos trazem **redirecionamentos permanentes (301)** dos endereços do site anterior em WordPress
+(`/solucao-de-rh/`, `/sobre-nos/`, `/fale-conosco/`, `/servicos/`, `/folha-de-pagamento/` etc.) para as rotas novas,
+para que os links já indexados pelo Google e salvos por clientes continuem funcionando. O `/blog/` ficou de fora:
+depende de onde o WordPress vai continuar publicado.
+
 `npm run build` roda antes `scripts/generate-sitemap.mjs`, que gera `public/sitemap.xml` e `public/robots.txt`
 a partir de `src/content/modulePages/registry.json` (use `VITE_SITE_URL` para o domínio final).
 
@@ -73,14 +78,15 @@ src/
                 do app) e analytics/ (Painel do Operador: indicadores de medicina, comparativo financeiro em
                 gráfico e tabela, modal de recrutamento, gráficos SVG reutilizáveis)
     journey/    Página da jornada: JourneyMap (mapa lateral e barra de fases), EffectivationHub, visuals (mini mockups por etapa)
-    sections/   Navbar (mega-menu de módulos), Hero, ProofStrip, Recognition (prêmios e clientes), Problem, Platform, Modules,
-                Journey, Nati, Analytics (People Analytics), NatPonto, Portals, Responsive, Security, Why (comparativo),
-                Personas, FAQ, FaqAccordion,
-                CTA (+ LeadForm lazy), Footer
+    sections/   Navbar (mega-menus de módulos e segmentos), Hero, ProofStrip, Recognition (prêmios e clientes), Problem,
+                Platform, Modules, Journey, Nati, Analytics (People Analytics), NatPonto, Portals, Responsive, Security,
+                Why (comparativo e serviços), Videos (canal no YouTube, player só após o clique), Personas, Segments,
+                FAQ, FaqAccordion, CTA (+ LeadForm lazy, canais de contato e escritórios), Footer
     seo/        JsonLd, Breadcrumb
     ui/         primitivos shadcn/ui
-  content/      textos e dados (módulos da landing, FAQ, personas, navegação, reconhecimentos), hiringJourney.ts (as 21 etapas
-                da jornada) e modulePages/ (páginas de módulo)
+  content/      textos e dados (módulos da landing, FAQ, personas, navegação e contato em site.ts, reconhecimentos, vídeos),
+                hiringJourney.ts (as 21 etapas da jornada), modulePages/ (páginas de módulo) e segments/ (páginas por segmento)
+  assets/videos miniaturas dos vídeos (960x540), servidas pelo próprio site
   hooks/        useMediaQuery, useScrolled, useIntroDone, useBrandGradientId, useSeo
   lib/          motion.ts (curvas e variantes), lenisStore.ts, leadSchema.ts, submitLead.ts, utils.ts
 scripts/        generate-sitemap.mjs

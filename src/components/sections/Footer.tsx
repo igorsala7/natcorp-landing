@@ -1,4 +1,4 @@
-import { ArrowUp, Mail, MapPin } from 'lucide-react'
+import { ArrowUp, Mail, MapPin, MessageCircle, Phone } from 'lucide-react'
 import { Link } from 'react-router'
 import { Logo } from '@/components/brand/Logo'
 import { groups } from '@/content/modulePages'
@@ -90,14 +90,31 @@ export function Footer() {
             <p className="text-[12px] font-semibold uppercase tracking-[0.16em] text-white/50">Contato</p>
             <ul className="mt-4 space-y-3 text-sm text-white/80">
               <li className="flex items-start gap-2.5">
+                <Phone className="mt-0.5 h-4 w-4 shrink-0 text-white/50" strokeWidth={1.6} aria-hidden />
+                <a href={siteConfig.phoneHref} className="transition-colors hover:text-white">
+                  <span className="sr-only">Telefone: </span>
+                  {siteConfig.phone}
+                </a>
+              </li>
+              <li className="flex items-start gap-2.5">
+                <MessageCircle className="mt-0.5 h-4 w-4 shrink-0 text-white/50" strokeWidth={1.6} aria-hidden />
+                <a href={siteConfig.whatsappHref} target="_blank" rel="noreferrer noopener" className="transition-colors hover:text-white">
+                  <span className="sr-only">WhatsApp: </span>
+                  {siteConfig.whatsapp}
+                </a>
+              </li>
+              <li className="flex items-start gap-2.5">
                 <Mail className="mt-0.5 h-4 w-4 shrink-0 text-white/50" strokeWidth={1.6} aria-hidden />
-                <a href={`mailto:${siteConfig.email}`} className="transition-colors hover:text-white">
+                <a href={`mailto:${siteConfig.email}`} className="break-all transition-colors hover:text-white">
                   {siteConfig.email}
                 </a>
               </li>
               <li className="flex items-start gap-2.5">
                 <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-white/50" strokeWidth={1.6} aria-hidden />
-                {siteConfig.city}
+                <span>
+                  {siteConfig.city}
+                  <span className="mt-0.5 block text-[12.5px] text-white/55">{siteConfig.coverage}</span>
+                </span>
               </li>
               <li>
                 <a href={siteConfig.url} className="font-semibold text-white transition-colors hover:text-[#E4A9C4]">

@@ -1,1 +1,13 @@
+# Endereços do site anterior (WordPress) que o Google ainda conhece -> novas rotas
+/solucao-de-rh                     /modulos                     301
+/sistema-de-rh-hcm                 /modulos                     301
+/sistema-de-gestao-de-rh-completo  /modulos                     301
+/sistema-de-rh-completo-2-0        /modulos                     301
+/folha-de-pagamento                /modulos/folha-de-pagamento  301
+/sobre-nos                         /#reconhecimento             301
+/servicos                          /#servicos                   301
+/fale-conosco                      /#contato                    301
+/fale-conosco-2                    /#contato                    301
+
+# SPA: qualquer outro caminho devolve o index.html
 /*    /index.html   200

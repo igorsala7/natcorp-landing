@@ -1,11 +1,11 @@
 import { Suspense, lazy, useRef } from 'react'
 import { useInView } from 'motion/react'
-import { CheckCircle2 } from 'lucide-react'
+import { CheckCircle2, Mail, MapPin, MessageCircle, Phone } from 'lucide-react'
 import { LogoOutline } from '@/components/brand/Logo'
 import { Reveal } from '@/components/motion/Reveal'
 import { SplitText } from '@/components/motion/SplitText'
 import { Eyebrow } from './Section'
-import { siteConfig } from '@/content/site'
+import { offices, siteConfig } from '@/content/site'
 
 const LeadForm = lazy(() => import('./LeadForm'))
 
@@ -13,6 +13,12 @@ const bullets = [
   'Demonstração guiada pela realidade da sua empresa',
   'Time que acompanha de perto, da implantação ao dia a dia',
   'Sem compromisso e sem letra miúda',
+]
+
+const channels = [
+  { icon: Phone, label: 'Telefone', value: siteConfig.phone, href: siteConfig.phoneHref, external: false },
+  { icon: MessageCircle, label: 'WhatsApp', value: siteConfig.whatsapp, href: siteConfig.whatsappHref, external: true },
+  { icon: Mail, label: 'E-mail', value: siteConfig.email, href: `mailto:${siteConfig.email}`, external: false },
 ]
 
 interface CTASectionProps {
@@ -61,12 +67,24 @@ export function CTASection({
                 </ul>
               </Reveal>
               <Reveal delay={0.45}>
-                <p className="mt-10 text-sm text-white/60">
-                  Prefere e-mail?{' '}
-                  <a href={`mailto:${siteConfig.email}`} className="font-semibold text-white underline-offset-4 hover:underline">
-                    {siteConfig.email}
-                  </a>
-                </p>
+                <div className="mt-10 border-t border-white/15 pt-6">
+                  <p className="text-[12px] font-semibold uppercase tracking-[0.14em] text-white/60">Prefere falar direto?</p>
+                  <ul className="mt-3 space-y-2.5 text-[15px]">
+                    {channels.map((c) => (
+                      <li key={c.label}>
+                        <a
+                          href={c.href}
+                          {...(c.external ? { target: '_blank', rel: 'noreferrer noopener' } : {})}
+                          className="group/link inline-flex items-center gap-2.5 font-semibold text-white underline-offset-4 hover:underline"
+                        >
+                          <c.icon className="h-4 w-4 shrink-0 text-[#E4A9C4]" strokeWidth={1.8} aria-hidden />
+                          <span className="sr-only">{c.label}: </span>
+                          {c.value}
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
               </Reveal>
             </div>
 
@@ -81,6 +99,34 @@ export function CTASection({
             </Reveal>
           </div>
         </div>
+
+        <Reveal delay={0.1}>
+          <address className="mt-6 grid grid-cols-1 gap-6 rounded-3xl border border-brand-mist bg-brand-off-white p-6 not-italic sm:p-8 lg:grid-cols-[minmax(0,15rem)_1fr] lg:gap-12">
+            <div>
+              <p className="text-[12px] font-semibold uppercase tracking-[0.16em] text-brand-purple">Onde estamos</p>
+              <p className="mt-2 text-[15px] leading-relaxed text-brand-graphite">
+                Escritórios em Barueri e São Paulo. {siteConfig.coverage}
+              </p>
+            </div>
+            <ul className="grid grid-cols-1 gap-5 sm:grid-cols-3">
+              {offices.map((o) => (
+                <li key={o.name}>
+                  <p className="flex items-center gap-2 text-[13px] font-bold text-brand-ink">
+                    <MapPin className="h-4 w-4 shrink-0 text-brand-purple" strokeWidth={1.8} aria-hidden />
+                    {o.name}
+                  </p>
+                  <p className="mt-1.5 text-[13.5px] leading-relaxed text-brand-graphite">
+                    {o.lines.map((l) => (
+                      <span key={l} className="block">
+                        {l}
+                      </span>
+                    ))}
+                  </p>
+                </li>
+              ))}
+            </ul>
+          </address>
+        </Reveal>
       </div>
     </section>
   )

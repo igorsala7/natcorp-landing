@@ -17,6 +17,7 @@ export const leadSchema = z.object({
   cargo: z.string().min(1, 'Selecione seu cargo'),
   colaboradores: z.string().min(1, 'Selecione o número de colaboradores'),
   mensagem: z.string().max(1000, 'Máximo de 1000 caracteres').optional(),
+  novidades: z.boolean().optional(),
 })
 
 export type LeadFormData = z.infer<typeof leadSchema>
@@ -33,10 +34,19 @@ export const cargoOptions = [
   'Outro',
 ]
 
+/** Faixas de porte usadas no formulário do site anterior, sem sobreposição. */
 export const colaboradoresOptions = [
-  'Até 500 colaboradores',
-  '500 a 2.000 colaboradores',
-  '2.000 a 5.000 colaboradores',
-  '5.000 a 10.000 colaboradores',
-  'Mais de 10.000 colaboradores',
+  '1 a 100',
+  '101 a 200',
+  '201 a 300',
+  '301 a 500',
+  '501 a 700',
+  '701 a 1.000',
+  '1.001 a 2.000',
+  '2.001 a 3.000',
+  '3.001 a 4.000',
+  '4.001 a 5.000',
+  '5.001 a 8.000',
+  '8.001 a 10.000',
+  'Acima de 10.000',
 ]

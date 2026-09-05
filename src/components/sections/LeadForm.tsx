@@ -17,7 +17,7 @@ export default function LeadForm() {
 
   const form = useForm<LeadFormData>({
     resolver: zodResolver(leadSchema),
-    defaultValues: { nome: '', email: '', telefone: '', empresa: '', cargo: '', colaboradores: '', mensagem: '' },
+    defaultValues: { nome: '', email: '', telefone: '', empresa: '', cargo: '', colaboradores: '', mensagem: '', novidades: false },
   })
 
   async function onSubmit(data: LeadFormData) {
@@ -179,6 +179,29 @@ export default function LeadForm() {
                 />
               </FormControl>
               <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="novidades"
+          render={({ field }) => (
+            <FormItem className="flex items-start gap-3 space-y-0">
+              <FormControl>
+                <input
+                  type="checkbox"
+                  className="mt-[3px] h-4 w-4 shrink-0 cursor-pointer rounded border-brand-mist accent-brand-purple focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-purple focus-visible:ring-offset-2"
+                  name={field.name}
+                  ref={field.ref}
+                  onBlur={field.onBlur}
+                  checked={!!field.value}
+                  onChange={(e) => field.onChange(e.target.checked)}
+                />
+              </FormControl>
+              <FormLabel className="cursor-pointer text-[13.5px] font-normal leading-relaxed text-brand-graphite">
+                Quero receber novidades e conteúdos sobre RH e sobre a Natcorp.
+              </FormLabel>
             </FormItem>
           )}
         />

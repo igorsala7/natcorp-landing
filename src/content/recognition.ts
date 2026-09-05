@@ -1,7 +1,7 @@
-/** Reconhecimentos e clientes citados no material oficial da Natcorp (deck "Sistema de RH"). */
+/** Reconhecimentos e clientes citados no material oficial da Natcorp (deck "Sistema de RH" e site anterior). */
 
 export const awards = [
-  { title: 'Top 5', org: 'Top of Mind de RH', kind: 'Prêmio' },
+  { title: 'Top 5 · Top of Mind de RH', org: 'Sistemas de Folha de Pagamento, 2019 e 2020', kind: 'Prêmio nacional' },
   { title: 'Tech Innovator Awards', org: 'Innovation in Business', kind: 'Prêmio internacional' },
   { title: 'Technology Innovator Awards', org: 'Corporate Vision', kind: 'Prêmio internacional' },
   { title: 'Oracle Partner', org: 'Oracle', kind: 'Parceria' },
@@ -10,8 +10,8 @@ export const awards = [
 export const facts = [
   '35 anos de história',
   'O maior e mais completo sistema de RH e DP do Brasil',
+  'Dados de mais de 500 mil colaboradores administrados no sistema',
   'Pioneira no uso de inteligência artificial para o RH',
-  'Reconhecimentos nacionais e internacionais',
 ]
 
 /** Empresas e instituições atendidas, como aparecem no material oficial. */

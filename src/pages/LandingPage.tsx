@@ -12,6 +12,7 @@ import { PortalsSection } from '@/components/sections/PortalsSection'
 import { ResponsiveSection } from '@/components/sections/ResponsiveSection'
 import { SecuritySection } from '@/components/sections/SecuritySection'
 import { WhySection } from '@/components/sections/WhySection'
+import { VideosSection } from '@/components/sections/VideosSection'
 import { PersonasSection } from '@/components/sections/PersonasSection'
 import { SegmentsSection } from '@/components/sections/SegmentsSection'
 import { FAQSection } from '@/components/sections/FAQSection'
@@ -38,6 +39,7 @@ export default function LandingPage() {
       <ResponsiveSection />
       <SecuritySection />
       <WhySection />
+      <VideosSection />
       <PersonasSection />
       <SegmentsSection />
       <FAQSection />
