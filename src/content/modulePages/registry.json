@@ -3,6 +3,7 @@
   { "slug": "administracao-de-pessoal", "name": "Administração de Pessoal", "group": "pessoal-e-folha", "icon": "users", "short": "Headcount, posições e orçamento previsto × realizado." },
   { "slug": "cargos-e-salarios", "name": "Cargos e Salários", "group": "pessoal-e-folha", "icon": "scale", "short": "Estrutura de cargos, faixas e equidade remuneratória." },
   { "slug": "gestao-de-beneficios", "name": "Gestão de Benefícios", "group": "pessoal-e-folha", "icon": "receipt", "short": "Benefícios, elegibilidade, custos e integração com operadoras." },
+  { "slug": "natpay", "name": "NatPay", "group": "pessoal-e-folha", "icon": "banknote", "short": "Adiantamento salarial via WhatsApp e Pix, descontado na folha." },
   { "slug": "esocial", "name": "eSocial", "group": "pessoal-e-folha", "icon": "send", "short": "Envio, retorno e acompanhamento de cada layout." },
   { "slug": "juridico-trabalhista", "name": "Jurídico Trabalhista", "group": "pessoal-e-folha", "icon": "gavel", "short": "Processos trabalhistas, contingência e eventos do eSocial." },
   { "slug": "ponto-eletronico", "name": "Ponto Eletrônico", "group": "ponto-e-jornada", "icon": "clock", "short": "Frequência, jornadas, escalas, banco de horas e abono." },

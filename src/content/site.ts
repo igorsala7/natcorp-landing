@@ -9,6 +9,9 @@ export const siteConfig = {
     'Folha de pagamento, ponto eletrônico, eSocial, admissão digital, saúde e segurança do trabalho, people analytics e a NATI, nossa inteligência artificial: mais de 30 módulos integrados em um único sistema de RH para grandes empresas. Há mais de 30 anos.',
 }
 
+/** Página da jornada do colaborador (história etapa por etapa). */
+export const journeyPath = '/jornada-da-contratacao'
+
 /** Links do menu principal. `hash` aponta para seções da página inicial. */
 export const navLinks = [
   { hash: '#plataforma', label: 'Plataforma' },

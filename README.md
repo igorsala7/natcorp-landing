@@ -31,7 +31,8 @@ npm run lint     # oxlint
 | --- | --- |
 | `/` | Landing page institucional |
 | `/modulos` | Índice com os 7 grupos e todos os módulos |
-| `/modulos/:slug` | Página dedicada de cada módulo (30 páginas) |
+| `/modulos/:slug` | Página dedicada de cada módulo (31 páginas) |
+| `/jornada-da-contratacao` | Jornada do colaborador em 21 etapas e 4 fases, contada como um exemplo do dia a dia, com fluxograma que acompanha a rolagem |
 | qualquer outra | Página 404 |
 
 O roteamento é feito no cliente com [React Router](https://reactrouter.com) (`BrowserRouter`). Por isso o servidor
@@ -68,11 +69,14 @@ src/
     mockups/    Telas do produto construídas em código: dashboard, DevicesShowcase (notebook, tablet e
                 celular), nati/ (chat, gráficos, WhatsApp, painel do operador) e natponto/ (as cinco telas
                 do app: início, abertura, reconhecimento facial, confirmação e comprovante)
-    sections/   Navbar (mega-menu de módulos), Hero, ProofStrip, Problem, Platform, Modules, Journey, Nati,
-                NatPonto, Portals, Responsive, Security, Why, Personas, FAQ, FaqAccordion, CTA (+ LeadForm lazy), Footer
+    journey/    Página da jornada: JourneyMap (mapa lateral e barra de fases), EffectivationHub, visuals (mini mockups por etapa)
+    sections/   Navbar (mega-menu de módulos), Hero, ProofStrip, Recognition (prêmios e clientes), Problem, Platform, Modules,
+                Journey, Nati, NatPonto, Portals, Responsive, Security, Why (comparativo), Personas, FAQ, FaqAccordion,
+                CTA (+ LeadForm lazy), Footer
     seo/        JsonLd, Breadcrumb
     ui/         primitivos shadcn/ui
-  content/      textos e dados (módulos da landing, FAQ, personas, navegação) e modulePages/ (páginas de módulo)
+  content/      textos e dados (módulos da landing, FAQ, personas, navegação, reconhecimentos), hiringJourney.ts (as 21 etapas
+                da jornada) e modulePages/ (páginas de módulo)
   hooks/        useMediaQuery, useScrolled, useIntroDone, useBrandGradientId, useSeo
   lib/          motion.ts (curvas e variantes), lenisStore.ts, leadSchema.ts, submitLead.ts, utils.ts
 scripts/        generate-sitemap.mjs

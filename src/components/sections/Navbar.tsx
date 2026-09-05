@@ -5,7 +5,7 @@ import { Link, useLocation } from 'react-router'
 import { Button } from '@/components/ui/button'
 import { Logo } from '@/components/brand/Logo'
 import { useScrolled } from '@/hooks/useScrolled'
-import { navLinks } from '@/content/site'
+import { journeyPath, navLinks } from '@/content/site'
 import { getGroup, groups, modulePath, modulesByGroup } from '@/content/modulePages'
 import { moduleIcons } from '@/content/modulePages/icons'
 import type { GroupId } from '@/content/modulePages/types'
@@ -116,6 +116,9 @@ export function Navbar() {
             Módulos
             <ChevronDown className={cn('h-4 w-4 transition-transform duration-300', mega && 'rotate-180')} aria-hidden />
           </button>
+          <Link to={journeyPath} onClick={closeAll} className={linkClass}>
+            Jornada
+          </Link>
           {navLinks
             .filter((l) => l.hash !== '#plataforma')
             .map((l) => (
@@ -277,6 +280,11 @@ export function Navbar() {
                     </m.div>
                   )}
                 </AnimatePresence>
+              </li>
+              <li>
+                <Link to={journeyPath} onClick={closeAll} className="block rounded-lg px-3 py-3 text-base font-semibold text-brand-ink hover:bg-brand-off-white hover:text-brand-purple">
+                  Jornada do colaborador
+                </Link>
               </li>
               {navLinks
                 .filter((l) => l.hash !== '#plataforma')

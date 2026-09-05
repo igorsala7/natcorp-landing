@@ -1,5 +1,6 @@
 import { Hero } from '@/components/sections/Hero'
 import { ProofStrip } from '@/components/sections/ProofStrip'
+import { RecognitionSection } from '@/components/sections/RecognitionSection'
 import { ProblemSection } from '@/components/sections/ProblemSection'
 import { PlatformSection } from '@/components/sections/PlatformSection'
 import { ModulesSection } from '@/components/sections/ModulesSection'
@@ -23,6 +24,7 @@ export default function LandingPage() {
     <PageTransition>
       <Hero />
       <ProofStrip />
+      <RecognitionSection />
       <ProblemSection />
       <PlatformSection />
       <ModulesSection />

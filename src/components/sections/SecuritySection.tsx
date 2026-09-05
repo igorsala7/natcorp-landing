@@ -8,7 +8,7 @@ const items = [
   { icon: Cloud, title: 'Parceiro Oracle', text: 'Infraestrutura Oracle Cloud com servidores dedicados e alta disponibilidade para a sua operação de RH.' },
   { icon: Layers, title: 'Produção, homologação e contingência', text: 'Ambientes separados para validar mudanças antes de aplicar, e um serviço de recuperação de desastres pronto para assumir.' },
   { icon: DatabaseBackup, title: 'Backups diários', text: 'Dois backups por dia, guardados em ambiente isolado, para que nenhum dado do RH se perca.' },
-  { icon: Lock, title: 'Camadas de proteção', text: 'Criptografia, HTTPS, firewall de aplicação, autenticação em dois fatores e VPN, com auditoria de acessos.' },
+  { icon: Lock, title: 'Camadas de proteção', text: 'Criptografia, HTTPS, firewall de aplicação, autenticação em dois fatores e VPN, com auditoria de acessos e monitoramento 24 horas por um time especializado.' },
   { icon: ShieldCheck, title: 'LGPD por desenho', text: 'Perfis de acesso granulares, anonimização, trilha de auditoria e controle por empresa e filial.' },
   { icon: Cable, title: 'Conecta com o que você já usa', text: 'ERP, operadoras de benefícios, relógios de ponto, login corporativo (SSO): APIs prontas, construtor de APIs, arquivos e webhooks.' },
 ]

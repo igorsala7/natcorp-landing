@@ -2,7 +2,7 @@ import { ArrowUp, Mail, MapPin } from 'lucide-react'
 import { Link } from 'react-router'
 import { Logo } from '@/components/brand/Logo'
 import { groups } from '@/content/modulePages'
-import { navLinks, siteConfig } from '@/content/site'
+import { journeyPath, navLinks, siteConfig } from '@/content/site'
 
 export function Footer() {
   return (
@@ -27,6 +27,11 @@ export function Footer() {
               <li>
                 <Link to="/" className="text-sm font-medium text-white/80 transition-colors hover:text-white">
                   Início
+                </Link>
+              </li>
+              <li>
+                <Link to={journeyPath} className="text-sm font-medium text-white/80 transition-colors hover:text-white">
+                  Jornada do colaborador
                 </Link>
               </li>
               {navLinks.map((l) => (

@@ -13,6 +13,7 @@ import LandingPage from '@/pages/LandingPage'
 
 const ModulesIndexPage = lazy(() => import('@/pages/ModulesIndexPage'))
 const ModulePage = lazy(() => import('@/pages/ModulePage'))
+const HiringJourneyPage = lazy(() => import('@/pages/HiringJourneyPage'))
 const NotFoundPage = lazy(() => import('@/pages/NotFoundPage'))
 
 /** HashRouter apenas para prévias hospedadas fora da raiz de um domínio (VITE_ROUTER=hash). */
@@ -50,6 +51,14 @@ function AppRoutes() {
           element={
             <Suspense fallback={<PageFallback />}>
               <ModulePage />
+            </Suspense>
+          }
+        />
+        <Route
+          path="/jornada-da-contratacao"
+          element={
+            <Suspense fallback={<PageFallback />}>
+              <HiringJourneyPage />
             </Suspense>
           }
         />

@@ -1,5 +1,7 @@
 import type { ComponentType, ReactNode } from 'react'
-import { Check } from 'lucide-react'
+import { ArrowRight, Check } from 'lucide-react'
+import { Link } from 'react-router'
+import { journeyPath } from '@/content/site'
 import { Section, SectionHeader, Eyebrow } from './Section'
 import { Reveal, Stagger, StaggerItem } from '@/components/motion/Reveal'
 import { Parallax } from '@/components/motion/Parallax'
@@ -85,6 +87,27 @@ export function JourneySection() {
             <FeatureBlock key={f.id} feature={f} reverse={i % 2 === 1} />
           ))}
         </div>
+
+        <Reveal delay={0.1} className="mt-20 lg:mt-28">
+          <Link
+            to={journeyPath}
+            className="group flex flex-col gap-5 rounded-3xl border border-brand-mist bg-white p-6 shadow-soft transition-[transform,box-shadow,border-color] duration-500 ease-brand hover:-translate-y-1 hover:border-brand-purple/30 hover:shadow-lift sm:flex-row sm:items-center sm:justify-between sm:p-8"
+          >
+            <span>
+              <span className="block text-[12px] font-semibold uppercase tracking-[0.16em] text-brand-purple">Jornada do colaborador, etapa por etapa</span>
+              <span className="mt-2 block text-xl font-extrabold leading-snug text-brand-ink sm:text-2xl">
+                Uma vaga nasce numa segunda-feira. Três semanas depois, a Ana bate o ponto.
+              </span>
+              <span className="mt-2 block max-w-2xl text-[15px] leading-relaxed text-brand-graphite">
+                As 21 etapas, da requisição da vaga à promoção, contadas como um exemplo do dia a dia, com os módulos que entram em cada uma.
+              </span>
+            </span>
+            <span className="inline-flex shrink-0 items-center gap-2 rounded-lg bg-brand-purple px-5 py-3 text-sm font-semibold text-white transition-colors duration-300 group-hover:bg-brand-purple-hover">
+              Ler a história
+              <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5" aria-hidden />
+            </span>
+          </Link>
+        </Reveal>
       </div>
     </Section>
   )

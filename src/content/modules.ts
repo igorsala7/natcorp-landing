@@ -44,6 +44,7 @@ export const moduleGroups: ModuleGroup[] = [
       { name: 'Administração de Pessoal', slug: 'administracao-de-pessoal', desc: 'Headcount, planejamento de pessoal e orçamento previsto × realizado.' },
       { name: 'Cargos e Salários', slug: 'cargos-e-salarios', desc: 'Estrutura de cargos, faixas salariais e equidade remuneratória.' },
       { name: 'Gestão de Benefícios', slug: 'gestao-de-beneficios', desc: 'Gestão total e pedido de compra de benefícios por integração com as operadoras.' },
+      { name: 'NatPay', slug: 'natpay', desc: 'Adiantamento salarial pedido pelo WhatsApp, pago via Pix e descontado automaticamente na folha.' },
       { name: 'eSocial', slug: 'esocial', desc: 'Envio, acompanhamento e retorno de cada layout, sem sair do sistema.' },
       { name: 'Jurídico Trabalhista', slug: 'juridico-trabalhista', desc: 'Acompanhamento e gestão de processos trabalhistas, já integrado ao eSocial.' },
     ],
