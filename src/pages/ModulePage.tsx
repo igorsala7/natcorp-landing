@@ -23,6 +23,7 @@ import { EASE } from '@/lib/motion'
 import NotFoundPage from './NotFoundPage'
 
 const NatiModulePage = lazy(() => import('./NatiModulePage'))
+const NatPontoModulePage = lazy(() => import('./NatPontoModulePage'))
 
 interface Loaded {
   slug: string
@@ -59,6 +60,13 @@ export default function ModulePage() {
     return (
       <Suspense fallback={<ModuleSkeleton />}>
         <NatiModulePage entry={entry} page={page} />
+      </Suspense>
+    )
+  }
+  if (entry.slug === 'natponto') {
+    return (
+      <Suspense fallback={<ModuleSkeleton />}>
+        <NatPontoModulePage entry={entry} page={page} />
       </Suspense>
     )
   }

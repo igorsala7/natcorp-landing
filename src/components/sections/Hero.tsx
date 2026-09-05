@@ -8,7 +8,9 @@ import { SplitText } from '@/components/motion/SplitText'
 import { Magnetic } from '@/components/motion/Magnetic'
 import { useIntroDone } from '@/hooks/useIntroDone'
 import { DashboardMockup } from '@/components/mockups/DashboardMockup'
-import { PhoneMockup } from '@/components/mockups/PhoneMockup'
+import { ScaledFrame } from '@/components/motion/ScaledFrame'
+import { NATPONTO_SIZE } from '@/components/mockups/natponto/NatPontoFrame'
+import { NatPontoPhone } from '@/components/mockups/natponto/screens'
 import { EASE } from '@/lib/motion'
 import { scrollToElement } from '@/components/motion/ScrollManager'
 
@@ -110,7 +112,9 @@ export function Hero() {
             animate={done ? { opacity: 1, y: 0, rotate: -4 } : { opacity: 0, y: 40, rotate: -4 }}
             transition={{ duration: 1, ease: EASE, delay: 1.3 }}
           >
-            <PhoneMockup className="w-[200px] lg:w-[220px]" />
+            <ScaledFrame width={NATPONTO_SIZE.width} height={NATPONTO_SIZE.height} className="w-[200px] lg:w-[230px]">
+              <NatPontoPhone screen="home" />
+            </ScaledFrame>
           </m.div>
         </m.div>
       </div>

@@ -58,14 +58,18 @@ escrito a partir das 33 apresentações comerciais de natcorprh.app e do briefin
 
 ```
 src/
-  pages/        LandingPage, ModulesIndexPage, ModulePage (template data-driven), NotFoundPage
+  pages/        LandingPage, ModulesIndexPage, ModulePage (template data-driven), NatiModulePage e
+                NatPontoModulePage (páginas dedicadas com as telas do produto), NotFoundPage
   components/
-    brand/      Logo.tsx (símbolo + wordmark em vetor), logo-paths.ts (geometria gerada do manual)
+    brand/      Logo.tsx (símbolo + wordmark em vetor), logo-paths.ts (geometria gerada do manual),
+                NatiAvatar, EmployeeAvatar e NatPontoIcon (avatares e ícone em vetor)
     motion/     Intro (abertura), SmoothScroll, ScrollManager (rotas + âncoras), PageTransition,
                 Reveal/Stagger, SplitText, Counter, Marquee, Magnetic, SpotlightCard, Parallax, ScrollProgress
-    mockups/    Telas do produto construídas em código (dashboard, NatPonto, NATI, fluxos)
+    mockups/    Telas do produto construídas em código: dashboard, DevicesShowcase (notebook, tablet e
+                celular), nati/ (chat, gráficos, WhatsApp, painel do operador) e natponto/ (as cinco telas
+                do app: início, abertura, reconhecimento facial, confirmação e comprovante)
     sections/   Navbar (mega-menu de módulos), Hero, ProofStrip, Problem, Platform, Modules, Journey, Nati,
-                Portals, Security, Why, Personas, FAQ, FaqAccordion, CTA (+ LeadForm lazy), Footer
+                NatPonto, Portals, Responsive, Security, Why, Personas, FAQ, FaqAccordion, CTA (+ LeadForm lazy), Footer
     seo/        JsonLd, Breadcrumb
     ui/         primitivos shadcn/ui
   content/      textos e dados (módulos da landing, FAQ, personas, navegação) e modulePages/ (páginas de módulo)
