@@ -21,6 +21,8 @@ const H = 843
 const MODULE = 'M1588 -114 L1889 226 C1986 336 1986 514 1889 624 L1588 964 C1491 1074 1333 1074 1236 964 L935 624 C838 514 838 336 935 226 L1236 -114 C1333 -224 1491 -224 1588 -114 Z'
 /* Um módulo menor, em vidro, perto do tablet. */
 const SMALL = { cx: 1770, cy: 700, s: 0.3 }
+/** Segundo módulo, atrás do principal: centro, inclinação e escala (o principal está centrado em 1412, 425). */
+const MODULE2 = { cx: 1300, cy: 500, rotate: 12, s: 1.12 }
 
 /* Linhas de fluxo: saem da esquerda, embaixo, e sobem em curva até a pessoa; cada uma com um leve desvio. */
 const flows = Array.from({ length: 7 }, (_, i) => {
@@ -77,6 +79,11 @@ export function HeroScene({ on, reduced, y, scale }: HeroSceneProps) {
               <stop offset="0.5" stopColor="#E4A9C4" stopOpacity="0.7" />
               <stop offset="1" stopColor="#C95788" stopOpacity="0.35" />
             </linearGradient>
+            <linearGradient id="hv2-edge-2" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stopColor="#E4A9C4" stopOpacity="0.9" />
+              <stop offset="0.5" stopColor="#C95788" stopOpacity="0.75" />
+              <stop offset="1" stopColor="#9A408A" stopOpacity="0.55" />
+            </linearGradient>
             <linearGradient id="hv2-glass" x1="0" y1="0" x2="1" y2="1">
               <stop offset="0" stopColor="#F3C9DA" stopOpacity="0.28" />
               <stop offset="0.55" stopColor="#C95788" stopOpacity="0.16" />
@@ -122,6 +129,30 @@ export function HeroScene({ on, reduced, y, scale }: HeroSceneProps) {
                   }}
                 />
               ))}
+          </g>
+
+          {/* o segundo módulo, atrás: deslocado, mais inclinado e afastado do principal, linha mais fina e um tom mais escuro */}
+          <g transform={`translate(${MODULE2.cx} ${MODULE2.cy}) rotate(${MODULE2.rotate}) scale(${MODULE2.s}) translate(-1412 -425)`}>
+            <m.path
+              d={MODULE}
+              fill="none"
+              stroke="#C95788"
+              strokeWidth="8"
+              strokeOpacity="0.22"
+              filter="url(#hv2-glow)"
+              initial={{ pathLength: 0, opacity: 0 }}
+              animate={on ? { pathLength: 1, opacity: 1 } : { pathLength: 0, opacity: 0 }}
+              transition={{ duration: 2.8, ease: EASE, delay: 0.8 }}
+            />
+            <m.path
+              d={MODULE}
+              fill="none"
+              stroke="url(#hv2-edge-2)"
+              strokeWidth="2.2"
+              initial={{ pathLength: 0, opacity: 0 }}
+              animate={on ? { pathLength: 1, opacity: 1 } : { pathLength: 0, opacity: 0 }}
+              transition={{ duration: 2.8, ease: EASE, delay: 0.8 }}
+            />
           </g>
 
           {/* o módulo grande: brilho difuso por baixo, contorno nítido por cima, desenhando-se na entrada */}
@@ -195,7 +226,7 @@ export function HeroScene({ on, reduced, y, scale }: HeroSceneProps) {
 
     {/* cartões do sistema, presos à seção (não ao quadro da imagem) */}
       <m.div
-        className="absolute right-[3%] top-[17%] hidden w-[300px] lg:block xl:right-[4%]"
+        className="absolute right-[2%] top-[12%] hidden w-[240px] lg:block 2xl:right-[3%] 2xl:w-[280px]"
         initial={{ opacity: 0, y: 16 }}
         animate={on ? { opacity: 1, y: 0 } : { opacity: 0, y: 16 }}
         transition={{ duration: 0.9, ease: EASE, delay: 1.6 }}
