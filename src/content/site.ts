@@ -51,6 +51,8 @@ export const paths = {
   structures: '/estruturas',
   faq: '/perguntas-frequentes',
   commercial: '/modelo-comercial',
+  /** Página interna com as peças de motion da marca (fora do menu e do sitemap). */
+  motion: '/motion',
 } as const
 
 export interface NavLink {

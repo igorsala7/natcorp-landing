@@ -9,6 +9,7 @@ import { CLOUD_MOTION_MS, CloudMotion } from '@/components/brand/motion/CloudMot
 import { Button } from '@/components/ui/button'
 import { useSeo } from '@/hooks/useSeo'
 import { cn } from '@/lib/utils'
+import { paths } from '@/content/site'
 
 interface PieceProps {
   tone?: 'white' | 'gradient'
@@ -68,7 +69,7 @@ const formatSeconds = (ms: number) => `${(ms / 1000).toFixed(1).replace('.', ','
  * Fora do menu e do sitemap.
  */
 export default function MotionPage() {
-  useSeo({ title: 'Motion da marca | Natcorp', description: 'Peças de motion da identidade Natcorp.', path: '/motion', noindex: true })
+  useSeo({ title: 'Motion da marca | Natcorp', description: 'Peças de motion da identidade Natcorp.', path: paths.motion, noindex: true })
   const [takes, setTakes] = useState<Record<string, number>>({})
   const replay = (id: string) => setTakes((t) => ({ ...t, [id]: (t[id] ?? 0) + 1 }))
 
