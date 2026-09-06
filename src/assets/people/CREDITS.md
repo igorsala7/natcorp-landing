@@ -6,8 +6,9 @@ ser substituídas por fotografias do time e dos clientes da Natcorp antes da pub
 
 | Arquivo | Origem |
 | --- | --- |
-| hero-v2.webp | Foto original limpa fornecida pela Natcorp (profissional com tablet junto à janela, sem efeitos), 2000 px. O contorno do módulo, as linhas de fluxo e os véus são desenhados por código em HeroScene |
-| hero-v2-3000.webp | A mesma foto reamostrada em 3000 px (Lanczos com nitidez leve) para telas de alta densidade, servida por srcset. Substituir pela ampliação por IA quando disponível |
+| hero-v2-source.png | Foto do hero em resolução nativa (3152 x 1328), licenciada pela Natcorp no Adobe Stock, sem efeitos. Não entra no bundle; é a origem das duas variantes abaixo |
+| hero-v2.webp | A foto do hero em 2000 px, para telas comuns e celulares. O contorno do módulo, as linhas de fluxo e os véus são desenhados por código em HeroScene |
+| hero-v2-3152.webp | A foto do hero na largura nativa, para telas de alta densidade, servida por srcset |
 | hero-tablet.webp, hero-tablet-sm.webp | https://unsplash.com/photos/b3WDtGtJ_mI (SoyBreno). Fundo de estúdio removido por chave de cor; WebP com transparência |
 | persona-chro.jpg | https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e |
 | persona-cfo.jpg | https://images.unsplash.com/photo-1560250097-0b93528c311a |

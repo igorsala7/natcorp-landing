@@ -3,7 +3,7 @@ import { ScanFace } from 'lucide-react'
 import { NatiAvatar } from '@/components/brand/NatiAvatar'
 import { EASE } from '@/lib/motion'
 import heroV2 from '@/assets/people/hero-v2.webp'
-import heroV2Large from '@/assets/people/hero-v2-3000.webp'
+import heroV2Large from '@/assets/people/hero-v2-3152.webp'
 
 /**
  * Fundo do hero: a cena natcorp_hero_v2 (a profissional com o tablet junto à janela, o módulo do símbolo
@@ -59,7 +59,7 @@ export function HeroScene({ on, reduced, y, scale }: HeroSceneProps) {
       >
         <img
           src={heroV2}
-          srcSet={`${heroV2} 2000w, ${heroV2Large} 3000w`}
+          srcSet={`${heroV2} 2000w, ${heroV2Large} 3152w`}
           sizes="(min-width: 1024px) 125vw, 150vw"
           alt=""
           width={W}
