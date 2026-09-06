@@ -1,20 +1,14 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024" role="img" aria-label="Ícone do módulo Medicina Ocupacional">
   <defs>
-    <linearGradient id="ic-medicina-ocupacional-grad" gradientUnits="userSpaceOnUse" x1="73.59" y1="73.59" x2="950.41" y2="950.41">
-      <stop offset="0" stop-color="#9A408A"/>
-      <stop offset="0.5" stop-color="#511C76"/>
-      <stop offset="1" stop-color="#2C1A63"/>
+    <linearGradient id="ic-medicina-ocupacional-grad" gradientUnits="userSpaceOnUse" x1="219.96" y1="219.96" x2="804.04" y2="804.04">
+      <stop offset="0" stop-color="#692878"/>
+      <stop offset="1" stop-color="#46206F"/>
     </linearGradient>
-    <clipPath id="ic-medicina-ocupacional-tile"><path d="M586.53 148.12 L875.88 437.47 C917.04 478.63 917.04 545.37 875.88 586.53 L586.53 875.88 C545.37 917.04 478.63 917.04 437.47 875.88 L148.12 586.53 C106.96 545.37 106.96 478.63 148.12 437.47 L437.47 148.12 C478.63 106.96 545.37 106.96 586.53 148.12 Z"/></clipPath>
   </defs>
-  <path d="M586.53 148.12 L875.88 437.47 C917.04 478.63 917.04 545.37 875.88 586.53 L586.53 875.88 C545.37 917.04 478.63 917.04 437.47 875.88 L148.12 586.53 C106.96 545.37 106.96 478.63 148.12 437.47 L437.47 148.12 C478.63 106.96 545.37 106.96 586.53 148.12 Z" fill="url(#ic-medicina-ocupacional-grad)"/>
-  <g clip-path="url(#ic-medicina-ocupacional-tile)" fill="none" stroke="#FFFFFF" stroke-opacity="0.1" stroke-width="30">
-    <path d="M829.32 -66.66 L1090.66 194.68 C1127.84 231.86 1127.84 292.14 1090.66 329.32 L829.32 590.66 C792.14 627.84 731.86 627.84 694.68 590.66 L433.34 329.32 C396.16 292.14 396.16 231.86 433.34 194.68 L694.68 -66.66 C731.86 -103.84 792.14 -103.84 829.32 -66.66 Z"/>
-  </g>
-  <g transform="translate(292 292) scale(18.333333333333332)" fill="none" stroke="#FFFFFF" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-    <rect x="4" y="4.5" width="16" height="16.5" rx="2.2"/>
-    <path d="M9 4.5V3.5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v1"/>
-    <path d="M12 8.6v8.8"/><path d="M7.6 13h8.8"/>
-    <path d="M12.22 11.92 L13.08 12.78 C13.2 12.9 13.2 13.1 13.08 13.22 L12.22 14.08 C12.1 14.2 11.9 14.2 11.78 14.08 L10.92 13.22 C10.8 13.1 10.8 12.9 10.92 12.78 L11.78 11.92 C11.9 11.8 12.1 11.8 12.22 11.92 Z" fill="#C95788" stroke="none"/>
+  <path d="M582.92 165.73 L858.27 441.08 C897.44 480.25 897.44 543.75 858.27 582.92 L582.92 858.27 C543.75 897.44 480.25 897.44 441.08 858.27 L165.73 582.92 C126.56 543.75 126.56 480.25 165.73 441.08 L441.08 165.73 C480.25 126.56 543.75 126.56 582.92 165.73 Z" fill="url(#ic-medicina-ocupacional-grad)"/>
+  <g transform="translate(262 262) scale(20.833333333333332)" fill="none" stroke="#FFFFFF" stroke-width="1.15" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="5" y="4" width="14" height="17" rx="2.6"/>
+    <path d="M9.5 4V3a1 1 0 0 1 1-1h3a1 1 0 0 1 1 1v1"/>
+    <path d="M12 9.5v6"/><path d="M9 12.5h6"/>
   </g>
 </svg>

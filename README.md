@@ -168,7 +168,8 @@ Tokens do **Manual de Identidade Visual Natcorp v1.2** (setembro de 2026), defin
 - **Tipografia**: Manrope em toda a página; títulos com entreletras −2% (`tracking-brand`).
 - **Grafismos**: contorno do símbolo em 1 px (`LogoOutline`) e trilha de módulos (`ModuleTrail`).
 - **Ícones e ilustrações dos módulos**: `brand/modulos/` guarda, para cada um dos 31 módulos, um ícone de app
-  (um módulo do símbolo em gradiente, glifo branco em traço na grade de 24, um acento em Rosa) e uma ilustração plana na
+  (um módulo do símbolo em gradiente, com cada família de módulos em um trecho do gradiente da marca, e o glifo
+  branco em traço fino na grade de 24, sem moldura nem acento) e uma ilustração plana na
   grade a 45° (cartões, avatares, gráficos e módulos, com o contorno do símbolo no canto). Tudo é gerado por código em
   `scripts/module-art/` (`node scripts/module-art/build.cjs`), em SVG e PNG.
 

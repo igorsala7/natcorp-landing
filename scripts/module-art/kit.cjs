@@ -43,9 +43,21 @@ function modulePath(cx, cy, x, radiusRatio = 0.17) {
 }
 
 /* ------------------------------------------------------------------------------------------------
- * Ícone: 1024 x 1024, um módulo em gradiente 135° com o glifo branco (grade de 24) e um acento rosa.
+ * Ícone: 1024 x 1024, um módulo do símbolo em gradiente com o glifo branco em traço fino (grade de 24).
+ * Cada família de módulos ocupa um trecho do gradiente da marca (Rosa → Ameixa → Roxo → Azul Profundo),
+ * do mais rosado (Ponto e Jornada) ao mais azulado (Dados, IA e Plataforma).
  * ---------------------------------------------------------------------------------------------- */
-const ICON = { size: 1024, moduleSide: 620, grid: 24, glyphBox: 440, stroke: 1.8 }
+const ICON = { size: 1024, moduleSide: 590, grid: 24, glyphBox: 500, stroke: 1.15 }
+
+const TONES = {
+  'ponto-e-jornada': ['#C95788', '#81347D'],
+  talentos: ['#B54E89', '#6F2C7B'],
+  'pessoal-e-folha': ['#9A408A', '#5E2379'],
+  desenvolvimento: ['#86397F', '#511C76'],
+  'saude-e-seguranca': ['#692878', '#46206F'],
+  autoatendimento: ['#5C2377', '#3A1D69'],
+  'dados-ia-plataforma': ['#511C76', '#2C1A63'],
+}
 
 function iconSvg(glyph, opts = {}) {
   const { size, moduleSide, grid, glyphBox } = ICON
@@ -54,20 +66,16 @@ function iconSvg(glyph, opts = {}) {
   const scale = glyphBox / grid
   const offset = c - glyphBox / 2
   const id = opts.id || 'g'
-  const stroke = ICON.stroke
+  const stroke = opts.stroke || ICON.stroke
+  const [from, to] = TONES[opts.tone] || [C.plum, C.purple]
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" role="img" aria-label="${escapeAttr(opts.label || '')}">
   <defs>
-    <linearGradient id="${id}-grad" gradientUnits="userSpaceOnUse" x1="${r2(c - half)}" y1="${r2(c - half)}" x2="${r2(c + half)}" y2="${r2(c + half)}">
-      <stop offset="0" stop-color="${C.plum}"/>
-      <stop offset="0.5" stop-color="${C.purple}"/>
-      <stop offset="1" stop-color="${C.blue}"/>
+    <linearGradient id="${id}-grad" gradientUnits="userSpaceOnUse" x1="${r2(c - half * 0.7)}" y1="${r2(c - half * 0.7)}" x2="${r2(c + half * 0.7)}" y2="${r2(c + half * 0.7)}">
+      <stop offset="0" stop-color="${from}"/>
+      <stop offset="1" stop-color="${to}"/>
     </linearGradient>
-    <clipPath id="${id}-tile"><path d="${modulePath(c, c, moduleSide)}"/></clipPath>
   </defs>
   <path d="${modulePath(c, c, moduleSide)}" fill="url(#${id}-grad)"/>
-  <g clip-path="url(#${id}-tile)" fill="none" stroke="${C.white}" stroke-opacity="0.1" stroke-width="30">
-    <path d="${modulePath(c + 250, c - 250, 560)}"/>
-  </g>
   <g transform="translate(${offset} ${offset}) scale(${scale})" fill="none" stroke="${C.white}" stroke-width="${stroke}" stroke-linecap="round" stroke-linejoin="round">
 ${indent(glyph, 4)}
   </g>
@@ -86,6 +94,10 @@ function moduleOutline(cx, cy, size = 3.2, extra = '') {
 /** Pessoa mínima na grade de 24: cabeça + ombros. */
 function person(cx, cy, s = 1) {
   return `<circle cx="${cx}" cy="${r2(cy - 2.2 * s)}" r="${r2(1.9 * s)}"/><path d="M${r2(cx - 3.4 * s)} ${r2(cy + 3.2 * s)} a3.4 3.4 0 0 1 6.8 0" transform="scale(1)"/>`.replace('a3.4 3.4 0 0 1 6.8 0', `a${r2(3.4 * s)} ${r2(3.4 * s)} 0 0 1 ${r2(6.8 * s)} 0`)
+}
+/** Ponto preenchido (branco) na grade de 24. */
+function dot(cx, cy, r = 1.2) {
+  return `<circle cx="${cx}" cy="${cy}" r="${r}" fill="${C.white}" stroke="none"/>`
 }
 function rr(x, y, w, h, r = 2) {
   return `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${r}"/>`
@@ -316,4 +328,4 @@ function escapeText(s) {
   return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;')
 }
 
-module.exports = { C, FONT, ICON, ILL, modulePath, iconSvg, accent, moduleOutline, person, rr, illustrationSvg, contorno, stage, heart, magnifier, clockFace, spark, bubble, door, card, surface, textLines, avatar, diamond, bars, lineChart, check, checkBadge, pill, label, phone, doc, flow, trail, dotGrid, r2 }
+module.exports = { C, FONT, ICON, TONES, ILL, modulePath, iconSvg, accent, moduleOutline, person, dot, rr, illustrationSvg, contorno, stage, heart, magnifier, clockFace, spark, bubble, door, card, surface, textLines, avatar, diamond, bars, lineChart, check, checkBadge, pill, label, phone, doc, flow, trail, dotGrid, r2 }

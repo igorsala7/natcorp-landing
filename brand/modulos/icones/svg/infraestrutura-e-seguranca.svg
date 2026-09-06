@@ -1,19 +1,14 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024" role="img" aria-label="Ícone do módulo Infraestrutura e Segurança">
   <defs>
-    <linearGradient id="ic-infraestrutura-e-seguranca-grad" gradientUnits="userSpaceOnUse" x1="73.59" y1="73.59" x2="950.41" y2="950.41">
-      <stop offset="0" stop-color="#9A408A"/>
-      <stop offset="0.5" stop-color="#511C76"/>
+    <linearGradient id="ic-infraestrutura-e-seguranca-grad" gradientUnits="userSpaceOnUse" x1="219.96" y1="219.96" x2="804.04" y2="804.04">
+      <stop offset="0" stop-color="#511C76"/>
       <stop offset="1" stop-color="#2C1A63"/>
     </linearGradient>
-    <clipPath id="ic-infraestrutura-e-seguranca-tile"><path d="M586.53 148.12 L875.88 437.47 C917.04 478.63 917.04 545.37 875.88 586.53 L586.53 875.88 C545.37 917.04 478.63 917.04 437.47 875.88 L148.12 586.53 C106.96 545.37 106.96 478.63 148.12 437.47 L437.47 148.12 C478.63 106.96 545.37 106.96 586.53 148.12 Z"/></clipPath>
   </defs>
-  <path d="M586.53 148.12 L875.88 437.47 C917.04 478.63 917.04 545.37 875.88 586.53 L586.53 875.88 C545.37 917.04 478.63 917.04 437.47 875.88 L148.12 586.53 C106.96 545.37 106.96 478.63 148.12 437.47 L437.47 148.12 C478.63 106.96 545.37 106.96 586.53 148.12 Z" fill="url(#ic-infraestrutura-e-seguranca-grad)"/>
-  <g clip-path="url(#ic-infraestrutura-e-seguranca-tile)" fill="none" stroke="#FFFFFF" stroke-opacity="0.1" stroke-width="30">
-    <path d="M829.32 -66.66 L1090.66 194.68 C1127.84 231.86 1127.84 292.14 1090.66 329.32 L829.32 590.66 C792.14 627.84 731.86 627.84 694.68 590.66 L433.34 329.32 C396.16 292.14 396.16 231.86 433.34 194.68 L694.68 -66.66 C731.86 -103.84 792.14 -103.84 829.32 -66.66 Z"/>
-  </g>
-  <g transform="translate(292 292) scale(18.333333333333332)" fill="none" stroke="#FFFFFF" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M12 3l7 2.6v5.6c0 4.4-3 7.6-7 9.3-4-1.7-7-4.9-7-9.3V5.6z"/>
-    <path d="M12.36 8.86 L13.74 10.24 C13.94 10.44 13.94 10.76 13.74 10.96 L12.36 12.34 C12.16 12.54 11.84 12.54 11.64 12.34 L10.26 10.96 C10.06 10.76 10.06 10.44 10.26 10.24 L11.64 8.86 C11.84 8.66 12.16 8.66 12.36 8.86 Z" fill="#C95788" stroke="none"/>
-    <path d="M12 12.7v3.3"/>
+  <path d="M582.92 165.73 L858.27 441.08 C897.44 480.25 897.44 543.75 858.27 582.92 L582.92 858.27 C543.75 897.44 480.25 897.44 441.08 858.27 L165.73 582.92 C126.56 543.75 126.56 480.25 165.73 441.08 L441.08 165.73 C480.25 126.56 543.75 126.56 582.92 165.73 Z" fill="url(#ic-infraestrutura-e-seguranca-grad)"/>
+  <g transform="translate(262 262) scale(20.833333333333332)" fill="none" stroke="#FFFFFF" stroke-width="1.15" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M7 18.5h10a4 4 0 0 0 .6-7.95A5.5 5.5 0 0 0 7 12.2 3.2 3.2 0 0 0 7 18.5z"/>
+    <rect x="10" y="12" width="4" height="3.4" rx="0.9"/>
+    <path d="M10.8 12v-1.2a1.2 1.2 0 0 1 2.4 0V12"/>
   </g>
 </svg>

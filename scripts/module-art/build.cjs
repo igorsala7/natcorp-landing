@@ -49,7 +49,7 @@ for (const m of modules) {
   const glyph = icons[m.slug]
   const entry = { slug: m.slug, name: m.name }
   if (glyph) {
-    const svg = kit.iconSvg(glyph(kit), { id: `ic-${m.slug}`, label: `Ícone do módulo ${m.name}` })
+    const svg = kit.iconSvg(glyph(kit), { id: `ic-${m.slug}`, label: `Ícone do módulo ${m.name}`, tone: m.group })
     fs.writeFileSync(path.join(dirs.iconSvg, `${m.slug}.svg`), svg)
     entry.icon = svg
   } else {

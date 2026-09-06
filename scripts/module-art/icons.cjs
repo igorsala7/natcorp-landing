@@ -1,236 +1,214 @@
 /**
- * Glifos dos ícones de módulo, desenhados na grade de 24 (traço branco, pontas redondas).
- * Cada glifo é original e leva exatamente um módulo (losango) preenchido em Rosa como acento.
- * Assinatura: (k) => string SVG interna, onde k é o kit (accent, moduleOutline, person, rr...).
+ * Glifos dos ícones de módulo, na grade de 24 (traço branco fino, pontas redondas, muito ar).
+ * Cada glifo é uma marca mínima e própria do módulo, como um produto: poucas linhas, geometria limpa,
+ * sem preenchimentos pesados. Assinatura: (k) => string SVG interna; k é o kit (moduleOutline, dot, rr...).
  */
-const kit = require('./kit.cjs')
-const { accent, moduleOutline, person, rr } = kit
+const { moduleOutline, dot, rr } = require('./kit.cjs')
+
+/** Doze marcas de relógio entre os raios r0 e r1 (o mostrador do NatPonto). */
+function ticks(cx, cy, r0, r1, n = 12) {
+  const out = []
+  for (let i = 0; i < n; i++) {
+    const a = (i / n) * Math.PI * 2
+    const x0 = +(cx + Math.sin(a) * r0).toFixed(2)
+    const y0 = +(cy - Math.cos(a) * r0).toFixed(2)
+    const x1 = +(cx + Math.sin(a) * r1).toFixed(2)
+    const y1 = +(cy - Math.cos(a) * r1).toFixed(2)
+    out.push(`<path d="M${x0} ${y0}L${x1} ${y1}"/>`)
+  }
+  return out.join('\n')
+}
+/** Pessoa mínima: cabeça e ombros. */
+function person(cx, cy, s = 1) {
+  return `<circle cx="${cx}" cy="${+(cy - 2.6 * s).toFixed(2)}" r="${+(2.1 * s).toFixed(2)}"/>
+<path d="M${+(cx - 4.2 * s).toFixed(2)} ${+(cy + 4.4 * s).toFixed(2)}a${+(4.2 * s).toFixed(2)} ${+(4.2 * s).toFixed(2)} 0 0 1 ${+(8.4 * s).toFixed(2)} 0"/>`
+}
 
 const icons = {
-  // Folha de Pagamento: holerite com dobra e a moeda como módulo rosa.
+  // Folha de Pagamento: o holerite com a borda picotada e a linha do valor.
   'folha-de-pagamento': () => `
-<path d="M7 3h7l4 4v13a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 6 20V4.5A1.5 1.5 0 0 1 7.5 3"/>
-<path d="M14 3v4h4"/>
-<path d="M9 11.5h6"/>
-<path d="M9 14.5h3.5"/>
-${accent(15.4, 16.6, 4)}`,
+<path d="M6.5 3h11v17.5l-2.2-1.6-2.2 1.6-2.2-1.6-2.2 1.6-2.2-1.6z"/>
+<path d="M9.5 8.5h5"/>
+<path d="M9.5 12h3"/>
+<path d="M12.5 15.5h2"/>`,
 
-  // Administração de Pessoal: a pessoa e o quadro de posições ao lado; a posição aberta é o módulo rosa.
+  // Administração de Pessoal: o quadro de posições, uma delas ainda aberta.
   'administracao-de-pessoal': () => `
-${person(8.5, 12.5, 1.25)}
-${moduleOutline(18.2, 6.8, 3.8)}
-${accent(18.2, 12.5, 3.8)}
-${moduleOutline(18.2, 18.2, 3.8)}`,
+${[6.5, 12, 17.5].map((y) => [6.5, 12, 17.5].map((x) => (x === 17.5 && y === 17.5 ? `<circle cx="${x}" cy="${y}" r="1.6"/>` : dot(x, y, 1.6))).join('')).join('\n')}`,
 
-  // Cargos e Salários: faixas salariais (mín-máx) com o salário atual marcado no módulo rosa.
+  // Cargos e Salários: três faixas salariais e o ponto do salário atual.
   'cargos-e-salarios': () => `
-${rr(3.5, 9.5, 4.2, 10, 2.1)}
-${rr(9.9, 4.5, 4.2, 13, 2.1)}
-${rr(16.3, 11.5, 4.2, 8, 2.1)}
-<path d="M3.5 21h17"/>
-${accent(12, 11, 3.6)}`,
+${rr(3.5, 10, 4.2, 10.5, 2.1)}
+${rr(9.9, 3.5, 4.2, 17, 2.1)}
+${rr(16.3, 7.5, 4.2, 13, 2.1)}
+${dot(12, 11, 1.2)}`,
 
-  // Gestão de Benefícios: o cartão de benefícios com o chip em módulo rosa.
+  // Gestão de Benefícios: o cartão do colaborador com o coração dos benefícios.
   'gestao-de-beneficios': () => `
-${rr(3, 5.5, 18, 13, 2.2)}
-<path d="M3 9.75h18"/>
-<path d="M13 14.5h4.5"/>
-${accent(8, 14.5, 3.6)}`,
+<path d="M12 20.5c-4.5-3.3-8.5-6.4-8.5-10.6A4.4 4.4 0 0 1 12 7.6a4.4 4.4 0 0 1 8.5 2.3c0 4.2-4 7.3-8.5 10.6z"/>
+${dot(12, 12.6, 1.1)}`,
 
-  // NatPay: o celular com o adiantamento chegando por Pix (o losango do Pix vira módulo rosa).
+  // NatPay: o celular com o Pix em forma de módulo.
   natpay: () => `
-${rr(6.5, 2.5, 11, 19, 2.6)}
-<path d="M10.5 18.25h3"/>
-<path d="M12 6.5v1.6"/><path d="M12 13.9v1.6"/>
-${accent(12, 11, 4.6)}`,
+${rr(7, 2, 10, 20, 2.8)}
+${moduleOutline(12, 11, 5.2)}
+<path d="M10.5 18.5h3"/>`,
 
-  // eSocial: o documento enviado e o retorno acompanhado (ida e volta).
+  // eSocial: ida e volta, envio e retorno, em uma só diagonal.
   esocial: () => `
-<path d="M4.5 3.5h5.5l3 3V19a1.5 1.5 0 0 1-1.5 1.5H4.5A1.5 1.5 0 0 1 3 19V5a1.5 1.5 0 0 1 1.5-1.5"/>
-<path d="M10 3.5v3h3"/>
-<path d="M15.5 9.5l5-5"/><path d="M17 4.5h3.5V8"/>
-<path d="M20.5 14.5l-5 5"/><path d="M19 19.5h-3.5V16"/>
-${accent(8, 13.5, 3.8)}`,
+<path d="M6 18L18 6"/>
+<path d="M10.5 6H18v7.5"/>
+<path d="M13.5 18H6v-7.5"/>`,
 
-  // Jurídico Trabalhista: a balança, com o fiel em módulo rosa.
+  // Jurídico Trabalhista: a balança em poucas linhas.
   'juridico-trabalhista': () => `
-<path d="M12 6.5V20"/><path d="M8 20h8"/>
+<path d="M12 4v16.5"/><path d="M8 20.5h8"/>
 <path d="M4.5 7.5h15"/>
-<path d="M5.5 7.5L3 13.5"/><path d="M5.5 7.5L8 13.5"/>
-<path d="M2.5 13.5a3 3 0 0 0 6 0"/>
-<path d="M18.5 7.5L16 13.5"/><path d="M18.5 7.5L21 13.5"/>
-<path d="M15.5 13.5a3 3 0 0 0 6 0"/>
-${accent(12, 4.6, 3.6)}`,
+<path d="M4.5 7.5v5.5"/><path d="M19.5 7.5v5.5"/>
+<path d="M2 13.5a2.5 2.5 0 0 0 5 0"/>
+<path d="M17 13.5a2.5 2.5 0 0 0 5 0"/>`,
 
-  // Ponto Eletrônico: relógio com ponteiros que nascem do módulo rosa.
+  // Ponto Eletrônico: o mostrador aberto, com as horas que se acumulam.
   'ponto-eletronico': () => `
-<circle cx="12" cy="12" r="8.5"/>
-<path d="M12 3.5v1.6"/><path d="M12 18.9v1.6"/><path d="M3.5 12h1.6"/><path d="M18.9 12h1.6"/>
-<path d="M12 12V7.2"/><path d="M12 12l3.4 2"/>
-${accent(12, 12, 3.2)}`,
+<path d="M12 3.5a8.5 8.5 0 1 0 8.5 8.5"/>
+<path d="M18.2 14.2L20.5 12l2.3 2.3"/>
+<path d="M12 12V7.3"/><path d="M12 12l3.4 1.9"/>`,
 
-  // NatPonto: reconhecimento facial, o rosto dentro da moldura de leitura e o local marcado.
+  // NatPonto: o mostrador de doze marcas e os ponteiros em L (referência aprovada).
   natponto: () => `
-<path d="M3.5 8V5.5a2 2 0 0 1 2-2H8"/><path d="M16 3.5h2.5a2 2 0 0 1 2 2V8"/>
-<path d="M3.5 16v2.5a2 2 0 0 0 2 2H8"/><path d="M16 20.5h2.5a2 2 0 0 0 2-2V16"/>
-${person(12, 12.4, 1.05)}
-${accent(19.6, 19.6, 3.6)}`,
+${ticks(12, 12, 9.6, 12)}
+<path d="M12 12V5.4"/><path d="M12 12h6.6"/>`,
 
-  // Medicina Ocupacional: a prancheta do ASO com a cruz de centro em módulo rosa.
+  // Medicina Ocupacional: a prancheta do ASO com a cruz.
   'medicina-ocupacional': () => `
-${rr(4, 4.5, 16, 16.5, 2.2)}
-<path d="M9 4.5V3.5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v1"/>
-<path d="M12 8.6v8.8"/><path d="M7.6 13h8.8"/>
-${accent(12, 13, 2.6)}`,
+${rr(5, 4, 14, 17, 2.6)}
+<path d="M9.5 4V3a1 1 0 0 1 1-1h3a1 1 0 0 1 1 1v1"/>
+<path d="M12 9.5v6"/><path d="M9 12.5h6"/>`,
 
-  // Segurança do Trabalho: o capacete, com a marca frontal em módulo rosa.
+  // Segurança do Trabalho: o capacete.
   'seguranca-do-trabalho': () => `
 <path d="M3 16.5h18"/>
-<path d="M5.5 16.5V14a6.5 6.5 0 0 1 13 0v2.5"/>
-<path d="M12 7.5v3.2"/>
-${accent(12, 13, 3)}`,
+<path d="M6 16.5v-2.5a6 6 0 0 1 12 0v2.5"/>
+<path d="M12 8v3"/>`,
 
-  // Recrutamento e Seleção: a lupa sobre a pessoa, com o cabo terminando no módulo rosa.
+  // Recrutamento e Seleção: a pessoa certa dentro da lupa.
   'recrutamento-e-selecao': () => `
-<circle cx="10" cy="10" r="6.5"/>
-${person(10, 10.6, 0.8)}
-<path d="M14.8 14.8l3.2 3.2"/>
-${accent(19.4, 19.4, 3.4)}`,
+<circle cx="10.5" cy="10.5" r="7.5"/>
+${person(10.5, 11, 0.85)}
+<path d="M16 16l5 5"/>`,
 
-  // Quadro de Vagas: o mural com os cartões de vaga e a vaga nova em destaque.
+  // Quadro de Vagas: o mural com as vagas publicadas.
   'quadro-de-vagas': () => `
-${rr(3, 4.5, 18, 15, 2)}
-<path d="M3 9.25h18"/>
-${rr(5.75, 12, 5, 4.5, 1.2)}
-${rr(13.25, 12, 5, 4.5, 1.2)}
-${accent(6.6, 6.9, 2.8)}`,
+${rr(3, 7.5, 18, 12.5, 2.6)}
+<path d="M9 7.5V6a1.5 1.5 0 0 1 1.5-1.5h3A1.5 1.5 0 0 1 15 6v1.5"/>
+<path d="M3 12.5h18"/>
+${dot(12, 12.5, 1)}`,
 
-  // Admissão Digital: o contrato assinado na tela, do candidato à folha em poucos cliques.
+  // Admissão Digital: o documento já conferido.
   'admissao-digital': () => `
-<path d="M7 3h7l4 4v13a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 6 20V4.5A1.5 1.5 0 0 1 7.5 3"/>
-<path d="M14 3v4h4"/>
-<path d="M8.5 16.5c1.2-2.4 2.2-2.4 3-.6s1.6 1.8 3-.6"/>
-${accent(10.6, 11, 3.6)}`,
+<path d="M7 3h7.5l4 4v12.5a1.5 1.5 0 0 1-1.5 1.5H8.5A1.5 1.5 0 0 1 7 19.5V4.5A1.5 1.5 0 0 1 8.5 3"/>
+<path d="M14.5 3v4h4"/>
+<path d="M9.5 14l2 2 4-4.5"/>`,
 
-  // Onboarding: a porta aberta e o lugar de quem chega já marcado.
+  // Onboarding: a porta aberta e a entrada.
   onboarding: () => `
 <path d="M5 21V4.5a1.5 1.5 0 0 1 1.5-1.5h6A1.5 1.5 0 0 1 14 4.5V21"/>
-<path d="M3 21h18"/>
-<path d="M21 12.5h-6.5"/><path d="M17 10l-2.5 2.5 2.5 2.5"/>
-${accent(9.5, 12.5, 3.8)}`,
+<path d="M2.5 21h19"/>
+<path d="M21.5 12h-7"/><path d="M17 9.5L14.5 12l2.5 2.5"/>
+${dot(11.3, 12.5, 0.8)}`,
 
-  // Offboarding: o mesmo lugar, agora com o caminho de saída resolvido.
+  // Offboarding: a mesma porta, a saída resolvida.
   offboarding: () => `
 <path d="M5 21V4.5a1.5 1.5 0 0 1 1.5-1.5h6A1.5 1.5 0 0 1 14 4.5V21"/>
-<path d="M3 21h18"/>
-<path d="M12.5 12.5H21"/><path d="M18.5 10l2.5 2.5-2.5 2.5"/>
-${accent(9.5, 12.5, 3.8)}`,
+<path d="M2.5 21h19"/>
+<path d="M11 12h10.5"/><path d="M19 9.5l2.5 2.5-2.5 2.5"/>
+${dot(11.3, 12.5, 0.8)}`,
 
-  // Avaliações, Pesquisas e Feedbacks: a volta de 360° em torno da pessoa.
+  // Avaliações, Pesquisas e Feedbacks: a volta completa em torno da pessoa.
   'avaliacoes-e-feedbacks': () => `
-<path d="M4.5 12A7.5 7.5 0 1 1 15.75 18.5"/>
-<path d="M13.4 19.4l2.35-.9-.6-2.4"/>
-${person(12, 12.4, 0.8)}
-${accent(4.5, 12, 3.4)}`,
+<path d="M4 12A8 8 0 1 1 16 18.93"/>
+<path d="M13.6 19.8l2.6-.9-.9-2.6"/>
+${person(12, 12.4, 0.85)}`,
 
-  // Metas e Resultados: o alvo feito de módulos, com o centro em Rosa.
+  // Metas e Resultados: o alvo feito de módulos.
   'metas-e-resultados': () => `
-${moduleOutline(12, 12, 17)}
+${moduleOutline(12, 12, 18)}
 ${moduleOutline(12, 12, 10.5)}
-${accent(12, 12, 4)}`,
+${dot(12, 12, 1.5)}`,
 
-  // Treinamento e Desenvolvimento: o capelo em forma de losango, com a borla em módulo rosa.
+  // Treinamento e Desenvolvimento: o capelo.
   'treinamento-e-desenvolvimento': () => `
-<path d="M2.5 9.5L11.5 5l9 4.5-9 4.5z"/>
-<path d="M6.5 11.8v3.7c0 1.6 2.2 2.9 5 2.9s5-1.3 5-2.9v-3.7"/>
-<path d="M20.5 9.5v3.5"/>
-${accent(20.5, 14.6, 3.2)}`,
+<path d="M2.5 9.5L12 5l9.5 4.5L12 14z"/>
+<path d="M7 12v3.5c0 1.4 2.2 2.5 5 2.5s5-1.1 5-2.5V12"/>
+<path d="M21.5 9.5v4"/>`,
 
-  // Carreira e Sucessão: a trilha que sobe, módulo a módulo, até o próximo lugar.
+  // Carreira e Sucessão: a escada que sobe.
   'carreira-e-sucessao': () => `
-<path d="M7.7 16.3l2.6-2.6"/><path d="M13.7 10.3l2.6-2.6"/>
-${moduleOutline(6, 18, 4.4)}
-${moduleOutline(12, 12, 4.4)}
-${accent(18, 6, 4.4)}
-<path d="M4.5 21h15"/>`,
+<path d="M3 20.5h4.5V15H12V9.5h4.5V4H21"/>
+${dot(21, 4, 1)}`,
 
-  // Portais: a janela do portal com a pessoa dentro e a entrada marcada.
+  // Portais: o arco de entrada.
   portais: () => `
-${rr(3, 4, 18, 16, 2.2)}
-<path d="M3 8.5h18"/>
-${person(12, 14.6, 0.95)}
-${accent(6, 6.25, 2.6)}`,
+<path d="M5 21V11.5a7 7 0 0 1 14 0V21"/>
+<path d="M2.5 21h19"/>
+${dot(12, 14.5, 1)}`,
 
-  // Requisições com Workflow: o pedido que passa pela aprovação e é efetivado.
+  // Requisições com Workflow: o pedido passa de módulo em módulo até ser efetivado.
   'requisicoes-com-workflow': () => `
-${moduleOutline(5, 13, 4.4)}
-<path d="M7.2 13h2.6"/>
-${accent(12, 13, 4.4)}
-<path d="M14.2 13h2.6"/>
-<circle cx="19.3" cy="13" r="2.4"/>
-<path d="M18.2 13l.8.8 1.6-1.7"/>
-<path d="M12 10.8V8.6"/><path d="M9.5 6.5h5"/>`,
+${moduleOutline(4.5, 12, 5)}
+<path d="M7 12h2.5"/>
+${moduleOutline(12, 12, 5)}
+<path d="M14.5 12H17"/>
+${moduleOutline(19.5, 12, 5)}
+${dot(19.5, 12, 1)}`,
 
-  // Chamado Interno: o balão do atendimento, com o chamado aberto em módulo rosa.
+  // Chamado Interno: a conversa em andamento.
   'chamado-interno': () => `
-<path d="M4 6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8.5a2 2 0 0 1-2 2h-6.5L7 20.5v-4H6a2 2 0 0 1-2-2z"/>
-<path d="M12.5 8.5h4"/><path d="M12.5 12h2.5"/>
-${accent(8.6, 10.25, 3.6)}`,
+<path d="M3.5 6a2 2 0 0 1 2-2h13a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-7.5L6 20.5V17H5.5a2 2 0 0 1-2-2z"/>
+${dot(8.5, 10.5, 0.9)}${dot(12, 10.5, 0.9)}${dot(15.5, 10.5, 0.9)}`,
 
-  // Blog Corporativo: a linha do tempo da intranet, com o aviso novo no topo.
+  // Blog Corporativo: o post da intranet.
   'blog-corporativo': () => `
-<path d="M5.5 3.5v17"/>
-${accent(5.5, 7, 3.6)}
-${moduleOutline(5.5, 12.5, 3.6)}
-${moduleOutline(5.5, 18, 3.6)}
-<path d="M9.5 7h11"/><path d="M9.5 12.5h7.5"/><path d="M9.5 18h9.5"/>`,
+<path d="M3 10.5v3a1.5 1.5 0 0 0 1.5 1.5H8l7.5 4.5v-15L8 9H4.5A1.5 1.5 0 0 0 3 10.5z"/>
+<path d="M18.5 9.2a4 4 0 0 1 0 5.6"/>
+<path d="M8 15v4"/>`,
 
-  // Assinatura Eletrônica: a assinatura sobre a linha e o selo de validade.
+  // Assinatura Eletrônica: a assinatura sobre a linha.
   'assinatura-eletronica': () => `
-<path d="M3 16.2c1.5-3.6 3-4.6 4-2.1s2.1 5.1 3.6.1 2.6-4.8 4-1.6 2.5 3.2 4.4 1.7"/>
-<path d="M3 20h18"/>
-${moduleOutline(18, 6.5, 6.4)}
-${accent(18, 6.5, 3)}`,
+<path d="M3 16c1.5-4 3-5 4-2.5s2 5.5 3.5.5 2.5-5 4-2 2.5 3.5 4.5 2"/>
+<path d="M3 20h18"/>`,
 
-  // GED: os documentos digitalizados, com a etiqueta de indexação.
+  // GED: a pasta com o documento guardado.
   ged: () => `
-<path d="M8.5 6V4.5A1.5 1.5 0 0 1 10 3h8.5A1.5 1.5 0 0 1 20 4.5v11a1.5 1.5 0 0 1-1.5 1.5H17"/>
-${rr(4, 6, 12, 15, 1.5)}
-<path d="M7 11h6"/><path d="M7 14.5h4"/>
-${accent(15.4, 16.6, 3.6)}`,
+<path d="M3 7.5a2 2 0 0 1 2-2h4.5l2 2.5H19a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+<path d="M3 11h18"/>`,
 
-  // People Analytics: os cruzamentos como pontos em módulo sobre os eixos.
+  // People Analytics: os cruzamentos como pontos sobre os eixos.
   'people-analytics': () => `
 <path d="M4 3.5V20h16.5"/>
-${moduleOutline(8.5, 15, 3.6)}
-${moduleOutline(12.5, 9.5, 3.6)}
-${moduleOutline(17.5, 13, 3.6)}
-${accent(16, 5.5, 3.6)}`,
+${dot(8, 15.5, 1.3)}${dot(11.5, 10, 1.3)}${dot(15, 12.5, 1.3)}${dot(18.5, 6.5, 1.3)}`,
 
-  // Business Intelligence: o painel com as barras, e o indicador principal em Rosa.
+  // Business Intelligence: as barras que sobem.
   'business-intelligence': () => `
-${rr(3, 4, 18, 16, 2.2)}
-<path d="M3 8.5h18"/>
-<path d="M7.5 16.5v-3"/><path d="M12 16.5V11"/><path d="M16.5 16.5v-4.5"/>
-${accent(12, 10.6, 2.8)}`,
+<path d="M6.5 20v-6"/><path d="M12 20V6"/><path d="M17.5 20v-9.5"/>
+<path d="M3 20h18"/>`,
 
-  // NATI: a faísca de quatro pontas em losango, com o núcleo em Rosa e um satélite.
+  // NATI: a faísca de quatro pontas, e uma menor ao lado.
   nati: () => `
-<path d="M12 3l1.9 7.1L21 12l-7.1 1.9L12 21l-1.9-7.1L3 12l7.1-1.9z"/>
-${accent(12, 12, 3.6)}
-${moduleOutline(19.5, 4.5, 2.8)}`,
+<path d="M12 3l1.6 7.4L21 12l-7.4 1.6L12 21l-1.6-7.4L3 12l7.4-1.6z"/>
+<path d="M19.5 3l.6 2 2 .6-2 .6-.6 2-.6-2-2-.6 2-.6z"/>`,
 
-  // Conexão com Outros Sistemas: a integração entre os dois lados, com o dado que passa no meio.
+  // Conexão com Outros Sistemas: dois sistemas ligados.
   'conexao-com-outros-sistemas': () => `
-<path d="M8 6.5L2.5 12 8 17.5"/>
-<path d="M16 6.5l5.5 5.5-5.5 5.5"/>
-${accent(12, 12, 3.8)}`,
+${moduleOutline(5.5, 12, 6.5)}
+${moduleOutline(18.5, 12, 6.5)}
+<path d="M8.75 12h6.5"/>`,
 
-  // Infraestrutura e Segurança: o escudo com o dado protegido em módulo rosa.
+  // Infraestrutura e Segurança: a nuvem com o cadeado.
   'infraestrutura-e-seguranca': () => `
-<path d="M12 3l7 2.6v5.6c0 4.4-3 7.6-7 9.3-4-1.7-7-4.9-7-9.3V5.6z"/>
-${accent(12, 10.6, 4.2)}
-<path d="M12 12.7v3.3"/>`,
+<path d="M7 18.5h10a4 4 0 0 0 .6-7.95A5.5 5.5 0 0 0 7 12.2 3.2 3.2 0 0 0 7 18.5z"/>
+${rr(10, 12, 4, 3.4, 0.9)}
+<path d="M10.8 12v-1.2a1.2 1.2 0 0 1 2.4 0V12"/>`,
 }
 
 module.exports = icons
