@@ -1,4 +1,4 @@
-import { Fragment, useMemo } from 'react'
+import { Fragment, useMemo, useRef } from 'react'
 import { m, useReducedMotion } from 'motion/react'
 import { Link } from 'react-router'
 import { ArrowRight } from 'lucide-react'
@@ -10,6 +10,7 @@ import { getModuleEntry, modulePath } from '@/content/modulePages'
 import { EFFECTIVATION_AFTER, actorMeta, actors, phases, steps, stepsByPhase, type JourneyPhase, type JourneyStep } from '@/content/hiringJourney'
 import { EASE, viewportOnce } from '@/lib/motion'
 import { cn } from '@/lib/utils'
+import { useSmilPause } from '@/hooks/useSmilPause'
 
 const pad = (n: number) => String(n).padStart(2, '0')
 
@@ -151,6 +152,8 @@ function segment(a: NodeRect, b: NodeRect) {
 
 /** Linha entre os nós, com um ponto na chegada de cada trecho e um pulso que percorre o caminho. */
 function Connectors({ rects, pulse }: { rects: (NodeRect | null)[]; pulse: boolean }) {
+  const svgRef = useRef<SVGSVGElement>(null)
+  useSmilPause(svgRef)
   const ready = rects.length > 1 && rects.every((r) => r && r.w > 0 && r.h > 0)
   if (!ready) return null
   const boxes = rects as NodeRect[]
@@ -169,7 +172,7 @@ function Connectors({ rects, pulse }: { rects: (NodeRect | null)[]; pulse: boole
   }
 
   return (
-    <svg aria-hidden className="pointer-events-none absolute inset-0 z-10 h-full w-full overflow-visible">
+    <svg ref={svgRef} aria-hidden className="pointer-events-none absolute inset-0 z-10 h-full w-full overflow-visible">
       {segments.map((s, i) => (
         <Fragment key={i}>
           <path d={s.d} fill="none" stroke={PURPLE} strokeOpacity={0.45} strokeWidth={1.5} strokeLinecap="round" />

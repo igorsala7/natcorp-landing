@@ -24,7 +24,7 @@ export function InsightStream({ className, interval = 7000 }: { className?: stri
   }, [paused, reduced, interval])
 
   return (
-    <div className={cn('flex flex-col overflow-hidden rounded-3xl border border-white/12 bg-brand-blue/70 text-white shadow-glow backdrop-blur-sm', className)}>
+    <div className={cn('flex flex-col overflow-hidden rounded-3xl border border-white/12 bg-brand-blue/85 text-white shadow-glow', className)}>
       <div className="flex items-center justify-between gap-3 border-b border-white/10 px-4 py-3 sm:px-5">
         <span className="flex items-center gap-2.5">
           <NatiAvatar ring className="h-8 w-8" />

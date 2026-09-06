@@ -1,10 +1,11 @@
-import { useId } from 'react'
+import { useId, useRef } from 'react'
 import { m, useReducedMotion } from 'motion/react'
 import { MODULES, SYMBOL_BOX } from '@/components/brand/logo-paths'
 import { moduleIcons } from '@/content/modulePages/icons'
 import { effectivation } from '@/content/hiringJourney'
 import { EASE, viewportOnce } from '@/lib/motion'
 import { cn } from '@/lib/utils'
+import { useSmilPause } from '@/hooks/useSmilPause'
 import {
   BAND_W,
   BAND_X,
@@ -93,6 +94,8 @@ export function IntegrationDiagram({ className }: { className?: string }) {
   const uid = useId().replace(/[^a-zA-Z0-9]/g, '')
   const id = (suffix: string) => `idg-${uid}-${suffix}`
   const animate = !reduced
+  const svgRef = useRef<SVGSVGElement>(null)
+  useSmilPause(svgRef)
 
   const symbolScale = 44 / SYMBOL_BOX
   const symbolY = BAND.y + 20
@@ -110,6 +113,7 @@ export function IntegrationDiagram({ className }: { className?: string }) {
         viewport={viewportOnce}
       >
         <svg
+          ref={svgRef}
           viewBox={`0 0 ${VB_W} ${VB_H}`}
           width="100%"
           role="img"

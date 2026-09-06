@@ -1,4 +1,5 @@
-import { m, type MotionValue } from 'motion/react'
+import { useEffect, useRef, useState } from 'react'
+import { m, useInView, type MotionValue } from 'motion/react'
 import { ScanFace } from 'lucide-react'
 import { NatiAvatar } from '@/components/brand/NatiAvatar'
 import { EASE } from '@/lib/motion'
@@ -40,8 +41,18 @@ interface HeroSceneProps {
 }
 
 export function HeroScene({ on, reduced, y, scale }: HeroSceneProps) {
+  const root = useRef<HTMLDivElement>(null)
+  /** Os laços contínuos (pacotes de luz, brilho na borda, respiração) só rodam com o hero na tela. */
+  const inView = useInView(root, { margin: '120px 0px' })
+  const loop = on && inView && !reduced
+  /** Depois da primeira entrada, os laços voltam sem a espera da introdução. */
+  const [looped, setLooped] = useState(false)
+  useEffect(() => {
+    if (loop) setLooped(true)
+  }, [loop])
+  const wait = looped ? 0 : 1
   return (
-    <div className="absolute inset-0" aria-hidden>
+    <div ref={root} className="absolute inset-0" aria-hidden>
       {/* o quadro que cobre a seção (no celular, só a parte de cima): imagem e arte no mesmo sistema de coordenadas */}
       <div className="absolute inset-x-0 top-0 h-[62%] overflow-hidden [container-type:size] lg:h-full">
       <m.div
@@ -54,6 +65,8 @@ export function HeroScene({ on, reduced, y, scale }: HeroSceneProps) {
           aspectRatio: `${W} / ${H}`,
           y,
           scale,
+          // o quadro tem layer própria: a paralaxe da rolagem só recompõe, sem repintar a foto
+          willChange: 'transform',
         }}
         initial={{ opacity: 0 }}
         animate={on ? { opacity: 1 } : { opacity: 0 }}
@@ -84,17 +97,6 @@ export function HeroScene({ on, reduced, y, scale }: HeroSceneProps) {
               <stop offset="0.5" stopColor="#C95788" stopOpacity="0.75" />
               <stop offset="1" stopColor="#9A408A" stopOpacity="0.55" />
             </linearGradient>
-            <linearGradient id="hv2-glass" x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0" stopColor="#F3C9DA" stopOpacity="0.28" />
-              <stop offset="0.55" stopColor="#C95788" stopOpacity="0.16" />
-              <stop offset="1" stopColor="#511C76" stopOpacity="0.1" />
-            </linearGradient>
-            <filter id="hv2-glow" x="-20%" y="-20%" width="140%" height="140%">
-              <feGaussianBlur stdDeviation="6" />
-            </filter>
-            <filter id="hv2-glow-soft" x="-20%" y="-20%" width="140%" height="140%">
-              <feGaussianBlur stdDeviation="14" />
-            </filter>
           </defs>
 
           {/* linhas de fluxo: traço contínuo fraco + pacotes de luz correndo */}
@@ -111,24 +113,6 @@ export function HeroScene({ on, reduced, y, scale }: HeroSceneProps) {
                 transition={{ duration: 1.8, ease: EASE, delay: 0.4 + i * 0.08 }}
               />
             ))}
-            {!reduced &&
-              flows.map((f, i) => (
-                <m.path
-                  key={`p${i}`}
-                  d={f.d}
-                  pathLength={1}
-                  stroke="#FFFFFF"
-                  strokeWidth="1.8"
-                  strokeOpacity="0.85"
-                  strokeDasharray="0.09 1"
-                  initial={{ strokeDashoffset: 1, opacity: 0 }}
-                  animate={on ? { strokeDashoffset: -1, opacity: 1 } : { strokeDashoffset: 1, opacity: 0 }}
-                  transition={{
-                    strokeDashoffset: { duration: f.dur, ease: 'linear', repeat: Infinity, delay: 2 + f.delay },
-                    opacity: { duration: 1, delay: 2 + f.delay },
-                  }}
-                />
-              ))}
           </g>
 
           {/* o segundo módulo, atrás: deslocado, mais inclinado e afastado do principal, linha mais fina e um tom mais escuro */}
@@ -137,9 +121,8 @@ export function HeroScene({ on, reduced, y, scale }: HeroSceneProps) {
               d={MODULE}
               fill="none"
               stroke="#C95788"
-              strokeWidth="8"
-              strokeOpacity="0.22"
-              filter="url(#hv2-glow)"
+              strokeWidth="7"
+              strokeOpacity="0.14"
               initial={{ pathLength: 0, opacity: 0 }}
               animate={on ? { pathLength: 1, opacity: 1 } : { pathLength: 0, opacity: 0 }}
               transition={{ duration: 2.8, ease: EASE, delay: 0.8 }}
@@ -160,9 +143,18 @@ export function HeroScene({ on, reduced, y, scale }: HeroSceneProps) {
             d={MODULE}
             fill="none"
             stroke="#E4A9C4"
-            strokeWidth="14"
-            strokeOpacity="0.35"
-            filter="url(#hv2-glow-soft)"
+            strokeWidth="26"
+            strokeOpacity="0.08"
+            initial={{ pathLength: 0, opacity: 0 }}
+            animate={on ? { pathLength: 1, opacity: 1 } : { pathLength: 0, opacity: 0 }}
+            transition={{ duration: 2.4, ease: EASE, delay: 0.3 }}
+          />
+          <m.path
+            d={MODULE}
+            fill="none"
+            stroke="#E4A9C4"
+            strokeWidth="10"
+            strokeOpacity="0.16"
             initial={{ pathLength: 0, opacity: 0 }}
             animate={on ? { pathLength: 1, opacity: 1 } : { pathLength: 0, opacity: 0 }}
             transition={{ duration: 2.4, ease: EASE, delay: 0.3 }}
@@ -176,21 +168,52 @@ export function HeroScene({ on, reduced, y, scale }: HeroSceneProps) {
             animate={on ? { pathLength: 1, opacity: 1 } : { pathLength: 0, opacity: 0 }}
             transition={{ duration: 2.4, ease: EASE, delay: 0.3 }}
           />
+
+        </svg>
+
+        {/* camada em movimento, numa layer própria do compositor: o que anima a cada quadro fica separado da foto e dos traços parados */}
+        <svg viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="none" className="absolute inset-0 h-full w-full overflow-visible will-change-transform">
+          <defs>
+            <linearGradient id="hv2-glass" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stopColor="#F3C9DA" stopOpacity="0.28" />
+              <stop offset="0.55" stopColor="#C95788" stopOpacity="0.16" />
+              <stop offset="1" stopColor="#511C76" stopOpacity="0.1" />
+            </linearGradient>
+          </defs>
+          <g strokeLinecap="round" fill="none">
+            {loop &&
+              flows.map((f, i) => (
+                <m.path
+                  key={`p${i}`}
+                  d={f.d}
+                  pathLength={1}
+                  stroke="#FFFFFF"
+                  strokeWidth="1.8"
+                  strokeOpacity="0.85"
+                  strokeDasharray="0.09 1"
+                  initial={{ strokeDashoffset: 1, opacity: 0 }}
+                  animate={{ strokeDashoffset: -1, opacity: 1 }}
+                  transition={{
+                    strokeDashoffset: { duration: f.dur, ease: 'linear', repeat: Infinity, delay: (2 + f.delay) * wait },
+                    opacity: { duration: 1, delay: (2 + f.delay) * wait },
+                  }}
+                />
+              ))}
+          </g>
           {/* a luz que percorre a borda do módulo, sem parar */}
-          {!reduced && (
+          {loop && (
             <>
               <m.path
                 d={MODULE}
                 pathLength={1}
                 fill="none"
                 stroke="#F3C9DA"
-                strokeWidth="18"
+                strokeWidth="12"
                 strokeLinecap="round"
                 strokeDasharray="0.06 1"
-                filter="url(#hv2-glow)"
                 initial={{ strokeDashoffset: 0, opacity: 0 }}
-                animate={on ? { strokeDashoffset: -2, opacity: 0.8 } : { strokeDashoffset: 0, opacity: 0 }}
-                transition={{ strokeDashoffset: { duration: 18, ease: 'linear', repeat: Infinity, delay: 2.6 }, opacity: { duration: 1.2, delay: 2.6 } }}
+                animate={{ strokeDashoffset: -2, opacity: 0.35 }}
+                transition={{ strokeDashoffset: { duration: 18, ease: 'linear', repeat: Infinity, delay: 2.6 * wait }, opacity: { duration: 1.2, delay: 2.6 * wait } }}
               />
               <m.path
                 d={MODULE}
@@ -201,18 +224,17 @@ export function HeroScene({ on, reduced, y, scale }: HeroSceneProps) {
                 strokeLinecap="round"
                 strokeDasharray="0.05 1"
                 initial={{ strokeDashoffset: 0, opacity: 0 }}
-                animate={on ? { strokeDashoffset: -2, opacity: 0.95 } : { strokeDashoffset: 0, opacity: 0 }}
-                transition={{ strokeDashoffset: { duration: 18, ease: 'linear', repeat: Infinity, delay: 2.6 }, opacity: { duration: 1.2, delay: 2.6 } }}
+                animate={{ strokeDashoffset: -2, opacity: 0.95 }}
+                transition={{ strokeDashoffset: { duration: 18, ease: 'linear', repeat: Infinity, delay: 2.6 * wait }, opacity: { duration: 1.2, delay: 2.6 * wait } }}
               />
             </>
           )}
-
           {/* o módulo menor, em vidro, respirando perto do tablet */}
           <m.g
             style={{ transformOrigin: `${SMALL.cx}px ${SMALL.cy}px`, transformBox: 'view-box' }}
             initial={{ opacity: 0, scale: 0.9 }}
-            animate={on ? { opacity: 1, scale: reduced ? 1 : [1, 1.04, 1] } : { opacity: 0, scale: 0.9 }}
-            transition={{ opacity: { duration: 1.2, ease: EASE, delay: 1.4 }, scale: reduced ? { duration: 1.2, delay: 1.4 } : { duration: 7, ease: 'easeInOut', repeat: Infinity, delay: 1.4 } }}
+            animate={on ? { opacity: 1, scale: loop ? [1, 1.04, 1] : 1 } : { opacity: 0, scale: 0.9 }}
+            transition={{ opacity: { duration: 1.2, ease: EASE, delay: 1.4 }, scale: loop ? { duration: 7, ease: 'easeInOut', repeat: Infinity, delay: 1.4 * wait } : { duration: 1.2 } }}
           >
             <g transform={`translate(${SMALL.cx} ${SMALL.cy}) scale(${SMALL.s}) translate(-1412 -425)`}>
               <path d={MODULE} fill="url(#hv2-glass)" stroke="#F3C9DA" strokeWidth="4" strokeOpacity="0.75" />
@@ -231,11 +253,8 @@ export function HeroScene({ on, reduced, y, scale }: HeroSceneProps) {
         animate={on ? { opacity: 1, y: 0 } : { opacity: 0, y: 16 }}
         transition={{ duration: 0.9, ease: EASE, delay: 1.6 }}
       >
-        <m.div
-          className="rounded-2xl border border-white/20 bg-[#1B1238]/60 p-3.5 shadow-[0_12px_40px_rgba(27,18,56,0.45)] backdrop-blur-md"
-          animate={reduced ? undefined : { y: [0, -7, 0] }}
-          transition={{ duration: 6.5, ease: 'easeInOut', repeat: Infinity }}
-        >
+        <div
+          className="rounded-2xl border border-white/20 bg-[#1B1238]/78 p-3.5 shadow-[0_12px_40px_rgba(27,18,56,0.45)]">
           <div className="flex items-start gap-3">
             <NatiAvatar ring className="h-9 w-9 shrink-0" />
             <div className="min-w-0">
@@ -243,7 +262,7 @@ export function HeroScene({ on, reduced, y, scale }: HeroSceneProps) {
               <p className="mt-0.5 text-[13.5px] font-semibold leading-snug text-white">12 pessoas com férias vencendo em setembro. Preparei os avisos aos gestores.</p>
             </div>
           </div>
-        </m.div>
+        </div>
       </m.div>
       <m.div
         className="absolute bottom-[12%] right-[5%] hidden w-[270px] lg:block"
@@ -251,11 +270,8 @@ export function HeroScene({ on, reduced, y, scale }: HeroSceneProps) {
         animate={on ? { opacity: 1, y: 0 } : { opacity: 0, y: 16 }}
         transition={{ duration: 0.9, ease: EASE, delay: 1.8 }}
       >
-        <m.div
-          className="rounded-2xl border border-white/20 bg-[#1B1238]/55 p-3.5 shadow-[0_12px_40px_rgba(27,18,56,0.45)] backdrop-blur-md"
-          animate={reduced ? undefined : { y: [0, -5, 0] }}
-          transition={{ duration: 7, ease: 'easeInOut', repeat: Infinity, delay: 1.6 }}
-        >
+        <div
+          className="rounded-2xl border border-white/20 bg-[#1B1238]/74 p-3.5 shadow-[0_12px_40px_rgba(27,18,56,0.45)]">
           <div className="flex items-center gap-3">
             <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-[#C95788]/25 text-[#F3C9DA] ring-1 ring-[#E4A9C4]/40">
               <ScanFace className="h-[18px] w-[18px]" strokeWidth={2} />
@@ -265,18 +281,16 @@ export function HeroScene({ on, reduced, y, scale }: HeroSceneProps) {
               <p className="mt-0.5 text-[13.5px] font-semibold leading-snug text-white">Marcação às 08:02, com reconhecimento facial</p>
             </div>
           </div>
-        </m.div>
+        </div>
       </m.div>
 
       {/* brilho que deriva devagar do lado do texto, para o roxo respirar */}
-      {!reduced && (
-        <m.div
-          className="absolute left-[-5%] top-[30%] h-[70%] w-[45%] rounded-full bg-[radial-gradient(closest-side,rgba(201,87,136,0.32),transparent)] blur-3xl"
-          style={{ mixBlendMode: 'screen' }}
-          animate={{ x: ['0%', '14%', '0%'], y: ['0%', '-12%', '0%'], opacity: [0.45, 0.85, 0.45] }}
-          transition={{ duration: 14, ease: 'easeInOut', repeat: Infinity }}
-        />
-      )}
+      <m.div
+        className="absolute left-[-12%] top-[18%] h-[95%] w-[58%] rounded-full bg-[radial-gradient(closest-side,rgba(201,87,136,0.26),rgba(201,87,136,0.1)_45%,rgba(201,87,136,0)_100%)]"
+        style={{ willChange: 'transform, opacity' }}
+        animate={loop ? { x: ['0%', '14%', '0%'], y: ['0%', '-12%', '0%'], opacity: [0.45, 0.85, 0.45] } : { x: '0%', y: '0%', opacity: 0.6 }}
+        transition={loop ? { duration: 14, ease: 'easeInOut', repeat: Infinity } : { duration: 1.2, ease: EASE }}
+      />
 
       {/* véu para o texto: base no celular, lateral esquerda no desktop */}
       <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(44,26,99,0.3)_0%,rgba(44,26,99,0.08)_16%,rgba(44,26,99,0.75)_44%,#2C1A63_58%)] lg:bg-[linear-gradient(90deg,rgba(44,26,99,0.92)_0%,rgba(44,26,99,0.78)_20%,rgba(44,26,99,0.45)_36%,rgba(44,26,99,0.12)_50%,rgba(44,26,99,0)_62%)]" />

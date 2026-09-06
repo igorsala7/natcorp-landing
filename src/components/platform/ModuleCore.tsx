@@ -1,6 +1,7 @@
-import { forwardRef, useId } from 'react'
+import { forwardRef, useId, useRef } from 'react'
 import { Logo } from '@/components/brand/Logo'
 import { cn } from '@/lib/utils'
+import { useSmilPause } from '@/hooks/useSmilPause'
 
 interface ModuleCoreProps {
   /** Lado da caixa (px). O disco ocupa 62% dela; o resto são anéis e brilho. */
@@ -18,10 +19,12 @@ export const ModuleCore = forwardRef<HTMLDivElement, ModuleCoreProps>(function M
   const uid = useId().replace(/[^a-zA-Z0-9]/g, '')
   const haloId = `mc-halo-${uid}`
   const disc = Math.round(size * 0.62)
+  const svgRef = useRef<SVGSVGElement>(null)
+  useSmilPause(svgRef)
 
   return (
     <div className={cn('relative grid shrink-0 place-items-center', className)} style={{ width: size, height: size }}>
-      <svg viewBox="0 0 200 200" className="absolute inset-0 h-full w-full overflow-visible" aria-hidden focusable="false">
+      <svg ref={svgRef} viewBox="0 0 200 200" className="absolute inset-0 h-full w-full overflow-visible" aria-hidden focusable="false">
         <defs>
           <radialGradient id={haloId} cx="0.5" cy="0.5" r="0.5">
             <stop offset="0" stopColor="#C95788" stopOpacity="0.28" />

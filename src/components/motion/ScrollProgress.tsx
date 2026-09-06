@@ -7,7 +7,7 @@ export function ScrollProgress() {
   return (
     <m.div
       aria-hidden
-      className="pointer-events-none fixed inset-x-0 top-0 z-[70] h-[3px] origin-left bg-brand-gradient"
+      className="pointer-events-none fixed inset-x-0 top-0 z-[70] h-[3px] origin-left bg-brand-gradient will-change-transform"
       style={{ scaleX }}
     />
   )

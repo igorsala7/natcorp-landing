@@ -16,7 +16,7 @@ export function Parallax({ children, distance = 60, className }: ParallaxProps) 
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'end start'] })
   const y = useTransform(scrollYProgress, [0, 1], [distance, -distance])
   return (
-    <m.div ref={ref} style={{ y: reduced ? 0 : y }} className={className}>
+    <m.div ref={ref} style={{ y: reduced ? 0 : y, willChange: reduced ? undefined : 'transform' }} className={className}>
       {children}
     </m.div>
   )

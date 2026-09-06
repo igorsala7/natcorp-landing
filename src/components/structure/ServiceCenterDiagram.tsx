@@ -1,4 +1,4 @@
-import { Fragment, type ReactNode } from 'react'
+import { Fragment, useRef, type ReactNode } from 'react'
 import { m, useReducedMotion } from 'motion/react'
 import { Logo, LogoOutline } from '@/components/brand/Logo'
 import { useNodeRects, type NodeRect } from '@/components/journey/useNodeRects'
@@ -7,6 +7,7 @@ import { operatorMeta } from '@/content/structures'
 import type { ServiceFlow } from '@/content/structures/types'
 import { EASE, viewportOnce } from '@/lib/motion'
 import { cn } from '@/lib/utils'
+import { useSmilPause } from '@/hooks/useSmilPause'
 import { ModuleChip } from './ModuleChip'
 import { operatorsIn } from './operators'
 import { OperatorLegend } from './ResponsibilityMap'
@@ -179,6 +180,8 @@ function curve(x1: number, y1: number, x2: number, y2: number) {
 }
 
 function Connectors({ rects, n, k, animate }: { rects: (NodeRect | null)[]; n: number; k: number; animate: boolean }) {
+  const svgRef = useRef<SVGSVGElement>(null)
+  useSmilPause(svgRef)
   const ready = rects.length === n + 1 + k && rects.every((r) => r && r.w > 0 && r.h > 0)
   if (!ready) return null
   const boxes = rects as NodeRect[]
@@ -206,7 +209,7 @@ function Connectors({ rects, n, k, animate }: { rects: (NodeRect | null)[]; n: n
       : {}
 
   return (
-    <svg aria-hidden className="pointer-events-none absolute inset-0 z-0 h-full w-full overflow-visible">
+    <svg ref={svgRef} aria-hidden className="pointer-events-none absolute inset-0 z-0 h-full w-full overflow-visible">
       {inputs.map((p, i) => (
         <Fragment key={`in-${i}`}>
           <m.path d={p.d} fill="none" stroke={WHITE} strokeOpacity={0.4} strokeWidth={1.5} strokeLinecap="round" {...draw(0.3 + i * 0.12)} />

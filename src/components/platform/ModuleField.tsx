@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { AnimatePresence, m, useInView, useReducedMotion } from 'motion/react'
 import type { Variants } from 'motion/react'
 import { Link } from 'react-router'
@@ -9,6 +9,7 @@ import type { GroupId } from '@/content/modulePages/types'
 import { categoryMeta, type StageSide } from '@/content/moduleCategories'
 import { EASE } from '@/lib/motion'
 import { cn } from '@/lib/utils'
+import { useSmilPause } from '@/hooks/useSmilPause'
 import { BaseLabel, ModuleCore } from './ModuleCore'
 
 /**
@@ -183,7 +184,7 @@ function Caption({ mod, cycling }: { mod: ModuleEntry | null; cycling: boolean }
   const Icon = mod ? moduleIcons[mod.icon] : moduleIcons.database
   const group = mod ? getGroup(mod.group) : null
   return (
-    <m.div variants={captionVariants} className="relative w-full max-w-[300px] overflow-hidden rounded-2xl border border-brand-mist bg-white/90 p-3.5 shadow-soft backdrop-blur-sm">
+    <m.div variants={captionVariants} className="relative w-full max-w-[300px] overflow-hidden rounded-2xl border border-brand-mist bg-white/95 p-3.5 shadow-soft">
       <AnimatePresence mode="wait" initial={false}>
         <m.div key={mod?.slug ?? 'base'} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -4 }} transition={{ duration: 0.3, ease: EASE }}>
           <div className="flex items-center gap-2.5">
@@ -225,6 +226,8 @@ export function ModuleField({ className }: { className?: string }) {
    */
   const entered = useInView(containerRef, { once: true, margin: '0px 0px -12% 0px' })
   const inView = useInView(containerRef, { amount: 0.3 })
+  const linksSvg = useRef<SVGSVGElement>(null)
+  useSmilPause(linksSvg)
 
   const [active, setActive] = useState(0)
   const [hovering, setHovering] = useState(false)
@@ -278,7 +281,7 @@ export function ModuleField({ className }: { className?: string }) {
       <div className="pointer-events-none absolute left-1/2 top-1/2 h-[560px] w-[560px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(154,64,138,0.14),transparent_62%)] blur-2xl" />
 
       {/* ligações: uma por módulo, todas chegando à base */}
-      <svg className="pointer-events-none absolute inset-0 h-full w-full overflow-visible" focusable="false">
+      <svg ref={linksSvg} className="pointer-events-none absolute inset-0 h-full w-full overflow-visible" focusable="false">
         <defs>
           {activeLink && (
             <linearGradient id="pf-active" gradientUnits="userSpaceOnUse" x1={activeLink.from.x} y1={activeLink.from.y} x2={activeLink.to.x} y2={activeLink.to.y}>

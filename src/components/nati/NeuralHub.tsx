@@ -1,4 +1,6 @@
+import { useRef } from 'react'
 import { useReducedMotion } from 'motion/react'
+import { useSmilPause } from '@/hooks/useSmilPause'
 import { NatiAvatar } from '@/components/brand/NatiAvatar'
 import { groups, modulesByGroup } from '@/content/modulePages'
 import { cn } from '@/lib/utils'
@@ -6,7 +8,12 @@ import { cn } from '@/lib/utils'
 /**
  * A NATI no centro do sistema: os módulos no anel de fora, as sete frentes no anel
  * de dentro e o dado fluindo de todos eles para ela. Os pulsos são animações SMIL do
- * próprio SVG (leves) e são desligados com prefers-reduced-motion.
+ * próprio SVG e são desligados com prefers-reduced-motion.
+ *
+ * O desenho é dividido em três camadas: a base parada (anéis, ligações), a camada em
+ * movimento (pulsos, ondas, anel girando) numa layer própria do compositor, e os nós e
+ * nomes por cima. Assim o que se mexe a cada quadro é só um punhado de círculos, e a
+ * camada em movimento pausa quando sai da tela.
  */
 
 const SIZE = 800
@@ -28,6 +35,8 @@ interface NeuralHubProps {
 
 export function NeuralHub({ className, labels = true }: NeuralHubProps) {
   const reduced = useReducedMotion()
+  const motionSvg = useRef<SVGSVGElement>(null)
+  useSmilPause(motionSvg)
   const step = 360 / groups.length
 
   const fronts = groups.map((g, i) => {
@@ -51,6 +60,7 @@ export function NeuralHub({ className, labels = true }: NeuralHubProps) {
       role="img"
       aria-label="A NATI no centro, ligada às sete frentes do RH e a todos os módulos do sistema, com os dados fluindo de todos eles para ela"
     >
+      {/* camada 1: a base parada (anéis, ligações, brilho do núcleo) */}
       <svg viewBox={`0 0 ${SIZE} ${SIZE}`} className="block h-auto w-full overflow-visible" aria-hidden focusable="false">
         <defs>
           <radialGradient id="nh-core" cx="0.5" cy="0.5" r="0.5">
@@ -58,65 +68,83 @@ export function NeuralHub({ className, labels = true }: NeuralHubProps) {
             <stop offset="0.55" stopColor="#9A408A" stopOpacity="0.35" />
             <stop offset="1" stopColor="#511C76" stopOpacity="0" />
           </radialGradient>
-          <radialGradient id="nh-node" cx="0.35" cy="0.3" r="0.8">
-            <stop offset="0" stopColor="#B27BE0" />
-            <stop offset="1" stopColor="#511C76" />
-          </radialGradient>
-          <filter id="nh-glow" x="-50%" y="-50%" width="200%" height="200%">
-            <feGaussianBlur stdDeviation="4" />
-          </filter>
         </defs>
-
-        {/* anéis */}
         <circle cx={C} cy={C} r={R_MODULE} fill="none" stroke="#FFFFFF" strokeOpacity="0.09" strokeWidth="1" />
         <circle cx={C} cy={C} r={R_FRONT} fill="none" stroke="#FFFFFF" strokeOpacity="0.12" strokeWidth="1" strokeDasharray="3 7" />
-        <g>
-          <circle cx={C} cy={C} r={R_MODULE + 30} fill="none" stroke="#E4A9C4" strokeOpacity="0.25" strokeWidth="1" strokeDasharray="1 14" strokeLinecap="round">
-            {!reduced && <animateTransform attributeName="transform" type="rotate" from={`0 ${C} ${C}`} to={`360 ${C} ${C}`} dur="90s" repeatCount="indefinite" />}
-          </circle>
-        </g>
-
-        {/* núcleo: brilho e ondas */}
+        {reduced && <circle cx={C} cy={C} r={R_MODULE + 30} fill="none" stroke="#E4A9C4" strokeOpacity="0.25" strokeWidth="1" strokeDasharray="1 14" strokeLinecap="round" />}
         <circle cx={C} cy={C} r={150} fill="url(#nh-core)" />
-        {!reduced &&
-          [0, 1.2].map((delay) => (
+        {fronts.map((f) => (
+          <g key={f.id}>
+            {f.modules.map((mo) => (
+              <line key={mo.slug} x1={mo.pos.x} y1={mo.pos.y} x2={f.pos.x} y2={f.pos.y} stroke="#FFFFFF" strokeOpacity="0.14" strokeWidth="1" />
+            ))}
+            <line x1={f.pos.x} y1={f.pos.y} x2={C} y2={C} stroke="#E4A9C4" strokeOpacity="0.38" strokeWidth="1.6" />
+          </g>
+        ))}
+      </svg>
+
+      {/* camada 2: o que se mexe (anel girando, ondas do núcleo, pulsos), numa layer própria */}
+      {!reduced && (
+        <svg
+          ref={motionSvg}
+          viewBox={`0 0 ${SIZE} ${SIZE}`}
+          className="absolute inset-0 h-full w-full overflow-visible will-change-transform"
+          aria-hidden
+          focusable="false"
+        >
+          <defs>
+            <radialGradient id="nh-spark" cx="0.5" cy="0.5" r="0.5">
+              <stop offset="0" stopColor="#FFFFFF" stopOpacity="1" />
+              <stop offset="0.35" stopColor="#E4A9C4" stopOpacity="0.9" />
+              <stop offset="1" stopColor="#E4A9C4" stopOpacity="0" />
+            </radialGradient>
+          </defs>
+          <circle cx={C} cy={C} r={R_MODULE + 30} fill="none" stroke="#E4A9C4" strokeOpacity="0.25" strokeWidth="1" strokeDasharray="1 14" strokeLinecap="round">
+            <animateTransform attributeName="transform" type="rotate" from={`0 ${C} ${C}`} to={`360 ${C} ${C}`} dur="90s" repeatCount="indefinite" />
+          </circle>
+          {[0, 1.2].map((delay) => (
             <circle key={delay} cx={C} cy={C} r={70} fill="none" stroke="#E4A9C4" strokeWidth="1.5">
               <animate attributeName="r" from="70" to="190" dur="2.6s" begin={`${delay}s`} repeatCount="indefinite" />
               <animate attributeName="stroke-opacity" from="0.55" to="0" dur="2.6s" begin={`${delay}s`} repeatCount="indefinite" />
             </circle>
           ))}
-
-        {/* ligações e pulsos */}
-        {fronts.map((f, fi) => (
-          <g key={f.id}>
-            {f.modules.map((mo, j) => {
-              const pulse = offsets[fi] + j + 1
-              const path = `M ${mo.pos.x} ${mo.pos.y} L ${f.pos.x} ${f.pos.y}`
-              return (
-                <g key={mo.slug}>
-                  <line x1={mo.pos.x} y1={mo.pos.y} x2={f.pos.x} y2={f.pos.y} stroke="#FFFFFF" strokeOpacity="0.14" strokeWidth="1" />
-                  {!reduced && (
-                    <circle r="3.2" fill="#FFFFFF" opacity="0.95">
-                      <animateMotion dur={`${2.4 + (pulse % 5) * 0.35}s`} begin={`${(pulse * 0.37) % 3}s`} repeatCount="indefinite" path={path} />
-                    </circle>
-                  )}
-                </g>
-              )
-            })}
-            <line x1={f.pos.x} y1={f.pos.y} x2={C} y2={C} stroke="#E4A9C4" strokeOpacity="0.38" strokeWidth="1.6" />
-            {!reduced && (
-              <circle r="4.5" fill="#E4A9C4" filter="url(#nh-glow)">
+          {fronts.map((f, fi) => (
+            <g key={f.id}>
+              {f.modules.map((mo, j) => {
+                const pulse = offsets[fi] + j + 1
+                return (
+                  <circle key={mo.slug} r="3.2" fill="#FFFFFF" opacity="0.95">
+                    <animateMotion dur={`${2.4 + (pulse % 5) * 0.35}s`} begin={`${(pulse * 0.37) % 3}s`} repeatCount="indefinite" path={`M ${mo.pos.x} ${mo.pos.y} L ${f.pos.x} ${f.pos.y}`} />
+                  </circle>
+                )
+              })}
+              <circle r="8" fill="url(#nh-spark)">
                 <animateMotion dur="1.8s" begin={`${(f.deg / 360) * 1.8}s`} repeatCount="indefinite" path={`M ${f.pos.x} ${f.pos.y} L ${C} ${C}`} />
               </circle>
-            )}
-          </g>
-        ))}
+            </g>
+          ))}
+        </svg>
+      )}
+
+      {/* camada 3: módulos, frentes e nomes, por cima dos pulsos */}
+      <svg viewBox={`0 0 ${SIZE} ${SIZE}`} className="absolute inset-0 h-full w-full overflow-visible" aria-hidden focusable="false">
+        <defs>
+          <radialGradient id="nh-node" cx="0.35" cy="0.3" r="0.8">
+            <stop offset="0" stopColor="#B27BE0" />
+            <stop offset="1" stopColor="#511C76" />
+          </radialGradient>
+          <radialGradient id="nh-halo" cx="0.5" cy="0.5" r="0.5">
+            <stop offset="0" stopColor="#C95788" stopOpacity="0.55" />
+            <stop offset="0.5" stopColor="#C95788" stopOpacity="0.18" />
+            <stop offset="1" stopColor="#C95788" stopOpacity="0" />
+          </radialGradient>
+        </defs>
 
         {/* módulos */}
         {fronts.flatMap((f) =>
           f.modules.map((mo) => (
             <g key={mo.slug}>
-              <circle cx={mo.pos.x} cy={mo.pos.y} r="9" fill="#C95788" opacity="0.35" filter="url(#nh-glow)" />
+              <circle cx={mo.pos.x} cy={mo.pos.y} r="16" fill="url(#nh-halo)" />
               <circle cx={mo.pos.x} cy={mo.pos.y} r="5.5" fill="#E4A9C4">
                 <title>{mo.name}</title>
               </circle>
@@ -131,7 +159,7 @@ export function NeuralHub({ className, labels = true }: NeuralHubProps) {
           const lines = words.length > 2 ? [words.slice(0, 2).join(' '), words.slice(2).join(' ')] : [f.name]
           return (
             <g key={f.id}>
-              <circle cx={f.pos.x} cy={f.pos.y} r="30" fill="#C95788" opacity="0.28" filter="url(#nh-glow)" />
+              <circle cx={f.pos.x} cy={f.pos.y} r="46" fill="url(#nh-halo)" />
               <circle cx={f.pos.x} cy={f.pos.y} r="22" fill="url(#nh-node)" stroke="#E4A9C4" strokeOpacity="0.7" strokeWidth="1.5" />
               <text x={f.pos.x} y={f.pos.y + 5} textAnchor="middle" fontSize="14" fontWeight="800" fill="#FFFFFF" fontFamily="Manrope, system-ui, sans-serif">
                 {f.modules.length}

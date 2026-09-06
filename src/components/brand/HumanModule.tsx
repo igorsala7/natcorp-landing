@@ -1,6 +1,6 @@
-import { useId } from 'react'
+import { useId, useRef } from 'react'
 import type { ReactNode } from 'react'
-import { m, useReducedMotion } from 'motion/react'
+import { m, useInView, useReducedMotion } from 'motion/react'
 import type { LucideIcon } from 'lucide-react'
 import { MODULES, SYMBOL_BOX } from './logo-paths'
 import { cn } from '@/lib/utils'
@@ -92,10 +92,13 @@ export function HumanModule({
   const glow = dark ? '#E4A9C4' : '#C95788'
   const line = dark ? '#FFFFFF' : '#511C76'
   const { x = 0, y = 0, scale = 1 } = frame ?? {}
-  const dashAnim = animated && !reduced
+  const root = useRef<HTMLDivElement>(null)
+  /** As linhas de luz e os chips só se mexem com a composição na tela. */
+  const inView = useInView(root, { margin: '160px 0px' })
+  const dashAnim = animated && !reduced && inView
 
   return (
-    <div className={cn('relative', className)}>
+    <div ref={root} className={cn('relative', className)}>
       <svg
         viewBox={`0 0 ${SYMBOL_BOX} ${SYMBOL_BOX}`}
         className="block h-auto w-full overflow-visible"
@@ -126,9 +129,6 @@ export function HumanModule({
             <stop offset="0" stopColor="#C95788" stopOpacity={dark ? 0.55 : 0.22} />
             <stop offset="1" stopColor="#C95788" stopOpacity="0" />
           </radialGradient>
-          <filter id={id('glow')} x="-20%" y="-20%" width="140%" height="140%">
-            <feGaussianBlur stdDeviation="0.09" />
-          </filter>
           <filter id={id('sat')}>
             <feColorMatrix type="saturate" values={String(saturate)} />
           </filter>
@@ -162,7 +162,10 @@ export function HumanModule({
         {/* contornos dos módulos como linhas de luz */}
         <g fill="none" strokeLinejoin="round" strokeLinecap="round">
           {paths.map((d, i) => (
-            <path key={`g${i}`} d={d} transform={pathTransform} stroke={glow} strokeWidth={0.075} opacity={dark ? 0.55 : 0.35} filter={`url(#${id('glow')})`} />
+            <path key={`g${i}`} d={d} transform={pathTransform} stroke={glow} strokeWidth={0.16} opacity={dark ? 0.16 : 0.1} />
+          ))}
+          {paths.map((d, i) => (
+            <path key={`g2${i}`} d={d} transform={pathTransform} stroke={glow} strokeWidth={0.07} opacity={dark ? 0.35 : 0.22} />
           ))}
           {paths.map((d, i) => (
             <path key={`b${i}`} d={d} transform={pathTransform} stroke={line} strokeWidth={0.014} opacity={dark ? 0.42 : 0.5} />
@@ -194,13 +197,13 @@ export function HumanModule({
           key={c.label}
           className={cn('absolute z-10', chipPos[c.at], c.desktopOnly && 'hidden sm:block')}
           aria-hidden
-          animate={reduced ? undefined : { y: [0, -7, 0] }}
-          transition={{ duration: 5 + i * 0.8, repeat: Infinity, ease: 'easeInOut', delay: i * 0.7 }}
+          animate={reduced || !inView ? { y: 0 } : { y: [0, -7, 0] }}
+          transition={reduced || !inView ? { duration: 0.6, ease: 'easeOut' } : { duration: 5 + i * 0.8, repeat: Infinity, ease: 'easeInOut', delay: i * 0.7 }}
         >
           <span
             className={cn(
-              'flex items-center gap-2.5 rounded-xl border px-3 py-2 shadow-lift backdrop-blur-md',
-              dark ? 'border-white/20 bg-white/[0.12] text-white' : 'border-brand-mist bg-white/90 text-brand-ink',
+              'flex items-center gap-2.5 rounded-xl border px-3 py-2 shadow-lift',
+              dark ? 'border-white/20 bg-white/[0.16] text-white' : 'border-brand-mist bg-white/95 text-brand-ink',
             )}
           >
             <span className={cn('flex h-7 w-7 shrink-0 items-center justify-center rounded-lg', dark ? 'bg-white text-brand-purple' : 'bg-brand-gradient text-white')}>

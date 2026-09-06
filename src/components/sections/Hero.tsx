@@ -1,5 +1,5 @@
 import { useRef } from 'react'
-import { m, useReducedMotion, useScroll, useTransform } from 'motion/react'
+import { m, useInView, useReducedMotion, useScroll, useTransform } from 'motion/react'
 import { ArrowRight, ChevronDown, Sparkles } from 'lucide-react'
 import { Link } from 'react-router'
 import { Button } from '@/components/ui/button'
@@ -27,6 +27,8 @@ export function Hero() {
   const reduced = useReducedMotion() ?? false
   const ref = useRef<HTMLElement>(null)
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end start'] })
+  /** A seta de rolar só balança com o hero na tela. */
+  const inView = useInView(ref, { margin: '120px 0px' })
   const yText = useTransform(scrollYProgress, [0, 1], [0, -70])
   const opacityText = useTransform(scrollYProgress, [0, 0.6], [1, 0])
   const yStage = useTransform(scrollYProgress, [0, 1], [0, 80])
@@ -53,17 +55,21 @@ export function Hero() {
       animate={done ? { opacity: 1 } : { opacity: 0 }}
       transition={{ delay: 1.8, duration: 0.8 }}
     >
-      <m.span className="block" animate={reduced ? undefined : { y: [0, 6, 0] }} transition={{ duration: 1.8, repeat: Infinity, ease: 'easeInOut' }}>
+      <m.span
+        className="block"
+        animate={reduced || !inView ? { y: 0 } : { y: [0, 6, 0] }}
+        transition={reduced || !inView ? { duration: 0.4 } : { duration: 1.8, repeat: Infinity, ease: 'easeInOut' }}
+      >
         <ChevronDown className="h-6 w-6" />
       </m.span>
     </m.a>
   )
 
   const text = (
-    <m.div style={{ y: reduced ? 0 : yText, opacity: reduced ? 1 : opacityText }} className="relative z-10 max-w-2xl">
+    <m.div style={{ y: reduced ? 0 : yText, opacity: reduced ? 1 : opacityText, willChange: reduced ? undefined : 'transform, opacity' }} className="relative z-10 max-w-2xl">
       <m.p
         {...show(0.05)}
-        className="inline-flex items-center gap-2 whitespace-nowrap rounded-full border border-white/20 bg-white/10 px-3.5 py-1.5 text-[11px] font-semibold uppercase tracking-[0.1em] text-white/90 backdrop-blur-sm sm:px-4 sm:text-[12px] sm:tracking-[0.14em]"
+        className="inline-flex items-center gap-2 whitespace-nowrap rounded-full border border-white/20 bg-white/[0.12] px-3.5 py-1.5 text-[11px] font-semibold uppercase tracking-[0.1em] text-white/90 sm:px-4 sm:text-[12px] sm:tracking-[0.14em]"
       >
         <Sparkles className="h-3.5 w-3.5 text-[#E4A9C4]" strokeWidth={2} />
         HR Tech brasileira · há mais de 35 anos
