@@ -43,6 +43,7 @@ npm run lint     # oxlint
 | `/estruturas/:slug` | Página por estrutura (empresa única, várias unidades, grupo com RH central, RH por unidade, equipes em clientes): como o RH costuma funcionar, dores e respostas, quem faz o quê, o fluxo animado do centro de serviços, os 31 módulos aplicados, o caminho para o CSC, personas e FAQ |
 | `/perguntas-frequentes` | Todas as perguntas frequentes, gerais e para grupos, com atalhos para as páginas que aprofundam (a seção de grupos leva a `/estruturas`) |
 | `/modelo-comercial` | Modular, em nuvem e pelo número de colaboradores: os três pilares, histórico completo na implantação, contabilização integrada ao ERP, diferenciais frente a outros sistemas, comparativo e como funciona a contratação |
+| `/apresentacao` | Apresentação executiva em tela cheia (fora do menu e do sitemap): 24 slides do deck comercial, com navegação por teclado, índice, notas do apresentador, tela cheia e exportação em PDF. `?s=N` abre direto no slide N |
 | `/jornada-da-contratacao` | Jornada do colaborador em 24 etapas e 4 fases, em uma indústria fictícia. Duas visões (`?modo=pratico` alterna): a história completa, com personagens 3D, mini mockups e o mapa que acompanha a rolagem, e a visão prática, um diagrama por raias (gestor, candidato, colaborador, RH, SESMT, sistema). Fecha com o diagrama animado dos módulos se integrando |
 | qualquer outra | Página 404 |
 
@@ -59,6 +60,30 @@ depende de onde o WordPress vai continuar publicado.
 `npm run build` roda antes `scripts/generate-sitemap.mjs`, que gera `public/sitemap.xml` e `public/robots.txt`
 a partir dos registros em `src/content/modulePages`, `src/content/segments` e `src/content/structures` (use `VITE_SITE_URL`
 para o domínio final).
+
+## Apresentação executiva
+
+`/apresentacao` é o deck comercial do sistema, em tela cheia e sem a moldura do site: 24 slides que seguem a
+seção 14 do manual (um assunto por slide, até três números de destaque, seção de produto em Azul Profundo,
+rodapé com o símbolo e o número do slide). O roteiro vai do momento do RH e do custo da operação manual até a
+plataforma (as sete frentes, módulo a módulo, e a NATI), segurança na Oracle Cloud, resultados, comparativo,
+modelo comercial, implantação, clientes, o custo de esperar e o convite para a demonstração.
+
+- **Apresentar**: setas, espaço ou Page Up/Down trocam de slide; `F` tela cheia; `N` notas do apresentador;
+  `G` índice; `Esc` fecha. Em tela cheia a barra some depois de alguns segundos sem mexer o mouse.
+- **Compartilhar**: a posição fica na URL (`/apresentacao?s=12`), e o índice tem "Copiar o link deste slide".
+- **PDF**: o botão "Baixar em PDF" entrega `public/natcorp-apresentacao.pdf`, gerado a partir dos próprios
+  slides (um por página, 16:9, igual à tela). Depois de mudar o conteúdo, gere de novo: `npm run build && npm run preview`
+  e, em outro terminal, `npm run export:deck` (`--png pasta` salva também um PNG por slide; requer o pacote
+  `playwright`). A impressão pelo navegador (`Ctrl/Cmd+P`) sai em paisagem, um slide por página, mas com o
+  layout de tela estreita; prefira o PDF gerado.
+- **Conteúdo**: textos, números e notas em `src/content/presentation.ts`; o roteiro (ordem, capítulos, títulos)
+  em `src/components/presentation/slides/index.ts`; a moldura (rolagem com encaixe, teclado, barra, índice,
+  notas, exportação) em `src/components/presentation/Deck.tsx`; os blocos de slide (`Slide`, `SlideTitle`,
+  `Big`, `Card`, `Chip`, `Rise`, `Stagger`) em `Slide.tsx`. Os tamanhos de texto são fluidos (variáveis
+  `--dk-*` em `src/index.css`), para caber de um projetor 1280x720 a um monitor 4K e no celular.
+- Os módulos, personas, comparativo, resultados e clientes vêm dos mesmos arquivos de conteúdo do site
+  (`modules.ts`, `personas.ts`, `recognition.ts`, `nati.ts`), então uma correção vale para os dois.
 
 ## Conteúdo dos módulos
 
@@ -79,7 +104,8 @@ escrito a partir das 33 apresentações comerciais de natcorprh.app e do briefin
 src/
   pages/        LandingPage, ModulesIndexPage, ModulePage (template data-driven), NatiModulePage, NatPontoModulePage e
                 PeopleAnalyticsModulePage (páginas dedicadas com as telas do produto), SegmentsIndexPage e SegmentPage,
-                StructuresIndexPage e StructurePage (templates data-driven de content/structures), HiringJourneyPage, NotFoundPage
+                StructuresIndexPage e StructurePage (templates data-driven de content/structures), HiringJourneyPage,
+                PresentationPage (a apresentação executiva em tela cheia), NotFoundPage
   components/
     brand/      Logo.tsx (símbolo + wordmark em vetor), logo-paths.ts (geometria gerada do manual),
                 LogoMotion.tsx (a assinatura em movimento: os losangos se encaixam, o raio rosa acende o X
@@ -95,6 +121,9 @@ src/
                 escolhe qual abre a home.
     motion/     Intro (abertura), SmoothScroll, ScrollManager (rotas + âncoras), PageTransition,
                 Reveal/Stagger, SplitText, Counter, Marquee, Magnetic, SpotlightCard, Parallax, ScrollProgress
+    presentation/ Deck (a moldura da apresentação: rolagem com encaixe, teclado, progresso, índice, notas, tela cheia e
+                exportação em PDF), Slide (o slide 16:9 e os blocos de texto, número, cartão e etiqueta) e slides/ (os 24
+                slides em cinco arquivos: abertura, frentes, plataforma, negócio e fechamento; a ordem em index.ts)
     mockups/    Telas do produto construídas em código: dashboard, DevicesShowcase (notebook, tablet e
                 celular), nati/ (chat, gráficos, WhatsApp, painel do operador), natponto/ (as cinco telas
                 do app) e analytics/ (Painel do Operador: indicadores de medicina, comparativo financeiro em
@@ -134,7 +163,7 @@ src/
                 substituir por fotos da Natcorp (créditos em CREDITS.md)
   hooks/        useMediaQuery, useScrolled, useIntroDone, useBrandGradientId, useSeo
   lib/          motion.ts (curvas e variantes), lenisStore.ts, leadSchema.ts, submitLead.ts, utils.ts
-scripts/        generate-sitemap.mjs
+scripts/        generate-sitemap.mjs, export-presentation.mjs (PDF e PNG da apresentação, via Playwright)
   module-art/   kit.cjs (paleta, módulo, primitivas), icons.cjs (31 glifos), scenes/<slug>.cjs (31 cenas),
                 build.cjs (gera brand/modulos em SVG e PNG via Playwright)
 brand/

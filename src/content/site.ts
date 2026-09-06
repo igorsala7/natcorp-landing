@@ -53,6 +53,8 @@ export const paths = {
   commercial: '/modelo-comercial',
   /** Página interna com as peças de motion da marca (fora do menu e do sitemap). */
   motion: '/motion',
+  /** Apresentação executiva em tela cheia (deck comercial), fora do menu e do sitemap. */
+  presentation: '/apresentacao',
 } as const
 
 export interface NavLink {

@@ -9,7 +9,8 @@
     "build": "tsc -b && vite build",
     "lint": "oxlint",
     "preview": "vite preview",
-    "sitemap": "node scripts/generate-sitemap.mjs"
+    "sitemap": "node scripts/generate-sitemap.mjs",
+    "export:deck": "node scripts/export-presentation.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.9.1",

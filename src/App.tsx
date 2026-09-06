@@ -10,6 +10,7 @@ import { ScrollManager } from '@/components/motion/ScrollManager'
 import { Navbar } from '@/components/sections/Navbar'
 import { Footer } from '@/components/sections/Footer'
 import LandingPage from '@/pages/LandingPage'
+import { paths } from '@/content/site'
 
 const ModulesIndexPage = lazy(() => import('@/pages/ModulesIndexPage'))
 const ModulePage = lazy(() => import('@/pages/ModulePage'))
@@ -27,6 +28,7 @@ const FaqPage = lazy(() => import('@/pages/FaqPage'))
 const CommercialPage = lazy(() => import('@/pages/CommercialPage'))
 const NotFoundPage = lazy(() => import('@/pages/NotFoundPage'))
 const MotionPage = lazy(() => import('@/pages/MotionPage'))
+const PresentationPage = lazy(() => import('@/pages/PresentationPage'))
 
 /** HashRouter apenas para prévias hospedadas fora da raiz de um domínio (VITE_ROUTER=hash). */
 const Router = import.meta.env.VITE_ROUTER === 'hash' ? HashRouter : BrowserRouter
@@ -109,6 +111,15 @@ function AppRoutes() {
             </Suspense>
           }
         />
+        {/* Apresentação executiva em tela cheia (fora do menu e do sitemap). */}
+        <Route
+          path={paths.presentation}
+          element={
+            <Suspense fallback={<PageFallback />}>
+              <PresentationPage />
+            </Suspense>
+          }
+        />
         {/* Página interna de motion da marca (fora do menu e do sitemap). */}
         <Route
           path="/motion"
@@ -141,6 +152,24 @@ function AppRoutes() {
   )
 }
 
+/** A moldura do site (barra, rodapé, rolagem suave): fica de fora nas páginas em tela cheia, como a apresentação. */
+function Shell() {
+  const { pathname } = useLocation()
+  const chromeless = pathname === paths.presentation
+  return (
+    <>
+      {!chromeless && <SmoothScroll />}
+      {!chromeless && <ScrollProgress />}
+      <ScrollManager />
+      {!chromeless && <Navbar />}
+      <main id="conteudo">
+        <AppRoutes />
+      </main>
+      {!chromeless && <Footer />}
+    </>
+  )
+}
+
 function App() {
   return (
     <MotionProvider>
@@ -152,14 +181,7 @@ function App() {
           >
             Pular para o conteúdo
           </a>
-          <SmoothScroll />
-          <ScrollProgress />
-          <ScrollManager />
-          <Navbar />
-          <main id="conteudo">
-            <AppRoutes />
-          </main>
-          <Footer />
+          <Shell />
           <Toaster position="bottom-right" />
         </Router>
       </IntroProvider>

@@ -155,3 +155,67 @@
     animation-play-state: paused;
   }
 }
+
+/* ------------------------------------------------------------------------------------------------
+ * Apresentação executiva (/apresentacao): tamanhos fluidos e impressão em 16:9, um slide por página.
+ * ---------------------------------------------------------------------------------------------- */
+.deck-root {
+  /* Margens de 8% (manual, seção 14); no celular, margens de leitura. */
+  --dk-mx: clamp(1.25rem, 7vw, 8.5rem);
+  --dk-mt: clamp(1.25rem, 5vh, 3.5rem);
+  --dk-mb: clamp(4.5rem, 9vh, 6rem);
+  --dk-gap: clamp(0.75rem, 2vh, 1.5rem);
+  --dk-card: clamp(0.85rem, min(1.3vw, 2.4vh), 1.5rem);
+  --dk-icon: clamp(2rem, min(2.6vw, 4.6vh), 3rem);
+  --dk-eyebrow: clamp(0.68rem, 0.78vw, 0.85rem);
+  --dk-h1: clamp(2.2rem, min(5.4vw, 10vh), 5.6rem);
+  --dk-h2: clamp(1.7rem, min(3.5vw, 6.4vh), 3.7rem);
+  --dk-lead: clamp(0.95rem, min(1.25vw, 2.4vh), 1.35rem);
+  --dk-body: clamp(0.86rem, min(1vw, 1.9vh), 1.06rem);
+  --dk-small: clamp(0.76rem, min(0.86vw, 1.65vh), 0.92rem);
+  --dk-big: clamp(2.3rem, min(4.8vw, 9vh), 5.2rem);
+  --dk-mid: clamp(1.5rem, min(2.5vw, 4.8vh), 2.7rem);
+  scrollbar-width: none;
+}
+.deck-root::-webkit-scrollbar {
+  display: none;
+}
+@media print {
+  /* Impressão pelo navegador: um slide por página, em paisagem (o PDF fiel à tela vem de `npm run export:deck`). */
+  @page {
+    size: landscape;
+    margin: 0;
+  }
+  html,
+  body {
+    background: #fff !important;
+  }
+  .deck-ui {
+    display: none !important;
+  }
+  .deck-root {
+    height: auto !important;
+    overflow: visible !important;
+    scroll-snap-type: none !important;
+  }
+  .deck-slide,
+  .deck-slide > div {
+    height: 100vh !important;
+    min-height: 100vh !important;
+    max-height: 100vh !important;
+  }
+  .deck-slide {
+    break-after: page;
+    page-break-after: always;
+    break-inside: avoid;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  .deck-slide:last-child {
+    break-after: auto;
+    page-break-after: auto;
+  }
+  .deck-slide-footer {
+    display: flex !important;
+  }
+}
