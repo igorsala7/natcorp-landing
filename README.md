@@ -82,6 +82,9 @@ src/
                 StructuresIndexPage e StructurePage (templates data-driven de content/structures), HiringJourneyPage, NotFoundPage
   components/
     brand/      Logo.tsx (símbolo + wordmark em vetor), logo-paths.ts (geometria gerada do manual),
+                LogoMotion.tsx (a assinatura em movimento: os losangos se encaixam, o raio rosa acende o X
+                e o wordmark aparece; usada na abertura), motion/ (peças da mesma família: SystemMotion,
+                NatiMotion e CloudMotion, reunidas na página interna /motion, fora do menu e do sitemap),
                 NatiAvatar e EmployeeAvatar (os personagens 3D em disco claro, com anel opcional), NatPontoIcon (ícone em vetor)
                 HumanModule.tsx: fotografia recortada pelos módulos do símbolo, gradiente da marca por cima e
                 linhas de luz nas arestas (hero, banner "Por que Natcorp", retratos das personas)
@@ -158,7 +161,9 @@ Tokens do **Manual de Identidade Visual Natcorp v1.2** (setembro de 2026), defin
 ## Sistema de movimento
 
 - Curva da marca `cubic-bezier(0.22, 1, 0.36, 1)`; cenas com `cubic-bezier(0.65, 0, 0.35, 1)`.
-- Abertura: os módulos do símbolo se encaixam, o wordmark surge e a cortina sobe (uma vez por sessão).
+- Abertura: os quatro losangos chegam girando e se encaixam, o raio rosa cresce do centro pelo X vazado,
+  o símbolo desliza e o wordmark aparece ao lado; depois a cortina sobe (uma vez por sessão). A mesma peça
+  (`LogoMotion`) e as irmãs do sistema, da NATI e da nuvem ficam em `/motion`, em fundo escuro e claro.
 - Revelações por palavra com máscara (`SplitText`), blocos escalonados (`Stagger`), contadores, parallax leve,
   seção de módulos com navegação fixa que acompanha a rolagem, chat da NATI que troca por perfil, faixa contínua.
 - Transição de cena entre rotas (`PageTransition`) e rolagem para âncoras entre páginas (`ScrollManager`).

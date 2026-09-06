@@ -7,7 +7,7 @@ import { LOGO_MOTION_MS, LogoMotion } from '@/components/brand/LogoMotion'
 
 const STORAGE_KEY = 'natcorp:intro'
 /** A assinatura completa mais um respiro antes de a cortina subir. */
-const HOLD_MS = LOGO_MOTION_MS + 350
+const HOLD_MS = LOGO_MOTION_MS + 450
 
 function shouldShow() {
   if (typeof window === 'undefined') return false
@@ -55,12 +55,12 @@ export function IntroProvider({ children }: { children: ReactNode }) {
           <m.div
             key="intro"
             aria-hidden
-            className="fixed inset-0 z-[100] flex items-center justify-center bg-brand-blue"
+            className="fixed inset-0 z-[100] flex items-center justify-center bg-white bg-[radial-gradient(ellipse_at_center,#FFFFFF_0%,#F4F2F7_55%,#E9E5F1_100%)]"
             initial={{ y: 0 }}
             exit={{ y: '-100%', transition: { duration: 0.85, ease: EASE_IN_OUT } }}
           >
             <m.div exit={{ opacity: 0, y: -24, transition: { duration: 0.4, ease: EASE } }}>
-              <LogoMotion tone="white" className="w-[min(80vw,520px)]" />
+              <LogoMotion tone="gradient" className="w-[min(86vw,640px)]" />
             </m.div>
           </m.div>
         )}
