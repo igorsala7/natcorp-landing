@@ -1,0 +1,117 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800" viewBox="0 0 1200 800" role="img" aria-label="Ilustração do módulo Recrutamento e Seleção: Processos seletivos, banco de talentos e SLAs por vaga." font-family="Manrope, Arial, sans-serif">
+  <defs>
+    <linearGradient id="il-recrutamento-e-selecao-grad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#9A408A"/>
+      <stop offset="0.5" stop-color="#511C76"/>
+      <stop offset="1" stop-color="#2C1A63"/>
+    </linearGradient>
+    <clipPath id="il-recrutamento-e-selecao-clip"><rect width="1200" height="800"/></clipPath>
+  </defs>
+  <rect width="1200" height="800" fill="#FFFFFF"/>
+  <g clip-path="url(#il-recrutamento-e-selecao-clip)">
+    <g fill="none" stroke="#511C76" stroke-opacity="0.22" stroke-width="3">
+      <path d="M1322.51 -753.33 L1565.19 -510.65 C1599.71 -476.13 1599.71 -420.16 1565.19 -385.63 L1322.51 -142.95 C1287.98 -108.43 1232.02 -108.43 1197.49 -142.95 L954.81 -385.63 C920.29 -420.16 920.29 -476.13 954.81 -510.65 L1197.49 -753.33 C1232.02 -787.85 1287.98 -787.85 1322.51 -753.33 Z"/>
+      <path d="M1730.65 -345.19 L1973.33 -102.51 C2007.85 -67.98 2007.85 -12.02 1973.33 22.51 L1730.65 265.19 C1696.13 299.71 1640.16 299.71 1605.63 265.19 L1362.95 22.51 C1328.43 -12.02 1328.43 -67.98 1362.95 -102.51 L1605.63 -345.19 C1640.16 -379.71 1696.13 -379.71 1730.65 -345.19 Z"/>
+      <path d="M914.37 -345.19 L1157.05 -102.51 C1191.57 -67.98 1191.57 -12.02 1157.05 22.51 L914.37 265.19 C879.84 299.71 823.87 299.71 789.35 265.19 L546.67 22.51 C512.15 -12.02 512.15 -67.98 546.67 -102.51 L789.35 -345.19 C823.87 -379.71 879.84 -379.71 914.37 -345.19 Z"/>
+      <path d="M1322.51 62.95 L1565.19 305.63 C1599.71 340.16 1599.71 396.13 1565.19 430.65 L1322.51 673.33 C1287.98 707.85 1232.02 707.85 1197.49 673.33 L954.81 430.65 C920.29 396.13 920.29 340.16 954.81 305.63 L1197.49 62.95 C1232.02 28.43 1287.98 28.43 1322.51 62.95 Z"/>
+    </g>
+    <path d="M651.69 167.63 L852.37 368.31 C880.91 396.86 880.91 443.14 852.37 471.69 L651.69 672.37 C623.14 700.91 576.86 700.91 548.31 672.37 L347.63 471.69 C319.09 443.14 319.09 396.86 347.63 368.31 L548.31 167.63 C576.86 139.09 623.14 139.09 651.69 167.63 Z" fill="#E9E5F1"/>
+    <!-- Cartão da vaga com prazo (SLA) -->
+    <rect x="150" y="270" width="230" height="280" rx="18" fill="#FFFFFF" stroke="#E9E5F1" stroke-width="3"/>
+    <path d="M192.72 298.72 L203.28 309.28 C204.78 310.78 204.78 313.22 203.28 314.72 L192.72 325.28 C191.22 326.78 188.78 326.78 187.28 325.28 L176.72 314.72 C175.22 313.22 175.22 310.78 176.72 309.28 L187.28 298.72 C188.78 297.22 191.22 297.22 192.72 298.72 Z" fill="#511C76" />
+    <rect x="216" y="302" width="110" height="10" rx="5" fill="#1B1238"/>
+    <rect x="216" y="322" width="70" height="10" rx="5" fill="#8E88A3"/>
+    <rect x="174" y="352" width="182" height="3" fill="#E9E5F1"/>
+    <rect x="174" y="374" width="180" height="10" rx="5" fill="#E9E5F1"/>
+    <rect x="174" y="396" width="140" height="10" rx="5" fill="#E9E5F1"/>
+    <rect x="174" y="418" width="160" height="10" rx="5" fill="#E9E5F1"/>
+    <rect x="174" y="478" width="150" height="36" rx="18" fill="#2C1A63"/>
+    <text x="249" y="501.4" text-anchor="middle" font-size="15" font-weight="700" fill="#FFFFFF">SLA 5 dias</text>
+    <line x1="392" y1="345" x2="458" y2="345" stroke="#511C76" stroke-width="3" stroke-linecap="round"/>
+    <path d="M459.19 339.19 L463.81 343.81 C464.47 344.47 464.47 345.53 463.81 346.19 L459.19 350.81 C458.53 351.47 457.47 351.47 456.81 350.81 L452.19 346.19 C451.53 345.53 451.53 344.47 452.19 343.81 L456.81 339.19 C457.47 338.53 458.53 338.53 459.19 339.19 Z" fill="#511C76" />
+    <!-- Funil: 5 → 3 → 1 -->
+    <rect x="420" y="160" width="360" height="110" rx="20" fill="#FFFFFF" stroke="#E9E5F1" stroke-width="3"/>
+    <g>
+      <circle cx="470" cy="215" r="26" fill="#E9E5F1"/>
+      <clipPath id="av-470-215"><circle cx="470" cy="215" r="26"/></clipPath>
+      <g clip-path="url(#av-470-215)" fill="#511C76">
+        <circle cx="470" cy="209.43" r="9.29"/>
+        <path d="M452.36 242.86 a17.64 17.64 0 0 1 35.29 0 Z" transform="translate(0 0)"/>
+      </g>
+    </g>
+    <g>
+      <circle cx="535" cy="215" r="26" fill="#E9E5F1"/>
+      <clipPath id="av-535-215"><circle cx="535" cy="215" r="26"/></clipPath>
+      <g clip-path="url(#av-535-215)" fill="#511C76">
+        <circle cx="535" cy="209.43" r="9.29"/>
+        <path d="M517.36 242.86 a17.64 17.64 0 0 1 35.29 0 Z" transform="translate(0 0)"/>
+      </g>
+    </g>
+    <g>
+      <circle cx="600" cy="215" r="26" fill="#E9E5F1"/>
+      <clipPath id="av-600-215"><circle cx="600" cy="215" r="26"/></clipPath>
+      <g clip-path="url(#av-600-215)" fill="#511C76">
+        <circle cx="600" cy="209.43" r="9.29"/>
+        <path d="M582.36 242.86 a17.64 17.64 0 0 1 35.29 0 Z" transform="translate(0 0)"/>
+      </g>
+    </g>
+    <g>
+      <circle cx="665" cy="215" r="26" fill="#E9E5F1"/>
+      <clipPath id="av-665-215"><circle cx="665" cy="215" r="26"/></clipPath>
+      <g clip-path="url(#av-665-215)" fill="#511C76">
+        <circle cx="665" cy="209.43" r="9.29"/>
+        <path d="M647.36 242.86 a17.64 17.64 0 0 1 35.29 0 Z" transform="translate(0 0)"/>
+      </g>
+    </g>
+    <g>
+      <circle cx="730" cy="215" r="26" fill="#E9E5F1"/>
+      <clipPath id="av-730-215"><circle cx="730" cy="215" r="26"/></clipPath>
+      <g clip-path="url(#av-730-215)" fill="#511C76">
+        <circle cx="730" cy="209.43" r="9.29"/>
+        <path d="M712.36 242.86 a17.64 17.64 0 0 1 35.29 0 Z" transform="translate(0 0)"/>
+      </g>
+    </g>
+    <rect x="470" y="290" width="260" height="110" rx="20" fill="#FFFFFF" stroke="#E9E5F1" stroke-width="3"/>
+    <g>
+      <circle cx="535" cy="345" r="26" fill="#E9E5F1"/>
+      <clipPath id="av-535-345"><circle cx="535" cy="345" r="26"/></clipPath>
+      <g clip-path="url(#av-535-345)" fill="#511C76">
+        <circle cx="535" cy="339.43" r="9.29"/>
+        <path d="M517.36 372.86 a17.64 17.64 0 0 1 35.29 0 Z" transform="translate(0 0)"/>
+      </g>
+    </g>
+    <g>
+      <circle cx="600" cy="345" r="26" fill="#E9E5F1"/>
+      <clipPath id="av-600-345"><circle cx="600" cy="345" r="26"/></clipPath>
+      <g clip-path="url(#av-600-345)" fill="#511C76">
+        <circle cx="600" cy="339.43" r="9.29"/>
+        <path d="M582.36 372.86 a17.64 17.64 0 0 1 35.29 0 Z" transform="translate(0 0)"/>
+      </g>
+    </g>
+    <g>
+      <circle cx="665" cy="345" r="26" fill="#E9E5F1"/>
+      <clipPath id="av-665-345"><circle cx="665" cy="345" r="26"/></clipPath>
+      <g clip-path="url(#av-665-345)" fill="#511C76">
+        <circle cx="665" cy="339.43" r="9.29"/>
+        <path d="M647.36 372.86 a17.64 17.64 0 0 1 35.29 0 Z" transform="translate(0 0)"/>
+      </g>
+    </g>
+    <rect x="525" y="420" width="150" height="120" rx="20" fill="#FFFFFF" stroke="#E9E5F1" stroke-width="3"/>
+    <path d="M608.5 438.5 L641.5 471.5 C646.19 476.19 646.19 483.81 641.5 488.5 L608.5 521.5 C603.81 526.19 596.19 526.19 591.5 521.5 L558.5 488.5 C553.81 483.81 553.81 476.19 558.5 471.5 L591.5 438.5 C596.19 433.81 603.81 433.81 608.5 438.5 Z" fill="#C95788" />
+    <g>
+      <circle cx="600" cy="480" r="30" fill="#FFFFFF"/>
+      <clipPath id="av-600-480"><circle cx="600" cy="480" r="30"/></clipPath>
+      <g clip-path="url(#av-600-480)" fill="#511C76">
+        <circle cx="600" cy="473.57" r="10.71"/>
+        <path d="M579.64 512.14 a20.36 20.36 0 0 1 40.71 0 Z" transform="translate(0 0)"/>
+      </g>
+    </g>
+    <!-- A busca no banco de talentos -->
+    <circle cx="724" cy="470" r="34" fill="none" stroke="#511C76" stroke-width="6"/><line x1="748.04" y1="494.04" x2="778.64" y2="524.64" stroke="#511C76" stroke-width="8.399999999999999" stroke-linecap="round"/>
+    <path d="M161.19 694.19 L165.81 698.81 C166.47 699.47 166.47 700.53 165.81 701.19 L161.19 705.81 C160.53 706.47 159.47 706.47 158.81 705.81 L154.19 701.19 C153.53 700.53 153.53 699.47 154.19 698.81 L158.81 694.19 C159.47 693.53 160.53 693.53 161.19 694.19 Z" fill="#511C76" fill-opacity="1"/>
+    <path d="M180.09 694.19 L184.71 698.81 C185.37 699.47 185.37 700.53 184.71 701.19 L180.09 705.81 C179.43 706.47 178.37 706.47 177.71 705.81 L173.09 701.19 C172.43 700.53 172.43 699.47 173.09 698.81 L177.71 694.19 C178.37 693.53 179.43 693.53 180.09 694.19 Z" fill="#511C76" fill-opacity="0.7"/>
+    <path d="M198.99 694.19 L203.61 698.81 C204.27 699.47 204.27 700.53 203.61 701.19 L198.99 705.81 C198.33 706.47 197.27 706.47 196.61 705.81 L191.99 701.19 C191.33 700.53 191.33 699.47 191.99 698.81 L196.61 694.19 C197.27 693.53 198.33 693.53 198.99 694.19 Z" fill="#511C76" fill-opacity="0.45"/>
+    <path d="M217.89 694.19 L222.51 698.81 C223.17 699.47 223.17 700.53 222.51 701.19 L217.89 705.81 C217.23 706.47 216.17 706.47 215.51 705.81 L210.89 701.19 C210.23 700.53 210.23 699.47 210.89 698.81 L215.51 694.19 C216.17 693.53 217.23 693.53 217.89 694.19 Z" fill="#511C76" fill-opacity="0.25"/>
+    <path d="M236.79 694.19 L241.41 698.81 C242.07 699.47 242.07 700.53 241.41 701.19 L236.79 705.81 C236.13 706.47 235.07 706.47 234.41 705.81 L229.79 701.19 C229.13 700.53 229.13 699.47 229.79 698.81 L234.41 694.19 C235.07 693.53 236.13 693.53 236.79 694.19 Z" fill="#511C76" fill-opacity="0.12"/>
+  </g>
+</svg>

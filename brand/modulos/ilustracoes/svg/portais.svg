@@ -1,0 +1,111 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800" viewBox="0 0 1200 800" role="img" aria-label="Ilustração do módulo Portais: Portais do Gestor, do Colaborador e do Candidato." font-family="Manrope, Arial, sans-serif">
+  <defs>
+    <linearGradient id="il-portais-grad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#9A408A"/>
+      <stop offset="0.5" stop-color="#511C76"/>
+      <stop offset="1" stop-color="#2C1A63"/>
+    </linearGradient>
+    <clipPath id="il-portais-clip"><rect width="1200" height="800"/></clipPath>
+  </defs>
+  <rect width="1200" height="800" fill="#FFFFFF"/>
+  <g clip-path="url(#il-portais-clip)">
+    <g fill="none" stroke="#511C76" stroke-opacity="0.22" stroke-width="3">
+      <path d="M1322.51 -753.33 L1565.19 -510.65 C1599.71 -476.13 1599.71 -420.16 1565.19 -385.63 L1322.51 -142.95 C1287.98 -108.43 1232.02 -108.43 1197.49 -142.95 L954.81 -385.63 C920.29 -420.16 920.29 -476.13 954.81 -510.65 L1197.49 -753.33 C1232.02 -787.85 1287.98 -787.85 1322.51 -753.33 Z"/>
+      <path d="M1730.65 -345.19 L1973.33 -102.51 C2007.85 -67.98 2007.85 -12.02 1973.33 22.51 L1730.65 265.19 C1696.13 299.71 1640.16 299.71 1605.63 265.19 L1362.95 22.51 C1328.43 -12.02 1328.43 -67.98 1362.95 -102.51 L1605.63 -345.19 C1640.16 -379.71 1696.13 -379.71 1730.65 -345.19 Z"/>
+      <path d="M914.37 -345.19 L1157.05 -102.51 C1191.57 -67.98 1191.57 -12.02 1157.05 22.51 L914.37 265.19 C879.84 299.71 823.87 299.71 789.35 265.19 L546.67 22.51 C512.15 -12.02 512.15 -67.98 546.67 -102.51 L789.35 -345.19 C823.87 -379.71 879.84 -379.71 914.37 -345.19 Z"/>
+      <path d="M1322.51 62.95 L1565.19 305.63 C1599.71 340.16 1599.71 396.13 1565.19 430.65 L1322.51 673.33 C1287.98 707.85 1232.02 707.85 1197.49 673.33 L954.81 430.65 C920.29 396.13 920.29 340.16 954.81 305.63 L1197.49 62.95 C1232.02 28.43 1287.98 28.43 1322.51 62.95 Z"/>
+    </g>
+    <path d="M651.69 167.63 L852.37 368.31 C880.91 396.86 880.91 443.14 852.37 471.69 L651.69 672.37 C623.14 700.91 576.86 700.91 548.31 672.37 L347.63 471.69 C319.09 443.14 319.09 396.86 347.63 368.31 L548.31 167.63 C576.86 139.09 623.14 139.09 651.69 167.63 Z" fill="#E9E5F1"/>
+    <!-- Portal do Gestor (ao fundo): a equipe e as aprovações -->
+    <rect x="200" y="140" width="420" height="280" rx="20" fill="#FFFFFF" stroke="#E9E5F1" stroke-width="3"/>
+    <path d="M200 184 V160 a20 20 0 0 1 20 -20 H600 a20 20 0 0 1 20 20 V184 Z" fill="#E9E5F1"/>
+    <circle cx="224" cy="162" r="4.5" fill="#8E88A3"/><circle cx="240" cy="162" r="4.5" fill="#8E88A3"/><circle cx="256" cy="162" r="4.5" fill="#8E88A3"/>
+    <g>
+      <circle cx="244" cy="222" r="22" fill="#E9E5F1"/>
+      <clipPath id="av-244-222"><circle cx="244" cy="222" r="22"/></clipPath>
+      <g clip-path="url(#av-244-222)" fill="#511C76">
+        <circle cx="244" cy="217.29" r="7.86"/>
+        <path d="M229.07 245.57 a14.93 14.93 0 0 1 29.86 0 Z" transform="translate(0 0)"/>
+      </g>
+    </g>
+    <rect x="280" y="212" width="130" height="10" rx="5" fill="#1B1238"/>
+    <rect x="280" y="232" width="90" height="10" rx="5" fill="#8E88A3"/>
+    <g>
+      <circle cx="240" cy="300" r="14" fill="#E9E5F1"/>
+      <clipPath id="av-240-300"><circle cx="240" cy="300" r="14"/></clipPath>
+      <g clip-path="url(#av-240-300)" fill="#2C1A63">
+        <circle cx="240" cy="297" r="5"/>
+        <path d="M230.5 315 a9.5 9.5 0 0 1 19 0 Z" transform="translate(0 0)"/>
+      </g>
+    </g>
+    <rect x="264" y="295" width="72" height="10" rx="5" fill="#E9E5F1"/>
+    <circle cx="360" cy="300" r="12" fill="#511C76"/><path d="M355.09 300.55 l3.27 3.27 l6.55 -7.09" fill="none" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+    <g>
+      <circle cx="240" cy="345" r="14" fill="#E9E5F1"/>
+      <clipPath id="av-240-345"><circle cx="240" cy="345" r="14"/></clipPath>
+      <g clip-path="url(#av-240-345)" fill="#2C1A63">
+        <circle cx="240" cy="342" r="5"/>
+        <path d="M230.5 360 a9.5 9.5 0 0 1 19 0 Z" transform="translate(0 0)"/>
+      </g>
+    </g>
+    <rect x="264" y="340" width="72" height="10" rx="5" fill="#E9E5F1"/>
+    <circle cx="360" cy="345" r="12" fill="#511C76"/><path d="M355.09 345.55 l3.27 3.27 l6.55 -7.09" fill="none" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+    <g>
+      <circle cx="240" cy="390" r="14" fill="#E9E5F1"/>
+      <clipPath id="av-240-390"><circle cx="240" cy="390" r="14"/></clipPath>
+      <g clip-path="url(#av-240-390)" fill="#2C1A63">
+        <circle cx="240" cy="387" r="5"/>
+        <path d="M230.5 405 a9.5 9.5 0 0 1 19 0 Z" transform="translate(0 0)"/>
+      </g>
+    </g>
+    <rect x="264" y="385" width="72" height="10" rx="5" fill="#E9E5F1"/>
+    <circle cx="360" cy="390" r="12" fill="#511C76"/><path d="M355.09 390.55 l3.27 3.27 l6.55 -7.09" fill="none" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+    <!-- Portal do Candidato (meio): o currículo e a seleção -->
+    <rect x="390" y="265" width="420" height="280" rx="20" fill="#FFFFFF" stroke="#E9E5F1" stroke-width="3"/>
+    <path d="M390 309 V285 a20 20 0 0 1 20 -20 H790 a20 20 0 0 1 20 20 V309 Z" fill="#E9E5F1"/>
+    <circle cx="414" cy="287" r="4.5" fill="#8E88A3"/><circle cx="430" cy="287" r="4.5" fill="#8E88A3"/><circle cx="446" cy="287" r="4.5" fill="#8E88A3"/>
+    <g>
+      <circle cx="434" cy="347" r="22" fill="#E9E5F1"/>
+      <clipPath id="av-434-347"><circle cx="434" cy="347" r="22"/></clipPath>
+      <g clip-path="url(#av-434-347)" fill="#511C76">
+        <circle cx="434" cy="342.29" r="7.86"/>
+        <path d="M419.07 370.57 a14.93 14.93 0 0 1 29.86 0 Z" transform="translate(0 0)"/>
+      </g>
+    </g>
+    <rect x="470" y="337" width="130" height="10" rx="5" fill="#1B1238"/>
+    <rect x="470" y="357" width="90" height="10" rx="5" fill="#8E88A3"/>
+    <path d="M432 402 H484 L510 428 V504 a18 18 0 0 1 -18 18 H432 a18 18 0 0 1 -18 -18 V420 a18 18 0 0 1 18 -18 Z" fill="#FFFFFF" stroke="#E9E5F1" stroke-width="3" stroke-linejoin="round"/>
+    <path d="M484 402 V428 H510" fill="none" stroke="#E9E5F1" stroke-width="3" stroke-linejoin="round"/>
+    <rect x="432" y="428" width="50" height="8" rx="4" fill="#E9E5F1"/>
+    <rect x="432" y="445" width="60" height="8" rx="4" fill="#E9E5F1"/>
+    <rect x="432" y="462" width="40" height="8" rx="4" fill="#E9E5F1"/>
+    <rect x="432" y="479" width="56" height="8" rx="4" fill="#E9E5F1"/>
+    <!-- Portal do Colaborador (frente): os módulos, com o ponto de entrada em destaque -->
+    <rect x="580" y="390" width="420" height="280" rx="20" fill="#FFFFFF" stroke="#E9E5F1" stroke-width="3"/>
+    <path d="M580 434 V410 a20 20 0 0 1 20 -20 H980 a20 20 0 0 1 20 20 V434 Z" fill="#E9E5F1"/>
+    <circle cx="604" cy="412" r="4.5" fill="#8E88A3"/><circle cx="620" cy="412" r="4.5" fill="#8E88A3"/><circle cx="636" cy="412" r="4.5" fill="#8E88A3"/>
+    <g>
+      <circle cx="624" cy="472" r="22" fill="#E9E5F1"/>
+      <clipPath id="av-624-472"><circle cx="624" cy="472" r="22"/></clipPath>
+      <g clip-path="url(#av-624-472)" fill="#511C76">
+        <circle cx="624" cy="467.29" r="7.86"/>
+        <path d="M609.07 495.57 a14.93 14.93 0 0 1 29.86 0 Z" transform="translate(0 0)"/>
+      </g>
+    </g>
+    <rect x="660" y="462" width="150" height="10" rx="5" fill="#1B1238"/>
+    <rect x="660" y="482" width="100" height="10" rx="5" fill="#8E88A3"/>
+    <path d="M654.76 551.76 L673.24 570.24 C675.87 572.87 675.87 577.13 673.24 579.76 L654.76 598.24 C652.13 600.87 647.87 600.87 645.24 598.24 L626.76 579.76 C624.13 577.13 624.13 572.87 626.76 570.24 L645.24 551.76 C647.87 549.13 652.13 549.13 654.76 551.76 Z" fill="#C95788" />
+    <rect x="630" y="618" width="40" height="8" rx="4" fill="#E9E5F1"/>
+    <path d="M744.76 551.76 L763.24 570.24 C765.87 572.87 765.87 577.13 763.24 579.76 L744.76 598.24 C742.13 600.87 737.87 600.87 735.24 598.24 L716.76 579.76 C714.13 577.13 714.13 572.87 716.76 570.24 L735.24 551.76 C737.87 549.13 742.13 549.13 744.76 551.76 Z" fill="#511C76" />
+    <rect x="720" y="618" width="40" height="8" rx="4" fill="#E9E5F1"/>
+    <path d="M834.76 551.76 L853.24 570.24 C855.87 572.87 855.87 577.13 853.24 579.76 L834.76 598.24 C832.13 600.87 827.87 600.87 825.24 598.24 L806.76 579.76 C804.13 577.13 804.13 572.87 806.76 570.24 L825.24 551.76 C827.87 549.13 832.13 549.13 834.76 551.76 Z" fill="#2C1A63" />
+    <rect x="810" y="618" width="40" height="8" rx="4" fill="#E9E5F1"/>
+    <path d="M924.76 551.76 L943.24 570.24 C945.87 572.87 945.87 577.13 943.24 579.76 L924.76 598.24 C922.13 600.87 917.87 600.87 915.24 598.24 L896.76 579.76 C894.13 577.13 894.13 572.87 896.76 570.24 L915.24 551.76 C917.87 549.13 922.13 549.13 924.76 551.76 Z" fill="#511C76" />
+    <rect x="900" y="618" width="40" height="8" rx="4" fill="#E9E5F1"/>
+    <path d="M161.19 694.19 L165.81 698.81 C166.47 699.47 166.47 700.53 165.81 701.19 L161.19 705.81 C160.53 706.47 159.47 706.47 158.81 705.81 L154.19 701.19 C153.53 700.53 153.53 699.47 154.19 698.81 L158.81 694.19 C159.47 693.53 160.53 693.53 161.19 694.19 Z" fill="#511C76" fill-opacity="1"/>
+    <path d="M180.09 694.19 L184.71 698.81 C185.37 699.47 185.37 700.53 184.71 701.19 L180.09 705.81 C179.43 706.47 178.37 706.47 177.71 705.81 L173.09 701.19 C172.43 700.53 172.43 699.47 173.09 698.81 L177.71 694.19 C178.37 693.53 179.43 693.53 180.09 694.19 Z" fill="#511C76" fill-opacity="0.7"/>
+    <path d="M198.99 694.19 L203.61 698.81 C204.27 699.47 204.27 700.53 203.61 701.19 L198.99 705.81 C198.33 706.47 197.27 706.47 196.61 705.81 L191.99 701.19 C191.33 700.53 191.33 699.47 191.99 698.81 L196.61 694.19 C197.27 693.53 198.33 693.53 198.99 694.19 Z" fill="#511C76" fill-opacity="0.45"/>
+    <path d="M217.89 694.19 L222.51 698.81 C223.17 699.47 223.17 700.53 222.51 701.19 L217.89 705.81 C217.23 706.47 216.17 706.47 215.51 705.81 L210.89 701.19 C210.23 700.53 210.23 699.47 210.89 698.81 L215.51 694.19 C216.17 693.53 217.23 693.53 217.89 694.19 Z" fill="#511C76" fill-opacity="0.25"/>
+    <path d="M236.79 694.19 L241.41 698.81 C242.07 699.47 242.07 700.53 241.41 701.19 L236.79 705.81 C236.13 706.47 235.07 706.47 234.41 705.81 L229.79 701.19 C229.13 700.53 229.13 699.47 229.79 698.81 L234.41 694.19 C235.07 693.53 236.13 693.53 236.79 694.19 Z" fill="#511C76" fill-opacity="0.12"/>
+  </g>
+</svg>

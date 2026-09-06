@@ -135,6 +135,11 @@ src/
   hooks/        useMediaQuery, useScrolled, useIntroDone, useBrandGradientId, useSeo
   lib/          motion.ts (curvas e variantes), lenisStore.ts, leadSchema.ts, submitLead.ts, utils.ts
 scripts/        generate-sitemap.mjs
+  module-art/   kit.cjs (paleta, módulo, primitivas), icons.cjs (31 glifos), scenes/<slug>.cjs (31 cenas),
+                build.cjs (gera brand/modulos em SVG e PNG via Playwright)
+brand/
+  modulos/      ícones e ilustrações dos 31 módulos (icones/ e ilustracoes/, em svg/ e png/), folhas de contato
+                e LEIA-ME.md com as regras aplicadas
 public/
   brand/        SVGs oficiais gerados (horizontal, vertical, símbolo; colorido, chapado, negativo)
   fonts/        Manrope woff2 (latin, latin-ext)
@@ -162,6 +167,10 @@ Tokens do **Manual de Identidade Visual Natcorp v1.2** (setembro de 2026), defin
   da especificação do manual. O wordmark usa os contornos da Manrope 640 com entreletras −2%.
 - **Tipografia**: Manrope em toda a página; títulos com entreletras −2% (`tracking-brand`).
 - **Grafismos**: contorno do símbolo em 1 px (`LogoOutline`) e trilha de módulos (`ModuleTrail`).
+- **Ícones e ilustrações dos módulos**: `brand/modulos/` guarda, para cada um dos 31 módulos, um ícone de app
+  (um módulo do símbolo em gradiente, glifo branco em traço na grade de 24, um acento em Rosa) e uma ilustração plana na
+  grade a 45° (cartões, avatares, gráficos e módulos, com o contorno do símbolo no canto). Tudo é gerado por código em
+  `scripts/module-art/` (`node scripts/module-art/build.cjs`), em SVG e PNG.
 
 ## Sistema de movimento
 

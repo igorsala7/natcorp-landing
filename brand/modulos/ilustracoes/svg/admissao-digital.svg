@@ -1,0 +1,94 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800" viewBox="0 0 1200 800" role="img" aria-label="Ilustração do módulo Admissão Digital: Admissão sem papel, do candidato à folha em poucos cliques." font-family="Manrope, Arial, sans-serif">
+  <defs>
+    <linearGradient id="il-admissao-digital-grad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#9A408A"/>
+      <stop offset="0.5" stop-color="#511C76"/>
+      <stop offset="1" stop-color="#2C1A63"/>
+    </linearGradient>
+    <clipPath id="il-admissao-digital-clip"><rect width="1200" height="800"/></clipPath>
+  </defs>
+  <rect width="1200" height="800" fill="#FFFFFF"/>
+  <g clip-path="url(#il-admissao-digital-clip)">
+    <g fill="none" stroke="#511C76" stroke-opacity="0.22" stroke-width="3">
+      <path d="M1322.51 -753.33 L1565.19 -510.65 C1599.71 -476.13 1599.71 -420.16 1565.19 -385.63 L1322.51 -142.95 C1287.98 -108.43 1232.02 -108.43 1197.49 -142.95 L954.81 -385.63 C920.29 -420.16 920.29 -476.13 954.81 -510.65 L1197.49 -753.33 C1232.02 -787.85 1287.98 -787.85 1322.51 -753.33 Z"/>
+      <path d="M1730.65 -345.19 L1973.33 -102.51 C2007.85 -67.98 2007.85 -12.02 1973.33 22.51 L1730.65 265.19 C1696.13 299.71 1640.16 299.71 1605.63 265.19 L1362.95 22.51 C1328.43 -12.02 1328.43 -67.98 1362.95 -102.51 L1605.63 -345.19 C1640.16 -379.71 1696.13 -379.71 1730.65 -345.19 Z"/>
+      <path d="M914.37 -345.19 L1157.05 -102.51 C1191.57 -67.98 1191.57 -12.02 1157.05 22.51 L914.37 265.19 C879.84 299.71 823.87 299.71 789.35 265.19 L546.67 22.51 C512.15 -12.02 512.15 -67.98 546.67 -102.51 L789.35 -345.19 C823.87 -379.71 879.84 -379.71 914.37 -345.19 Z"/>
+      <path d="M1322.51 62.95 L1565.19 305.63 C1599.71 340.16 1599.71 396.13 1565.19 430.65 L1322.51 673.33 C1287.98 707.85 1232.02 707.85 1197.49 673.33 L954.81 430.65 C920.29 396.13 920.29 340.16 954.81 305.63 L1197.49 62.95 C1232.02 28.43 1287.98 28.43 1322.51 62.95 Z"/>
+    </g>
+    <path d="M651.69 167.63 L852.37 368.31 C880.91 396.86 880.91 443.14 852.37 471.69 L651.69 672.37 C623.14 700.91 576.86 700.91 548.31 672.37 L347.63 471.69 C319.09 443.14 319.09 396.86 347.63 368.31 L548.31 167.63 C576.86 139.09 623.14 139.09 651.69 167.63 Z" fill="#E9E5F1"/>
+    <!-- Candidato e seus documentos -->
+    <g>
+      <circle cx="250" cy="300" r="42" fill="#E9E5F1"/>
+      <clipPath id="av-250-300"><circle cx="250" cy="300" r="42"/></clipPath>
+      <g clip-path="url(#av-250-300)" fill="#511C76">
+        <circle cx="250" cy="291" r="15"/>
+        <path d="M221.5 345 a28.5 28.5 0 0 1 57 0 Z" transform="translate(0 0)"/>
+      </g>
+    </g>
+    <path d="M178 370 H246 L280 404 V502 a18 18 0 0 1 -18 18 H178 a18 18 0 0 1 -18 -18 V388 a18 18 0 0 1 18 -18 Z" fill="#FFFFFF" stroke="#E9E5F1" stroke-width="3" stroke-linejoin="round"/>
+    <path d="M246 370 V404 H280" fill="none" stroke="#E9E5F1" stroke-width="3" stroke-linejoin="round"/>
+    <path d="M208 396 H276 L310 430 V528 a18 18 0 0 1 -18 18 H208 a18 18 0 0 1 -18 -18 V414 a18 18 0 0 1 18 -18 Z" fill="#FFFFFF" stroke="#E9E5F1" stroke-width="3" stroke-linejoin="round"/>
+    <path d="M276 396 V430 H310" fill="none" stroke="#E9E5F1" stroke-width="3" stroke-linejoin="round"/>
+    <rect x="212" y="432" width="70" height="8" rx="4" fill="#1B1238"/>
+    <rect x="212" y="450" width="56" height="8" rx="4" fill="#8E88A3"/>
+    <rect x="212" y="468" width="62" height="8" rx="4" fill="#E9E5F1"/>
+    <line x1="322" y1="470" x2="428" y2="470" stroke="#511C76" stroke-width="3" stroke-linecap="round"/>
+    <path d="M429.19 464.19 L433.81 468.81 C434.47 469.47 434.47 470.53 433.81 471.19 L429.19 475.81 C428.53 476.47 427.47 476.47 426.81 475.81 L422.19 471.19 C421.53 470.53 421.53 469.47 422.19 468.81 L426.81 464.19 C427.47 463.53 428.53 463.53 429.19 464.19 Z" fill="#511C76" />
+    <!-- Celular: documentos conferidos e contrato assinado -->
+    <rect x="440" y="160" width="250" height="510" rx="40" fill="#2C1A63"/>
+    <rect x="452" y="172" width="226" height="486" rx="28" fill="#FFFFFF"/>
+    <rect x="452" y="172" width="226" height="66" rx="28" fill="#511C76"/>
+    <rect x="452" y="210" width="226" height="28" fill="#511C76"/>
+    <rect x="476" y="198" width="100" height="12" rx="6" fill="#FFFFFF" fill-opacity="0.85"/>
+    <rect x="470" y="270" width="26" height="34" rx="6" fill="#E9E5F1"/>
+    <rect x="510" y="278" width="96" height="8" rx="4" fill="#1B1238"/>
+    <rect x="510" y="295" width="64" height="8" rx="4" fill="#8E88A3"/>
+    <circle cx="648" cy="287" r="12" fill="#511C76"/><path d="M643.09 287.55 l3.27 3.27 l6.55 -7.09" fill="none" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+    <rect x="470" y="324" width="26" height="34" rx="6" fill="#E9E5F1"/>
+    <rect x="510" y="332" width="96" height="8" rx="4" fill="#1B1238"/>
+    <rect x="510" y="349" width="64" height="8" rx="4" fill="#8E88A3"/>
+    <circle cx="648" cy="341" r="12" fill="#511C76"/><path d="M643.09 341.55 l3.27 3.27 l6.55 -7.09" fill="none" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+    <rect x="470" y="378" width="26" height="34" rx="6" fill="#E9E5F1"/>
+    <rect x="510" y="386" width="96" height="8" rx="4" fill="#1B1238"/>
+    <rect x="510" y="403" width="64" height="8" rx="4" fill="#8E88A3"/>
+    <circle cx="648" cy="395" r="12" fill="#511C76"/><path d="M643.09 395.55 l3.27 3.27 l6.55 -7.09" fill="none" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+    <rect x="470" y="448" width="190" height="110" rx="16" fill="#E9E5F1"/>
+    <path d="M492 516 c 18 -40 30 -44 26 -18 c -4 22 10 20 24 -8 c 10 -22 16 -8 22 4 c 6 12 20 8 44 -14" fill="none" stroke="#511C76" stroke-width="4" stroke-linecap="round"/>
+    <rect x="492" y="532" width="146" height="3" fill="#511C76"/>
+    <rect x="488" y="584" width="154" height="36" rx="18" fill="#511C76"/>
+    <rect x="535" y="596" width="60" height="12" rx="6" fill="#FFFFFF" fill-opacity="0.85"/>
+    <line x1="702" y1="430" x2="768" y2="430" stroke="#511C76" stroke-width="3" stroke-linecap="round"/>
+    <path d="M769.19 424.19 L773.81 428.81 C774.47 429.47 774.47 430.53 773.81 431.19 L769.19 435.81 C768.53 436.47 767.47 436.47 766.81 435.81 L762.19 431.19 C761.53 430.53 761.53 429.47 762.19 428.81 L766.81 424.19 C767.47 423.53 768.53 423.53 769.19 424.19 Z" fill="#511C76" />
+    <!-- Folha: cadastro criado, admissão fechada -->
+    <path d="M798 200 H976 L1020 244 V582 a18 18 0 0 1 -18 18 H798 a18 18 0 0 1 -18 -18 V218 a18 18 0 0 1 18 -18 Z" fill="#FFFFFF" stroke="#E9E5F1" stroke-width="3" stroke-linejoin="round"/>
+    <path d="M976 200 V244 H1020" fill="none" stroke="#E9E5F1" stroke-width="3" stroke-linejoin="round"/>
+    <g>
+      <circle cx="822" cy="262" r="22" fill="#E9E5F1"/>
+      <clipPath id="av-822-262"><circle cx="822" cy="262" r="22"/></clipPath>
+      <g clip-path="url(#av-822-262)" fill="#511C76">
+        <circle cx="822" cy="257.29" r="7.86"/>
+        <path d="M807.07 285.57 a14.93 14.93 0 0 1 29.86 0 Z" transform="translate(0 0)"/>
+      </g>
+    </g>
+    <rect x="856" y="252" width="110" height="10" rx="5" fill="#1B1238"/>
+    <rect x="856" y="272" width="70" height="10" rx="5" fill="#8E88A3"/>
+    <rect x="806" y="306" width="188" height="3" fill="#E9E5F1"/>
+      <rect x="806" y="330" width="100" height="10" rx="5" fill="#E9E5F1"/>
+      <rect x="944" y="330" width="50" height="10" rx="5" fill="#511C76"/>
+      <rect x="806" y="372" width="80" height="10" rx="5" fill="#E9E5F1"/>
+      <rect x="954" y="372" width="40" height="10" rx="5" fill="#511C76"/>
+      <rect x="806" y="414" width="110" height="10" rx="5" fill="#E9E5F1"/>
+      <rect x="934" y="414" width="60" height="10" rx="5" fill="#511C76"/>
+      <rect x="806" y="456" width="90" height="10" rx="5" fill="#E9E5F1"/>
+      <rect x="950" y="456" width="44" height="10" rx="5" fill="#511C76"/>
+    <rect x="806" y="500" width="188" height="56" rx="12" fill="#511C76"/>
+    <rect x="822" y="522" width="70" height="12" rx="6" fill="#FFFFFF" fill-opacity="0.8"/>
+    <rect x="920" y="522" width="58" height="12" rx="6" fill="#FFFFFF"/>
+    <circle cx="1006" cy="588" r="28" fill="#C95788"/><path d="M994.55 589.27 l7.64 7.64 l15.27 -16.55" fill="none" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M161.19 694.19 L165.81 698.81 C166.47 699.47 166.47 700.53 165.81 701.19 L161.19 705.81 C160.53 706.47 159.47 706.47 158.81 705.81 L154.19 701.19 C153.53 700.53 153.53 699.47 154.19 698.81 L158.81 694.19 C159.47 693.53 160.53 693.53 161.19 694.19 Z" fill="#511C76" fill-opacity="1"/>
+    <path d="M180.09 694.19 L184.71 698.81 C185.37 699.47 185.37 700.53 184.71 701.19 L180.09 705.81 C179.43 706.47 178.37 706.47 177.71 705.81 L173.09 701.19 C172.43 700.53 172.43 699.47 173.09 698.81 L177.71 694.19 C178.37 693.53 179.43 693.53 180.09 694.19 Z" fill="#511C76" fill-opacity="0.7"/>
+    <path d="M198.99 694.19 L203.61 698.81 C204.27 699.47 204.27 700.53 203.61 701.19 L198.99 705.81 C198.33 706.47 197.27 706.47 196.61 705.81 L191.99 701.19 C191.33 700.53 191.33 699.47 191.99 698.81 L196.61 694.19 C197.27 693.53 198.33 693.53 198.99 694.19 Z" fill="#511C76" fill-opacity="0.45"/>
+    <path d="M217.89 694.19 L222.51 698.81 C223.17 699.47 223.17 700.53 222.51 701.19 L217.89 705.81 C217.23 706.47 216.17 706.47 215.51 705.81 L210.89 701.19 C210.23 700.53 210.23 699.47 210.89 698.81 L215.51 694.19 C216.17 693.53 217.23 693.53 217.89 694.19 Z" fill="#511C76" fill-opacity="0.25"/>
+    <path d="M236.79 694.19 L241.41 698.81 C242.07 699.47 242.07 700.53 241.41 701.19 L236.79 705.81 C236.13 706.47 235.07 706.47 234.41 705.81 L229.79 701.19 C229.13 700.53 229.13 699.47 229.79 698.81 L234.41 694.19 C235.07 693.53 236.13 693.53 236.79 694.19 Z" fill="#511C76" fill-opacity="0.12"/>
+  </g>
+</svg>

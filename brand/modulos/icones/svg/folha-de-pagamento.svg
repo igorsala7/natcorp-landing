@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024" role="img" aria-label="Ícone do módulo Folha de Pagamento">
+  <defs>
+    <linearGradient id="ic-folha-de-pagamento-grad" gradientUnits="userSpaceOnUse" x1="73.59" y1="73.59" x2="950.41" y2="950.41">
+      <stop offset="0" stop-color="#9A408A"/>
+      <stop offset="0.5" stop-color="#511C76"/>
+      <stop offset="1" stop-color="#2C1A63"/>
+    </linearGradient>
+    <clipPath id="ic-folha-de-pagamento-tile"><path d="M586.53 148.12 L875.88 437.47 C917.04 478.63 917.04 545.37 875.88 586.53 L586.53 875.88 C545.37 917.04 478.63 917.04 437.47 875.88 L148.12 586.53 C106.96 545.37 106.96 478.63 148.12 437.47 L437.47 148.12 C478.63 106.96 545.37 106.96 586.53 148.12 Z"/></clipPath>
+  </defs>
+  <path d="M586.53 148.12 L875.88 437.47 C917.04 478.63 917.04 545.37 875.88 586.53 L586.53 875.88 C545.37 917.04 478.63 917.04 437.47 875.88 L148.12 586.53 C106.96 545.37 106.96 478.63 148.12 437.47 L437.47 148.12 C478.63 106.96 545.37 106.96 586.53 148.12 Z" fill="url(#ic-folha-de-pagamento-grad)"/>
+  <g clip-path="url(#ic-folha-de-pagamento-tile)" fill="none" stroke="#FFFFFF" stroke-opacity="0.1" stroke-width="30">
+    <path d="M829.32 -66.66 L1090.66 194.68 C1127.84 231.86 1127.84 292.14 1090.66 329.32 L829.32 590.66 C792.14 627.84 731.86 627.84 694.68 590.66 L433.34 329.32 C396.16 292.14 396.16 231.86 433.34 194.68 L694.68 -66.66 C731.86 -103.84 792.14 -103.84 829.32 -66.66 Z"/>
+  </g>
+  <g transform="translate(292 292) scale(18.333333333333332)" fill="none" stroke="#FFFFFF" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M7 3h7l4 4v13a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 6 20V4.5A1.5 1.5 0 0 1 7.5 3"/>
+    <path d="M14 3v4h4"/>
+    <path d="M9 11.5h6"/>
+    <path d="M9 14.5h3.5"/>
+    <path d="M15.74 14.94 L17.06 16.26 C17.25 16.45 17.25 16.75 17.06 16.94 L15.74 18.26 C15.55 18.45 15.25 18.45 15.06 18.26 L13.74 16.94 C13.55 16.75 13.55 16.45 13.74 16.26 L15.06 14.94 C15.25 14.75 15.55 14.75 15.74 14.94 Z" fill="#C95788" stroke="none"/>
+  </g>
+</svg>

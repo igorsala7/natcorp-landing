@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800" viewBox="0 0 1200 800" role="img" aria-label="Ilustração do módulo NatPonto: App de ponto com reconhecimento facial e geolocalização." font-family="Manrope, Arial, sans-serif">
+  <defs>
+    <linearGradient id="il-natponto-grad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#9A408A"/>
+      <stop offset="0.5" stop-color="#511C76"/>
+      <stop offset="1" stop-color="#2C1A63"/>
+    </linearGradient>
+    <clipPath id="il-natponto-clip"><rect width="1200" height="800"/></clipPath>
+  </defs>
+  <rect width="1200" height="800" fill="#FFFFFF"/>
+  <g clip-path="url(#il-natponto-clip)">
+    <g fill="none" stroke="#511C76" stroke-opacity="0.22" stroke-width="3">
+      <path d="M1322.51 -753.33 L1565.19 -510.65 C1599.71 -476.13 1599.71 -420.16 1565.19 -385.63 L1322.51 -142.95 C1287.98 -108.43 1232.02 -108.43 1197.49 -142.95 L954.81 -385.63 C920.29 -420.16 920.29 -476.13 954.81 -510.65 L1197.49 -753.33 C1232.02 -787.85 1287.98 -787.85 1322.51 -753.33 Z"/>
+      <path d="M1730.65 -345.19 L1973.33 -102.51 C2007.85 -67.98 2007.85 -12.02 1973.33 22.51 L1730.65 265.19 C1696.13 299.71 1640.16 299.71 1605.63 265.19 L1362.95 22.51 C1328.43 -12.02 1328.43 -67.98 1362.95 -102.51 L1605.63 -345.19 C1640.16 -379.71 1696.13 -379.71 1730.65 -345.19 Z"/>
+      <path d="M914.37 -345.19 L1157.05 -102.51 C1191.57 -67.98 1191.57 -12.02 1157.05 22.51 L914.37 265.19 C879.84 299.71 823.87 299.71 789.35 265.19 L546.67 22.51 C512.15 -12.02 512.15 -67.98 546.67 -102.51 L789.35 -345.19 C823.87 -379.71 879.84 -379.71 914.37 -345.19 Z"/>
+      <path d="M1322.51 62.95 L1565.19 305.63 C1599.71 340.16 1599.71 396.13 1565.19 430.65 L1322.51 673.33 C1287.98 707.85 1232.02 707.85 1197.49 673.33 L954.81 430.65 C920.29 396.13 920.29 340.16 954.81 305.63 L1197.49 62.95 C1232.02 28.43 1287.98 28.43 1322.51 62.95 Z"/>
+    </g>
+    <path d="M651.69 167.63 L852.37 368.31 C880.91 396.86 880.91 443.14 852.37 471.69 L651.69 672.37 C623.14 700.91 576.86 700.91 548.31 672.37 L347.63 471.69 C319.09 443.14 319.09 396.86 347.63 368.31 L548.31 167.63 C576.86 139.09 623.14 139.09 651.69 167.63 Z" fill="#E9E5F1"/>
+    <!-- Celular com a leitura do rosto -->
+    <rect x="470" y="110" width="270" height="560" rx="40" fill="#2C1A63"/>
+    <rect x="482" y="122" width="246" height="536" rx="28" fill="#FFFFFF"/>
+    <rect x="482" y="122" width="246" height="70" rx="28" fill="#511C76"/>
+    <rect x="482" y="164" width="246" height="28" fill="#511C76"/>
+    <rect x="510" y="150" width="110" height="12" rx="6" fill="#FFFFFF" fill-opacity="0.85"/>
+    <!-- Moldura de leitura com o rosto -->
+    <g fill="none" stroke="#511C76" stroke-width="6" stroke-linecap="round">
+      <path d="M530 260 v-18 a10 10 0 0 1 10 -10 h18"/>
+      <path d="M680 260 v-18 a10 10 0 0 0 -10 -10 h-18"/>
+      <path d="M530 410 v18 a10 10 0 0 0 10 10 h18"/>
+      <path d="M680 410 v18 a10 10 0 0 1 -10 10 h-18"/>
+    </g>
+    <g>
+      <circle cx="605" cy="335" r="62" fill="#E9E5F1"/>
+      <clipPath id="av-605-335"><circle cx="605" cy="335" r="62"/></clipPath>
+      <g clip-path="url(#av-605-335)" fill="#2C1A63">
+        <circle cx="605" cy="321.71" r="22.14"/>
+        <path d="M562.93 401.43 a42.07 42.07 0 0 1 84.14 0 Z" transform="translate(0 0)"/>
+      </g>
+    </g>
+    <rect x="540" y="332" width="130" height="6" rx="3" fill="#C95788"/>
+    <!-- Resultado: batida confirmada -->
+    <rect x="510" y="470" width="190" height="110" rx="20" fill="#E9E5F1"/>
+    <circle cx="548" cy="505" r="18" fill="#511C76"/><path d="M540.64 505.82 l4.91 4.91 l9.82 -10.64" fill="none" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+    <rect x="576" y="497" width="80" height="10" rx="5" fill="#1B1238"/>
+    <rect x="576" y="517" width="56" height="10" rx="5" fill="#8E88A3"/>
+    <rect x="530" y="538" width="150" height="30" rx="15" fill="#511C76"/>
+    <text x="605" y="558.4" text-anchor="middle" font-size="15" font-weight="700" fill="#FFFFFF">08:02</text>
+    <rect x="570" y="634" width="70" height="8" rx="4" fill="#E9E5F1"/>
+    <!-- Localização -->
+    <rect x="160" y="250" width="250" height="210" rx="18" fill="#FFFFFF" stroke="#E9E5F1" stroke-width="3"/>
+    <line x1="180" y1="290" x2="390" y2="290" stroke="#E9E5F1" stroke-width="3"/><line x1="180" y1="326" x2="390" y2="326" stroke="#E9E5F1" stroke-width="3"/><line x1="180" y1="362" x2="390" y2="362" stroke="#E9E5F1" stroke-width="3"/><line x1="180" y1="398" x2="390" y2="398" stroke="#E9E5F1" stroke-width="3"/><line x1="180" y1="434" x2="390" y2="434" stroke="#E9E5F1" stroke-width="3"/>
+    <line x1="200" y1="270" x2="200" y2="440" stroke="#E9E5F1" stroke-width="3"/><line x1="242" y1="270" x2="242" y2="440" stroke="#E9E5F1" stroke-width="3"/><line x1="284" y1="270" x2="284" y2="440" stroke="#E9E5F1" stroke-width="3"/><line x1="326" y1="270" x2="326" y2="440" stroke="#E9E5F1" stroke-width="3"/><line x1="368" y1="270" x2="368" y2="440" stroke="#E9E5F1" stroke-width="3"/>
+    <path d="M285 320 c-30 0 -46 22 -46 46 c0 34 46 76 46 76 s46 -42 46 -76 c0 -24 -16 -46 -46 -46z" fill="#511C76"/>
+    <path d="M286.87 356.87 L294.13 364.13 C295.16 365.16 295.16 366.84 294.13 367.87 L286.87 375.13 C285.84 376.16 284.16 376.16 283.13 375.13 L275.87 367.87 C274.84 366.84 274.84 365.16 275.87 364.13 L283.13 356.87 C284.16 355.84 285.84 355.84 286.87 356.87 Z" fill="#FFFFFF" />
+    <!-- Horário apurado -->
+    <rect x="800" y="300" width="240" height="170" rx="18" fill="#FFFFFF" stroke="#E9E5F1" stroke-width="3"/>
+    <circle cx="860" cy="385" r="46" fill="#FFFFFF" stroke="#E9E5F1" stroke-width="6"/><line x1="897.72" y1="385" x2="902.32" y2="385" stroke="#511C76" stroke-width="4" stroke-linecap="round"/><line x1="860" y1="422.72" x2="860" y2="427.32" stroke="#511C76" stroke-width="4" stroke-linecap="round"/><line x1="822.28" y1="385" x2="817.68" y2="385" stroke="#511C76" stroke-width="4" stroke-linecap="round"/><line x1="860" y1="347.28" x2="860" y2="342.68" stroke="#511C76" stroke-width="4" stroke-linecap="round"/><line x1="860" y1="385" x2="839.88" y2="396.15" stroke="#511C76" stroke-width="5" stroke-linecap="round"/><line x1="860" y1="385" x2="866.89" y2="352.6" stroke="#511C76" stroke-width="5" stroke-linecap="round"/><path d="M861.02 380.02 L864.98 383.98 C865.54 384.54 865.54 385.46 864.98 386.02 L861.02 389.98 C860.46 390.54 859.54 390.54 858.98 389.98 L855.02 386.02 C854.46 385.46 854.46 384.54 855.02 383.98 L858.98 380.02 C859.54 379.46 860.46 379.46 861.02 380.02 Z" fill="#511C76" />
+    <rect x="925" y="360" width="90" height="10" rx="5" fill="#1B1238"/>
+    <rect x="925" y="382" width="64" height="10" rx="5" fill="#8E88A3"/>
+    <rect x="925" y="404" width="76" height="10" rx="5" fill="#8E88A3"/>
+    <path d="M161.19 694.19 L165.81 698.81 C166.47 699.47 166.47 700.53 165.81 701.19 L161.19 705.81 C160.53 706.47 159.47 706.47 158.81 705.81 L154.19 701.19 C153.53 700.53 153.53 699.47 154.19 698.81 L158.81 694.19 C159.47 693.53 160.53 693.53 161.19 694.19 Z" fill="#511C76" fill-opacity="1"/>
+    <path d="M180.09 694.19 L184.71 698.81 C185.37 699.47 185.37 700.53 184.71 701.19 L180.09 705.81 C179.43 706.47 178.37 706.47 177.71 705.81 L173.09 701.19 C172.43 700.53 172.43 699.47 173.09 698.81 L177.71 694.19 C178.37 693.53 179.43 693.53 180.09 694.19 Z" fill="#511C76" fill-opacity="0.7"/>
+    <path d="M198.99 694.19 L203.61 698.81 C204.27 699.47 204.27 700.53 203.61 701.19 L198.99 705.81 C198.33 706.47 197.27 706.47 196.61 705.81 L191.99 701.19 C191.33 700.53 191.33 699.47 191.99 698.81 L196.61 694.19 C197.27 693.53 198.33 693.53 198.99 694.19 Z" fill="#511C76" fill-opacity="0.45"/>
+    <path d="M217.89 694.19 L222.51 698.81 C223.17 699.47 223.17 700.53 222.51 701.19 L217.89 705.81 C217.23 706.47 216.17 706.47 215.51 705.81 L210.89 701.19 C210.23 700.53 210.23 699.47 210.89 698.81 L215.51 694.19 C216.17 693.53 217.23 693.53 217.89 694.19 Z" fill="#511C76" fill-opacity="0.25"/>
+    <path d="M236.79 694.19 L241.41 698.81 C242.07 699.47 242.07 700.53 241.41 701.19 L236.79 705.81 C236.13 706.47 235.07 706.47 234.41 705.81 L229.79 701.19 C229.13 700.53 229.13 699.47 229.79 698.81 L234.41 694.19 C235.07 693.53 236.13 693.53 236.79 694.19 Z" fill="#511C76" fill-opacity="0.12"/>
+  </g>
+</svg>

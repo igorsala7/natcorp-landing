@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024" role="img" aria-label="Ícone do módulo Cargos e Salários">
+  <defs>
+    <linearGradient id="ic-cargos-e-salarios-grad" gradientUnits="userSpaceOnUse" x1="73.59" y1="73.59" x2="950.41" y2="950.41">
+      <stop offset="0" stop-color="#9A408A"/>
+      <stop offset="0.5" stop-color="#511C76"/>
+      <stop offset="1" stop-color="#2C1A63"/>
+    </linearGradient>
+    <clipPath id="ic-cargos-e-salarios-tile"><path d="M586.53 148.12 L875.88 437.47 C917.04 478.63 917.04 545.37 875.88 586.53 L586.53 875.88 C545.37 917.04 478.63 917.04 437.47 875.88 L148.12 586.53 C106.96 545.37 106.96 478.63 148.12 437.47 L437.47 148.12 C478.63 106.96 545.37 106.96 586.53 148.12 Z"/></clipPath>
+  </defs>
+  <path d="M586.53 148.12 L875.88 437.47 C917.04 478.63 917.04 545.37 875.88 586.53 L586.53 875.88 C545.37 917.04 478.63 917.04 437.47 875.88 L148.12 586.53 C106.96 545.37 106.96 478.63 148.12 437.47 L437.47 148.12 C478.63 106.96 545.37 106.96 586.53 148.12 Z" fill="url(#ic-cargos-e-salarios-grad)"/>
+  <g clip-path="url(#ic-cargos-e-salarios-tile)" fill="none" stroke="#FFFFFF" stroke-opacity="0.1" stroke-width="30">
+    <path d="M829.32 -66.66 L1090.66 194.68 C1127.84 231.86 1127.84 292.14 1090.66 329.32 L829.32 590.66 C792.14 627.84 731.86 627.84 694.68 590.66 L433.34 329.32 C396.16 292.14 396.16 231.86 433.34 194.68 L694.68 -66.66 C731.86 -103.84 792.14 -103.84 829.32 -66.66 Z"/>
+  </g>
+  <g transform="translate(292 292) scale(18.333333333333332)" fill="none" stroke="#FFFFFF" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="3.5" y="9.5" width="4.2" height="10" rx="2.1"/>
+    <rect x="9.9" y="4.5" width="4.2" height="13" rx="2.1"/>
+    <rect x="16.3" y="11.5" width="4.2" height="8" rx="2.1"/>
+    <path d="M3.5 21h17"/>
+    <path d="M12.31 9.51 L13.49 10.69 C13.66 10.86 13.66 11.14 13.49 11.31 L12.31 12.49 C12.14 12.66 11.86 12.66 11.69 12.49 L10.51 11.31 C10.34 11.14 10.34 10.86 10.51 10.69 L11.69 9.51 C11.86 9.34 12.14 9.34 12.31 9.51 Z" fill="#C95788" stroke="none"/>
+  </g>
+</svg>
