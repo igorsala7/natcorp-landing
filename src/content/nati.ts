@@ -115,7 +115,7 @@ export const insights: Insight[] = [
 
 /** Números da NATI. Fontes: material comercial Natcorp ("Gestão otimizada" e "Produtividade de RH"). */
 export const natiStats = [
-  { value: 31, prefix: '', suffix: '', label: 'módulos lidos por um único agente de IA' },
+  { value: 31, prefix: '', suffix: '', label: 'módulos lidos por uma única Inteligência Artificial' },
   { value: 70, prefix: 'até ', suffix: '%', label: 'de aumento de produtividade no RH' },
   { value: 70, prefix: '', suffix: '%', label: 'menos chamados de colaboradores' },
   { value: 24, prefix: '', suffix: 'x7', label: 'no sistema, no WhatsApp e no Teams' },

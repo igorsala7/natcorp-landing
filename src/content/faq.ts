@@ -35,7 +35,7 @@ export const faqs: FaqItem[] = [
   },
   {
     q: 'Onde ficam os dados e como é a segurança?',
-    a: 'Em nuvem segura, na infraestrutura Oracle Cloud, com ambientes separados de produção e homologação e um serviço de contingência (disaster recovery) para garantir a continuidade da operação. Perfis de acesso por empresa e filial, trilha de auditoria e tratamento de dados conforme a LGPD.',
+    a: 'Em servidores dedicados na Oracle Cloud Infrastructure, com ambientes separados de produção e homologação e um serviço de contingência (disaster recovery) para garantir a continuidade da operação. Cada acesso passa pelo firewall de aplicação, autentica com credenciais e dois fatores e só enxerga os dados que o perfil permite, por empresa e filial, com trilha de auditoria e tratamento conforme a LGPD.',
   },
   {
     q: 'A Natcorp se conecta aos sistemas que já usamos?',
@@ -51,6 +51,6 @@ export const faqs: FaqItem[] = [
   },
   {
     q: 'Como a Natcorp cobra?',
-    a: 'A proposta considera o porte e os módulos que a sua operação precisa. Não há cobrança por usuário, por CNPJ nem por histórico: todos os colaboradores acessam os portais, todas as empresas do grupo entram na mesma base e a migração traz o histórico completo.',
+    a: 'A contratação é modular, como serviço em nuvem, e o valor é calculado pelo número de colaboradores. Você contrata os módulos que a sua operação precisa. Não há cobrança por usuário, por CNPJ nem por histórico: todos os colaboradores acessam os portais, todas as empresas do grupo entram na mesma base e a implantação traz o histórico completo da empresa.',
   },
 ]

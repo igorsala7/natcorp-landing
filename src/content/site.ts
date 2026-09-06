@@ -46,7 +46,9 @@ export const paths = {
   journey: journeyPath,
   segments: '/segmentos',
   nati: '/modulos/nati',
+  /** Página antiga de grupos: agora redireciona para /estruturas. */
   groups: '/grupos',
+  structures: '/estruturas',
   faq: '/perguntas-frequentes',
   commercial: '/modelo-comercial',
 } as const
@@ -60,7 +62,7 @@ export interface NavLink {
 /** Menu "Sistema": entradas gerais, antes das colunas de módulos por grupo. */
 export const systemLinks: NavLink[] = [
   { to: paths.modules, label: 'Todos os módulos', short: '31 módulos, cada um com a sua página' },
-  { to: paths.groups, label: 'Grupos com várias empresas e filiais', short: 'Multiempresa, perfis por filial e fechamento na matriz' },
+  { to: paths.structures, label: 'Como é a sua estrutura?', short: 'Empresa única, grupo, filiais, RH central ou por unidade' },
   { to: paths.journey, label: 'Jornada do colaborador', short: 'As 24 etapas, da vaga à promoção' },
   { to: paths.security, label: 'Segurança e infraestrutura', short: 'Nuvem Oracle, contingência e LGPD' },
   { to: paths.portals, label: 'Portais e autoatendimento', short: 'Gestor, colaborador e candidato' },
@@ -82,6 +84,6 @@ export const companyLinks: NavLink[] = [
   { to: paths.about, label: 'Sobre a Natcorp', short: '35 anos, missão, visão e valores' },
   { to: `${paths.about}#reconhecimento`, label: 'Clientes e reconhecimentos', short: 'Quem usa o sistema e os prêmios' },
   { to: `${paths.about}#servicos`, label: 'Implantação, suporte e serviços', short: 'Implantação, migração, BPO, treinamento e suporte' },
-  { to: paths.commercial, label: 'Modelo comercial', short: 'Sem cobrança por usuário, CNPJ ou histórico' },
+  { to: paths.commercial, label: 'Modelo comercial', short: 'Modular, em nuvem, pelo número de colaboradores' },
   { to: `${paths.about}#videos`, label: 'Vídeos', short: 'O canal da Natcorp' },
 ]

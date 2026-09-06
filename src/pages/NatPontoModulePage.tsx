@@ -16,7 +16,7 @@ import { NATPONTO_SIZE } from '@/components/mockups/natponto/NatPontoFrame'
 import { NatPontoPhone, type NatPontoScreen } from '@/components/mockups/natponto/screens'
 import { getGroup, getModuleEntry, modulePath, type ModuleEntry } from '@/content/modulePages'
 import type { ModulePage as ModulePageData } from '@/content/modulePages/types'
-import { paths } from '@/content/site'
+import { structurePath } from '@/content/structures'
 import { EASE, viewportOnce } from '@/lib/motion'
 import { ImplantationBlock, ModuleFaqAccordion, ModuleNav, SeeAlsoStrip } from './ModulePage'
 
@@ -39,7 +39,7 @@ const units = [
     icon: MapPin,
     title: 'Um raio por unidade, uma pessoa em várias',
     text: 'Cada filial tem o seu perímetro de marcação. Quem transita entre unidades marca em qualquer uma delas, e o comprovante registra onde foi.',
-    link: { to: paths.groups, label: 'Perfis e unidades para grupos' },
+    link: { to: structurePath('varias-unidades'), label: 'Perfis e unidades por estrutura' },
   },
   {
     icon: MapPinOff,

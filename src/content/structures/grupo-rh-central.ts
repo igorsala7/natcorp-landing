@@ -1,0 +1,202 @@
+import type { StructurePage } from './types'
+
+const page: StructurePage = {
+  slug: 'grupo-rh-central',
+  name: 'Grupo de empresas com RH central',
+  tagline: 'Várias empresas. [[Um único time]] cuidando de todas.',
+  summary:
+    'Holdings e grupos com vários CNPJs, convenções e calendários de fechamento, e um só time de RH respondendo por todos. A Natcorp coloca todas as empresas na mesma base, recebe as requisições de gestores e colaboradores em uma fila única e roda a folha de cada empresa em minutos, conferida pela NATI. É o Centro de Serviços Compartilhados para o qual o sistema foi desenhado.',
+  seo: {
+    title: 'RH central para grupos de empresas: o CSC de RH | Natcorp',
+    description:
+      'Grupo com vários CNPJs e um só RH: empresas e sindicatos ilimitados na mesma base, folha por empresa conferida pela NATI, eSocial por CNPJ e fila única de requisições.',
+  },
+  context: [
+    'Em um grupo, o RH central responde por empresas que não se parecem. Cada CNPJ tem a sua convenção, o seu sindicato, o seu calendário de fechamento e a sua contabilidade. Os pedidos chegam de gestores espalhados por todas elas, por e-mail, planilha e telefone, e o time gasta o mês juntando informação antes de conseguir operar.',
+    'Com todas as empresas na mesma base, o pedido nasce no portal, passa pela alçada da empresa certa e chega pronto ao time central. A folha roda por empresa, a NATI confere cada uma antes do corte, e o eSocial e a contabilização saem por CNPJ. O RH deixa de ser vários departamentos pessoais dentro de um só e passa a operar como um centro de serviços.',
+  ],
+  facts: [
+    { value: 'CNPJs ilimitados', label: 'empresas, CNPJs e sindicatos na mesma base, sem cobrança adicional' },
+    { value: '2.500/min', label: 'colaboradores calculados por minuto, folha por empresa, conferida pela NATI' },
+    { value: 'Uma fila', label: 'requisições e chamados de todas as empresas chegando ao mesmo time' },
+  ],
+  pains: [
+    {
+      icon: 'building',
+      title: 'Cada empresa com convenção, calendário e CNPJ diferentes',
+      text: 'Sindicatos distintos, pisos e adicionais próprios, datas de fechamento que não coincidem. Em sistemas separados, o time central mantém vários cadastros da mesma pessoa e consolida tudo em planilha.',
+    },
+    {
+      icon: 'workflow',
+      title: 'Pedidos chegando de todas as empresas, por todos os canais',
+      text: 'Vaga, férias, movimentação e desligamento pedidos por e-mail, planilha e telefone, cada empresa do seu jeito. O RH central não sabe o que está pendente nem quem ainda precisa aprovar.',
+    },
+    {
+      icon: 'calendar',
+      title: 'Fechar várias folhas no mesmo mês sem ver o que falta',
+      text: 'Ponto de uma empresa atrasado, benefício de outra sem lançamento, admissão de uma terceira sem documento. A pendência só aparece quando a folha já deveria estar fechada.',
+    },
+    {
+      icon: 'bar-chart',
+      title: 'Headcount e custo do grupo montados na mão',
+      text: 'A diretoria pede o consolidado e o RH soma as empresas em planilha. Quando o número chega, já mudou. Previsto e realizado por empresa não conversam com a folha.',
+    },
+  ],
+  answers: [
+    {
+      pain: 'Convenções e CNPJs',
+      title: 'Todas as empresas na mesma base, cada uma com as suas regras',
+      text: 'Empresas, CNPJs e sindicatos ilimitados no mesmo cadastro, sem cobrança adicional. Cada empresa mantém a sua convenção, o seu calendário de fechamento e a sua contabilização. O time central opera tudo em uma tela, e o eSocial sai por CNPJ.',
+      modules: ['folha-de-pagamento', 'esocial', 'cargos-e-salarios', 'infraestrutura-e-seguranca'],
+    },
+    {
+      pain: 'Pedidos de todo lado',
+      title: 'Uma fila única de requisições e chamados para o time central',
+      text: 'Vaga, pessoal, férias, movimentação, desligamento e benefícios nascem como requisição no portal, passam pela alçada da empresa e da área certas, com suplência automática, e caem já aprovados na fila do RH central. Dúvidas viram chamado com prazo e histórico, e a NATI responde o que é rotina.',
+      modules: ['requisicoes-com-workflow', 'portais', 'chamado-interno', 'nati'],
+    },
+    {
+      pain: 'Fechamento',
+      title: 'Pendências por empresa e filial visíveis antes do corte',
+      text: 'Ponto, benefícios e movimentações chegam apurados à folha. A matriz vê o que ainda está aberto em cada empresa e filial, confere com a NATI e roda a folha de cada empresa a 2.500 colaboradores por minuto. A contabilização de cada CNPJ sai pronta para o ERP.',
+      modules: ['folha-de-pagamento', 'ponto-eletronico', 'nati', 'conexao-com-outros-sistemas'],
+    },
+    {
+      pain: 'Consolidado',
+      title: 'Headcount, orçamento e indicadores por empresa e do grupo',
+      text: 'Posições, previsto e realizado por empresa, filial e centro de custo, com a visão do grupo para a matriz. Turnover, absenteísmo, custo e horas extras por empresa nos painéis, e o consolidado para a diretoria, sem planilha.',
+      modules: ['administracao-de-pessoal', 'business-intelligence', 'people-analytics'],
+    },
+  ],
+  responsibilities: [
+    { task: 'Requisição de vaga e headcount', by: 'gestores', note: 'pelo Portal do Gestor, com a alçada financeira da empresa e da área', modules: ['requisicoes-com-workflow', 'administracao-de-pessoal'] },
+    { task: 'Recrutamento e admissão', by: 'rh-central', note: 'o processo seletivo abre pela requisição aprovada; o candidato preenche e assina pelo portal e o time central valida', modules: ['recrutamento-e-selecao', 'admissao-digital', 'assinatura-eletronica'] },
+    { task: 'Férias, alterações cadastrais e funcionais', by: 'gestores', note: 'pedidas no portal pelo colaborador ou pelo gestor e efetivadas na folha da empresa após a aprovação', modules: ['requisicoes-com-workflow', 'portais'] },
+    { task: 'Ponto: marcação, tratamento e aprovação', by: 'gestores', note: 'o colaborador marca no NatPonto e pede abono com justificativa; o gestor aprova o período pelo celular', modules: ['natponto', 'ponto-eletronico'] },
+    { task: 'Benefícios', by: 'rh-central', note: 'elegibilidade por empresa, movimentações pedidas no portal e rubricas automáticas na folha de cada CNPJ', modules: ['gestao-de-beneficios', 'requisicoes-com-workflow'] },
+    { task: 'Afastamentos e exames', by: 'rh-central', note: 'atestados enviados pelo portal, exames agendados por função e S-2220 enviado por empresa', modules: ['medicina-ocupacional', 'esocial'] },
+    { task: 'Desligamento', by: 'gestores', note: 'indicado pelo gestor na requisição; o Offboarding reúne rescisão, bloqueios e documentos em uma tela para o time central', modules: ['requisicoes-com-workflow', 'offboarding'] },
+    { task: 'Conferência da folha', by: 'nati', note: 'cruza frequência, benefícios e impostos de cada empresa e aponta inconsistências antes do corte', modules: ['nati', 'folha-de-pagamento'] },
+    { task: 'Fechamento da folha', by: 'rh-central', note: 'por empresa, no calendário de cada uma, a 2.500 colaboradores por minuto', modules: ['folha-de-pagamento'] },
+    { task: 'eSocial e contabilização', by: 'rh-central', note: 'eventos enviados e acompanhados por CNPJ; contabilização com provisões pronta para o ERP', modules: ['esocial', 'conexao-com-outros-sistemas'] },
+    { task: 'Atendimento ao colaborador', by: 'nati', note: 'responde holerite, ponto e benefícios no portal, no WhatsApp e no Teams; o que precisa de gente vira chamado', modules: ['nati', 'chamado-interno'] },
+    { task: 'Indicadores', by: 'rh-central', note: 'headcount, custo, turnover e absenteísmo por empresa e o consolidado do grupo para a diretoria', modules: ['business-intelligence', 'people-analytics'] },
+  ],
+  flow: {
+    inputs: [
+      {
+        from: 'Gestores de todas as empresas',
+        operator: 'gestores',
+        items: [
+          'Requisição de headcount e alteração de headcount',
+          'Requisição de pessoal e admissão',
+          'Alterações funcionais e indicação para movimentações',
+          'Programação de férias',
+          'Horas extras, escala de trabalho e apuração de ponto',
+          'Desligamento',
+          'Treinamento, criação de curso e indicação para curso',
+          'Serviços de terceiros',
+        ],
+      },
+      {
+        from: 'Colaboradores e candidatos',
+        operator: 'gestores',
+        items: [
+          'Alterações cadastrais, endereço e dependentes',
+          'Abono de marcações',
+          'Atestados e afastamentos',
+          'Benefícios',
+          'Exames',
+          'Chamados',
+          'Currículo do candidato',
+        ],
+      },
+    ],
+    center: {
+      title: 'Centro de Serviços Compartilhados de RH',
+      text: 'Um só time recebe as requisições de todas as empresas já aprovadas e opera a folha de cada uma na mesma base. A NATI confere, a Assinatura Eletrônica fecha os documentos, e a Admissão Digital, o Onboarding e o Offboarding padronizam a entrada e a saída em todo o grupo.',
+      modules: ['folha-de-pagamento', 'nati', 'admissao-digital', 'assinatura-eletronica', 'onboarding', 'offboarding', 'ged'],
+    },
+    outputs: [
+      { title: 'Folha de cada empresa calculada e conferida', modules: ['folha-de-pagamento', 'nati'] },
+      { title: 'Contabilização da folha com provisões, pronta para o ERP', modules: ['folha-de-pagamento', 'conexao-com-outros-sistemas'] },
+      { title: 'eSocial enviado e acompanhado por CNPJ', modules: ['esocial'] },
+      { title: 'Guias para o governo e os sindicatos e créditos para pagamento dos funcionários', modules: ['folha-de-pagamento', 'conexao-com-outros-sistemas'] },
+      { title: 'Informações aos gestores e colaboradores, no portal e no WhatsApp', modules: ['portais', 'nati'] },
+      { title: 'Recrutamento e Seleção para as vagas aprovadas de qualquer empresa', modules: ['recrutamento-e-selecao', 'quadro-de-vagas'] },
+      { title: 'Gestão de benefícios e de treinamento em todo o grupo', modules: ['gestao-de-beneficios', 'treinamento-e-desenvolvimento'] },
+      { title: 'Medicina Ocupacional e Segurança do Trabalho: exames, EPIs e PGR por unidade', modules: ['medicina-ocupacional', 'seguranca-do-trabalho'] },
+      { title: 'Informações gerenciais, headcount e orçamento de pessoal consolidados', modules: ['business-intelligence', 'administracao-de-pessoal'] },
+    ],
+  },
+  spotlight: ['folha-de-pagamento', 'requisicoes-com-workflow', 'nati', 'esocial', 'administracao-de-pessoal', 'business-intelligence'],
+  moduleNotes: {
+    'folha-de-pagamento': 'Folha de cada empresa do grupo na mesma base, com as convenções e o calendário de cada uma, a 2.500 colaboradores por minuto.',
+    'administracao-de-pessoal': 'Posições, previsto e realizado por empresa, filial e centro de custo, com o consolidado do grupo para a matriz.',
+    'cargos-e-salarios': 'Tabelas e faixas por empresa e sindicato, política de mérito do grupo aplicada em todas, com simulação do impacto por CNPJ.',
+    'gestao-de-beneficios': 'Elegibilidade por empresa, operadoras diferentes em cada CNPJ e rubricas automáticas na folha de cada uma.',
+    natpay: 'Adiantamento pelo WhatsApp para colaboradores de qualquer empresa do grupo, com o desconto na folha do CNPJ certo.',
+    esocial: 'Eventos gerados da folha de cada empresa, enviados e acompanhados por CNPJ, com validador antes do envio.',
+    'juridico-trabalhista': 'Processos de todas as empresas em um painel, com o reclamante importado da folha do CNPJ certo e S-2500 por empresa.',
+    'ponto-eletronico': 'Regras de jornada e banco de horas por sindicato e empresa, fechamento por empresa e pendências por filial antes do corte.',
+    natponto: 'Um raio de marcação por unidade em todas as empresas; a marcação chega ao Ponto Eletrônico em segundos, na empresa certa.',
+    'medicina-ocupacional': 'PCMSO e exames por função em cada empresa, atestados enviados pelo portal e S-2220 saindo por CNPJ.',
+    'seguranca-do-trabalho': 'PGR, EPIs e CAT por unidade de cada empresa, com o S-2210 saindo no prazo pelo CNPJ correspondente.',
+    'recrutamento-e-selecao': 'Processo seletivo aberto pela requisição aprovada de qualquer empresa e conduzido pelo time central em uma tela.',
+    'quadro-de-vagas': 'Vagas de todas as empresas e unidades do grupo publicadas em um quadro só, com a marca de cada uma.',
+    'admissao-digital': 'O candidato preenche e assina pelo portal, o time central valida e o cadastro nasce na folha da empresa certa.',
+    onboarding: 'Conteúdo de boas-vindas por empresa, unidade, área ou cargo, com a mesma experiência em todo o grupo.',
+    offboarding: 'Desligamento indicado pelo gestor e concluído pelo time central em uma tela, com a rescisão pela convenção da empresa.',
+    'avaliacoes-e-feedbacks': 'Ciclos de avaliação e pesquisas de clima do grupo inteiro ou por empresa, com calibração entre áreas e empresas.',
+    'metas-e-resultados': 'Metas de grupo, empresa, área e indivíduo no mesmo ciclo, com PLR calculada pela regra de cada empresa e enviada à folha dela.',
+    'treinamento-e-desenvolvimento': 'Catálogo e turmas compartilhados entre as empresas, com orçamento e certificações controlados por empresa.',
+    'carreira-e-sucessao': 'Mapa de sucessão que enxerga talentos de todas as empresas do grupo, não só da que tem a vaga.',
+    portais: 'Portal do Gestor, do Colaborador e do Candidato para todas as empresas, cada pessoa vendo só o que o perfil da sua empresa permite.',
+    'requisicoes-com-workflow': 'Alçadas por empresa, área e centro de custo, com suplência automática, e uma fila única já aprovada para o time central.',
+    'chamado-interno': 'Áreas e sub-áreas de atendimento do centro de serviços, com prazo, histórico e relatórios de volume por empresa.',
+    'blog-corporativo': 'Comunicados para o grupo inteiro, para uma empresa ou para uma filial, na timeline dos portais que as pessoas já usam.',
+    'assinatura-eletronica': 'Contratos, termos e avisos de férias de todas as empresas assinados na tela, com os signatários carregados do organograma de cada uma.',
+    ged: 'Documentos de colaboradores e candidatos de todas as empresas organizados por pessoa, com pendências por admissão e por unidade.',
+    'people-analytics': 'Qualquer listagem cruzada por empresa, filial e centro de custo com o botão Ações, sem depender de TI.',
+    'business-intelligence': 'Painéis por empresa e filial e o consolidado do grupo para a matriz, com alerta quando um indicador sai da faixa.',
+    nati: 'Confere a folha de cada empresa antes do corte, encaminha requisições para a alçada certa e atende colaboradores de todo o grupo no portal, no WhatsApp e no Teams.',
+    'conexao-com-outros-sistemas': 'Contabilização de cada CNPJ para o ERP, operadoras de benefícios e relógios de ponto de todas as empresas na mesma integração.',
+    'infraestrutura-e-seguranca': 'Perfis por empresa, filial e centro de custo, trilha de auditoria e servidores dedicados na Oracle Cloud com contingência para o grupo inteiro.',
+  },
+  csc: {
+    title: 'É o modelo para o qual o sistema foi desenhado',
+    text: 'O Centro de Serviços Compartilhados é o desenho natural da Natcorp: quantas empresas, CNPJs e filiais existirem, um único time faz a gestão e a operação, alimentado por requisições eletrônicas de todo o resto. Um grupo com RH central já tem o time. O que falta é tirar dos e-mails e das planilhas o caminho que cada pedido percorre até ele.',
+    steps: [
+      { title: 'Todas as empresas na mesma base', text: 'Cadastro único de pessoas, empresas, CNPJs e sindicatos, com perfis por empresa, filial e centro de custo e o histórico completo migrado.' },
+      { title: 'Cada pedido vira requisição', text: 'Vaga, admissão, férias, movimentação, desligamento, benefícios e ponto entram pelo portal, com alçadas que seguem o organograma de cada empresa.' },
+      { title: 'Uma fila para o time central', text: 'Requisições aprovadas e chamados de todas as empresas chegam ao mesmo lugar, com prazo, responsável e histórico. A NATI responde o que é rotina.' },
+      { title: 'Folha por empresa, visão do grupo', text: 'O time fecha cada empresa no seu calendário, conferida pela NATI, e a diretoria vê headcount, custo e indicadores consolidados.' },
+    ],
+  },
+  personas: [
+    { role: 'Gerente de RH do grupo', text: 'Vê as pendências de cada empresa antes do corte, fecha a folha de todas com o mesmo time e responde à diretoria com o consolidado, sem montar planilha.' },
+    { role: 'Gestor em qualquer empresa', text: 'Pede vaga e aprova férias, ponto e movimentações da sua equipe pelo celular, dentro da alçada da sua empresa, sem precisar saber como o RH está organizado.' },
+    { role: 'Diretoria e Controladoria', text: 'Recebe a contabilização de cada CNPJ com provisões pronta para o ERP e acompanha headcount e custo de pessoal por empresa e do grupo em tempo real.' },
+  ],
+  faq: [
+    {
+      q: 'Quantas empresas e CNPJs cabem em uma base?',
+      a: 'Quantas o grupo tiver. Empresas, CNPJs e sindicatos são ilimitados no mesmo cadastro, sem cobrança adicional. Cada empresa mantém as suas convenções, o seu calendário de fechamento e a sua contabilização, e a matriz vê tudo consolidado.',
+    },
+    {
+      q: 'Como um time só fecha a folha de várias empresas?',
+      a: 'Ponto, benefícios e movimentações chegam apurados à folha, na mesma base. O time acompanha as pendências de cada empresa e filial, confere com a NATI e roda a folha de cada empresa a 2.500 colaboradores por minuto. A contabilização de cada CNPJ e os eventos do eSocial saem por empresa.',
+    },
+    {
+      q: 'Os gestores de uma empresa veem dados das outras?',
+      a: 'Não. Os perfis seguem a estrutura do grupo: empresa, filial e centro de custo. O gestor vê a própria equipe e aprova dentro da sua alçada. O time central enxerga todas as empresas, e cada acesso e alteração fica registrado na trilha de auditoria.',
+    },
+    {
+      q: 'O que é um Centro de Serviços Compartilhados de RH?',
+      a: 'É o modelo em que um único time de RH faz a gestão e a operação de todas as empresas e unidades, alimentado por requisições eletrônicas de gestores e colaboradores. O pedido nasce no portal, passa pela alçada certa e chega pronto ao time central, que opera tudo na mesma base. A Natcorp foi desenhada para esse modelo.',
+    },
+  ],
+  related: ['varias-unidades', 'rh-por-unidade'],
+}
+
+export default page

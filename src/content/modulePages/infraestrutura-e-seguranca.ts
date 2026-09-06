@@ -6,11 +6,11 @@ const page: ModulePage = {
   group: 'dados-ia-plataforma',
   tagline: 'A folha não pode parar. [[A infraestrutura também não]].',
   summary:
-    'O sistema Natcorp roda na Oracle Cloud, com ambientes separados de produção, homologação e contingência, duas cópias de segurança por dia e dados criptografados. Acesso por perfil, autenticação em dois fatores e LGPD por desenho, em qualquer dispositivo.',
+    'O sistema Natcorp roda em servidores dedicados na Oracle Cloud, com produção, homologação e contingência separadas, duas cópias de segurança por dia e dados criptografados. Acesso por perfil, dois fatores e LGPD por desenho, em qualquer dispositivo.',
   seo: {
     title: 'Infraestrutura e Segurança de Dados do RH | Natcorp',
     description:
-      'Nuvem segura para o sistema de RH: parceria Oracle, ambientes de produção, homologação e contingência, dois backups diários, criptografia, dois fatores e LGPD.',
+      'Servidores dedicados na Oracle Cloud para o sistema de RH: produção, homologação e contingência, dois backups diários, criptografia, dois fatores e LGPD.',
   },
   highlights: [
     { value: '2', label: 'cópias de segurança por dia, guardadas em área isolada' },
@@ -25,7 +25,7 @@ const page: ModulePage = {
     },
     {
       title: 'Dados de pessoas protegidos de ponta a ponta',
-      text: 'Informações pessoais, salariais e de saúde trafegam e ficam guardadas criptografadas, com acesso por perfil, dois fatores e registro de quem viu o quê.',
+      text: 'Informações pessoais, salariais e de saúde trafegam criptografadas, passam pelo firewall de aplicação e por uma camada de permissões antes do banco de dados, com acesso por perfil, dois fatores e registro de quem viu o quê.',
     },
     {
       title: 'Homologue antes de mudar a produção',
@@ -38,8 +38,8 @@ const page: ModulePage = {
   ],
   features: [
     {
-      title: 'Nuvem segura com a Oracle',
-      text: 'A Natcorp é parceira Oracle e roda o sistema na Oracle Cloud, com datacenters de alta disponibilidade e proteção contra invasões e ameaças externas.',
+      title: 'Servidores dedicados na Oracle Cloud',
+      text: 'A Natcorp é parceira Oracle e roda o sistema em servidores dedicados na Oracle Cloud Infrastructure, em datacenters de alta disponibilidade e com proteção contra invasões e ameaças externas. O acesso passa por um firewall de aplicação; Oracle WebLogic e Oracle REST Data Services executam as aplicações; Oracle APEX conversa com o Oracle Database por uma camada de permissões.',
       icon: 'cloud',
     },
     {
@@ -94,14 +94,18 @@ const page: ModulePage = {
   },
   compliance: ['LGPD', 'Trilhas de auditoria de acesso e alterações', 'Conformidade com a legislação vigente em auditorias e no eSocial'],
   personas: [
-    { role: 'CTO e TI', text: 'Recebe uma plataforma na Oracle Cloud com ambientes segregados, redundância e canal direto com a engenharia, sem servidor para manter.' },
+    { role: 'CTO e TI', text: 'Recebe uma plataforma em servidores dedicados na Oracle Cloud, com ambientes segregados, redundância e canal direto com a engenharia, sem nada para instalar ou manter na empresa.' },
     { role: 'CHRO e CFO', text: 'Sabe que a folha não para e que dados salariais e de saúde estão protegidos e auditáveis.' },
     { role: 'RH e Departamento Pessoal', text: 'Trabalha de qualquer dispositivo, testa mudanças em homologação e opera a produção com tranquilidade.' },
   ],
   faq: [
     {
       q: 'Onde ficam os dados do sistema?',
-      a: 'Na Oracle Cloud. A Natcorp é parceira Oracle e usa seus datacenters de alta disponibilidade, com proteção contra invasões e conexões de baixíssima latência. Há ainda redundância em outros datacenters e um ambiente dedicado à recuperação de desastres.',
+      a: 'Em servidores dedicados na Oracle Cloud Infrastructure. A Natcorp é parceira Oracle e usa seus datacenters de alta disponibilidade, com proteção contra invasões e conexões de baixíssima latência. Há ainda redundância em outros datacenters e um ambiente dedicado à recuperação de desastres.',
+    },
+    {
+      q: 'Como é a arquitetura por trás do sistema?',
+      a: 'Em camadas. O usuário acessa pelo navegador, no desktop ou no celular, e a conexão passa por um Web Application Firewall, com HTTPS, filtro WAF, credenciais e autenticação em dois fatores. Dali, a requisição chega aos servidores dedicados na Oracle Cloud Infrastructure: Oracle WebLogic e Oracle REST Data Services executam as aplicações Java, e o Oracle APEX conversa com o Oracle Database por uma camada de permissões, que entrega só os dados que o perfil do usuário permite.',
     },
     {
       q: 'O que acontece se houver uma falha?',

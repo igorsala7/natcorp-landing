@@ -1,0 +1,201 @@
+import type { StructurePage } from './types'
+
+const page: StructurePage = {
+  slug: 'empresa-unica',
+  name: 'Empresa única, uma sede',
+  tagline: 'Um CNPJ, um time de RH e [[a rotina fora da sua mesa]].',
+  summary:
+    'Uma empresa, um endereço e um time de RH pequeno que faz tudo: admite, trata o ponto, lança férias, responde dúvidas e fecha a folha. A Natcorp coloca cada pedido no portal, aprova no fluxo e efetiva sem redigitar, com a NATI respondendo e conferindo. O RH deixa de ser o balcão e passa a operar como o centro de serviços da própria empresa.',
+  seo: {
+    title: 'Sistema de RH para empresa única, uma sede | Natcorp',
+    description:
+      'RH de uma empresa com um só CNPJ e uma sede: portais, requisições com workflow e NATI tiram o operacional do time pequeno, com folha, ponto e eSocial na mesma base.',
+  },
+  context: [
+    'Em uma empresa de um só CNPJ, o RH costuma ser um time pequeno que responde por tudo. A mesma pessoa que admite trata o ponto, lança férias, atende dúvida de holerite e fecha a folha. Os pedidos chegam pelo corredor, pelo e-mail e pelo WhatsApp, e o mês acaba antes do trabalho que exige análise.',
+    'Com uma única base, o pedido deixa de passar pela mesa do RH. O colaborador programa férias, pede abono e atualiza o cadastro no portal, o gestor aprova pelo celular e o sistema efetiva na folha e no ponto. A NATI responde o que é rotina e confere a folha antes do corte. O time continua pequeno, mas passa a gerir em vez de digitar.',
+  ],
+  facts: [
+    { value: '1 CNPJ', label: 'uma empresa, um endereço e uma base com todos os 31 módulos' },
+    { value: 'Autoatendimento', label: 'colaboradores e gestores resolvem o dia a dia no portal e com a NATI' },
+    { value: '2.500/min', label: 'colaboradores calculados por minuto, folha conferida pela NATI antes do corte' },
+  ],
+  pains: [
+    {
+      icon: 'clock',
+      title: 'Um time pequeno fazendo tudo na mão',
+      text: 'Admissão em papel, férias em planilha, atestado por e-mail, dúvida de holerite no corredor. O tempo do RH vai para o operacional, e a análise fica para depois.',
+    },
+    {
+      icon: 'message-square',
+      title: 'O RH como balcão de dúvidas',
+      text: 'Holerite, saldo de férias, banco de horas, benefício. As mesmas perguntas chegam todos os dias, por todos os canais, e cada uma interrompe alguém.',
+    },
+    {
+      icon: 'layers',
+      title: 'Sistemas separados e cadastro repetido',
+      text: 'Ponto em um sistema, folha em outro, benefícios na planilha da operadora. O mesmo CPF digitado várias vezes, e a divergência aparece no fechamento.',
+    },
+    {
+      icon: 'alert-triangle',
+      title: 'Folha conferida por amostragem',
+      text: 'Com pouca gente e pouco tempo, a conferência olha alguns casos e confia no resto. O erro aparece na reclamação do colaborador ou na rejeição do eSocial.',
+    },
+  ],
+  answers: [
+    {
+      pain: 'Operacional na mão',
+      title: 'Cada pedido nasce no portal e é efetivado sem redigitar',
+      text: 'Férias, abono de ponto, alteração cadastral, dependentes, benefícios e desligamento são pedidos no Portal do Colaborador ou no Portal do Gestor, aprovados no fluxo e efetivados na folha, no ponto e nos benefícios. A admissão é feita pelo candidato no portal, com o contrato assinado eletronicamente; o RH só valida.',
+      modules: ['requisicoes-com-workflow', 'portais', 'admissao-digital', 'assinatura-eletronica'],
+    },
+    {
+      pain: 'Balcão de dúvidas',
+      title: 'A NATI responde a rotina; o que sobra vira chamado',
+      text: 'A NATI responde dúvidas de holerite, ponto e benefícios no portal, no WhatsApp e no Teams, a qualquer hora. O que precisa de uma pessoa vira chamado com área, prazo e histórico, e o RH atende em fila organizada em vez de no corredor.',
+      modules: ['nati', 'chamado-interno', 'portais'],
+    },
+    {
+      pain: 'Sistemas separados',
+      title: 'Um cadastro, 31 módulos, uma base',
+      text: 'Folha, ponto, benefícios, eSocial, admissão, treinamento e SESMT usam o mesmo cadastro. A marcação do NatPonto chega ao Ponto Eletrônico, a apuração vai para a folha e o eSocial sai dos dados já validados. Ninguém digita o mesmo CPF duas vezes.',
+      modules: ['folha-de-pagamento', 'ponto-eletronico', 'natponto', 'esocial'],
+    },
+    {
+      pain: 'Conferência',
+      title: 'A NATI confere a folha inteira antes do corte',
+      text: 'A NATI cruza frequência, benefícios e impostos, aponta proventos e descontos atípicos e sugere a correção antes do fechamento. A folha roda a 2.500 colaboradores por minuto, com reprocessamento imediato, e a contabilização com provisões sai pronta para o ERP.',
+      modules: ['nati', 'folha-de-pagamento', 'conexao-com-outros-sistemas'],
+    },
+  ],
+  responsibilities: [
+    { task: 'Requisição de vaga e headcount', by: 'gestores', note: 'pelo Portal do Gestor, com alçada financeira e o orçamento de pessoal validado', modules: ['requisicoes-com-workflow', 'administracao-de-pessoal'] },
+    { task: 'Admissão', by: 'rh-central', note: 'o candidato preenche e assina pelo portal; o RH valida e o cadastro nasce na folha, no ponto e nos benefícios', modules: ['admissao-digital', 'assinatura-eletronica', 'ged'] },
+    { task: 'Alterações cadastrais e funcionais', by: 'gestores', note: 'o colaborador atualiza o próprio cadastro e o gestor indica movimentações no portal, com efetivação automática', modules: ['requisicoes-com-workflow', 'portais'] },
+    { task: 'Férias', by: 'gestores', note: 'programadas pelo colaborador, aprovadas pelo gestor e efetivadas na folha, com o aviso assinado na tela', modules: ['requisicoes-com-workflow', 'assinatura-eletronica'] },
+    { task: 'Ponto: marcação, tratamento e aprovação', by: 'gestores', note: 'marcação no NatPonto, abono com justificativa e aprovação do período pelo gestor antes do fechamento', modules: ['natponto', 'ponto-eletronico'] },
+    { task: 'Benefícios', by: 'rh-central', note: 'elegibilidade parametrizada, movimentações pedidas no portal e rubricas automáticas na folha', modules: ['gestao-de-beneficios'] },
+    { task: 'Afastamentos e exames', by: 'rh-central', note: 'atestado enviado pelo portal, exames agendados por função e afastamento refletido no ponto e na folha', modules: ['medicina-ocupacional', 'requisicoes-com-workflow'] },
+    { task: 'Desligamento', by: 'gestores', note: 'indicado pelo gestor na requisição; o Offboarding reúne rescisão, bloqueios e documentos em uma tela', modules: ['requisicoes-com-workflow', 'offboarding'] },
+    { task: 'Conferência da folha', by: 'nati', note: 'cruza frequência, benefícios e impostos e aponta o que corrigir antes do corte', modules: ['nati', 'folha-de-pagamento'] },
+    { task: 'Fechamento da folha, eSocial e contabilização', by: 'rh-central', note: 'folha em minutos, eventos do eSocial acompanhados na mesma tela e contabilização pronta para o ERP', modules: ['folha-de-pagamento', 'esocial', 'conexao-com-outros-sistemas'] },
+    { task: 'Atendimento ao colaborador', by: 'nati', note: 'responde holerite, ponto e benefícios a qualquer hora; o que precisa de gente vira chamado com prazo', modules: ['nati', 'chamado-interno'] },
+    { task: 'Indicadores', by: 'rh-central', note: 'headcount, custo, turnover e absenteísmo em painéis prontos, sem planilha nem TI', modules: ['business-intelligence', 'people-analytics'] },
+  ],
+  flow: {
+    inputs: [
+      {
+        from: 'Gestores',
+        operator: 'gestores',
+        items: [
+          'Requisição de headcount e de pessoal',
+          'Alterações funcionais e indicação para movimentações',
+          'Programação de férias',
+          'Horas extras e escala de trabalho',
+          'Apuração de ponto',
+          'Desligamento',
+          'Treinamento e indicação para curso',
+        ],
+      },
+      {
+        from: 'Colaboradores e candidatos',
+        operator: 'gestores',
+        items: [
+          'Alterações cadastrais, endereço e dependentes',
+          'Abono de marcações',
+          'Atestados e afastamentos',
+          'Benefícios',
+          'Exames',
+          'Chamados',
+          'Currículo do candidato',
+        ],
+      },
+    ],
+    center: {
+      title: 'O RH como centro de serviços',
+      text: 'Um time pequeno recebe tudo já aprovado e padronizado e opera em uma única base. A NATI confere e atende, a Admissão Digital e a Assinatura Eletrônica tiram o papel do caminho, e o Onboarding e o Offboarding padronizam a entrada e a saída.',
+      modules: ['folha-de-pagamento', 'nati', 'admissao-digital', 'assinatura-eletronica', 'onboarding', 'offboarding', 'ged'],
+    },
+    outputs: [
+      { title: 'Folha calculada em minutos e conferida pela NATI', modules: ['folha-de-pagamento', 'nati'] },
+      { title: 'Contabilização da folha com provisões, pronta para o ERP', modules: ['folha-de-pagamento', 'conexao-com-outros-sistemas'] },
+      { title: 'eSocial enviado e acompanhado na mesma tela', modules: ['esocial'] },
+      { title: 'Guias para o governo e o sindicato e créditos para pagamento dos funcionários', modules: ['folha-de-pagamento'] },
+      { title: 'Informações aos gestores e colaboradores, no portal e no WhatsApp', modules: ['portais', 'nati'] },
+      { title: 'Recrutamento e Seleção para as vagas aprovadas', modules: ['recrutamento-e-selecao', 'quadro-de-vagas'] },
+      { title: 'Gestão de benefícios e de treinamento', modules: ['gestao-de-beneficios', 'treinamento-e-desenvolvimento'] },
+      { title: 'Medicina Ocupacional e Segurança do Trabalho: exames, EPIs e PGR', modules: ['medicina-ocupacional', 'seguranca-do-trabalho'] },
+      { title: 'Informações gerenciais, gráficos e relatórios', modules: ['business-intelligence', 'people-analytics'] },
+    ],
+  },
+  spotlight: ['portais', 'requisicoes-com-workflow', 'nati', 'admissao-digital', 'folha-de-pagamento', 'chamado-interno'],
+  moduleNotes: {
+    'folha-de-pagamento': 'Folha da empresa calculada em minutos, com ponto, benefícios e admissões chegando prontos e a conferência da NATI antes do corte.',
+    'administracao-de-pessoal': 'Posições, vagas e orçamento de pessoal por área e centro de custo, com previsto e realizado lado a lado.',
+    'cargos-e-salarios': 'Tabela salarial e política de mérito aplicadas sem exceção, com a NATI apontando distorções de equidade.',
+    'gestao-de-beneficios': 'Plano de saúde, vale-transporte e alimentação com elegibilidade parametrizada e rubricas automáticas na folha.',
+    natpay: 'Adiantamento salarial pedido pelo WhatsApp e pago por Pix, sem passar pelo RH, com desconto automático na folha.',
+    esocial: 'Eventos gerados da folha validada, enviados e acompanhados na mesma tela, com validador antes do envio.',
+    'juridico-trabalhista': 'Processos trabalhistas com dados do reclamante vindos da folha e do ponto, e S-2500 enviado do próprio processo.',
+    'ponto-eletronico': 'Escalas, banco de horas e abono com workflow, apuração direto para a folha e espelho assinado digitalmente.',
+    natponto: 'Marcação no celular ou em um tablet no modo multiusuário na sede, com reconhecimento facial e geolocalização.',
+    'medicina-ocupacional': 'Exames agendados por função, ASO digital, atestados enviados pelo portal e afastamento refletido no ponto e na folha.',
+    'seguranca-do-trabalho': 'PGR, EPIs com CA validado e ficha assinada na tela, CAT com S-2210 no prazo e CIPA no mesmo sistema.',
+    'recrutamento-e-selecao': 'Processo seletivo aberto pela requisição de vaga aprovada, com etapas e prazos conduzidos pelo próprio time.',
+    'quadro-de-vagas': 'Vagas publicadas com a marca da empresa, candidatura e acompanhamento pelo celular.',
+    'admissao-digital': 'O candidato preenche, anexa e assina pelo portal; o RH valida em uma tela e o cadastro nasce em todos os módulos.',
+    onboarding: 'Boas-vindas, instruções iniciais e treinamentos de entrada no Portal do Colaborador desde o primeiro dia.',
+    offboarding: 'Desligamento em uma tela, com rescisão, bloqueio de acessos e documentos, conferido pela NATI.',
+    'avaliacoes-e-feedbacks': 'Ciclos de avaliação e pesquisas de clima montados pelo próprio RH, com feedback contínuo no portal.',
+    'metas-e-resultados': 'Metas de empresa, área e indivíduo no mesmo ciclo, com bônus e PLR calculados e enviados à folha.',
+    'treinamento-e-desenvolvimento': 'Turmas, orçamento e certificações com vencimento, e treinamentos obrigatórios com alerta antes de vencer.',
+    'carreira-e-sucessao': 'Plano de carreira por cargo, PDI acompanhado e sucessores prontos para as posições-chave da empresa.',
+    portais: 'Portal do Gestor e Portal do Colaborador para toda a empresa, no celular, sem cobrança por usuário.',
+    'requisicoes-com-workflow': 'Férias, abono, cadastro, benefícios, vaga e desligamento com aprovadores definidos e efetivação automática.',
+    'chamado-interno': 'A central de atendimento do RH, com área, prioridade, prazo e histórico, e a NATI na primeira linha.',
+    'blog-corporativo': 'Comunicados, vídeos e avisos da empresa na timeline dos portais que as pessoas já usam.',
+    'assinatura-eletronica': 'Contrato, termos, aviso de férias e espelho de ponto assinados pelo celular, com validade jurídica.',
+    ged: 'Documentos do colaborador e do candidato digitalizados e organizados por pessoa, sem arquivo físico.',
+    'people-analytics': 'Qualquer listagem vira análise com o botão Ações, com gráfico e exportação, sem depender de TI.',
+    'business-intelligence': 'Painéis de headcount, custo, absenteísmo e horas extras em tempo real, com alerta por e-mail.',
+    nati: 'Responde colaboradores e gestores no portal, no WhatsApp e no Teams, confere a folha antes do corte e prepara o que o RH aprova.',
+    'conexao-com-outros-sistemas': 'Contabilização para o ERP, operadoras de benefícios e relógio de ponto conectados, sem redigitar.',
+    'infraestrutura-e-seguranca': 'Servidores dedicados na Oracle Cloud, produção, homologação e contingência, e dois backups por dia.',
+  },
+  csc: {
+    title: 'Você já opera como um centro de serviços',
+    text: 'Um time de RH que atende toda a empresa é, na prática, um centro de serviços. O que falta é o sistema tirar o operacional do caminho: cada pedido entra pelo portal, é aprovado no fluxo e efetivado sem passar pela mesa de alguém. Quando a empresa abrir uma unidade ou ganhar um CNPJ, o modelo já está pronto.',
+    steps: [
+      { title: 'Portal para todo mundo', text: 'Colaboradores e gestores consultam e pedem pelo Portal do Colaborador e pelo Portal do Gestor, no celular, sem cobrança por usuário.' },
+      { title: 'Cada pedido com fluxo', text: 'Férias, abono, cadastro, benefícios, vaga e desligamento com aprovadores definidos e efetivação automática na folha e no ponto.' },
+      { title: 'A NATI na primeira linha', text: 'Dúvidas respondidas pela NATI e chamados com prazo para o resto. A folha conferida por ela antes do corte.' },
+      { title: 'Pronto para crescer', text: 'Nova unidade ou novo CNPJ entram na mesma base, com perfil e raio de marcação próprios, e o mesmo time continua operando.' },
+    ],
+  },
+  personas: [
+    { role: 'Gerente de RH', text: 'Recebe os pedidos já aprovados e padronizados, fecha a folha com a conferência da NATI e usa o tempo que sobra para as pessoas e para a análise.' },
+    { role: 'Gestor de equipe', text: 'Aprova férias, ponto e abono da equipe pelo celular e pede vaga com o orçamento validado, sem passar pelo RH para cada assunto.' },
+    { role: 'Colaborador', text: 'Consulta holerite e espelho de ponto, programa férias, atualiza o cadastro e pergunta à NATI quando precisar, a qualquer hora.' },
+  ],
+  faq: [
+    {
+      q: 'Faz sentido um sistema desse porte para uma empresa de um só CNPJ?',
+      a: 'Sim. A dor de uma empresa única é o tempo de um time pequeno, e é isso que o autoatendimento, as requisições com workflow e a NATI resolvem. Os 31 módulos usam o mesmo cadastro, e não há cobrança por usuário: todos os colaboradores acessam os portais.',
+    },
+    {
+      q: 'O que o colaborador resolve sozinho?',
+      a: 'Consulta holerite, espelho de ponto e benefícios, programa férias, pede abono com comprovante, atualiza cadastro e dependentes, assina documentos e tira dúvidas com a NATI. O que precisa de uma pessoa vira chamado com prazo, e o RH acompanha em fila.',
+    },
+    {
+      q: 'A NATI substitui o time de RH?',
+      a: 'Não. A NATI é a inteligência artificial que trabalha dentro do sistema. Ela responde, analisa, confere a folha e prepara o que foi pedido, e uma pessoa aprova. O time continua decidindo; o que sai da mesa dele é a digitação e a conferência por amostragem.',
+    },
+    {
+      q: 'E se a empresa abrir uma filial ou um novo CNPJ?',
+      a: 'Ela entra na mesma base, com perfil por unidade, alçadas próprias e um raio de marcação no NatPonto. Empresas e CNPJs são ilimitados, e o time que já opera como centro de serviços passa a atender a nova unidade com o mesmo fluxo.',
+    },
+  ],
+  related: ['varias-unidades', 'grupo-rh-central'],
+}
+
+export default page

@@ -113,8 +113,8 @@ export default function SegmentsIndexPage() {
             </StaggerItem>
           </Stagger>
           <Reveal delay={0.2} className="mt-8">
-            <Link to={paths.groups} className="group inline-flex items-center gap-2 text-[15px] font-semibold text-brand-purple">
-              Tem várias empresas e filiais? Veja o que muda
+            <Link to={paths.structures} className="group inline-flex items-center gap-2 text-[15px] font-semibold text-brand-purple">
+              Prefere ver pela sua estrutura? Empresa única, grupo ou filiais
               <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5" aria-hidden />
             </Link>
           </Reveal>

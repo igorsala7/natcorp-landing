@@ -1,9 +1,31 @@
-import { Activity, ArrowRight, ClipboardCheck, Cloud, DatabaseBackup, EyeOff, FilePen, Globe, Headset, KeyRound, Layers, Lock, RefreshCw, ScrollText, ServerOff, ShieldCheck, Users } from 'lucide-react'
+import {
+  Activity,
+  ArrowRight,
+  ClipboardCheck,
+  Cloud,
+  Database,
+  DatabaseBackup,
+  EyeOff,
+  FilePen,
+  Gauge,
+  Globe,
+  Headset,
+  KeyRound,
+  Layers,
+  Lock,
+  RefreshCw,
+  ScrollText,
+  Server,
+  ShieldCheck,
+  UserCheck,
+  Users,
+} from 'lucide-react'
 import { Link } from 'react-router'
 import { Section, Eyebrow, SectionHeader } from '@/components/sections/Section'
 import { SecuritySection } from '@/components/sections/SecuritySection'
 import { FAQSection } from '@/components/sections/FAQSection'
 import { CTASection } from '@/components/sections/CTASection'
+import { InfraDiagram } from '@/components/security/InfraDiagram'
 import { PageTransition } from '@/components/motion/PageTransition'
 import { SplitText } from '@/components/motion/SplitText'
 import { Reveal, Stagger, StaggerItem } from '@/components/motion/Reveal'
@@ -13,24 +35,79 @@ import { useSeo } from '@/hooks/useSeo'
 import { faqs, type FaqItem } from '@/content/faq'
 import { modulePath } from '@/content/modulePages'
 import { paths } from '@/content/site'
+import { structurePath } from '@/content/structures'
 
 const seals = [
-  { icon: Cloud, label: 'Oracle Cloud Infrastructure' },
+  { icon: Cloud, label: 'Servidores dedicados na Oracle Cloud' },
   { icon: DatabaseBackup, label: '2 backups por dia' },
   { icon: KeyRound, label: 'Autenticação em dois fatores e VPN' },
   { icon: ShieldCheck, label: 'LGPD' },
 ]
 
+/* As três camadas do desenho, explicadas em uma frase cada. */
+const layers = [
+  {
+    icon: Server,
+    title: 'Aplicação',
+    text: 'Oracle WebLogic e Oracle REST Data Services recebem cada requisição que passou pelo firewall e executam as aplicações Java do sistema.',
+  },
+  {
+    icon: Database,
+    title: 'Dados',
+    text: 'Oracle APEX conversa com o Oracle Database. Leitura e gravação passam por um canal protegido, dentro da mesma nuvem.',
+  },
+  {
+    icon: UserCheck,
+    title: 'Permissões',
+    text: 'Uma camada de controle filtra os dados conforme o perfil de quem acessa. Cada pessoa só enxerga o que a sua função permite, por empresa e filial.',
+  },
+]
+
+/* Tecnologia Oracle de ponta a ponta: os seis temas da apresentação da Natcorp. */
+const oracle = [
+  {
+    icon: Cloud,
+    title: 'Oracle Cloud Infrastructure',
+    text: 'Servidores dedicados na Oracle Cloud, com alta performance, disponibilidade e escalabilidade para a sua operação de RH.',
+  },
+  {
+    icon: Layers,
+    title: 'Ambientes isolados',
+    text: 'Produção, homologação e contingência (disaster recovery), com políticas de espelhamento e recuperação.',
+  },
+  {
+    icon: Gauge,
+    title: 'Performance',
+    text: 'Mais de 2.500 colaboradores calculados por minuto na folha, com estabilidade nos dias de fechamento.',
+  },
+  {
+    icon: Lock,
+    title: 'Segurança',
+    text: 'LGPD, criptografia, autenticação em dois fatores, gestão de acessos por perfil e trilha de auditoria detalhada.',
+  },
+  {
+    icon: DatabaseBackup,
+    title: 'Backups múltiplos',
+    text: 'Dois backups por dia, automatizados, com políticas de retenção e restauração e cópias guardadas em ambiente isolado.',
+  },
+  {
+    icon: Activity,
+    title: 'Cibersegurança 24 horas',
+    text: 'Monitoramento contínuo por um time especializado em infraestrutura, com auditoria de acessos.',
+  },
+]
+
+/* Como o sistema chega até você: só como serviço, pelo navegador. */
 const saas = [
   {
-    icon: ServerOff,
-    title: 'Sem servidor próprio',
-    text: 'Nada para instalar ou manter na empresa. Infraestrutura, monitoramento e atualizações ficam com a Natcorp.',
+    icon: Server,
+    title: 'Servidores dedicados na Oracle Cloud',
+    text: 'Infraestrutura dedicada à sua operação, sem nada para instalar ou manter na empresa. Monitoramento e atualizações ficam com a Natcorp.',
   },
   {
     icon: RefreshCw,
-    title: 'Legislação e versões em dia',
-    text: 'As atualizações entram sem parar a operação, sempre com homologação antes de aplicar em produção.',
+    title: 'Atualizações sem parar a operação',
+    text: 'As novas versões entram sem interromper o RH, sempre com homologação antes de chegar à produção.',
   },
   {
     icon: Globe,
@@ -40,7 +117,7 @@ const saas = [
 ]
 
 const lgpd: { icon: typeof Users; text: string; link?: { to: string; label: string } }[] = [
-  { icon: Users, text: 'Perfis de acesso granulares por empresa e filial.', link: { to: paths.groups, label: 'Como funciona para grupos' } },
+  { icon: Users, text: 'Perfis de acesso granulares por empresa e filial.', link: { to: structurePath('rh-por-unidade'), label: 'Como funciona com RH por unidade' } },
   { icon: ScrollText, text: 'Trilha de auditoria de acessos e alterações.' },
   { icon: EyeOff, text: 'Anonimização e retenção conforme a política da empresa.' },
   { icon: ClipboardCheck, text: 'Consentimento e finalidade nos portais do candidato e do colaborador.' },
@@ -54,23 +131,23 @@ const commitments = [
   { icon: Activity, title: 'Monitoramento 24 horas', text: 'Por um time especializado, com auditoria de acessos.' },
   { icon: Lock, title: 'Camadas de proteção', text: 'Criptografia, HTTPS, WAF, autenticação em dois fatores e VPN.' },
   { icon: ScrollText, title: 'Trilha de auditoria', text: 'Registro de acessos e alterações, com perfis por empresa e filial.' },
-  { icon: Cloud, title: 'Nuvem Oracle', text: 'Oracle Cloud Infrastructure, sem servidor próprio nem instalação na empresa.' },
+  { icon: Cloud, title: 'Servidores dedicados na Oracle Cloud', text: 'Oracle Cloud Infrastructure dedicada à sua operação, sem nada para instalar na empresa.' },
   { icon: Headset, title: 'Suporte por chamados', text: 'Central de chamados com prazos definidos, histórico e controle de qualidade.' },
 ]
 
 const securityFaqs: FaqItem[] = [
   {
     q: 'O sistema é instalado ou em nuvem?',
-    a: 'Apenas em nuvem, como serviço (SaaS), na infraestrutura Oracle Cloud. Cada cliente conta com ambientes de produção, homologação e contingência, e a Natcorp cuida da infraestrutura.',
+    a: 'Em nuvem, como serviço (SaaS), em servidores dedicados na Oracle Cloud Infrastructure. Nada é instalado na sua empresa: o acesso é pelo navegador, passando pelo firewall de aplicação e pela autenticação em dois fatores. Cada cliente conta com ambientes de produção, homologação e contingência, e a Natcorp cuida da infraestrutura.',
   },
   ...faqs.filter((f) => f.q.startsWith('Onde ficam os dados') || f.q.startsWith('A Natcorp se conecta')),
 ]
 
 export default function SecurityPage() {
   useSeo({
-    title: 'Segurança e infraestrutura: nuvem Oracle com contingência | Natcorp',
+    title: 'Segurança e infraestrutura: servidores dedicados na Oracle Cloud | Natcorp',
     description:
-      'Sistema de RH 100% SaaS na Oracle Cloud: produção, homologação e contingência, dois backups por dia, autenticação em dois fatores, VPN e LGPD por desenho.',
+      'Sistema de RH em servidores dedicados na Oracle Cloud: firewall de aplicação, dois fatores, camada de permissões, três ambientes, dois backups por dia e LGPD.',
     path: paths.security,
   })
 
@@ -97,8 +174,8 @@ export default function SecurityPage() {
             />
             <Reveal delay={0.25}>
               <p className="mt-6 max-w-2xl text-lg leading-relaxed text-brand-graphite sm:text-xl">
-                A operação de RH não pode parar. Por isso a Natcorp roda na Oracle Cloud, com produção e homologação separadas, uma
-                contingência pronta para assumir e a LGPD por desenho.
+                A operação de RH não pode parar. Por isso a Natcorp roda em servidores dedicados na Oracle Cloud Infrastructure, com produção e
+                homologação separadas, uma contingência pronta para assumir e cada camada protegida, do navegador ao banco de dados.
               </p>
             </Reveal>
             <Reveal delay={0.35}>
@@ -118,21 +195,59 @@ export default function SecurityPage() {
         </div>
       </Section>
 
-      <SecuritySection withHeader={false} tone="off" />
+      <SecuritySection withHeader={false} tone="off" diagram={false} />
+
+      <Section id="arquitetura" tone="dark" className="overflow-hidden" aria-labelledby="arquitetura-title">
+        <LogoOutline className="pointer-events-none absolute -bottom-[45%] -right-[12%] h-[130%] w-auto text-white/[0.08]" />
+        <div className="container relative">
+          <SectionHeader
+            id="arquitetura-title"
+            tone="dark"
+            eyebrow="Arquitetura"
+            title="Do navegador ao banco de dados, [[cada camada protegida]]."
+            lead="A Natcorp roda em servidores dedicados na Oracle Cloud Infrastructure. Cada acesso passa pelo firewall de aplicação, autentica com credenciais e dois fatores e só enxerga os dados que o perfil permite."
+          />
+          <div className="mt-12 lg:mt-16">
+            <InfraDiagram variant="full" />
+          </div>
+          <Stagger className="mt-10 grid gap-4 md:grid-cols-3" stagger={0.1} role="list" aria-label="As três camadas da arquitetura">
+            {layers.map((l) => (
+              <StaggerItem key={l.title} role="listitem" className="flex gap-4 rounded-2xl border border-white/10 bg-white/[0.04] p-5">
+                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white/10 text-[#E4A9C4]">
+                  <l.icon className="h-5 w-5" strokeWidth={1.7} aria-hidden />
+                </span>
+                <div className="min-w-0">
+                  <h3 className="text-[16px] font-extrabold text-white">{l.title}</h3>
+                  <p className="mt-1.5 text-[14px] leading-relaxed text-white/70">{l.text}</p>
+                </div>
+              </StaggerItem>
+            ))}
+          </Stagger>
+        </div>
+      </Section>
 
       <Section id="saas" tone="white" aria-labelledby="saas-title">
         <div className="container">
-          <SectionHeader
-            id="saas-title"
-            eyebrow="Como o sistema chega até você"
-            title="100% SaaS, na [[nuvem Oracle]]."
-            lead="A Natcorp é oferecida apenas como serviço. Você usa o sistema. A infraestrutura, as atualizações e o monitoramento ficam com a gente."
-          />
-          <Stagger className="mt-12 grid gap-4 md:grid-cols-3 lg:mt-16" stagger={0.1}>
-            {saas.map((item) => (
+          <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end">
+            <SectionHeader
+              id="saas-title"
+              eyebrow="Tecnologia Oracle de ponta a ponta"
+              title="Infraestrutura de [[nível corporativo]]."
+              lead="Performance, segurança e disponibilidade para a gestão de pessoas da sua organização. Você usa o sistema pelo navegador. A infraestrutura, as atualizações e o monitoramento ficam com a Natcorp."
+            />
+            <Reveal delay={0.3} className="lg:pb-2">
+              <p className="inline-flex items-center gap-2 rounded-full border border-brand-mist bg-brand-off-white px-4 py-2 text-[12px] font-semibold uppercase tracking-[0.14em] text-brand-purple">
+                <Cloud className="h-4 w-4" strokeWidth={1.8} aria-hidden />
+                Parceiro Oracle
+              </p>
+            </Reveal>
+          </div>
+          <Stagger className="mt-12 grid gap-4 sm:grid-cols-2 lg:mt-16 lg:grid-cols-3" stagger={0.08} role="list">
+            {oracle.map((item) => (
               <StaggerItem
                 key={item.title}
-                className="group rounded-3xl border border-brand-mist bg-white p-7 transition-[transform,box-shadow,border-color] duration-500 ease-brand hover:-translate-y-1.5 hover:border-brand-purple/30 hover:shadow-lift"
+                role="listitem"
+                className="group flex h-full flex-col rounded-3xl border border-brand-mist bg-white p-7 transition-[transform,box-shadow,border-color] duration-500 ease-brand hover:-translate-y-1.5 hover:border-brand-purple/30 hover:shadow-lift"
               >
                 <span className="inline-flex h-12 w-12 items-center justify-center rounded-xl bg-brand-off-white text-brand-purple transition-colors duration-500 group-hover:bg-brand-purple group-hover:text-white">
                   <item.icon className="h-6 w-6" strokeWidth={1.6} aria-hidden />
@@ -142,6 +257,26 @@ export default function SecurityPage() {
               </StaggerItem>
             ))}
           </Stagger>
+
+          <div className="mt-14 border-t border-brand-mist pt-10 lg:mt-16">
+            <Reveal y={12} duration={0.5}>
+              <h3 className="text-[12px] font-semibold uppercase tracking-[0.16em] text-brand-purple">Como o sistema chega até você</h3>
+            </Reveal>
+            <Stagger className="mt-6 grid gap-4 md:grid-cols-3" stagger={0.1} role="list">
+              {saas.map((item) => (
+                <StaggerItem key={item.title} role="listitem" className="flex gap-4 rounded-2xl border border-brand-mist bg-brand-off-white p-5">
+                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white text-brand-purple shadow-soft">
+                    <item.icon className="h-5 w-5" strokeWidth={1.7} aria-hidden />
+                  </span>
+                  <div className="min-w-0">
+                    <h4 className="text-[16px] font-extrabold leading-snug text-brand-ink">{item.title}</h4>
+                    <p className="mt-1.5 text-[14px] leading-relaxed text-brand-graphite">{item.text}</p>
+                  </div>
+                </StaggerItem>
+              ))}
+            </Stagger>
+          </div>
+
           <Reveal delay={0.1} className="mt-10 flex flex-wrap items-center gap-x-8 gap-y-2 text-[15px] font-semibold text-brand-purple">
             <Link to={modulePath('infraestrutura-e-seguranca')} className="group inline-flex items-center gap-2">
               Ver o módulo Infraestrutura e Segurança
@@ -239,7 +374,7 @@ export default function SecurityPage() {
 
       <CTASection
         title="Fale com quem cuida da infraestrutura."
-        text="Traga o seu time de TI para a conversa. Mostramos os ambientes, os controles e as conexões com os sistemas que você já usa."
+        text="Traga o seu time de TI para a conversa. Mostramos a arquitetura, os ambientes, os controles e as conexões com os sistemas que você já usa."
       />
     </PageTransition>
   )

@@ -119,7 +119,7 @@ export function NatiSection() {
         {/* A NATI se apresenta: o título é uma mensagem dela, digitada */}
         <div className="max-w-3xl">
           <Reveal y={12} duration={0.5}>
-            <Eyebrow tone="white">NATI · agente de IA especialista em RH</Eyebrow>
+            <Eyebrow tone="white">Inteligência Artificial · NATI, a IA especialista em RH</Eyebrow>
           </Reveal>
           <Reveal delay={0.1} className="mt-6 flex items-start gap-3 sm:gap-4">
             <NatiAvatar ring className="h-12 w-12 shrink-0 sm:h-14 sm:w-14" />
@@ -132,7 +132,7 @@ export function NatiSection() {
           </Reveal>
           <Reveal delay={0.25}>
             <p className="mt-6 text-lg leading-relaxed text-white/75 sm:text-xl">
-              Não é um chat de respostas prontas. É um agente treinado em cada frente do RH, que enxerga a operação inteira e transforma dado em decisão: análise, diagnóstico, pontos de atenção e sugestão, com as fontes citadas.
+              A NATI não é um chatbot de respostas prontas. É uma Inteligência Artificial treinada em cada frente do RH, que enxerga a operação inteira e transforma dado em decisão: análise, diagnóstico, pontos de atenção e sugestão, com as fontes citadas.
             </p>
           </Reveal>
         </div>
@@ -141,7 +141,7 @@ export function NatiSection() {
         <div className="mt-12 grid grid-cols-1 items-center gap-10 lg:mt-16 lg:grid-cols-[1.1fr_1fr] lg:gap-12">
           <Reveal delay={0.15} className="mx-auto w-full max-w-[560px] lg:max-w-none">
             <NeuralHub />
-            <p className="mt-3 text-center text-[12.5px] text-white/55">Sete frentes, 31 módulos, um único agente lendo tudo ao mesmo tempo.</p>
+            <p className="mt-3 text-center text-[12.5px] text-white/55">Sete frentes, 31 módulos, uma única Inteligência Artificial lendo tudo ao mesmo tempo.</p>
           </Reveal>
           <Reveal delay={0.25} className="min-w-0">
             <InsightStream />

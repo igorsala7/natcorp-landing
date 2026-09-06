@@ -1,0 +1,203 @@
+import type { StructurePage } from './types'
+
+const page: StructurePage = {
+  slug: 'equipes-em-clientes',
+  name: 'Equipes alocadas em clientes',
+  tagline: 'Equipes dentro de cada cliente. [[Um RH central fechando tudo]].',
+  summary:
+    'Empresas de terceirização, facilities e serviços industriais com colaboradores trabalhando dentro do cliente. Em cada contrato há um RH da ponta, que admite, desliga, trata o ponto e atende quem está ali. Folha, eSocial, benefícios, obrigações e indicadores ficam com o RH central, que recebe os dados de todas as unidades na mesma base. Cada contrato é uma unidade e um centro de custo.',
+  seo: {
+    title: 'RH para mão de obra alocada em clientes e contratos | Natcorp',
+    description:
+      'Equipes alocadas em clientes: RH da ponta em cada contrato, NatPonto com raio por unidade, exames e EPIs por site e RH central fechando folha, eSocial e benefícios.',
+  },
+  context: [
+    'Quem aloca mão de obra em clientes opera RH em dois lugares ao mesmo tempo. Dentro de cada contrato, alguém admite, desliga, controla o ponto, cuida das férias e atende os colaboradores que estão ali. Na sede, o RH central fecha a folha, cuida do eSocial, dos benefícios e das obrigações de todos. Quando cada ponta trabalha em planilha, o dado chega tarde à sede e o contrato fecha no escuro.',
+    'Com cada contrato como uma unidade e um centro de custo na mesma base, o RH da ponta opera dentro do seu perfil e o que ele lança já está na folha. O ponto chega do NatPonto com o raio de cada site, os exames e EPIs são controlados por unidade e o RH central vê as pendências de cada contrato antes de fechar. A folha, o eSocial e a contabilização saem por empresa, e o custo de pessoal aparece por contrato.',
+  ],
+  facts: [
+    { value: 'Unidade por contrato', label: 'cada cliente é uma unidade e um centro de custo, com perfil e alçadas próprios' },
+    { value: 'Raio por unidade', label: 'marcação no celular ou no tablet, com o raio de cada site do cliente' },
+    { value: 'Uma base', label: 'RH da ponta e RH central no mesmo cadastro; folha e eSocial fechados na sede' },
+  ],
+  pains: [
+    {
+      icon: 'map-pin',
+      title: 'Ponto batido dentro do cliente',
+      text: 'O colaborador trabalha no site do cliente, às vezes em vários no mesmo mês. Marcação em papel ou no relógio do cliente, que o RH central só vê quando alguém envia. Hora extra e falta aparecem tarde.',
+    },
+    {
+      icon: 'users',
+      title: 'Um RH em cada ponta, com o seu jeito',
+      text: 'Cada contrato tem quem admite, desliga e atende a equipe ali. Sem uma base comum, cada ponta mantém a sua planilha, e a sede recebe um formato diferente de cada cliente.',
+    },
+    {
+      icon: 'hard-hat',
+      title: 'Exames, EPIs e PGR por site',
+      text: 'Cada cliente tem os seus riscos, os seus EPIs e as suas exigências de ASO e treinamento. Controlar isso por contrato, com o colaborador mudando de site, é o que mais gera pendência e passivo.',
+    },
+    {
+      icon: 'pie-chart',
+      title: 'Custo de pessoal por contrato só no fim do mês',
+      text: 'A sede precisa saber quanto cada contrato custa em pessoas, horas extras e benefícios. Quando o número depende de consolidar as planilhas das pontas, chega tarde para agir.',
+    },
+  ],
+  answers: [
+    {
+      pain: 'Ponto no cliente',
+      title: 'NatPonto com um raio de marcação por unidade',
+      text: 'Cada site do cliente é uma unidade com o seu raio de marcação. O colaborador marca no próprio celular, com rosto e local, mesmo sem internet, e quem transita entre sites marca em qualquer um deles. A marcação fora do raio entra sinalizada para o gestor justificar, e a apuração vai direto para a folha.',
+      modules: ['natponto', 'ponto-eletronico', 'folha-de-pagamento'],
+    },
+    {
+      pain: 'RH da ponta',
+      title: 'O RH da ponta opera no seu perfil; a sede vê tudo',
+      text: 'Cada contrato é uma unidade e um centro de custo na mesma base. O RH da ponta admite pelo portal, desliga no Offboarding, trata o ponto e atende os chamados dos seus colaboradores dentro do seu perfil e das suas alçadas. Tudo já está na folha que o RH central fecha.',
+      modules: ['portais', 'admissao-digital', 'offboarding', 'chamado-interno'],
+    },
+    {
+      pain: 'Saúde e segurança',
+      title: 'Exames, EPIs e PGR controlados por unidade',
+      text: 'PCMSO e exames ligados ao risco de cada função e unidade, ASO com alerta de vencimento, EPIs com CA validado e ficha assinada na tela, PGR e CAT por site. O S-2210, o S-2220 e o S-2240 saem pela empresa, e a NATI aponta lacunas de conformidade antes da auditoria do cliente.',
+      modules: ['medicina-ocupacional', 'seguranca-do-trabalho', 'esocial', 'nati'],
+    },
+    {
+      pain: 'Custo por contrato',
+      title: 'Headcount, horas extras e custo de pessoal por contrato',
+      text: 'Posições, previsto e realizado por unidade e centro de custo, com alerta quando o custo de um contrato sai do orçado. Horas extras, absenteísmo e turnover por site nos painéis, e o consolidado para a diretoria, em tempo real.',
+      modules: ['administracao-de-pessoal', 'business-intelligence', 'people-analytics'],
+    },
+  ],
+  responsibilities: [
+    { task: 'Requisição de vaga e headcount', by: 'gestores', note: 'pelo Portal do Gestor, dentro da alçada do contrato e do orçamento de pessoal da unidade', modules: ['requisicoes-com-workflow', 'administracao-de-pessoal'] },
+    { task: 'Admissão', by: 'rh-unidade', note: 'o candidato preenche e assina pelo portal; o RH da ponta valida e o cadastro nasce na unidade do contrato, na folha e no ponto', modules: ['admissao-digital', 'assinatura-eletronica', 'ged'] },
+    { task: 'Alterações cadastrais e funcionais', by: 'rh-unidade', note: 'transferências entre sites, mudança de função e cadastro tratados no perfil do contrato', modules: ['requisicoes-com-workflow', 'portais'] },
+    { task: 'Férias', by: 'rh-unidade', note: 'programadas pelo colaborador, aprovadas pelo gestor da equipe e acompanhadas pelo RH da ponta, já na folha', modules: ['requisicoes-com-workflow', 'folha-de-pagamento'] },
+    { task: 'Ponto: marcação, tratamento e aprovação', by: 'rh-unidade', note: 'marcação no NatPonto com o raio do site, tratamento pelo RH da ponta e aprovação do período pelo gestor da equipe', modules: ['natponto', 'ponto-eletronico'] },
+    { task: 'Benefícios', by: 'rh-central', note: 'elegibilidade definida na sede, movimentações pedidas no portal e rubricas automáticas na folha', modules: ['gestao-de-beneficios', 'requisicoes-com-workflow'] },
+    { task: 'Afastamentos, exames e EPIs', by: 'rh-unidade', note: 'exames, atestados, EPIs e CAT de cada site registrados no perfil da unidade, com o eSocial saindo pela empresa', modules: ['medicina-ocupacional', 'seguranca-do-trabalho', 'esocial'] },
+    { task: 'Desligamento', by: 'rh-unidade', note: 'indicado pelo gestor na requisição e concluído pelo RH da ponta no Offboarding, em uma tela', modules: ['requisicoes-com-workflow', 'offboarding'] },
+    { task: 'Conferência da folha', by: 'nati', note: 'cruza frequência, benefícios e impostos de todos os contratos e aponta inconsistências antes do corte', modules: ['nati', 'folha-de-pagamento'] },
+    { task: 'Fechamento da folha, eSocial e contabilização', by: 'rh-central', note: 'pendências por contrato antes do corte, folha por empresa e contabilização por centro de custo pronta para o ERP', modules: ['folha-de-pagamento', 'esocial', 'conexao-com-outros-sistemas'] },
+    { task: 'Atendimento ao colaborador', by: 'nati', note: 'responde holerite, ponto e benefícios no WhatsApp de quem está no cliente; o resto vira chamado para o RH da ponta', modules: ['nati', 'chamado-interno'] },
+    { task: 'Indicadores', by: 'rh-central', note: 'headcount, horas extras, absenteísmo e custo de pessoal por contrato e o consolidado da empresa', modules: ['business-intelligence', 'people-analytics'] },
+  ],
+  flow: {
+    inputs: [
+      {
+        from: 'Gestores e colaboradores nos sites',
+        operator: 'gestores',
+        items: [
+          'Requisição de headcount e de pessoal',
+          'Programação de férias',
+          'Abono de marcações e horas extras',
+          'Alterações cadastrais, endereço e dependentes',
+          'Atestados e afastamentos',
+          'Indicação para movimentações',
+          'Chamados',
+          'Currículo do candidato',
+        ],
+      },
+      {
+        from: 'RH da ponta em cada cliente',
+        operator: 'rh-unidade',
+        items: [
+          'Admissão',
+          'Alterações funcionais e efetivação de alterações',
+          'Apuração de ponto e escala de trabalho',
+          'Exames',
+          'Acidente ou incidente de trabalho',
+          'Desligamento',
+          'Serviços de terceiros',
+          'Treinamento e indicação para curso',
+        ],
+      },
+    ],
+    center: {
+      title: 'RH central',
+      text: 'Recebe de todas as unidades o que o RH da ponta lançou, vê as pendências por contrato e fecha a folha de cada empresa, conferida pela NATI. Benefícios, eSocial, obrigações e documentos saem da sede, padronizados para todos os contratos.',
+      modules: ['folha-de-pagamento', 'nati', 'gestao-de-beneficios', 'assinatura-eletronica', 'ged', 'onboarding', 'offboarding'],
+    },
+    outputs: [
+      { title: 'Folha de todos os contratos fechada na sede, conferida pela NATI', modules: ['folha-de-pagamento', 'nati'] },
+      { title: 'Contabilização da folha com provisões, por centro de custo, pronta para o ERP', modules: ['folha-de-pagamento', 'conexao-com-outros-sistemas'] },
+      { title: 'eSocial enviado e acompanhado por empresa, incluindo os eventos de SST de cada site', modules: ['esocial'] },
+      { title: 'Guias para o governo e os sindicatos e créditos para pagamento dos funcionários', modules: ['folha-de-pagamento'] },
+      { title: 'Informações aos gestores e colaboradores de cada site, no portal e no WhatsApp', modules: ['portais', 'nati'] },
+      { title: 'Controle de entrega de EPIs e uniformes por unidade', modules: ['seguranca-do-trabalho'] },
+      { title: 'Medicina Ocupacional por site: exames, ASOs e afastamentos', modules: ['medicina-ocupacional'] },
+      { title: 'Gestão de benefícios e de treinamento para todos os contratos', modules: ['gestao-de-beneficios', 'treinamento-e-desenvolvimento'] },
+      { title: 'Headcount, orçamento e custo de pessoal por contrato', modules: ['administracao-de-pessoal', 'business-intelligence'] },
+    ],
+  },
+  spotlight: ['natponto', 'ponto-eletronico', 'portais', 'seguranca-do-trabalho', 'medicina-ocupacional', 'folha-de-pagamento'],
+  moduleNotes: {
+    'folha-de-pagamento': 'Uma folha para todos os contratos, com o ponto de cada site já apurado, pendências por unidade e conferência da NATI antes do corte.',
+    'administracao-de-pessoal': 'Posições, previsto e realizado por contrato e centro de custo, com alerta quando o custo de pessoal de um cliente sai do orçado.',
+    'cargos-e-salarios': 'Cargos e faixas por função alocada, com pisos por sindicato e a mesma política em todos os contratos.',
+    'gestao-de-beneficios': 'Elegibilidade definida na sede, vale-transporte pelo trajeto até cada site e rubricas automáticas na folha.',
+    natpay: 'Adiantamento pedido pelo WhatsApp por quem está no cliente, com o limite pelos dias já registrados no NatPonto.',
+    esocial: 'Eventos de folha e de SST de todos os sites enviados e acompanhados por empresa, com validador antes do envio.',
+    'juridico-trabalhista': 'Processos por contrato em um painel, com espelho de ponto, ficha de EPI e ASO de cada site como evidência.',
+    'ponto-eletronico': 'Escalas e jornadas por contrato, banco de horas pela regra do sindicato e pendências por unidade antes do corte.',
+    natponto: 'Um raio de marcação por site do cliente; quem transita entre contratos marca em qualquer um, mesmo sem internet.',
+    'medicina-ocupacional': 'PCMSO e exames ligados ao risco de cada site, ASO com alerta de vencimento e atestados enviados pelo portal.',
+    'seguranca-do-trabalho': 'PGR, EPIs com CA validado, ficha assinada na tela e CAT por unidade, com o S-2210 saindo no prazo.',
+    'recrutamento-e-selecao': 'Processo seletivo aberto pela requisição do contrato, com banco de talentos por cidade e prazo por vaga.',
+    'quadro-de-vagas': 'Vagas de todos os contratos publicadas com a marca da empresa, com candidatura pelo celular.',
+    'admissao-digital': 'O candidato preenche e assina pelo celular, o RH da ponta valida e o cadastro nasce na unidade do contrato.',
+    onboarding: 'Regras do cliente, instruções do site e treinamentos de entrada no celular antes do primeiro dia.',
+    offboarding: 'Desligamento concluído pelo RH da ponta em uma tela, com rescisão, bloqueio de acessos e documentos.',
+    'avaliacoes-e-feedbacks': 'Avaliação de experiência e feedback do gestor da equipe registrados pelo celular, no site.',
+    'metas-e-resultados': 'Metas por contrato, área e indivíduo no mesmo ciclo, com bônus e PLR calculados e enviados à folha.',
+    'treinamento-e-desenvolvimento': 'Treinamentos de NR e de integração exigidos por cada cliente, com validade controlada por site.',
+    'carreira-e-sucessao': 'Trilha de operador a líder de equipe e sucessores prontos para os contratos que crescem.',
+    portais: 'Portal do Gestor para o gestor da equipe no site e Portal do Colaborador para quem está no cliente, cada um vendo só o que é seu.',
+    'requisicoes-com-workflow': 'Alçadas por contrato e centro de custo, com suplência automática, e efetivação sem passar pela sede.',
+    'chamado-interno': 'Os chamados dos colaboradores de cada site roteados para o RH da ponta ou para a sede conforme a área, com prazo e histórico.',
+    'blog-corporativo': 'Comunicados para toda a empresa ou para um contrato, na timeline do portal que o colaborador abre no celular.',
+    'assinatura-eletronica': 'Contratos, termos e fichas de EPI assinados pelo celular dentro do cliente, com validade jurídica.',
+    ged: 'Documentos de cada colaborador por pessoa, com pendências por admissão e por unidade visíveis para a ponta e para a sede.',
+    'people-analytics': 'Horas extras, absenteísmo e turnover cruzados por contrato e site com o botão Ações, sem depender de TI.',
+    'business-intelligence': 'Painéis de custo de pessoal, headcount e absenteísmo por contrato, com alerta quando um site sai da faixa.',
+    nati: 'Atende quem está no cliente pelo WhatsApp, confere a folha de todos os contratos antes do corte e aponta lacunas de exames e EPIs por site.',
+    'conexao-com-outros-sistemas': 'Contabilização por centro de custo para o ERP, e relógios de ponto ou catracas conectados quando houver.',
+    'infraestrutura-e-seguranca': 'Perfis por contrato e centro de custo, trilha de auditoria e servidores dedicados na Oracle Cloud com contingência.',
+  },
+  csc: {
+    title: 'Ponta leve, centro forte',
+    text: 'Nesse modelo, o RH central já é um centro de serviços: ele fecha folha, eSocial e benefícios de todos os contratos. O caminho é deixar a ponta cada vez mais leve. Quanto mais o colaborador e o gestor do site pedem pelo portal, menos o RH da ponta digita, e mais a sede consegue absorver, sem perder a presença dentro do cliente.',
+    steps: [
+      { title: 'Cada contrato como unidade', text: 'Unidade e centro de custo por cliente, com perfil, alçadas e raio de marcação próprios, na mesma base da sede.' },
+      { title: 'Ponto e requisições pelo celular', text: 'O colaborador marca no NatPonto e pede abono, férias e atestado pelo portal; o gestor da equipe aprova de onde estiver.' },
+      { title: 'Saúde e segurança por site, no sistema', text: 'Exames, EPIs, PGR e CAT de cada unidade registrados no perfil do contrato, com o eSocial saindo pela empresa.' },
+      { title: 'A sede absorve a operação', text: 'Com o fluxo padronizado em todos os contratos, o RH central assume o que for repetitivo e o RH da ponta fica com a presença no cliente.' },
+    ],
+  },
+  personas: [
+    { role: 'RH da ponta', text: 'Admite, trata o ponto e atende a equipe do contrato dentro do seu perfil, sem mandar planilha para a sede, e ganha tempo para estar perto das pessoas no cliente.' },
+    { role: 'Gerente de RH na sede', text: 'Vê as pendências de cada contrato antes do corte, fecha a folha de todos com a conferência da NATI e acompanha o custo de pessoal por cliente.' },
+    { role: 'Gestor da equipe no site', text: 'Aprova ponto, férias e abono da equipe pelo celular, dentro do cliente, e pede vaga quando o contrato cresce.' },
+  ],
+  faq: [
+    {
+      q: 'Como funciona o ponto de quem trabalha dentro do cliente?',
+      a: 'Cada site do cliente é uma unidade com o seu raio de marcação no NatPonto. O colaborador marca no próprio celular, com reconhecimento facial e geolocalização, mesmo sem internet, e quem transita entre sites marca em qualquer um deles. A marcação fora do raio entra sinalizada para o gestor justificar. Um tablet no modo multiusuário também atende a equipe inteira de um site.',
+    },
+    {
+      q: 'O RH da ponta vê só o seu contrato?',
+      a: 'Sim. Os perfis seguem a estrutura da empresa: empresa, filial e centro de custo. O RH da ponta admite, trata o ponto e lança movimentações dentro do seu perfil e das suas alçadas; o gestor vê a própria equipe. A sede enxerga todos os contratos, com trilha de auditoria.',
+    },
+    {
+      q: 'Como controlar exames e EPIs quando cada cliente exige coisas diferentes?',
+      a: 'O PCMSO e os exames ficam ligados ao risco de cada função e unidade, com alerta de vencimento do ASO. Os EPIs têm CA validado e ficha assinada na tela, por site. O PGR e a CAT são registrados por unidade, e os eventos S-2210, S-2220 e S-2240 saem pela empresa. A NATI aponta o que está faltando antes da auditoria do cliente.',
+    },
+    {
+      q: 'Dá para ver o custo de pessoal por contrato?',
+      a: 'Sim. Cada contrato é um centro de custo. Posições, previsto e realizado, horas extras, absenteísmo e benefícios aparecem por contrato nos painéis do Business Intelligence e no People Analytics, com o consolidado para a diretoria e a contabilização por centro de custo pronta para o ERP.',
+    },
+  ],
+  related: ['rh-por-unidade', 'grupo-rh-central'],
+}
+
+export default page

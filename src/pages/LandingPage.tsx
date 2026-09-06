@@ -3,7 +3,7 @@ import { ProofStrip } from '@/components/sections/ProofStrip'
 import { NatiTeaser } from '@/components/sections/NatiTeaser'
 import { ProblemSection } from '@/components/sections/ProblemSection'
 import { PlatformSection } from '@/components/sections/PlatformSection'
-import { StructureSection } from '@/components/sections/StructureSection'
+import { StructureChooserSection } from '@/components/sections/StructureChooserSection'
 import { JourneySection } from '@/components/sections/JourneySection'
 import { NatiSection } from '@/components/sections/NatiSection'
 import { SegmentsSection } from '@/components/sections/SegmentsSection'
@@ -25,7 +25,7 @@ export default function LandingPage() {
       <NatiTeaser />
       <ProblemSection />
       <PlatformSection />
-      <StructureSection tone="white" />
+      <StructureChooserSection />
       <JourneySection />
       <NatiSection />
       <SegmentsSection />

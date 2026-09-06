@@ -1,10 +1,12 @@
 import { m } from 'motion/react'
-import { ArrowRight, Cable, Cloud, DatabaseBackup, Layers, Lock, ShieldCheck } from 'lucide-react'
+import { Activity, ArrowRight, Cloud, DatabaseBackup, Gauge, Layers, Lock } from 'lucide-react'
 import { Link } from 'react-router'
 import { Section, SectionHeader } from './Section'
 import { Reveal, Stagger, StaggerItem } from '@/components/motion/Reveal'
+import { InfraDiagram } from '@/components/security/InfraDiagram'
 import { modulePath } from '@/content/modulePages'
 import { paths } from '@/content/site'
+import { structurePath } from '@/content/structures'
 import { viewportOnce } from '@/lib/motion'
 
 interface SecurityItem {
@@ -15,29 +17,41 @@ interface SecurityItem {
   links?: { label: string; to: string }[]
 }
 
+/* Os seis temas da infraestrutura, na mesma ordem da apresentação da Natcorp. */
 const items: SecurityItem[] = [
-  { icon: Cloud, title: 'Parceiro Oracle', text: 'Infraestrutura Oracle Cloud com servidores dedicados e alta disponibilidade para a sua operação de RH.' },
-  { icon: Layers, title: 'Produção, homologação e contingência', text: 'Ambientes separados para validar mudanças antes de aplicar, e um serviço de recuperação de desastres pronto para assumir.' },
-  { icon: DatabaseBackup, title: 'Backups diários', text: 'Dois backups por dia, guardados em ambiente isolado, para que nenhum dado do RH se perca.' },
   {
-    icon: Lock,
-    title: 'Camadas de proteção',
-    text: 'Criptografia, HTTPS, firewall de aplicação, autenticação em dois fatores e VPN, com auditoria de acessos e monitoramento 24 horas por um time especializado.',
+    icon: Cloud,
+    title: 'Servidores dedicados na Oracle Cloud',
+    text: 'Parceira Oracle, a Natcorp roda em servidores dedicados na Oracle Cloud Infrastructure, com alta performance, disponibilidade e escalabilidade.',
   },
   {
-    icon: ShieldCheck,
-    title: 'LGPD por desenho',
-    text: 'Perfis de acesso granulares, anonimização, trilha de auditoria e controle por empresa e filial.',
+    icon: Layers,
+    title: 'Produção, homologação e contingência',
+    text: 'Ambientes isolados para validar mudanças antes de aplicar, com espelhamento e um serviço de recuperação de desastres pronto para assumir.',
+  },
+  {
+    icon: Gauge,
+    title: 'Performance para a folha',
+    text: 'Mais de 2.500 colaboradores calculados por minuto, com estabilidade nos dias de fechamento. Mais filiais e mais usuários não deixam o sistema lento.',
+  },
+  {
+    icon: Lock,
+    title: 'Segurança em camadas',
+    text: 'LGPD, criptografia, HTTPS, firewall de aplicação, autenticação em dois fatores e VPN, com gestão de acessos por perfil e trilha de auditoria detalhada.',
     links: [
       { label: 'Infraestrutura e Segurança', to: modulePath('infraestrutura-e-seguranca') },
-      { label: 'Perfis por empresa e filial', to: paths.groups },
+      { label: 'Perfis por empresa e filial', to: structurePath('rh-por-unidade') },
     ],
   },
   {
-    icon: Cable,
-    title: 'Conecta com o que você já usa',
-    text: 'ERP, operadoras de benefícios, relógios de ponto, login corporativo (SSO): APIs prontas, construtor de APIs, arquivos e webhooks.',
-    links: [{ label: 'Conexão com Outros Sistemas', to: modulePath('conexao-com-outros-sistemas') }],
+    icon: DatabaseBackup,
+    title: 'Backups múltiplos',
+    text: 'Dois backups por dia, automatizados e guardados em ambiente isolado, com políticas de retenção e restauração.',
+  },
+  {
+    icon: Activity,
+    title: 'Cibersegurança 24 horas',
+    text: 'Monitoramento contínuo por um time especializado em infraestrutura, com auditoria de acessos e um canal direto com a engenharia para incidentes.',
   },
 ]
 
@@ -52,9 +66,11 @@ interface SecuritySectionProps {
   tone?: 'white' | 'off'
   /** Sem o cabeçalho, para páginas em que o título já está no topo. */
   withHeader?: boolean
+  /** Desenho compacto da arquitetura no cartão escuro. A página /seguranca desliga, porque traz o desenho completo em #arquitetura. */
+  diagram?: boolean
 }
 
-export function SecuritySection({ id = 'seguranca', tone = 'off', withHeader = true }: SecuritySectionProps) {
+export function SecuritySection({ id = 'seguranca', tone = 'off', withHeader = true, diagram = true }: SecuritySectionProps) {
   return (
     <Section id={id} tone={tone} aria-labelledby={withHeader ? `${id}-title` : undefined} className={withHeader ? undefined : 'pt-0 sm:pt-0 lg:pt-0'}>
       <div className="container">
@@ -63,43 +79,81 @@ export function SecuritySection({ id = 'seguranca', tone = 'off', withHeader = t
           <SectionHeader
             id={`${id}-title`}
             eyebrow="Segurança e infraestrutura"
-            title="Nuvem segura, com [[plano de contingência]]."
-            lead="A operação de RH não pode parar. Por isso a Natcorp roda na infraestrutura Oracle Cloud, com ambientes separados para produção e homologação e um serviço de contingência pronto para assumir."
+            title="Servidores dedicados na Oracle Cloud, com [[plano de contingência]]."
+            lead="A operação de RH não pode parar. Por isso a Natcorp roda em servidores dedicados na Oracle Cloud Infrastructure, com ambientes separados para produção e homologação, um serviço de contingência pronto para assumir e cada camada protegida, do navegador ao banco de dados."
           />
         )}
 
         <Reveal delay={0.2} className={withHeader ? 'mt-12 overflow-hidden rounded-3xl bg-brand-blue p-6 text-white sm:p-8 lg:mt-16' : 'overflow-hidden rounded-3xl bg-brand-blue p-6 text-white sm:p-8'}>
-          <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
-            <div className="lg:max-w-xs">
-              <p className="text-[12px] font-semibold uppercase tracking-[0.16em] text-white/60">Oracle Cloud Infrastructure</p>
-              <p className="mt-2 text-xl font-bold">Três ambientes, uma operação que não para.</p>
-              <Link
-                to={modulePath('infraestrutura-e-seguranca')}
-                className="group mt-3 inline-flex items-center gap-1.5 text-[13.5px] font-semibold text-white/85 underline-offset-4 hover:text-white hover:underline"
-              >
-                Ver o módulo Infraestrutura e Segurança
-                <ArrowRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-0.5" aria-hidden />
-              </Link>
-            </div>
-            <ul className="grid flex-1 grid-cols-1 gap-3 sm:grid-cols-3">
-              {envs.map((e, i) => (
-                <m.li
-                  key={e.name}
-                  className="relative rounded-xl border border-white/15 bg-white/[0.06] p-4"
-                  initial={{ opacity: 0, y: 12 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={viewportOnce}
-                  transition={{ duration: 0.6, delay: 0.3 + i * 0.12 }}
+          {diagram ? (
+            <>
+              <div className="grid gap-7 lg:grid-cols-[minmax(0,17rem)_minmax(0,1fr)] lg:items-center lg:gap-10">
+                <div>
+                  <p className="text-[12px] font-semibold uppercase tracking-[0.16em] text-white/60">Arquitetura na Oracle Cloud</p>
+                  <p className="mt-2 text-xl font-bold leading-snug">Do navegador ao banco de dados, cada camada protegida.</p>
+                  <p className="mt-2 text-[14px] leading-relaxed text-white/70">
+                    Servidores dedicados, firewall de aplicação, dois fatores e uma camada de permissões antes de qualquer dado.
+                  </p>
+                  <Link
+                    to={`${paths.security}#arquitetura`}
+                    className="group mt-4 inline-flex items-center gap-1.5 text-[13.5px] font-semibold text-white/85 underline-offset-4 hover:text-white hover:underline"
+                  >
+                    Ver a arquitetura completa
+                    <ArrowRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-0.5" aria-hidden />
+                  </Link>
+                </div>
+                <InfraDiagram variant="compact" className="min-w-0" />
+              </div>
+              <ul className="mt-6 flex flex-wrap gap-x-6 gap-y-2 border-t border-white/10 pt-5" aria-label="Três ambientes">
+                {envs.map((e, i) => (
+                  <m.li
+                    key={e.name}
+                    className="flex items-center gap-2 text-[13.5px]"
+                    initial={{ opacity: 0, y: 8 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={viewportOnce}
+                    transition={{ duration: 0.6, delay: 0.5 + i * 0.1 }}
+                  >
+                    <span className={i === 2 ? 'h-2 w-2 shrink-0 rounded-full bg-[#E4A9C4]' : 'h-2 w-2 shrink-0 rounded-full bg-emerald-400 animate-pulse-soft'} aria-hidden />
+                    <span className="font-bold">{e.name}</span>
+                    <span className="text-white/60">{e.desc}</span>
+                  </m.li>
+                ))}
+              </ul>
+            </>
+          ) : (
+            <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
+              <div className="lg:max-w-xs">
+                <p className="text-[12px] font-semibold uppercase tracking-[0.16em] text-white/60">Servidores dedicados na Oracle Cloud</p>
+                <p className="mt-2 text-xl font-bold">Três ambientes, uma operação que não para.</p>
+                <Link
+                  to={modulePath('infraestrutura-e-seguranca')}
+                  className="group mt-3 inline-flex items-center gap-1.5 text-[13.5px] font-semibold text-white/85 underline-offset-4 hover:text-white hover:underline"
                 >
-                  <span className="flex items-center gap-2 text-sm font-bold">
-                    <span className={i === 2 ? 'h-2 w-2 rounded-full bg-[#E4A9C4]' : 'h-2 w-2 rounded-full bg-emerald-400 animate-pulse-soft'} aria-hidden />
-                    {e.name}
-                  </span>
-                  <p className="mt-1 text-[12.5px] text-white/65">{e.desc}</p>
-                </m.li>
-              ))}
-            </ul>
-          </div>
+                  Ver o módulo Infraestrutura e Segurança
+                  <ArrowRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-0.5" aria-hidden />
+                </Link>
+              </div>
+              <ul className="grid flex-1 grid-cols-1 gap-3 sm:grid-cols-3">
+                {envs.map((e, i) => (
+                  <m.li
+                    key={e.name}
+                    className="relative rounded-xl border border-white/15 bg-white/[0.06] p-4"
+                    initial={{ opacity: 0, y: 12 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={viewportOnce}
+                    transition={{ duration: 0.6, delay: 0.3 + i * 0.12 }}
+                  >
+                    <span className="flex items-center gap-2 text-sm font-bold">
+                      <span className={i === 2 ? 'h-2 w-2 rounded-full bg-[#E4A9C4]' : 'h-2 w-2 rounded-full bg-emerald-400 animate-pulse-soft'} aria-hidden />
+                      {e.name}
+                    </span>
+                    <p className="mt-1 text-[12.5px] text-white/65">{e.desc}</p>
+                  </m.li>
+                ))}
+              </ul>
+            </div>
+          )}
         </Reveal>
 
         <Stagger className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">

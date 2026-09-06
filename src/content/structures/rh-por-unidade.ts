@@ -1,0 +1,202 @@
+import type { StructurePage } from './types'
+
+const page: StructurePage = {
+  slug: 'rh-por-unidade',
+  name: 'RH em cada unidade ou filial',
+  tagline: 'Cada unidade opera o que é dela. [[A matriz fecha tudo]].',
+  summary:
+    'Empresa única ou grupo em que cada unidade tem o seu RH: admite, desliga, trata o ponto, programa férias, lança benefícios e atende os seus colaboradores, dentro do seu perfil e das suas alçadas. Tudo cai na mesma base, e a matriz vê as pendências por filial, confere e fecha a folha por empresa. O sistema respeita esse modelo e deixa pronto o caminho para o centro de serviços.',
+  seo: {
+    title: 'RH em cada unidade, folha fechada pela matriz | Natcorp',
+    description:
+      'RH em cada filial: a unidade admite, trata o ponto e lança movimentações no seu perfil; a matriz vê as pendências, fecha a folha por empresa e contabiliza por CNPJ.',
+  },
+  context: [
+    'Em muitas empresas e grupos, o RH nasceu junto com cada unidade. A filial tem quem admite, desliga, trata o ponto, cuida das férias e atende o colaborador ali, perto da operação. A matriz recebe o resultado no fim do mês, quase sempre por planilha, e fecha a folha conferindo o que cada unidade mandou, sem conseguir ver o que ficou de fora.',
+    'Com uma base só, o RH de cada unidade continua fazendo o que faz, dentro do seu perfil e das suas alçadas, mas o que ele lança já está na folha da matriz. A matriz vê as pendências por filial antes do corte, confere com a NATI e fecha por empresa, com a contabilização de cada CNPJ para o ERP. E, como o fluxo e o portal são os mesmos em toda unidade, o time central pode absorver a operação aos poucos, quando fizer sentido.',
+  ],
+  facts: [
+    { value: '3 níveis', label: 'perfis e alçadas por empresa, filial e centro de custo' },
+    { value: 'Uma base', label: 'o que cada unidade lança já está na folha que a matriz fecha' },
+    { value: 'Por CNPJ', label: 'folha fechada por empresa, eSocial e contabilização de cada CNPJ para o ERP' },
+  ],
+  pains: [
+    {
+      icon: 'layers',
+      title: 'Cada unidade faz do seu jeito',
+      text: 'Formulário de admissão diferente, regra de abono própria, planilha de férias local. A política é uma, mas a execução muda de filial para filial, e a matriz só percebe no fechamento ou na fiscalização.',
+    },
+    {
+      icon: 'upload',
+      title: 'A matriz recebe planilha e redigita',
+      text: 'O RH da unidade lança no sistema local ou na planilha e manda para a matriz, que confere, redigita e devolve o erro. Dois trabalhos para o mesmo dado, e o prazo da folha comprimido.',
+    },
+    {
+      icon: 'eye',
+      title: 'Cada unidade deveria ver só a sua',
+      text: 'O RH da filial precisa operar a sua equipe sem enxergar as outras. A matriz precisa ver todas. Sem perfis por filial, o controle depende de combinação e de confiança.',
+    },
+    {
+      icon: 'bar-chart',
+      title: 'Indicadores por filial só depois de consolidar',
+      text: 'Turnover, absenteísmo, horas extras e custo de cada unidade existem, mas em bases diferentes. A comparação entre filiais chega tarde e vem em planilha.',
+    },
+  ],
+  answers: [
+    {
+      pain: 'Padrão',
+      title: 'O mesmo fluxo e o mesmo portal em todas as unidades',
+      text: 'Admissão, férias, abono, movimentação, benefícios e desligamento seguem o mesmo caminho em toda unidade, com as políticas padronizadas pela matriz e as alçadas de cada filial. O RH da unidade opera dentro do seu perfil; a regra é a mesma para todos, e a tabela salarial também.',
+      modules: ['requisicoes-com-workflow', 'portais', 'admissao-digital', 'cargos-e-salarios'],
+    },
+    {
+      pain: 'Redigitação',
+      title: 'O que a unidade lança já está na folha da matriz',
+      text: 'Admissão, ponto tratado, férias e benefícios lançados pelo RH da unidade caem na mesma base. Nada é exportado, enviado ou redigitado. A matriz vê as pendências de cada filial antes do corte, confere com a NATI e fecha por empresa, a 2.500 colaboradores por minuto.',
+      modules: ['folha-de-pagamento', 'ponto-eletronico', 'nati', 'gestao-de-beneficios'],
+    },
+    {
+      pain: 'Perfis',
+      title: 'Perfis e alçadas por empresa, filial e centro de custo',
+      text: 'O RH da filial admite, trata o ponto e lança movimentações dentro do seu perfil e das suas alçadas; o gestor vê a própria equipe; a matriz enxerga o consolidado e as pendências de cada unidade, com trilha de auditoria de quem viu e alterou cada dado.',
+      modules: ['portais', 'infraestrutura-e-seguranca', 'requisicoes-com-workflow'],
+    },
+    {
+      pain: 'Indicadores',
+      title: 'Relatórios por filial e consolidado, na hora',
+      text: 'Turnover, absenteísmo, horas extras e custo por filial e por empresa nos painéis do Business Intelligence, com o consolidado para a matriz. Qualquer listagem cruzada por unidade no People Analytics, sem TI. O eSocial e a contabilização saem por CNPJ.',
+      modules: ['business-intelligence', 'people-analytics', 'esocial', 'conexao-com-outros-sistemas'],
+    },
+  ],
+  responsibilities: [
+    { task: 'Requisição de vaga e headcount', by: 'gestores', note: 'pelo Portal do Gestor, com a alçada da filial e a validação do orçamento de pessoal', modules: ['requisicoes-com-workflow', 'administracao-de-pessoal'] },
+    { task: 'Admissão', by: 'rh-unidade', note: 'o candidato preenche e assina pelo portal; o RH da unidade valida e o cadastro nasce na folha da empresa', modules: ['admissao-digital', 'assinatura-eletronica', 'ged'] },
+    { task: 'Alterações cadastrais e funcionais', by: 'rh-unidade', note: 'lançadas ou efetivadas dentro do perfil da filial, com a política de cargos e salários definida pela matriz', modules: ['requisicoes-com-workflow', 'cargos-e-salarios'] },
+    { task: 'Férias', by: 'rh-unidade', note: 'programadas pelo colaborador, aprovadas pelo gestor e acompanhadas pelo RH da unidade, já na folha', modules: ['requisicoes-com-workflow', 'folha-de-pagamento'] },
+    { task: 'Ponto: marcação, tratamento e aprovação', by: 'rh-unidade', note: 'marcação no NatPonto com o raio da unidade, tratamento pelo RH da filial e aprovação do período pelo gestor', modules: ['natponto', 'ponto-eletronico'] },
+    { task: 'Benefícios', by: 'rh-unidade', note: 'movimentações da unidade dentro da elegibilidade definida pela matriz, com rubricas automáticas na folha', modules: ['gestao-de-beneficios'] },
+    { task: 'Afastamentos e exames', by: 'rh-unidade', note: 'atestados, exames e afastamentos da unidade registrados no perfil da filial, com o S-2220 saindo pela empresa', modules: ['medicina-ocupacional', 'esocial'] },
+    { task: 'Desligamento', by: 'rh-unidade', note: 'indicado pelo gestor na requisição e concluído pelo RH da unidade no Offboarding, em uma tela', modules: ['requisicoes-com-workflow', 'offboarding'] },
+    { task: 'Conferência da folha', by: 'nati', note: 'aponta inconsistências por empresa e filial antes do corte, com sugestão de correção', modules: ['nati', 'folha-de-pagamento'] },
+    { task: 'Fechamento da folha, eSocial e contabilização', by: 'rh-central', note: 'pendências por filial, folha fechada por empresa e contabilização de cada CNPJ pronta para o ERP', modules: ['folha-de-pagamento', 'esocial', 'conexao-com-outros-sistemas'] },
+    { task: 'Atendimento ao colaborador', by: 'nati', note: 'responde a rotina no portal, no WhatsApp e no Teams; o resto vira chamado para o RH da unidade ou da matriz', modules: ['nati', 'chamado-interno'] },
+    { task: 'Indicadores e políticas', by: 'rh-central', note: 'turnover, absenteísmo e custo por filial e consolidado; tabelas, elegibilidades e fluxos definidos para todas', modules: ['business-intelligence', 'people-analytics'] },
+  ],
+  flow: {
+    inputs: [
+      {
+        from: 'Gestores e colaboradores',
+        operator: 'gestores',
+        items: [
+          'Requisição de headcount e de pessoal',
+          'Programação de férias',
+          'Abono de marcações e horas extras',
+          'Alterações cadastrais, endereço e dependentes',
+          'Indicação para movimentações',
+          'Atestados e afastamentos',
+          'Chamados',
+          'Currículo do candidato',
+        ],
+      },
+      {
+        from: 'RH da unidade',
+        operator: 'rh-unidade',
+        items: [
+          'Admissão',
+          'Alterações funcionais e efetivação de alterações',
+          'Apuração de ponto e escala de trabalho',
+          'Benefícios',
+          'Exames',
+          'Acidente ou incidente de trabalho',
+          'Desligamento',
+          'Treinamento e indicação para curso',
+        ],
+      },
+    ],
+    center: {
+      title: 'Matriz: fechamento e obrigações',
+      text: 'A matriz recebe na mesma base o que cada unidade lançou, vê as pendências por filial e fecha a folha de cada empresa, conferida pela NATI. Políticas, documentos e comunicação saem padronizados para todas as unidades.',
+      modules: ['folha-de-pagamento', 'nati', 'assinatura-eletronica', 'ged', 'onboarding', 'offboarding', 'blog-corporativo'],
+    },
+    outputs: [
+      { title: 'Folha de cada empresa fechada pela matriz, conferida pela NATI', modules: ['folha-de-pagamento', 'nati'] },
+      { title: 'Contabilização da folha com provisões, por CNPJ, pronta para o ERP', modules: ['folha-de-pagamento', 'conexao-com-outros-sistemas'] },
+      { title: 'eSocial enviado e acompanhado por empresa', modules: ['esocial'] },
+      { title: 'Guias para o governo e os sindicatos e créditos para pagamento dos funcionários', modules: ['folha-de-pagamento'] },
+      { title: 'Informações aos gestores e colaboradores de cada filial, no portal e no WhatsApp', modules: ['portais', 'nati'] },
+      { title: 'Gestão de benefícios e de treinamento com a regra da matriz', modules: ['gestao-de-beneficios', 'treinamento-e-desenvolvimento'] },
+      { title: 'Medicina Ocupacional e Segurança do Trabalho por unidade, com o eSocial pela empresa', modules: ['medicina-ocupacional', 'seguranca-do-trabalho'] },
+      { title: 'Relatórios por filial e consolidado, com headcount e orçamento por unidade', modules: ['business-intelligence', 'administracao-de-pessoal'] },
+    ],
+  },
+  spotlight: ['portais', 'requisicoes-com-workflow', 'ponto-eletronico', 'folha-de-pagamento', 'esocial', 'business-intelligence'],
+  moduleNotes: {
+    'folha-de-pagamento': 'O que cada filial lança já está na folha; a matriz vê as pendências por unidade, confere e fecha por empresa em minutos.',
+    'administracao-de-pessoal': 'Posições e orçamento por filial e centro de custo, com o RH da unidade pedindo e a matriz vendo o consolidado.',
+    'cargos-e-salarios': 'Tabela e política de mérito definidas pela matriz e aplicadas em toda filial, com travas para reajustes fora da regra.',
+    'gestao-de-beneficios': 'Elegibilidade definida pela matriz e movimentações lançadas pelo RH de cada unidade, com rubricas automáticas na folha.',
+    natpay: 'Adiantamento pelo WhatsApp em qualquer unidade, com o limite pelos dias trabalhados e o desconto na folha da empresa.',
+    esocial: 'Eventos gerados da folha de cada empresa e acompanhados por CNPJ, com o que a filial lançou já validado.',
+    'juridico-trabalhista': 'Processos de todas as filiais em um painel da matriz, com espelho de ponto e documentos da unidade como evidência.',
+    'ponto-eletronico': 'O RH de cada filial trata escalas, abonos e banco de horas no seu perfil; a matriz vê as pendências por unidade antes do corte.',
+    natponto: 'Um raio de marcação por unidade; a marcação chega ao Ponto Eletrônico da filial em segundos, pronta para o RH local tratar.',
+    'medicina-ocupacional': 'Exames, ASOs e atestados registrados pelo RH da unidade no seu perfil, com o S-2220 saindo pela empresa.',
+    'seguranca-do-trabalho': 'PGR, EPIs e CAT por unidade, registrados pela filial, com o S-2210 saindo no prazo pela empresa.',
+    'recrutamento-e-selecao': 'Processo seletivo aberto pela requisição da filial e conduzido pelo RH da unidade ou pela matriz, com o mesmo fluxo.',
+    'quadro-de-vagas': 'Vagas de todas as filiais e empresas publicadas em um quadro só, com a marca de cada uma.',
+    'admissao-digital': 'O candidato preenche e assina pelo portal, o RH da unidade valida e o cadastro nasce na folha da empresa certa.',
+    onboarding: 'A mesma experiência de entrada em toda filial, com conteúdo por empresa, unidade, área ou cargo.',
+    offboarding: 'Desligamento concluído pelo RH da unidade em uma tela, com rescisão, bloqueios e documentos no padrão da matriz.',
+    'avaliacoes-e-feedbacks': 'Ciclos definidos pela matriz e aplicados em todas as filiais, com calibração entre unidades.',
+    'metas-e-resultados': 'Metas por empresa, filial, área e indivíduo no mesmo ciclo, com PLR calculada pela regra de cada empresa.',
+    'treinamento-e-desenvolvimento': 'Catálogo da matriz com turmas abertas em cada filial, e treinamentos obrigatórios com validade controlada por unidade.',
+    'carreira-e-sucessao': 'Mapa de sucessão que enxerga talentos de todas as filiais, não só da unidade que tem a vaga.',
+    portais: 'O RH da filial vê a sua filial, o gestor vê a sua equipe e a matriz vê o consolidado, tudo no mesmo portal.',
+    'requisicoes-com-workflow': 'Alçadas por filial e área, com suplência automática, e o mesmo fluxo em toda unidade, definido pela matriz.',
+    'chamado-interno': 'Chamados roteados para o RH da unidade ou para a matriz conforme a área, com prazo e histórico.',
+    'blog-corporativo': 'Comunicados da matriz para todas as filiais e avisos de cada unidade para o seu público, na mesma timeline.',
+    'assinatura-eletronica': 'Contratos e termos assinados na tela em qualquer filial, com os signatários carregados do organograma.',
+    ged: 'Documentos organizados por pessoa, com pendências por admissão e por unidade visíveis para a filial e para a matriz.',
+    'people-analytics': 'Qualquer listagem cruzada por empresa, filial e centro de custo, com o botão Ações e sem depender de TI.',
+    'business-intelligence': 'Painéis por filial para o RH da unidade e o consolidado para a matriz, com alerta quando uma unidade sai da faixa.',
+    nati: 'Confere a folha de cada empresa antes do corte, aponta pendências por filial e atende colaboradores de qualquer unidade no portal, no WhatsApp e no Teams.',
+    'conexao-com-outros-sistemas': 'Contabilização de cada CNPJ para o ERP, relógios de ponto das filiais e operadoras conectados à mesma base.',
+    'infraestrutura-e-seguranca': 'Perfis por empresa, filial e centro de custo, trilha de auditoria de cada unidade e servidores dedicados na Oracle Cloud.',
+  },
+  csc: {
+    title: 'O caminho natural para o centro de serviços',
+    text: 'O sistema respeita o RH em cada unidade: perfis, alçadas e operação local. Mas, com o mesmo portal, o mesmo fluxo e a mesma política em toda filial, a operação deixa de depender de onde a pessoa está. O time central pode absorver aos poucos o que for repetitivo, unidade por unidade, e o RH local ganha tempo para a operação e para as pessoas.',
+    steps: [
+      { title: 'Uma base, perfis por filial', text: 'Todas as unidades e empresas no mesmo cadastro, cada RH local operando dentro do seu perfil e das suas alçadas.' },
+      { title: 'Mesmo fluxo em toda unidade', text: 'Admissão, férias, ponto, benefícios e desligamento com o mesmo caminho e as políticas da matriz, em qualquer filial.' },
+      { title: 'Pedidos direto no portal', text: 'Gestores e colaboradores passam a pedir pelo portal, e o RH da unidade deixa de intermediar o que o sistema efetiva sozinho.' },
+      { title: 'O time central absorve o que for repetitivo', text: 'Com o fluxo padronizado, o que é operacional pode ser assumido pela matriz, unidade por unidade, no ritmo da empresa.' },
+    ],
+  },
+  personas: [
+    { role: 'RH da unidade', text: 'Admite, trata o ponto, lança férias e benefícios e atende a sua equipe dentro do seu perfil, sem mandar planilha para a matriz.' },
+    { role: 'Gerente de RH na matriz', text: 'Vê as pendências de cada filial antes do corte, confere com a NATI e fecha a folha por empresa, com a contabilização de cada CNPJ para o ERP.' },
+    { role: 'Gestor de equipe', text: 'Pede vaga, aprova férias e ponto da equipe pelo celular e acompanha o status sem precisar do RH da unidade para cada passo.' },
+  ],
+  faq: [
+    {
+      q: 'O RH de cada filial vê só a sua filial?',
+      a: 'Sim. Os perfis de acesso seguem a estrutura da organização: empresa, filial e centro de custo. A equipe da filial admite, trata o ponto e lança movimentações dentro do seu perfil e das suas alçadas. A matriz enxerga o consolidado e as pendências de cada unidade.',
+    },
+    {
+      q: 'Como a matriz fecha a folha de várias filiais sem redigitar?',
+      a: 'Ponto, benefícios e movimentações lançados pelas filiais já chegam apurados à folha, na mesma base. A matriz acompanha o que ainda está pendente por unidade, confere com a NATI e roda a folha por empresa, a 2.500 colaboradores por minuto. A contabilização de cada CNPJ e os eventos do eSocial saem por empresa.',
+    },
+    {
+      q: 'Precisamos centralizar o RH para usar o sistema?',
+      a: 'Não. O sistema foi feito para funcionar com RH em cada unidade, com perfis e alçadas por filial e as políticas padronizadas pela matriz. Centralizar é uma escolha da empresa, e o sistema deixa o caminho pronto para quando ela quiser.',
+    },
+    {
+      q: 'Como migrar aos poucos para um RH central?',
+      a: 'Com o mesmo portal e o mesmo fluxo em toda filial, a operação não depende de onde a pessoa está. A matriz pode assumir primeiro o que é repetitivo, como a conferência do ponto ou o lançamento de benefícios, unidade por unidade, enquanto o RH local mantém a presença junto à operação. O sistema não muda; muda só quem opera cada etapa.',
+    },
+  ],
+  related: ['grupo-rh-central', 'varias-unidades'],
+}
+
+export default page

@@ -15,8 +15,8 @@ import { cn } from '@/lib/utils'
 /* Os quatro pilares da marca (Manual de Identidade, seção 01). */
 const pillars = [
   { big: '31', title: 'Abrangência', text: '31 módulos. Tudo o que o RH faz, em um só lugar, com um único cadastro e uma única base.' },
-  { big: '35+', title: 'Solidez', text: 'Mais de 35 anos de especialização exclusiva em RH, plataforma premiada, parceira Oracle e nuvem com contingência.' },
-  { big: 'NATI', title: 'Inteligência', text: 'A NATI e o People Analytics transformando dado em decisão, dentro do sistema e sem depender de TI.' },
+  { big: '35+', title: 'Solidez', text: 'Mais de 35 anos de especialização exclusiva em RH, plataforma premiada, parceira Oracle e servidores dedicados na Oracle Cloud, com contingência.' },
+  { big: 'NATI', title: 'Inteligência', text: 'A NATI, a Inteligência Artificial do RH, e o People Analytics transformando dado em decisão, dentro do sistema e sem depender de TI.' },
   { big: '1:1', title: 'Proximidade', text: 'Acompanhamento próximo, atenção e agilidade de resposta. Um time que conhece a sua operação pelo nome.' },
 ]
 
@@ -128,7 +128,7 @@ export function WhySection() {
 
           <Reveal delay={0.1} className="mt-10 max-w-xl">
             <p className="text-[15px] leading-relaxed text-brand-graphite">
-              <strong className="font-bold text-brand-ink">Como cobramos:</strong> a proposta considera o porte e os módulos da sua operação.
+              <strong className="font-bold text-brand-ink">Como cobramos:</strong> contratação modular, como serviço em nuvem, com o valor calculado pelo número de colaboradores.
             </p>
           </Reveal>
 
@@ -143,6 +143,10 @@ export function WhySection() {
             </Link>
             <Link to={`${paths.about}#servicos`} className="group inline-flex items-center gap-2">
               Conhecer os serviços que acompanham o sistema
+              <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5" aria-hidden />
+            </Link>
+            <Link to={`${paths.security}#arquitetura`} className="group inline-flex items-center gap-2">
+              Ver a arquitetura da infraestrutura na Oracle Cloud
               <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5" aria-hidden />
             </Link>
           </Reveal>

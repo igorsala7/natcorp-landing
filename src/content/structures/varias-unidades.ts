@@ -1,0 +1,202 @@
+import type { StructurePage } from './types'
+
+const page: StructurePage = {
+  slug: 'varias-unidades',
+  name: 'Uma empresa, várias unidades',
+  tagline: 'Uma empresa, muitas unidades. [[Um RH que enxerga todas]].',
+  summary:
+    'Filiais, lojas, plantas ou centros de distribuição da mesma empresa, com um RH central operando tudo. Cada gestor aprova pelo celular o que é da sua unidade, cada unidade tem o seu raio de marcação no NatPonto e o RH vê as pendências de cada uma antes de fechar a folha. É o centro de serviços dentro de uma só empresa.',
+  seo: {
+    title: 'RH para empresa com várias unidades e filiais | Natcorp',
+    description:
+      'Uma empresa com filiais, lojas ou plantas e um RH central: perfis por unidade, Portal do Gestor no celular, raio de marcação por unidade e pendências antes do corte.',
+  },
+  context: [
+    'Quando a empresa cresce para várias unidades, o RH continua em um lugar e as pessoas, não. O gerente da loja, o supervisor da planta ou o líder da filial decide no local e informa depois, por telefone, e-mail ou planilha. O RH recebe o que já aconteceu, sem prazo e sem padrão, e descobre a pendência no fechamento.',
+    'Com uma base e perfis por unidade e centro de custo, o gestor aprova pelo Portal do Gestor o que é da equipe dele, de onde estiver. As marcações chegam do NatPonto com o raio de cada unidade, as requisições seguem a alçada da unidade e o RH central vê o que falta em cada uma antes do corte. Um time, todas as unidades, o mesmo fluxo.',
+  ],
+  facts: [
+    { value: '3 níveis', label: 'perfis e alçadas por empresa, filial e centro de custo' },
+    { value: 'Raio por unidade', label: 'cada filial com o seu perímetro de marcação no NatPonto' },
+    { value: 'Uma fila', label: 'requisições de todas as unidades chegando aprovadas ao RH central' },
+  ],
+  pains: [
+    {
+      icon: 'map-pin',
+      title: 'O gestor decide na unidade e o RH sabe depois',
+      text: 'Troca de escala, hora extra, falta abonada e desligamento acontecem na loja ou na planta. A informação chega ao RH por telefone ou planilha, sem padrão, e às vezes não chega.',
+    },
+    {
+      icon: 'clock',
+      title: 'Ponto de cada unidade em um formato diferente',
+      text: 'Relógio em uma filial, planilha em outra, marcação no celular na terceira. Juntar tudo, apurar e conferir por unidade toma os primeiros dias do mês.',
+    },
+    {
+      icon: 'eye',
+      title: 'Quem vê o quê em cada unidade',
+      text: 'O gestor da filial precisa ver a sua equipe e só ela. O RH precisa ver todas. Sem perfis por unidade, ou todo mundo vê demais ou o RH vira intermediário de tudo.',
+    },
+    {
+      icon: 'calendar',
+      title: 'A pendência da unidade aparece no fechamento',
+      text: 'Uma filial não aprovou o ponto, outra não lançou a admissão, a terceira mandou o atestado tarde. A folha atrasa por causa de quem o RH não alcança.',
+    },
+  ],
+  answers: [
+    {
+      pain: 'Decisão na unidade',
+      title: 'Portal do Gestor no celular, com alçada por unidade',
+      text: 'O gestor aprova ponto, férias, abono, hora extra e requisições da sua equipe pelo celular, de onde estiver, dentro da alçada da sua unidade e do seu centro de custo, com suplente automático quando se ausenta. Aprovado, o pedido é efetivado no sistema e o RH central recebe tudo padronizado.',
+      modules: ['portais', 'requisicoes-com-workflow', 'administracao-de-pessoal'],
+    },
+    {
+      pain: 'Ponto por unidade',
+      title: 'Um raio de marcação por unidade e a apuração na mesma base',
+      text: 'O NatPonto tem um raio de marcação por unidade, e quem transita entre filiais marca em qualquer uma delas. A marcação fora do raio entra sinalizada para o gestor justificar. Relógios de ponto das unidades entram por integração, e o Ponto Eletrônico apura tudo com a mesma regra, direto para a folha.',
+      modules: ['natponto', 'ponto-eletronico', 'conexao-com-outros-sistemas'],
+    },
+    {
+      pain: 'Perfis',
+      title: 'Perfis por unidade e centro de custo; o RH vê o total',
+      text: 'Cada pessoa vê e opera só o que o perfil permite: o gestor, a sua equipe; o RH central, todas as unidades, por filial ou no consolidado. Cada acesso e alteração fica na trilha de auditoria, e os painéis mostram cada unidade e o total da empresa.',
+      modules: ['portais', 'infraestrutura-e-seguranca', 'business-intelligence'],
+    },
+    {
+      pain: 'Pendências',
+      title: 'Pendências por unidade visíveis antes do corte',
+      text: 'O RH vê o que ainda está aberto em cada unidade antes de fechar: ponto não aprovado, admissão sem documento, benefício sem lançamento. Confere por unidade, a NATI aponta as inconsistências e a folha roda em minutos, com a contabilização por centro de custo pronta para o ERP.',
+      modules: ['folha-de-pagamento', 'ponto-eletronico', 'nati', 'ged'],
+    },
+  ],
+  responsibilities: [
+    { task: 'Requisição de vaga e headcount', by: 'gestores', note: 'pelo Portal do Gestor, com a alçada da unidade e o orçamento de pessoal do centro de custo validado', modules: ['requisicoes-com-workflow', 'administracao-de-pessoal'] },
+    { task: 'Admissão', by: 'rh-central', note: 'o candidato preenche e assina pelo portal; o RH central valida e o cadastro nasce na unidade certa, na folha e no ponto', modules: ['admissao-digital', 'assinatura-eletronica', 'ged'] },
+    { task: 'Alterações cadastrais e funcionais', by: 'gestores', note: 'o colaborador atualiza o cadastro e o gestor indica movimentações e transferências entre unidades no portal', modules: ['requisicoes-com-workflow', 'portais'] },
+    { task: 'Férias', by: 'gestores', note: 'programadas pelo colaborador, aprovadas pelo gestor da unidade e efetivadas na folha, com o aviso assinado na tela', modules: ['requisicoes-com-workflow', 'assinatura-eletronica'] },
+    { task: 'Ponto: marcação, tratamento e aprovação', by: 'gestores', note: 'marcação no NatPonto com o raio da unidade, abono com justificativa e aprovação do período pelo gestor, pelo celular', modules: ['natponto', 'ponto-eletronico'] },
+    { task: 'Benefícios', by: 'rh-central', note: 'elegibilidade única para a empresa, vale-transporte por unidade e movimentações pedidas no portal', modules: ['gestao-de-beneficios', 'requisicoes-com-workflow'] },
+    { task: 'Afastamentos e exames', by: 'rh-central', note: 'atestados enviados pelo portal, exames por função e unidade, afastamento refletido no ponto e na folha', modules: ['medicina-ocupacional', 'seguranca-do-trabalho'] },
+    { task: 'Desligamento', by: 'gestores', note: 'indicado pelo gestor da unidade na requisição; o Offboarding reúne rescisão, bloqueios e documentos para o RH central', modules: ['requisicoes-com-workflow', 'offboarding'] },
+    { task: 'Conferência da folha', by: 'nati', note: 'cruza frequência, benefícios e impostos de todas as unidades e aponta inconsistências antes do corte', modules: ['nati', 'folha-de-pagamento'] },
+    { task: 'Fechamento da folha, eSocial e contabilização', by: 'rh-central', note: 'pendências por unidade antes do corte, folha em minutos e contabilização por centro de custo pronta para o ERP', modules: ['folha-de-pagamento', 'esocial', 'conexao-com-outros-sistemas'] },
+    { task: 'Atendimento ao colaborador', by: 'nati', note: 'responde holerite, ponto e benefícios em qualquer unidade, no portal, no WhatsApp e no Teams; o resto vira chamado', modules: ['nati', 'chamado-interno'] },
+    { task: 'Indicadores', by: 'rh-central', note: 'headcount, horas extras, absenteísmo e custo por unidade e o total da empresa em painéis prontos', modules: ['business-intelligence', 'people-analytics'] },
+  ],
+  flow: {
+    inputs: [
+      {
+        from: 'Gestores das unidades',
+        operator: 'gestores',
+        items: [
+          'Requisição de headcount e de pessoal',
+          'Alterações funcionais e indicação para movimentações',
+          'Programação de férias',
+          'Horas extras, escala de trabalho e apuração de ponto',
+          'Desligamento',
+          'Treinamento e indicação para curso',
+          'Acidente ou incidente de trabalho',
+          'Serviços de terceiros',
+        ],
+      },
+      {
+        from: 'Colaboradores e candidatos',
+        operator: 'gestores',
+        items: [
+          'Alterações cadastrais, endereço e dependentes',
+          'Abono de marcações',
+          'Atestados e afastamentos',
+          'Benefícios',
+          'Exames',
+          'Chamados',
+          'Currículo do candidato',
+        ],
+      },
+    ],
+    center: {
+      title: 'RH central',
+      text: 'Um time recebe de todas as unidades os pedidos já aprovados na alçada de cada uma e opera na mesma base. A NATI confere e atende, a Admissão Digital e a Assinatura Eletrônica tiram o papel das filiais, e o Onboarding e o Offboarding garantem a mesma experiência em qualquer unidade.',
+      modules: ['folha-de-pagamento', 'nati', 'admissao-digital', 'assinatura-eletronica', 'onboarding', 'offboarding', 'blog-corporativo'],
+    },
+    outputs: [
+      { title: 'Folha calculada em minutos, conferida por unidade e pela NATI', modules: ['folha-de-pagamento', 'nati'] },
+      { title: 'Contabilização da folha com provisões, por centro de custo, pronta para o ERP', modules: ['folha-de-pagamento', 'conexao-com-outros-sistemas'] },
+      { title: 'eSocial enviado e acompanhado na mesma tela', modules: ['esocial'] },
+      { title: 'Guias para o governo e o sindicato e créditos para pagamento dos funcionários', modules: ['folha-de-pagamento'] },
+      { title: 'Informações aos gestores e colaboradores de cada unidade, no portal e no WhatsApp', modules: ['portais', 'nati'] },
+      { title: 'Recrutamento e Seleção para as vagas de qualquer unidade', modules: ['recrutamento-e-selecao', 'quadro-de-vagas'] },
+      { title: 'Gestão de benefícios e de treinamento em todas as unidades', modules: ['gestao-de-beneficios', 'treinamento-e-desenvolvimento'] },
+      { title: 'Medicina Ocupacional e Segurança do Trabalho: exames, EPIs e PGR por unidade', modules: ['medicina-ocupacional', 'seguranca-do-trabalho'] },
+      { title: 'Indicadores por unidade e o total da empresa, com headcount e orçamento', modules: ['business-intelligence', 'administracao-de-pessoal'] },
+    ],
+  },
+  spotlight: ['portais', 'natponto', 'ponto-eletronico', 'requisicoes-com-workflow', 'folha-de-pagamento', 'business-intelligence'],
+  moduleNotes: {
+    'folha-de-pagamento': 'Uma folha para a empresa inteira, com as pendências de cada unidade visíveis antes do corte e a conferência por unidade.',
+    'administracao-de-pessoal': 'Posições, vagas e orçamento por unidade e centro de custo, com alerta quando uma filial sai do previsto.',
+    'cargos-e-salarios': 'A mesma tabela e a mesma política de mérito em todas as unidades, com travas para reajustes fora da regra.',
+    'gestao-de-beneficios': 'Vale-transporte por trajeto e unidade, plano de saúde e alimentação com a mesma elegibilidade em toda a empresa.',
+    natpay: 'Adiantamento pelo WhatsApp para o colaborador de qualquer unidade, com desconto automático na folha.',
+    esocial: 'Eventos gerados da folha validada e acompanhados na mesma tela, com validador antes do envio.',
+    'juridico-trabalhista': 'Processos de todas as unidades em um painel, com espelho de ponto e escala de cada filial como evidência.',
+    'ponto-eletronico': 'Escalas por unidade, banco de horas pela regra da empresa, pendências por filial antes do corte e AFD e AEJ por unidade.',
+    natponto: 'Um raio de marcação por unidade; quem transita entre filiais marca em qualquer uma, e a marcação fora do raio vai para o gestor justificar.',
+    'medicina-ocupacional': 'Exames por função e unidade, clínicas por cidade, atestados enviados pelo portal e absenteísmo por filial.',
+    'seguranca-do-trabalho': 'PGR, EPIs e CAT por unidade, com ficha de EPI assinada na tela e o S-2210 saindo no prazo.',
+    'recrutamento-e-selecao': 'Processo seletivo aberto pela requisição do gestor da unidade e conduzido pelo RH central, com banco de talentos por cidade.',
+    'quadro-de-vagas': 'Vagas de todas as unidades publicadas em um quadro só, com a marca da empresa e filtro por localidade.',
+    'admissao-digital': 'O candidato preenche e assina de onde estiver, o RH central valida e o cadastro nasce na unidade certa.',
+    onboarding: 'Conteúdo de boas-vindas por unidade, área ou cargo, com a mesma experiência em qualquer filial.',
+    offboarding: 'Desligamento indicado pelo gestor da unidade e concluído pelo RH central em uma tela, com bloqueio de acessos.',
+    'avaliacoes-e-feedbacks': 'Ciclos de avaliação para toda a empresa, com feedback do gestor pelo celular e calibração entre unidades.',
+    'metas-e-resultados': 'Metas e PLR por unidade, área e indivíduo no mesmo ciclo, calculadas e enviadas à folha.',
+    'treinamento-e-desenvolvimento': 'Turmas por unidade ou para toda a empresa, com treinamentos obrigatórios e validade controlada em cada filial.',
+    'carreira-e-sucessao': 'Mapa de sucessão que enxerga talentos de todas as unidades, com prontidão para gerente de filial e supervisor regional.',
+    portais: 'Portal do Gestor no celular de cada líder de unidade e Portal do Colaborador para todos, cada um vendo só o que é seu.',
+    'requisicoes-com-workflow': 'Alçadas por unidade, área e centro de custo, com suplência automática, e uma fila padronizada para o RH central.',
+    'chamado-interno': 'Dúvidas de qualquer unidade em fila organizada no RH central, com prazo, histórico e relatórios por filial.',
+    'blog-corporativo': 'Comunicados para a empresa inteira ou para uma unidade, na timeline dos portais que as pessoas já usam.',
+    'assinatura-eletronica': 'Contratos, termos e avisos de férias assinados pelo celular em qualquer unidade, sem malote nem papel.',
+    ged: 'Documentos de colaboradores e candidatos por pessoa, com pendências por admissão e por unidade.',
+    'people-analytics': 'Qualquer listagem cruzada por unidade, área e centro de custo com o botão Ações, sem depender de TI.',
+    'business-intelligence': 'Painéis por unidade e o total da empresa, com alerta por e-mail quando um indicador de uma filial sai da faixa.',
+    nati: 'Atende colaboradores e gestores de todas as unidades no portal, no WhatsApp e no Teams, e confere a folha antes do corte.',
+    'conexao-com-outros-sistemas': 'Relógios de ponto e catracas das unidades, operadoras de benefícios e ERP conectados à mesma base.',
+    'infraestrutura-e-seguranca': 'Perfis por unidade e centro de custo, trilha de auditoria e servidores dedicados na Oracle Cloud com contingência.',
+  },
+  csc: {
+    title: 'Já é o modelo do centro de serviços, dentro de uma só empresa',
+    text: 'Um RH central operando várias unidades é exatamente o Centro de Serviços Compartilhados, só que com um CNPJ. O caminho é levar para o portal cada pedido que ainda chega por telefone, e-mail ou planilha, até que o RH receba tudo aprovado e padronizado, de qualquer unidade, e só opere.',
+    steps: [
+      { title: 'Perfis por unidade e centro de custo', text: 'Cada gestor vê e aprova só a sua equipe; o RH vê todas as unidades e o total. Cada filial com o seu raio de marcação no NatPonto.' },
+      { title: 'Portal do Gestor no celular', text: 'Ponto, férias, abono, hora extra, vaga e desligamento aprovados de onde o gestor estiver, dentro da alçada da unidade.' },
+      { title: 'Cada pedido no portal', text: 'O que ainda chega por telefone ou planilha vira requisição com fluxo, prazo e efetivação automática. A NATI responde o que é rotina.' },
+      { title: 'Pendências por unidade, folha em minutos', text: 'O RH vê o que falta em cada unidade antes do corte, confere com a NATI e fecha a folha da empresa com a contabilização por centro de custo.' },
+    ],
+  },
+  personas: [
+    { role: 'Gerente de RH', text: 'Enxerga cada unidade e o total, vê as pendências por filial antes do corte e fecha a folha sem ligar para ninguém.' },
+    { role: 'Gestor de unidade', text: 'Aprova ponto, férias, abono e hora extra da equipe pelo celular, entre uma tarefa e outra, e pede vaga com a alçada já definida.' },
+    { role: 'Colaborador na unidade', text: 'Marca o ponto no NatPonto, vê o espelho e o holerite no celular, pede férias e abono pelo portal e pergunta à NATI quando precisar.' },
+  ],
+  faq: [
+    {
+      q: 'O gestor de uma unidade vê dados das outras?',
+      a: 'Não. Os perfis seguem a estrutura da empresa: filial e centro de custo. O gestor vê a própria equipe e aprova dentro da sua alçada. O RH central enxerga todas as unidades, por filial ou no consolidado, com trilha de auditoria de quem viu e alterou cada dado.',
+    },
+    {
+      q: 'Como funciona o ponto em várias unidades?',
+      a: 'Cada unidade tem o seu raio de marcação no NatPonto, e quem transita entre filiais marca em qualquer uma delas. A marcação fora do raio entra sinalizada para o gestor justificar. Relógios de ponto que já existem nas unidades entram por integração, e o Ponto Eletrônico apura tudo na mesma base.',
+    },
+    {
+      q: 'Como o RH fecha a folha sem esperar cada unidade mandar informação?',
+      a: 'Porque nada precisa ser mandado. O ponto aprovado pelo gestor, a admissão feita pelo portal e os benefícios lançados já estão na base. O RH vê as pendências de cada unidade antes do corte, confere com a NATI e roda a folha a 2.500 colaboradores por minuto.',
+    },
+    {
+      q: 'Precisamos de alguém do RH em cada unidade?',
+      a: 'Não. Nesse modelo o gestor da unidade aprova o que é da equipe dele pelo Portal do Gestor, o colaborador resolve o dia a dia no portal e com a NATI, e o RH central opera tudo. Se a empresa preferir ter RH em cada unidade, o sistema também atende, com perfis e alçadas por filial.',
+    },
+  ],
+  related: ['grupo-rh-central', 'rh-por-unidade'],
+}
+
+export default page

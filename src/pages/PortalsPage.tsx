@@ -2,7 +2,7 @@ import { Link } from 'react-router'
 import { ArrowRight, Check, ChevronRight } from 'lucide-react'
 import { Section, SectionHeader, Eyebrow } from '@/components/sections/Section'
 import { PortalsSection } from '@/components/sections/PortalsSection'
-import { StructureCards } from '@/components/sections/StructureSection'
+import { StructureStrip } from '@/components/sections/StructureStrip'
 import { ResponsiveSection } from '@/components/sections/ResponsiveSection'
 import { FAQSection } from '@/components/sections/FAQSection'
 import { CTASection } from '@/components/sections/CTASection'
@@ -18,6 +18,7 @@ import { faqs, type FaqItem } from '@/content/faq'
 import { modulePath, modulesByGroup } from '@/content/modulePages'
 import { moduleIcons } from '@/content/modulePages/icons'
 import { paths } from '@/content/site'
+import { structurePath } from '@/content/structures'
 
 const stats = [
   { value: '3', label: 'portais: gestor, colaborador e candidato' },
@@ -145,8 +146,8 @@ export default function PortalsPage() {
                 matriz acompanha as pendências por unidade e fecha a folha.
               </p>
               <div className="mt-3 flex flex-wrap items-center gap-x-6 gap-y-2 text-[14px] font-semibold text-brand-purple">
-                <Link to={paths.groups} className="group inline-flex items-center gap-1.5">
-                  Como um grupo fecha a folha na matriz
+                <Link to={structurePath('rh-por-unidade')} className="group inline-flex items-center gap-1.5">
+                  Como o RH em cada unidade fecha na matriz
                   <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5" aria-hidden />
                 </Link>
                 <Link to={modulePath('requisicoes-com-workflow')} className="group inline-flex items-center gap-1.5">
@@ -204,24 +205,13 @@ export default function PortalsPage() {
 
       <ResponsiveSection tone="off" eyebrow="Os portais em qualquer tela" />
 
-      {/* Para a sua estrutura: empresa única, holding com RH central, grupo com RH em cada filial */}
-      <Section id="estrutura" tone="white" aria-labelledby="portais-estrutura-title">
-        <div className="container">
-          <SectionHeader
-            id="portais-estrutura-title"
-            eyebrow="Para a sua estrutura"
-            title="Os portais seguem a [[estrutura da sua empresa]]."
-            lead="Perfis por empresa, filial e centro de custo. Cada equipe vê só o que é dela; a matriz consolida."
-          />
-          <StructureCards tone="white" className="mt-12" />
-          <Reveal delay={0.2} className="mt-8">
-            <Link to={paths.groups} className="group inline-flex items-center gap-2 text-[15px] font-semibold text-brand-purple">
-              Ver tudo o que muda para grupos com várias empresas e filiais
-              <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5" aria-hidden />
-            </Link>
-          </Reveal>
-        </div>
-      </Section>
+      {/* Para a sua estrutura: os portais seguem perfis por empresa, filial e centro de custo */}
+      <StructureStrip
+        id="estrutura"
+        tone="white"
+        title="Os portais seguem a estrutura da sua empresa."
+        text="Perfis por empresa, filial e centro de custo: cada equipe vê só o que é dela e o RH consolida. Veja como o sistema se encaixa na sua estrutura."
+      />
 
       <FAQSection
         tone="off"

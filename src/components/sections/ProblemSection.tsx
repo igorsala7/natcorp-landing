@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { AnimatePresence, m, useInView, useReducedMotion } from 'motion/react'
-import { AlertTriangle, ArrowRight, BarChart2, Building2, Unplug } from 'lucide-react'
+import { ArrowRight, FileSpreadsheet, Hourglass, Unplug } from 'lucide-react'
 import { Link } from 'react-router'
 import { Section, Eyebrow } from './Section'
 import { Reveal, Stagger, StaggerItem } from '@/components/motion/Reveal'
@@ -11,38 +11,33 @@ import { EASE } from '@/lib/motion'
 
 /**
  * O problema, com personalidade de afirmação: uma pergunta grande em fundo escuro,
- * quatro sintomas em texto corrido e um objeto de antes e depois que troca de cena.
+ * três sintomas do RH sem a Natcorp e um objeto de antes e depois que troca de cena.
  */
 
 const pains = [
   {
     icon: Unplug,
-    title: 'Sistemas que não conversam.',
-    text: 'Ponto em um lugar, folha em outro, SESMT em planilha. Cada integração é um ponto de falha e uma digitação a mais.',
+    title: 'Vários sistemas, nenhum integrado.',
+    text: 'Folha em um, ponto em outro, recrutamento em um terceiro. Cada um faz a sua parte e nenhum conversa com o outro. O mesmo dado é digitado três vezes e a divergência aparece depois de pagar.',
   },
   {
-    icon: AlertTriangle,
-    title: 'Retrabalho e risco.',
-    text: 'Conferência manual, pendências no eSocial e prazos de exames que ninguém viu. O erro custa multa, passivo e confiança.',
+    icon: FileSpreadsheet,
+    title: 'Planilha para tudo o que o sistema não entrega.',
+    text: 'Turnover, headcount, custo por centro de custo. O sistema atual não gera o relatório, então o RH exporta, cola e mantém uma planilha paralela para responder à diretoria.',
   },
   {
-    icon: BarChart2,
-    title: 'Decisão sem dado.',
-    text: 'Turnover, custo de folha e headcount fechados semanas depois. A diretoria pergunta, o RH exporta para o Excel.',
-  },
-  {
-    icon: Building2,
-    title: 'Várias empresas e filiais, cada uma com a sua planilha de fechamento.',
-    text: 'A matriz recebe o fechamento de cada unidade por e-mail, consolida à mão e descobre a divergência depois de pagar.',
+    icon: Hourglass,
+    title: 'Horas de trabalho manual, todo mês.',
+    text: 'Sem automação nem processos inteligentes, os analistas conferem, redigitam e cobram pendências por e-mail. O tempo que devia ir para as pessoas vai para o operacional.',
   },
 ]
 
 /* Cena "hoje": quatro lugares, quatro versões da mesma informação. */
 const today = [
-  { title: 'Planilha de ponto', ext: 'ponto_out.xlsx', badge: '3 versões da mesma planilha' },
+  { title: 'Sistema de ponto', ext: 'ponto.exe', badge: 'Exporta, importa, confere' },
   { title: 'Sistema de folha', ext: 'folha.exe', badge: 'Horas redigitadas à mão' },
-  { title: 'Portal eSocial', ext: 'gov.br', badge: '2 eventos rejeitados' },
-  { title: 'E-mail do RH', ext: 'caixa de entrada', badge: '42 dúvidas sem resposta' },
+  { title: 'Planilha de indicadores', ext: 'turnover_v7.xlsx', badge: '7 versões da mesma planilha' },
+  { title: 'E-mail do RH', ext: 'caixa de entrada', badge: '42 pendências cobradas à mão' },
 ]
 
 /* Resultados observados na operação de clientes (material comercial Natcorp, "Produtividade de RH"). */
@@ -104,8 +99,8 @@ export function ProblemSection() {
             ))}
           </Stagger>
           <Reveal delay={0.3} className="mt-8">
-            <Link to={paths.groups} className="group inline-flex items-center gap-2 text-[15px] font-semibold text-white underline-offset-4 hover:underline">
-              Veja como um grupo fecha a folha na matriz
+            <Link to={paths.structures} className="group inline-flex items-center gap-2 text-[15px] font-semibold text-white underline-offset-4 hover:underline">
+              Veja como um único time de RH opera várias empresas e filiais
               <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5" aria-hidden />
             </Link>
           </Reveal>
@@ -189,7 +184,7 @@ function TodayScene() {
         <line x1="75" y1="25" x2="25" y2="75" stroke="#E4A9C4" strokeWidth="0.4" strokeDasharray="2 2" opacity="0.6" vectorEffect="non-scaling-stroke" />
       </svg>
       <p className="mt-4 text-[12.5px] font-semibold leading-relaxed text-white/60">
-        Todo mês, dias de conferência para descobrir qual versão está certa. E o eSocial esperando.
+        Todo mês, dias de conferência manual para descobrir qual versão está certa. E o eSocial esperando.
       </p>
       <m.p
         className="pointer-events-none absolute left-1/2 top-[42%] -translate-x-1/2 -translate-y-1/2 whitespace-nowrap rounded-full border border-[#E4A9C4]/50 bg-brand-ink px-3.5 py-1.5 text-[11.5px] font-bold text-[#F3C9DA] shadow-lift"
@@ -197,7 +192,7 @@ function TodayScene() {
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.4, ease: EASE, delay: 0.6 }}
       >
-        4 lugares, 4 versões da verdade
+        4 sistemas, 4 versões da verdade
       </m.p>
     </div>
   )

@@ -57,7 +57,7 @@ import { WhatsAppMockup } from '@/components/mockups/nati/WhatsAppMockup'
 import { OperatorPanel, PANEL_SIZE } from '@/components/mockups/nati/OperatorPanel'
 import { capabilities } from '@/content/nati'
 import { getGroup, getModuleEntry, type ModuleEntry } from '@/content/modulePages'
-import { paths } from '@/content/site'
+import { structurePath } from '@/content/structures'
 import type { ModulePage as ModulePageData } from '@/content/modulePages/types'
 import { cn } from '@/lib/utils'
 import { EASE, fadeUp, staggerContainer, viewportOnce } from '@/lib/motion'
@@ -133,7 +133,7 @@ const subnav = [
 
 type SubnavId = (typeof subnav)[number]['id']
 
-const channels = ['No sistema', 'No WhatsApp', 'No Microsoft Teams', 'Por texto ou voz']
+const channels = ['Inteligência Artificial, não um chatbot', 'No sistema', 'No WhatsApp', 'No Microsoft Teams', 'Por texto ou voz']
 
 /* Regra do sistema: o que vem em cada resposta. */
 const answerParts = [
@@ -174,7 +174,7 @@ const profiles = [
     role: 'Para o RH da filial',
     question: 'Tem alguém da minha filial com ponto pendente para o fechamento?',
     answer: 'Responde só sobre a filial dela, com o prompt de conferência que a matriz salvou para todas as unidades.',
-    link: { to: paths.groups, label: 'Como funciona para grupos' },
+    link: { to: structurePath('rh-por-unidade'), label: 'Como funciona com RH em cada filial' },
   },
 ]
 
@@ -266,7 +266,7 @@ export default function NatiModulePage({ entry, page }: { entry: ModuleEntry; pa
           <div className="mt-8 grid items-center gap-12 lg:grid-cols-[1.05fr_1fr] lg:gap-10 xl:gap-16">
             <div className="max-w-2xl">
               <Reveal y={12} duration={0.5}>
-                <Eyebrow tone="white">NATI · agente de IA especialista em RH</Eyebrow>
+                <Eyebrow tone="white">Inteligência Artificial · NATI, a IA especialista em RH</Eyebrow>
               </Reveal>
               <Reveal delay={0.1} y={8}>
                 <p className="mt-6 inline-flex max-w-full items-center gap-2.5 rounded-full border border-white/12 bg-white/[0.06] py-1.5 pl-1.5 pr-4 text-[13.5px] font-semibold text-[#E4A9C4] backdrop-blur-sm sm:text-[14.5px]">
@@ -277,7 +277,7 @@ export default function NatiModulePage({ entry, page }: { entry: ModuleEntry; pa
               <SplitText
                 as="h1"
                 id="module-title"
-                text="A inteligência artificial que lê o RH inteiro [[e pensa junto com você]]."
+                text="A Inteligência Artificial que lê o RH inteiro [[e pensa junto com você]]."
                 className="mt-5 text-4xl font-extrabold leading-[1.04] text-white sm:text-5xl lg:text-[3.5rem] xl:text-[4rem]"
                 highlightClassName="text-[#E4A9C4]"
               />
@@ -317,7 +317,7 @@ export default function NatiModulePage({ entry, page }: { entry: ModuleEntry; pa
               </m.div>
               <Reveal delay={0.9} y={8}>
                 <p className="mt-3 text-center text-[12.5px] leading-snug text-white/55">
-                  A NATI no centro. Em volta, as sete frentes do RH e os 31 módulos que ela lê o tempo todo.
+                  A Inteligência Artificial no centro. Em volta, as sete frentes do RH e os 31 módulos que ela lê o tempo todo.
                 </p>
               </Reveal>
             </div>

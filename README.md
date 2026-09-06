@@ -39,9 +39,10 @@ npm run lint     # oxlint
 | `/sobre` | Sobre a Natcorp: história, missão, visão e valores, reconhecimentos e clientes, serviços e vídeos |
 | `/contato` | Canais de contato, formulário, escritórios e como funciona o atendimento |
 | `/portais` | Portais do Gestor, do Colaborador e do Candidato, requisições com workflow, módulos de autoatendimento e multiplataforma |
-| `/grupos` | Para grupos com várias empresas e filiais: três jeitos de operar (empresa única, holding com RH central, RH em cada filial), o que muda no sistema, como a matriz fecha a folha e FAQ |
-| `/perguntas-frequentes` | Todas as perguntas frequentes, gerais e para grupos, com atalhos para as páginas que aprofundam |
-| `/modelo-comercial` | Sem cobrança por usuário, CNPJ ou histórico: o que está incluído, comparativo com outros sistemas, como funciona a contratação |
+| `/estruturas` | Como é a sua estrutura? Seletor de três perguntas (empresas, unidades, RH) que leva a uma das cinco estruturas, os cinco cartões e o centro de serviços compartilhados. `/grupos` redireciona para cá |
+| `/estruturas/:slug` | Página por estrutura (empresa única, várias unidades, grupo com RH central, RH por unidade, equipes em clientes): como o RH costuma funcionar, dores e respostas, quem faz o quê, o fluxo animado do centro de serviços, os 31 módulos aplicados, o caminho para o CSC, personas e FAQ |
+| `/perguntas-frequentes` | Todas as perguntas frequentes, gerais e para grupos, com atalhos para as páginas que aprofundam (a seção de grupos leva a `/estruturas`) |
+| `/modelo-comercial` | Modular, em nuvem e pelo número de colaboradores: os três pilares, histórico completo na implantação, contabilização integrada ao ERP, diferenciais frente a outros sistemas, comparativo e como funciona a contratação |
 | `/jornada-da-contratacao` | Jornada do colaborador em 24 etapas e 4 fases, em uma indústria fictícia. Duas visões (`?modo=pratico` alterna): a história completa, com personagens 3D, mini mockups e o mapa que acompanha a rolagem, e a visão prática, um diagrama por raias (gestor, candidato, colaborador, RH, SESMT, sistema). Fecha com o diagrama animado dos módulos se integrando |
 | qualquer outra | Página 404 |
 
@@ -56,7 +57,8 @@ para que os links já indexados pelo Google e salvos por clientes continuem func
 depende de onde o WordPress vai continuar publicado.
 
 `npm run build` roda antes `scripts/generate-sitemap.mjs`, que gera `public/sitemap.xml` e `public/robots.txt`
-a partir de `src/content/modulePages/registry.json` (use `VITE_SITE_URL` para o domínio final).
+a partir dos registros em `src/content/modulePages`, `src/content/segments` e `src/content/structures` (use `VITE_SITE_URL`
+para o domínio final).
 
 ## Conteúdo dos módulos
 
@@ -76,7 +78,8 @@ escrito a partir das 33 apresentações comerciais de natcorprh.app e do briefin
 ```
 src/
   pages/        LandingPage, ModulesIndexPage, ModulePage (template data-driven), NatiModulePage, NatPontoModulePage e
-                PeopleAnalyticsModulePage (páginas dedicadas com as telas do produto), HiringJourneyPage, NotFoundPage
+                PeopleAnalyticsModulePage (páginas dedicadas com as telas do produto), SegmentsIndexPage e SegmentPage,
+                StructuresIndexPage e StructurePage (templates data-driven de content/structures), HiringJourneyPage, NotFoundPage
   components/
     brand/      Logo.tsx (símbolo + wordmark em vetor), logo-paths.ts (geometria gerada do manual),
                 NatiAvatar e EmployeeAvatar (os personagens 3D em disco claro, com anel opcional), NatPontoIcon (ícone em vetor)
@@ -99,13 +102,18 @@ src/
                 área), Journey (história da Ana com tela fixa que troca ao rolar), NatiTeaser (prévia da NATI logo após os números), Nati (a NATI se apresenta digitando, hub neural, análise contínua, números, capacidades e chat),
                 Segments (faixa de fotos com a dor de cada segmento), Why (manifesto tipográfico + "o que não cobramos" +
                 banner humano), Comparison, Services, Recognition, Videos, Modules, GroupTabs, Analytics, NatPonto, Portals,
-                Responsive, Security, Personas, FAQ (com itens e link "ver todas"), FaqAccordion, CTA (+ LeadForm lazy,
-                canais e escritórios), Footer
+                Responsive, Security, Personas, FAQ (com itens e link "ver todas"), FaqAccordion, StructureChooserSection
+                (o seletor compacto na home) e StructureStrip (faixa com as cinco estruturas, fecha segmentos, jornada e portais),
+                CTA (+ LeadForm lazy, canais e escritórios), Footer
+    structure/  Página "Como é a sua estrutura?": StructureChooser (três perguntas com papel de rádio e resultado ao vivo),
+                ResponsibilityMap (quem faz o quê: tabela em telas largas, cartões no celular), ServiceCenterDiagram
+                (entradas, centro e saídas com conectores medidos e animados; empilhado no celular) e ModuleChip
     seo/        JsonLd, Breadcrumb
     ui/         primitivos shadcn/ui
   content/      textos e dados (módulos da landing, FAQ, personas, navegação e contato em site.ts, reconhecimentos, vídeos),
                 hiringJourney.ts (as 24 etapas da jornada, com ator e personagem por etapa), journeyArt.ts (figuras, retratos e
-                cenas opcionais, descobertos pelo nome do arquivo), modulePages/ (páginas de módulo) e segments/ (páginas por segmento)
+                cenas opcionais, descobertos pelo nome do arquivo), modulePages/ (páginas de módulo), segments/ (páginas por segmento)
+                e structures/ (as cinco estruturas: registro, perguntas do seletor e o conteúdo de cada página)
   assets/avatars nati.png (a NATI, personagem 3D oficial, renderizada em alta resolução a partir do avatar do material
                 da Natcorp) e ana.png (a colaboradora Ana, no mesmo estilo 3D); PNG com fundo transparente, 512 px.
                 Para usar o arquivo original, basta substituir nati.png

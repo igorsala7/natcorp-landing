@@ -6,9 +6,9 @@ const page: ModulePage = {
   group: 'dados-ia-plataforma',
   tagline: 'A NATI analisa e sugere. [[O gestor decide]].',
   summary:
-    'A inteligência artificial que trabalha dentro do sistema de RH. Ela cruza folha, ponto, benefícios, cargos, talentos e SESMT, aponta inconsistências antes do fechamento e responde ao colaborador 24 horas por dia, pelo sistema, WhatsApp ou Teams.',
+    'A Inteligência Artificial que trabalha dentro do sistema de RH. Ela cruza folha, ponto, benefícios, cargos, talentos e SESMT, aponta inconsistências antes do fechamento e responde ao colaborador 24 horas por dia, pelo sistema, WhatsApp ou Teams.',
   seo: {
-    title: 'NATI: a inteligência artificial do RH | Natcorp',
+    title: 'NATI: a Inteligência Artificial do RH | Natcorp',
     description:
       'NATI, a IA da Natcorp: audita a folha antes do fechamento, lê as sete frentes e os 31 módulos do RH e responde a colaboradores 24/7 no sistema, WhatsApp e Teams.',
   },

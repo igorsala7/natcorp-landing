@@ -1,6 +1,6 @@
 import { Suspense, lazy, useEffect } from 'react'
 import { AnimatePresence } from 'motion/react'
-import { BrowserRouter, HashRouter, Route, Routes, useLocation } from 'react-router'
+import { BrowserRouter, HashRouter, Navigate, Route, Routes, useLocation } from 'react-router'
 import { Toaster } from '@/components/ui/sonner'
 import { MotionProvider } from '@/components/motion/MotionProvider'
 import { IntroProvider } from '@/components/motion/Intro'
@@ -16,12 +16,13 @@ const ModulePage = lazy(() => import('@/pages/ModulePage'))
 const HiringJourneyPage = lazy(() => import('@/pages/HiringJourneyPage'))
 const SegmentsIndexPage = lazy(() => import('@/pages/SegmentsIndexPage'))
 const SegmentPage = lazy(() => import('@/pages/SegmentPage'))
+const StructuresIndexPage = lazy(() => import('@/pages/StructuresIndexPage'))
+const StructurePage = lazy(() => import('@/pages/StructurePage'))
 const SystemPage = lazy(() => import('@/pages/SystemPage'))
 const SecurityPage = lazy(() => import('@/pages/SecurityPage'))
 const AboutPage = lazy(() => import('@/pages/AboutPage'))
 const ContactPage = lazy(() => import('@/pages/ContactPage'))
 const PortalsPage = lazy(() => import('@/pages/PortalsPage'))
-const GroupsPage = lazy(() => import('@/pages/GroupsPage'))
 const FaqPage = lazy(() => import('@/pages/FaqPage'))
 const CommercialPage = lazy(() => import('@/pages/CommercialPage'))
 const NotFoundPage = lazy(() => import('@/pages/NotFoundPage'))
@@ -45,7 +46,7 @@ function AppRoutes() {
   }, [])
 
   return (
-    <AnimatePresence mode="wait" initial={false}>
+    <AnimatePresence mode="wait">
       <Routes location={location} key={location.pathname}>
         <Route path="/" element={<LandingPage />} />
         {[
@@ -54,7 +55,6 @@ function AppRoutes() {
           ['/sobre', <AboutPage />],
           ['/contato', <ContactPage />],
           ['/portais', <PortalsPage />],
-          ['/grupos', <GroupsPage />],
           ['/perguntas-frequentes', <FaqPage />],
           ['/modelo-comercial', <CommercialPage />],
         ].map(([path, element]) => (
@@ -92,6 +92,24 @@ function AppRoutes() {
             </Suspense>
           }
         />
+        <Route
+          path="/estruturas"
+          element={
+            <Suspense fallback={<PageFallback />}>
+              <StructuresIndexPage />
+            </Suspense>
+          }
+        />
+        <Route
+          path="/estruturas/:slug"
+          element={
+            <Suspense fallback={<PageFallback />}>
+              <StructurePage />
+            </Suspense>
+          }
+        />
+        {/* Endereço antigo da página de grupos: agora é "Como é a sua estrutura?". */}
+        <Route path="/grupos" element={<Navigate to="/estruturas" replace />} />
         <Route
           path="/jornada-da-contratacao"
           element={

@@ -46,7 +46,7 @@ const extras = [
     title: 'Multiempresa e multifilial',
     text: 'Controle por empresa, filial e centro de custo, com perfis de acesso e alçadas por unidade. Cada equipe vê só o que é dela; a matriz consolida.',
     links: [
-      { label: 'Como um grupo opera', to: paths.groups },
+      { label: 'Como é a sua estrutura?', to: paths.structures },
       { label: 'Módulo Portais', to: modulePath('portais') },
     ],
   },

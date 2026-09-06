@@ -49,7 +49,7 @@ const menuColumns: GroupId[][] = [
 /** Ícones das entradas gerais dos menus, por destino. */
 const linkIcons: Record<string, LucideIcon> = {
   [paths.system]: LayoutGrid,
-  [paths.groups]: Network,
+  [paths.structures]: Network,
   [paths.faq]: CircleHelp,
   [paths.commercial]: Receipt,
   [paths.modules]: SquareStack,

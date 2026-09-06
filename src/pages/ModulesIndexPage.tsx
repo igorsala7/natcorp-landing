@@ -13,6 +13,7 @@ import { Button } from '@/components/ui/button'
 import { useSeo } from '@/hooks/useSeo'
 import { getGroup, groups, modulePath, moduleRegistry, type ModuleEntry } from '@/content/modulePages'
 import { moduleIcons } from '@/content/modulePages/icons'
+import { structurePath } from '@/content/structures'
 import { paths } from '@/content/site'
 import { cn } from '@/lib/utils'
 
@@ -29,7 +30,7 @@ const shortcuts = [
     title: 'Holding com RH central',
     text: 'Vários CNPJs na mesma folha, um time cuidando de todos. Os módulos que mais pesam:',
     modules: ['folha-de-pagamento', 'administracao-de-pessoal', 'business-intelligence'],
-    links: [{ to: paths.groups, label: 'Como funciona para grupos' }],
+    links: [{ to: structurePath('grupo-rh-central'), label: 'Como funciona com RH central' }],
   },
   {
     icon: Users,
@@ -37,7 +38,7 @@ const shortcuts = [
     text: 'Cada equipe vê só a sua filial e a matriz fecha a folha. Os módulos que mais pesam:',
     modules: ['portais', 'requisicoes-com-workflow', 'ponto-eletronico'],
     links: [
-      { to: paths.groups, label: 'Como funciona para grupos' },
+      { to: structurePath('rh-por-unidade'), label: 'Como funciona com RH por unidade' },
       { to: modulePath('portais'), label: 'Portais' },
     ],
   },
@@ -46,7 +47,7 @@ const shortcuts = [
     title: 'Empresa única',
     text: 'Uma base, perfis por unidade e centro de custo. Os módulos que mais pesam:',
     modules: ['admissao-digital', 'natponto', 'nati'],
-    links: [{ to: paths.groups, label: 'Como funciona para a sua estrutura' }],
+    links: [{ to: paths.structures, label: 'Como é a sua estrutura?' }],
   },
 ]
 

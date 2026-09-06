@@ -119,7 +119,7 @@ export const cast: CastMember[] = [
   { key: 'henrique', name: 'Dr. Henrique Sales', role: 'Médico do Trabalho', initials: 'HS' },
   { key: 'rafael', name: 'Rafael Duarte', role: 'Técnico de Segurança do Trabalho', initials: 'RD' },
   { key: 'paulo', name: 'Paulo Mendes', role: 'Analista de Folha e eSocial', initials: 'PM' },
-  { key: 'nati', name: 'NATI', role: 'Agente de IA da Natcorp, presente em todas as etapas', initials: 'N' },
+  { key: 'nati', name: 'NATI', role: 'Inteligência Artificial da Natcorp, presente em todas as etapas', initials: 'N' },
 ]
 
 export const castMember = (key: CastKey) => cast.find((c) => c.key === key)!

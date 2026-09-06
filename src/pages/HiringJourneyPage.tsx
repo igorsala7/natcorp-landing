@@ -3,7 +3,7 @@ import { Link, useSearchParams } from 'react-router'
 import { ArrowDown, ArrowRight, BookOpen, Building2, Check, Clock, GitBranch, LayoutGrid } from 'lucide-react'
 import { Section, Eyebrow, SectionHeader } from '@/components/sections/Section'
 import { CTASection } from '@/components/sections/CTASection'
-import { StructureSection } from '@/components/sections/StructureSection'
+import { StructureStrip } from '@/components/sections/StructureStrip'
 import { PageTransition } from '@/components/motion/PageTransition'
 import { SplitText } from '@/components/motion/SplitText'
 import { Reveal, Stagger, StaggerItem } from '@/components/motion/Reveal'
@@ -224,12 +224,9 @@ export default function HiringJourneyPage() {
 
       {mode === 'historia' ? <StorySection go={go} mode={mode} onModeChange={setMode} /> : <PracticalSection onOpenStory={openStory} mode={mode} onModeChange={setMode} />}
 
-      <StructureSection
+      <StructureStrip
         tone="off"
-        eyebrow="Para a sua estrutura"
-        title="A mesma jornada [[para o grupo inteiro]], com RH central ou em cada filial."
-        lead="A Vale Verde tem um RH central. Se o seu grupo tem RH em cada filial, o que muda é o perfil de quem lança e a alçada de quem aprova. As 24 etapas são as mesmas, e a matriz fecha a folha por empresa."
-        more
+        text="A Vale Verde tem um RH central. Se a sua empresa tem RH em cada unidade, o que muda é o perfil de quem lança e a alçada de quem aprova. As 24 etapas são as mesmas. Veja como o sistema se encaixa na sua estrutura."
       />
 
       {/* Fechamento: os módulos se integrando */}
@@ -299,10 +296,10 @@ export default function HiringJourneyPage() {
                 text: 'Nove mercados, da indústria ao setor público: as dores de cada um e os módulos que respondem a elas.',
               },
               {
-                to: paths.groups,
+                to: paths.structures,
                 icon: Building2,
-                title: 'Grupos com várias empresas e filiais',
-                text: 'Perfis por filial, alçadas por unidade e a folha fechando na matriz, por empresa e por CNPJ.',
+                title: 'Como é a sua estrutura?',
+                text: 'Empresa única, grupo, filiais, RH central ou por unidade: quem faz o quê e o fluxo do centro de serviços em cada uma.',
               },
             ].map((c) => (
               <StaggerItem key={c.to}>

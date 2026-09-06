@@ -5,7 +5,7 @@ import { ArrowRight, Check, ChevronDown, ChevronRight, GitBranch, ShieldCheck, S
 import { Section, SectionHeader, Eyebrow } from '@/components/sections/Section'
 import { CTASection } from '@/components/sections/CTASection'
 import { FaqAccordion } from '@/components/sections/FaqAccordion'
-import { StructureSection } from '@/components/sections/StructureSection'
+import { StructureStrip } from '@/components/sections/StructureStrip'
 import { PageTransition } from '@/components/motion/PageTransition'
 import { SplitText } from '@/components/motion/SplitText'
 import { Reveal, Stagger, StaggerItem } from '@/components/motion/Reveal'
@@ -405,12 +405,7 @@ function SegmentContent({ entry, page }: { entry: SegmentEntry; page: SegmentPag
         </div>
       </Section>
 
-      <StructureSection
-        tone="off"
-        eyebrow="Para a sua estrutura"
-        title={`Uma base para [[o grupo inteiro]], também em ${entry.name}.`}
-        lead="Várias empresas, CNPJs, sindicatos e filiais no mesmo cadastro. Perfis, alçadas e trilha de auditoria por unidade; folha, headcount e orçamento consolidados para a matriz. Tudo o que está nesta página vale com RH central ou com RH em cada filial."
-      />
+      <StructureStrip tone="off" text={`Tudo o que está nesta página vale para ${entry.name} com empresa única, grupo, filiais, RH central ou RH em cada unidade. Veja como o sistema se encaixa na sua.`} />
 
       <Section id="para-quem" tone="white" aria-labelledby="personas-title">
         <div className="container">

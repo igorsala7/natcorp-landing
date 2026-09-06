@@ -1,0 +1,42 @@
+[
+  {
+    "slug": "empresa-unica",
+    "name": "Empresa única, uma sede",
+    "label": "Empresa única",
+    "icon": "building",
+    "short": "Um CNPJ, um endereço, um time de RH. Autoatendimento e automação para o RH sair do operacional.",
+    "tags": ["Empresa única", "Apenas matriz", "RH centralizado"]
+  },
+  {
+    "slug": "varias-unidades",
+    "name": "Uma empresa, várias unidades",
+    "label": "Várias unidades",
+    "icon": "map-pin",
+    "short": "Um CNPJ com filiais, lojas ou plantas. Um RH central opera tudo e os gestores aprovam de onde estiverem.",
+    "tags": ["Empresa única", "Múltiplas filiais", "RH centralizado"]
+  },
+  {
+    "slug": "grupo-rh-central",
+    "name": "Grupo de empresas com RH central",
+    "label": "Grupo com RH central",
+    "icon": "network",
+    "short": "Várias empresas, CNPJs e sindicatos, um único time de RH: o centro de serviços compartilhados.",
+    "tags": ["Grupo empresarial", "Múltiplas filiais", "RH centralizado"]
+  },
+  {
+    "slug": "rh-por-unidade",
+    "name": "RH em cada unidade ou filial",
+    "label": "RH por unidade",
+    "icon": "users",
+    "short": "Cada unidade tem o seu RH e opera o que é dela. A matriz recebe tudo na mesma base e fecha a folha.",
+    "tags": ["Grupo ou empresa única", "Múltiplas filiais", "RH descentralizado"]
+  },
+  {
+    "slug": "equipes-em-clientes",
+    "name": "Equipes alocadas em clientes",
+    "label": "Equipes em clientes",
+    "icon": "briefcase",
+    "short": "Colaboradores trabalhando dentro de cada cliente, um RH na ponta em cada contrato e o RH central fechando tudo.",
+    "tags": ["Mão de obra alocada", "RH na ponta", "RH central"]
+  }
+]

@@ -14,8 +14,8 @@ import { structureFaqs } from '@/content/structure'
 import { journeyPath, paths } from '@/content/site'
 
 const shortcuts = [
-  { to: paths.groups, title: 'Grupos com várias empresas e filiais', text: 'Multiempresa, perfis por filial e fechamento na matriz.' },
-  { to: paths.commercial, title: 'Modelo comercial', text: 'Sem cobrança por usuário, por CNPJ nem por histórico.' },
+  { to: paths.structures, title: 'Como é a sua estrutura?', text: 'Empresa única, grupo, filiais, RH central ou por unidade.' },
+  { to: paths.commercial, title: 'Modelo comercial', text: 'Modular, em nuvem, pelo número de colaboradores.' },
   { to: paths.security, title: 'Segurança e infraestrutura', text: 'Nuvem Oracle, ambientes, backups e LGPD.' },
   { to: `${paths.about}#servicos`, title: 'Implantação, suporte e serviços', text: 'Como a Natcorp entra e acompanha a operação.' },
   { to: journeyPath, title: 'Jornada do colaborador', text: 'As 24 etapas, da vaga à promoção, em história ou diagrama.' },
@@ -81,7 +81,7 @@ export default function FaqPage() {
         eyebrow="Para grupos"
         title="Várias empresas, [[várias filiais]], uma base."
         lead="O que grupos com RH central ou com RH em cada filial perguntam antes de qualquer outra coisa."
-        more={{ to: paths.groups, label: 'Ver tudo o que muda para grupos' }}
+        more={{ to: paths.structures, label: 'Ver como o sistema se encaixa na sua estrutura' }}
       />
 
       <CTASection />

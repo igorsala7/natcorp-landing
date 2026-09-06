@@ -286,15 +286,15 @@ const groupsFaq: FaqItem = {
   a: 'Sim. Empresas, CNPJs e sindicatos são ilimitados na mesma base, e os perfis de acesso seguem a estrutura da organização: empresa, filial e centro de custo. Cada equipe vê e opera só o que é dela; a matriz consolida.',
 }
 
-/** Acordeão de perguntas de um módulo, com a pergunta sobre grupos no fim e o link para /grupos. */
+/** Acordeão de perguntas de um módulo, com a pergunta sobre grupos no fim e o link para /estruturas. */
 export function ModuleFaqAccordion({ items, className }: { items: FaqItem[]; className?: string }) {
   return (
     <div className={className}>
       <FaqAccordion items={[...items, groupsFaq]} />
       <p className="mt-5 text-[14.5px] leading-relaxed text-brand-graphite">
         Tem várias empresas e filiais?{' '}
-        <Link to={paths.groups} className="group inline-flex items-center gap-1 font-semibold text-brand-purple">
-          Veja tudo o que muda para grupos
+        <Link to={paths.structures} className="group inline-flex items-center gap-1 font-semibold text-brand-purple">
+          Como é a sua estrutura?
           <ArrowRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-0.5" aria-hidden />
         </Link>
       </p>
@@ -348,7 +348,7 @@ const seeAlso = [
   { icon: LayoutGrid, to: paths.portals, title: 'Portais e autoatendimento', text: 'Gestor, colaborador e candidato resolvem sozinhos, no celular.' },
   { icon: ShieldCheck, to: paths.security, title: 'Segurança e infraestrutura', text: 'Nuvem Oracle, contingência, backups e LGPD.' },
   { icon: Route, to: journeyPath, title: 'Jornada do colaborador', text: 'As 24 etapas, da vaga à promoção, no mesmo sistema.' },
-  { icon: Network, to: paths.groups, title: 'Grupos com várias empresas e filiais', text: 'Multiempresa, perfis por filial e fechamento na matriz.' },
+  { icon: Network, to: paths.structures, title: 'Como é a sua estrutura?', text: 'Empresa única, grupo, filiais, RH central ou por unidade: o sistema em cada uma.' },
 ]
 
 /** Faixa "Veja também": as quatro páginas que complementam qualquer módulo. */
