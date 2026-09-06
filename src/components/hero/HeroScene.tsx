@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useRef, useState } from 'react'
 import { m, useInView, type MotionValue } from 'motion/react'
 import { ScanFace } from 'lucide-react'
 import { NatiAvatar } from '@/components/brand/NatiAvatar'
@@ -45,12 +45,10 @@ export function HeroScene({ on, reduced, y, scale }: HeroSceneProps) {
   /** Os laços contínuos (pacotes de luz, brilho na borda, respiração) só rodam com o hero na tela. */
   const inView = useInView(root, { margin: '120px 0px' })
   const loop = on && inView && !reduced
-  /** Depois da primeira entrada, os laços voltam sem a espera da introdução. */
-  const [looped, setLooped] = useState(false)
-  useEffect(() => {
-    if (loop) setLooped(true)
-  }, [loop])
-  const wait = looped ? 0 : 1
+  /** Depois da primeira entrada, os laços voltam sem a espera da introdução (estado derivado durante a renderização). */
+  const [prev, setPrev] = useState({ loop: false, looped: false })
+  if (prev.loop !== loop) setPrev({ loop, looped: prev.looped || prev.loop })
+  const wait = prev.looped ? 0 : 1
   return (
     <div ref={root} className="absolute inset-0" aria-hidden>
       {/* o quadro que cobre a seção (no celular, só a parte de cima): imagem e arte no mesmo sistema de coordenadas */}
