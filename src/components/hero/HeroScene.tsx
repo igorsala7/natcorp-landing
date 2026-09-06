@@ -3,6 +3,7 @@ import { ScanFace } from 'lucide-react'
 import { NatiAvatar } from '@/components/brand/NatiAvatar'
 import { EASE } from '@/lib/motion'
 import heroV2 from '@/assets/people/hero-v2.webp'
+import heroV2Large from '@/assets/people/hero-v2-3000.webp'
 
 /**
  * Fundo do hero: a cena natcorp_hero_v2 (a profissional com o tablet junto à janela, o módulo do símbolo
@@ -56,7 +57,18 @@ export function HeroScene({ on, reduced, y, scale }: HeroSceneProps) {
         animate={on ? { opacity: 1 } : { opacity: 0 }}
         transition={{ duration: 1.4, ease: EASE }}
       >
-        <img src={heroV2} alt="" width={W} height={H} fetchPriority="high" decoding="async" draggable={false} className="absolute inset-0 h-full w-full" />
+        <img
+          src={heroV2}
+          srcSet={`${heroV2} 2000w, ${heroV2Large} 3000w`}
+          sizes="(min-width: 1024px) 125vw, 150vw"
+          alt=""
+          width={W}
+          height={H}
+          fetchPriority="high"
+          decoding="async"
+          draggable={false}
+          className="absolute inset-0 h-full w-full"
+        />
 
         <svg viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="none" className="absolute inset-0 h-full w-full overflow-visible">
           <defs>

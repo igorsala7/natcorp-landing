@@ -6,7 +6,8 @@ ser substituídas por fotografias do time e dos clientes da Natcorp antes da pub
 
 | Arquivo | Origem |
 | --- | --- |
-| hero-v2.webp | Imagem natcorp_hero_v2 fornecida pela Natcorp (profissional com tablet junto à janela, módulo em contorno e linhas de fluxo) |
+| hero-v2.webp | Imagem natcorp_hero_v2 fornecida pela Natcorp (profissional com tablet junto à janela, módulo em contorno e linhas de fluxo), 2000 px |
+| hero-v2-3000.webp | A mesma imagem reamostrada em 3000 px (Lanczos com nitidez leve) para telas de alta densidade, servida por srcset |
 | hero-tablet.webp, hero-tablet-sm.webp | https://unsplash.com/photos/b3WDtGtJ_mI (SoyBreno). Fundo de estúdio removido por chave de cor; WebP com transparência |
 | persona-chro.jpg | https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e |
 | persona-cfo.jpg | https://images.unsplash.com/photo-1560250097-0b93528c311a |
