@@ -6,11 +6,11 @@ const page: ModulePage = {
   group: 'talentos',
   tagline: 'A admissão que leva [[minutos, não dias]].',
   summary:
-    'O candidato preenche os próprios dados, anexa os documentos e assina o contrato eletronicamente. O RH valida e admite em poucos cliques, uma pessoa ou centenas por mês. Folha, ponto e benefícios já nascem prontos, sem papel e sem digitar nada de novo.',
+    'O candidato preenche os próprios dados, anexa os documentos e assina o contrato eletronicamente. O RH valida e admite em poucos cliques. Folha, ponto e benefícios já nascem prontos, sem papel e sem digitar nada de novo.',
   seo: {
     title: 'Admissão Digital sem papel | Natcorp',
     description:
-      'Admissão digital para grandes empresas: dados e documentos pelo portal, assinatura com validade jurídica e cadastro direto na folha, em fila por unidade.',
+      'Admissão digital para grandes empresas: dados e documentos pelo portal, assinatura com validade jurídica e cadastro direto na folha, sem papel e sem redigitar.',
   },
   highlights: [
     { value: '1 vez', label: 'o colaborador é cadastrado e já existe em todos os módulos' },
@@ -19,7 +19,7 @@ const page: ModulePage = {
   benefits: [
     {
       title: 'Tempo de contratação de dias para minutos',
-      text: 'O candidato faz a parte dele no portal, o RH só valida. A vaga fecha mais rápido e a pessoa começa a trabalhar antes, mesmo quando são dezenas de admissões na mesma semana.',
+      text: 'O candidato faz a parte dele no portal, o RH só valida. A vaga fecha mais rápido e a pessoa começa a trabalhar antes.',
     },
     {
       title: 'Zero digitação, zero retrabalho',
@@ -66,19 +66,14 @@ const page: ModulePage = {
       icon: 'workflow',
     },
     {
-      title: 'Fila de admissões por unidade',
-      text: 'Dezenas ou centenas de admissões por mês acompanhadas em fila por empresa e filial, com o status de cada pessoa em tempo real. O candidato conclui a dele de onde estiver, pelo celular ou pelo computador.',
-      icon: 'list-checks',
-    },
-    {
-      title: 'Convites pelo portal e efetivação em série',
-      text: 'O RH envia os convites pelo portal para todos os aprovados de uma vez, valida os cadastros conforme chegam e efetiva as admissões em série. Cada cadastro nasce na folha, no ponto e nos benefícios.',
-      icon: 'send',
-    },
-    {
       title: 'LGPD por desenho',
       text: 'Consentimento, acesso por perfil e trilha de auditoria sobre quem viu e alterou cada dado do candidato.',
       icon: 'shield-check',
+    },
+    {
+      title: 'No celular ou no computador',
+      text: 'O candidato conclui a admissão de onde estiver. O RH acompanha o status de cada pessoa em tempo real.',
+      icon: 'smartphone',
     },
   ],
   flow: {
@@ -93,7 +88,7 @@ const page: ModulePage = {
   },
   compliance: ['LGPD', 'Assinatura eletrônica com validade jurídica (padrão ICP-Brasil)', 'eSocial: evento de admissão gerado a partir do cadastro'],
   personas: [
-    { role: 'RH e Departamento Pessoal', text: 'Deixa de digitar cadastro e conferir cópia de documento. Valida, aprova e acompanha o status de cada admissão, uma a uma ou em fila por unidade.' },
+    { role: 'RH e Departamento Pessoal', text: 'Deixa de digitar cadastro e conferir cópia de documento. Valida, aprova e acompanha o status de cada admissão.' },
     { role: 'Candidato', text: 'Resolve tudo pelo celular, no seu tempo, sem imprimir nem levar papel na empresa.' },
     { role: 'Gestor', text: 'Vê quando a pessoa que pediu na requisição de vaga vai começar, sem perguntar ao RH.' },
   ],
@@ -107,8 +102,8 @@ const page: ModulePage = {
       a: 'Não. A integração com a folha é nativa: aprovada a admissão, o cadastro é criado na folha, no ponto, nos benefícios e no SESMT sem nenhuma redigitação.',
     },
     {
-      q: 'O sistema dá conta de centenas de admissões por mês?',
-      a: 'Sim. O sistema foi feito para grupos grandes. As admissões ficam em fila por empresa e filial, os convites saem pelo portal para todos os aprovados de uma vez, cada candidato preenche os próprios dados pelo celular ou pelo computador e o RH valida e efetiva em série. Centenas de admissões por mês seguem o mesmo fluxo, sem papel e sem redigitar, com o cadastro nascendo na folha, no ponto e nos benefícios.',
+      q: 'O candidato consegue fazer a admissão pelo celular?',
+      a: 'Sim. O Portal do Candidato é responsivo e funciona no celular, no tablet e no computador. Os documentos podem ser fotografados e anexados na hora.',
     },
     {
       q: 'Como fica a LGPD nos dados do candidato?',

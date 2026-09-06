@@ -1,5 +1,5 @@
 import { Link } from 'react-router'
-import { ArrowRight, Check, Cloud, Database, Headset, Infinity as InfinityIcon, RefreshCw, Sparkles, Users } from 'lucide-react'
+import { ArrowRight, Check, Cloud, Database, Headset, Infinity as InfinityIcon, Sparkles, Users } from 'lucide-react'
 import { Section, Eyebrow, SectionHeader } from '@/components/sections/Section'
 import { ComparisonSection } from '@/components/sections/ComparisonSection'
 import { FAQSection } from '@/components/sections/FAQSection'
@@ -19,14 +19,13 @@ const included = [
   { icon: InfinityIcon, title: 'CNPJs e sindicatos ilimitados', text: 'Todas as empresas do grupo na mesma base, cada uma com as suas convenções, sem cobrança adicional por CNPJ.' },
   { icon: Database, title: 'Histórico ilimitado', text: 'Migração sem limite de anos e histórico completo dentro do sistema, sem cobrança por volume de dados.' },
   { icon: Cloud, title: 'Nuvem Oracle com três ambientes', text: 'Produção, homologação e contingência, com dois backups por dia e monitoramento 24 horas.' },
-  { icon: RefreshCw, title: 'Legislação e versões em dia', text: 'Atualizações do sistema e dos layouts do eSocial chegam para todos os clientes, sem projeto de upgrade.' },
   { icon: Sparkles, title: 'NATI integrada', text: 'A inteligência artificial trabalha dentro do sistema e no WhatsApp, para colaboradores, gestores e RH.' },
   { icon: Headset, title: 'Suporte por chamados', text: 'Central com prazos definidos, histórico e controle de qualidade do atendimento.' },
 ]
 
 const steps = [
   { title: 'Demonstração com os seus dados', text: 'Você mostra a operação: empresas, unidades, convenções, volumes. A gente mostra o sistema resolvendo cada ponto.' },
-  { title: 'Proposta por porte e módulos', text: 'A proposta considera o número de colaboradores e os módulos que a sua operação precisa. Dá para começar pelo mais urgente e ampliar depois, sem reimplantar.' },
+  { title: 'Proposta por porte e módulos', text: 'A proposta considera o número de colaboradores e os módulos que a sua operação precisa.' },
   { title: 'Implantação com cronograma', text: 'Planejamento por empresa e filial, migração do histórico, homologação com a folha atual em paralelo e treinamento das equipes antes de entrar em produção.' },
 ]
 
@@ -36,16 +35,8 @@ const faq: FaqItem[] = [
     a: 'A proposta considera o porte e os módulos que a sua operação precisa. Não há cobrança por usuário, por CNPJ nem por histórico: todos os colaboradores acessam os portais, todas as empresas do grupo entram na mesma base e a migração traz o histórico completo.',
   },
   {
-    q: 'Posso começar por alguns módulos?',
-    a: 'Sim. Os módulos são nativos e integrados na mesma base, então dá para começar pelo que resolve a dor mais urgente e ampliar depois, sem reimplantar nem migrar de novo.',
-  },
-  {
-    q: 'A implantação e o treinamento estão incluídos?',
-    a: 'Implantação, migração e treinamento fazem parte do projeto e entram na proposta com cronograma e marcos, do planejamento ao primeiro fechamento de folha. Consultores alocados, BPO e fábrica de software são serviços à parte, quando fizer sentido para a sua empresa.',
-  },
-  {
-    q: 'O que acontece quando a legislação muda?',
-    a: 'As atualizações legais e de layouts do eSocial fazem parte do sistema e chegam para todos os clientes. Nada para instalar, nenhum projeto de upgrade.',
+    q: 'O que vem incluído e costuma ser cobrado à parte em outros sistemas?',
+    a: 'Usuários, CNPJs, sindicatos e histórico sem limite, três ambientes na nuvem Oracle com dois backups por dia, a NATI integrada e o suporte por chamados. O comparativo desta página mostra item por item.',
   },
 ]
 
@@ -53,7 +44,7 @@ export default function CommercialPage() {
   useSeo({
     title: 'Modelo comercial: sem cobrança por usuário, CNPJ ou histórico | Natcorp',
     description:
-      'Como a Natcorp é contratada: SaaS na nuvem Oracle, usuários, CNPJs e histórico ilimitados, NATI incluída, comparativo com outros sistemas e como funciona a proposta e a implantação.',
+      'Como a Natcorp é contratada: SaaS na nuvem Oracle, usuários, CNPJs e histórico ilimitados, NATI integrada, comparativo com outros sistemas e como funciona a proposta.',
     path: paths.commercial,
   })
 
@@ -96,7 +87,7 @@ export default function CommercialPage() {
             <Reveal delay={0.3} className="rounded-3xl border border-brand-mist bg-white p-6 shadow-soft">
               <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-brand-graphite">O que não entra na conta</p>
               <ul className="mt-3 space-y-3">
-                {['Cobrança por usuário ou por acesso aos portais', 'Cobrança por CNPJ ou por sindicato', 'Cobrança por histórico de dados ou por anos migrados', 'Projeto de upgrade a cada mudança na legislação'].map((t) => (
+                {['Cobrança por usuário ou por acesso aos portais', 'Cobrança por CNPJ ou por sindicato', 'Cobrança por histórico de dados ou por anos migrados'].map((t) => (
                   <li key={t} className="flex items-start gap-3 text-[15px] text-brand-ink">
                     <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-brand-purple/10 text-brand-purple">
                       <Check className="h-3 w-3" strokeWidth={3} aria-hidden />
@@ -112,8 +103,8 @@ export default function CommercialPage() {
 
       <Section id="incluido" tone="white" aria-labelledby="incluido-title">
         <div className="container">
-          <SectionHeader id="incluido-title" eyebrow="O que está incluído" title="Sete coisas que [[já vêm no sistema]]." lead="Sem módulo extra e sem letra pequena." />
-          <Stagger className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-4" stagger={0.06}>
+          <SectionHeader id="incluido-title" eyebrow="O que está incluído" title="Seis coisas que [[já vêm no sistema]]." lead="Sem módulo extra e sem letra pequena." />
+          <Stagger className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3" stagger={0.06}>
             {included.map((c) => (
               <StaggerItem key={c.title} className="flex h-full flex-col rounded-2xl border border-brand-mist bg-brand-off-white p-5">
                 <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-white text-brand-purple shadow-soft">
@@ -150,7 +141,7 @@ export default function CommercialPage() {
         </div>
       </Section>
 
-      <FAQSection id="comercial-faq" tone="off" items={faq} eyebrow="Perguntas sobre o modelo" title="Como cobra, [[como começa]], o que está incluído." lead="Sem surpresa na proposta." more={{ to: paths.faq, label: 'Ver todas as perguntas frequentes' }} />
+      <FAQSection id="comercial-faq" tone="off" items={faq} eyebrow="Perguntas sobre o modelo" title="Como cobra e [[o que está incluído]]." lead="Sem surpresa na proposta." more={{ to: paths.faq, label: 'Ver todas as perguntas frequentes' }} />
 
       <CTASection />
     </PageTransition>

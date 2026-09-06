@@ -20,7 +20,6 @@ import { actorMeta, castMember, company, EFFECTIVATION_AFTER, journeyModuleSlugs
 import { hasFigure, scenes, sceneCaptions } from '@/content/journeyArt'
 import { EFFECTIVATION_ID, JourneyBar, JourneyMap, useMapRows } from '@/components/journey/JourneyMap'
 import { EffectivationHub } from '@/components/journey/EffectivationHub'
-import { VolumeAside } from '@/components/journey/VolumeAside'
 import { StepVisual } from '@/components/journey/visuals'
 import { CastAvatar, CastFigure, CastList } from '@/components/journey/Cast'
 import { JourneyDiagram } from '@/components/journey/JourneyDiagram'
@@ -162,7 +161,7 @@ export default function HiringJourneyPage() {
                 <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-brand-graphite">A empresa do exemplo</p>
                 <p className="mt-1 text-lg font-extrabold text-brand-ink">{company.name}</p>
                 <p className="text-[13.5px] text-brand-graphite">
-                  {company.descriptor}, {company.volume}. A história se passa na {company.unit}.
+                  {company.descriptor}. A história se passa na {company.unit}.
                 </p>
                 <p className="mt-5 text-[11px] font-semibold uppercase tracking-[0.14em] text-brand-graphite">Quem aparece</p>
                 <CastList className="mt-2" />
@@ -178,7 +177,7 @@ export default function HiringJourneyPage() {
                   <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-brand-graphite">A empresa do exemplo</p>
                   <p className="mt-1 text-lg font-extrabold text-brand-ink">{company.name}</p>
                   <p className="text-[13.5px] leading-snug text-brand-graphite">
-                    {company.descriptor}, {company.volume}. A história se passa na {company.unit}.
+                    {company.descriptor}. A história se passa na {company.unit}.
                   </p>
                   <p className="mt-4 text-[11.5px] leading-snug text-brand-graphite">Empresa, pessoas, datas e valores são fictícios. As etapas, os módulos e o que o sistema faz em cada uma são reais.</p>
                 </div>
@@ -478,7 +477,6 @@ function StorySection({ go, mode, onModeChange }: { go: (id: string) => void; mo
                       {s.n === EFFECTIVATION_AFTER && (
                         <div className="py-10">
                           <EffectivationHub id={EFFECTIVATION_ID} />
-                          <VolumeAside className="mt-6" />
                         </div>
                       )}
                     </div>

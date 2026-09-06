@@ -15,7 +15,7 @@ export const faqs: FaqItem[] = [
   },
   {
     q: 'O sistema aguenta o volume de um grupo grande?',
-    a: 'Sim. A folha calcula 2.500 colaboradores por minuto: 20 mil colaboradores ficam calculados em cerca de 8 minutos, prontos para a conferência da NATI. Admissões e desligamentos em volume seguem o mesmo fluxo digital, com as pendências acompanhadas por unidade, e cada evento do eSocial é enviado e acompanhado na mesma tela, por empresa.',
+    a: 'Sim. A folha calcula 2.500 colaboradores por minuto: 20 mil colaboradores ficam calculados em cerca de 8 minutos, prontos para a conferência da NATI. Cada evento do eSocial é enviado e acompanhado na mesma tela, por empresa.',
   },
   {
     q: 'Cada filial pode operar o seu RH e a matriz fechar a folha?',

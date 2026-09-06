@@ -5,7 +5,7 @@
  * Empresa, pessoas, datas e valores são fictícios. As etapas e o que o sistema faz em cada uma são reais.
  */
 
-import { journeyPath, paths } from './site'
+import { journeyPath } from './site'
 
 export type PhaseNumber = 1 | 2 | 3 | 4
 
@@ -108,7 +108,6 @@ export const company = {
   name: 'Vale Verde Alimentos',
   descriptor: 'indústria de alimentos, 10.000 colaboradores, 6 unidades',
   unit: 'unidade de Sorocaba (SP)',
-  volume: 'cerca de 300 admissões por mês nas safras',
 }
 
 export const cast: CastMember[] = [
@@ -811,14 +810,6 @@ export const effectivation = {
     { slug: 'portais', note: 'Portal do Colaborador, onboarding e NatPonto liberados para o dia 28.' },
   ],
   base: { slug: 'infraestrutura-e-seguranca', note: 'Tudo em nuvem, com trilha de auditoria de quem viu e alterou cada dado.' },
-}
-
-/** E quando a admissão não é uma, mas centenas? O mesmo fluxo, em série (aparece logo depois da efetivação). */
-export const volume = {
-  title: 'E quando são 300 de uma vez?',
-  text: 'Na safra, a Vale Verde abre dezenas de requisições de uma vez, dispara os convites de admissão pelo portal, acompanha a fila de pendências por unidade e confirma as admissões em série. Cada evento do eSocial sai validado antes do primeiro dia.',
-  modules: ['admissao-digital', 'esocial'],
-  more: { to: paths.groups, label: 'Grupos com várias empresas e filiais' },
 }
 
 /** Números da história (para a abertura e o fechamento). */

@@ -40,7 +40,7 @@ export const structureCards: StructureCard[] = [
     key: 'central',
     eyebrow: 'Holding com RH central',
     title: 'Vários CNPJs na mesma folha. Um time cuidando de todos.',
-    text: 'Empresas, CNPJs e sindicatos ilimitados no mesmo cadastro. Headcount e orçamento consolidados por empresa e filial, folha calculada por empresa e conferida pela NATI, admissões e desligamentos em volume, e uma fila única de requisições e chamados para o time central.',
+    text: 'Empresas, CNPJs e sindicatos ilimitados no mesmo cadastro. Headcount e orçamento consolidados por empresa e filial, folha calculada por empresa e conferida pela NATI, e uma fila única de requisições e chamados para o time central.',
     bullets: ['CNPJs e sindicatos sem limite nem custo extra', 'Folha por empresa, consolidado para a matriz', 'Autoatendimento e NATI absorvendo a rotina de milhares de pessoas'],
     links: [
       { label: 'Folha de Pagamento', to: modulePath('folha-de-pagamento') },
@@ -76,7 +76,7 @@ export const groupCapabilities: GroupCapability[] = [
   { title: 'Headcount e orçamento consolidados', text: 'Posições, previsto e realizado por empresa, filial e centro de custo, com a visão do grupo para a matriz.', slug: 'administracao-de-pessoal' },
   { title: 'Fechamento por empresa, pendências por filial', text: 'Ponto, benefícios e movimentações chegam à folha já apurados. A matriz confere por unidade e roda a folha de cada empresa em minutos.', slug: 'ponto-eletronico' },
   { title: 'eSocial e contabilização por CNPJ', text: 'Eventos enviados e acompanhados por empresa, e a contabilização de cada CNPJ pronta para o ERP.', slug: 'esocial' },
-  { title: 'Admissões e desligamentos em volume', text: 'Convites de admissão pelo portal, documentos no GED, assinatura pelo NatDocs e efetivação em série, com as pendências acompanhadas por unidade.', slug: 'admissao-digital' },
+  { title: 'Admissão digital, do portal à folha', text: 'O candidato preenche e anexa pelo portal, o RH da unidade valida, o contrato é assinado pelo NatDocs e o cadastro nasce na folha, no ponto e nos benefícios.', slug: 'admissao-digital' },
   { title: 'Indicadores por filial e do grupo', text: 'Turnover, absenteísmo, custo e horas extras por empresa e unidade, e o consolidado para a diretoria.', slug: 'business-intelligence' },
 ]
 
@@ -93,10 +93,6 @@ export const structureFaqs: FaqItem[] = [
   {
     q: 'Como a matriz fecha a folha de várias filiais sem redigitar?',
     a: 'Ponto, benefícios e movimentações lançados pelas filiais já chegam apurados à folha, na mesma base. A matriz acompanha o que ainda está pendente por unidade, confere com a NATI e roda a folha por empresa, a 2.500 colaboradores por minuto. A contabilização de cada CNPJ e os eventos do eSocial saem por empresa.',
-  },
-  {
-    q: 'O sistema aguenta centenas de admissões e desligamentos por mês?',
-    a: 'Sim. A admissão é digital de ponta a ponta: o candidato preenche e anexa, o RH confere no GED, o contrato é assinado pelo NatDocs e a efetivação atualiza folha, ponto, benefícios, eSocial e portais de uma vez. O desligamento segue o mesmo fluxo pelo Offboarding. As pendências ficam em fila por unidade.',
   },
   {
     q: 'Como é a implantação para um grupo com várias empresas e filiais?',

@@ -54,7 +54,7 @@ const commitments = [
   { icon: Activity, title: 'Monitoramento 24 horas', text: 'Por um time especializado, com auditoria de acessos.' },
   { icon: Lock, title: 'Camadas de proteção', text: 'Criptografia, HTTPS, WAF, autenticação em dois fatores e VPN.' },
   { icon: ScrollText, title: 'Trilha de auditoria', text: 'Registro de acessos e alterações, com perfis por empresa e filial.' },
-  { icon: RefreshCw, title: 'Atualizações incluídas', text: 'Legislação e novas versões entram sem parar a operação, com homologação antes.' },
+  { icon: Cloud, title: 'Nuvem Oracle', text: 'Oracle Cloud Infrastructure, sem servidor próprio nem instalação na empresa.' },
   { icon: Headset, title: 'Suporte por chamados', text: 'Central de chamados com prazos definidos, histórico e controle de qualidade.' },
 ]
 

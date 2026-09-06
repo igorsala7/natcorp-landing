@@ -81,9 +81,9 @@ const page: ModulePage = {
       icon: 'history',
     },
     {
-      title: 'Desligamentos em volume',
-      text: 'Desligamentos em volume, inclusive coletivos, com documentação, assinatura e cálculo rescisório em fila. O RH acompanha cada caso por empresa e filial até o fechamento, no computador ou no celular.',
-      icon: 'layers',
+      title: 'Pelo celular também',
+      text: 'A rescisão pode ser processada do smartphone, de qualquer lugar, com a mesma segurança.',
+      icon: 'smartphone',
     },
   ],
   flow: {
@@ -99,7 +99,7 @@ const page: ModulePage = {
   },
   compliance: ['CLT: verbas rescisórias e regras de desligamento aplicadas automaticamente', 'eSocial: evento S-2299 de desligamento gerado da rescisão validada', 'LGPD: acesso por perfil e trilha de auditoria'],
   personas: [
-    { role: 'RH e Departamento Pessoal', text: 'Calcula, bloqueia e documenta em uma tela, com a NATI conferindo, um desligamento ou dezenas em fila. Ganha tempo para a conversa de saída.' },
+    { role: 'RH e Departamento Pessoal', text: 'Calcula, bloqueia e documenta em uma tela, com a NATI conferindo. Ganha tempo para a conversa de saída.' },
     { role: 'Gestor', text: 'Abre a Requisição de Desligamento pelo portal e acompanha o status até o fechamento, sem trocar e-mails com o RH.' },
     { role: 'Colaborador que sai', text: 'Passa por uma transição organizada e respeitosa, com documentos e prazos corretos.' },
   ],
@@ -117,8 +117,8 @@ const page: ModulePage = {
       a: 'Sim. Os bloqueios de acesso fazem parte do fluxo de Offboarding e ficam na mesma tela dos cálculos e dos documentos rescisórios.',
     },
     {
-      q: 'O sistema dá conta de um desligamento coletivo?',
-      a: 'Sim. Desligamentos em volume, inclusive coletivos, entram em fila com documentação, assinatura eletrônica e cálculo rescisório de cada pessoa, com o saldo do banco de horas tratado automaticamente. A NATI confere as rescisões antes do fechamento e os eventos S-2299 do eSocial saem por empresa, a partir dos dados validados. Tudo fica rastreável e auditável, da requisição ao encerramento.',
+      q: 'O Offboarding ajuda a reduzir passivo trabalhista?',
+      a: 'Sim. A automação garante o cumprimento das obrigações legais, a NATI confere a rescisão antes do fechamento e todo o processo fica rastreável e auditável, da requisição ao encerramento.',
     },
   ],
   related: ['requisicoes-com-workflow', 'folha-de-pagamento', 'ponto-eletronico', 'administracao-de-pessoal'],

@@ -76,9 +76,9 @@ const page: ModulePage = {
       icon: 'building',
     },
     {
-      title: 'Lotes de contratos e vários signatários',
-      text: 'Envie o mesmo documento para vários signatários ou crie um lote de contratos de uma vez, como as admissões do mês ou os espelhos de ponto de uma filial. Cada processo do lote aparece por status.',
-      icon: 'layers',
+      title: 'Pendências na palma da mão',
+      text: 'O signatário vê apenas o que exige a sua ação, assina em poucos toques e recebe confirmação instantânea, no celular ou no computador.',
+      icon: 'smartphone',
     },
     {
       title: 'Integrada à admissão e ao ponto',
@@ -89,8 +89,8 @@ const page: ModulePage = {
   flow: {
     title: 'Do envio ao documento verificado',
     steps: [
-      { title: 'Criação do processo', text: 'O operador escolhe o documento, os signatários e o prazo final, um a um ou em lote.' },
-      { title: 'Pendência para o signatário', text: 'Colaborador ou candidato recebe a pendência no portal, no celular ou no computador, e vê só o que exige a sua ação.' },
+      { title: 'Criação do processo', text: 'O operador escolhe o documento, os signatários e o prazo final.' },
+      { title: 'Pendência para o signatário', text: 'Colaborador ou candidato recebe a pendência no portal, no celular ou no computador.' },
       { title: 'Assinatura e confirmação', text: 'Assina em poucos toques e recebe a confirmação de processamento na hora.' },
       { title: 'Acompanhamento pelo RH', text: 'Status, categoria e tipo mostram quem já assinou. Só o Master altera prazos.' },
       { title: 'Original disponível', text: 'O documento assinado fica guardado e pode ser baixado e validado a qualquer momento.' },
@@ -104,7 +104,7 @@ const page: ModulePage = {
   personas: [
     {
       role: 'RH e Departamento Pessoal',
-      text: 'Cria o processo, um a um ou em lote, acompanha por status e para de imprimir, colher assinatura e arquivar papel.',
+      text: 'Cria o processo, acompanha por status e para de imprimir, colher assinatura e arquivar papel.',
     },
     {
       role: 'Colaborador e candidato',
@@ -129,8 +129,8 @@ const page: ModulePage = {
       a: 'Só usuários com perfil Master ou Administrador. O Operador cria e acompanha processos, mas não altera prazos. O colaborador apenas visualiza e assina os próprios documentos.',
     },
     {
-      q: 'Consigo enviar um lote de contratos de uma vez?',
-      a: 'Sim. O mesmo documento pode ir para vários signatários, e um lote de contratos, como as admissões do mês ou os espelhos de ponto de uma filial, é criado de uma vez, inclusive para candidatos ainda em admissão. O acompanhamento é por status, categoria e tipo: quem já assinou, o que está pendente e o prazo de cada processo.',
+      q: 'Um candidato que ainda não foi admitido consegue assinar?',
+      a: 'Sim. O módulo gerencia signatários desde colaboradores ativos até candidatos em processo de admissão, e o contrato é assinado dentro da própria Admissão Digital.',
     },
   ],
   related: ['admissao-digital', 'ged', 'ponto-eletronico', 'portais'],

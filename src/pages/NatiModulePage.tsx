@@ -10,11 +10,8 @@ import {
   Building2,
   Check,
   ChevronRight,
-  Cloud,
-  ClipboardList,
   Database,
   Download,
-  HeartPulse,
   History,
   Lightbulb,
   MessageSquare,
@@ -24,7 +21,6 @@ import {
   Plug,
   ScanSearch,
   ShieldCheck,
-  ShieldEllipsis,
   Sparkles,
   Stethoscope,
   ThumbsUp,
@@ -122,15 +118,6 @@ const guardrails = [
   { icon: Brain, title: 'Especialista, não generalista.', text: 'Conhece folha, ponto, benefícios, saúde ocupacional e as regras da sua empresa. Atualizada com a legislação vigente.' },
   { icon: ShieldCheck, title: 'Confidencialidade e LGPD.', text: 'Cada pessoa vê apenas o que o seu perfil permite. Os dados ficam no sistema, com trilha de auditoria.' },
   { icon: MessageSquare, title: 'Transparente sobre limites.', text: 'Toda conversa lembra que ela é uma IA, que pode cometer enganos e que as informações devem ser validadas.' },
-]
-
-/* Governança de dados: o que a empresa pode exigir e o que a proposta confirma por escrito. */
-const governance = [
-  { icon: Cloud, text: 'A NATI roda na nuvem Oracle da Natcorp, a mesma infraestrutura do sistema de RH, com produção, homologação e contingência.' },
-  { icon: Database, text: 'Os dados da empresa ficam na base da empresa, com trilha de auditoria de cada consulta.' },
-  { icon: ShieldEllipsis, text: 'No sistema, no WhatsApp e no Teams, cada pessoa vê só o que o perfil dela permite. Dados pessoais só vão para a própria pessoa.' },
-  { icon: ClipboardList, text: 'O histórico das conversas pertence à empresa, com retenção conforme a política definida pelo RH.' },
-  { icon: HeartPulse, text: 'As análises de saúde seguem o sigilo do PCMSO: indicadores e vencimentos por setor, não o diagnóstico de cada pessoa.' },
 ]
 
 /* Sub-navegação da página: as âncoras e a seção ativa. */
@@ -592,38 +579,6 @@ export default function NatiModulePage({ entry, page }: { entry: ModuleEntry; pa
               </StaggerItem>
             ))}
           </Stagger>
-
-          <div id="governanca" className="mt-16 grid gap-8 lg:mt-20 lg:grid-cols-[1fr_1.6fr] lg:gap-16">
-            <div>
-              <Reveal y={12} duration={0.5}>
-                <Eyebrow tone="white">Governança</Eyebrow>
-              </Reveal>
-              <Reveal delay={0.08}>
-                <h3 className="mt-4 text-2xl font-extrabold leading-tight sm:text-3xl">Governança de dados da NATI.</h3>
-              </Reveal>
-              <Reveal delay={0.16}>
-                <p className="mt-4 text-[15.5px] leading-relaxed text-white/75">
-                  Onde a NATI roda, de quem são os dados e quem vê o quê. Estes pontos são confirmados por escrito na proposta.
-                </p>
-              </Reveal>
-              <Reveal delay={0.24} className="mt-6">
-                <Link to={paths.security} className="group inline-flex items-center gap-2 text-[15px] font-semibold text-white">
-                  Ver segurança e infraestrutura
-                  <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5" aria-hidden />
-                </Link>
-              </Reveal>
-            </div>
-            <Stagger className="grid gap-3" stagger={0.06} delay={0.1}>
-              {governance.map(({ icon: Icon, text }) => (
-                <StaggerItem key={text} className="flex items-start gap-3 rounded-xl border border-white/10 bg-white/[0.05] p-4">
-                  <span className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-white/10 text-[#E4A9C4]">
-                    <Icon className="h-4 w-4" strokeWidth={1.7} aria-hidden />
-                  </span>
-                  <p className="text-[14.5px] leading-relaxed text-white/85">{text}</p>
-                </StaggerItem>
-              ))}
-            </Stagger>
-          </div>
 
           <div className="mt-16 lg:mt-20">
             <Reveal y={12} duration={0.5}>

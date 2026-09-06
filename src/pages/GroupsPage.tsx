@@ -170,7 +170,7 @@ export default function GroupsPage() {
         items={structureFaqs}
         eyebrow="Perguntas de quem tem várias empresas"
         title="O que grupos perguntam [[antes de qualquer outra coisa]]."
-        lead="Respostas diretas sobre CNPJs, perfis por filial, fechamento na matriz, volume e implantação."
+        lead="Respostas diretas sobre CNPJs, perfis por filial, fechamento na matriz e implantação."
         more={{ to: paths.faq, label: 'Ver todas as perguntas frequentes' }}
       />
 

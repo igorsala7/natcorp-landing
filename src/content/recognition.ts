@@ -58,43 +58,6 @@ export const clients = [
   'dn.ia',
 ]
 
-/** Como os clientes se organizam: estrutura, sem números de porte (esses ficam para a demonstração). */
-export interface ClientGroup {
-  id: string
-  title: string
-  text: string
-  /** Nomes como aparecem na lista de clientes. */
-  examples: string[]
-  links: { label: string; to: string }[]
-}
-
-export const clientGroups: ClientGroup[] = [
-  {
-    id: 'saude',
-    title: 'Complexo hospitalar com vários institutos',
-    text: 'Vários institutos e uma fundação, cada um com o seu regime e a sua escala, operando na mesma base.',
-    examples: ['InCor', 'Instituto Central', 'ICESP', 'Instituto da Criança', 'Instituto de Psiquiatria', 'Instituto de Ortopedia e Traumatologia', 'Instituto de Medicina Física e Reabilitação', 'InRad', 'LIM', 'Hospital das Clínicas da FMUSP', 'Fundação Zerbini'],
-    links: [{ label: 'Como atendemos a saúde', to: '/segmentos/saude-e-ciencias-biologicas' }],
-  },
-  {
-    id: 'tecnologia',
-    title: 'Grupos de tecnologia e serviços',
-    text: 'Empresas com várias unidades e equipes distribuídas, folha e portais em um só sistema.',
-    examples: ['Stefanini Group', 'Orbitall Payments', 'Topaz', 'Scala', 'Teccloud', 'N1IT', 'Cyber Smart Defence', 'Logbank'],
-    links: [
-      { label: 'Serviços financeiros', to: '/segmentos/servicos-financeiros' },
-      { label: 'Telecom', to: '/segmentos/telecom' },
-    ],
-  },
-  {
-    id: 'industria',
-    title: 'Indústria, varejo e serviços',
-    text: 'Operações com turnos, escalas e sazonalidade diferentes, cada uma com as suas regras, na mesma folha.',
-    examples: ['Abril', 'Real Food Alimentação', 'Saque e Pague', 'Leadec', 'Prevcom', 'Haus'],
-    links: [{ label: 'Ver todos os segmentos', to: '/segmentos' }],
-  },
-]
-
 /** Comparativo do deck "Nossos diferenciais": Natcorp x outros sistemas. */
 export const comparison = [
   { feature: 'Módulos integrados', natcorp: '31 módulos nativos, 100% integrados', others: 'Módulos separados ou integração limitada' },
