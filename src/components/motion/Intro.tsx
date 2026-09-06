@@ -3,10 +3,11 @@ import type { ReactNode } from 'react'
 import { IntroContext } from '@/hooks/useIntroDone'
 import { AnimatePresence, m, useReducedMotion } from 'motion/react'
 import { EASE, EASE_IN_OUT } from '@/lib/motion'
-import { H_WIDTH, MODULES, SYMBOL_BOX, WORDMARK_H } from '@/components/brand/logo-paths'
+import { LOGO_MOTION_MS, LogoMotion } from '@/components/brand/LogoMotion'
 
 const STORAGE_KEY = 'natcorp:intro'
-const HOLD_MS = 1450
+/** A assinatura completa mais um respiro antes de a cortina subir. */
+const HOLD_MS = LOGO_MOTION_MS + 350
 
 function shouldShow() {
   if (typeof window === 'undefined') return false
@@ -18,8 +19,8 @@ function shouldShow() {
 }
 
 /**
- * Sequência de abertura: os quatro módulos do símbolo se encaixam, o wordmark surge,
- * e a cortina sobe revelando o hero. Uma vez por sessão; ignorada com movimento reduzido.
+ * Sequência de abertura: os quatro módulos chegam e se encaixam, o raio rosa acende o X,
+ * o wordmark surge ao lado e a cortina sobe revelando o hero. Uma vez por sessão; ignorada com movimento reduzido.
  */
 export function IntroProvider({ children }: { children: ReactNode }) {
   const reduced = useReducedMotion()
@@ -59,39 +60,11 @@ export function IntroProvider({ children }: { children: ReactNode }) {
             exit={{ y: '-100%', transition: { duration: 0.85, ease: EASE_IN_OUT } }}
           >
             <m.div exit={{ opacity: 0, y: -24, transition: { duration: 0.4, ease: EASE } }}>
-              <IntroMark />
+              <LogoMotion tone="white" className="w-[min(80vw,520px)]" />
             </m.div>
           </m.div>
         )}
       </AnimatePresence>
     </IntroContext.Provider>
-  )
-}
-
-function IntroMark() {
-  return (
-    <svg viewBox={`0 0 ${H_WIDTH} ${SYMBOL_BOX}`} className="w-[min(60vw,320px)]" aria-hidden>
-      {MODULES.map((d, i) => (
-        <m.path
-          key={i}
-          d={d}
-          fill="#ffffff"
-          style={{ transformOrigin: 'center', transformBox: 'fill-box' }}
-          initial={{ opacity: 0, scale: 0.4 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.6, ease: EASE, delay: 0.12 + i * 0.09 }}
-        />
-      ))}
-      {WORDMARK_H.map((d, i) => (
-        <m.path
-          key={i}
-          d={d}
-          fill="#ffffff"
-          initial={{ opacity: 0, x: -0.6 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.55, ease: EASE, delay: 0.5 + i * 0.04 }}
-        />
-      ))}
-    </svg>
   )
 }

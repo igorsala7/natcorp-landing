@@ -26,6 +26,7 @@ const PortalsPage = lazy(() => import('@/pages/PortalsPage'))
 const FaqPage = lazy(() => import('@/pages/FaqPage'))
 const CommercialPage = lazy(() => import('@/pages/CommercialPage'))
 const NotFoundPage = lazy(() => import('@/pages/NotFoundPage'))
+const MotionPage = lazy(() => import('@/pages/MotionPage'))
 
 /** HashRouter apenas para prévias hospedadas fora da raiz de um domínio (VITE_ROUTER=hash). */
 const Router = import.meta.env.VITE_ROUTER === 'hash' ? HashRouter : BrowserRouter
@@ -105,6 +106,15 @@ function AppRoutes() {
           element={
             <Suspense fallback={<PageFallback />}>
               <StructurePage />
+            </Suspense>
+          }
+        />
+        {/* Página interna de motion da marca (fora do menu e do sitemap). */}
+        <Route
+          path="/motion"
+          element={
+            <Suspense fallback={<PageFallback />}>
+              <MotionPage />
             </Suspense>
           }
         />
