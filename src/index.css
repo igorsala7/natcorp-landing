@@ -136,6 +136,21 @@
     -ms-overflow-style: none;
     scrollbar-width: none;
   }
+  /* Hero: a borda entre a foto natural e a versão "sistema" respira devagar (máscara com 200% de largura) */
+  @keyframes hero-breathe {
+    0%,
+    100% {
+      -webkit-mask-position: 0 0;
+      mask-position: 0 0;
+    }
+    50% {
+      -webkit-mask-position: -44px 0;
+      mask-position: -44px 0;
+    }
+  }
+  .animate-hero-breathe {
+    animation: hero-breathe 9s ease-in-out infinite;
+  }
   .pause-on-hover:hover .animate-marquee {
     animation-play-state: paused;
   }
