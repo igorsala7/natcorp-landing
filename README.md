@@ -92,6 +92,7 @@ src/
                 do app) e analytics/ (Painel do Operador: indicadores de medicina, comparativo financeiro em
                 gráfico e tabela, modal de recrutamento, gráficos SVG reutilizáveis)
     journey/    Página da jornada: JourneyMap (mapa lateral e barra de fases), EffectivationHub, visuals (mini mockups por etapa),
+                scenes/ (cenas montadas por camadas: palco escalado ao contêiner, cenário em SVG com paralaxe, figuras 3D recortadas e a interface animada por fases; descobertas pelo nome EtapaNNScene.tsx),
                 Cast (avatares e figuras 3D dos personagens), JourneyDiagram (visão prática por raias, com conectores medidos
                 por useNodeRects) e IntegrationDiagram (SVG dos módulos se integrando; geometria em integration-layout.ts)
     nati/       A NATI como agente: NeuralHub (a NATI no centro, 7 frentes e 31 módulos com pulsos de dados), InsightStream
