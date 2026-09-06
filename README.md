@@ -220,3 +220,7 @@ Payload:
 
 Site estático: `npm run build` gera `dist/`. Publique em qualquer CDN (Vercel, Netlify, Cloudflare Pages, S3 +
 CloudFront). Configure as variáveis `VITE_*` no provedor antes do build.
+
+## Referência de aplicação (SaaS)
+
+`brand/app-referencia/natcorp-app.html` mostra como uma aplicação Natcorp ficaria com a identidade do site: menu lateral, barra superior, início com painéis, colaboradores, cadastro, ponto, relatórios e NATI. Página única, abre direto no navegador. Detalhes em `brand/app-referencia/LEIA-ME.md`.

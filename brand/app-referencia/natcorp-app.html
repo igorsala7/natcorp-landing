@@ -1,0 +1,979 @@
+<title>Natcorp App</title>
+<meta name="description" content="Referência visual de uma aplicação SaaS com a identidade Natcorp: menu lateral, barra superior, início com painéis, colaboradores, cadastro, ponto, relatórios e NATI.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap">
+<style>
+  :root {
+    color-scheme: light;
+    --blue: #2C1A63; --purple: #511C76; --mix80: #692878; --mix60: #81347D; --plum: #9A408A; --pink: #C95788;
+    --highlight: #E4A9C4; --rose: #F3C9DA; --mist: #E9E5F1; --off: #F4F2F7;
+    --ink: #1B1238; --graphite: #4A4460; --muted: #8E88A3;
+    --canvas: #F6F2FA; --surface: #FFFFFF; --surface-2: #FBF9FD; --line: #E9E5F1; --line-2: #F1EDF6;
+    --series-1: #6E3796; --series-2: #C95788; --seq-1: #EFE6F5; --seq-2: #D9C3E6; --seq-3: #B58FCB; --seq-4: #8C5AAE; --seq-5: #6E3796;
+    --good: #2E8B6B; --good-bg: #E6F4EE; --warn: #B8791F; --warn-bg: #FBF0DC; --bad: #B8323F; --bad-bg: #FBE6E9;
+    --grad: linear-gradient(135deg, #2C1A63 0%, #511C76 55%, #9A408A 100%);
+    --shadow: 0 14px 34px -22px rgba(81, 28, 118, 0.35), 0 1px 0 0 rgba(81, 28, 118, 0.04);
+    --shadow-lift: 0 24px 50px -28px rgba(44, 26, 99, 0.45);
+    --radius: 20px; --radius-sm: 12px;
+    --sidebar: 264px; --topbar: 64px;
+    font-family: Manrope, "Segoe UI", system-ui, -apple-system, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html { background: var(--canvas); }
+  body { margin: 0; background: var(--canvas); color: var(--ink); font-family: Manrope, "Segoe UI", system-ui, -apple-system, sans-serif; font-size: 14px; line-height: 1.5; -webkit-font-smoothing: antialiased; }
+  a { color: inherit; text-decoration: none; }
+  button { font: inherit; color: inherit; cursor: pointer; }
+  input, select, textarea { font: inherit; color: inherit; }
+  svg { display: block; }
+  :focus-visible { outline: 2px solid var(--pink); outline-offset: 2px; border-radius: 6px; }
+  .num { font-variant-numeric: tabular-nums; }
+  .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+  /* ---------- shell ---------- */
+  .shell { display: grid; grid-template-columns: var(--sidebar) minmax(0, 1fr); min-height: 100vh; }
+  .sidebar { position: sticky; top: 0; height: 100vh; background: var(--grad); color: #fff; display: flex; flex-direction: column; overflow: hidden; }
+  .sidebar::before { content: ""; position: absolute; inset: auto -40% -18% auto; width: 420px; height: 420px; border-radius: 50%; background: radial-gradient(closest-side, rgba(201, 87, 136, 0.35), rgba(201, 87, 136, 0)); pointer-events: none; }
+  .sidebar::after { content: ""; position: absolute; left: -90px; top: 60%; width: 260px; height: 260px; transform: rotate(45deg); border: 1.5px solid rgba(243, 201, 218, 0.16); border-radius: 44px; pointer-events: none; }
+  .brand { display: flex; align-items: center; gap: 12px; padding: 22px 22px 18px; position: relative; z-index: 1; }
+  .brand svg { height: 30px; width: auto; }
+  .brand-tag { margin-left: auto; font-size: 10px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(255, 255, 255, 0.7); border: 1px solid rgba(255, 255, 255, 0.22); border-radius: 999px; padding: 4px 8px; }
+  .company { margin: 0 16px 8px; padding: 12px 14px; border-radius: 14px; background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.12); display: flex; align-items: center; gap: 10px; position: relative; z-index: 1; }
+  .company .mark { width: 34px; height: 34px; border-radius: 10px; background: #fff; color: var(--purple); display: grid; place-items: center; font-weight: 800; font-size: 13px; }
+  .company b { display: block; font-size: 13px; font-weight: 700; line-height: 1.2; white-space: nowrap; }
+  .company span { display: block; font-size: 11px; color: rgba(255, 255, 255, 0.65); white-space: nowrap; }
+  .company .chev { margin-left: auto; opacity: 0.7; }
+  nav.menu { padding: 10px 12px; overflow: auto; position: relative; z-index: 1; flex: 1; }
+  .menu-group { font-size: 10.5px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: rgba(255, 255, 255, 0.5); padding: 14px 12px 6px; }
+  .menu a { display: flex; align-items: center; gap: 11px; padding: 9px 12px; border-radius: 12px; font-weight: 600; font-size: 13.5px; color: rgba(255, 255, 255, 0.82); white-space: nowrap; transition: background 0.18s, color 0.18s; }
+  .menu a svg { width: 18px; height: 18px; flex: none; opacity: 0.85; }
+  .menu a:hover { background: rgba(255, 255, 255, 0.08); color: #fff; }
+  .menu a[aria-current="page"] { background: rgba(255, 255, 255, 0.14); color: #fff; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.14); }
+  .menu a[aria-current="page"] svg { opacity: 1; }
+  .menu .badge { margin-left: auto; font-size: 11px; font-weight: 800; background: var(--pink); color: #fff; border-radius: 999px; padding: 1px 7px; }
+  .menu a[aria-disabled="true"] { color: rgba(255, 255, 255, 0.6); }
+  .menu .soon { margin-left: auto; font-size: 9.5px; font-weight: 700; color: rgba(255, 255, 255, 0.55); letter-spacing: 0.08em; text-transform: uppercase; }
+  .side-foot { padding: 14px 16px 18px; position: relative; z-index: 1; }
+  .nati-side { display: flex; align-items: center; gap: 10px; padding: 12px; border-radius: 14px; background: rgba(27, 18, 56, 0.35); border: 1px solid rgba(228, 169, 196, 0.35); }
+  .nati-side b { display: block; font-size: 12.5px; }
+  .nati-side span { display: block; font-size: 11px; color: rgba(255, 255, 255, 0.7); line-height: 1.3; }
+
+  .main { min-width: 0; display: flex; flex-direction: column; }
+  .topbar { position: sticky; top: 0; z-index: 20; height: var(--topbar); display: flex; align-items: center; gap: 14px; padding: 0 28px; background: rgba(255, 255, 255, 0.92); backdrop-filter: blur(10px); border-bottom: 1px solid var(--line); }
+  .crumbs { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--muted); font-weight: 600; white-space: nowrap; }
+  .crumbs b { color: var(--ink); font-weight: 800; font-size: 15px; }
+  .search { margin-left: auto; display: flex; align-items: center; gap: 8px; width: min(380px, 34vw); height: 40px; padding: 0 14px; border-radius: 999px; background: var(--off); border: 1px solid var(--line); color: var(--muted); }
+  .search input { flex: 1; border: 0; background: transparent; outline: none; font-size: 13px; }
+  .search kbd { font-family: inherit; font-size: 10.5px; font-weight: 700; border: 1px solid var(--line); border-radius: 6px; padding: 1px 6px; background: #fff; color: var(--muted); }
+  .icon-btn { width: 40px; height: 40px; border-radius: 999px; border: 1px solid var(--line); background: #fff; display: grid; place-items: center; color: var(--graphite); position: relative; }
+  .icon-btn:hover { background: var(--off); }
+  .icon-btn .dot { position: absolute; top: 9px; right: 10px; width: 8px; height: 8px; border-radius: 50%; background: var(--pink); box-shadow: 0 0 0 2px #fff; }
+  .btn { display: inline-flex; align-items: center; gap: 8px; height: 40px; padding: 0 16px; border-radius: 999px; font-weight: 700; font-size: 13.5px; border: 1px solid transparent; white-space: nowrap; }
+  .btn-primary { background: var(--grad); color: #fff; box-shadow: 0 10px 24px -14px rgba(81, 28, 118, 0.7); }
+  .btn-primary:hover { filter: brightness(1.06); }
+  .btn-outline { background: #fff; border-color: var(--line); color: var(--purple); }
+  .btn-outline:hover { background: var(--off); }
+  .btn-ghost { background: transparent; color: var(--purple); }
+  .btn-sm { height: 34px; padding: 0 13px; font-size: 12.5px; }
+  .btn svg { width: 16px; height: 16px; }
+  .user { display: flex; align-items: center; gap: 10px; padding-left: 8px; }
+  .avatar { width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; font-weight: 800; font-size: 12px; color: #fff; background: var(--grad); flex: none; }
+  .avatar.sm { width: 30px; height: 30px; font-size: 11px; }
+  .avatar.rose { background: var(--rose); color: var(--purple); }
+  .avatar.lav { background: #E2D6F0; color: var(--purple); }
+  .avatar.pink { background: var(--pink); }
+  .user > div > b { display: block; font-size: 13px; line-height: 1.1; white-space: nowrap; }
+  .user > div > span { display: block; font-size: 11px; color: var(--muted); white-space: nowrap; }
+
+  .content { padding: 26px 28px 40px; max-width: 1400px; width: 100%; }
+  .page { display: none; }
+  .page.is-active { display: block; animation: rise 0.35s cubic-bezier(0.2, 0.7, 0.2, 1); }
+  @keyframes rise { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+  @media (prefers-reduced-motion: reduce) { .page.is-active { animation: none; } * { transition: none !important; } }
+
+  .page-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; margin-bottom: 20px; flex-wrap: wrap; }
+  .eyebrow { display: inline-flex; align-items: center; gap: 8px; font-size: 11px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--purple); }
+  .eyebrow i { display: inline-block; width: 8px; height: 8px; transform: rotate(45deg); border-radius: 2px; background: var(--grad); }
+  h1 { margin: 6px 0 0; font-size: 26px; font-weight: 800; letter-spacing: -0.01em; line-height: 1.15; text-wrap: balance; }
+  h2 { margin: 0; font-size: 15.5px; font-weight: 800; letter-spacing: -0.005em; }
+  .lead { margin: 6px 0 0; color: var(--graphite); font-size: 14px; max-width: 62ch; }
+  .actions { display: flex; gap: 10px; flex-wrap: wrap; }
+
+  .grid { display: grid; gap: 18px; }
+  .cols-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .cols-2-1 { grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); }
+  .cols-1-2 { grid-template-columns: minmax(0, 1fr) minmax(0, 2fr); }
+  .cols-3-2 { grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); }
+  .card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); padding: 20px 22px; min-width: 0; }
+  .card-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 14px; }
+  .card-head p { margin: 2px 0 0; font-size: 12.5px; color: var(--muted); }
+  .link { color: var(--purple); font-weight: 700; font-size: 12.5px; display: inline-flex; align-items: center; gap: 4px; }
+  .link svg { width: 14px; height: 14px; }
+
+  /* ---------- welcome ---------- */
+  .welcome { position: relative; overflow: hidden; border-radius: 24px; background: var(--grad); color: #fff; padding: 28px 30px; display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); gap: 20px; box-shadow: var(--shadow-lift); }
+  .welcome::before { content: ""; position: absolute; right: 26%; top: -140px; width: 380px; height: 380px; transform: rotate(45deg); border-radius: 70px; border: 2px solid rgba(243, 201, 218, 0.35); pointer-events: none; }
+  .welcome::after { content: ""; position: absolute; right: -80px; bottom: -190px; width: 380px; height: 380px; transform: rotate(45deg); border-radius: 70px; background: linear-gradient(135deg, rgba(243, 201, 218, 0.28), rgba(201, 87, 136, 0.08)); border: 2px solid rgba(243, 201, 218, 0.5); pointer-events: none; }
+  .welcome .kicker { font-size: 11px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--highlight); }
+  .welcome h1 { font-size: 30px; color: #fff; }
+  .welcome p { margin: 10px 0 0; color: rgba(255, 255, 255, 0.85); max-width: 52ch; font-size: 14.5px; }
+  .welcome .actions { margin-top: 18px; }
+  .welcome .btn-outline { background: rgba(255, 255, 255, 0.1); border-color: rgba(255, 255, 255, 0.3); color: #fff; }
+  .welcome .btn-primary { background: #fff; color: var(--purple); box-shadow: none; }
+  .nati-note { position: relative; z-index: 1; align-self: center; background: rgba(27, 18, 56, 0.5); border: 1px solid rgba(228, 169, 196, 0.4); border-radius: 18px; padding: 16px 18px; display: grid; grid-template-columns: auto 1fr; gap: 12px; }
+  .nati-note .who { font-size: 10.5px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--highlight); }
+  .nati-note b { display: block; font-size: 13.5px; margin-top: 2px; line-height: 1.35; }
+  .nati-note .chips { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
+  .chip { font-size: 10.5px; font-weight: 700; border-radius: 8px; padding: 2px 8px; background: rgba(228, 169, 196, 0.14); border: 1px solid rgba(228, 169, 196, 0.4); color: var(--rose); }
+  .nati-face { width: 44px; height: 44px; border-radius: 50%; background: radial-gradient(circle at 35% 30%, #F3C9DA, #C95788 70%); box-shadow: 0 0 0 3px rgba(243, 201, 218, 0.35); display: grid; place-items: center; }
+
+  /* ---------- KPI tiles ---------- */
+  .kpi { display: grid; gap: 6px; }
+  .kpi .label { font-size: 12px; font-weight: 700; color: var(--graphite); display: flex; align-items: center; gap: 8px; }
+  .kpi .label i { width: 30px; height: 30px; border-radius: 10px; display: grid; place-items: center; background: var(--off); color: var(--purple); }
+  .kpi .label i svg { width: 16px; height: 16px; }
+  .kpi .value { font-size: 30px; font-weight: 800; letter-spacing: -0.02em; line-height: 1.05; }
+  .kpi .delta { font-size: 12px; color: var(--muted); display: flex; align-items: center; gap: 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .delta .up { color: var(--good); font-weight: 700; }
+  .delta .down { color: var(--bad); font-weight: 700; }
+  .delta .flat { color: var(--graphite); font-weight: 700; }
+  .spark { margin-top: 4px; height: 34px; }
+
+  /* ---------- charts ---------- */
+  .chart { position: relative; }
+  .chart svg { width: 100%; height: auto; overflow: visible; }
+  .legend { display: flex; gap: 14px; flex-wrap: wrap; font-size: 12px; color: var(--graphite); font-weight: 600; }
+  .legend i { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 6px; vertical-align: -1px; }
+  .tip { position: absolute; pointer-events: none; background: var(--ink); color: #fff; font-size: 12px; padding: 8px 10px; border-radius: 10px; box-shadow: var(--shadow-lift); opacity: 0; transform: translate(-50%, -110%); transition: opacity 0.12s; white-space: nowrap; z-index: 5; }
+  .tip b { display: block; font-size: 11px; color: var(--highlight); font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; }
+  .tip.show { opacity: 1; }
+  .hbar-list { display: grid; gap: 10px; }
+  .hbar { display: grid; grid-template-columns: 150px minmax(0, 1fr) 84px; align-items: center; gap: 12px; font-size: 12.5px; }
+  .hbar .name { font-weight: 600; color: var(--graphite); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .hbar .track { display: block; height: 10px; border-radius: 0 4px 4px 0; background: var(--line-2); overflow: hidden; }
+  .hbar .fill { display: block; height: 100%; border-radius: 0 4px 4px 0; background: var(--series-1); }
+  .hbar .val { text-align: right; font-weight: 700; }
+  .rings { display: flex; align-items: center; gap: 18px; }
+  .ring-legend { display: grid; gap: 8px; font-size: 12.5px; }
+  .ring-legend div { display: flex; align-items: center; gap: 8px; }
+  .ring-legend i { width: 10px; height: 10px; border-radius: 3px; flex: none; }
+  .ring-legend b { margin-left: auto; font-weight: 700; }
+
+  /* ---------- lists ---------- */
+  .task { display: flex; align-items: center; gap: 12px; padding: 11px 0; border-top: 1px solid var(--line-2); }
+  .task:first-of-type { border-top: 0; }
+  .task .ico { width: 36px; height: 36px; border-radius: 12px; display: grid; place-items: center; background: var(--off); color: var(--purple); flex: none; }
+  .task .ico svg { width: 17px; height: 17px; }
+  .task b { display: block; font-size: 13px; }
+  .task span { display: block; font-size: 12px; color: var(--muted); }
+  .task .btn { margin-left: auto; }
+  .status { display: inline-flex; align-items: center; gap: 6px; font-size: 11.5px; font-weight: 700; border-radius: 999px; padding: 3px 9px 3px 7px; white-space: nowrap; flex: none; }
+  .task .status { margin-left: auto; }
+  .status svg { width: 12px; height: 12px; }
+  .status.good { background: var(--good-bg); color: var(--good); }
+  .status.warn { background: var(--warn-bg); color: var(--warn); }
+  .status.bad { background: var(--bad-bg); color: var(--bad); }
+  .status.info { background: #EFE6F5; color: var(--purple); }
+  .modules { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 12px; }
+  .module { display: grid; justify-items: center; gap: 8px; padding: 14px 8px 12px; border-radius: 16px; border: 1px solid var(--line); background: var(--surface-2); text-align: center; font-size: 12px; font-weight: 700; color: var(--graphite); transition: transform 0.18s, box-shadow 0.18s, border-color 0.18s; }
+  .module svg { width: 52px; height: 52px; }
+  .module:hover { transform: translateY(-2px); box-shadow: var(--shadow); border-color: var(--highlight); }
+
+  /* ---------- tables ---------- */
+  .toolbar { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 14px; }
+  .toolbar .search { margin: 0; width: 280px; height: 38px; }
+  .seg { display: inline-flex; background: var(--off); border: 1px solid var(--line); border-radius: 999px; padding: 3px; }
+  .seg button { border: 0; background: transparent; border-radius: 999px; padding: 6px 12px; font-size: 12.5px; font-weight: 700; color: var(--graphite); }
+  .seg button[aria-pressed="true"] { background: #fff; color: var(--purple); box-shadow: 0 1px 2px rgba(27, 18, 56, 0.08); }
+  .select { height: 38px; border-radius: 999px; border: 1px solid var(--line); background: #fff; padding: 0 34px 0 14px; font-size: 12.5px; font-weight: 600; color: var(--graphite); appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%234A4460' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; }
+  .table-wrap { overflow-x: auto; margin: 0 -22px -20px; padding: 0 22px 8px; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; min-width: 760px; }
+  table.fit { min-width: 0; }
+  th { text-align: left; font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); padding: 8px 12px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+  td { padding: 11px 12px; border-bottom: 1px solid var(--line-2); vertical-align: middle; }
+  tr:hover td { background: var(--surface-2); }
+  td.r, th.r { text-align: right; }
+  .who { display: flex; align-items: center; gap: 10px; }
+  .who > div > b { display: block; font-size: 13px; }
+  .who > div > span { display: block; font-size: 11.5px; color: var(--muted); }
+  .pager { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 0 0; font-size: 12.5px; color: var(--muted); }
+  .pager .pages { display: flex; gap: 4px; }
+  .pager button { width: 32px; height: 32px; border-radius: 10px; border: 1px solid var(--line); background: #fff; font-weight: 700; font-size: 12.5px; color: var(--graphite); }
+  .pager button[aria-current="page"] { background: var(--purple); color: #fff; border-color: var(--purple); }
+
+  /* ---------- forms ---------- */
+  .steps { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; margin-bottom: 20px; }
+  .step { display: flex; align-items: center; gap: 10px; padding: 12px 14px; border-radius: 14px; border: 1px solid var(--line); background: #fff; font-size: 12.5px; font-weight: 700; color: var(--muted); }
+  .step i { width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; font-style: normal; font-size: 12px; background: var(--off); color: var(--graphite); }
+  .step.done { color: var(--graphite); }
+  .step.done i { background: var(--good-bg); color: var(--good); }
+  .step.now { border-color: var(--purple); color: var(--ink); box-shadow: 0 0 0 3px rgba(81, 28, 118, 0.08); }
+  .step.now i { background: var(--grad); color: #fff; }
+  fieldset { border: 0; padding: 0; margin: 0 0 18px; }
+  legend { font-size: 13.5px; font-weight: 800; padding: 0; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+  legend i { width: 8px; height: 8px; transform: rotate(45deg); border-radius: 2px; background: var(--grad); }
+  .form-grid { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 12px 14px; }
+  .f { display: grid; gap: 5px; }
+  .f label { font-size: 12px; font-weight: 700; color: var(--graphite); }
+  .f label small { font-weight: 600; color: var(--muted); }
+  .f input, .f select, .f textarea { height: 42px; border-radius: 12px; border: 1px solid var(--line); background: #fff; padding: 0 13px; font-size: 13.5px; outline: none; transition: border-color 0.15s, box-shadow 0.15s; width: 100%; }
+  .f select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%234A4460' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; padding-right: 34px; }
+  .f textarea { height: auto; min-height: 84px; padding: 10px 13px; resize: vertical; }
+  .f input:focus, .f select:focus, .f textarea:focus { border-color: var(--purple); box-shadow: 0 0 0 3px rgba(81, 28, 118, 0.12); }
+  .f .hint { font-size: 11.5px; color: var(--muted); }
+  .f.ok input { border-color: var(--good); }
+  .f .hint.ok { color: var(--good); font-weight: 600; }
+  .s6 { grid-column: span 6; } .s3 { grid-column: span 3; } .s2 { grid-column: span 2; } .s4 { grid-column: span 4; }
+  .switch { display: flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 600; color: var(--graphite); }
+  .switch i { width: 38px; height: 22px; border-radius: 999px; background: var(--grad); position: relative; flex: none; }
+  .switch i::after { content: ""; position: absolute; top: 3px; right: 3px; width: 16px; height: 16px; border-radius: 50%; background: #fff; }
+  .switch.off i { background: var(--mist); }
+  .switch.off i::after { right: auto; left: 3px; }
+  .upload { border: 1.5px dashed var(--highlight); border-radius: 14px; background: var(--surface-2); padding: 18px; text-align: center; color: var(--graphite); font-size: 13px; }
+  .upload b { color: var(--purple); }
+  .docs { display: grid; gap: 8px; margin-top: 12px; }
+  .doc { display: flex; align-items: center; gap: 10px; padding: 9px 12px; border-radius: 12px; border: 1px solid var(--line); background: #fff; font-size: 12.5px; }
+  .doc .ico { width: 30px; height: 30px; border-radius: 9px; background: var(--off); display: grid; place-items: center; color: var(--purple); }
+  .doc .ico svg { width: 15px; height: 15px; }
+  .doc span { color: var(--muted); }
+  .doc .status { margin-left: auto; }
+  .summary-row { display: flex; justify-content: space-between; gap: 12px; padding: 9px 0; border-top: 1px solid var(--line-2); font-size: 13px; }
+  .summary-row:first-child { border-top: 0; }
+  .summary-row span { color: var(--muted); }
+  .summary-row b { text-align: right; }
+  .aside-nati { border-radius: 16px; background: var(--grad); color: #fff; padding: 16px; margin-top: 16px; }
+  .aside-nati .who { font-size: 10.5px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--highlight); display: block; }
+  .aside-nati ul { margin: 8px 0 0; padding-left: 18px; font-size: 12.5px; line-height: 1.45; }
+  .aside-nati li { margin: 4px 0; }
+
+  /* ---------- ponto ---------- */
+  .timeline { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+  .punch { border-radius: 14px; border: 1px solid var(--line); padding: 12px 14px; background: var(--surface-2); }
+  .punch small { display: block; font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+  .punch b { display: block; font-size: 22px; font-weight: 800; letter-spacing: -0.02em; margin-top: 2px; }
+  .punch span { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--graphite); margin-top: 4px; }
+  .punch span svg { width: 13px; height: 13px; color: var(--purple); }
+  .meter { height: 8px; border-radius: 4px; background: var(--line-2); overflow: hidden; }
+  .meter i { display: block; height: 100%; border-radius: 4px; background: var(--grad); }
+  .phone { width: 210px; margin: 0 auto; border-radius: 30px; background: var(--ink); padding: 10px; box-shadow: var(--shadow-lift); }
+  .screen { border-radius: 22px; background: var(--grad); color: #fff; padding: 18px 14px 16px; min-height: 340px; display: grid; align-content: start; gap: 10px; text-align: center; }
+  .screen .t { font-size: 11px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--highlight); }
+  .screen .clock { font-size: 34px; font-weight: 800; letter-spacing: -0.02em; }
+  .screen .face { width: 118px; height: 118px; margin: 4px auto; border-radius: 50%; border: 2px solid rgba(243, 201, 218, 0.8); position: relative; background: radial-gradient(circle at 50% 40%, rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0) 60%); }
+  .screen .face::before { content: ""; position: absolute; inset: 14px; border-radius: 50%; border: 1.5px dashed rgba(255, 255, 255, 0.5); }
+  .screen .ok { margin-top: 6px; background: #fff; color: var(--purple); border-radius: 999px; padding: 9px; font-weight: 800; font-size: 13px; }
+
+  /* ---------- reports ---------- */
+  .report-cat { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
+  .rep { border: 1px solid var(--line); border-radius: 16px; padding: 14px 16px; background: var(--surface-2); display: grid; gap: 6px; text-align: left; transition: transform 0.18s, box-shadow 0.18s, border-color 0.18s; }
+  .rep:hover { transform: translateY(-2px); box-shadow: var(--shadow); border-color: var(--highlight); }
+  .rep .ico { width: 34px; height: 34px; border-radius: 11px; background: #fff; border: 1px solid var(--line); display: grid; place-items: center; color: var(--purple); }
+  .rep .ico svg { width: 16px; height: 16px; }
+  .rep b { font-size: 13px; }
+  .rep span { font-size: 12px; color: var(--muted); }
+  .rep .tag { font-size: 10.5px; font-weight: 700; color: var(--purple); letter-spacing: 0.1em; text-transform: uppercase; }
+  .filters { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; padding: 12px 14px; border-radius: 16px; background: var(--surface-2); border: 1px solid var(--line); margin-bottom: 16px; }
+  .filters .lbl { font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
+
+  /* ---------- NATI chat ---------- */
+  .chat { display: grid; grid-template-rows: auto 1fr auto; min-height: 560px; }
+  .msgs { display: grid; gap: 14px; padding: 6px 0; align-content: start; }
+  .msg { display: flex; gap: 10px; max-width: 720px; }
+  .msg.me { margin-left: auto; flex-direction: row-reverse; }
+  .bubble { border-radius: 18px; padding: 12px 14px; font-size: 13.5px; background: var(--surface-2); border: 1px solid var(--line); }
+  .msg.me .bubble { background: var(--grad); color: #fff; border: 0; border-bottom-right-radius: 6px; }
+  .msg.nati .bubble { border-bottom-left-radius: 6px; }
+  .bubble .src { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 10px; }
+  .bubble .src span { font-size: 10.5px; font-weight: 700; border-radius: 8px; padding: 2px 8px; background: #EFE6F5; color: var(--purple); }
+  .mini { margin-top: 10px; background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; }
+  .composer { display: flex; align-items: center; gap: 10px; border: 1px solid var(--line); border-radius: 999px; padding: 6px 6px 6px 16px; background: #fff; margin-top: 14px; }
+  .composer input { flex: 1; border: 0; outline: none; font-size: 13.5px; }
+  .suggest { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+  .suggest button { border: 1px solid var(--line); background: #fff; border-radius: 999px; padding: 6px 12px; font-size: 12px; font-weight: 600; color: var(--purple); }
+  .suggest button:hover { background: var(--off); }
+
+  /* ---------- responsive ---------- */
+  .menu-toggle { display: none; }
+  @media (max-width: 1180px) {
+    .cols-4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .cols-3 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .modules { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .report-cat { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .cols-2-1, .cols-1-2, .cols-3-2 { grid-template-columns: minmax(0, 1fr); }
+    .welcome { grid-template-columns: minmax(0, 1fr); }
+    .welcome::before { display: none; }
+  }
+  @media (max-width: 900px) {
+    :root { --sidebar: 0px; }
+    .shell { grid-template-columns: minmax(0, 1fr); }
+    .sidebar { position: fixed; left: 0; top: 0; width: 264px; z-index: 40; transform: translateX(-100%); transition: transform 0.25s; box-shadow: var(--shadow-lift); }
+    .sidebar.open { transform: none; }
+    .menu-toggle { display: grid; }
+    .topbar { padding: 0 16px; }
+    .content { padding: 18px 16px 32px; }
+    .search { display: none; }
+    .crumbs > span { display: none; }
+    .topbar .btn-primary { width: 40px; padding: 0; justify-content: center; margin-left: auto; }
+    .topbar .btn-primary .lbl { display: none; }
+    .user { padding-left: 0; }
+    .user > div { display: none; }
+    .cols-4, .cols-3, .cols-2, .steps, .timeline { grid-template-columns: minmax(0, 1fr); }
+    .form-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .s6, .s3, .s2, .s4 { grid-column: span 2; }
+    .hbar { grid-template-columns: 110px minmax(0, 1fr) 70px; }
+  }
+  .scrim { position: fixed; inset: 0; background: rgba(27, 18, 56, 0.4); z-index: 30; display: none; }
+  .scrim.show { display: block; }
+</style>
+
+<div class="shell">
+  <aside class="sidebar" id="sidebar" aria-label="Menu principal">
+    <div class="brand">
+      <svg viewBox="0 0 31.596 8" role="img" aria-label="Natcorp" focusable="false"><path d="M4.322 0.322L5.573 1.573A0.456 0.456 0 0 1 5.573 2.218L4.322 3.469A0.456 0.456 0 0 1 3.678 3.469L2.427 2.218A0.456 0.456 0 0 1 2.427 1.573L3.678 0.322A0.456 0.456 0 0 1 4.322 0.322Z" fill="#FFFFFF"/><path d="M6.427 2.427L7.678 3.678A0.456 0.456 0 0 1 7.678 4.322L6.427 5.573A0.456 0.456 0 0 1 5.782 5.573L4.531 4.322A0.456 0.456 0 0 1 4.531 3.678L5.782 2.427A0.456 0.456 0 0 1 6.427 2.427Z" fill="#FFFFFF"/><path d="M2.218 2.427L3.469 3.678A0.456 0.456 0 0 1 3.469 4.322L2.218 5.573A0.456 0.456 0 0 1 1.573 5.573L0.322 4.322A0.456 0.456 0 0 1 0.322 3.678L1.573 2.427A0.456 0.456 0 0 1 2.218 2.427Z" fill="#FFFFFF"/><path d="M4.322 4.531L5.573 5.782A0.456 0.456 0 0 1 5.573 6.427L4.322 7.678A0.456 0.456 0 0 1 3.678 7.678L2.427 6.427A0.456 0.456 0 0 1 2.427 5.782L3.678 4.531A0.456 0.456 0 0 1 4.322 4.531Z" fill="#FFFFFF"/><path d="M11.61 5.69V4.04Q11.61 3.86 11.58 3.66Q11.55 3.46 11.47 3.28Q11.38 3.10 11.22 2.99Q11.05 2.87 10.78 2.87Q10.62 2.87 10.47 2.93Q10.32 2.98 10.21 3.10Q10.09 3.23 10.02 3.43Q9.95 3.64 9.95 3.94L9.53 3.77Q9.53 3.32 9.70 2.97Q9.87 2.62 10.19 2.42Q10.52 2.22 10.98 2.22Q11.34 2.22 11.58 2.34Q11.82 2.45 11.97 2.64Q12.11 2.83 12.19 3.05Q12.26 3.26 12.29 3.46Q12.31 3.67 12.31 3.81V5.69ZM9.25 5.69V2.31H9.87V3.32H9.95V5.69Z" fill="#FFFFFF"/><path d="M13.95 5.78Q13.58 5.78 13.32 5.64Q13.07 5.50 12.94 5.27Q12.81 5.04 12.81 4.77Q12.81 4.52 12.90 4.32Q12.99 4.13 13.16 3.99Q13.33 3.85 13.60 3.76Q13.81 3.70 14.09 3.65Q14.37 3.59 14.69 3.55Q15.00 3.51 15.33 3.46L15.08 3.60Q15.09 3.22 14.92 3.04Q14.75 2.86 14.35 2.86Q14.10 2.86 13.88 2.97Q13.66 3.09 13.57 3.36L12.93 3.17Q13.06 2.73 13.41 2.48Q13.76 2.22 14.35 2.22Q14.80 2.22 15.14 2.37Q15.48 2.52 15.64 2.86Q15.72 3.03 15.74 3.21Q15.76 3.40 15.76 3.61V5.69H15.15V4.93L15.26 5.04Q15.05 5.42 14.73 5.60Q14.41 5.78 13.95 5.78ZM14.08 5.22Q14.35 5.22 14.54 5.13Q14.73 5.03 14.85 4.89Q14.96 4.74 15.00 4.60Q15.06 4.45 15.06 4.26Q15.07 4.07 15.07 3.96L15.29 4.04Q14.97 4.09 14.72 4.12Q14.47 4.16 14.28 4.20Q14.09 4.23 13.94 4.28Q13.80 4.33 13.71 4.39Q13.61 4.46 13.55 4.55Q13.49 4.64 13.49 4.76Q13.49 4.89 13.56 4.99Q13.62 5.10 13.75 5.16Q13.88 5.22 14.08 5.22Z" fill="#FFFFFF"/><path d="M18.40 5.69Q18.07 5.75 17.76 5.74Q17.45 5.73 17.20 5.62Q16.96 5.51 16.83 5.28Q16.72 5.06 16.71 4.84Q16.71 4.62 16.71 4.34V1.38H17.40V4.30Q17.40 4.51 17.40 4.66Q17.41 4.81 17.47 4.91Q17.58 5.10 17.83 5.12Q18.07 5.15 18.40 5.10ZM16.07 2.86V2.31H18.40V2.86Z" fill="#FFFFFF"/><path d="M20.44 5.78Q19.92 5.78 19.56 5.55Q19.19 5.32 19.00 4.91Q18.80 4.51 18.80 4.00Q18.80 3.48 19.00 3.08Q19.20 2.68 19.57 2.45Q19.94 2.22 20.45 2.22Q21.01 2.22 21.41 2.50Q21.80 2.78 21.93 3.27L21.24 3.46Q21.14 3.18 20.93 3.03Q20.71 2.87 20.44 2.87Q20.13 2.87 19.93 3.02Q19.73 3.16 19.63 3.42Q19.54 3.67 19.54 4.00Q19.54 4.51 19.77 4.82Q19.99 5.13 20.44 5.13Q20.75 5.13 20.94 4.99Q21.12 4.84 21.22 4.58L21.93 4.74Q21.76 5.24 21.38 5.51Q20.99 5.78 20.44 5.78Z" fill="#FFFFFF"/><path d="M23.91 5.78Q23.40 5.78 23.03 5.55Q22.66 5.33 22.45 4.92Q22.25 4.52 22.25 4.00Q22.25 3.47 22.46 3.07Q22.67 2.67 23.04 2.44Q23.41 2.22 23.91 2.22Q24.42 2.22 24.79 2.45Q25.17 2.67 25.37 3.08Q25.58 3.48 25.58 4.00Q25.58 4.53 25.37 4.93Q25.17 5.33 24.79 5.56Q24.42 5.78 23.91 5.78ZM23.91 5.13Q24.38 5.13 24.61 4.81Q24.84 4.50 24.84 4.00Q24.84 3.48 24.61 3.18Q24.38 2.87 23.91 2.87Q23.59 2.87 23.39 3.01Q23.18 3.16 23.08 3.41Q22.98 3.66 22.98 4.00Q22.98 4.51 23.22 4.82Q23.45 5.13 23.91 5.13Z" fill="#FFFFFF"/><path d="M26.14 5.69V2.31H26.76V3.13L26.68 3.03Q26.74 2.86 26.84 2.72Q26.94 2.59 27.08 2.50Q27.21 2.41 27.36 2.36Q27.52 2.31 27.68 2.30Q27.84 2.29 28.00 2.31V2.96Q27.84 2.92 27.64 2.93Q27.44 2.95 27.27 3.06Q27.12 3.15 27.02 3.29Q26.93 3.43 26.88 3.61Q26.84 3.78 26.84 3.98V5.69Z" fill="#FFFFFF"/><path d="M30.06 5.78Q29.58 5.78 29.24 5.55Q28.91 5.31 28.75 4.91Q28.58 4.50 28.58 4.00Q28.58 3.49 28.74 3.09Q28.91 2.69 29.24 2.45Q29.57 2.22 30.04 2.22Q30.52 2.22 30.87 2.45Q31.22 2.68 31.41 3.09Q31.60 3.49 31.60 4.00Q31.60 4.50 31.41 4.91Q31.22 5.31 30.88 5.55Q30.53 5.78 30.06 5.78ZM28.46 7.19V2.31H29.07V4.72H29.16V7.19ZM29.96 5.16Q30.27 5.16 30.47 5.00Q30.67 4.85 30.76 4.59Q30.86 4.32 30.86 4.00Q30.86 3.68 30.76 3.42Q30.66 3.15 30.46 3.00Q30.26 2.84 29.94 2.84Q29.64 2.84 29.45 2.99Q29.26 3.13 29.17 3.40Q29.07 3.66 29.07 4.00Q29.07 4.34 29.17 4.60Q29.26 4.86 29.45 5.01Q29.65 5.16 29.96 5.16Z" fill="#FFFFFF"/></svg>
+      <span class="brand-tag">App</span>
+    </div>
+    <div class="company" role="button" tabindex="0" aria-label="Trocar empresa: Vale Verde Alimentos">
+      <span class="mark">VV</span>
+      <div><b>Grupo Vale Verde</b><span>4 empresas · 11 CNPJs</span></div>
+      <svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m7 15 5 5 5-5M7 9l5-5 5 5"/></svg>
+    </div>
+    <nav class="menu" id="menu">
+      <div class="menu-group">Visão geral</div>
+      <a href="#/inicio" data-page="inicio"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/><path d="M10 21v-6h4v6"/></svg>Início</a>
+      <a href="#/nati" data-page="nati"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/><path d="M19 16l.7 2 2 .7-2 .7-.7 2-.7-2-2-.7 2-.7z"/></svg>NATI <span class="badge">3</span></a>
+      <div class="menu-group">Pessoas</div>
+      <a href="#/colaboradores" data-page="colaboradores"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><path d="M16 4.5a3.5 3.5 0 0 1 0 7"/><path d="M17.5 14a6 6 0 0 1 4 5.5"/></svg>Colaboradores</a>
+      <a href="#/cadastro" data-page="cadastro"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="10" cy="8" r="3.5"/><path d="M3.5 20a6.5 6.5 0 0 1 13 0"/><path d="M19 8v6M16 11h6"/></svg>Cadastro e admissão</a>
+      <a href="#/ponto" data-page="ponto"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg>Ponto e jornada</a>
+      <div class="menu-group">Gestão</div>
+      <a href="#/relatorios" data-page="relatorios"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 20h16"/><path d="M7 16v-5M12 16V8M17 16v-3"/></svg>Relatórios</a>
+      <a href="#/inicio" aria-disabled="true"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="6" width="18" height="13" rx="3"/><path d="M3 10h18"/><path d="M15 14.5h2.5"/></svg>Folha <span class="soon">em breve</span></a>
+      <a href="#/inicio" aria-disabled="true"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3l7 3v5.5c0 4.5-3 7.8-7 9.5-4-1.7-7-5-7-9.5V6z"/><path d="m9.5 12 1.8 1.8L15 10"/></svg>SESMT <span class="soon">em breve</span></a>
+      <div class="menu-group">Sistema</div>
+      <a href="#/inicio" aria-disabled="true"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="3"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5.3 5.3l2.1 2.1M16.6 16.6l2.1 2.1M5.3 18.7l2.1-2.1M16.6 7.4l2.1-2.1"/></svg>Configurações <span class="soon">em breve</span></a>
+    </nav>
+    <div class="side-foot">
+      <div class="nati-side">
+        <span class="nati-face" style="width:36px;height:36px"><svg viewBox="0 0 8 8" width="18" height="18" aria-hidden="true" focusable="false"><path d="M4.322 0.322L5.573 1.573A0.456 0.456 0 0 1 5.573 2.218L4.322 3.469A0.456 0.456 0 0 1 3.678 3.469L2.427 2.218A0.456 0.456 0 0 1 2.427 1.573L3.678 0.322A0.456 0.456 0 0 1 4.322 0.322Z" fill="#FFFFFF"/><path d="M6.427 2.427L7.678 3.678A0.456 0.456 0 0 1 7.678 4.322L6.427 5.573A0.456 0.456 0 0 1 5.782 5.573L4.531 4.322A0.456 0.456 0 0 1 4.531 3.678L5.782 2.427A0.456 0.456 0 0 1 6.427 2.427Z" fill="#FFFFFF"/><path d="M2.218 2.427L3.469 3.678A0.456 0.456 0 0 1 3.469 4.322L2.218 5.573A0.456 0.456 0 0 1 1.573 5.573L0.322 4.322A0.456 0.456 0 0 1 0.322 3.678L1.573 2.427A0.456 0.456 0 0 1 2.218 2.427Z" fill="#FFFFFF"/><path d="M4.322 4.531L5.573 5.782A0.456 0.456 0 0 1 5.573 6.427L4.322 7.678A0.456 0.456 0 0 1 3.678 7.678L2.427 6.427A0.456 0.456 0 0 1 2.427 5.782L3.678 4.531A0.456 0.456 0 0 1 4.322 4.531Z" fill="#FFFFFF"/></svg></span>
+        <div><b>NATI leu 31 módulos</b><span>3 pontos de atenção para hoje</span></div>
+      </div>
+    </div>
+  </aside>
+  <div class="scrim" id="scrim"></div>
+
+  <div class="main">
+    <header class="topbar">
+      <button class="icon-btn menu-toggle" id="menuToggle" aria-label="Abrir menu" aria-controls="sidebar" aria-expanded="false"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+      <div class="crumbs"><span>Vale Verde Alimentos</span><span>/</span><b id="crumb">Início</b></div>
+      <label class="search"><span class="sr">Buscar</span><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="6.5"/><path d="m20 20-4.3-4.3"/></svg><input type="search" placeholder="Buscar pessoa, módulo ou relatório"><kbd>⌘K</kbd></label>
+      <button class="icon-btn" aria-label="Notificações, 3 novas"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15z"/><path d="M10 20a2 2 0 0 0 4 0"/></svg><span class="dot"></span></button>
+      <a class="btn btn-primary" href="#/nati" aria-label="Perguntar à NATI"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/><path d="M19 16l.7 2 2 .7-2 .7-.7 2-.7-2-2-.7 2-.7z"/></svg><span class="lbl">Perguntar à NATI</span></a>
+      <div class="user"><span class="avatar">JP</span><div><b>Juliana Prado</b><span>Recursos Humanos</span></div></div>
+    </header>
+
+    <main class="content" id="content">
+
+      <!-- ================= INÍCIO ================= -->
+      <section class="page" id="page-inicio" aria-labelledby="h-inicio">
+        <div class="welcome">
+          <div style="position:relative;z-index:1">
+            <span class="kicker">Segunda-feira, 7 de setembro</span>
+            <h1 id="h-inicio">Bom dia, Juliana. O RH da Vale Verde está em dia.</h1>
+            <p>A folha de agosto fechou sem inconsistências, 37 admissões entraram no mês e o eSocial está em ordem. Três pontos pedem atenção hoje.</p>
+            <div class="actions">
+              <a class="btn btn-primary" href="#/cadastro"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="10" cy="8" r="3.5"/><path d="M3.5 20a6.5 6.5 0 0 1 13 0"/><path d="M19 8v6M16 11h6"/></svg>Nova admissão</a>
+              <a class="btn btn-outline" href="#/relatorios"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 20h16"/><path d="M7 16v-5M12 16V8M17 16v-3"/></svg>Ver relatórios</a>
+            </div>
+          </div>
+          <div class="nati-note">
+            <span class="nati-face"><svg viewBox="0 0 8 8" width="18" height="18" aria-hidden="true" focusable="false"><path d="M4.322 0.322L5.573 1.573A0.456 0.456 0 0 1 5.573 2.218L4.322 3.469A0.456 0.456 0 0 1 3.678 3.469L2.427 2.218A0.456 0.456 0 0 1 2.427 1.573L3.678 0.322A0.456 0.456 0 0 1 4.322 0.322Z" fill="#FFFFFF"/><path d="M6.427 2.427L7.678 3.678A0.456 0.456 0 0 1 7.678 4.322L6.427 5.573A0.456 0.456 0 0 1 5.782 5.573L4.531 4.322A0.456 0.456 0 0 1 4.531 3.678L5.782 2.427A0.456 0.456 0 0 1 6.427 2.427Z" fill="#FFFFFF"/><path d="M2.218 2.427L3.469 3.678A0.456 0.456 0 0 1 3.469 4.322L2.218 5.573A0.456 0.456 0 0 1 1.573 5.573L0.322 4.322A0.456 0.456 0 0 1 0.322 3.678L1.573 2.427A0.456 0.456 0 0 1 2.218 2.427Z" fill="#FFFFFF"/><path d="M4.322 4.531L5.573 5.782A0.456 0.456 0 0 1 5.573 6.427L4.322 7.678A0.456 0.456 0 0 1 3.678 7.678L2.427 6.427A0.456 0.456 0 0 1 2.427 5.782L3.678 4.531A0.456 0.456 0 0 1 4.322 4.531Z" fill="#FFFFFF"/></svg></span>
+            <div>
+              <span class="who">NATI · análise de hoje</span>
+              <b>27 ASOs vencem em 15 dias na Unidade Guarulhos. Preparei o agendamento com a clínica e o aviso aos gestores. Quer que eu envie?</b>
+              <div class="chips"><span class="chip">Medicina Ocupacional</span><span class="chip">Segurança do Trabalho</span><span class="chip">Portais</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid cols-4" style="margin-top:18px">
+          <div class="card kpi">
+            <span class="label"><i><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><path d="M16 4.5a3.5 3.5 0 0 1 0 7"/><path d="M17.5 14a6 6 0 0 1 4 5.5"/></svg></i>Colaboradores ativos</span>
+            <span class="value">4.812</span>
+            <span class="delta"><span class="up">+1,4%</span> no mês · 11 CNPJs</span>
+            <svg class="spark" viewBox="0 0 120 34" data-spark="4610,4640,4655,4690,4702,4720,4738,4751,4760,4780,4795,4812"></svg>
+          </div>
+          <div class="card kpi">
+            <span class="label"><i><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="10" cy="8" r="3.5"/><path d="M3.5 20a6.5 6.5 0 0 1 13 0"/><path d="M19 8v6M16 11h6"/></svg></i>Admissões no mês</span>
+            <span class="value">37</span>
+            <span class="delta"><span class="up">+9</span> em relação a agosto · 4 em andamento</span>
+            <svg class="spark" viewBox="0 0 120 34" data-spark="22,18,25,31,27,29,33,24,28,30,28,37"></svg>
+          </div>
+          <div class="card kpi">
+            <span class="label"><i><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="6" width="18" height="13" rx="3"/><path d="M3 10h18"/><path d="M15 14.5h2.5"/></svg></i>Folha de agosto</span>
+            <span class="value">R$ 18,4 mi</span>
+            <span class="delta"><span class="flat">+0,6%</span> · fechada em 4 min 12 s</span>
+            <svg class="spark" viewBox="0 0 120 34" data-spark="17.1,17.2,17.4,17.3,17.6,17.8,17.9,18.0,18.1,18.2,18.3,18.4"></svg>
+          </div>
+          <div class="card kpi">
+            <span class="label"><i><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 4 21 19H3z"/><path d="M12 10v4M12 16.5v.5"/></svg></i>Pendências</span>
+            <span class="value">12</span>
+            <span class="delta"><span class="down">3 críticas</span> · 9 no prazo</span>
+            <svg class="spark" viewBox="0 0 120 34" data-spark="21,19,18,16,17,15,14,15,13,12,13,12"></svg>
+          </div>
+        </div>
+
+        <div class="grid cols-3-2" style="margin-top:18px">
+          <div class="card">
+            <div class="card-head">
+              <div><h2>Admissões e desligamentos</h2><p>Últimos 12 meses, todas as empresas do grupo</p></div>
+              <div class="legend"><span><i style="background:var(--series-1)"></i>Admissões</span><span><i style="background:var(--series-2)"></i>Desligamentos</span></div>
+            </div>
+            <div class="chart" id="chart-flow"></div>
+          </div>
+          <div class="card">
+            <div class="card-head"><div><h2>Para hoje</h2><p>Aprovações e prazos da sua fila</p></div><a class="link" href="#/relatorios">Ver tudo <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></div>
+            <div class="task"><span class="ico"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span><div><b>Aprovar requisição de vaga · Supervisor de Produção</b><span>Marcos Tavares · Unidade Campinas · aberta há 2 dias</span></div><a class="btn btn-outline btn-sm" href="#/colaboradores">Abrir</a></div>
+            <div class="task"><span class="ico"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg></span><div><b>8 marcações inconsistentes no NatPonto</b><span>Turno da noite · Unidade Guarulhos · ontem</span></div><a class="btn btn-outline btn-sm" href="#/ponto">Tratar</a></div>
+            <div class="task"><span class="ico"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M7 3h7l5 5v13H7z"/><path d="M14 3v5h5"/><path d="M10 13h6M10 17h6"/></svg></span><div><b>Assinar contrato de Ana Ribeiro</b><span>Admissão digital · aguardando assinatura eletrônica</span></div><a class="btn btn-outline btn-sm" href="#/cadastro">Assinar</a></div>
+            <div class="task"><span class="ico"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3l7 3v5.5c0 4.5-3 7.8-7 9.5-4-1.7-7-5-7-9.5V6z"/><path d="m9.5 12 1.8 1.8L15 10"/></svg></span><div><b>Treinamento NR-35 vencendo para 6 pessoas</b><span>Segurança do Trabalho · prazo em 9 dias</span></div><a class="btn btn-outline btn-sm" href="#/relatorios">Agendar</a></div>
+          </div>
+        </div>
+
+        <div class="grid cols-3" style="margin-top:18px">
+          <div class="card">
+            <div class="card-head"><div><h2>Folha por centro de custo</h2><p>Agosto · R$ mil · 6 maiores</p></div></div>
+            <div class="hbar-list">
+              <div class="hbar"><span class="name">Produção</span><span class="track"><span class="fill" style="width:100%"></span></span><span class="val num">7.920</span></div>
+              <div class="hbar"><span class="name">Logística</span><span class="track"><span class="fill" style="width:44%"></span></span><span class="val num">3.480</span></div>
+              <div class="hbar"><span class="name">Comercial</span><span class="track"><span class="fill" style="width:31%"></span></span><span class="val num">2.460</span></div>
+              <div class="hbar"><span class="name">Administrativo</span><span class="track"><span class="fill" style="width:24%"></span></span><span class="val num">1.900</span></div>
+              <div class="hbar"><span class="name">Qualidade</span><span class="track"><span class="fill" style="width:15%"></span></span><span class="val num">1.190</span></div>
+              <div class="hbar"><span class="name">Manutenção</span><span class="track"><span class="fill" style="width:12%"></span></span><span class="val num">950</span></div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-head"><div><h2>Colaboradores por unidade</h2><p>Ativos hoje</p></div></div>
+            <div class="rings">
+              <svg viewBox="0 0 120 120" width="130" height="130" id="ring" aria-label="Distribuição por unidade"></svg>
+              <div class="ring-legend">
+                <div><i style="background:var(--seq-5)"></i>Campinas<b class="num">1.904</b></div>
+                <div><i style="background:var(--seq-4)"></i>Guarulhos<b class="num">1.372</b></div>
+                <div><i style="background:var(--seq-3)"></i>Uberlândia<b class="num">886</b></div>
+                <div><i style="background:var(--seq-2)"></i>Matriz<b class="num">650</b></div>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-head"><div><h2>Absenteísmo e horas extras</h2><p>Últimas 8 semanas</p></div></div>
+            <div class="grid cols-2" style="gap:12px">
+              <div><div class="legend" style="margin-bottom:4px"><span>Absenteísmo</span></div><div class="kpi"><span class="value" style="font-size:24px">2,1%</span></div><svg class="spark" viewBox="0 0 120 34" data-spark="2.9,2.7,2.8,2.5,2.4,2.3,2.2,2.1" data-color="var(--series-2)"></svg></div>
+              <div><div class="legend" style="margin-bottom:4px"><span>Horas extras</span></div><div class="kpi"><span class="value" style="font-size:24px">3.240 h</span></div><svg class="spark" viewBox="0 0 120 34" data-spark="3900,3820,3710,3600,3480,3400,3300,3240"></svg></div>
+            </div>
+            <p style="margin:12px 0 0;font-size:12.5px;color:var(--graphite)">A NATI relaciona as duas curvas: a queda das horas extras acompanha a nova escala da Produção desde julho.</p>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:18px">
+          <div class="card-head"><div><h2>Atalhos dos módulos</h2><p>Os mais usados pela sua equipe</p></div><a class="link" href="#/relatorios">Todos os 31 módulos <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></div>
+          <div class="modules">
+            <a class="module" href="#/cadastro"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" aria-hidden="true" focusable="false">
+  <defs>
+    <linearGradient id="ic-admissao-digital-grad" gradientUnits="userSpaceOnUse" x1="219.96" y1="219.96" x2="804.04" y2="804.04">
+      <stop offset="0" stop-color="#B54E89"/>
+      <stop offset="1" stop-color="#6F2C7B"/>
+    </linearGradient>
+  </defs>
+  <path d="M582.92 165.73 L858.27 441.08 C897.44 480.25 897.44 543.75 858.27 582.92 L582.92 858.27 C543.75 897.44 480.25 897.44 441.08 858.27 L165.73 582.92 C126.56 543.75 126.56 480.25 165.73 441.08 L441.08 165.73 C480.25 126.56 543.75 126.56 582.92 165.73 Z" fill="url(#ic-admissao-digital-grad)"/>
+  <g transform="translate(262 262) scale(20.833333333333332)" fill="none" stroke="#FFFFFF" stroke-width="1.15" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M7 3h7.5l4 4v12.5a1.5 1.5 0 0 1-1.5 1.5H8.5A1.5 1.5 0 0 1 7 19.5V4.5A1.5 1.5 0 0 1 8.5 3"/>
+    <path d="M14.5 3v4h4"/>
+    <path d="M9.5 14l2 2 4-4.5"/>
+  </g>
+</svg>Admissão Digital</a>
+            <a class="module" href="#/ponto"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" aria-hidden="true" focusable="false">
+  <defs>
+    <linearGradient id="ic-natponto-grad" gradientUnits="userSpaceOnUse" x1="219.96" y1="219.96" x2="804.04" y2="804.04">
+      <stop offset="0" stop-color="#C95788"/>
+      <stop offset="1" stop-color="#81347D"/>
+    </linearGradient>
+  </defs>
+  <path d="M582.92 165.73 L858.27 441.08 C897.44 480.25 897.44 543.75 858.27 582.92 L582.92 858.27 C543.75 897.44 480.25 897.44 441.08 858.27 L165.73 582.92 C126.56 543.75 126.56 480.25 165.73 441.08 L441.08 165.73 C480.25 126.56 543.75 126.56 582.92 165.73 Z" fill="url(#ic-natponto-grad)"/>
+  <g transform="translate(262 262) scale(20.833333333333332)" fill="none" stroke="#FFFFFF" stroke-width="1.15" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 2.4L12 0"/>
+    <path d="M16.8 3.69L18 1.61"/>
+    <path d="M20.31 7.2L22.39 6"/>
+    <path d="M21.6 12L24 12"/>
+    <path d="M20.31 16.8L22.39 18"/>
+    <path d="M16.8 20.31L18 22.39"/>
+    <path d="M12 21.6L12 24"/>
+    <path d="M7.2 20.31L6 22.39"/>
+    <path d="M3.69 16.8L1.61 18"/>
+    <path d="M2.4 12L0 12"/>
+    <path d="M3.69 7.2L1.61 6"/>
+    <path d="M7.2 3.69L6 1.61"/>
+    <path d="M12 12V5.4"/><path d="M12 12h6.6"/>
+  </g>
+</svg>NatPonto</a>
+            <a class="module" href="#/relatorios"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" aria-hidden="true" focusable="false">
+  <defs>
+    <linearGradient id="ic-folha-de-pagamento-grad" gradientUnits="userSpaceOnUse" x1="219.96" y1="219.96" x2="804.04" y2="804.04">
+      <stop offset="0" stop-color="#9A408A"/>
+      <stop offset="1" stop-color="#5E2379"/>
+    </linearGradient>
+  </defs>
+  <path d="M582.92 165.73 L858.27 441.08 C897.44 480.25 897.44 543.75 858.27 582.92 L582.92 858.27 C543.75 897.44 480.25 897.44 441.08 858.27 L165.73 582.92 C126.56 543.75 126.56 480.25 165.73 441.08 L441.08 165.73 C480.25 126.56 543.75 126.56 582.92 165.73 Z" fill="url(#ic-folha-de-pagamento-grad)"/>
+  <g transform="translate(262 262) scale(20.833333333333332)" fill="none" stroke="#FFFFFF" stroke-width="1.15" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M6.5 3h11v17.5l-2.2-1.6-2.2 1.6-2.2-1.6-2.2 1.6-2.2-1.6z"/>
+    <path d="M9.5 8.5h5"/>
+    <path d="M9.5 12h3"/>
+    <path d="M12.5 15.5h2"/>
+  </g>
+</svg>Folha de Pagamento</a>
+            <a class="module" href="#/colaboradores"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" aria-hidden="true" focusable="false">
+  <defs>
+    <linearGradient id="ic-recrutamento-e-selecao-grad" gradientUnits="userSpaceOnUse" x1="219.96" y1="219.96" x2="804.04" y2="804.04">
+      <stop offset="0" stop-color="#B54E89"/>
+      <stop offset="1" stop-color="#6F2C7B"/>
+    </linearGradient>
+  </defs>
+  <path d="M582.92 165.73 L858.27 441.08 C897.44 480.25 897.44 543.75 858.27 582.92 L582.92 858.27 C543.75 897.44 480.25 897.44 441.08 858.27 L165.73 582.92 C126.56 543.75 126.56 480.25 165.73 441.08 L441.08 165.73 C480.25 126.56 543.75 126.56 582.92 165.73 Z" fill="url(#ic-recrutamento-e-selecao-grad)"/>
+  <g transform="translate(262 262) scale(20.833333333333332)" fill="none" stroke="#FFFFFF" stroke-width="1.15" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="10.5" cy="10.5" r="7.5"/>
+    <circle cx="10.5" cy="8.79" r="1.78"/>
+    <path d="M6.93 14.74a3.57 3.57 0 0 1 7.14 0"/>
+    <path d="M16 16l5 5"/>
+  </g>
+</svg>Recrutamento e Seleção</a>
+            <a class="module" href="#/relatorios"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" aria-hidden="true" focusable="false">
+  <defs>
+    <linearGradient id="ic-medicina-ocupacional-grad" gradientUnits="userSpaceOnUse" x1="219.96" y1="219.96" x2="804.04" y2="804.04">
+      <stop offset="0" stop-color="#692878"/>
+      <stop offset="1" stop-color="#46206F"/>
+    </linearGradient>
+  </defs>
+  <path d="M582.92 165.73 L858.27 441.08 C897.44 480.25 897.44 543.75 858.27 582.92 L582.92 858.27 C543.75 897.44 480.25 897.44 441.08 858.27 L165.73 582.92 C126.56 543.75 126.56 480.25 165.73 441.08 L441.08 165.73 C480.25 126.56 543.75 126.56 582.92 165.73 Z" fill="url(#ic-medicina-ocupacional-grad)"/>
+  <g transform="translate(262 262) scale(20.833333333333332)" fill="none" stroke="#FFFFFF" stroke-width="1.15" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="5" y="4" width="14" height="17" rx="2.6"/>
+    <path d="M9.5 4V3a1 1 0 0 1 1-1h3a1 1 0 0 1 1 1v1"/>
+    <path d="M12 9.5v6"/><path d="M9 12.5h6"/>
+  </g>
+</svg>Medicina Ocupacional</a>
+            <a class="module" href="#/relatorios"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" aria-hidden="true" focusable="false">
+  <defs>
+    <linearGradient id="ic-people-analytics-grad" gradientUnits="userSpaceOnUse" x1="219.96" y1="219.96" x2="804.04" y2="804.04">
+      <stop offset="0" stop-color="#511C76"/>
+      <stop offset="1" stop-color="#2C1A63"/>
+    </linearGradient>
+  </defs>
+  <path d="M582.92 165.73 L858.27 441.08 C897.44 480.25 897.44 543.75 858.27 582.92 L582.92 858.27 C543.75 897.44 480.25 897.44 441.08 858.27 L165.73 582.92 C126.56 543.75 126.56 480.25 165.73 441.08 L441.08 165.73 C480.25 126.56 543.75 126.56 582.92 165.73 Z" fill="url(#ic-people-analytics-grad)"/>
+  <g transform="translate(262 262) scale(20.833333333333332)" fill="none" stroke="#FFFFFF" stroke-width="1.15" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M4 3.5V20h16.5"/>
+    <circle cx="8" cy="15.5" r="1.3" fill="#FFFFFF" stroke="none"/><circle cx="11.5" cy="10" r="1.3" fill="#FFFFFF" stroke="none"/><circle cx="15" cy="12.5" r="1.3" fill="#FFFFFF" stroke="none"/><circle cx="18.5" cy="6.5" r="1.3" fill="#FFFFFF" stroke="none"/>
+  </g>
+</svg>People Analytics</a>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= COLABORADORES ================= -->
+      <section class="page" id="page-colaboradores" aria-labelledby="h-colab">
+        <div class="page-head">
+          <div><span class="eyebrow"><i></i>Pessoas</span><h1 id="h-colab">Colaboradores</h1><p class="lead">4.812 pessoas ativas em 11 CNPJs. Um cadastro para folha, ponto, benefícios e SESMT.</p></div>
+          <div class="actions"><a class="btn btn-outline" href="#/relatorios"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 4v11M7 10l5 5 5-5"/><path d="M4 19h16"/></svg>Exportar</a><a class="btn btn-primary" href="#/cadastro"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="10" cy="8" r="3.5"/><path d="M3.5 20a6.5 6.5 0 0 1 13 0"/><path d="M19 8v6M16 11h6"/></svg>Nova admissão</a></div>
+        </div>
+        <div class="grid cols-4" style="margin-bottom:18px">
+          <div class="card kpi"><span class="label">Ativos</span><span class="value">4.812</span><span class="delta"><span class="up">+68</span> no mês</span></div>
+          <div class="card kpi"><span class="label">Em admissão</span><span class="value">4</span><span class="delta">2 aguardando assinatura</span></div>
+          <div class="card kpi"><span class="label">Afastados</span><span class="value">61</span><span class="delta">INSS 38 · licença 23</span></div>
+          <div class="card kpi"><span class="label">Em experiência</span><span class="value">92</span><span class="delta"><span class="down">7</span> com avaliação atrasada</span></div>
+        </div>
+        <div class="card">
+          <div class="toolbar">
+            <label class="search"><span class="sr">Filtrar colaboradores</span><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="6.5"/><path d="m20 20-4.3-4.3"/></svg><input type="search" placeholder="Nome, matrícula ou CPF"></label>
+            <div class="seg" role="group" aria-label="Situação"><button aria-pressed="true">Todos</button><button aria-pressed="false">Ativos</button><button aria-pressed="false">Afastados</button><button aria-pressed="false">Em admissão</button></div>
+            <select class="select" aria-label="Unidade"><option>Todas as unidades</option><option>Campinas</option><option>Guarulhos</option><option>Uberlândia</option><option>Matriz</option></select>
+            <select class="select" aria-label="Área"><option>Todas as áreas</option><option>Produção</option><option>Logística</option><option>Comercial</option></select>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Colaborador</th><th>Cargo</th><th>Unidade</th><th>Admissão</th><th>Situação</th><th class="r">Ponto do mês</th><th></th></tr></thead>
+              <tbody>
+                <tr><td><div class="who"><span class="avatar sm rose">AR</span><div><b>Ana Ribeiro</b><span>Matrícula 04812</span></div></div></td><td>Supervisora de Produção</td><td>Campinas</td><td class="num">01/09/2026</td><td><span class="status info"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/><path d="M19 16l.7 2 2 .7-2 .7-.7 2-.7-2-2-.7 2-.7z"/></svg>Em admissão</span></td><td class="r num">—</td><td class="r"><a class="link" href="#/cadastro">Abrir</a></td></tr>
+                <tr><td><div class="who"><span class="avatar sm">MT</span><div><b>Marcos Tavares</b><span>Matrícula 01187</span></div></div></td><td>Gerente de Produção</td><td>Campinas</td><td class="num">14/03/2015</td><td><span class="status good"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg>Ativo</span></td><td class="r num">176 h 00</td><td class="r"><a class="link" href="#/ponto">Abrir</a></td></tr>
+                <tr><td><div class="who"><span class="avatar sm lav">BL</span><div><b>Beatriz Lima</b><span>Matrícula 02931</span></div></div></td><td>Analista de Admissão</td><td>Matriz</td><td class="num">02/05/2019</td><td><span class="status good"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg>Ativo</span></td><td class="r num">168 h 40</td><td class="r"><a class="link" href="#/ponto">Abrir</a></td></tr>
+                <tr><td><div class="who"><span class="avatar sm pink">RD</span><div><b>Rafael Duarte</b><span>Matrícula 03110</span></div></div></td><td>Técnico de Segurança</td><td>Guarulhos</td><td class="num">18/08/2020</td><td><span class="status warn"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 4 21 19H3z"/><path d="M12 10v4M12 16.5v.5"/></svg>Ponto a tratar</span></td><td class="r num">171 h 15</td><td class="r"><a class="link" href="#/ponto">Abrir</a></td></tr>
+                <tr><td><div class="who"><span class="avatar sm lav">PM</span><div><b>Paulo Mendes</b><span>Matrícula 02204</span></div></div></td><td>Analista de Folha</td><td>Matriz</td><td class="num">11/11/2017</td><td><span class="status good"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg>Ativo</span></td><td class="r num">176 h 00</td><td class="r"><a class="link" href="#/ponto">Abrir</a></td></tr>
+                <tr><td><div class="who"><span class="avatar sm rose">CN</span><div><b>Cláudia Nunes</b><span>Matrícula 00874</span></div></div></td><td>Controller</td><td>Matriz</td><td class="num">05/02/2012</td><td><span class="status good"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg>Ativo</span></td><td class="r num">176 h 00</td><td class="r"><a class="link" href="#/ponto">Abrir</a></td></tr>
+                <tr><td><div class="who"><span class="avatar sm">HS</span><div><b>Henrique Sales</b><span>Matrícula 01560</span></div></div></td><td>Médico do Trabalho</td><td>Guarulhos</td><td class="num">23/06/2016</td><td><span class="status bad"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6 6 18"/></svg>Afastado · INSS</span></td><td class="r num">—</td><td class="r"><a class="link" href="#/relatorios">Abrir</a></td></tr>
+                <tr><td><div class="who"><span class="avatar sm pink">LS</span><div><b>Larissa Souza</b><span>Matrícula 04790</span></div></div></td><td>Operadora de Máquinas</td><td>Uberlândia</td><td class="num">17/08/2026</td><td><span class="status warn"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 4 21 19H3z"/><path d="M12 10v4M12 16.5v.5"/></svg>Experiência · avaliar</span></td><td class="r num">120 h 30</td><td class="r"><a class="link" href="#/relatorios">Abrir</a></td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="pager"><span>Mostrando 1 a 8 de 4.812</span><div class="pages"><button aria-label="Anterior">‹</button><button aria-current="page">1</button><button>2</button><button>3</button><button>…</button><button>602</button><button aria-label="Próxima">›</button></div></div>
+        </div>
+      </section>
+
+      <!-- ================= CADASTRO ================= -->
+      <section class="page" id="page-cadastro" aria-labelledby="h-cad">
+        <div class="page-head">
+          <div><span class="eyebrow"><i></i>Admissão Digital</span><h1 id="h-cad">Cadastro de Ana Ribeiro</h1><p class="lead">O que a candidata preencheu no portal já está aqui. Você confere, completa o contrato e o eSocial sai sozinho.</p></div>
+          <div class="actions"><button class="btn btn-outline">Salvar rascunho</button><button class="btn btn-primary">Continuar <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button></div>
+        </div>
+        <div class="steps">
+          <div class="step done"><i><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></i>Dados pessoais</div>
+          <div class="step now"><i>2</i>Contrato e cargo</div>
+          <div class="step"><i>3</i>Documentos e benefícios</div>
+          <div class="step"><i>4</i>Assinatura e eSocial</div>
+        </div>
+        <div class="grid cols-2-1">
+          <form class="card" onsubmit="return false">
+            <fieldset>
+              <legend><i></i>Vínculo</legend>
+              <div class="form-grid">
+                <div class="f s3"><label>Empresa</label><select><option>Vale Verde Alimentos Ltda · 12.345.678/0001-90</option><option>Vale Verde Logística S.A.</option></select></div>
+                <div class="f s3"><label>Unidade</label><select><option>Campinas · Fábrica 1</option><option>Guarulhos</option><option>Uberlândia</option></select></div>
+                <div class="f s2"><label>Tipo de contrato</label><select><option>CLT · prazo indeterminado</option><option>CLT · experiência</option><option>Aprendiz</option><option>Estágio</option></select></div>
+                <div class="f s2"><label>Data de admissão</label><input type="text" value="01/09/2026"></div>
+                <div class="f s2"><label>Experiência</label><select><option>45 + 45 dias</option><option>30 + 60 dias</option><option>90 dias</option><option>Sem experiência</option></select></div>
+              </div>
+            </fieldset>
+            <fieldset>
+              <legend><i></i>Cargo e remuneração</legend>
+              <div class="form-grid">
+                <div class="f s3 ok"><label>Cargo <small>· Cargos e Salários</small></label><input type="text" value="Supervisora de Produção · CBO 8201-05"><span class="hint ok">Faixa salarial validada: nível III</span></div>
+                <div class="f s3"><label>Centro de custo</label><input type="text" value="1020 · Produção · Linha 3"></div>
+                <div class="f s2"><label>Salário base</label><input type="text" value="R$ 6.850,00"></div>
+                <div class="f s2"><label>Jornada</label><select><option>44 h semanais · escala 6x1</option><option>40 h semanais · 5x2</option><option>12x36</option></select></div>
+                <div class="f s2"><label>Gestor imediato</label><input type="text" value="Marcos Tavares"></div>
+                <div class="f s6"><label>Observações do contrato <small>· opcional</small></label><textarea>Adicional de insalubridade grau médio conforme laudo LTCAT da Linha 3.</textarea></div>
+              </div>
+            </fieldset>
+            <fieldset>
+              <legend><i></i>Ponto e acesso</legend>
+              <div class="form-grid">
+                <div class="f s3"><label>Marcação de ponto</label><select><option>NatPonto · reconhecimento facial</option><option>Relógio REP · Fábrica 1</option><option>Sem controle de ponto</option></select></div>
+                <div class="f s3"><label>Perfil no portal</label><select><option>Colaborador + Gestor de equipe</option><option>Colaborador</option></select></div>
+                <div class="f s3"><span class="switch"><i></i>Vale-transporte</span></div>
+                <div class="f s3"><span class="switch"><i></i>Plano de saúde · Unimed Enfermaria</span></div>
+              </div>
+            </fieldset>
+            <div class="upload">Arraste o <b>contrato de trabalho assinado</b> ou os documentos que faltam. A NATI lê e confere com o cadastro.</div>
+            <div class="docs">
+              <div class="doc"><span class="ico"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M7 3h7l5 5v13H7z"/><path d="M14 3v5h5"/><path d="M10 13h6M10 17h6"/></svg></span><div><b>RG e CPF</b> <span>· enviados pela candidata no portal</span></div><span class="status good"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg>Conferido</span></div>
+              <div class="doc"><span class="ico"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M7 3h7l5 5v13H7z"/><path d="M14 3v5h5"/><path d="M10 13h6M10 17h6"/></svg></span><div><b>Carteira de trabalho digital</b> <span>· consulta automática</span></div><span class="status good"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg>Conferido</span></div>
+              <div class="doc"><span class="ico"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M7 3h7l5 5v13H7z"/><path d="M14 3v5h5"/><path d="M10 13h6M10 17h6"/></svg></span><div><b>ASO admissional</b> <span>· Dr. Henrique Sales · 28/08</span></div><span class="status good"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg>Apto</span></div>
+              <div class="doc"><span class="ico"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M7 3h7l5 5v13H7z"/><path d="M14 3v5h5"/><path d="M10 13h6M10 17h6"/></svg></span><div><b>Comprovante de residência</b> <span>· pendente</span></div><span class="status warn"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 4 21 19H3z"/><path d="M12 10v4M12 16.5v.5"/></svg>Falta</span></div>
+            </div>
+          </form>
+          <aside>
+            <div class="card">
+              <div class="card-head"><div><h2>Resumo</h2><p>O que já está pronto</p></div></div>
+              <div class="summary-row"><span>Candidata</span><b>Ana Ribeiro</b></div>
+              <div class="summary-row"><span>Vaga</span><b>Supervisora de Produção</b></div>
+              <div class="summary-row"><span>Unidade</span><b>Campinas · Fábrica 1</b></div>
+              <div class="summary-row"><span>Admissão</span><b class="num">01/09/2026</b></div>
+              <div class="summary-row"><span>Salário</span><b class="num">R$ 6.850,00</b></div>
+              <div class="summary-row"><span>eSocial</span><b>S-2200 pronto para envio</b></div>
+              <div class="summary-row"><span>Completude</span><b class="num">82%</b></div>
+              <div class="meter" style="margin-top:8px"><i style="width:82%"></i></div>
+            </div>
+            <div class="aside-nati">
+              <span class="who">NATI · conferência</span>
+              <ul>
+                <li>CPF e CTPS conferem com a base da Receita e do eSocial.</li>
+                <li>O salário está dentro da faixa do cargo. Não há colaborador na mesma função com salário menor nesta unidade.</li>
+                <li>Falta o comprovante de residência. Já pedi à Ana pelo portal.</li>
+              </ul>
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      <!-- ================= PONTO ================= -->
+      <section class="page" id="page-ponto" aria-labelledby="h-ponto">
+        <div class="page-head">
+          <div><span class="eyebrow"><i></i>NatPonto</span><h1 id="h-ponto">Ponto e jornada</h1><p class="lead">Marcações do dia, inconsistências para tratar e o espelho do mês, tudo ligado à folha.</p></div>
+          <div class="actions"><a class="btn btn-outline" href="#/relatorios"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 4v11M7 10l5 5 5-5"/><path d="M4 19h16"/></svg>Espelho de ponto</a><button class="btn btn-primary"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg>Fechar setembro</button></div>
+        </div>
+        <div class="grid cols-4" style="margin-bottom:18px">
+          <div class="card kpi"><span class="label">Marcações hoje</span><span class="value">9.148</span><span class="delta"><span class="up">98,7%</span> por reconhecimento facial</span></div>
+          <div class="card kpi"><span class="label">Inconsistências</span><span class="value">8</span><span class="delta"><span class="down">turno da noite</span> · Guarulhos</span></div>
+          <div class="card kpi"><span class="label">Horas extras no mês</span><span class="value">3.240 h</span><span class="delta"><span class="up">-12%</span> que agosto</span></div>
+          <div class="card kpi"><span class="label">Banco de horas</span><span class="value">+1.180 h</span><span class="delta">saldo do grupo · vence em dezembro</span></div>
+        </div>
+        <div class="grid cols-3-2">
+          <div class="card">
+            <div class="card-head"><div><h2>Marcações de Marcos Tavares · hoje</h2><p>Gerente de Produção · escala 5x2 · 08:00 às 17:48</p></div><span class="status good"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg>Jornada em dia</span></div>
+            <div class="timeline">
+              <div class="punch"><small>Entrada</small><b class="num">07:52</b><span><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 8V6a2 2 0 0 1 2-2h2M16 4h2a2 2 0 0 1 2 2v2M20 16v2a2 2 0 0 1-2 2h-2M8 20H6a2 2 0 0 1-2-2v-2"/><path d="M9 10v1M15 10v1"/><path d="M9.5 14.5c1.5 1.3 3.5 1.3 5 0"/></svg>Facial · Portaria 1</span></div>
+              <div class="punch"><small>Saída almoço</small><b class="num">12:03</b><span><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 8V6a2 2 0 0 1 2-2h2M16 4h2a2 2 0 0 1 2 2v2M20 16v2a2 2 0 0 1-2 2h-2M8 20H6a2 2 0 0 1-2-2v-2"/><path d="M9 10v1M15 10v1"/><path d="M9.5 14.5c1.5 1.3 3.5 1.3 5 0"/></svg>Facial · Refeitório</span></div>
+              <div class="punch"><small>Volta</small><b class="num">13:01</b><span><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 8V6a2 2 0 0 1 2-2h2M16 4h2a2 2 0 0 1 2 2v2M20 16v2a2 2 0 0 1-2 2h-2M8 20H6a2 2 0 0 1-2-2v-2"/><path d="M9 10v1M15 10v1"/><path d="M9.5 14.5c1.5 1.3 3.5 1.3 5 0"/></svg>Facial · Refeitório</span></div>
+              <div class="punch"><small>Saída</small><b class="num" style="color:var(--muted)">—</b><span>Prevista 17:48</span></div>
+            </div>
+            <div class="card-head" style="margin-top:22px"><div><h2>Inconsistências para tratar</h2><p>A NATI sugere a correção; você aprova</p></div></div>
+            <div class="table-wrap">
+              <table class="fit">
+                <thead><tr><th>Colaborador</th><th>Dia</th><th>Ocorrência</th><th>Sugestão da NATI</th><th></th></tr></thead>
+                <tbody>
+                  <tr><td><div class="who"><span class="avatar sm pink">RD</span><div><b>Rafael Duarte</b><span>Guarulhos</span></div></div></td><td class="num">06/09</td><td>Sem marcação de saída</td><td>Saída 22:04 pelo acesso da portaria</td><td class="r"><button class="btn btn-outline btn-sm">Aceitar</button></td></tr>
+                  <tr><td><div class="who"><span class="avatar sm lav">FA</span><div><b>Fernanda Alves</b><span>Guarulhos</span></div></div></td><td class="num">06/09</td><td>Intervalo menor que 1 h</td><td>Registrar 42 min e gerar hora extra</td><td class="r"><button class="btn btn-outline btn-sm">Aceitar</button></td></tr>
+                  <tr><td><div class="who"><span class="avatar sm">GC</span><div><b>Gustavo Costa</b><span>Guarulhos</span></div></div></td><td class="num">05/09</td><td>Marcação duplicada</td><td>Manter 22:01 e descartar 22:02</td><td class="r"><button class="btn btn-outline btn-sm">Aceitar</button></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-head"><div><h2>Como o colaborador marca</h2><p>NatPonto no celular, com reconhecimento facial</p></div></div>
+            <div class="phone"><div class="screen">
+              <span class="t">NatPonto · Vale Verde</span>
+              <span class="clock num">07:52</span>
+              <span style="font-size:12px;color:rgba(255,255,255,.8)">Segunda, 7 de setembro</span>
+              <div class="face"><svg viewBox="0 0 24 24" width="60" height="60" style="position:absolute;inset:0;margin:auto;opacity:.55" fill="none" stroke="#fff" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="9" r="3.5"/><path d="M5 20a7 7 0 0 1 14 0"/></svg></div>
+              <span style="font-size:12.5px;font-weight:700">Marcos, olhe para a câmera</span>
+              <span class="ok">Registrar entrada</span>
+            </div></div>
+            <div class="actions" style="justify-content:center;margin-top:14px"><span class="status good"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg>Comprovante no celular</span><span class="status info"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M7 3h7l5 5v13H7z"/><path d="M14 3v5h5"/><path d="M10 13h6M10 17h6"/></svg>Espelho no portal</span></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= RELATÓRIOS ================= -->
+      <section class="page" id="page-relatorios" aria-labelledby="h-rel">
+        <div class="page-head">
+          <div><span class="eyebrow"><i></i>People Analytics</span><h1 id="h-rel">Relatórios</h1><p class="lead">Painéis prontos por módulo e o criador de relatórios. Todo relatório sai em tela, PDF ou planilha.</p></div>
+          <div class="actions"><button class="btn btn-outline"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 20h16"/><path d="M7 16v-5M12 16V8M17 16v-3"/></svg>Criar relatório</button><button class="btn btn-primary"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 4v11M7 10l5 5 5-5"/><path d="M4 19h16"/></svg>Exportar painel</button></div>
+        </div>
+        <div class="filters">
+          <span class="lbl">Filtros</span>
+          <select class="select" aria-label="Período"><option>Últimos 12 meses</option><option>Este ano</option><option>Último trimestre</option></select>
+          <select class="select" aria-label="Empresa"><option>Todas as empresas</option><option>Vale Verde Alimentos</option><option>Vale Verde Logística</option></select>
+          <select class="select" aria-label="Unidade"><option>Todas as unidades</option><option>Campinas</option><option>Guarulhos</option></select>
+          <span class="seg" role="group" aria-label="Comparar com"><button aria-pressed="true">Ano anterior</button><button aria-pressed="false">Orçamento</button></span>
+        </div>
+        <div class="grid cols-3-2" style="margin-bottom:18px">
+          <div class="card">
+            <div class="card-head">
+              <div><h2>Custo da folha por mês</h2><p>R$ milhões · 2026 contra 2025</p></div>
+              <div class="legend"><span><i style="background:var(--series-1)"></i>2026</span><span><i style="background:var(--series-2)"></i>2025</span></div>
+            </div>
+            <div class="chart" id="chart-cost"></div>
+          </div>
+          <div class="card">
+            <div class="card-head"><div><h2>Rotatividade por área</h2><p>Últimos 12 meses · anual</p></div></div>
+            <div class="hbar-list">
+              <div class="hbar"><span class="name">Logística</span><span class="track"><span class="fill" style="width:100%"></span></span><span class="val num">18,2%</span></div>
+              <div class="hbar"><span class="name">Produção</span><span class="track"><span class="fill" style="width:78%"></span></span><span class="val num">14,1%</span></div>
+              <div class="hbar"><span class="name">Comercial</span><span class="track"><span class="fill" style="width:60%"></span></span><span class="val num">10,9%</span></div>
+              <div class="hbar"><span class="name">Manutenção</span><span class="track"><span class="fill" style="width:38%"></span></span><span class="val num">6,9%</span></div>
+              <div class="hbar"><span class="name">Administrativo</span><span class="track"><span class="fill" style="width:29%"></span></span><span class="val num">5,3%</span></div>
+              <div class="hbar"><span class="name">Qualidade</span><span class="track"><span class="fill" style="width:22%"></span></span><span class="val num">4,0%</span></div>
+            </div>
+            <p style="margin:14px 0 0;font-size:12.5px;color:var(--graphite)">Meta do grupo: 9%. A Logística concentra 41% dos desligamentos, a maioria nos 6 primeiros meses.</p>
+          </div>
+        </div>
+        <div class="card" style="margin-bottom:18px">
+          <div class="card-head"><div><h2>Painéis prontos</h2><p>Um por módulo, com os dados de hoje</p></div><a class="link" href="#/inicio">Ver todos <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></div>
+          <div class="report-cat">
+            <button class="rep"><span class="ico"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="6" width="18" height="13" rx="3"/><path d="M3 10h18"/><path d="M15 14.5h2.5"/></svg></span><span class="tag">Folha</span><b>Comparativo financeiro</b><span>Folha, encargos e provisões por CNPJ</span></button>
+            <button class="rep"><span class="ico"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><path d="M16 4.5a3.5 3.5 0 0 1 0 7"/><path d="M17.5 14a6 6 0 0 1 4 5.5"/></svg></span><span class="tag">People Analytics</span><b>Demográfico</b><span>Idade, tempo de casa, gênero e escolaridade</span></button>
+            <button class="rep"><span class="ico"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3l7 3v5.5c0 4.5-3 7.8-7 9.5-4-1.7-7-5-7-9.5V6z"/><path d="m9.5 12 1.8 1.8L15 10"/></svg></span><span class="tag">SESMT</span><b>Medicina e segurança</b><span>ASOs, exames, EPIs e treinamentos a vencer</span></button>
+            <button class="rep"><span class="ico"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg></span><span class="tag">Ponto</span><b>Horas extras e banco</b><span>Por unidade, área e gestor</span></button>
+            <button class="rep"><span class="ico"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="10" cy="8" r="3.5"/><path d="M3.5 20a6.5 6.5 0 0 1 13 0"/><path d="M19 8v6M16 11h6"/></svg></span><span class="tag">Talentos</span><b>Funil de recrutamento</b><span>Vagas, tempo de preenchimento e origem</span></button>
+            <button class="rep"><span class="ico"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M7 3h7l5 5v13H7z"/><path d="M14 3v5h5"/><path d="M10 13h6M10 17h6"/></svg></span><span class="tag">eSocial</span><b>Eventos e pendências</b><span>Enviados, rejeitados e prazos</span></button>
+            <button class="rep"><span class="ico"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 20h16"/><path d="M7 16v-5M12 16V8M17 16v-3"/></svg></span><span class="tag">Benefícios</span><b>Custo por colaborador</b><span>Saúde, VT, VR e previdência</span></button>
+            <button class="rep"><span class="ico"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/><path d="M19 16l.7 2 2 .7-2 .7-.7 2-.7-2-2-.7 2-.7z"/></svg></span><span class="tag">NATI</span><b>Pontos de atenção</b><span>O que a NATI encontrou esta semana</span></button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-head"><div><h2>Folha por empresa · agosto</h2><p>Valores em R$ · tabela do painel</p></div><button class="btn btn-outline btn-sm"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 4v11M7 10l5 5 5-5"/><path d="M4 19h16"/></svg>Planilha</button></div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Empresa</th><th class="r">Colaboradores</th><th class="r">Salários</th><th class="r">Encargos</th><th class="r">Benefícios</th><th class="r">Total</th><th class="r">vs. 2025</th></tr></thead>
+              <tbody>
+                <tr><td><b>Vale Verde Alimentos Ltda</b></td><td class="r num">3.104</td><td class="r num">8.910.400</td><td class="r num">3.207.700</td><td class="r num">1.118.600</td><td class="r num"><b>13.236.700</b></td><td class="r"><span class="status good"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg>+4,1%</span></td></tr>
+                <tr><td><b>Vale Verde Logística S.A.</b></td><td class="r num">1.058</td><td class="r num">2.640.900</td><td class="r num">950.700</td><td class="r num">381.200</td><td class="r num"><b>3.972.800</b></td><td class="r"><span class="status warn"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 4 21 19H3z"/><path d="M12 10v4M12 16.5v.5"/></svg>+9,8%</span></td></tr>
+                <tr><td><b>Vale Verde Comercial Ltda</b></td><td class="r num">412</td><td class="r num">690.100</td><td class="r num">248.400</td><td class="r num">98.700</td><td class="r num"><b>1.037.200</b></td><td class="r"><span class="status good"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg>+2,3%</span></td></tr>
+                <tr><td><b>Instituto Vale Verde</b></td><td class="r num">238</td><td class="r num">126.300</td><td class="r num">45.500</td><td class="r num">22.900</td><td class="r num"><b>194.700</b></td><td class="r"><span class="status good"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg>+1,0%</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= NATI ================= -->
+      <section class="page" id="page-nati" aria-labelledby="h-nati">
+        <div class="page-head">
+          <div><span class="eyebrow"><i></i>Inteligência Artificial</span><h1 id="h-nati">NATI</h1><p class="lead">Pergunte em linguagem natural. A NATI lê todos os módulos, responde com as fontes e executa só o que você aprovar.</p></div>
+          <div class="actions"><span class="status good"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg>Todos os módulos lidos às 07:40</span></div>
+        </div>
+        <div class="grid cols-2-1">
+          <div class="card chat">
+            <div class="card-head"><div class="who"><span class="nati-face" style="width:36px;height:36px"><svg viewBox="0 0 8 8" width="18" height="18" aria-hidden="true" focusable="false"><path d="M4.322 0.322L5.573 1.573A0.456 0.456 0 0 1 5.573 2.218L4.322 3.469A0.456 0.456 0 0 1 3.678 3.469L2.427 2.218A0.456 0.456 0 0 1 2.427 1.573L3.678 0.322A0.456 0.456 0 0 1 4.322 0.322Z" fill="#FFFFFF"/><path d="M6.427 2.427L7.678 3.678A0.456 0.456 0 0 1 7.678 4.322L6.427 5.573A0.456 0.456 0 0 1 5.782 5.573L4.531 4.322A0.456 0.456 0 0 1 4.531 3.678L5.782 2.427A0.456 0.456 0 0 1 6.427 2.427Z" fill="#FFFFFF"/><path d="M2.218 2.427L3.469 3.678A0.456 0.456 0 0 1 3.469 4.322L2.218 5.573A0.456 0.456 0 0 1 1.573 5.573L0.322 4.322A0.456 0.456 0 0 1 0.322 3.678L1.573 2.427A0.456 0.456 0 0 1 2.218 2.427Z" fill="#FFFFFF"/><path d="M4.322 4.531L5.573 5.782A0.456 0.456 0 0 1 5.573 6.427L4.322 7.678A0.456 0.456 0 0 1 3.678 7.678L2.427 6.427A0.456 0.456 0 0 1 2.427 5.782L3.678 4.531A0.456 0.456 0 0 1 4.322 4.531Z" fill="#FFFFFF"/></svg></span><div><b>NATI</b><span>no sistema, no WhatsApp e no Teams</span></div></div><button class="btn btn-ghost btn-sm">Nova conversa</button></div>
+            <div class="msgs">
+              <div class="msg me"><span class="avatar sm">JP</span><div class="bubble">Quem está com ASO vencendo nos próximos 30 dias em Guarulhos?</div></div>
+              <div class="msg nati"><span class="nati-face" style="width:30px;height:30px;flex:none"><svg viewBox="0 0 8 8" width="18" height="18" aria-hidden="true" focusable="false"><path d="M4.322 0.322L5.573 1.573A0.456 0.456 0 0 1 5.573 2.218L4.322 3.469A0.456 0.456 0 0 1 3.678 3.469L2.427 2.218A0.456 0.456 0 0 1 2.427 1.573L3.678 0.322A0.456 0.456 0 0 1 4.322 0.322Z" fill="#FFFFFF"/><path d="M6.427 2.427L7.678 3.678A0.456 0.456 0 0 1 7.678 4.322L6.427 5.573A0.456 0.456 0 0 1 5.782 5.573L4.531 4.322A0.456 0.456 0 0 1 4.531 3.678L5.782 2.427A0.456 0.456 0 0 1 6.427 2.427Z" fill="#FFFFFF"/><path d="M2.218 2.427L3.469 3.678A0.456 0.456 0 0 1 3.469 4.322L2.218 5.573A0.456 0.456 0 0 1 1.573 5.573L0.322 4.322A0.456 0.456 0 0 1 0.322 3.678L1.573 2.427A0.456 0.456 0 0 1 2.218 2.427Z" fill="#FFFFFF"/><path d="M4.322 4.531L5.573 5.782A0.456 0.456 0 0 1 5.573 6.427L4.322 7.678A0.456 0.456 0 0 1 3.678 7.678L2.427 6.427A0.456 0.456 0 0 1 2.427 5.782L3.678 4.531A0.456 0.456 0 0 1 4.322 4.531Z" fill="#FFFFFF"/></svg></span><div class="bubble">
+                <b>27 pessoas</b> em Guarulhos têm ASO vencendo até 7 de outubro. 19 na Produção, 6 na Logística e 2 na Manutenção. A clínica conveniada tem agenda a partir de quinta.
+                <div class="mini">
+                  <div class="hbar" style="grid-template-columns:90px 1fr 40px"><span class="name">Produção</span><span class="track"><span class="fill" style="width:100%"></span></span><span class="val num">19</span></div>
+                  <div class="hbar" style="grid-template-columns:90px 1fr 40px;margin-top:6px"><span class="name">Logística</span><span class="track"><span class="fill" style="width:32%"></span></span><span class="val num">6</span></div>
+                  <div class="hbar" style="grid-template-columns:90px 1fr 40px;margin-top:6px"><span class="name">Manutenção</span><span class="track"><span class="fill" style="width:11%"></span></span><span class="val num">2</span></div>
+                </div>
+                <div class="src"><span>Medicina Ocupacional</span><span>Administração de Pessoal</span><span>Portais</span></div>
+              </div></div>
+              <div class="msg me"><span class="avatar sm">JP</span><div class="bubble">Agende com a clínica e avise os gestores.</div></div>
+              <div class="msg nati"><span class="nati-face" style="width:30px;height:30px;flex:none"><svg viewBox="0 0 8 8" width="18" height="18" aria-hidden="true" focusable="false"><path d="M4.322 0.322L5.573 1.573A0.456 0.456 0 0 1 5.573 2.218L4.322 3.469A0.456 0.456 0 0 1 3.678 3.469L2.427 2.218A0.456 0.456 0 0 1 2.427 1.573L3.678 0.322A0.456 0.456 0 0 1 4.322 0.322Z" fill="#FFFFFF"/><path d="M6.427 2.427L7.678 3.678A0.456 0.456 0 0 1 7.678 4.322L6.427 5.573A0.456 0.456 0 0 1 5.782 5.573L4.531 4.322A0.456 0.456 0 0 1 4.531 3.678L5.782 2.427A0.456 0.456 0 0 1 6.427 2.427Z" fill="#FFFFFF"/><path d="M2.218 2.427L3.469 3.678A0.456 0.456 0 0 1 3.469 4.322L2.218 5.573A0.456 0.456 0 0 1 1.573 5.573L0.322 4.322A0.456 0.456 0 0 1 0.322 3.678L1.573 2.427A0.456 0.456 0 0 1 2.218 2.427Z" fill="#FFFFFF"/><path d="M4.322 4.531L5.573 5.782A0.456 0.456 0 0 1 5.573 6.427L4.322 7.678A0.456 0.456 0 0 1 3.678 7.678L2.427 6.427A0.456 0.456 0 0 1 2.427 5.782L3.678 4.531A0.456 0.456 0 0 1 4.322 4.531Z" fill="#FFFFFF"/></svg></span><div class="bubble">
+                Preparei os 27 agendamentos entre quinta e a próxima terça, respeitando as escalas, e um aviso para Marcos Tavares e mais 3 gestores. Nada foi enviado ainda.
+                <div class="actions" style="margin-top:10px"><button class="btn btn-primary btn-sm">Aprovar e enviar</button><button class="btn btn-outline btn-sm">Ver agenda</button></div>
+              </div></div>
+            </div>
+            <div>
+              <div class="composer"><input type="text" placeholder="Pergunte à NATI sobre folha, ponto, SESMT, talentos ou benefícios"><button class="btn btn-primary btn-sm"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M21 3 10.5 13.5"/><path d="M21 3 14 21l-3.5-7.5L3 10z"/></svg>Enviar</button></div>
+              <div class="suggest"><button>Quanto custou a folha de agosto por CNPJ?</button><button>Quem entra em férias em outubro?</button><button>Simule o reajuste de 4,5% da convenção</button></div>
+            </div>
+          </div>
+          <div>
+            <div class="card">
+              <div class="card-head"><div><h2>Pontos de atenção</h2><p>Encontrados hoje, com a fonte</p></div></div>
+              <div class="task"><span class="ico"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3l7 3v5.5c0 4.5-3 7.8-7 9.5-4-1.7-7-5-7-9.5V6z"/><path d="m9.5 12 1.8 1.8L15 10"/></svg></span><div><b>27 ASOs vencendo em Guarulhos</b><span>Medicina Ocupacional · em tratamento</span></div><span class="status warn"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 4 21 19H3z"/><path d="M12 10v4M12 16.5v.5"/></svg>15 dias</span></div>
+              <div class="task"><span class="ico"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg></span><div><b>8 marcações inconsistentes</b><span>NatPonto · turno da noite</span></div><span class="status bad"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6 6 18"/></svg>Folha</span></div>
+              <div class="task"><span class="ico"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="6" width="18" height="13" rx="3"/><path d="M3 10h18"/><path d="M15 14.5h2.5"/></svg></span><div><b>Convenção da Logística reajusta 4,5%</b><span>Folha · impacto de R$ 118 mil em novembro</span></div><span class="status info"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/><path d="M19 16l.7 2 2 .7-2 .7-.7 2-.7-2-2-.7 2-.7z"/></svg>Simulado</span></div>
+            </div>
+            <div class="card" style="margin-top:18px">
+              <div class="card-head"><div><h2>O que a NATI faz</h2></div></div>
+              <div class="task"><span class="ico"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/><path d="M19 16l.7 2 2 .7-2 .7-.7 2-.7-2-2-.7 2-.7z"/></svg></span><div><b>Responde</b><span>Em linguagem natural, para colaborador, gestor e RH</span></div></div>
+              <div class="task"><span class="ico"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 20h16"/><path d="M7 16v-5M12 16V8M17 16v-3"/></svg></span><div><b>Analisa</b><span>Cruza folha, ponto, SESMT e talentos numa pergunta só</span></div></div>
+              <div class="task"><span class="ico"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 4 21 19H3z"/><path d="M12 10v4M12 16.5v.5"/></svg></span><div><b>Alerta</b><span>Aponta o desvio antes do fechamento e da multa</span></div></div>
+              <div class="task"><span class="ico"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span><div><b>Executa</b><span>Só o que uma pessoa aprovou</span></div></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+</div>
+
+<script>
+(function () {
+  var pages = ['inicio', 'colaboradores', 'cadastro', 'ponto', 'relatorios', 'nati'];
+  var titles = { inicio: 'Início', colaboradores: 'Colaboradores', cadastro: 'Cadastro e admissão', ponto: 'Ponto e jornada', relatorios: 'Relatórios', nati: 'NATI' };
+  var sidebar = document.getElementById('sidebar'), scrim = document.getElementById('scrim'), toggle = document.getElementById('menuToggle');
+  function closeMenu() { sidebar.classList.remove('open'); scrim.classList.remove('show'); toggle.setAttribute('aria-expanded', 'false'); }
+  toggle.addEventListener('click', function () { var open = !sidebar.classList.contains('open'); sidebar.classList.toggle('open', open); scrim.classList.toggle('show', open); toggle.setAttribute('aria-expanded', String(open)); });
+  scrim.addEventListener('click', closeMenu);
+  function route() {
+    var id = (location.hash.replace('#/', '') || 'inicio').split('?')[0];
+    if (pages.indexOf(id) < 0) id = 'inicio';
+    pages.forEach(function (p) { document.getElementById('page-' + p).classList.toggle('is-active', p === id); });
+    document.querySelectorAll('#menu a[data-page]').forEach(function (a) { if (a.dataset.page === id) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current'); });
+    document.getElementById('crumb').textContent = titles[id];
+    document.title = titles[id] + ' · Natcorp App';
+    closeMenu();
+    window.scrollTo({ top: 0 });
+  }
+  window.addEventListener('hashchange', route);
+  route();
+  document.querySelectorAll('.seg').forEach(function (seg) { seg.addEventListener('click', function (e) { var b = e.target.closest('button'); if (!b) return; seg.querySelectorAll('button').forEach(function (x) { x.setAttribute('aria-pressed', String(x === b)); }); }); });
+
+  /* ---------- sparklines ---------- */
+  document.querySelectorAll('svg[data-spark]').forEach(function (svg) {
+    var v = svg.dataset.spark.split(',').map(Number), color = svg.dataset.color || 'var(--series-1)';
+    var min = Math.min.apply(null, v), max = Math.max.apply(null, v), W = 120, H = 34, pad = 4;
+    var pts = v.map(function (y, i) { return [pad + (i / (v.length - 1)) * (W - pad * 2), H - pad - ((y - min) / ((max - min) || 1)) * (H - pad * 2)]; });
+    var d = pts.map(function (p, i) { return (i ? 'L' : 'M') + p[0].toFixed(1) + ' ' + p[1].toFixed(1); }).join(' ');
+    var last = pts[pts.length - 1];
+    svg.setAttribute('aria-hidden', 'true');
+    svg.innerHTML = '<path d="' + d + ' L' + last[0].toFixed(1) + ' ' + H + ' L' + pts[0][0].toFixed(1) + ' ' + H + 'Z" fill="' + color + '" opacity="0.1"/>' +
+      '<path d="' + d + '" fill="none" stroke="' + color + '" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>' +
+      '<circle cx="' + last[0].toFixed(1) + '" cy="' + last[1].toFixed(1) + '" r="4" fill="' + color + '" stroke="#fff" stroke-width="2"/>';
+  });
+
+  /* ---------- grouped columns with tooltip ---------- */
+  function columns(el, cfg) {
+    var W = 640, H = 270, L = 36, R = 8, T = 12, B = 30, n = cfg.labels.length;
+    var max = Math.max.apply(null, cfg.series.reduce(function (a, s) { return a.concat(s.values); }, [])), top = Math.ceil(max / cfg.step) * cfg.step;
+    var y = function (v) { return T + (H - T - B) * (1 - v / top); };
+    var band = (W - L - R) / n, bw = Math.min(22, (band - 14) / cfg.series.length), g = 2;
+    var s = '<svg viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="' + cfg.aria + '">';
+    for (var t = 0; t <= top; t += cfg.step) { s += '<line x1="' + L + '" x2="' + (W - R) + '" y1="' + y(t) + '" y2="' + y(t) + '" stroke="#EFEBF4" stroke-width="1"/><text x="' + (L - 8) + '" y="' + (y(t) + 4) + '" text-anchor="end" font-size="11" fill="#8E88A3">' + cfg.fmt(t) + '</text>'; }
+    cfg.labels.forEach(function (lb, i) {
+      var cx = L + band * i + band / 2, groupW = bw * cfg.series.length + g * (cfg.series.length - 1), x0 = cx - groupW / 2;
+      s += '<text x="' + cx + '" y="' + (H - 9) + '" text-anchor="middle" font-size="11" fill="#8E88A3">' + lb + '</text>';
+      s += '<rect class="hit" data-i="' + i + '" x="' + (L + band * i) + '" y="' + T + '" width="' + band + '" height="' + (H - T - B) + '" fill="transparent"/>';
+      cfg.series.forEach(function (se, k) {
+        var v = se.values[i], x = x0 + k * (bw + g), yy = y(v), h = H - B - yy, r = Math.min(4, h);
+        s += '<path data-i="' + i + '" d="M' + x + ' ' + (H - B) + ' V' + (yy + r) + ' Q' + x + ' ' + yy + ' ' + (x + r) + ' ' + yy + ' H' + (x + bw - r) + ' Q' + (x + bw) + ' ' + yy + ' ' + (x + bw) + ' ' + (yy + r) + ' V' + (H - B) + 'Z" fill="' + se.color + '"/>';
+      });
+    });
+    s += '</svg><div class="tip"></div>';
+    el.innerHTML = s;
+    var svg = el.querySelector('svg'), tip = el.querySelector('.tip');
+    svg.addEventListener('mousemove', function (e) {
+      var hit = e.target.closest('[data-i]'); if (!hit) { tip.classList.remove('show'); return; }
+      var i = +hit.dataset.i, box = el.getBoundingClientRect(), sb = svg.getBoundingClientRect(), scale = sb.width / W;
+      var cx = (L + band * i + band / 2) * scale;
+      tip.innerHTML = '<b>' + cfg.labels[i] + '</b>' + cfg.series.map(function (se) { return '<span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:' + se.color + ';margin-right:6px"></span>' + se.name + ': <strong>' + cfg.fmt(se.values[i], true) + '</strong>'; }).join('<br>');
+      tip.style.left = cx + 'px'; tip.style.top = (T * scale) + 'px'; tip.classList.add('show');
+    });
+    svg.addEventListener('mouseleave', function () { tip.classList.remove('show'); });
+  }
+  var months = ['out', 'nov', 'dez', 'jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set'];
+  columns(document.getElementById('chart-flow'), {
+    labels: months, step: 10, aria: 'Admissões e desligamentos por mês nos últimos 12 meses',
+    fmt: function (v) { return v; },
+    series: [
+      { name: 'Admissões', color: '#6E3796', values: [22, 18, 25, 31, 27, 29, 33, 24, 28, 30, 28, 37] },
+      { name: 'Desligamentos', color: '#C95788', values: [17, 21, 24, 19, 16, 22, 20, 18, 17, 21, 19, 15] }
+    ]
+  });
+  lines(document.getElementById('chart-cost'), {
+    labels: ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago'], min: 15, max: 19, step: 1, aria: 'Custo da folha por mês, 2026 contra 2025, em milhões de reais',
+    fmt: function (v, full) { return full ? 'R$ ' + v.toFixed(1).replace('.', ',') + ' mi' : v; },
+    series: [
+      { name: '2026', color: '#6E3796', values: [17.1, 17.2, 17.4, 17.3, 17.6, 17.8, 17.9, 18.4] },
+      { name: '2025', color: '#C95788', values: [16.0, 16.1, 16.2, 16.4, 16.5, 16.7, 16.9, 17.2] }
+    ]
+  });
+
+  /* ---------- lines with crosshair ---------- */
+  function lines(el, cfg) {
+    var W = 640, H = 250, L = 36, R = 16, T = 14, B = 30, n = cfg.labels.length;
+    var y = function (v) { return T + (H - T - B) * (1 - (v - cfg.min) / (cfg.max - cfg.min)); };
+    var x = function (i) { return L + (i / (n - 1)) * (W - L - R); };
+    var s = '<svg viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="' + cfg.aria + '">';
+    for (var t = cfg.min; t <= cfg.max; t += cfg.step) { s += '<line x1="' + L + '" x2="' + (W - R) + '" y1="' + y(t) + '" y2="' + y(t) + '" stroke="#EFEBF4" stroke-width="1"/><text x="' + (L - 8) + '" y="' + (y(t) + 4) + '" text-anchor="end" font-size="11" fill="#8E88A3">' + cfg.fmt(t) + '</text>'; }
+    cfg.labels.forEach(function (lb, i) { s += '<text x="' + x(i) + '" y="' + (H - 9) + '" text-anchor="middle" font-size="11" fill="#8E88A3">' + lb + '</text>'; });
+    s += '<line class="xh" x1="0" x2="0" y1="' + T + '" y2="' + (H - B) + '" stroke="#8E88A3" stroke-width="1" opacity="0"/>';
+    cfg.series.forEach(function (se) {
+      var d = se.values.map(function (v, i) { return (i ? 'L' : 'M') + x(i).toFixed(1) + ' ' + y(v).toFixed(1); }).join(' ');
+      s += '<path d="' + d + '" fill="none" stroke="' + se.color + '" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>';
+      var li = se.values.length - 1;
+      s += '<circle cx="' + x(li) + '" cy="' + y(se.values[li]) + '" r="4.5" fill="' + se.color + '" stroke="#fff" stroke-width="2"/>';
+      s += '<text x="' + (x(li) + 9) + '" y="' + (y(se.values[li]) + 4) + '" font-size="11" font-weight="700" fill="#4A4460">' + se.name + '</text>';
+    });
+    cfg.labels.forEach(function (lb, i) { var x0 = i ? (x(i - 1) + x(i)) / 2 : L, x1 = i < n - 1 ? (x(i) + x(i + 1)) / 2 : W - R; s += '<rect data-i="' + i + '" x="' + x0 + '" y="' + T + '" width="' + (x1 - x0) + '" height="' + (H - T - B) + '" fill="transparent"/>'; });
+    s += '</svg><div class="tip"></div>';
+    el.innerHTML = s;
+    var svg = el.querySelector('svg'), tip = el.querySelector('.tip'), xh = el.querySelector('.xh');
+    svg.addEventListener('mousemove', function (e) {
+      var hit = e.target.closest('[data-i]'); if (!hit) return;
+      var i = +hit.dataset.i, sb = svg.getBoundingClientRect(), scale = sb.width / W;
+      xh.setAttribute('x1', x(i)); xh.setAttribute('x2', x(i)); xh.setAttribute('opacity', '0.6');
+      tip.innerHTML = '<b>' + cfg.labels[i] + '</b>' + cfg.series.map(function (se) { return '<span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:' + se.color + ';margin-right:6px"></span>' + se.name + ': <strong>' + cfg.fmt(se.values[i], true) + '</strong>'; }).join('<br>');
+      tip.style.left = (x(i) * scale) + 'px'; tip.style.top = (T * scale) + 'px'; tip.classList.add('show');
+    });
+    svg.addEventListener('mouseleave', function () { tip.classList.remove('show'); xh.setAttribute('opacity', '0'); });
+  }
+
+  /* ---------- ring ---------- */
+  (function () {
+    var svg = document.getElementById('ring'), parts = [[1904, '#6E3796'], [1372, '#8C5AAE'], [886, '#B58FCB'], [650, '#D9C3E6']], total = parts.reduce(function (a, p) { return a + p[0]; }, 0);
+    var r = 46, c = 2 * Math.PI * r, off = 0, s = '';
+    parts.forEach(function (p) { var len = (p[0] / total) * c - 2; s += '<circle cx="60" cy="60" r="' + r + '" fill="none" stroke="' + p[1] + '" stroke-width="14" stroke-dasharray="' + len + ' ' + (c - len) + '" stroke-dashoffset="' + (-off) + '" transform="rotate(-90 60 60)"/>'; off += len + 2; });
+    s += '<text x="60" y="57" text-anchor="middle" font-size="18" font-weight="800" fill="#1B1238">4.812</text><text x="60" y="73" text-anchor="middle" font-size="9.5" font-weight="700" fill="#8E88A3" letter-spacing="1">ATIVOS</text>';
+    svg.innerHTML = s;
+  })();
+})();
+</script>
