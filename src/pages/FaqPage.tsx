@@ -19,7 +19,7 @@ const shortcuts = [
   { to: paths.security, title: 'Segurança e infraestrutura', text: 'Nuvem Oracle, ambientes, backups e LGPD.' },
   { to: `${paths.about}#servicos`, title: 'Implantação, suporte e serviços', text: 'Como a Natcorp entra e acompanha a operação.' },
   { to: journeyPath, title: 'Jornada do colaborador', text: 'As 24 etapas, da vaga à promoção, em história ou diagrama.' },
-  { to: paths.modules, title: 'Todos os módulos', text: '31 páginas, uma por módulo, com funcionalidades e FAQ.' },
+  { to: paths.modules, title: 'Todos os módulos', text: 'Uma página por módulo, com funcionalidades e FAQ.' },
 ]
 
 export default function FaqPage() {

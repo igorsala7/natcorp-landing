@@ -12,7 +12,7 @@ export const siteConfig = {
   youtube: 'https://www.youtube.com/@natcorpbr',
   defaultTitle: 'Natcorp — Todo o RH em um único sistema | Sistema de RH para grandes empresas',
   defaultDescription:
-    'Folha de pagamento, ponto eletrônico, eSocial, admissão digital, saúde e segurança do trabalho, people analytics e a NATI, nossa inteligência artificial: 31 módulos integrados em um único sistema de RH para grandes empresas. Há mais de 30 anos.',
+    'Folha de pagamento, ponto eletrônico, eSocial, admissão digital, saúde e segurança do trabalho, people analytics e a NATI, nossa Inteligência Artificial: todos os módulos integrados em um único sistema de RH para grandes empresas. Há mais de 30 anos.',
 }
 
 /** Escritórios da Natcorp, como constam na página "Fale conosco" do site anterior. */
@@ -61,7 +61,7 @@ export interface NavLink {
 
 /** Menu "Sistema": entradas gerais, antes das colunas de módulos por grupo. */
 export const systemLinks: NavLink[] = [
-  { to: paths.modules, label: 'Todos os módulos', short: '31 módulos, cada um com a sua página' },
+  { to: paths.modules, label: 'Todos os módulos', short: 'Cada módulo com a sua página' },
   { to: paths.structures, label: 'Como é a sua estrutura?', short: 'Empresa única, grupo, filiais, RH central ou por unidade' },
   { to: paths.journey, label: 'Jornada do colaborador', short: 'As 24 etapas, da vaga à promoção' },
   { to: paths.security, label: 'Segurança e infraestrutura', short: 'Nuvem Oracle, contingência e LGPD' },

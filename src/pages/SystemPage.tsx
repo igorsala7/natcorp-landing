@@ -18,7 +18,7 @@ import { Button } from '@/components/ui/button'
 import { useSeo } from '@/hooks/useSeo'
 
 const stats = [
-  { value: '31', label: 'módulos integrados' },
+  { value: '35+', label: 'anos de especialização em RH' },
   { value: '7', label: 'frentes do RH' },
   { value: '1', label: 'cadastro, uma base, uma experiência' },
 ]
@@ -52,7 +52,7 @@ export default function SystemPage() {
               <Reveal delay={0.25}>
                 <p className="mt-6 max-w-2xl text-lg leading-relaxed text-brand-graphite sm:text-xl">
                   O Departamento Pessoal, o RH e a Medicina e Segurança do Trabalho operando na mesma base, com a NATI dentro de tudo. Não é
-                  integração entre produtos: é um sistema só, com 31 módulos que crescem com a sua empresa.
+                  integração entre produtos: é um sistema só, com módulos que crescem com a sua empresa.
                 </p>
               </Reveal>
               <Reveal delay={0.35} className="mt-8 flex flex-wrap gap-3">

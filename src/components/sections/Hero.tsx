@@ -12,7 +12,7 @@ import { paths } from '@/content/site'
 import { EASE } from '@/lib/motion'
 import { scrollToElement } from '@/components/motion/ScrollManager'
 
-const trust = ['31 módulos integrados', '2.500 folhas por minuto', 'NATI, a IA do RH', 'Nuvem Oracle com contingência', 'Várias empresas e CNPJs, uma base']
+const trust = ['Todos os módulos integrados', '2.500 folhas por minuto', 'NATI, a IA do RH', 'Nuvem Oracle com contingência', 'Várias empresas e CNPJs, uma base']
 
 /**
  * Abertura: fotografia real em tela cheia, véu no gradiente da marca à esquerda para o texto
@@ -100,7 +100,7 @@ export function Hero() {
 
           <m.p {...show(0.55)} className="mt-5 max-w-xl text-[15.5px] leading-relaxed text-white/85 sm:mt-6 sm:text-xl">
             Folha, ponto, eSocial, admissão digital, saúde e segurança do trabalho, talentos e People Analytics.
-            31 módulos integrados, com a NATI, nossa inteligência artificial, trabalhando dentro do sistema.
+            Todos os módulos integrados, com a NATI, nossa Inteligência Artificial, trabalhando dentro do sistema.
             Para grandes empresas que querem um RH protagonista.
           </m.p>
 

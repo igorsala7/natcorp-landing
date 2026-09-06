@@ -18,9 +18,9 @@ import { paths } from '@/content/site'
 import { cn } from '@/lib/utils'
 
 const stats = [
-  { value: '31', label: 'módulos, cada um com a sua página' },
-  { value: '7', label: 'frentes do RH' },
+  { value: '7', label: 'frentes do RH, da folha ao People Analytics' },
   { value: '1', label: 'cadastro, uma base, uma experiência' },
+  { value: '2.500', label: 'colaboradores calculados por minuto' },
 ]
 
 /* Por onde começar, conforme a estrutura da organização. */
@@ -63,7 +63,7 @@ export default function ModulesIndexPage() {
   useSeo({
     title: 'Módulos do sistema de RH Natcorp | Natcorp',
     description:
-      'Conheça os 31 módulos da Natcorp: folha de pagamento, ponto eletrônico, eSocial, admissão digital, SESMT, recrutamento, avaliações, treinamento, people analytics e a NATI.',
+      'Conheça todos os módulos da Natcorp: folha de pagamento, ponto eletrônico, eSocial, admissão digital, SESMT, recrutamento, avaliações, treinamento, people analytics e a NATI.',
     path: '/modulos',
   })
 
@@ -99,7 +99,7 @@ export default function ModulesIndexPage() {
               <SplitText
                 as="h1"
                 id="modulos-index-title"
-                text="31 módulos. [[Um único sistema.]]"
+                text="Todos os módulos. [[Um único sistema.]]"
                 className="mt-5 text-4xl font-extrabold leading-[1.05] text-brand-ink sm:text-5xl lg:text-6xl"
                 highlightClassName="text-brand-purple"
               />
@@ -204,7 +204,7 @@ export default function ModulesIndexPage() {
                   ? count === 0
                     ? `Nenhum módulo encontrado para "${query.trim()}".`
                     : `${count} ${count === 1 ? 'módulo encontrado' : 'módulos encontrados'} para "${query.trim()}".`
-                  : `${moduleRegistry.length} módulos em ${groups.length} frentes. Busque pelo nome, pelo que o módulo faz ou pela frente.`}
+                  : `Busque pelo nome, pelo que o módulo faz ou pela frente.`}
               </p>
             </div>
           </Reveal>
@@ -271,7 +271,7 @@ function SearchResults({ results, query, onClear }: { results: ResultGroup[]; qu
             ))}
             <p className="text-[14px] text-brand-graphite">
               <button type="button" onClick={onClear} className="inline-flex items-center gap-1.5 font-semibold text-brand-purple">
-                Limpar a busca e ver os 31 módulos
+                Limpar a busca e ver todos os módulos
                 <ArrowRight className="h-3.5 w-3.5" aria-hidden />
               </button>
             </p>

@@ -16,7 +16,7 @@ import { paths } from '@/content/site'
 const promises = [
   { t: 'As dores do segmento primeiro', d: 'Cada página começa pelo que tira o sono do RH daquele mercado: escalas, normas, sazonalidade, dispersão, turnover.' },
   { t: 'Uma resposta por dor', d: 'Para cada dificuldade, os módulos que trabalham juntos para resolvê-la, com o dado entrando uma vez só.' },
-  { t: 'O paralelo com os 31 módulos', d: 'Todos os módulos, aplicados à realidade do segmento, com destaque para os que mais pesam ali.' },
+  { t: 'O paralelo com todos os módulos', d: 'Todos os módulos, aplicados à realidade do segmento, com destaque para os que mais pesam ali.' },
 ]
 
 export default function SegmentsIndexPage() {

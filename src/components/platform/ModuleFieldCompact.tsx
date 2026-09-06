@@ -6,7 +6,7 @@ import { cn } from '@/lib/utils'
 import { BaseLabel, ModuleCore } from './ModuleCore'
 
 /**
- * O palco em telas estreitas: a base no alto e os 31 módulos correndo em duas faixas
+ * O palco em telas estreitas: a base no alto e os módulos correndo em duas faixas
  * logo abaixo dela. Decorativo; os cartões das frentes trazem os links.
  */
 

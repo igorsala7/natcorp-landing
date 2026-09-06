@@ -18,7 +18,6 @@ import { cn } from '@/lib/utils'
 
 const FEATURED: GroupMeta['id'] = 'dados-ia-plataforma'
 
-const countLabel = (n: number) => `${n} ${n === 1 ? 'módulo' : 'módulos'}`
 
 /** Duas frases sobre a frente, do agrupamento oficial (src/content/modules.ts). */
 const descriptionOf = new Map(moduleGroups.map((g) => [g.id, g.description]))
@@ -48,7 +47,6 @@ function CategoryCard({ group }: { group: GroupMeta }) {
           <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-brand-off-white text-brand-purple transition-colors duration-300 group-hover/card:bg-brand-purple group-hover/card:text-white">
             <Icon className="h-5 w-5" strokeWidth={1.7} aria-hidden />
           </span>
-          <span className="rounded-full border border-brand-mist px-2.5 py-1 text-[11.5px] font-semibold tabular text-brand-graphite">{countLabel(mods.length)}</span>
         </div>
         <h3 className="mt-5 text-[19px] font-extrabold leading-snug text-brand-ink">{group.name}</h3>
         <p className="mt-1 text-[14.5px] font-semibold leading-snug text-brand-purple">{group.tagline}</p>
@@ -106,7 +104,6 @@ function FeaturedCard({ group }: { group: GroupMeta }) {
           <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/10 text-[#E4A9C4] ring-1 ring-white/15">
             <Icon className="h-5 w-5" strokeWidth={1.7} aria-hidden />
           </span>
-          <span className="rounded-full border border-white/20 px-2.5 py-1 text-[11.5px] font-semibold tabular text-white/80">{countLabel(mods.length)}</span>
         </div>
         <h3 className="mt-5 text-[22px] font-extrabold leading-snug sm:text-2xl">{group.name}</h3>
         <p className="mt-1.5 text-[15px] font-semibold text-[#E4A9C4]">{group.tagline}</p>

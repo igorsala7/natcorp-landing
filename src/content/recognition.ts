@@ -60,7 +60,7 @@ export const clients = [
 
 /** Comparativo do deck "Nossos diferenciais": Natcorp x outros sistemas. */
 export const comparison = [
-  { feature: 'Módulos integrados', natcorp: '31 módulos nativos, 100% integrados', others: 'Módulos separados ou integração limitada' },
+  { feature: 'Módulos integrados', natcorp: 'Módulos nativos, 100% integrados', others: 'Módulos separados ou integração limitada' },
   { feature: 'Inteligência artificial', natcorp: 'NATI integrada ao sistema e ao WhatsApp', others: 'IA limitada ou inexistente' },
   { feature: 'Cobrança por usuário', natcorp: 'Usuários ilimitados, em produção e homologação', others: 'Cobrança por usuário adicional' },
   { feature: 'Cobrança por CNPJ', natcorp: 'CNPJs e sindicatos ilimitados', others: 'Cobrança adicional por CNPJ' },

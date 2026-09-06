@@ -125,7 +125,7 @@ export function NatiSection() {
             <NatiAvatar ring className="h-12 w-12 shrink-0 sm:h-14 sm:w-14" />
             <div className="relative rounded-3xl rounded-tl-lg bg-white px-5 py-4 text-brand-ink shadow-lift sm:px-6 sm:py-5">
               <h2 id="nati-title" className="text-xl font-extrabold leading-snug sm:text-2xl lg:text-[1.75rem]">
-                <TypedText text="Oi, eu sou a NATI. Leio os 31 módulos do sistema, cruzo folha, ponto, SESMT e talentos e respondo em segundos, com análise e sugestão." />
+                <TypedText text="Oi, eu sou a NATI. Leio todos os módulos do sistema, cruzo folha, ponto, SESMT e talentos e respondo em segundos, com análise e sugestão." />
               </h2>
               <span className="mt-2 block text-[11px] font-semibold uppercase tracking-[0.12em] text-brand-graphite">agora · no sistema, no WhatsApp e no Teams</span>
             </div>
@@ -141,7 +141,7 @@ export function NatiSection() {
         <div className="mt-12 grid grid-cols-1 items-center gap-10 lg:mt-16 lg:grid-cols-[1.1fr_1fr] lg:gap-12">
           <Reveal delay={0.15} className="mx-auto w-full max-w-[560px] lg:max-w-none">
             <NeuralHub />
-            <p className="mt-3 text-center text-[12.5px] text-white/55">Sete frentes, 31 módulos, uma única Inteligência Artificial lendo tudo ao mesmo tempo.</p>
+            <p className="mt-3 text-center text-[12.5px] text-white/55">Sete frentes, todos os módulos, uma única Inteligência Artificial lendo tudo ao mesmo tempo.</p>
           </Reveal>
           <Reveal delay={0.25} className="min-w-0">
             <InsightStream />

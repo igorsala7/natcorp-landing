@@ -317,7 +317,7 @@ export default function NatiModulePage({ entry, page }: { entry: ModuleEntry; pa
               </m.div>
               <Reveal delay={0.9} y={8}>
                 <p className="mt-3 text-center text-[12.5px] leading-snug text-white/55">
-                  A Inteligência Artificial no centro. Em volta, as sete frentes do RH e os 31 módulos que ela lê o tempo todo.
+                  A Inteligência Artificial no centro. Em volta, as sete frentes do RH e todos os módulos que ela lê o tempo todo.
                 </p>
               </Reveal>
             </div>
@@ -389,7 +389,7 @@ export default function NatiModulePage({ entry, page }: { entry: ModuleEntry; pa
             id="frentes-title"
             eyebrow="Especialista em todas as frentes"
             title="Treinada em [[cada frente do RH]]. Não em uma só."
-            lead="Folha, ponto, SESMT, talentos, desenvolvimento, autoatendimento e dados: sete frentes, 31 módulos, uma única especialista. Em cada frente ela responde, analisa, alerta, executa e reporta. A tabela mostra um exemplo de cada."
+            lead="Folha, ponto, SESMT, talentos, desenvolvimento, autoatendimento e dados: sete frentes, todos os módulos, uma única especialista. Em cada frente ela responde, analisa, alerta, executa e reporta. A tabela mostra um exemplo de cada."
           />
 
           <Stagger className="mt-12 grid gap-3 sm:grid-cols-2 lg:mt-14 lg:grid-cols-5" stagger={0.06}>

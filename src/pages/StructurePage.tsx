@@ -293,7 +293,7 @@ function StructureContent({ entry, page }: { entry: StructureEntry; page: Struct
           <SectionHeader
             id="modulos-title"
             eyebrow="Os módulos nessa estrutura"
-            title={`Os ${moduleRegistry.length} módulos, [[aplicados à sua estrutura]].`}
+            title="Todos os módulos, [[aplicados à sua estrutura]]."
             lead="Os que mais pesam ficam abertos, com a estrela. Os outros estão a um clique, na ordem dos grupos do sistema, cada um com uma frase sobre como se aplica aqui."
           />
           <ul className="mt-12 grid gap-4 sm:grid-cols-2 xl:grid-cols-3" aria-label="Os módulos que mais pesam nessa estrutura">
@@ -325,8 +325,8 @@ function StructureContent({ entry, page }: { entry: StructureEntry; page: Struct
 
           <details className="group mt-8 rounded-3xl border border-brand-mist bg-white shadow-soft">
             <summary className="flex cursor-pointer list-none items-center justify-between gap-4 rounded-3xl px-6 py-5 text-[16px] font-bold text-brand-ink transition-colors duration-300 hover:bg-brand-off-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-purple [&::-webkit-details-marker]:hidden">
-              <span className="group-open:hidden">Todos os {moduleRegistry.length} módulos nessa estrutura</span>
-              <span className="hidden group-open:inline">Ocultar os {moduleRegistry.length} módulos</span>
+              <span className="group-open:hidden">Todos os módulos nessa estrutura</span>
+              <span className="hidden group-open:inline">Ocultar os módulos</span>
               <ChevronDown className="h-5 w-5 shrink-0 text-brand-purple transition-transform duration-300 group-open:rotate-180" aria-hidden />
             </summary>
             <div className="grid gap-6 border-t border-brand-mist px-6 pb-6 pt-6 md:grid-cols-2 xl:grid-cols-3">

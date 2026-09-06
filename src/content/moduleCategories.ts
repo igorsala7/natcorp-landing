@@ -26,6 +26,6 @@ export const categoryMeta: Record<GroupId, CategoryMeta> = {
 
 /** O que a frente de dados acrescenta no cartão de destaque da home. */
 export const dataFrontNote =
-  'Painéis, relatórios e a NATI lendo os 31 módulos ao mesmo tempo. Tudo em nuvem segura, com APIs prontas para conversar com os outros sistemas da empresa.'
+  'Painéis, relatórios e a NATI lendo todos os módulos ao mesmo tempo. Tudo em nuvem segura, com APIs prontas para conversar com os outros sistemas da empresa.'
 
-export const natiNote = 'A NATI lê os 31 módulos, cruza folha, ponto, SESMT e talentos e responde em segundos, com análise e sugestão.'
+export const natiNote = 'A NATI lê todos os módulos, cruza folha, ponto, SESMT e talentos e responde em segundos, com análise e sugestão.'

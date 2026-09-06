@@ -39,7 +39,7 @@ export function NatiTeaser() {
                 <div>
                   <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[#E4A9C4]">NATI · Inteligência Artificial especialista em RH</p>
                   <h2 id="nati-teaser-title" className="mt-1 text-[17px] font-extrabold leading-snug">
-                    Enquanto você lia os números acima, a NATI cruzou 31 módulos.
+                    Enquanto você lia isto, a NATI cruzou todos os módulos do sistema.
                   </h2>
                 </div>
               </div>

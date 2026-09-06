@@ -16,7 +16,7 @@ const page: StructurePage = {
     'Com uma única base, o pedido deixa de passar pela mesa do RH. O colaborador programa férias, pede abono e atualiza o cadastro no portal, o gestor aprova pelo celular e o sistema efetiva na folha e no ponto. A NATI responde o que é rotina e confere a folha antes do corte. O time continua pequeno, mas passa a gerir em vez de digitar.',
   ],
   facts: [
-    { value: '1 CNPJ', label: 'uma empresa, um endereço e uma base com todos os 31 módulos' },
+    { value: '1 CNPJ', label: 'uma empresa, um endereço e uma base com todos os módulos' },
     { value: 'Autoatendimento', label: 'colaboradores e gestores resolvem o dia a dia no portal e com a NATI' },
     { value: '2.500/min', label: 'colaboradores calculados por minuto, folha conferida pela NATI antes do corte' },
   ],
@@ -57,7 +57,7 @@ const page: StructurePage = {
     },
     {
       pain: 'Sistemas separados',
-      title: 'Um cadastro, 31 módulos, uma base',
+      title: 'Um cadastro, todos os módulos, uma base',
       text: 'Folha, ponto, benefícios, eSocial, admissão, treinamento e SESMT usam o mesmo cadastro. A marcação do NatPonto chega ao Ponto Eletrônico, a apuração vai para a folha e o eSocial sai dos dados já validados. Ninguém digita o mesmo CPF duas vezes.',
       modules: ['folha-de-pagamento', 'ponto-eletronico', 'natponto', 'esocial'],
     },
@@ -180,7 +180,7 @@ const page: StructurePage = {
   faq: [
     {
       q: 'Faz sentido um sistema desse porte para uma empresa de um só CNPJ?',
-      a: 'Sim. A dor de uma empresa única é o tempo de um time pequeno, e é isso que o autoatendimento, as requisições com workflow e a NATI resolvem. Os 31 módulos usam o mesmo cadastro, e não há cobrança por usuário: todos os colaboradores acessam os portais.',
+      a: 'Sim. A dor de uma empresa única é o tempo de um time pequeno, e é isso que o autoatendimento, as requisições com workflow e a NATI resolvem. Os todos os módulos usam o mesmo cadastro, e não há cobrança por usuário: todos os colaboradores acessam os portais.',
     },
     {
       q: 'O que o colaborador resolve sozinho?',

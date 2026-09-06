@@ -115,7 +115,7 @@ export const insights: Insight[] = [
 
 /** Números da NATI. Fontes: material comercial Natcorp ("Gestão otimizada" e "Produtividade de RH"). */
 export const natiStats = [
-  { value: 31, prefix: '', suffix: '', label: 'módulos lidos por uma única Inteligência Artificial' },
+  { value: 7, prefix: '', suffix: '', label: 'frentes do RH lidas por uma única Inteligência Artificial' },
   { value: 70, prefix: 'até ', suffix: '%', label: 'de aumento de produtividade no RH' },
   { value: 70, prefix: '', suffix: '%', label: 'menos chamados de colaboradores' },
   { value: 24, prefix: '', suffix: 'x7', label: 'no sistema, no WhatsApp e no Teams' },
@@ -125,7 +125,7 @@ export const natiStats = [
 export const pipeline = [
   { title: 'Pergunta', text: 'Por texto ou voz, no sistema, no WhatsApp ou no Teams.' },
   { title: 'Entende', text: 'O contexto, o perfil e as permissões de quem pergunta.' },
-  { title: 'Consulta', text: 'Os 31 módulos e as fontes que o RH liberou.' },
+  { title: 'Consulta', text: 'Todos os módulos e as fontes que o RH liberou.' },
   { title: 'Cruza', text: 'Folha com ponto, ponto com saúde, talentos com metas.' },
   { title: 'Responde', text: 'Análise, diagnóstico, pontos de atenção e sugestão, com as fontes.' },
   { title: 'Executa', text: 'Agenda, abre a requisição, gera o relatório. Só depois que quem decide aprova.' },

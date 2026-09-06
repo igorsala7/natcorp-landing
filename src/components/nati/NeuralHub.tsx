@@ -4,7 +4,7 @@ import { groups, modulesByGroup } from '@/content/modulePages'
 import { cn } from '@/lib/utils'
 
 /**
- * A NATI no centro do sistema: os 31 módulos no anel de fora, as sete frentes no anel
+ * A NATI no centro do sistema: os módulos no anel de fora, as sete frentes no anel
  * de dentro e o dado fluindo de todos eles para ela. Os pulsos são animações SMIL do
  * próprio SVG (leves) e são desligados com prefers-reduced-motion.
  */
@@ -49,7 +49,7 @@ export function NeuralHub({ className, labels = true }: NeuralHubProps) {
     <div
       className={cn('relative', className)}
       role="img"
-      aria-label="A NATI no centro, ligada às sete frentes do RH e aos 31 módulos do sistema, com os dados fluindo de todos eles para ela"
+      aria-label="A NATI no centro, ligada às sete frentes do RH e a todos os módulos do sistema, com os dados fluindo de todos eles para ela"
     >
       <svg viewBox={`0 0 ${SIZE} ${SIZE}`} className="block h-auto w-full overflow-visible" aria-hidden focusable="false">
         <defs>

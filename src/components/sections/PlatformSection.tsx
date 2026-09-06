@@ -7,7 +7,6 @@ import { ModuleField } from '@/components/platform/ModuleField'
 import { ModuleFieldCompact } from '@/components/platform/ModuleFieldCompact'
 import { CategoryCards } from '@/components/platform/CategoryCards'
 import { useIsDesktop } from '@/hooks/useMediaQuery'
-import { moduleRegistry } from '@/content/modulePages'
 import { paths } from '@/content/site'
 import { Eyebrow, Section } from './Section'
 
@@ -18,13 +17,12 @@ const pillars = [
 ]
 
 /**
- * A plataforma: o produto principal do site. Abre com o título e o argumento, mostra os 31 módulos
+ * A plataforma: o produto principal do site. Abre com o título e o argumento, mostra os módulos
  * em volta de uma única base (o palco), resume as sete frentes em cartões que levam à página de
  * módulos e fecha com os dois caminhos: todos os módulos e os portais.
  */
 export function PlatformSection() {
   const desktop = useIsDesktop()
-  const count = moduleRegistry.length
 
   return (
     <Section id="plataforma" tone="off" className="overflow-x-clip" aria-labelledby="plataforma-title">
@@ -44,7 +42,7 @@ export function PlatformSection() {
             />
             <Reveal delay={0.25} y={16}>
               <p className="mt-5 max-w-2xl text-lg leading-relaxed text-brand-graphite sm:text-xl">
-                {count} módulos nativos, um só cadastro, uma só base de dados e a mesma experiência no computador e no celular.
+                Módulos nativos, um só cadastro, uma só base de dados e a mesma experiência no computador e no celular.
               </p>
             </Reveal>
           </div>
@@ -62,7 +60,7 @@ export function PlatformSection() {
           </Reveal>
         </div>
 
-        {/* O palco: os 31 módulos em volta de uma única base */}
+        {/* O palco: os módulos em volta de uma única base */}
         <div className="mt-12 lg:mt-16">
           {desktop ? <ModuleField /> : <ModuleFieldCompact />}
           <p className="mt-3 text-center text-[12.5px] text-brand-graphite">
@@ -89,7 +87,7 @@ export function PlatformSection() {
         <Reveal delay={0.15} className="mt-12 flex flex-wrap gap-3 lg:mt-14">
           <Button asChild size="lg">
             <Link to={paths.modules}>
-              Ver os {count} módulos
+              Ver todos os módulos
               <ArrowRight className="transition-transform duration-300 group-hover/btn:translate-x-0.5" />
             </Link>
           </Button>

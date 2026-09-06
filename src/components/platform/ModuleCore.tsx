@@ -1,6 +1,5 @@
 import { forwardRef, useId } from 'react'
-import { Database } from 'lucide-react'
-import { moduleRegistry } from '@/content/modulePages'
+import { Logo } from '@/components/brand/Logo'
 import { cn } from '@/lib/utils'
 
 interface ModuleCoreProps {
@@ -11,7 +10,7 @@ interface ModuleCoreProps {
 }
 
 /**
- * A base de dados: um disco no gradiente da marca com o número de módulos, um anel tracejado
+ * A base de dados: um disco no gradiente da marca com o símbolo da Natcorp, um anel tracejado
  * girando devagar e ondas que se afastam do centro (SMIL, desligadas com movimento reduzido).
  * A ref aponta para o disco, para as ligações do palco mirarem na borda dele.
  */
@@ -52,11 +51,7 @@ export const ModuleCore = forwardRef<HTMLDivElement, ModuleCoreProps>(function M
         style={{ width: disc, height: disc }}
       >
         <span className="absolute inset-[3px] rounded-full border border-white/20" aria-hidden />
-        <Database className="mb-1 h-4 w-4 text-white/80" strokeWidth={1.8} aria-hidden />
-        <span className="text-[2.75rem] font-extrabold leading-none tracking-brand" style={{ fontSize: Math.round(disc * 0.33) }}>
-          {moduleRegistry.length}
-        </span>
-        <span className="mt-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-white/85">módulos</span>
+        <Logo variant="symbol" tone="white" decorative className="h-auto w-[48%] drop-shadow-[0_6px_14px_rgba(27,18,56,0.35)]" />
       </div>
     </div>
   )

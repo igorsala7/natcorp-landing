@@ -21,8 +21,8 @@ const pillars = [
     icon: Layers,
     kicker: 'Modular',
     title: 'Contrate o que a sua operação precisa.',
-    text: 'São 31 módulos nativos, na mesma base de dados. A proposta considera os módulos da sua operação, com folha, ponto, eSocial, talentos, SESMT e NATI conversando entre si desde o primeiro dia.',
-    link: { to: paths.modules, label: 'Ver os 31 módulos' },
+    text: 'Módulos nativos, todos na mesma base de dados. A proposta considera os módulos da sua operação, com folha, ponto, eSocial, talentos, SESMT e NATI conversando entre si desde o primeiro dia.',
+    link: { to: paths.modules, label: 'Ver todos os módulos' },
   },
   {
     icon: Cloud,

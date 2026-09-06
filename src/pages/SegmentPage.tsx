@@ -328,7 +328,7 @@ function SegmentContent({ entry, page }: { entry: SegmentEntry; page: SegmentPag
         </div>
       </Section>
 
-      {/* Os 31 módulos: os que mais pesam abertos, os demais a um clique */}
+      {/* Todos os módulos: os que mais pesam abertos, os demais a um clique */}
       <Section id="modulos" tone="dark" className="overflow-hidden" aria-labelledby="modulos-title">
         <LogoOutline className="pointer-events-none absolute -left-[10%] -top-[40%] h-[150%] w-auto text-white/[0.06]" />
         <div className="container relative">
@@ -336,7 +336,7 @@ function SegmentContent({ entry, page }: { entry: SegmentEntry; page: SegmentPag
             id="modulos-title"
             tone="dark"
             eyebrow="O paralelo com todos os módulos"
-            title={`Os ${moduleRegistry.length} módulos, [[aplicados a este segmento]].`}
+            title="Todos os módulos, [[aplicados a este segmento]]."
             lead="Os que mais pesam neste segmento ficam abertos, com a estrela. Os outros estão a um clique, na ordem dos grupos do sistema."
           />
           <ul className="mt-12 grid gap-4 sm:grid-cols-2 xl:grid-cols-3" aria-label="Os módulos que mais pesam neste segmento">

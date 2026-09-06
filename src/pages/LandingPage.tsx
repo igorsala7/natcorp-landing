@@ -1,5 +1,4 @@
 import { Hero } from '@/components/sections/Hero'
-import { ProofStrip } from '@/components/sections/ProofStrip'
 import { NatiTeaser } from '@/components/sections/NatiTeaser'
 import { ProblemSection } from '@/components/sections/ProblemSection'
 import { PlatformSection } from '@/components/sections/PlatformSection'
@@ -21,7 +20,6 @@ export default function LandingPage() {
   return (
     <PageTransition>
       <Hero />
-      <ProofStrip />
       <NatiTeaser />
       <ProblemSection />
       <PlatformSection />

@@ -10,7 +10,7 @@ const page: ModulePage = {
   seo: {
     title: 'NATI: a Inteligência Artificial do RH | Natcorp',
     description:
-      'NATI, a IA da Natcorp: audita a folha antes do fechamento, lê as sete frentes e os 31 módulos do RH e responde a colaboradores 24/7 no sistema, WhatsApp e Teams.',
+      'NATI, a IA da Natcorp: audita a folha antes do fechamento, lê as sete frentes e todos os módulos do RH e responde a colaboradores 24/7 no sistema, WhatsApp e Teams.',
   },
   /* A página da NATI mostra os números nos contadores de "Poder analítico"; sem dados de prova duplicados no hero. */
   highlights: [],
@@ -114,7 +114,7 @@ const page: ModulePage = {
     },
     {
       q: 'O que a NATI analisa?',
-      a: 'As sete frentes do RH, nos 31 módulos: Pessoal e Folha, Ponto e Jornada, Saúde e Segurança, Talentos, Desenvolvimento, Autoatendimento e Dados, IA e Plataforma. Sempre com análise, diagnóstico, pontos de atenção e sugestão.',
+      a: 'As sete frentes do RH, em todos os módulos: Pessoal e Folha, Ponto e Jornada, Saúde e Segurança, Talentos, Desenvolvimento, Autoatendimento e Dados, IA e Plataforma. Sempre com análise, diagnóstico, pontos de atenção e sugestão.',
     },
     {
       q: 'Como fica a LGPD nas conversas com a NATI?',

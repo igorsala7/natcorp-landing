@@ -325,7 +325,7 @@ export function Navbar() {
                 </div>
               </div>
               <div className="mt-6 flex items-center justify-between border-t border-brand-mist pt-4">
-                <p className="text-sm text-brand-graphite">31 módulos. Um único sistema, uma única base de dados.</p>
+                <p className="text-sm text-brand-graphite">Todos os módulos. Um único sistema, uma única base de dados.</p>
                 <Link to={paths.modules} onClick={closeAll} className="group inline-flex items-center gap-1.5 text-sm font-semibold text-brand-purple">
                   Ver todos os módulos
                   <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5" aria-hidden />

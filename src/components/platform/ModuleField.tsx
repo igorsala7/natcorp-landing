@@ -12,7 +12,7 @@ import { cn } from '@/lib/utils'
 import { BaseLabel, ModuleCore } from './ModuleCore'
 
 /**
- * O palco dos módulos (desktop): os 31 módulos em volta de uma única base de dados,
+ * O palco dos módulos (desktop): todos os módulos em volta de uma única base de dados,
  * agrupados por frente, cada um ligado ao centro por uma linha. Um foco percorre os
  * módulos um a um (ou segue o mouse) e acende a frente inteira; a legenda sob a base
  * diz o que o módulo faz. Decorativo: os cartões das frentes, logo abaixo, são a versão
@@ -158,7 +158,6 @@ function Cluster({ group, align, activeGroup, activeIndex, onEnter, setNodeRef }
       >
         <Icon className="h-3.5 w-3.5" strokeWidth={1.9} aria-hidden />
         {group.name}
-        <span className={cn('font-semibold tabular', lit ? 'text-brand-purple/70' : 'text-brand-graphite/60')}>{mods.length}</span>
       </m.p>
       <div className={cn('flex max-w-full flex-wrap gap-2', align === 'end' && 'justify-end', align === 'center' && 'justify-center')}>
         {mods.map((mod) => {

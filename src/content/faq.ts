@@ -7,7 +7,7 @@ export interface FaqItem {
 export const faqs: FaqItem[] = [
   {
     q: 'O que a Natcorp substitui na minha operação de RH?',
-    a: 'Tudo o que o RH faz hoje em sistemas separados e planilhas: folha de pagamento, ponto eletrônico, eSocial, admissão digital, recrutamento, avaliações, treinamento, benefícios, saúde e segurança do trabalho, portais e requisições. São 31 módulos em um único sistema, com um só cadastro e uma só base de dados.',
+    a: 'Tudo o que o RH faz hoje em sistemas separados e planilhas: folha de pagamento, ponto eletrônico, eSocial, admissão digital, recrutamento, avaliações, treinamento, benefícios, saúde e segurança do trabalho, portais e requisições. Todos os módulos em um único sistema, com um só cadastro e uma só base de dados.',
   },
   {
     q: 'A Natcorp é para empresas de que tamanho e estrutura?',

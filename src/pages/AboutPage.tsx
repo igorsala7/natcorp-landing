@@ -17,7 +17,7 @@ import { paths } from '@/content/site'
 const stats = [
   { value: '35 anos', label: 'de história dedicada ao RH' },
   { value: '+500 mil', label: 'colaboradores com os dados administrados' },
-  { value: '31', label: 'módulos integrados' },
+  { value: '7', label: 'frentes do RH em um único sistema' },
   { value: '2.500', label: 'folhas por minuto' },
 ]
 
@@ -143,7 +143,7 @@ export default function AboutPage() {
               <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5" aria-hidden />
             </Link>
             <Link to={paths.modules} className="group inline-flex items-center gap-2">
-              Conhecer os 31 módulos
+              Conhecer todos os módulos
               <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5" aria-hidden />
             </Link>
           </Reveal>
