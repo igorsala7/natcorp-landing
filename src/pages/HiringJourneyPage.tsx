@@ -24,6 +24,7 @@ import { StepVisual } from '@/components/journey/visuals'
 import { CastAvatar, CastFigure, CastList } from '@/components/journey/Cast'
 import { JourneyDiagram } from '@/components/journey/JourneyDiagram'
 import { IntegrationDiagram } from '@/components/journey/IntegrationDiagram'
+import { composedScenes } from '@/components/journey/scenes'
 
 const pad = (n: number) => String(n).padStart(2, '0')
 
@@ -492,9 +493,16 @@ function StepArticle({ step }: { step: JourneyStep }) {
   const when = [step.when.day, step.when.date, step.when.time].filter(Boolean).join(' · ')
   const person = castMember(step.character)
   const actor = actorMeta(step.actor)
-  const scene = scenes[step.id]
+  const Composed = composedScenes[step.id]
+  const scene = Composed ? undefined : scenes[step.id]
   return (
     <article id={step.id} data-step={step.id} aria-labelledby={`${step.id}-title`} className="scroll-mt-28 border-t border-brand-mist py-10 first-of-type:border-t-0 lg:py-12">
+      {/* Cena montada por camadas: ocupa a largura toda, como um plano de abertura da etapa. */}
+      {Composed && (
+        <Reveal delay={0.05} className="mb-8">
+          <Composed />
+        </Reveal>
+      )}
       <div className="grid grid-cols-1 gap-8 xl:grid-cols-[minmax(0,1fr)_340px] xl:gap-12">
         <div className="min-w-0">
           <Reveal y={10} duration={0.5} className="flex flex-wrap items-center gap-x-2 gap-y-1.5 text-[12px]">
