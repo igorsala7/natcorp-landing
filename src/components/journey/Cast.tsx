@@ -14,7 +14,7 @@ interface CastAvatarProps extends HTMLAttributes<HTMLSpanElement> {
 
 /**
  * Avatar redondo de um personagem da história. A Ana e a NATI usam os avatares 3D oficiais;
- * os demais usam o retrato em src/assets/journey/bust-<personagem>.png quando existe, ou as iniciais.
+ * os demais usam o retrato em src/assets/journey/bust-<personagem>.png (já recortado com o rosto no centro) quando existe, ou as iniciais.
  */
 export function CastAvatar({ who, ring = false, className, initialsClassName = 'text-[11px]', ...rest }: CastAvatarProps) {
   if (who === 'ana') return <EmployeeAvatar ring={ring} className={className} {...rest} />
@@ -28,7 +28,7 @@ export function CastAvatar({ who, ring = false, className, initialsClassName = '
         className={cn('relative block aspect-square overflow-hidden rounded-full bg-[linear-gradient(180deg,#FFFFFF_0%,#EDE4F4_100%)]', ring && 'shadow-[0_0_0_2px_#E4A9C4]', className)}
         {...rest}
       >
-        <img src={src} alt="" draggable={false} className="absolute inset-0 h-full w-full translate-y-[7%] scale-[1.18] object-cover" />
+        <img src={src} alt="" draggable={false} className="absolute inset-0 h-full w-full object-cover" />
       </span>
     )
   }

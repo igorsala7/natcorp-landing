@@ -1,6 +1,6 @@
 /** Folha de Pagamento: o ponto já apurado entra no holerite e o total fecha. */
 module.exports = (k) => {
-  const { C, stage, card, doc, textLines, avatar, diamond, surface, checkBadge, flow, clockFace, label, trail } = k
+  const { C, stage, card, doc, textLines, avatar, diamond, surface, checkBadge, flow, clockFace, trail } = k
   return `
 ${stage(600, 420)}
 <!-- Holerite -->

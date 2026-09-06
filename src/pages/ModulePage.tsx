@@ -347,7 +347,7 @@ export function ImplantationBlock({ id = 'implantacao', tone = 'off' }: { id?: s
 const seeAlso = [
   { icon: LayoutGrid, to: paths.portals, title: 'Portais e autoatendimento', text: 'Gestor, colaborador e candidato resolvem sozinhos, no celular.' },
   { icon: ShieldCheck, to: paths.security, title: 'Segurança e infraestrutura', text: 'Nuvem Oracle, contingência, backups e LGPD.' },
-  { icon: Route, to: journeyPath, title: 'Jornada do colaborador', text: 'As 24 etapas, da vaga à promoção, no mesmo sistema.' },
+  { icon: Route, to: journeyPath, title: 'Jornada do colaborador', text: 'O ciclo completo, da vaga à promoção, no mesmo sistema.' },
   { icon: Network, to: paths.structures, title: 'Como é a sua estrutura?', text: 'Empresa única, grupo, filiais, RH central ou por unidade: o sistema em cada uma.' },
 ]
 

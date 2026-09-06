@@ -18,7 +18,7 @@ const shortcuts = [
   { to: paths.commercial, title: 'Modelo comercial', text: 'Modular, em nuvem, pelo número de colaboradores.' },
   { to: paths.security, title: 'Segurança e infraestrutura', text: 'Nuvem Oracle, ambientes, backups e LGPD.' },
   { to: `${paths.about}#servicos`, title: 'Implantação, suporte e serviços', text: 'Como a Natcorp entra e acompanha a operação.' },
-  { to: journeyPath, title: 'Jornada do colaborador', text: 'As 24 etapas, da vaga à promoção, em história ou diagrama.' },
+  { to: journeyPath, title: 'Jornada do colaborador', text: 'O ciclo completo, da vaga à promoção, em história ou diagrama.' },
   { to: paths.modules, title: 'Todos os módulos', text: 'Uma página por módulo, com funcionalidades e FAQ.' },
 ]
 

@@ -1,6 +1,6 @@
 /** NatPonto: o rosto reconhecido no celular, com a localização confirmada. */
 module.exports = (k) => {
-  const { C, stage, card, phone, avatar, diamond, surface, checkBadge, textLines, pill, trail, clockFace, modulePath } = k
+  const { C, stage, card, phone, avatar, diamond, surface, checkBadge, textLines, pill, trail, clockFace } = k
   const px = 470, py = 110, pw = 270, ph = 560
   return `
 ${stage(600, 420)}

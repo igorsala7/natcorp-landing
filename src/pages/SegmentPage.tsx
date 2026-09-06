@@ -426,7 +426,7 @@ function SegmentContent({ entry, page }: { entry: SegmentEntry; page: SegmentPag
                     Veja a jornada completa numa indústria de alimentos de 10 mil colaboradores
                   </span>
                   <span className="mt-2 block text-[15px] leading-relaxed text-brand-graphite">
-                    Da requisição da vaga à promoção: 24 etapas, 6 unidades, 300 admissões por mês na safra e a folha de 10.000 pessoas calculada em cerca de 4 minutos.
+                    Da requisição da vaga à promoção: o ciclo completo, 6 unidades, 300 admissões por mês na safra e a folha de 10.000 pessoas calculada em cerca de 4 minutos.
                   </span>
                 </span>
                 <span className="inline-flex shrink-0 items-center gap-2 text-[15px] font-semibold text-brand-purple">
