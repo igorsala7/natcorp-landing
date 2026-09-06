@@ -252,7 +252,7 @@ export function HeroScene({ on, reduced, y, scale }: HeroSceneProps) {
         transition={{ duration: 0.9, ease: EASE, delay: 1.6 }}
       >
         <div
-          className="rounded-2xl border border-white/20 bg-[#1B1238]/78 p-3.5 shadow-[0_12px_40px_rgba(27,18,56,0.45)]">
+          className="rounded-2xl border border-white/20 bg-[#1B1238]/80 p-3.5 shadow-[0_12px_40px_rgba(27,18,56,0.45)]">
           <div className="flex items-start gap-3">
             <NatiAvatar ring className="h-9 w-9 shrink-0" />
             <div className="min-w-0">
@@ -269,7 +269,7 @@ export function HeroScene({ on, reduced, y, scale }: HeroSceneProps) {
         transition={{ duration: 0.9, ease: EASE, delay: 1.8 }}
       >
         <div
-          className="rounded-2xl border border-white/20 bg-[#1B1238]/74 p-3.5 shadow-[0_12px_40px_rgba(27,18,56,0.45)]">
+          className="rounded-2xl border border-white/20 bg-[#1B1238]/75 p-3.5 shadow-[0_12px_40px_rgba(27,18,56,0.45)]">
           <div className="flex items-center gap-3">
             <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-[#C95788]/25 text-[#F3C9DA] ring-1 ring-[#E4A9C4]/40">
               <ScanFace className="h-[18px] w-[18px]" strokeWidth={2} />

@@ -225,7 +225,7 @@ export function Navbar() {
       ref={headerRef}
       className={cn(
         'fixed inset-x-0 top-0 z-50 transition-[background-color,box-shadow] duration-500 ease-brand',
-        solid ? 'bg-white/85 shadow-[0_1px_0_0_#E9E5F1] backdrop-blur-md supports-[backdrop-filter]:bg-white/85' : 'bg-transparent',
+        solid ? 'bg-white/85 shadow-[0_1px_0_0_#E9E5F1] backdrop-blur-md supports-[backdrop-filter]:bg-white/80' : 'bg-transparent',
       )}
     >
       <div className="container flex h-[var(--nav-h)] items-center justify-between gap-6">
