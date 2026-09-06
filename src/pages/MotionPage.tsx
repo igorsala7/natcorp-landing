@@ -87,13 +87,14 @@ export default function MotionPage() {
           </p>
           <nav aria-label="Peças" className="mt-8 flex flex-wrap gap-2">
             {pieces.map((p) => (
-              <a
+              <button
                 key={p.id}
-                href={`#${p.id}`}
+                type="button"
+                onClick={() => document.getElementById(p.id)?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
                 className="rounded-full border border-brand-mist bg-white px-4 py-2 text-sm font-semibold text-brand-ink transition-colors hover:border-brand-purple hover:text-brand-purple"
               >
                 {p.title}
-              </a>
+              </button>
             ))}
           </nav>
         </div>
