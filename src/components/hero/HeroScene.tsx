@@ -2,13 +2,32 @@ import { m, type MotionValue } from 'motion/react'
 import { ScanFace } from 'lucide-react'
 import { NatiAvatar } from '@/components/brand/NatiAvatar'
 import { EASE } from '@/lib/motion'
-import heroScene from '@/assets/people/hero-scene.webp'
+import heroV2 from '@/assets/people/hero-v2.webp'
 
 /**
- * Fundo do hero em cena completa: a profissional com o tablet junto à janela, envolvida pelos
- * módulos em néon e pelas ondas de dados (imagem fornecida pela Natcorp). Por cima, só o que
- * a cena não tem: o véu para o texto, um brilho que deriva devagar e os cartões do sistema.
+ * Fundo do hero: a cena natcorp_hero_v2 (a profissional com o tablet junto à janela, o módulo do símbolo
+ * em contorno e as linhas de fluxo), com a arte da marca animada por cima, em código, alinhada à imagem:
+ * - o contorno do módulo redesenhado em luz, que se desenha na entrada e recebe um brilho percorrendo a borda;
+ * - linhas de fluxo com pacotes de luz correndo em direção à pessoa;
+ * - um módulo menor em vidro, respirando, perto do tablet;
+ * - o véu para o texto e os cartões do sistema.
+ * A imagem e o SVG ficam no mesmo quadro (2000 x 843), que cobre a seção como um object-fit: cover.
  */
+
+const W = 2000
+const H = 843
+/* O módulo grande, medido sobre a imagem (quadrado arredondado girado 45°, um pouco mais alto que largo). */
+const MODULE = 'M1588 -114 L1889 226 C1986 336 1986 514 1889 624 L1588 964 C1491 1074 1333 1074 1236 964 L935 624 C838 514 838 336 935 226 L1236 -114 C1333 -224 1491 -224 1588 -114 Z'
+/* Um módulo menor, em vidro, perto do tablet. */
+const SMALL = { cx: 1770, cy: 700, s: 0.3 }
+
+/* Linhas de fluxo: saem da esquerda, embaixo, e sobem em curva até a pessoa; cada uma com um leve desvio. */
+const flows = Array.from({ length: 7 }, (_, i) => {
+  const y0 = 600 + i * 34
+  const y1 = 520 + i * 18
+  const y2 = 300 + i * 14
+  return { d: `M-40 ${y0} C 420 ${y0 - 30}, 760 ${y1}, 1040 ${y1 - 60} S 1500 ${y2 + 40}, ${W + 40} ${y2}`, dur: 8 + i * 0.9, delay: i * 0.7 }
+})
 
 interface HeroSceneProps {
   on: boolean
@@ -20,48 +39,157 @@ interface HeroSceneProps {
 export function HeroScene({ on, reduced, y, scale }: HeroSceneProps) {
   return (
     <div className="absolute inset-0" aria-hidden>
+      {/* o quadro que cobre a seção (no celular, só a parte de cima): imagem e arte no mesmo sistema de coordenadas */}
+      <div className="absolute inset-x-0 top-0 h-[62%] overflow-hidden [container-type:size] lg:h-full">
       <m.div
-        className="absolute inset-0"
-        style={{ y, scale }}
-        initial={{ opacity: 0, scale: 1.06 }}
-        animate={on ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 1.06 }}
-        transition={{ duration: 1.6, ease: EASE }}
+        className="absolute [--fx:84%] [--fy:50%] lg:[--fx:62%] lg:[--fy:45%]"
+        style={{
+          left: 'var(--fx)',
+          top: 'var(--fy)',
+          translate: 'calc(var(--fx) * -1) calc(var(--fy) * -1)',
+          width: `max(100cqw, calc(100cqh * ${(W / H).toFixed(4)}))`,
+          aspectRatio: `${W} / ${H}`,
+          y,
+          scale,
+        }}
+        initial={{ opacity: 0 }}
+        animate={on ? { opacity: 1 } : { opacity: 0 }}
+        transition={{ duration: 1.4, ease: EASE }}
       >
-        <img
-          src={heroScene}
-          alt=""
-          width={2000}
-          height={1116}
-          fetchPriority="high"
-          decoding="async"
-          draggable={false}
-          className="absolute inset-0 h-full w-full object-cover object-[78%_18%] lg:object-[70%_40%]"
-        />
+        <img src={heroV2} alt="" width={W} height={H} fetchPriority="high" decoding="async" draggable={false} className="absolute inset-0 h-full w-full" />
+
+        <svg viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="none" className="absolute inset-0 h-full w-full overflow-visible">
+          <defs>
+            <linearGradient id="hv2-edge" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stopColor="#F3C9DA" stopOpacity="0.95" />
+              <stop offset="0.5" stopColor="#E4A9C4" stopOpacity="0.7" />
+              <stop offset="1" stopColor="#C95788" stopOpacity="0.35" />
+            </linearGradient>
+            <linearGradient id="hv2-glass" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stopColor="#F3C9DA" stopOpacity="0.28" />
+              <stop offset="0.55" stopColor="#C95788" stopOpacity="0.16" />
+              <stop offset="1" stopColor="#511C76" stopOpacity="0.1" />
+            </linearGradient>
+            <filter id="hv2-glow" x="-20%" y="-20%" width="140%" height="140%">
+              <feGaussianBlur stdDeviation="6" />
+            </filter>
+            <filter id="hv2-glow-soft" x="-20%" y="-20%" width="140%" height="140%">
+              <feGaussianBlur stdDeviation="14" />
+            </filter>
+          </defs>
+
+          {/* linhas de fluxo: traço contínuo fraco + pacotes de luz correndo */}
+          <g strokeLinecap="round" fill="none">
+            {flows.map((f, i) => (
+              <m.path
+                key={`f${i}`}
+                d={f.d}
+                stroke="#F3C9DA"
+                strokeWidth="1.3"
+                strokeOpacity="0.28"
+                initial={{ pathLength: 0 }}
+                animate={on ? { pathLength: 1 } : { pathLength: 0 }}
+                transition={{ duration: 1.8, ease: EASE, delay: 0.4 + i * 0.08 }}
+              />
+            ))}
+            {!reduced &&
+              flows.map((f, i) => (
+                <m.path
+                  key={`p${i}`}
+                  d={f.d}
+                  pathLength={1}
+                  stroke="#FFFFFF"
+                  strokeWidth="1.8"
+                  strokeOpacity="0.85"
+                  strokeDasharray="0.09 1"
+                  initial={{ strokeDashoffset: 1, opacity: 0 }}
+                  animate={on ? { strokeDashoffset: -1, opacity: 1 } : { strokeDashoffset: 1, opacity: 0 }}
+                  transition={{
+                    strokeDashoffset: { duration: f.dur, ease: 'linear', repeat: Infinity, delay: 2 + f.delay },
+                    opacity: { duration: 1, delay: 2 + f.delay },
+                  }}
+                />
+              ))}
+          </g>
+
+          {/* o módulo grande: brilho difuso por baixo, contorno nítido por cima, desenhando-se na entrada */}
+          <m.path
+            d={MODULE}
+            fill="none"
+            stroke="#E4A9C4"
+            strokeWidth="14"
+            strokeOpacity="0.35"
+            filter="url(#hv2-glow-soft)"
+            initial={{ pathLength: 0, opacity: 0 }}
+            animate={on ? { pathLength: 1, opacity: 1 } : { pathLength: 0, opacity: 0 }}
+            transition={{ duration: 2.4, ease: EASE, delay: 0.3 }}
+          />
+          <m.path
+            d={MODULE}
+            fill="none"
+            stroke="url(#hv2-edge)"
+            strokeWidth="3"
+            initial={{ pathLength: 0, opacity: 0 }}
+            animate={on ? { pathLength: 1, opacity: 1 } : { pathLength: 0, opacity: 0 }}
+            transition={{ duration: 2.4, ease: EASE, delay: 0.3 }}
+          />
+          {/* a luz que percorre a borda do módulo, sem parar */}
+          {!reduced && (
+            <>
+              <m.path
+                d={MODULE}
+                pathLength={1}
+                fill="none"
+                stroke="#F3C9DA"
+                strokeWidth="18"
+                strokeLinecap="round"
+                strokeDasharray="0.06 1"
+                filter="url(#hv2-glow)"
+                initial={{ strokeDashoffset: 0, opacity: 0 }}
+                animate={on ? { strokeDashoffset: -2, opacity: 0.8 } : { strokeDashoffset: 0, opacity: 0 }}
+                transition={{ strokeDashoffset: { duration: 18, ease: 'linear', repeat: Infinity, delay: 2.6 }, opacity: { duration: 1.2, delay: 2.6 } }}
+              />
+              <m.path
+                d={MODULE}
+                pathLength={1}
+                fill="none"
+                stroke="#FFFFFF"
+                strokeWidth="4"
+                strokeLinecap="round"
+                strokeDasharray="0.05 1"
+                initial={{ strokeDashoffset: 0, opacity: 0 }}
+                animate={on ? { strokeDashoffset: -2, opacity: 0.95 } : { strokeDashoffset: 0, opacity: 0 }}
+                transition={{ strokeDashoffset: { duration: 18, ease: 'linear', repeat: Infinity, delay: 2.6 }, opacity: { duration: 1.2, delay: 2.6 } }}
+              />
+            </>
+          )}
+
+          {/* o módulo menor, em vidro, respirando perto do tablet */}
+          <m.g
+            style={{ transformOrigin: `${SMALL.cx}px ${SMALL.cy}px`, transformBox: 'view-box' }}
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={on ? { opacity: 1, scale: reduced ? 1 : [1, 1.04, 1] } : { opacity: 0, scale: 0.9 }}
+            transition={{ opacity: { duration: 1.2, ease: EASE, delay: 1.4 }, scale: reduced ? { duration: 1.2, delay: 1.4 } : { duration: 7, ease: 'easeInOut', repeat: Infinity, delay: 1.4 } }}
+          >
+            <g transform={`translate(${SMALL.cx} ${SMALL.cy}) scale(${SMALL.s}) translate(-1412 -425)`}>
+              <path d={MODULE} fill="url(#hv2-glass)" stroke="#F3C9DA" strokeWidth="4" strokeOpacity="0.75" />
+              <path d={MODULE} fill="none" stroke="#FFFFFF" strokeWidth="2" strokeOpacity="0.5" transform="translate(-14 -14) scale(1.0)" />
+            </g>
+          </m.g>
+        </svg>
+
       </m.div>
+      </div>
 
-      {/* brilho que deriva devagar sobre as ondas, em screen, para a cena respirar */}
-      {!reduced && (
-        <m.div
-          className="absolute left-[10%] top-[20%] h-[60%] w-[50%] rounded-full bg-[radial-gradient(closest-side,rgba(201,87,136,0.35),transparent)] blur-3xl"
-          style={{ mixBlendMode: 'screen' }}
-          animate={{ x: ['0%', '18%', '0%'], y: ['0%', '-10%', '0%'], opacity: [0.5, 0.9, 0.5] }}
-          transition={{ duration: 14, ease: 'easeInOut', repeat: Infinity }}
-        />
-      )}
-
-      {/* véu para o texto: base no celular, lateral esquerda no desktop */}
-      <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(44,26,99,0.35)_0%,rgba(44,26,99,0.12)_18%,rgba(44,26,99,0.86)_46%,#2C1A63_60%)] lg:bg-[linear-gradient(90deg,#2C1A63_0%,rgba(44,26,99,0.94)_20%,rgba(44,26,99,0.7)_38%,rgba(44,26,99,0.28)_52%,rgba(44,26,99,0)_66%)]" />
-      <div className="absolute inset-0 hidden bg-[linear-gradient(180deg,rgba(27,18,56,0.5)_0%,transparent_20%,transparent_80%,rgba(27,18,56,0.45)_100%)] lg:block" />
-
-      {/* cartões do sistema, perto do tablet */}
+    {/* cartões do sistema, presos à seção (não ao quadro da imagem) */}
       <m.div
-        className="absolute right-[3%] top-[22%] hidden w-[300px] lg:block xl:right-[4%]"
+        className="absolute right-[3%] top-[17%] hidden w-[300px] lg:block xl:right-[4%]"
         initial={{ opacity: 0, y: 16 }}
         animate={on ? { opacity: 1, y: 0 } : { opacity: 0, y: 16 }}
-        transition={{ duration: 0.9, ease: EASE, delay: 1.2 }}
+        transition={{ duration: 0.9, ease: EASE, delay: 1.6 }}
       >
         <m.div
-          className="rounded-2xl border border-white/15 bg-[#1B1238]/55 p-3.5 shadow-[0_12px_40px_rgba(27,18,56,0.45)] backdrop-blur-md"
+          className="rounded-2xl border border-white/20 bg-[#1B1238]/60 p-3.5 shadow-[0_12px_40px_rgba(27,18,56,0.45)] backdrop-blur-md"
           animate={reduced ? undefined : { y: [0, -7, 0] }}
           transition={{ duration: 6.5, ease: 'easeInOut', repeat: Infinity }}
         >
@@ -75,13 +203,13 @@ export function HeroScene({ on, reduced, y, scale }: HeroSceneProps) {
         </m.div>
       </m.div>
       <m.div
-        className="absolute bottom-[14%] right-[6%] hidden w-[270px] lg:block"
+        className="absolute bottom-[12%] right-[5%] hidden w-[270px] lg:block"
         initial={{ opacity: 0, y: 16 }}
         animate={on ? { opacity: 1, y: 0 } : { opacity: 0, y: 16 }}
-        transition={{ duration: 0.9, ease: EASE, delay: 1.4 }}
+        transition={{ duration: 0.9, ease: EASE, delay: 1.8 }}
       >
         <m.div
-          className="rounded-2xl border border-white/15 bg-[#1B1238]/55 p-3.5 shadow-[0_12px_40px_rgba(27,18,56,0.45)] backdrop-blur-md"
+          className="rounded-2xl border border-white/20 bg-[#1B1238]/55 p-3.5 shadow-[0_12px_40px_rgba(27,18,56,0.45)] backdrop-blur-md"
           animate={reduced ? undefined : { y: [0, -5, 0] }}
           transition={{ duration: 7, ease: 'easeInOut', repeat: Infinity, delay: 1.6 }}
         >
@@ -96,6 +224,20 @@ export function HeroScene({ on, reduced, y, scale }: HeroSceneProps) {
           </div>
         </m.div>
       </m.div>
+
+      {/* brilho que deriva devagar do lado do texto, para o roxo respirar */}
+      {!reduced && (
+        <m.div
+          className="absolute left-[-5%] top-[30%] h-[70%] w-[45%] rounded-full bg-[radial-gradient(closest-side,rgba(201,87,136,0.32),transparent)] blur-3xl"
+          style={{ mixBlendMode: 'screen' }}
+          animate={{ x: ['0%', '14%', '0%'], y: ['0%', '-12%', '0%'], opacity: [0.45, 0.85, 0.45] }}
+          transition={{ duration: 14, ease: 'easeInOut', repeat: Infinity }}
+        />
+      )}
+
+      {/* véu para o texto: base no celular, lateral esquerda no desktop */}
+      <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(44,26,99,0.3)_0%,rgba(44,26,99,0.08)_16%,rgba(44,26,99,0.75)_44%,#2C1A63_58%)] lg:bg-[linear-gradient(90deg,rgba(44,26,99,0.92)_0%,rgba(44,26,99,0.78)_20%,rgba(44,26,99,0.45)_36%,rgba(44,26,99,0.12)_50%,rgba(44,26,99,0)_62%)]" />
+      <div className="absolute inset-x-0 top-0 h-28 bg-gradient-to-b from-[#1B1238]/55 to-transparent" />
     </div>
   )
 }

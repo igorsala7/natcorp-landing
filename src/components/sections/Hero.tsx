@@ -116,7 +116,7 @@ export function Hero() {
     return (
       <section ref={ref} id="top" className="on-dark relative isolate flex min-h-[92svh] flex-col overflow-hidden bg-brand-blue text-white lg:min-h-0" aria-labelledby="hero-title">
         <HeroScene on={done} reduced={reduced} y={reduced ? 0 : yStage} scale={reduced ? 1 : scaleScene} />
-        <div className="container relative mt-auto flex flex-col items-start pb-12 pt-[calc(var(--nav-h)+38svh)] sm:pb-14 sm:pt-[calc(var(--nav-h)+42svh)] lg:min-h-[min(820px,90vh)] lg:justify-center lg:py-[calc(var(--nav-h)+4rem)]">
+        <div className="container relative mt-auto flex flex-col items-start pb-12 pt-[calc(var(--nav-h)+38svh)] sm:pb-14 sm:pt-[calc(var(--nav-h)+42svh)] lg:min-h-[min(760px,80vh)] lg:justify-center lg:py-[calc(var(--nav-h)+2.5rem)]">
           {text}
         </div>
         {scrollHint}

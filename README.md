@@ -88,10 +88,11 @@ src/
                 NatiAvatar e EmployeeAvatar (os personagens 3D em disco claro, com anel opcional), NatPontoIcon (ícone em vetor)
                 HumanModule.tsx: fotografia recortada pelos módulos do símbolo, gradiente da marca por cima e
                 linhas de luz nas arestas (hero, banner "Por que Natcorp", retratos das personas)
-    hero/       HeroScene (cena completa fornecida pela Natcorp, véu para o texto, brilho à deriva e cartões
-                do sistema) e HeroStage (a pessoa recortada entre o humano e o sistema: duotone em pontos,
-                máscara que respira, varredura de luz, tela do tablet acesa). A constante VARIANT em
-                sections/Hero.tsx escolhe qual abre a home.
+    hero/       HeroScene (a cena natcorp_hero_v2 com a arte da marca animada por cima, alinhada à imagem:
+                o módulo do símbolo em contorno de luz com brilho percorrendo a borda, linhas de fluxo com
+                pacotes de luz, um módulo menor em vidro, véu para o texto e cartões do sistema) e HeroStage
+                (a pessoa recortada entre o humano e o sistema). A constante VARIANT em sections/Hero.tsx
+                escolhe qual abre a home.
     motion/     Intro (abertura), SmoothScroll, ScrollManager (rotas + âncoras), PageTransition,
                 Reveal/Stagger, SplitText, Counter, Marquee, Magnetic, SpotlightCard, Parallax, ScrollProgress
     mockups/    Telas do produto construídas em código: dashboard, DevicesShowcase (notebook, tablet e
