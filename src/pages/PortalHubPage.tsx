@@ -1,31 +1,25 @@
-import { useMemo } from 'react'
+import { useRef } from 'react'
 import { Link, useParams } from 'react-router'
-import { m, useReducedMotion } from 'motion/react'
-import { ArrowRight, ArrowUpRight, FlaskConical, KeyRound, LifeBuoy, LockKeyhole, ShieldCheck, Sparkles } from 'lucide-react'
+import { m, useInView, useReducedMotion } from 'motion/react'
+import { ArrowRight, ArrowUpRight, FlaskConical, KeyRound, LifeBuoy, LockKeyhole, MapPin, QrCode, ScanFace, ShieldCheck, Sparkles, WifiOff } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Section, SectionHeader, Eyebrow } from '@/components/sections/Section'
 import { Reveal, Stagger, StaggerItem } from '@/components/motion/Reveal'
 import { SplitText } from '@/components/motion/SplitText'
 import { SpotlightCard } from '@/components/motion/SpotlightCard'
 import { PageTransition } from '@/components/motion/PageTransition'
+import { ScaledFrame } from '@/components/motion/ScaledFrame'
 import { scrollToElement } from '@/components/motion/ScrollManager'
 import { NetworkField } from '@/components/nati/NetworkField'
 import { Logo, LogoOutline } from '@/components/brand/Logo'
-import { MODULES, SYMBOL_BOX } from '@/components/brand/logo-paths'
+import { NatPontoIcon } from '@/components/brand/NatPontoIcon'
+import { StoreBadges } from '@/components/brand/StoreBadges'
+import { ModuleLights, amberPalette, rosePalette } from '@/components/portals/ModuleLights'
+import { NATPONTO_SIZE } from '@/components/mockups/natponto/NatPontoFrame'
+import { NatPontoPhone } from '@/components/mockups/natponto/screens'
 import { useSeo } from '@/hooks/useSeo'
-import {
-  apexPath,
-  clientLogo,
-  greeting,
-  hubPath,
-  portalApps,
-  portalClients,
-  portalUrl,
-  resolveClient,
-  type PortalApp,
-  type PortalClient,
-  type PortalEnv,
-} from '@/content/portals'
+import { usePortalClient, usePortalClients } from '@/hooks/usePortalClient'
+import { clientLogo, greeting, hubPath, portalApps, portalHost, portalUrl, type PortalApp, type PortalClient, type PortalEnv } from '@/content/portals'
 import { paths, siteConfig } from '@/content/site'
 import { EASE, viewportOnce } from '@/lib/motion'
 import { cn } from '@/lib/utils'
@@ -35,7 +29,6 @@ import figureBeatriz from '@/assets/portals/figure-beatriz.webp'
 import iconCandidato from '@/assets/portals/icons/quadro-de-vagas.svg'
 import iconNatDocs from '@/assets/portals/icons/assinatura-eletronica.svg'
 import iconChamado from '@/assets/portals/icons/chamado-interno.svg'
-import iconNatPonto from '@/assets/portals/icons/natponto.svg'
 
 /** Quem ilustra cada portal do sistema: os personagens da jornada, na mesma família 3D da NATI. */
 const figures: Partial<Record<PortalApp['key'], { src: string; alt: string }>> = {
@@ -51,17 +44,14 @@ const icons: Partial<Record<PortalApp['key'], string>> = {
   chamado: iconChamado,
 }
 
-/** Cor da homologação: âmbar, fora da paleta roxa, para ninguém confundir com a produção. */
-const AMBER = '#F2B84B'
-
 /**
  * Página de acesso aos portais de um cliente (/portais/<cliente> e /portais/dev/<cliente> na homologação):
- * a porta de entrada do sistema, com a identidade do site, o logotipo do cliente e os endereços do
- * ambiente dele no APEX. Não usa o menu e o rodapé de marketing: quem chega aqui quer entrar.
+ * a porta de entrada do sistema, com a identidade do site, o logotipo do cliente e os endereços dos portais
+ * dele, como estão no cadastro. Não usa o menu e o rodapé de marketing: quem chega aqui quer entrar.
  */
 export default function PortalHubPage({ env = 'prod' }: { env?: PortalEnv }) {
   const { cliente } = useParams()
-  const client = useMemo(() => resolveClient(cliente), [cliente])
+  const { client, status } = usePortalClient(cliente)
   const dev = env === 'dev'
 
   useSeo({
@@ -73,6 +63,7 @@ export default function PortalHubPage({ env = 'prod' }: { env?: PortalEnv }) {
     noindex: dev || !client || client.slug !== 'natcorp',
   })
 
+  if (status === 'loading') return <HubLoading env={env} />
   if (!client) return <NotFound slug={cliente ?? ''} env={env} />
 
   return (
@@ -121,6 +112,7 @@ export default function PortalHubPage({ env = 'prod' }: { env?: PortalEnv }) {
         </div>
       </Section>
 
+      <NatPonto />
       <Help client={client} env={env} />
       <HubFooter client={client} env={env} />
     </PageTransition>
@@ -129,25 +121,53 @@ export default function PortalHubPage({ env = 'prod' }: { env?: PortalEnv }) {
 
 /* ---------------- abertura ---------------- */
 
-/** Abertura baixa: saudação, uma linha, acesso rápido e a identidade do cliente. Os cartões ficam logo abaixo. */
+/**
+ * Abertura baixa: saudação, uma linha, acesso rápido e a identidade do cliente, envolvida pelos losangos do
+ * hero da home (os módulos em luz, com o brilho correndo na borda). Os cartões ficam logo abaixo.
+ */
 function Opening({ client, env }: { client: PortalClient; env: PortalEnv }) {
   const reduced = useReducedMotion() ?? false
+  const ref = useRef<HTMLElement>(null)
+  /** Os laços contínuos só rodam com a abertura na tela. */
+  const inView = useInView(ref, { margin: '80px 0px' })
+  const loop = inView && !reduced
   const dev = env === 'dev'
   const hello = greeting()
-  const highlight = dev ? AMBER : '#F3C9DA'
   return (
-    <section className="on-dark relative isolate overflow-hidden bg-brand-blue text-white" aria-labelledby="hub-title">
+    <section ref={ref} className="on-dark relative isolate overflow-hidden bg-brand-blue text-white" aria-labelledby="hub-title">
       <div className="absolute inset-0" aria-hidden>
         <div
           className={cn(
             'absolute inset-0',
             dev
-              ? 'bg-[radial-gradient(60%_80%_at_85%_50%,rgba(242,184,75,0.22),transparent_70%),linear-gradient(180deg,#1B1238_0%,#2C1A63_60%,#3A1A66_100%)]'
-              : 'bg-[radial-gradient(60%_80%_at_85%_50%,rgba(160,105,205,0.5),transparent_70%),radial-gradient(45%_60%_at_100%_100%,rgba(201,87,136,0.35),transparent_70%),linear-gradient(180deg,#2C1A63_0%,#3A1A66_60%,#4A1B72_100%)]',
+              ? 'bg-[radial-gradient(60%_80%_at_85%_50%,rgba(242,184,75,0.24),transparent_70%),linear-gradient(180deg,#1B1238_0%,#2C1A63_60%,#3A1A66_100%)]'
+              : 'bg-[radial-gradient(60%_80%_at_85%_50%,rgba(160,105,205,0.55),transparent_70%),radial-gradient(45%_60%_at_100%_100%,rgba(201,87,136,0.4),transparent_70%),linear-gradient(180deg,#2C1A63_0%,#3A1A66_60%,#4A1B72_100%)]',
           )}
         />
-        <NetworkField density={0.5} className="opacity-35 lg:[mask-image:linear-gradient(90deg,transparent_30%,#000_70%)] lg:[-webkit-mask-image:linear-gradient(90deg,transparent_30%,#000_70%)]" />
-        <ModuleDraw reduced={reduced} className="absolute right-[-4%] top-[-60%] hidden w-[min(34vw,460px)] lg:block" color={highlight} />
+        {/* a malha técnica, do lado do sistema */}
+        <div
+          className="absolute inset-0 hidden bg-[linear-gradient(rgba(255,255,255,0.06)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.06)_1px,transparent_1px)] bg-[size:56px_56px] lg:block"
+          style={{
+            WebkitMaskImage: 'radial-gradient(55% 90% at 78% 50%, #000, transparent 75%)',
+            maskImage: 'radial-gradient(55% 90% at 78% 50%, #000, transparent 75%)',
+          }}
+        />
+        <NetworkField
+          density={0.7}
+          className="opacity-40 lg:opacity-60 lg:[mask-image:linear-gradient(90deg,transparent_25%,#000_60%)] lg:[-webkit-mask-image:linear-gradient(90deg,transparent_25%,#000_60%)]"
+        />
+        {/* brilho que deriva devagar, para o roxo respirar */}
+        <m.div
+          className={cn(
+            'absolute left-[30%] top-[-40%] hidden h-[180%] w-[45%] rounded-full lg:block',
+            dev
+              ? 'bg-[radial-gradient(closest-side,rgba(242,184,75,0.18),rgba(242,184,75,0.06)_45%,rgba(242,184,75,0)_100%)]'
+              : 'bg-[radial-gradient(closest-side,rgba(201,87,136,0.3),rgba(201,87,136,0.1)_45%,rgba(201,87,136,0)_100%)]',
+          )}
+          style={{ willChange: 'transform, opacity' }}
+          animate={loop ? { x: ['0%', '18%', '0%'], y: ['0%', '10%', '0%'], opacity: [0.5, 0.9, 0.5] } : { x: '0%', y: '0%', opacity: 0.65 }}
+          transition={loop ? { duration: 12, ease: 'easeInOut', repeat: Infinity } : { duration: 1.2, ease: EASE }}
+        />
       </div>
 
       <div className="container relative grid gap-8 py-10 sm:py-12 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-center lg:gap-12 lg:py-14">
@@ -182,7 +202,10 @@ function Opening({ client, env }: { client: PortalClient; env: PortalEnv }) {
                   >
                     {app.short}
                     {app.key === 'chamado' && <span className="text-[11px] font-bold text-white/60">RH</span>}
-                    <ArrowUpRight className="h-3.5 w-3.5 opacity-60 transition-transform group-hover:translate-x-px group-hover:-translate-y-px group-hover:opacity-100" strokeWidth={2.2} />
+                    <ArrowUpRight
+                      className="h-3.5 w-3.5 opacity-60 transition-transform group-hover:translate-x-px group-hover:-translate-y-px group-hover:opacity-100"
+                      strokeWidth={2.2}
+                    />
                   </a>
                 </li>
               ))}
@@ -190,49 +213,40 @@ function Opening({ client, env }: { client: PortalClient; env: PortalEnv }) {
           </Reveal>
         </div>
 
-        <ClientBadge client={client} env={env} />
+        {/* a identidade do cliente, no centro do módulo em luz */}
+        <div className="relative hidden lg:block">
+          <div className="pointer-events-none absolute left-1/2 top-1/2 h-[720px] w-[1080px] -translate-x-[62.5%] -translate-y-1/2" aria-hidden>
+            <ModuleLights on loop={loop} palette={dev ? amberPalette : rosePalette} id={dev ? 'hub-dev' : 'hub'} className="h-full w-full" />
+          </div>
+          <ClientBadge client={client} env={env} />
+        </div>
       </div>
     </section>
   )
 }
 
-/** A identidade do cliente na abertura: o logotipo (ou o nome), o ambiente e o endereço do servidor. */
+/** A identidade do cliente na abertura: só o logotipo (ou o nome), em um cartão de vidro. */
 function ClientBadge({ client, env }: { client: PortalClient; env: PortalEnv }) {
   const dev = env === 'dev'
-  const logo = clientLogo(client.slug)
+  const logo = clientLogo(client)
   const own = client.slug === 'natcorp'
   return (
     <m.div
-      className={cn(
-        'hidden w-[300px] rounded-2xl border p-5 lg:block',
-        dev ? 'border-[#F2B84B]/50 bg-[#1B1238]/70' : 'border-white/20 bg-white/[0.07]',
-      )}
+      className={cn('relative w-[300px] rounded-2xl border p-3 backdrop-blur-sm', dev ? 'border-[#F2B84B]/50 bg-[#1B1238]/70' : 'border-white/25 bg-white/[0.08]')}
       initial={{ opacity: 0, y: 14 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.8, ease: EASE, delay: 0.5 }}
-      aria-label={`Ambiente ${dev ? 'de homologação' : 'de produção'} da ${client.name}`}
+      aria-label={`${client.name}, ambiente ${dev ? 'de homologação' : 'de produção'}`}
     >
-      <div className="flex min-h-[64px] items-center justify-center rounded-xl bg-white px-5 py-3">
+      <div className="flex min-h-[88px] items-center justify-center rounded-xl bg-white px-6 py-4">
         {logo ? (
-          <img src={logo} alt={client.name} className="max-h-11 w-auto max-w-[220px] object-contain" draggable={false} />
+          <img src={logo} alt={client.name} className="max-h-14 w-auto max-w-[230px] object-contain" draggable={false} />
         ) : own ? (
-          <Logo variant="horizontal" decorative className="h-8 w-auto" />
+          <Logo variant="horizontal" decorative className="h-9 w-auto" />
         ) : (
-          <span className="text-[20px] font-extrabold tracking-tight text-brand-ink">{client.name}</span>
+          <span className="text-[22px] font-extrabold tracking-tight text-brand-ink">{client.name}</span>
         )}
       </div>
-      <dl className="mt-4 grid grid-cols-[auto_1fr] gap-x-4 gap-y-1.5 text-[12.5px]">
-        <dt className="text-white/55">Ambiente</dt>
-        <dd className={cn('font-bold', dev ? 'text-[#F2B84B]' : 'text-white')}>{dev ? 'Homologação' : 'Produção'}</dd>
-        <dt className="text-white/55">Servidor</dt>
-        <dd className="truncate font-mono text-[12px] text-white/85">natcorpbr.com.br/apex/{apexPath(client, env)}</dd>
-      </dl>
-      <Link
-        to={hubPath(client.slug, dev ? 'prod' : 'dev')}
-        className="mt-4 inline-flex items-center gap-1.5 text-[12.5px] font-bold text-white/80 underline-offset-4 hover:text-white hover:underline"
-      >
-        {dev ? 'Ir para a produção' : 'Base de homologação'} <ArrowRight className="h-3.5 w-3.5" />
-      </Link>
     </m.div>
   )
 }
@@ -259,7 +273,12 @@ function EnvBanner({ client }: { client: PortalClient }) {
 
 function EnvChip({ className }: { className?: string }) {
   return (
-    <span className={cn('inline-flex items-center gap-1.5 rounded-full bg-[#F2B84B] px-2.5 py-0.5 text-[11px] font-extrabold uppercase tracking-[0.12em] text-brand-ink', className)}>
+    <span
+      className={cn(
+        'inline-flex items-center gap-1.5 rounded-full bg-[#F2B84B] px-2.5 py-0.5 text-[11px] font-extrabold uppercase tracking-[0.12em] text-brand-ink',
+        className,
+      )}
+    >
       <FlaskConical className="h-3 w-3" strokeWidth={2.4} /> Homologação
     </span>
   )
@@ -269,10 +288,12 @@ function EnvChip({ className }: { className?: string }) {
 
 function HubHeader({ client, env }: { client: PortalClient; env: PortalEnv }) {
   const dev = env === 'dev'
-  const logo = clientLogo(client.slug)
+  const logo = clientLogo(client)
   const own = client.slug === 'natcorp'
   return (
-    <header className={cn('on-dark sticky top-0 z-40 border-b text-white backdrop-blur-md', dev ? 'border-[#F2B84B]/40 bg-[#1B1238]/90' : 'border-white/10 bg-brand-blue/90')}>
+    <header
+      className={cn('on-dark sticky top-0 z-40 border-b text-white backdrop-blur-md', dev ? 'border-[#F2B84B]/40 bg-[#1B1238]/90' : 'border-white/10 bg-brand-blue/90')}
+    >
       <div className="container flex h-16 items-center gap-3 sm:gap-4">
         <Link to={paths.home} className="shrink-0" aria-label="Natcorp, ir para o site">
           <Logo variant="horizontal" tone="white" decorative className="h-7 w-auto sm:h-8" />
@@ -303,7 +324,10 @@ function HubHeader({ client, env }: { client: PortalClient; env: PortalEnv }) {
           >
             Ajuda
           </a>
-          <Link to={paths.home} className="hidden items-center gap-1.5 rounded-full border border-white/25 px-3.5 py-2 text-white/90 transition-colors hover:border-white/60 hover:bg-white/10 sm:inline-flex">
+          <Link
+            to={paths.home}
+            className="hidden items-center gap-1.5 rounded-full border border-white/25 px-3.5 py-2 text-white/90 transition-colors hover:border-white/60 hover:bg-white/10 sm:inline-flex"
+          >
             natcorp.com.br <ArrowUpRight className="h-3.5 w-3.5" strokeWidth={2.2} />
           </Link>
         </nav>
@@ -354,7 +378,7 @@ function HubFooter({ client, env }: { client: PortalClient; env: PortalEnv }) {
         <span>
           © {new Date().getFullYear()} {siteConfig.name}. Todos os direitos reservados.
         </span>
-        <span>Os portais abrem em natcorpbr.com.br/apex/{apexPath(client, env)}, o ambiente do sistema.</span>
+        <span>Os portais abrem em {portalHost(client, env)}, o ambiente do sistema.</span>
       </div>
     </footer>
   )
@@ -423,7 +447,14 @@ function ServiceCard({ app, href, dev }: { app: PortalApp; href: string; dev: bo
       <div className="flex h-full flex-col p-6 sm:p-7">
         <div className="flex items-start justify-between gap-4">
           {icon && (
-            <img src={icon} alt="" width={84} height={84} className="h-[84px] w-[84px] shrink-0 transition-transform duration-700 ease-brand group-hover:-rotate-3 group-hover:scale-105" draggable={false} />
+            <img
+              src={icon}
+              alt=""
+              width={84}
+              height={84}
+              className="h-[84px] w-[84px] shrink-0 transition-transform duration-700 ease-brand group-hover:-rotate-3 group-hover:scale-105"
+              draggable={false}
+            />
           )}
           <span
             className={cn(
@@ -466,6 +497,65 @@ function DevNote() {
   )
 }
 
+/* ---------------- NatPonto ---------------- */
+
+const natPontoPoints = [
+  { icon: ScanFace, text: 'Reconhecimento facial' },
+  { icon: MapPin, text: 'Local dentro do raio' },
+  { icon: WifiOff, text: 'Funciona sem internet' },
+  { icon: QrCode, text: 'Comprovante com QR' },
+]
+
+/** O app de ponto, com os selos das lojas: a marcação é no celular, o espelho fica no Portal do Colaborador. */
+function NatPonto() {
+  return (
+    <Section tone="white" id="natponto" className="pb-14 pt-0 sm:pb-16 lg:pb-20">
+      <div className="container">
+        <Reveal>
+          <div className="on-dark relative overflow-hidden rounded-[32px] bg-brand-gradient text-white shadow-glow">
+            <LogoOutline strokeWidth={1} className="absolute -left-24 -top-32 h-[420px] w-[420px] -rotate-12 text-white/[0.08]" />
+            <div className="absolute inset-0 bg-[radial-gradient(50%_80%_at_85%_100%,rgba(27,18,56,0.45),transparent_70%)]" aria-hidden />
+            <div className="relative grid gap-8 px-7 pt-8 sm:px-10 sm:pt-10 lg:grid-cols-[minmax(0,1fr)_320px] lg:items-end lg:gap-12 lg:px-12 lg:pt-12">
+              <div className="pb-8 sm:pb-10 lg:pb-12">
+                <div className="flex items-center gap-3">
+                  <NatPontoIcon className="h-11 w-11" />
+                  <Eyebrow tone="white" trail={false}>
+                    NatPonto · App de ponto
+                  </Eyebrow>
+                </div>
+                <h2 className="mt-5 text-[1.75rem] font-extrabold leading-[1.08] sm:text-[2.1rem]">O ponto é pelo celular.</h2>
+                <p className="mt-3 max-w-xl text-[15px] leading-relaxed text-white/85 sm:text-base">
+                  A marcação é no app NatPonto, com reconhecimento facial e geolocalização. Baixe o app, entre com o acesso liberado pelo RH da sua empresa e marque o
+                  ponto. O espelho e os ajustes ficam no Portal do Colaborador.
+                </p>
+                <ul className="mt-5 flex flex-wrap gap-2" aria-label="O que o app faz">
+                  {natPontoPoints.map(({ icon: Icon, text }) => (
+                    <li
+                      key={text}
+                      className="inline-flex items-center gap-1.5 rounded-full border border-white/20 bg-white/10 px-3 py-1 text-[12.5px] font-semibold text-white/90"
+                    >
+                      <Icon className="h-3.5 w-3.5 text-[#F3C9DA]" strokeWidth={2} /> {text}
+                    </li>
+                  ))}
+                </ul>
+                <StoreBadges className="mt-7" />
+              </div>
+              {/* o app, saindo pela borda de baixo do cartão */}
+              <div className="relative mx-auto hidden h-[300px] w-[260px] overflow-hidden lg:block" aria-hidden>
+                <div className="absolute inset-x-0 top-0">
+                  <ScaledFrame width={NATPONTO_SIZE.width} height={NATPONTO_SIZE.height} className="w-full">
+                    <NatPontoPhone screen="home" />
+                  </ScaledFrame>
+                </div>
+              </div>
+            </div>
+          </div>
+        </Reveal>
+      </div>
+    </Section>
+  )
+}
+
 /* ---------------- ajuda ---------------- */
 
 function Help({ client, env }: { client: PortalClient; env: PortalEnv }) {
@@ -497,7 +587,11 @@ function Help({ client, env }: { client: PortalClient; env: PortalEnv }) {
   return (
     <Section tone="off" id="ajuda" className="py-14 sm:py-16 lg:py-20">
       <div className="container">
-        <SectionHeader eyebrow="Precisa de ajuda?" title="Antes de abrir um chamado." lead="O acesso é criado pela sua empresa. Os problemas mais comuns se resolvem em um minuto." />
+        <SectionHeader
+          eyebrow="Precisa de ajuda?"
+          title="Antes de abrir um chamado."
+          lead="O acesso é criado pela sua empresa. Os problemas mais comuns se resolvem em um minuto."
+        />
         <Stagger className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4" stagger={0.08}>
           {items.map((item) => (
             <StaggerItem key={item.title} className="h-full">
@@ -517,46 +611,46 @@ function Help({ client, env }: { client: PortalClient; env: PortalEnv }) {
           ))}
         </Stagger>
 
-        <div className="mt-6 grid gap-5 lg:grid-cols-2">
-          <Reveal>
-            <div className="flex h-full items-center gap-5 rounded-2xl border border-brand-mist bg-white p-6 shadow-soft">
-              <img src={iconNatPonto} alt="" width={72} height={72} className="h-[72px] w-[72px] shrink-0" draggable={false} />
-              <div>
-                <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-brand-purple">NatPonto</p>
-                <h3 className="mt-1 text-[17px] font-extrabold text-brand-ink">O ponto é pelo celular.</h3>
-                <p className="mt-1.5 text-[14px] leading-relaxed text-brand-graphite">
-                  A marcação é no app NatPonto, com reconhecimento facial. O RH da sua empresa libera o seu acesso; o espelho fica no Portal do Colaborador.
-                </p>
-              </div>
+        <Reveal className="mt-6">
+          <div className="flex flex-col gap-5 rounded-2xl border border-brand-mist bg-white p-6 shadow-soft sm:flex-row sm:items-center">
+            <span className="grid h-[64px] w-[64px] shrink-0 place-items-center rounded-2xl bg-brand-gradient">
+              <ShieldCheck className="h-8 w-8 text-white" strokeWidth={1.8} />
+            </span>
+            <div>
+              <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-brand-purple">Segurança</p>
+              <h3 className="mt-1 text-[17px] font-extrabold text-brand-ink">Seus dados, protegidos.</h3>
+              <p className="mt-1.5 text-[14px] leading-relaxed text-brand-graphite">
+                Servidores dedicados na Oracle Cloud, com contingência, criptografia e acesso por perfil. Nunca compartilhe sua senha.{' '}
+                <Link to={paths.security} className="font-bold text-brand-purple underline-offset-4 hover:underline">
+                  Como cuidamos da segurança
+                </Link>
+              </p>
             </div>
-          </Reveal>
-          <Reveal delay={0.1}>
-            <div className="on-dark flex h-full items-center gap-5 rounded-2xl bg-brand-gradient p-6 text-white shadow-glow">
-              <span className="grid h-[72px] w-[72px] shrink-0 place-items-center rounded-2xl border border-white/20 bg-white/10">
-                <ShieldCheck className="h-8 w-8 text-[#F3C9DA]" strokeWidth={1.8} />
-              </span>
-              <div>
-                <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[#E4A9C4]">Segurança</p>
-                <h3 className="mt-1 text-[17px] font-extrabold">Seus dados, protegidos.</h3>
-                <p className="mt-1.5 text-[14px] leading-relaxed text-white/85">
-                  Servidores dedicados na Oracle Cloud, com contingência, criptografia e acesso por perfil. Nunca compartilhe sua senha.{' '}
-                  <Link to={paths.security} className="font-bold text-white underline-offset-4 hover:underline">
-                    Como cuidamos da segurança
-                  </Link>
-                </p>
-              </div>
-            </div>
-          </Reveal>
-        </div>
+          </div>
+        </Reveal>
       </div>
     </Section>
   )
 }
 
-/* ---------------- ambiente não encontrado ---------------- */
+/* ---------------- carregando e ambiente não encontrado ---------------- */
+
+/** Enquanto o cadastro responde: a moldura escura no lugar, sem texto para não piscar. */
+function HubLoading({ env }: { env: PortalEnv }) {
+  return (
+    <div className="min-h-screen bg-brand-off-white" aria-busy="true" aria-live="polite">
+      <header className={cn('on-dark border-b border-white/10 text-white', env === 'dev' ? 'bg-[#1B1238]' : 'bg-brand-blue')}>
+        <div className="container flex h-16 items-center">
+          <Logo variant="horizontal" tone="white" decorative className="h-8 w-auto" />
+        </div>
+      </header>
+      <div className="on-dark h-[360px] bg-brand-blue" />
+    </div>
+  )
+}
 
 function NotFound({ slug, env }: { slug: string; env: PortalEnv }) {
-  const known = Object.values(portalClients)
+  const known = usePortalClients()
   return (
     <PageTransition>
       <header className="on-dark border-b border-white/10 bg-brand-blue text-white">
@@ -571,12 +665,16 @@ function NotFound({ slug, env }: { slug: string; env: PortalEnv }) {
           <Eyebrow>Portais Natcorp{env === 'dev' ? ' · Homologação' : ''}</Eyebrow>
           <h1 className="mt-5 text-[2rem] font-extrabold leading-tight text-brand-ink sm:text-4xl">Não encontramos o ambiente "{slug}".</h1>
           <p className="mt-4 text-[16px] leading-relaxed text-brand-graphite">
-            Cada empresa tem o próprio endereço, no formato natcorp.com.br/portais/<b>nome-da-empresa</b>. Confira o endereço que o RH da sua empresa enviou ou escolha abaixo.
+            Cada empresa tem o próprio endereço, no formato natcorp.com.br/portais/<b>nome-da-empresa</b>. Confira o endereço que o RH da sua empresa enviou ou escolha
+            abaixo.
           </p>
           <ul className="mt-8 flex flex-wrap gap-2">
             {known.map((c) => (
               <li key={c.slug}>
-                <Link to={hubPath(c.slug, env)} className="inline-flex items-center gap-1.5 rounded-full border border-brand-mist bg-white px-4 py-2 text-[13.5px] font-bold text-brand-purple shadow-soft hover:border-brand-purple/40">
+                <Link
+                  to={hubPath(c.slug, env)}
+                  className="inline-flex items-center gap-1.5 rounded-full border border-brand-mist bg-white px-4 py-2 text-[13.5px] font-bold text-brand-purple shadow-soft hover:border-brand-purple/40"
+                >
                   {c.name} <ArrowRight className="h-3.5 w-3.5" />
                 </Link>
               </li>
@@ -585,29 +683,5 @@ function NotFound({ slug, env }: { slug: string; env: PortalEnv }) {
         </div>
       </Section>
     </PageTransition>
-  )
-}
-
-/* ---------------- grafismo ---------------- */
-
-/** O símbolo da Natcorp em contorno, desenhando-se na entrada. */
-function ModuleDraw({ reduced, className, color }: { reduced: boolean; className?: string; color: string }) {
-  return (
-    <svg viewBox={`0 0 ${SYMBOL_BOX} ${SYMBOL_BOX}`} className={cn('block', className)} aria-hidden focusable="false">
-      {MODULES.map((d, i) => (
-        <m.path
-          key={i}
-          d={d}
-          fill="none"
-          stroke={color}
-          strokeWidth={1.4}
-          strokeOpacity={0.28}
-          vectorEffect="non-scaling-stroke"
-          initial={reduced ? false : { pathLength: 0, opacity: 0 }}
-          animate={{ pathLength: 1, opacity: 1 }}
-          transition={{ duration: 1.6, ease: EASE, delay: 0.2 + i * 0.12 }}
-        />
-      ))}
-    </svg>
   )
 }

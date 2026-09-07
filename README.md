@@ -44,7 +44,8 @@ npm run lint     # oxlint
 | `/perguntas-frequentes` | Todas as perguntas frequentes, gerais e para grupos, com atalhos para as páginas que aprofundam (a seção de grupos leva a `/estruturas`) |
 | `/modelo-comercial` | Modular, em nuvem e pelo número de colaboradores: os três pilares, histórico completo na implantação, contabilização integrada ao ERP, diferenciais frente a outros sistemas, comparativo e como funciona a contratação |
 | `/portais/natcorp/` | Página estática de acesso aos portais do cliente (gerada em `public/portais/<cliente>/` por `scripts/build-portais.mjs` a partir de `src/content/clientPortals.json`): Gestor, Operador, Colaborador, Cadastro de Currículo, Assinatura Eletrônica e Chamado, com "continuar de onde parou" e ajuda para entrar. Autônoma, pode ser copiada para o servidor atual |
-| `/portais/:cliente` e `/portais/dev/:cliente` | Porta de entrada dos portais no site novo (React): abertura baixa com saudação e acesso rápido, logotipo do cliente, cartões dos portais do sistema (Colaborador, Gestor, Operador) com os personagens da jornada, aplicativos e serviços (Candidato, NatDocs e Chamado, este só para o RH), ajuda, NatPonto e segurança. Sem o menu de marketing e sem a abertura animada. Clientes e o caminho do ambiente no APEX (rh, natrh, hc, hcm, cloud) em `src/content/portals.ts`; logotipos em `src/assets/portals/logos/<slug>.svg`. A rota `dev/` é a base de homologação, com faixa e identidade âmbar |
+| `/portais/:cliente` e `/portais/dev/:cliente` | Porta de entrada dos portais no site novo (React): abertura baixa com saudação, acesso rápido e o logotipo do cliente envolvido pelos losangos em luz do hero da home (módulo desenhando-se, brilho na borda, linhas de fluxo); cartões dos portais do sistema (Colaborador, Gestor, Operador) com os personagens da jornada; aplicativos e serviços (Candidato, NatDocs e Chamado, este só para o RH); seção do NatPonto com os selos da App Store e do Google Play; ajuda e segurança. Sem o menu de marketing e sem a abertura animada. Os clientes e os endereços de cada portal (produção e homologação) vêm do cadastro no Supabase (tabela `portal_clients`), com `src/content/portals.ts` como reserva sem banco. A rota `dev/` é a base de homologação, com faixa e identidade âmbar |
+| `/admin/portais` | Administração do cadastro dos portais, só para o administrador (login por e-mail e senha no Supabase; só e-mails da tabela `portal_admins` conseguem criar usuário e alterar). Nome, slug, código base do APEX, logotipo (balde `portal-logos`), ativo e os seis endereços em produção e em homologação, com preenchimento pelo padrão do servidor. Sem `VITE_SUPABASE_URL` e `VITE_SUPABASE_PUBLISHABLE_KEY` abre em prévia, sem salvar. Fora do menu, do sitemap e dos robôs |
 | `/apresentacao` | Apresentação executiva em tela cheia (fora do menu e do sitemap): 24 slides do deck comercial, com navegação por teclado, índice, notas do apresentador, tela cheia e exportação em PDF. `?s=N` abre direto no slide N |
 | `/jornada-da-contratacao` | Jornada do colaborador em 24 etapas e 4 fases, em uma indústria fictícia. Duas visões (`?modo=pratico` alterna): a história completa, com personagens 3D, mini mockups e o mapa que acompanha a rolagem, e a visão prática, um diagrama por raias (gestor, candidato, colaborador, RH, SESMT, sistema). Fecha com o diagrama animado dos módulos se integrando |
 | qualquer outra | Página 404 |
@@ -73,6 +74,19 @@ gera `public/portais/<cliente>/index.html` com CSS e JS embutidos, favicon em da
 depender do site novo. A página guarda o último portal usado no navegador e oferece "continuar de onde parou"; portais
 sem URL aparecem como "Em configuração" e apontam para a ajuda. As URLs dos portais devem ser confirmadas com o time
 antes de publicar (o campo `confirmar` marca as que vieram por dedução).
+
+### Cadastro dos portais (Supabase)
+
+A página React `/portais/<cliente>` e a administração `/admin/portais` usam um projeto Supabase. A migração
+`supabase/migrations/20260907120000_portal_clients.sql` cria a tabela `portal_clients` (slug, nome, código, servidor do
+APEX, logotipo, `urls_prod` e `urls_dev` em JSON por aplicativo, ativo), a tabela `portal_admins` (e-mails que podem
+editar), a função `is_portal_admin()`, as políticas de segurança por linha (leitura pública; escrita só para
+administradores), o gatilho que impede a criação de usuário fora da lista de administradores e o balde público
+`portal-logos`. Ela também semeia os sete clientes de hoje com os endereços atuais. Para ligar: aplique a migração,
+coloque `VITE_SUPABASE_URL` e `VITE_SUPABASE_PUBLISHABLE_KEY` no ambiente (Vercel e `.env.local`) e, em
+Authentication → URL Configuration, informe o domínio do site como Site URL e `https://<domínio>/admin/portais` nos
+Redirect URLs (para os e-mails de confirmação e de senha nova voltarem à administração). O primeiro acesso é feito na
+própria página ("Primeiro acesso"): o e-mail precisa estar em `portal_admins`.
 
 ## Apresentação executiva
 

@@ -12,6 +12,7 @@ import { LogoOutline } from '@/components/brand/Logo'
 import { NatPontoIcon } from '@/components/brand/NatPontoIcon'
 import { Button } from '@/components/ui/button'
 import { BenefitsGrid, FeaturesGrid, PersonasGrid, RelatedModules } from '@/components/modules/blocks'
+import { StoreBadges } from '@/components/brand/StoreBadges'
 import { NATPONTO_SIZE } from '@/components/mockups/natponto/NatPontoFrame'
 import { NatPontoPhone, type NatPontoScreen } from '@/components/mockups/natponto/screens'
 import { getGroup, getModuleEntry, modulePath, type ModuleEntry } from '@/content/modulePages'
@@ -95,6 +96,9 @@ export default function NatPontoModulePage({ entry, page }: { entry: ModuleEntry
                 <Button asChild size="lg" variant="secondary">
                   <Link to="#jornada">Ver o app tela a tela</Link>
                 </Button>
+              </Reveal>
+              <Reveal delay={0.4} className="mt-5">
+                <StoreBadges tone="light" />
               </Reveal>
               <Stagger className="mt-10 grid grid-cols-2 gap-x-6 gap-y-6 sm:grid-cols-3" delay={0.4}>
                 {page.highlights.map((h) => (

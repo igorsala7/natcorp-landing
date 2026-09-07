@@ -30,6 +30,7 @@ const NotFoundPage = lazy(() => import('@/pages/NotFoundPage'))
 const MotionPage = lazy(() => import('@/pages/MotionPage'))
 const PresentationPage = lazy(() => import('@/pages/PresentationPage'))
 const PortalHubPage = lazy(() => import('@/pages/PortalHubPage'))
+const PortalAdminPage = lazy(() => import('@/pages/PortalAdminPage'))
 
 /** HashRouter apenas para prévias hospedadas fora da raiz de um domínio (VITE_ROUTER=hash). */
 const Router = import.meta.env.VITE_ROUTER === 'hash' ? HashRouter : BrowserRouter
@@ -148,6 +149,15 @@ function AppRoutes() {
             </Suspense>
           }
         />
+        {/* Administração do cadastro dos portais (só para o administrador; fora do menu e do sitemap). */}
+        <Route
+          path={paths.portalAdmin}
+          element={
+            <Suspense fallback={<PageFallback />}>
+              <PortalAdminPage />
+            </Suspense>
+          }
+        />
         <Route
           path="/jornada-da-contratacao"
           element={
@@ -171,14 +181,16 @@ function AppRoutes() {
 
 /**
  * A moldura do site (barra, rodapé, rolagem suave): fica de fora nas páginas em tela cheia, como a apresentação.
- * A porta de entrada dos portais (/portais/<cliente>) tem cabeçalho e rodapé próprios, sem o menu de marketing.
+ * A porta de entrada dos portais (/portais/<cliente>) e a administração (/admin/portais) têm cabeçalho e rodapé
+ * próprios, sem o menu de marketing.
  */
 function Shell() {
   const { pathname } = useLocation()
   const chromeless = pathname === paths.presentation
   const hubProd = useMatch('/portais/:cliente')
   const hubDev = useMatch('/portais/dev/:cliente')
-  const hub = hubProd !== null || hubDev !== null
+  const admin = useMatch('/admin/*')
+  const hub = hubProd !== null || hubDev !== null || admin !== null
   return (
     <>
       {!chromeless && <SmoothScroll />}

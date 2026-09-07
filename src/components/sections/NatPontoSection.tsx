@@ -6,6 +6,7 @@ import { ScaledFrame } from '@/components/motion/ScaledFrame'
 import { NATPONTO_SIZE } from '@/components/mockups/natponto/NatPontoFrame'
 import { NatPontoPhone, type NatPontoScreen } from '@/components/mockups/natponto/screens'
 import { NatPontoIcon } from '@/components/brand/NatPontoIcon'
+import { StoreBadges } from '@/components/brand/StoreBadges'
 
 const screens: { id: NatPontoScreen; caption: string }[] = [
   { id: 'home', caption: 'Relógio, escala do dia e um toque para registrar' },
@@ -56,7 +57,11 @@ export function NatPontoSection() {
           ))}
         </Stagger>
 
-        <Reveal delay={0.2} className="mt-10 flex justify-center">
+        <Reveal delay={0.15} className="mt-10 flex flex-col items-center gap-3">
+          <p className="text-[13px] font-semibold uppercase tracking-[0.14em] text-brand-purple">Baixe o app</p>
+          <StoreBadges tone="light" className="justify-center" />
+        </Reveal>
+        <Reveal delay={0.2} className="mt-6 flex justify-center">
           <Link to="/modulos/natponto" className="group inline-flex items-center gap-3 rounded-full border border-brand-mist bg-white py-2 pl-2 pr-5 text-[15px] font-semibold text-brand-purple shadow-soft transition-colors hover:border-brand-purple/40">
             <NatPontoIcon className="h-8 w-8" />
             Conhecer o NatPonto em detalhes

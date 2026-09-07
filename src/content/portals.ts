@@ -2,21 +2,25 @@
  * Portais que os clientes usam para entrar no sistema (a página /portais/<cliente> e, para a base de
  * homologação, /portais/dev/<cliente>).
  *
- * Cada cliente tem o próprio ambiente no APEX. A URL de um portal é:
+ * O cadastro dos clientes vive no banco (tabela portal_clients, editada em /admin/portais). Cada cliente
+ * guarda o endereço de cada portal, em produção e em homologação, porque a estrutura dessas URLs é a do
+ * servidor de cada cliente e não pode ser alterada pelo site. Quando um endereço não foi informado, vale
+ * o padrão do APEX:
  *   https://www.natcorpbr.com.br/apex/<ambiente>/f?p=<PREFIXO>_<CÓDIGO DO CLIENTE>
- * O <ambiente> muda conforme o servidor do cliente (rh, natrh, hc, hcm, cloud) e é sempre "dev" na
- * base de homologação. Ex.: PO_NATCORP em /apex/rh/, PO_LEADEC em /apex/natrh/, PO_STEFANINI em /apex/hcm/.
+ * O <ambiente> muda conforme o servidor do cliente (rh, natrh, hc, hcm, cloud) e é "dev" na homologação.
  *
- * O logotipo do cliente entra pelo nome do arquivo em src/assets/portals/logos/<slug>.(svg|png|webp).
+ * A lista `portalClients` abaixo é a reserva: usada quando o banco não está configurado (prévia local,
+ * artefato) ou não responde.
  */
 
 export const APEX_HOST = 'https://www.natcorpbr.com.br/apex/'
 
 export type PortalEnv = 'prod' | 'dev'
 export type PortalKind = 'portal' | 'service'
+export type PortalKey = 'colaborador' | 'gestor' | 'operador' | 'candidato' | 'natdocs' | 'chamado'
 
 export interface PortalApp {
-  key: 'colaborador' | 'gestor' | 'operador' | 'candidato' | 'natdocs' | 'chamado'
+  key: PortalKey
   name: string
   /** Nome curto, para botões e listas. */
   short: string
@@ -97,39 +101,82 @@ export const portalApps: PortalApp[] = [
   },
 ]
 
+export const portalKeys = portalApps.map((a) => a.key)
+
+/** Endereços dos portais de um ambiente, por aplicativo. Um aplicativo sem endereço usa o padrão do APEX. */
+export type PortalUrls = Partial<Record<PortalKey, string>>
+
 export interface PortalClient {
+  /** Trecho da URL da página: /portais/<slug>. */
   slug: string
   name: string
-  /** Ambiente do cliente no APEX de produção: rh, natrh, hc, hcm, cloud. */
+  /** Código do cliente no APEX (o que vem depois do prefixo em f?p=PO_<CÓDIGO>). */
+  code: string
+  /** Ambiente do cliente no APEX de produção (rh, natrh, hc, hcm, cloud), para montar o endereço padrão. */
   apex: string
-  /** Código usado no APEX quando difere do slug (opcional). */
-  code?: string
+  /** Logotipo hospedado (cadastro). Sem ele, vale o arquivo em src/assets/portals/logos/<slug>. */
+  logoUrl?: string
+  /** Endereços informados no cadastro, por ambiente. */
+  urls?: { prod?: PortalUrls; dev?: PortalUrls }
+  active?: boolean
 }
 
-/** Clientes com página de acesso. O slug é o trecho da URL (/portais/<slug>). */
+/** Clientes de reserva, usados sem o banco. O slug é o trecho da URL (/portais/<slug>). */
 export const portalClients: Record<string, PortalClient> = {
-  natcorp: { slug: 'natcorp', name: 'Natcorp', apex: 'rh' },
-  incor: { slug: 'incor', name: 'Incor', apex: 'rh' },
-  redeflex: { slug: 'redeflex', name: 'Redeflex', apex: 'rh' },
-  leadec: { slug: 'leadec', name: 'Leadec', apex: 'natrh' },
-  saude: { slug: 'saude', name: 'Saúde', apex: 'hc' },
-  stefanini: { slug: 'stefanini', name: 'Stefanini', apex: 'hcm' },
-  realfood: { slug: 'realfood', name: 'RealFood', apex: 'cloud' },
+  natcorp: { slug: 'natcorp', name: 'Natcorp', code: 'NATCORP', apex: 'rh' },
+  incor: { slug: 'incor', name: 'Incor', code: 'INCOR', apex: 'rh' },
+  redeflex: { slug: 'redeflex', name: 'Redeflex', code: 'REDEFLEX', apex: 'rh' },
+  leadec: { slug: 'leadec', name: 'Leadec', code: 'LEADEC', apex: 'natrh' },
+  saude: { slug: 'saude', name: 'Saúde', code: 'SAUDE', apex: 'hc' },
+  stefanini: { slug: 'stefanini', name: 'Stefanini', code: 'STEFANINI', apex: 'hcm' },
+  realfood: { slug: 'realfood', name: 'RealFood', code: 'REALFOOD', apex: 'cloud' },
 }
 
-/** Resolve o cliente a partir do trecho da URL; null quando não há ambiente com esse nome. */
+/** Servidores conhecidos do APEX de produção (para o preenchimento automático no cadastro). */
+export const apexServers = ['rh', 'natrh', 'hc', 'hcm', 'cloud'] as const
+
+/** Resolve o cliente de reserva a partir do trecho da URL; null quando não há ambiente com esse nome. */
 export function resolveClient(raw: string | undefined): PortalClient | null {
-  const slug = (raw ?? '').toLowerCase()
+  const slug = normalizeSlug(raw ?? '')
   return portalClients[slug] ?? null
 }
 
+export const normalizeSlug = (raw: string) =>
+  raw
+    .trim()
+    .toLowerCase()
+    .replace(/^\/+|\/+$/g, '')
+
 /** Caminho do ambiente no APEX: o do cliente em produção, "dev" na homologação. */
-export function apexPath(client: PortalClient, env: PortalEnv): string {
-  return env === 'dev' ? 'dev' : client.apex
+export function apexPath(client: Pick<PortalClient, 'apex'>, env: PortalEnv): string {
+  return env === 'dev' ? 'dev' : client.apex || 'rh'
 }
 
+/** Endereço padrão do APEX para um aplicativo, ambiente e cliente. */
+export function defaultPortalUrl(app: Pick<PortalApp, 'prefix'>, client: Pick<PortalClient, 'apex' | 'code' | 'slug'>, env: PortalEnv = 'prod'): string {
+  const code = (client.code || client.slug).toUpperCase()
+  return `${APEX_HOST}${apexPath(client, env)}/f?p=${app.prefix}_${code}`
+}
+
+/** Endereço padrão dos seis aplicativos, para preencher um cadastro. */
+export function defaultPortalUrls(client: Pick<PortalClient, 'apex' | 'code' | 'slug'>, env: PortalEnv): Record<PortalKey, string> {
+  return Object.fromEntries(portalApps.map((app) => [app.key, defaultPortalUrl(app, client, env)])) as Record<PortalKey, string>
+}
+
+/** Endereço de um portal: o informado no cadastro ou, na falta dele, o padrão do APEX. */
 export function portalUrl(app: PortalApp, client: PortalClient, env: PortalEnv = 'prod'): string {
-  return `${APEX_HOST}${apexPath(client, env)}/f?p=${app.prefix}_${(client.code ?? client.slug).toUpperCase()}`
+  const custom = client.urls?.[env]?.[app.key]?.trim()
+  return custom || defaultPortalUrl(app, client, env)
+}
+
+/** Domínio onde os portais abrem (pelo Portal do Operador), para o rodapé. */
+export function portalHost(client: PortalClient, env: PortalEnv): string {
+  const operador = portalApps.find((a) => a.key === 'operador')!
+  try {
+    return new URL(portalUrl(operador, client, env)).host.replace(/^www\./, '')
+  } catch {
+    return 'natcorpbr.com.br'
+  }
 }
 
 export const hubPath = (slug = 'natcorp', env: PortalEnv = 'prod') => (env === 'dev' ? `/portais/dev/${slug}` : `/portais/${slug}`)
@@ -143,14 +190,15 @@ export function greeting(date = new Date()): string {
   return 'Boa noite'
 }
 
-/* Logotipos dos clientes, descobertos pelo nome do arquivo (ver cabeçalho). */
+/* Logotipos dos clientes em arquivo, descobertos pelo nome (reserva para o logotipo do cadastro). */
 const logoFiles = import.meta.glob<{ default: string }>('../assets/portals/logos/*.{svg,png,webp}', { eager: true })
 
-/** Logotipo do cliente, quando existe o arquivo src/assets/portals/logos/<slug>.(svg|png|webp). */
-export function clientLogo(slug: string): string | undefined {
+/** Logotipo do cliente: o do cadastro ou o arquivo src/assets/portals/logos/<slug>.(svg|png|webp). */
+export function clientLogo(client: Pick<PortalClient, 'slug' | 'logoUrl'>): string | undefined {
+  if (client.logoUrl) return client.logoUrl
   for (const [path, mod] of Object.entries(logoFiles)) {
     const file = path.split('/').pop() ?? ''
-    if (file.replace(/\.(svg|png|webp)$/, '') === slug) return mod.default
+    if (file.replace(/\.(svg|png|webp)$/, '') === client.slug) return mod.default
   }
   return undefined
 }

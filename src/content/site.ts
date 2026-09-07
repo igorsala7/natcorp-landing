@@ -55,6 +55,14 @@ export const paths = {
   motion: '/motion',
   /** Apresentação executiva em tela cheia (deck comercial), fora do menu e do sitemap. */
   presentation: '/apresentacao',
+  /** Administração dos portais dos clientes (só para o administrador; fora do menu e do sitemap). */
+  portalAdmin: '/admin/portais',
+} as const
+
+/** O app NatPonto nas lojas. */
+export const natPontoStores = {
+  apple: 'https://apps.apple.com/br/app/natponto/id6474680680',
+  google: 'https://play.google.com/store/apps/details?id=br.com.natcorp.natponto',
 } as const
 
 export interface NavLink {
