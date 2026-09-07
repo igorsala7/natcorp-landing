@@ -1,0 +1,76 @@
+{
+  "_comentario": "Portais de acesso por cliente (/portais/<slug>/). Gerado por scripts/build-portais.mjs em public/portais/<slug>/. As URLs marcadas com 'confirmar' vieram por dedução das páginas APEX e precisam ser validadas antes de publicar.",
+  "natcorp": {
+    "name": "Natcorp",
+    "titulo": "Acesse os portais",
+    "subtitulo": "Escolha o seu portal e entre com o usuário e a senha fornecidos pela sua empresa.",
+    "portais": [
+      {
+        "id": "gestor",
+        "titulo": "Gestor",
+        "nome": "Portal do Gestor",
+        "descricao": "Aprovações, ponto, férias, avaliações e indicadores da sua equipe.",
+        "publico": "Para gestores",
+        "ilustracao": "requisicoes-com-workflow",
+        "url": "https://www.natcorpbr.com.br/apex/rh/f?p=PG_NATCORP:900",
+        "confirmar": true
+      },
+      {
+        "id": "operador",
+        "titulo": "Operador",
+        "nome": "Painel do Operador",
+        "descricao": "A operação do RH e do Departamento Pessoal: cadastros, folha, ponto e relatórios.",
+        "publico": "Para RH e DP",
+        "ilustracao": "administracao-de-pessoal",
+        "url": "https://www.natcorpbr.com.br/apex/rh/f?p=PO_NATCORP:900",
+        "confirmar": true
+      },
+      {
+        "id": "colaborador",
+        "titulo": "Colaborador",
+        "nome": "Portal do Colaborador",
+        "descricao": "Holerite, informe de rendimentos, espelho de ponto, férias, benefícios e documentos.",
+        "publico": "Para colaboradores",
+        "ilustracao": "portais",
+        "url": "https://www.natcorpbr.com.br/apex/rh/f?p=PC_NATCORP:900",
+        "confirmar": true
+      },
+      {
+        "id": "curriculo",
+        "titulo": "Cadastro de Currículo",
+        "nome": "Cadastro de Currículo",
+        "descricao": "Cadastre o seu currículo, candidate-se às vagas abertas e acompanhe o processo seletivo.",
+        "publico": "Para candidatos",
+        "ilustracao": "quadro-de-vagas",
+        "url": "",
+        "confirmar": true
+      },
+      {
+        "id": "assinatura",
+        "titulo": "Assinatura Eletrônica",
+        "nome": "Assinatura Eletrônica",
+        "descricao": "Assine contratos, termos e documentos do RH com validade jurídica, pelo celular ou computador.",
+        "publico": "Para todos",
+        "ilustracao": "assinatura-eletronica",
+        "url": "",
+        "confirmar": true
+      },
+      {
+        "id": "chamado",
+        "titulo": "Chamado",
+        "nome": "Chamado",
+        "descricao": "Abra um chamado para o RH ou para o suporte e acompanhe a resposta com prazo.",
+        "publico": "Para todos",
+        "ilustracao": "chamado-interno",
+        "url": "",
+        "confirmar": true
+      }
+    ],
+    "ajuda": {
+      "primeiroAcesso": "O usuário e a senha inicial são fornecidos pelo RH da sua empresa. Se ainda não recebeu, fale com o RH ou abra um chamado.",
+      "senha": "Na tela de entrada de cada portal, use \"Esqueci minha senha\" para receber o link de redefinição no e-mail cadastrado, ou \"Alterar senha\" se ainda souber a atual.",
+      "suporte": "Atendimento em dias úteis, das 8h às 18h."
+    },
+    "termosUrl": "https://www.natcorp.com.br/termos-de-uso/"
+  }
+}

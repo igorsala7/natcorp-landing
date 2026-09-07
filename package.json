@@ -5,12 +5,13 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "prebuild": "node scripts/generate-sitemap.mjs",
+    "prebuild": "node scripts/generate-sitemap.mjs && node scripts/build-portais.mjs",
     "build": "tsc -b && vite build",
     "lint": "oxlint",
     "preview": "vite preview",
     "sitemap": "node scripts/generate-sitemap.mjs",
-    "export:deck": "node scripts/export-presentation.mjs"
+    "export:deck": "node scripts/export-presentation.mjs",
+    "portais": "node scripts/build-portais.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.9.1",

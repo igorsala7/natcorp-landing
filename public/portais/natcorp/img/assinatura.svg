@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800" viewBox="0 0 1200 800" role="img" aria-label="Ilustração do módulo Assinatura Eletrônica: Documentos de RH assinados com validade jurídica." font-family="Manrope, Arial, sans-serif">
+  <defs>
+    <linearGradient id="il-assinatura-eletronica-grad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#9A408A"/>
+      <stop offset="0.5" stop-color="#511C76"/>
+      <stop offset="1" stop-color="#2C1A63"/>
+    </linearGradient>
+    <clipPath id="il-assinatura-eletronica-clip"><rect width="1200" height="800"/></clipPath>
+  </defs>
+  <rect width="1200" height="800" fill="#FFFFFF"/>
+  <g clip-path="url(#il-assinatura-eletronica-clip)">
+    <g fill="none" stroke="#511C76" stroke-opacity="0.22" stroke-width="3">
+      <path d="M1322.51 -753.33 L1565.19 -510.65 C1599.71 -476.13 1599.71 -420.16 1565.19 -385.63 L1322.51 -142.95 C1287.98 -108.43 1232.02 -108.43 1197.49 -142.95 L954.81 -385.63 C920.29 -420.16 920.29 -476.13 954.81 -510.65 L1197.49 -753.33 C1232.02 -787.85 1287.98 -787.85 1322.51 -753.33 Z"/>
+      <path d="M1730.65 -345.19 L1973.33 -102.51 C2007.85 -67.98 2007.85 -12.02 1973.33 22.51 L1730.65 265.19 C1696.13 299.71 1640.16 299.71 1605.63 265.19 L1362.95 22.51 C1328.43 -12.02 1328.43 -67.98 1362.95 -102.51 L1605.63 -345.19 C1640.16 -379.71 1696.13 -379.71 1730.65 -345.19 Z"/>
+      <path d="M914.37 -345.19 L1157.05 -102.51 C1191.57 -67.98 1191.57 -12.02 1157.05 22.51 L914.37 265.19 C879.84 299.71 823.87 299.71 789.35 265.19 L546.67 22.51 C512.15 -12.02 512.15 -67.98 546.67 -102.51 L789.35 -345.19 C823.87 -379.71 879.84 -379.71 914.37 -345.19 Z"/>
+      <path d="M1322.51 62.95 L1565.19 305.63 C1599.71 340.16 1599.71 396.13 1565.19 430.65 L1322.51 673.33 C1287.98 707.85 1232.02 707.85 1197.49 673.33 L954.81 430.65 C920.29 396.13 920.29 340.16 954.81 305.63 L1197.49 62.95 C1232.02 28.43 1287.98 28.43 1322.51 62.95 Z"/>
+    </g>
+    <path d="M651.69 167.63 L852.37 368.31 C880.91 396.86 880.91 443.14 852.37 471.69 L651.69 672.37 C623.14 700.91 576.86 700.91 548.31 672.37 L347.63 471.69 C319.09 443.14 319.09 396.86 347.63 368.31 L548.31 167.63 C576.86 139.09 623.14 139.09 651.69 167.63 Z" fill="#E9E5F1"/>
+    <!-- Acompanhamento por status -->
+    <rect x="160" y="290" width="150" height="250" rx="18" fill="#FFFFFF" stroke="#E9E5F1" stroke-width="3"/>
+    <circle cx="200" cy="335" r="16" fill="#511C76"/><path d="M193.45 335.73 l4.36 4.36 l8.73 -9.45" fill="none" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+    <rect x="226" y="330" width="60" height="10" rx="5" fill="#1B1238"/>
+    <circle cx="200" cy="415" r="16" fill="#511C76"/><path d="M193.45 415.73 l4.36 4.36 l8.73 -9.45" fill="none" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+    <rect x="226" y="410" width="60" height="10" rx="5" fill="#1B1238"/>
+    <circle cx="200" cy="495" r="14" fill="#FFFFFF" stroke="#8E88A3" stroke-width="4"/>
+    <rect x="226" y="490" width="60" height="10" rx="5" fill="#8E88A3"/>
+    <!-- Documento -->
+    <path d="M358 140 H692 L740 188 V642 a18 18 0 0 1 -18 18 H358 a18 18 0 0 1 -18 -18 V158 a18 18 0 0 1 18 -18 Z" fill="#FFFFFF" stroke="#E9E5F1" stroke-width="3" stroke-linejoin="round"/>
+    <path d="M692 140 V188 H740" fill="none" stroke="#E9E5F1" stroke-width="3" stroke-linejoin="round"/>
+    <rect x="380" y="190" width="200" height="14" rx="7" fill="#1B1238"/>
+    <rect x="380" y="232" width="320" height="10" rx="5" fill="#E9E5F1"/>
+    <rect x="380" y="256" width="300" height="10" rx="5" fill="#E9E5F1"/>
+    <rect x="380" y="280" width="260" height="10" rx="5" fill="#E9E5F1"/>
+    <rect x="380" y="304" width="320" height="10" rx="5" fill="#E9E5F1"/>
+    <rect x="380" y="328" width="240" height="10" rx="5" fill="#E9E5F1"/>
+    <rect x="380" y="372" width="300" height="10" rx="5" fill="#E9E5F1"/>
+    <rect x="380" y="396" width="320" height="10" rx="5" fill="#E9E5F1"/>
+    <rect x="380" y="420" width="200" height="10" rx="5" fill="#E9E5F1"/>
+    <!-- Traço da assinatura -->
+    <rect x="380" y="600" width="210" height="3" fill="#E9E5F1"/>
+    <path d="M384 594 C392 556 404 538 416 546 C430 556 418 596 404 600 C392 604 396 580 420 574 C446 568 466 562 480 578 C490 590 500 574 516 566 C534 556 552 572 586 562" fill="none" stroke="#511C76" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+    <!-- Selo de validade -->
+    <path d="M669.52 533.52 L706.48 570.48 C711.74 575.74 711.74 584.26 706.48 589.52 L669.52 626.48 C664.26 631.74 655.74 631.74 650.48 626.48 L613.52 589.52 C608.26 584.26 608.26 575.74 613.52 570.48 L650.48 533.52 C655.74 528.26 664.26 528.26 669.52 533.52 Z" fill="none" stroke="#511C76" stroke-width="4"/>
+    <path d="M664.42 558.42 L681.58 575.58 C684.02 578.02 684.02 581.98 681.58 584.42 L664.42 601.58 C661.98 604.02 658.02 604.02 655.58 601.58 L638.42 584.42 C635.98 581.98 635.98 578.02 638.42 575.58 L655.58 558.42 C658.02 555.98 661.98 555.98 664.42 558.42 Z" fill="#C95788" />
+    <!-- Assinar no celular -->
+    <rect x="820" y="300" width="190" height="340" rx="32" fill="#2C1A63"/>
+    <rect x="830" y="310" width="170" height="320" rx="22" fill="#FFFFFF"/>
+    <path d="M864 330 H956 L984 358 V482 a18 18 0 0 1 -18 18 H864 a18 18 0 0 1 -18 -18 V348 a18 18 0 0 1 18 -18 Z" fill="#FFFFFF" stroke="#E9E5F1" stroke-width="3" stroke-linejoin="round"/>
+    <path d="M956 330 V358 H984" fill="none" stroke="#E9E5F1" stroke-width="3" stroke-linejoin="round"/>
+    <rect x="864" y="356" width="80" height="8" rx="4" fill="#E9E5F1"/>
+    <rect x="864" y="374" width="100" height="8" rx="4" fill="#E9E5F1"/>
+    <rect x="864" y="392" width="70" height="8" rx="4" fill="#E9E5F1"/>
+    <rect x="864" y="410" width="90" height="8" rx="4" fill="#E9E5F1"/>
+    <rect x="864" y="428" width="60" height="8" rx="4" fill="#E9E5F1"/>
+    <rect x="846" y="560" width="138" height="40" rx="20" fill="#511C76"/>
+    <text x="915" y="585.76" text-anchor="middle" font-size="16" font-weight="700" fill="#FFFFFF">Assinar</text>
+    <line x1="810" y1="470" x2="758" y2="470" stroke="#511C76" stroke-width="3" stroke-linecap="round"/>
+    <path d="M759.19 464.19 L763.81 468.81 C764.47 469.47 764.47 470.53 763.81 471.19 L759.19 475.81 C758.53 476.47 757.47 476.47 756.81 475.81 L752.19 471.19 C751.53 470.53 751.53 469.47 752.19 468.81 L756.81 464.19 C757.47 463.53 758.53 463.53 759.19 464.19 Z" fill="#511C76" />
+    <path d="M161.19 694.19 L165.81 698.81 C166.47 699.47 166.47 700.53 165.81 701.19 L161.19 705.81 C160.53 706.47 159.47 706.47 158.81 705.81 L154.19 701.19 C153.53 700.53 153.53 699.47 154.19 698.81 L158.81 694.19 C159.47 693.53 160.53 693.53 161.19 694.19 Z" fill="#511C76" fill-opacity="1"/>
+    <path d="M180.09 694.19 L184.71 698.81 C185.37 699.47 185.37 700.53 184.71 701.19 L180.09 705.81 C179.43 706.47 178.37 706.47 177.71 705.81 L173.09 701.19 C172.43 700.53 172.43 699.47 173.09 698.81 L177.71 694.19 C178.37 693.53 179.43 693.53 180.09 694.19 Z" fill="#511C76" fill-opacity="0.7"/>
+    <path d="M198.99 694.19 L203.61 698.81 C204.27 699.47 204.27 700.53 203.61 701.19 L198.99 705.81 C198.33 706.47 197.27 706.47 196.61 705.81 L191.99 701.19 C191.33 700.53 191.33 699.47 191.99 698.81 L196.61 694.19 C197.27 693.53 198.33 693.53 198.99 694.19 Z" fill="#511C76" fill-opacity="0.45"/>
+    <path d="M217.89 694.19 L222.51 698.81 C223.17 699.47 223.17 700.53 222.51 701.19 L217.89 705.81 C217.23 706.47 216.17 706.47 215.51 705.81 L210.89 701.19 C210.23 700.53 210.23 699.47 210.89 698.81 L215.51 694.19 C216.17 693.53 217.23 693.53 217.89 694.19 Z" fill="#511C76" fill-opacity="0.25"/>
+    <path d="M236.79 694.19 L241.41 698.81 C242.07 699.47 242.07 700.53 241.41 701.19 L236.79 705.81 C236.13 706.47 235.07 706.47 234.41 705.81 L229.79 701.19 C229.13 700.53 229.13 699.47 229.79 698.81 L234.41 694.19 C235.07 693.53 236.13 693.53 236.79 694.19 Z" fill="#511C76" fill-opacity="0.12"/>
+  </g>
+</svg>

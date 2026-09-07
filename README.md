@@ -43,6 +43,7 @@ npm run lint     # oxlint
 | `/estruturas/:slug` | Página por estrutura (empresa única, várias unidades, grupo com RH central, RH por unidade, equipes em clientes): como o RH costuma funcionar, dores e respostas, quem faz o quê, o fluxo animado do centro de serviços, os 31 módulos aplicados, o caminho para o CSC, personas e FAQ |
 | `/perguntas-frequentes` | Todas as perguntas frequentes, gerais e para grupos, com atalhos para as páginas que aprofundam (a seção de grupos leva a `/estruturas`) |
 | `/modelo-comercial` | Modular, em nuvem e pelo número de colaboradores: os três pilares, histórico completo na implantação, contabilização integrada ao ERP, diferenciais frente a outros sistemas, comparativo e como funciona a contratação |
+| `/portais/natcorp/` | Página estática de acesso aos portais do cliente (gerada em `public/portais/<cliente>/` por `scripts/build-portais.mjs` a partir de `src/content/clientPortals.json`): Gestor, Operador, Colaborador, Cadastro de Currículo, Assinatura Eletrônica e Chamado, com "continuar de onde parou" e ajuda para entrar. Autônoma, pode ser copiada para o servidor atual |
 | `/apresentacao` | Apresentação executiva em tela cheia (fora do menu e do sitemap): 24 slides do deck comercial, com navegação por teclado, índice, notas do apresentador, tela cheia e exportação em PDF. `?s=N` abre direto no slide N |
 | `/jornada-da-contratacao` | Jornada do colaborador em 24 etapas e 4 fases, em uma indústria fictícia. Duas visões (`?modo=pratico` alterna): a história completa, com personagens 3D, mini mockups e o mapa que acompanha a rolagem, e a visão prática, um diagrama por raias (gestor, candidato, colaborador, RH, SESMT, sistema). Fecha com o diagrama animado dos módulos se integrando |
 | qualquer outra | Página 404 |
@@ -60,6 +61,17 @@ depende de onde o WordPress vai continuar publicado.
 `npm run build` roda antes `scripts/generate-sitemap.mjs`, que gera `public/sitemap.xml` e `public/robots.txt`
 a partir dos registros em `src/content/modulePages`, `src/content/segments` e `src/content/structures` (use `VITE_SITE_URL`
 para o domínio final).
+
+## Portais de acesso dos clientes
+
+`/portais/<cliente>/` é a página que colaboradores, gestores e candidatos usam para entrar no sistema (a atual fica em
+`www.natcorp.com.br/portais/natcorp/`). Cada cliente é uma entrada em `src/content/clientPortals.json` (nome, título, os
+portais com descrição, público, ilustração e URL, textos de ajuda); `npm run portais` (também executado antes do build)
+gera `public/portais/<cliente>/index.html` com CSS e JS embutidos, favicon em data URI e as ilustrações de marca de
+`brand/modulos/ilustracoes` copiadas para `img/`. Por ser autônoma, a pasta pode ser copiada para o servidor atual sem
+depender do site novo. A página guarda o último portal usado no navegador e oferece "continuar de onde parou"; portais
+sem URL aparecem como "Em configuração" e apontam para a ajuda. As URLs dos portais devem ser confirmadas com o time
+antes de publicar (o campo `confirmar` marca as que vieram por dedução).
 
 ## Apresentação executiva
 
