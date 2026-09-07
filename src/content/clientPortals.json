@@ -1,5 +1,5 @@
 {
-  "_comentario": "Portais de acesso por cliente (/portais/<slug>/). Gerado por scripts/build-portais.mjs em public/portais/<slug>/. As URLs marcadas com 'confirmar' vieram por dedução das páginas APEX e precisam ser validadas antes de publicar.",
+  "_comentario": "Portais de acesso por cliente (/portais/<slug>/). Gerado por scripts/build-portais.mjs em public/portais/<slug>/. As URLs seguem o padrão do APEX: prefixo do portal + código do cliente (PG_NATCORP, PC_NATCORP...).",
   "natcorp": {
     "name": "Natcorp",
     "titulo": "Acesse os portais",
@@ -12,8 +12,7 @@
         "descricao": "Aprovações, ponto, férias, avaliações e indicadores da sua equipe.",
         "publico": "Para gestores",
         "ilustracao": "requisicoes-com-workflow",
-        "url": "https://www.natcorpbr.com.br/apex/rh/f?p=PG_NATCORP:900",
-        "confirmar": true
+        "url": "https://www.natcorpbr.com.br/apex/rh/f?p=PG_NATCORP"
       },
       {
         "id": "operador",
@@ -22,8 +21,7 @@
         "descricao": "A operação do RH e do Departamento Pessoal: cadastros, folha, ponto e relatórios.",
         "publico": "Para RH e DP",
         "ilustracao": "administracao-de-pessoal",
-        "url": "https://www.natcorpbr.com.br/apex/rh/f?p=PO_NATCORP:900",
-        "confirmar": true
+        "url": "https://www.natcorpbr.com.br/apex/rh/f?p=PO_NATCORP"
       },
       {
         "id": "colaborador",
@@ -32,8 +30,7 @@
         "descricao": "Holerite, informe de rendimentos, espelho de ponto, férias, benefícios e documentos.",
         "publico": "Para colaboradores",
         "ilustracao": "portais",
-        "url": "https://www.natcorpbr.com.br/apex/rh/f?p=PC_NATCORP:900",
-        "confirmar": true
+        "url": "https://www.natcorpbr.com.br/apex/rh/f?p=PC_NATCORP"
       },
       {
         "id": "curriculo",
@@ -42,8 +39,7 @@
         "descricao": "Cadastre o seu currículo, candidate-se às vagas abertas e acompanhe o processo seletivo.",
         "publico": "Para candidatos",
         "ilustracao": "quadro-de-vagas",
-        "url": "",
-        "confirmar": true
+        "url": "https://www.natcorpbr.com.br/apex/rh/f?p=CV_NATCORP"
       },
       {
         "id": "assinatura",
@@ -52,8 +48,7 @@
         "descricao": "Assine contratos, termos e documentos do RH com validade jurídica, pelo celular ou computador.",
         "publico": "Para todos",
         "ilustracao": "assinatura-eletronica",
-        "url": "",
-        "confirmar": true
+        "url": "https://www.natcorpbr.com.br/apex/rh/f?p=NATDOCS_NATCORP"
       },
       {
         "id": "chamado",
@@ -62,8 +57,7 @@
         "descricao": "Abra um chamado para o RH ou para o suporte e acompanhe a resposta com prazo.",
         "publico": "Para todos",
         "ilustracao": "chamado-interno",
-        "url": "",
-        "confirmar": true
+        "url": "https://www.natcorpbr.com.br/apex/rh/f?p=CHAMADO_NATCORP"
       }
     ],
     "ajuda": {
