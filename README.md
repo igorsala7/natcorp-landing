@@ -44,8 +44,8 @@ npm run lint     # oxlint
 | `/perguntas-frequentes` | Todas as perguntas frequentes, gerais e para grupos, com atalhos para as páginas que aprofundam (a seção de grupos leva a `/estruturas`) |
 | `/modelo-comercial` | Modular, em nuvem e pelo número de colaboradores: os três pilares, histórico completo na implantação, contabilização integrada ao ERP, diferenciais frente a outros sistemas, comparativo e como funciona a contratação |
 | `/portais/natcorp/` | Página estática de acesso aos portais do cliente (gerada em `public/portais/<cliente>/` por `scripts/build-portais.mjs` a partir de `src/content/clientPortals.json`): Gestor, Operador, Colaborador, Cadastro de Currículo, Assinatura Eletrônica e Chamado, com "continuar de onde parou" e ajuda para entrar. Autônoma, pode ser copiada para o servidor atual |
-| `/portais/:cliente` e `/portais/dev/:cliente` | Porta de entrada dos portais no site novo (React): abertura baixa com saudação, acesso rápido e o logotipo do cliente envolvido pelos losangos em luz do hero da home (módulo desenhando-se, brilho na borda, linhas de fluxo); cartões dos portais do sistema (Colaborador, Gestor, Operador) com os personagens da jornada; aplicativos e serviços (Candidato, NatDocs e Chamado, este só para o RH); seção do NatPonto com os selos da App Store e do Google Play; ajuda e segurança. Sem o menu de marketing e sem a abertura animada. Os clientes e os endereços de cada portal (produção e homologação) vêm do cadastro no Supabase (tabela `portal_clients`), com `src/content/portals.ts` como reserva sem banco. A rota `dev/` é a base de homologação, com faixa e identidade âmbar |
-| `/admin/portais` | Administração do cadastro dos portais, só para o administrador (login por e-mail e senha no Supabase; só e-mails da tabela `portal_admins` conseguem criar usuário e alterar). Nome, slug, código base do APEX, logotipo (balde `portal-logos`), ativo e os seis endereços em produção e em homologação, com preenchimento pelo padrão do servidor. Sem `VITE_SUPABASE_URL` e `VITE_SUPABASE_PUBLISHABLE_KEY` abre em prévia, sem salvar. Fora do menu, do sitemap e dos robôs |
+| `/portais/:cliente` e `/portais/dev/:cliente` | Porta de entrada dos portais no site novo (React): abertura baixa com saudação, acesso rápido e o logotipo do cliente envolvido pelos losangos em luz do hero da home (módulo desenhando-se, brilho na borda, linhas de fluxo); cartões dos portais do sistema (Colaborador, Gestor, Operador) com os personagens da jornada; aplicativos e serviços (Candidato, NatDocs e Chamado, este só para o RH); seção do NatPonto com os selos da App Store e do Google Play; ajuda e segurança. Sem o menu de marketing e sem a abertura animada. Os clientes e os endereços de cada portal (produção e homologação) vêm de `src/content/portals.json`. A rota `dev/` é a base de homologação, com faixa e identidade âmbar |
+| `/admin/portais` | Administração do cadastro dos portais, só para o administrador. Nome, slug, código base do APEX, logotipo, ativo e os seis endereços em produção e em homologação, com preenchimento pelo padrão do servidor. Salvar grava `src/content/portals.json` e os logotipos no repositório pela API do GitHub, com um token que fica só no navegador; a publicação segue pela Vercel. Fora do menu, do sitemap e dos robôs |
 | `/apresentacao` | Apresentação executiva em tela cheia (fora do menu e do sitemap): 24 slides do deck comercial, com navegação por teclado, índice, notas do apresentador, tela cheia e exportação em PDF. `?s=N` abre direto no slide N |
 | `/jornada-da-contratacao` | Jornada do colaborador em 24 etapas e 4 fases, em uma indústria fictícia. Duas visões (`?modo=pratico` alterna): a história completa, com personagens 3D, mini mockups e o mapa que acompanha a rolagem, e a visão prática, um diagrama por raias (gestor, candidato, colaborador, RH, SESMT, sistema). Fecha com o diagrama animado dos módulos se integrando |
 | qualquer outra | Página 404 |
@@ -75,18 +75,20 @@ depender do site novo. A página guarda o último portal usado no navegador e of
 sem URL aparecem como "Em configuração" e apontam para a ajuda. As URLs dos portais devem ser confirmadas com o time
 antes de publicar (o campo `confirmar` marca as que vieram por dedução).
 
-### Cadastro dos portais (Supabase)
+### Cadastro dos portais e a administração
 
-A página React `/portais/<cliente>` e a administração `/admin/portais` usam um projeto Supabase. A migração
-`supabase/migrations/20260907120000_portal_clients.sql` cria a tabela `portal_clients` (slug, nome, código, servidor do
-APEX, logotipo, `urls_prod` e `urls_dev` em JSON por aplicativo, ativo), a tabela `portal_admins` (e-mails que podem
-editar), a função `is_portal_admin()`, as políticas de segurança por linha (leitura pública; escrita só para
-administradores), o gatilho que impede a criação de usuário fora da lista de administradores e o balde público
-`portal-logos`. Ela também semeia os sete clientes de hoje com os endereços atuais. Para ligar: aplique a migração,
-coloque `VITE_SUPABASE_URL` e `VITE_SUPABASE_PUBLISHABLE_KEY` no ambiente (Vercel e `.env.local`) e, em
-Authentication → URL Configuration, informe o domínio do site como Site URL e `https://<domínio>/admin/portais` nos
-Redirect URLs (para os e-mails de confirmação e de senha nova voltarem à administração). O primeiro acesso é feito na
-própria página ("Primeiro acesso"): o e-mail precisa estar em `portal_admins`.
+Os clientes da página `/portais/<cliente>` ficam em `src/content/portals.json`: slug, nome, código base do APEX,
+servidor de produção, logotipo, se está ativo e os endereços dos seis portais em produção e em homologação. Os
+endereços são gravados por extenso, porque a estrutura é a do servidor de cada cliente; um campo vazio usa o padrão
+`https://www.natcorpbr.com.br/apex/<servidor>/f?p=<PREFIXO>_<CÓDIGO>`. Os logotipos ficam em
+`src/assets/portals/logos/` (o nome do arquivo está no cadastro).
+
+A página `/admin/portais` edita esse arquivo sem sair do navegador: ao salvar, ela faz o commit do JSON e do
+logotipo no repositório pela API do GitHub e a Vercel publica em seguida. Para isso o administrador cola um token
+fine-grained do GitHub com `Contents: Read and write` apenas neste repositório; o token fica no `localStorage`
+daquele navegador e nunca é enviado a outro lugar. `VITE_ADMIN_REPO_OWNER`, `VITE_ADMIN_REPO` e `VITE_ADMIN_BRANCH`
+mudam o destino da gravação (o padrão é `igorsala7/natcorp-landing`, branch `main`). Sem token, a página abre em
+prévia: dá para navegar e mexer, mas nada é gravado.
 
 ## Apresentação executiva
 

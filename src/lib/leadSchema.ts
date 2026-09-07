@@ -1,7 +1,7 @@
 import { z } from 'zod'
 
 export const leadSchema = z.object({
-  nome: z.string().min(2, 'Informe seu nome completo'),
+  nome: z.string().min(2, 'Informe seu nome'),
   email: z
     .string()
     .email('Informe um e-mail válido')
@@ -16,8 +16,9 @@ export const leadSchema = z.object({
   empresa: z.string().min(2, 'Informe o nome da empresa'),
   cargo: z.string().min(1, 'Selecione seu cargo'),
   colaboradores: z.string().min(1, 'Selecione o número de colaboradores'),
-  empresas: z.string().min(1, 'Selecione quantas empresas ou CNPJs'),
-  unidades: z.string().min(1, 'Selecione quantas unidades'),
+  /* Estrutura do grupo: os três campos estão fora do formulário por enquanto e seguem opcionais. */
+  empresas: z.string().optional(),
+  unidades: z.string().optional(),
   organizacao: z.string().optional(),
   mensagem: z.string().max(1000, 'Máximo de 1000 caracteres').optional(),
   novidades: z.boolean().optional(),

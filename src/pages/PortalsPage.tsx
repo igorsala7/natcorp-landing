@@ -224,7 +224,7 @@ export default function PortalsPage() {
 
       <CTASection
         title="Veja os portais com a cara da sua empresa."
-        text="Mostramos o Portal do Gestor, o do Colaborador e o do Candidato com exemplos do seu segmento, no celular e no computador. Respondemos em até 1 dia útil."
+        text="Mostramos o Portal do Gestor, o do Colaborador e o do Candidato com exemplos do seu segmento, no celular e no computador."
       />
     </PageTransition>
   )

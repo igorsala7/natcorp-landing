@@ -2,16 +2,16 @@
  * Portais que os clientes usam para entrar no sistema (a página /portais/<cliente> e, para a base de
  * homologação, /portais/dev/<cliente>).
  *
- * O cadastro dos clientes vive no banco (tabela portal_clients, editada em /admin/portais). Cada cliente
- * guarda o endereço de cada portal, em produção e em homologação, porque a estrutura dessas URLs é a do
- * servidor de cada cliente e não pode ser alterada pelo site. Quando um endereço não foi informado, vale
- * o padrão do APEX:
+ * O cadastro dos clientes fica em src/content/portals.json, editado em /admin/portais (que grava o arquivo no
+ * repositório; a Vercel publica em seguida). Cada cliente guarda o endereço de cada portal, em produção e em
+ * homologação, porque a estrutura dessas URLs é a do servidor de cada cliente e não pode ser alterada pelo site.
+ * Quando um endereço não foi informado, vale o padrão do APEX:
  *   https://www.natcorpbr.com.br/apex/<ambiente>/f?p=<PREFIXO>_<CÓDIGO DO CLIENTE>
  * O <ambiente> muda conforme o servidor do cliente (rh, natrh, hc, hcm, cloud) e é "dev" na homologação.
  *
- * A lista `portalClients` abaixo é a reserva: usada quando o banco não está configurado (prévia local,
- * artefato) ou não responde.
+ * O logotipo é um arquivo em src/assets/portals/logos/ (o nome fica no cadastro; sem ele, vale <slug>.svg|png|webp).
  */
+import registry from './portals.json'
 
 export const APEX_HOST = 'https://www.natcorpbr.com.br/apex/'
 
@@ -114,38 +114,30 @@ export interface PortalClient {
   code: string
   /** Ambiente do cliente no APEX de produção (rh, natrh, hc, hcm, cloud), para montar o endereço padrão. */
   apex: string
-  /** Logotipo hospedado (cadastro). Sem ele, vale o arquivo em src/assets/portals/logos/<slug>. */
-  logoUrl?: string
+  /** Nome do arquivo do logotipo em src/assets/portals/logos/ (null: sem logotipo, mostra o nome). */
+  logo?: string | null
+  active?: boolean
   /** Endereços informados no cadastro, por ambiente. */
   urls?: { prod?: PortalUrls; dev?: PortalUrls }
-  active?: boolean
 }
 
-/** Clientes de reserva, usados sem o banco. O slug é o trecho da URL (/portais/<slug>). */
-export const portalClients: Record<string, PortalClient> = {
-  natcorp: { slug: 'natcorp', name: 'Natcorp', code: 'NATCORP', apex: 'rh' },
-  incor: { slug: 'incor', name: 'Incor', code: 'INCOR', apex: 'rh' },
-  redeflex: { slug: 'redeflex', name: 'Redeflex', code: 'REDEFLEX', apex: 'rh' },
-  leadec: { slug: 'leadec', name: 'Leadec', code: 'LEADEC', apex: 'natrh' },
-  saude: { slug: 'saude', name: 'Saúde', code: 'SAUDE', apex: 'hc' },
-  stefanini: { slug: 'stefanini', name: 'Stefanini', code: 'STEFANINI', apex: 'hcm' },
-  realfood: { slug: 'realfood', name: 'RealFood', code: 'REALFOOD', apex: 'cloud' },
-}
+/** O cadastro, como está em src/content/portals.json, na ordem do arquivo. */
+export const portalClients: PortalClient[] = (registry as { clients: PortalClient[] }).clients
 
 /** Servidores conhecidos do APEX de produção (para o preenchimento automático no cadastro). */
 export const apexServers = ['rh', 'natrh', 'hc', 'hcm', 'cloud'] as const
-
-/** Resolve o cliente de reserva a partir do trecho da URL; null quando não há ambiente com esse nome. */
-export function resolveClient(raw: string | undefined): PortalClient | null {
-  const slug = normalizeSlug(raw ?? '')
-  return portalClients[slug] ?? null
-}
 
 export const normalizeSlug = (raw: string) =>
   raw
     .trim()
     .toLowerCase()
     .replace(/^\/+|\/+$/g, '')
+
+/** Resolve o cliente a partir do trecho da URL; null quando não há ambiente ativo com esse nome. */
+export function resolveClient(raw: string | undefined): PortalClient | null {
+  const slug = normalizeSlug(raw ?? '')
+  return portalClients.find((c) => c.slug === slug && c.active !== false) ?? null
+}
 
 /** Caminho do ambiente no APEX: o do cliente em produção, "dev" na homologação. */
 export function apexPath(client: Pick<PortalClient, 'apex'>, env: PortalEnv): string {
@@ -190,15 +182,23 @@ export function greeting(date = new Date()): string {
   return 'Boa noite'
 }
 
-/* Logotipos dos clientes em arquivo, descobertos pelo nome (reserva para o logotipo do cadastro). */
-const logoFiles = import.meta.glob<{ default: string }>('../assets/portals/logos/*.{svg,png,webp}', { eager: true })
+/* Logotipos dos clientes, descobertos pelo nome do arquivo em src/assets/portals/logos/. */
+const logoFiles = import.meta.glob<{ default: string }>('../assets/portals/logos/*.{svg,png,webp,jpg,jpeg}', { eager: true })
 
-/** Logotipo do cliente: o do cadastro ou o arquivo src/assets/portals/logos/<slug>.(svg|png|webp). */
-export function clientLogo(client: Pick<PortalClient, 'slug' | 'logoUrl'>): string | undefined {
-  if (client.logoUrl) return client.logoUrl
+/** URL do arquivo de logotipo pelo nome (ex.: "stefanini.svg"), quando existe na pasta. */
+export function logoFile(name: string | null | undefined): string | undefined {
+  if (!name) return undefined
+  for (const [path, mod] of Object.entries(logoFiles)) if (path.split('/').pop() === name) return mod.default
+  return undefined
+}
+
+/** Logotipo do cliente: o arquivo do cadastro ou, na falta dele, <slug>.(svg|png|webp) na mesma pasta. */
+export function clientLogo(client: Pick<PortalClient, 'slug' | 'logo'>): string | undefined {
+  const named = logoFile(client.logo)
+  if (named) return named
   for (const [path, mod] of Object.entries(logoFiles)) {
     const file = path.split('/').pop() ?? ''
-    if (file.replace(/\.(svg|png|webp)$/, '') === client.slug) return mod.default
+    if (file.replace(/\.(svg|png|webp|jpe?g)$/, '') === client.slug) return mod.default
   }
   return undefined
 }

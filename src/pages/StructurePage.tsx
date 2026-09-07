@@ -468,7 +468,7 @@ function StructureContent({ entry, page }: { entry: StructureEntry; page: Struct
         </div>
       </section>
 
-      <CTASection title="Veja a Natcorp com a estrutura da sua empresa." text="Conte como o RH está organizado hoje, com quantas empresas e unidades, e agende uma conversa com quem entende de folha, ponto, eSocial e SESMT de grandes empresas. Respondemos em até 1 dia útil." />
+      <CTASection title="Veja a Natcorp com a estrutura da sua empresa." text="Conte como o RH está organizado hoje, com quantas empresas e unidades, e agende uma conversa com quem entende de folha, ponto, eSocial e SESMT de grandes empresas." />
     </PageTransition>
   )
 }

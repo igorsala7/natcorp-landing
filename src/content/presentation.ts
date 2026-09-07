@@ -294,7 +294,7 @@ export const proximos = {
 /* 22 · Contato. */
 export const contato = {
   title: 'A transformação que seu RH precisa [[começa com uma conversa]].',
-  lead: 'Agende uma demonstração guiada pela realidade da sua empresa. Sem compromisso e sem letra miúda. Respondemos em até 1 dia útil.',
+  lead: 'Agende uma demonstração guiada pela realidade da sua empresa. Sem compromisso e sem letra miúda.',
 }
 
 /* Notas do apresentador, por slide (tecla N). */

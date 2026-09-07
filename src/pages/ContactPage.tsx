@@ -15,7 +15,7 @@ import type { FaqItem } from '@/content/faq'
 const channels = [
   { icon: Phone, label: 'Telefone', value: siteConfig.phone, href: siteConfig.phoneHref, external: false, hint: 'Ligue e fale direto com o nosso time.' },
   { icon: MessageCircle, label: 'WhatsApp', value: siteConfig.whatsapp, href: siteConfig.whatsappHref, external: true, hint: 'Mande uma mensagem e siga a conversa por lá.' },
-  { icon: Mail, label: 'E-mail', value: siteConfig.email, href: `mailto:${siteConfig.email}`, external: false, hint: 'Escreva para a gente. Respondemos em até 1 dia útil.' },
+  { icon: Mail, label: 'E-mail', value: siteConfig.email, href: `mailto:${siteConfig.email}`, external: false, hint: 'Escreva para a gente.' },
 ]
 
 const steps: { title: string; text: string; links?: { label: string; to: string }[] }[] = [
@@ -33,10 +33,6 @@ const steps: { title: string; text: string; links?: { label: string; to: string 
 
 const contactFaqs: FaqItem[] = [
   {
-    q: 'Em quanto tempo recebo retorno?',
-    a: 'Em até 1 dia útil. Vale para o telefone, o WhatsApp, o e-mail e o formulário desta página. O canal não muda o prazo.',
-  },
-  {
     q: 'A Natcorp atende empresas fora de São Paulo?',
     a: 'Sim. Atendemos todo o território nacional. A implantação e o suporte acontecem de forma remota, com visitas quando necessário.',
   },
@@ -50,7 +46,7 @@ export default function ContactPage() {
   useSeo({
     title: 'Contato: fale com a Natcorp | Natcorp',
     description:
-      'Telefone, WhatsApp, e-mail ou formulário: fale com a Natcorp e agende uma demonstração do sistema de RH. Resposta em até 1 dia útil, em todo o Brasil.',
+      'Telefone, WhatsApp, e-mail ou formulário: fale com a Natcorp e agende uma demonstração do sistema de RH, em todo o Brasil.',
     path: paths.contact,
   })
 
@@ -73,8 +69,7 @@ export default function ContactPage() {
             />
             <Reveal delay={0.25}>
               <p className="mt-6 max-w-2xl text-lg leading-relaxed text-brand-graphite sm:text-xl">
-                Telefone, WhatsApp, e-mail ou o formulário desta página: escolha o canal. Respondemos em até 1 dia útil e atendemos
-                todo o território nacional.
+                Telefone, WhatsApp, e-mail ou o formulário desta página: escolha o canal. Atendemos todo o território nacional.
               </p>
             </Reveal>
           </div>
@@ -137,7 +132,7 @@ export default function ContactPage() {
         </div>
       </Section>
 
-      <CTASection title="Agende uma demonstração." text="Conte um pouco sobre a sua operação de RH. Respondemos em até 1 dia útil." />
+      <CTASection title="Agende uma demonstração." text="Conte um pouco sobre a sua operação de RH." />
 
       <FAQSection
         tone="off"

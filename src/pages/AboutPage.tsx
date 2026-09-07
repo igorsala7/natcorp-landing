@@ -155,7 +155,7 @@ export default function AboutPage() {
       <VideosSection />
       <CTASection
         title="Conheça a Natcorp de perto."
-        text="Marque uma conversa com o nosso time. Mostramos o sistema com exemplos da sua operação e respondemos em até 1 dia útil."
+        text="Marque uma conversa com o nosso time. Mostramos o sistema com exemplos da sua operação."
       />
     </PageTransition>
   )

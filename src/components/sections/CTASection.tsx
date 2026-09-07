@@ -28,7 +28,7 @@ interface CTASectionProps {
 
 export function CTASection({
   title = 'Veja a Natcorp com os dados da sua empresa.',
-  text = 'Conte um pouco sobre a sua operação de RH e agende uma conversa com quem entende de folha, ponto, eSocial e SESMT de grandes empresas. Respondemos em até 1 dia útil.',
+  text = 'Conte um pouco sobre a sua operação de RH e agende uma conversa com quem entende de folha, ponto, eSocial e SESMT de grandes empresas.',
 }: CTASectionProps) {
   const ref = useRef<HTMLDivElement>(null)
   const near = useInView(ref, { once: true, margin: '800px 0px' })

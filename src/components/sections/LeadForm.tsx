@@ -8,7 +8,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
-import { cargoOptions, colaboradoresOptions, empresasOptions, leadSchema, organizacaoOptions, unidadesOptions, type LeadFormData } from '@/lib/leadSchema'
+import { cargoOptions, colaboradoresOptions, leadSchema, type LeadFormData } from '@/lib/leadSchema'
 import { submitLead } from '@/lib/submitLead'
 import { siteConfig } from '@/content/site'
 
@@ -17,7 +17,19 @@ export default function LeadForm() {
 
   const form = useForm<LeadFormData>({
     resolver: zodResolver(leadSchema),
-    defaultValues: { nome: '', email: '', telefone: '', empresa: '', cargo: '', colaboradores: '', empresas: '', unidades: '', organizacao: '', mensagem: '', novidades: false },
+    defaultValues: {
+      nome: '',
+      email: '',
+      telefone: '',
+      empresa: '',
+      cargo: '',
+      colaboradores: '',
+      empresas: '',
+      unidades: '',
+      organizacao: '',
+      mensagem: '',
+      novidades: false,
+    },
   })
 
   async function onSubmit(data: LeadFormData) {
@@ -44,8 +56,7 @@ export default function LeadForm() {
         </span>
         <h3 className="mt-5 text-2xl font-extrabold text-brand-ink">Recebemos o seu contato.</h3>
         <p className="mt-2 max-w-sm text-brand-graphite">
-          Obrigado pelo interesse. Nosso time entra em contato em até 1 dia útil para agendar a demonstração com a
-          realidade da sua empresa.
+          Obrigado pelo interesse. Nosso time entra em contato para agendar a demonstração com a realidade da sua empresa.
         </p>
       </div>
     )
@@ -62,7 +73,7 @@ export default function LeadForm() {
             name="nome"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Nome completo</FormLabel>
+                <FormLabel>Nome</FormLabel>
                 <FormControl>
                   <Input className={fieldClass} placeholder="Seu nome" autoComplete="name" {...field} />
                 </FormControl>
@@ -164,82 +175,7 @@ export default function LeadForm() {
           )}
         />
 
-        <div className="grid gap-4 sm:grid-cols-2">
-          <FormField
-            control={form.control}
-            name="empresas"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Empresas ou CNPJs no grupo</FormLabel>
-                <Select onValueChange={field.onChange} value={field.value}>
-                  <FormControl>
-                    <SelectTrigger className={fieldClass}>
-                      <SelectValue placeholder="Selecione" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    {empresasOptions.map((c) => (
-                      <SelectItem key={c} value={c}>
-                        {c}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="unidades"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Unidades ou filiais</FormLabel>
-                <Select onValueChange={field.onChange} value={field.value}>
-                  <FormControl>
-                    <SelectTrigger className={fieldClass}>
-                      <SelectValue placeholder="Selecione" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    {unidadesOptions.map((c) => (
-                      <SelectItem key={c} value={c}>
-                        {c}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </div>
-
-        <FormField
-          control={form.control}
-          name="organizacao"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Como o RH está organizado hoje (opcional)</FormLabel>
-              <Select onValueChange={field.onChange} value={field.value}>
-                <FormControl>
-                  <SelectTrigger className={fieldClass}>
-                    <SelectValue placeholder="Selecione" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  {organizacaoOptions.map((c) => (
-                    <SelectItem key={c} value={c}>
-                      {c}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
+        {/* Empresas ou CNPJs, unidades ou filiais e a organização do RH ficam fora do formulário por enquanto (campos opcionais no esquema). */}
         <FormField
           control={form.control}
           name="mensagem"
@@ -297,8 +233,7 @@ export default function LeadForm() {
         </Button>
 
         <p className="text-center text-xs leading-relaxed text-brand-graphite">
-          Ao enviar, você concorda em ser contatado pela Natcorp. Seus dados são tratados conforme a LGPD (Lei nº
-          13.709/2018).
+          Ao enviar, você concorda em ser contatado pela Natcorp. Seus dados são tratados conforme a LGPD (Lei nº 13.709/2018).
         </p>
       </form>
     </Form>

@@ -1,0 +1,187 @@
+{
+  "_comentario": "Cadastro dos clientes da página /portais/<slug> (e /portais/dev/<slug>). Editado em /admin/portais, que grava este arquivo no repositório; a Vercel publica em seguida. Cada portal tem o endereço por extenso, em produção (urls.prod) e em homologação (urls.dev): a estrutura é a do servidor do cliente e não é remontada pelo site. Um endereço vazio usa o padrão do APEX (https://www.natcorpbr.com.br/apex/<apex>/f?p=<PREFIXO>_<code>). O logotipo é o nome de um arquivo em src/assets/portals/logos/.",
+  "clients": [
+    {
+      "slug": "natcorp",
+      "name": "Natcorp",
+      "code": "NATCORP",
+      "apex": "rh",
+      "logo": null,
+      "active": true,
+      "urls": {
+        "prod": {
+          "colaborador": "https://www.natcorpbr.com.br/apex/rh/f?p=PC_NATCORP",
+          "gestor": "https://www.natcorpbr.com.br/apex/rh/f?p=PG_NATCORP",
+          "operador": "https://www.natcorpbr.com.br/apex/rh/f?p=PO_NATCORP",
+          "candidato": "https://www.natcorpbr.com.br/apex/rh/f?p=CV_NATCORP",
+          "natdocs": "https://www.natcorpbr.com.br/apex/rh/f?p=NATDOCS_NATCORP",
+          "chamado": "https://www.natcorpbr.com.br/apex/rh/f?p=CHAMADO_NATCORP"
+        },
+        "dev": {
+          "colaborador": "https://www.natcorpbr.com.br/apex/dev/f?p=PC_NATCORP",
+          "gestor": "https://www.natcorpbr.com.br/apex/dev/f?p=PG_NATCORP",
+          "operador": "https://www.natcorpbr.com.br/apex/dev/f?p=PO_NATCORP",
+          "candidato": "https://www.natcorpbr.com.br/apex/dev/f?p=CV_NATCORP",
+          "natdocs": "https://www.natcorpbr.com.br/apex/dev/f?p=NATDOCS_NATCORP",
+          "chamado": "https://www.natcorpbr.com.br/apex/dev/f?p=CHAMADO_NATCORP"
+        }
+      }
+    },
+    {
+      "slug": "incor",
+      "name": "Incor",
+      "code": "INCOR",
+      "apex": "rh",
+      "logo": null,
+      "active": true,
+      "urls": {
+        "prod": {
+          "colaborador": "https://www.natcorpbr.com.br/apex/rh/f?p=PC_INCOR",
+          "gestor": "https://www.natcorpbr.com.br/apex/rh/f?p=PG_INCOR",
+          "operador": "https://www.natcorpbr.com.br/apex/rh/f?p=PO_INCOR",
+          "candidato": "https://www.natcorpbr.com.br/apex/rh/f?p=CV_INCOR",
+          "natdocs": "https://www.natcorpbr.com.br/apex/rh/f?p=NATDOCS_INCOR",
+          "chamado": "https://www.natcorpbr.com.br/apex/rh/f?p=CHAMADO_INCOR"
+        },
+        "dev": {
+          "colaborador": "https://www.natcorpbr.com.br/apex/dev/f?p=PC_INCOR",
+          "gestor": "https://www.natcorpbr.com.br/apex/dev/f?p=PG_INCOR",
+          "operador": "https://www.natcorpbr.com.br/apex/dev/f?p=PO_INCOR",
+          "candidato": "https://www.natcorpbr.com.br/apex/dev/f?p=CV_INCOR",
+          "natdocs": "https://www.natcorpbr.com.br/apex/dev/f?p=NATDOCS_INCOR",
+          "chamado": "https://www.natcorpbr.com.br/apex/dev/f?p=CHAMADO_INCOR"
+        }
+      }
+    },
+    {
+      "slug": "redeflex",
+      "name": "Redeflex",
+      "code": "REDEFLEX",
+      "apex": "rh",
+      "logo": null,
+      "active": true,
+      "urls": {
+        "prod": {
+          "colaborador": "https://www.natcorpbr.com.br/apex/rh/f?p=PC_REDEFLEX",
+          "gestor": "https://www.natcorpbr.com.br/apex/rh/f?p=PG_REDEFLEX",
+          "operador": "https://www.natcorpbr.com.br/apex/rh/f?p=PO_REDEFLEX",
+          "candidato": "https://www.natcorpbr.com.br/apex/rh/f?p=CV_REDEFLEX",
+          "natdocs": "https://www.natcorpbr.com.br/apex/rh/f?p=NATDOCS_REDEFLEX",
+          "chamado": "https://www.natcorpbr.com.br/apex/rh/f?p=CHAMADO_REDEFLEX"
+        },
+        "dev": {
+          "colaborador": "https://www.natcorpbr.com.br/apex/dev/f?p=PC_REDEFLEX",
+          "gestor": "https://www.natcorpbr.com.br/apex/dev/f?p=PG_REDEFLEX",
+          "operador": "https://www.natcorpbr.com.br/apex/dev/f?p=PO_REDEFLEX",
+          "candidato": "https://www.natcorpbr.com.br/apex/dev/f?p=CV_REDEFLEX",
+          "natdocs": "https://www.natcorpbr.com.br/apex/dev/f?p=NATDOCS_REDEFLEX",
+          "chamado": "https://www.natcorpbr.com.br/apex/dev/f?p=CHAMADO_REDEFLEX"
+        }
+      }
+    },
+    {
+      "slug": "leadec",
+      "name": "Leadec",
+      "code": "LEADEC",
+      "apex": "natrh",
+      "logo": null,
+      "active": true,
+      "urls": {
+        "prod": {
+          "colaborador": "https://www.natcorpbr.com.br/apex/natrh/f?p=PC_LEADEC",
+          "gestor": "https://www.natcorpbr.com.br/apex/natrh/f?p=PG_LEADEC",
+          "operador": "https://www.natcorpbr.com.br/apex/natrh/f?p=PO_LEADEC",
+          "candidato": "https://www.natcorpbr.com.br/apex/natrh/f?p=CV_LEADEC",
+          "natdocs": "https://www.natcorpbr.com.br/apex/natrh/f?p=NATDOCS_LEADEC",
+          "chamado": "https://www.natcorpbr.com.br/apex/natrh/f?p=CHAMADO_LEADEC"
+        },
+        "dev": {
+          "colaborador": "https://www.natcorpbr.com.br/apex/dev/f?p=PC_LEADEC",
+          "gestor": "https://www.natcorpbr.com.br/apex/dev/f?p=PG_LEADEC",
+          "operador": "https://www.natcorpbr.com.br/apex/dev/f?p=PO_LEADEC",
+          "candidato": "https://www.natcorpbr.com.br/apex/dev/f?p=CV_LEADEC",
+          "natdocs": "https://www.natcorpbr.com.br/apex/dev/f?p=NATDOCS_LEADEC",
+          "chamado": "https://www.natcorpbr.com.br/apex/dev/f?p=CHAMADO_LEADEC"
+        }
+      }
+    },
+    {
+      "slug": "saude",
+      "name": "Saúde",
+      "code": "SAUDE",
+      "apex": "hc",
+      "logo": null,
+      "active": true,
+      "urls": {
+        "prod": {
+          "colaborador": "https://www.natcorpbr.com.br/apex/hc/f?p=PC_SAUDE",
+          "gestor": "https://www.natcorpbr.com.br/apex/hc/f?p=PG_SAUDE",
+          "operador": "https://www.natcorpbr.com.br/apex/hc/f?p=PO_SAUDE",
+          "candidato": "https://www.natcorpbr.com.br/apex/hc/f?p=CV_SAUDE",
+          "natdocs": "https://www.natcorpbr.com.br/apex/hc/f?p=NATDOCS_SAUDE",
+          "chamado": "https://www.natcorpbr.com.br/apex/hc/f?p=CHAMADO_SAUDE"
+        },
+        "dev": {
+          "colaborador": "https://www.natcorpbr.com.br/apex/dev/f?p=PC_SAUDE",
+          "gestor": "https://www.natcorpbr.com.br/apex/dev/f?p=PG_SAUDE",
+          "operador": "https://www.natcorpbr.com.br/apex/dev/f?p=PO_SAUDE",
+          "candidato": "https://www.natcorpbr.com.br/apex/dev/f?p=CV_SAUDE",
+          "natdocs": "https://www.natcorpbr.com.br/apex/dev/f?p=NATDOCS_SAUDE",
+          "chamado": "https://www.natcorpbr.com.br/apex/dev/f?p=CHAMADO_SAUDE"
+        }
+      }
+    },
+    {
+      "slug": "stefanini",
+      "name": "Stefanini",
+      "code": "STEFANINI",
+      "apex": "hcm",
+      "logo": null,
+      "active": true,
+      "urls": {
+        "prod": {
+          "colaborador": "https://www.natcorpbr.com.br/apex/hcm/f?p=PC_STEFANINI",
+          "gestor": "https://www.natcorpbr.com.br/apex/hcm/f?p=PG_STEFANINI",
+          "operador": "https://www.natcorpbr.com.br/apex/hcm/f?p=PO_STEFANINI",
+          "candidato": "https://www.natcorpbr.com.br/apex/hcm/f?p=CV_STEFANINI",
+          "natdocs": "https://www.natcorpbr.com.br/apex/hcm/f?p=NATDOCS_STEFANINI",
+          "chamado": "https://www.natcorpbr.com.br/apex/hcm/f?p=CHAMADO_STEFANINI"
+        },
+        "dev": {
+          "colaborador": "https://www.natcorpbr.com.br/apex/dev/f?p=PC_STEFANINI",
+          "gestor": "https://www.natcorpbr.com.br/apex/dev/f?p=PG_STEFANINI",
+          "operador": "https://www.natcorpbr.com.br/apex/dev/f?p=PO_STEFANINI",
+          "candidato": "https://www.natcorpbr.com.br/apex/dev/f?p=CV_STEFANINI",
+          "natdocs": "https://www.natcorpbr.com.br/apex/dev/f?p=NATDOCS_STEFANINI",
+          "chamado": "https://www.natcorpbr.com.br/apex/dev/f?p=CHAMADO_STEFANINI"
+        }
+      }
+    },
+    {
+      "slug": "realfood",
+      "name": "RealFood",
+      "code": "REALFOOD",
+      "apex": "cloud",
+      "logo": null,
+      "active": true,
+      "urls": {
+        "prod": {
+          "colaborador": "https://www.natcorpbr.com.br/apex/cloud/f?p=PC_REALFOOD",
+          "gestor": "https://www.natcorpbr.com.br/apex/cloud/f?p=PG_REALFOOD",
+          "operador": "https://www.natcorpbr.com.br/apex/cloud/f?p=PO_REALFOOD",
+          "candidato": "https://www.natcorpbr.com.br/apex/cloud/f?p=CV_REALFOOD",
+          "natdocs": "https://www.natcorpbr.com.br/apex/cloud/f?p=NATDOCS_REALFOOD",
+          "chamado": "https://www.natcorpbr.com.br/apex/cloud/f?p=CHAMADO_REALFOOD"
+        },
+        "dev": {
+          "colaborador": "https://www.natcorpbr.com.br/apex/dev/f?p=PC_REALFOOD",
+          "gestor": "https://www.natcorpbr.com.br/apex/dev/f?p=PG_REALFOOD",
+          "operador": "https://www.natcorpbr.com.br/apex/dev/f?p=PO_REALFOOD",
+          "candidato": "https://www.natcorpbr.com.br/apex/dev/f?p=CV_REALFOOD",
+          "natdocs": "https://www.natcorpbr.com.br/apex/dev/f?p=NATDOCS_REALFOOD",
+          "chamado": "https://www.natcorpbr.com.br/apex/dev/f?p=CHAMADO_REALFOOD"
+        }
+      }
+    }
+  ]
+}

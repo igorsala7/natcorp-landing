@@ -51,7 +51,7 @@ const icons: Partial<Record<PortalApp['key'], string>> = {
  */
 export default function PortalHubPage({ env = 'prod' }: { env?: PortalEnv }) {
   const { cliente } = useParams()
-  const { client, status } = usePortalClient(cliente)
+  const client = usePortalClient(cliente)
   const dev = env === 'dev'
 
   useSeo({
@@ -63,7 +63,6 @@ export default function PortalHubPage({ env = 'prod' }: { env?: PortalEnv }) {
     noindex: dev || !client || client.slug !== 'natcorp',
   })
 
-  if (status === 'loading') return <HubLoading env={env} />
   if (!client) return <NotFound slug={cliente ?? ''} env={env} />
 
   return (
@@ -165,7 +164,8 @@ function Opening({ client, env }: { client: PortalClient; env: PortalEnv }) {
               : 'bg-[radial-gradient(closest-side,rgba(201,87,136,0.3),rgba(201,87,136,0.1)_45%,rgba(201,87,136,0)_100%)]',
           )}
           style={{ willChange: 'transform, opacity' }}
-          animate={loop ? { x: ['0%', '18%', '0%'], y: ['0%', '10%', '0%'], opacity: [0.5, 0.9, 0.5] } : { x: '0%', y: '0%', opacity: 0.65 }}
+          initial={{ x: '0%', y: '0%', opacity: 0.5 }}
+          animate={loop ? { x: ['0%', '18%', '0%'], y: ['0%', '10%', '0%'], opacity: [0.5, 0.9, 0.5] } : { x: '0%', y: '0%', opacity: 0.5 }}
           transition={loop ? { duration: 12, ease: 'easeInOut', repeat: Infinity } : { duration: 1.2, ease: EASE }}
         />
       </div>
@@ -633,21 +633,7 @@ function Help({ client, env }: { client: PortalClient; env: PortalEnv }) {
   )
 }
 
-/* ---------------- carregando e ambiente não encontrado ---------------- */
-
-/** Enquanto o cadastro responde: a moldura escura no lugar, sem texto para não piscar. */
-function HubLoading({ env }: { env: PortalEnv }) {
-  return (
-    <div className="min-h-screen bg-brand-off-white" aria-busy="true" aria-live="polite">
-      <header className={cn('on-dark border-b border-white/10 text-white', env === 'dev' ? 'bg-[#1B1238]' : 'bg-brand-blue')}>
-        <div className="container flex h-16 items-center">
-          <Logo variant="horizontal" tone="white" decorative className="h-8 w-auto" />
-        </div>
-      </header>
-      <div className="on-dark h-[360px] bg-brand-blue" />
-    </div>
-  )
-}
+/* ---------------- ambiente não encontrado ---------------- */
 
 function NotFound({ slug, env }: { slug: string; env: PortalEnv }) {
   const known = usePortalClients()
