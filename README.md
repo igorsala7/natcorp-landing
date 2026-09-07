@@ -253,3 +253,10 @@ CloudFront). Configure as variáveis `VITE_*` no provedor antes do build.
 ## Referência de aplicação (SaaS)
 
 `brand/app-referencia/natcorp-app.html` mostra como uma aplicação Natcorp ficaria com a identidade do site: menu lateral, barra superior, início com painéis, colaboradores, cadastro, ponto, relatórios e NATI. Página única, abre direto no navegador. Detalhes em `brand/app-referencia/LEIA-ME.md`.
+
+## Modernização das aplicações Oracle APEX 19.2
+
+`brand/apex/` traz a máscara de CSS que aproxima as aplicações Natcorp em APEX 19.2 (Universal Theme 42, estilo Vita)
+desse app de referência sem mudar templates, páginas ou JavaScript: `Natcorp_Style_Modern.css` (legível, 17 seções),
+a versão minificada, a Manrope self-hosted (`Natcorp_Fonts.css` + `fonts/`), as capturas antes/depois de nove telas e
+o guia de implantação e teste em `brand/apex/LEIA-ME.md`.
