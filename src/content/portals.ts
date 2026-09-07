@@ -1,11 +1,18 @@
 /**
- * Portais que os clientes usam para entrar no sistema (a página /portais/<cliente>).
- * Cada cliente tem o próprio ambiente no APEX: o aplicativo é o prefixo do portal mais o código do cliente
- * (PG_NATCORP, PC_VERDEALIMENTOS...). Clientes conhecidos ganham nome bonito; os demais usam o próprio slug.
+ * Portais que os clientes usam para entrar no sistema (a página /portais/<cliente> e, para a base de
+ * homologação, /portais/dev/<cliente>).
+ *
+ * Cada cliente tem o próprio ambiente no APEX. A URL de um portal é:
+ *   https://www.natcorpbr.com.br/apex/<ambiente>/f?p=<PREFIXO>_<CÓDIGO DO CLIENTE>
+ * O <ambiente> muda conforme o servidor do cliente (rh, natrh, hc, hcm, cloud) e é sempre "dev" na
+ * base de homologação. Ex.: PO_NATCORP em /apex/rh/, PO_LEADEC em /apex/natrh/, PO_STEFANINI em /apex/hcm/.
+ *
+ * O logotipo do cliente entra pelo nome do arquivo em src/assets/portals/logos/<slug>.(svg|png|webp).
  */
 
-export const APEX_BASE = 'https://www.natcorpbr.com.br/apex/rh/f?p='
+export const APEX_HOST = 'https://www.natcorpbr.com.br/apex/'
 
+export type PortalEnv = 'prod' | 'dev'
 export type PortalKind = 'portal' | 'service'
 
 export interface PortalApp {
@@ -22,6 +29,8 @@ export interface PortalApp {
   description: string
   /** O que a pessoa faz ali (chips). */
   tasks: string[]
+  /** Aviso curto sobre quem deve usar, quando o público é restrito. */
+  note?: string
 }
 
 export const portalApps: PortalApp[] = [
@@ -32,7 +41,7 @@ export const portalApps: PortalApp[] = [
     prefix: 'PC',
     kind: 'portal',
     audience: 'Para todas as pessoas da empresa',
-    description: 'Holerite, espelho de ponto, férias, benefícios, documentos e chamados, sem passar pelo RH.',
+    description: 'Holerite, espelho de ponto, férias, benefícios, documentos e chamados internos, sem passar pelo RH.',
     tasks: ['Holerite e informe de rendimentos', 'Espelho de ponto', 'Férias e requisições', 'Documentos para assinar'],
   },
   {
@@ -81,39 +90,49 @@ export const portalApps: PortalApp[] = [
     short: 'Chamado',
     prefix: 'CHAMADO',
     kind: 'service',
-    audience: 'Suporte Natcorp',
-    description: 'Abra e acompanhe chamados com a equipe de suporte da Natcorp. Cada pedido tem número, prazo e histórico.',
+    audience: 'Só para o RH: suporte Natcorp',
+    description: 'O RH e o Departamento Pessoal abrem e acompanham chamados com a equipe de suporte da Natcorp. Cada pedido tem número, prazo e histórico.',
     tasks: ['Abrir chamado', 'Acompanhar o andamento', 'Histórico de atendimentos'],
+    note: 'Colaboradores e gestores falam com o RH da própria empresa, pelo Portal do Colaborador.',
   },
 ]
 
 export interface PortalClient {
   slug: string
   name: string
+  /** Ambiente do cliente no APEX de produção: rh, natrh, hc, hcm, cloud. */
+  apex: string
   /** Código usado no APEX quando difere do slug (opcional). */
   code?: string
 }
 
-/** Clientes com nome próprio na página. Os demais aparecem com o slug capitalizado. */
+/** Clientes com página de acesso. O slug é o trecho da URL (/portais/<slug>). */
 export const portalClients: Record<string, PortalClient> = {
-  natcorp: { slug: 'natcorp', name: 'Natcorp' },
-  verdealimentos: { slug: 'verdealimentos', name: 'Verde Alimentos' },
+  natcorp: { slug: 'natcorp', name: 'Natcorp', apex: 'rh' },
+  incor: { slug: 'incor', name: 'Incor', apex: 'rh' },
+  redeflex: { slug: 'redeflex', name: 'Redeflex', apex: 'rh' },
+  leadec: { slug: 'leadec', name: 'Leadec', apex: 'natrh' },
+  saude: { slug: 'saude', name: 'Saúde', apex: 'hc' },
+  stefanini: { slug: 'stefanini', name: 'Stefanini', apex: 'hcm' },
+  realfood: { slug: 'realfood', name: 'RealFood', apex: 'cloud' },
 }
 
-const SLUG = /^[a-z0-9][a-z0-9-]{0,40}$/
-
-/** Resolve o cliente a partir do trecho da URL. Slugs inválidos caem no ambiente da Natcorp. */
-export function resolveClient(raw: string | undefined): PortalClient {
-  const slug = (raw ?? 'natcorp').toLowerCase()
-  if (!SLUG.test(slug)) return portalClients.natcorp
-  return portalClients[slug] ?? { slug, name: slug.charAt(0).toUpperCase() + slug.slice(1) }
+/** Resolve o cliente a partir do trecho da URL; null quando não há ambiente com esse nome. */
+export function resolveClient(raw: string | undefined): PortalClient | null {
+  const slug = (raw ?? '').toLowerCase()
+  return portalClients[slug] ?? null
 }
 
-export function portalUrl(app: PortalApp, client: PortalClient): string {
-  return `${APEX_BASE}${app.prefix}_${(client.code ?? client.slug).toUpperCase()}`
+/** Caminho do ambiente no APEX: o do cliente em produção, "dev" na homologação. */
+export function apexPath(client: PortalClient, env: PortalEnv): string {
+  return env === 'dev' ? 'dev' : client.apex
 }
 
-export const hubPath = (slug = 'natcorp') => `/portais/${slug}`
+export function portalUrl(app: PortalApp, client: PortalClient, env: PortalEnv = 'prod'): string {
+  return `${APEX_HOST}${apexPath(client, env)}/f?p=${app.prefix}_${(client.code ?? client.slug).toUpperCase()}`
+}
+
+export const hubPath = (slug = 'natcorp', env: PortalEnv = 'prod') => (env === 'dev' ? `/portais/dev/${slug}` : `/portais/${slug}`)
 
 /** Saudação pela hora local de quem abre a página. */
 export function greeting(date = new Date()): string {
@@ -122,4 +141,16 @@ export function greeting(date = new Date()): string {
   if (h < 12) return 'Bom dia'
   if (h < 18) return 'Boa tarde'
   return 'Boa noite'
+}
+
+/* Logotipos dos clientes, descobertos pelo nome do arquivo (ver cabeçalho). */
+const logoFiles = import.meta.glob<{ default: string }>('../assets/portals/logos/*.{svg,png,webp}', { eager: true })
+
+/** Logotipo do cliente, quando existe o arquivo src/assets/portals/logos/<slug>.(svg|png|webp). */
+export function clientLogo(slug: string): string | undefined {
+  for (const [path, mod] of Object.entries(logoFiles)) {
+    const file = path.split('/').pop() ?? ''
+    if (file.replace(/\.(svg|png|webp)$/, '') === slug) return mod.default
+  }
+  return undefined
 }

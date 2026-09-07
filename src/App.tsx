@@ -133,6 +133,14 @@ function AppRoutes() {
         {/* Endereço antigo da página de grupos: agora é "Como é a sua estrutura?". */}
         <Route path="/grupos" element={<Navigate to="/estruturas" replace />} />
         <Route
+          path="/portais/dev/:cliente"
+          element={
+            <Suspense fallback={<PageFallback />}>
+              <PortalHubPage env="dev" />
+            </Suspense>
+          }
+        />
+        <Route
           path="/portais/:cliente"
           element={
             <Suspense fallback={<PageFallback />}>
@@ -168,7 +176,9 @@ function AppRoutes() {
 function Shell() {
   const { pathname } = useLocation()
   const chromeless = pathname === paths.presentation
-  const hub = useMatch('/portais/:cliente') !== null
+  const hubProd = useMatch('/portais/:cliente')
+  const hubDev = useMatch('/portais/dev/:cliente')
+  const hub = hubProd !== null || hubDev !== null
   return (
     <>
       {!chromeless && <SmoothScroll />}
