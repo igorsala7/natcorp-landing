@@ -42,6 +42,15 @@
 
     <link rel="preload" href="/fonts/manrope-latin.woff2" as="font" type="font/woff2" crossorigin />
 
+    <!--
+      A abertura do hero é comandada pela rolagem (o título desvanece conforme a página desce). Se o navegador
+      restaurasse a posição ao recarregar, a página abriria no meio e o título apareceria a meio caminho do
+      desvanecimento, piscando enquanto o layout assentava. Quem cuida da posição é o site (ScrollManager).
+    -->
+    <script>
+      if ('scrollRestoration' in history) history.scrollRestoration = 'manual'
+    </script>
+
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",

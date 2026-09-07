@@ -30,9 +30,16 @@ export function ScrollManager() {
   const { pathname, hash, key } = useLocation()
   const navType = useNavigationType()
   const lastPath = useRef(pathname)
+  const firstRender = useRef(true)
 
   useLayoutEffect(() => {
-    if (hash || navType === 'POP') return
+    const first = firstRender.current
+    firstRender.current = false
+    if (hash) return
+    // A primeira carga sempre começa no topo, mesmo em uma recarga no meio da página: a abertura do hero é
+    // comandada pela rolagem e abrir no meio deixaria o título a meio caminho do desvanecimento.
+    // Depois disso, só a navegação para uma rota nova rola ao topo; "voltar" mantém onde estava.
+    if (!first && navType === 'POP') return
     scrollToTop(true)
   }, [pathname, key, hash, navType])
 
