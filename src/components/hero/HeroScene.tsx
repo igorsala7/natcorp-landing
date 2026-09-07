@@ -39,10 +39,15 @@ interface HeroSceneProps {
   reduced: boolean
   /** Desliga os laços contínuos (usado pelo interruptor de diagnóstico ?hero=sem-lacos). */
   loops?: boolean
+  /** Mostra a cena já pronta, sem a entrada (usado pelo interruptor ?hero=liso). */
+  instant?: boolean
   y: MotionValue<number> | 0
 }
 
-export function HeroScene({ on, reduced, loops = true, y }: HeroSceneProps) {
+/** Transição de duração zero: a cena nasce no estado final. */
+const NOW = { duration: 0 } as const
+
+export function HeroScene({ on, reduced, loops = true, instant = false, y }: HeroSceneProps) {
   const root = useRef<HTMLDivElement>(null)
   /** Os laços contínuos (pacotes de luz, brilho na borda, respiração) só rodam com o hero na tela. */
   const inView = useInView(root, { margin: '120px 0px' })
@@ -114,9 +119,9 @@ export function HeroScene({ on, reduced, loops = true, y }: HeroSceneProps) {
                   stroke="#F3C9DA"
                   strokeWidth="1.3"
                   strokeOpacity="0.28"
-                  initial={{ pathLength: 0 }}
+                  initial={instant ? false : { pathLength: 0 }}
                   animate={on ? { pathLength: 1 } : { pathLength: 0 }}
-                  transition={{ duration: 1.8, ease: EASE, delay: 0.4 + i * 0.08 }}
+                  transition={instant ? NOW : { duration: 1.8, ease: EASE, delay: 0.4 + i * 0.08 }}
                 />
               ))}
             </g>
@@ -129,18 +134,18 @@ export function HeroScene({ on, reduced, loops = true, y }: HeroSceneProps) {
                 stroke="#C95788"
                 strokeWidth="7"
                 strokeOpacity="0.14"
-                initial={{ pathLength: 0, opacity: 0 }}
+                initial={instant ? false : { pathLength: 0, opacity: 0 }}
                 animate={on ? { pathLength: 1, opacity: 1 } : { pathLength: 0, opacity: 0 }}
-                transition={{ duration: 2.8, ease: EASE, delay: 0.8 }}
+                transition={instant ? NOW : { duration: 2.8, ease: EASE, delay: 0.8 }}
               />
               <m.path
                 d={MODULE}
                 fill="none"
                 stroke="url(#hv2-edge-2)"
                 strokeWidth="2.2"
-                initial={{ pathLength: 0, opacity: 0 }}
+                initial={instant ? false : { pathLength: 0, opacity: 0 }}
                 animate={on ? { pathLength: 1, opacity: 1 } : { pathLength: 0, opacity: 0 }}
-                transition={{ duration: 2.8, ease: EASE, delay: 0.8 }}
+                transition={instant ? NOW : { duration: 2.8, ease: EASE, delay: 0.8 }}
               />
             </g>
 
@@ -151,9 +156,9 @@ export function HeroScene({ on, reduced, loops = true, y }: HeroSceneProps) {
               stroke="#E4A9C4"
               strokeWidth="26"
               strokeOpacity="0.08"
-              initial={{ pathLength: 0, opacity: 0 }}
+              initial={instant ? false : { pathLength: 0, opacity: 0 }}
               animate={on ? { pathLength: 1, opacity: 1 } : { pathLength: 0, opacity: 0 }}
-              transition={{ duration: 2.4, ease: EASE, delay: 0.3 }}
+              transition={instant ? NOW : { duration: 2.4, ease: EASE, delay: 0.3 }}
             />
             <m.path
               d={MODULE}
@@ -161,18 +166,18 @@ export function HeroScene({ on, reduced, loops = true, y }: HeroSceneProps) {
               stroke="#E4A9C4"
               strokeWidth="10"
               strokeOpacity="0.16"
-              initial={{ pathLength: 0, opacity: 0 }}
+              initial={instant ? false : { pathLength: 0, opacity: 0 }}
               animate={on ? { pathLength: 1, opacity: 1 } : { pathLength: 0, opacity: 0 }}
-              transition={{ duration: 2.4, ease: EASE, delay: 0.3 }}
+              transition={instant ? NOW : { duration: 2.4, ease: EASE, delay: 0.3 }}
             />
             <m.path
               d={MODULE}
               fill="none"
               stroke="url(#hv2-edge)"
               strokeWidth="3"
-              initial={{ pathLength: 0, opacity: 0 }}
+              initial={instant ? false : { pathLength: 0, opacity: 0 }}
               animate={on ? { pathLength: 1, opacity: 1 } : { pathLength: 0, opacity: 0 }}
-              transition={{ duration: 2.4, ease: EASE, delay: 0.3 }}
+              transition={instant ? NOW : { duration: 2.4, ease: EASE, delay: 0.3 }}
             />
           </svg>
 
@@ -239,12 +244,16 @@ export function HeroScene({ on, reduced, loops = true, y }: HeroSceneProps) {
             {/* o módulo menor, em vidro, respirando perto do tablet */}
             <m.g
               style={{ transformOrigin: `${SMALL.cx}px ${SMALL.cy}px`, transformBox: 'view-box' }}
-              initial={{ opacity: 0, scale: 0.9 }}
+              initial={instant ? false : { opacity: 0, scale: 0.9 }}
               animate={on ? { opacity: 1, scale: loop ? [1, 1.04, 1] : 1 } : { opacity: 0, scale: 0.9 }}
-              transition={{
-                opacity: { duration: 1.2, ease: EASE, delay: 1.4 },
-                scale: loop ? { duration: 7, ease: 'easeInOut', repeat: Infinity, delay: 1.4 * wait } : { duration: 1.2 },
-              }}
+              transition={
+                instant
+                  ? NOW
+                  : {
+                      opacity: { duration: 1.2, ease: EASE, delay: 1.4 },
+                      scale: loop ? { duration: 7, ease: 'easeInOut', repeat: Infinity, delay: 1.4 * wait } : { duration: 1.2 },
+                    }
+              }
             >
               <g transform={`translate(${SMALL.cx} ${SMALL.cy}) scale(${SMALL.s}) translate(-1412 -425)`}>
                 <path d={MODULE} fill="url(#hv2-glass)" stroke="#F3C9DA" strokeWidth="4" strokeOpacity="0.75" />
@@ -258,9 +267,9 @@ export function HeroScene({ on, reduced, loops = true, y }: HeroSceneProps) {
       {/* cartões do sistema, presos à seção (não ao quadro da imagem) */}
       <m.div
         className="absolute right-[2%] top-[12%] hidden w-[240px] lg:block 2xl:right-[3%] 2xl:w-[280px]"
-        initial={{ opacity: 0, y: 16 }}
+        initial={instant ? false : { opacity: 0, y: 16 }}
         animate={on ? { opacity: 1, y: 0 } : { opacity: 0, y: 16 }}
-        transition={{ duration: 0.9, ease: EASE, delay: 1.6 }}
+        transition={instant ? NOW : { duration: 0.9, ease: EASE, delay: 1.6 }}
       >
         <div className="rounded-2xl border border-white/20 bg-[#1B1238]/80 p-3.5 shadow-[0_12px_40px_rgba(27,18,56,0.45)]">
           <div className="flex items-start gap-3">
@@ -274,9 +283,9 @@ export function HeroScene({ on, reduced, loops = true, y }: HeroSceneProps) {
       </m.div>
       <m.div
         className="absolute bottom-[12%] right-[5%] hidden w-[270px] lg:block"
-        initial={{ opacity: 0, y: 16 }}
+        initial={instant ? false : { opacity: 0, y: 16 }}
         animate={on ? { opacity: 1, y: 0 } : { opacity: 0, y: 16 }}
-        transition={{ duration: 0.9, ease: EASE, delay: 1.8 }}
+        transition={instant ? NOW : { duration: 0.9, ease: EASE, delay: 1.8 }}
       >
         <div className="rounded-2xl border border-white/20 bg-[#1B1238]/75 p-3.5 shadow-[0_12px_40px_rgba(27,18,56,0.45)]">
           <div className="flex items-center gap-3">
@@ -297,9 +306,9 @@ export function HeroScene({ on, reduced, loops = true, y }: HeroSceneProps) {
           Sem will-change à mão: a biblioteca pede a layer só enquanto anima. */}
       <m.div
         className="absolute left-[-12%] top-[18%] h-[95%] w-[58%] rounded-full bg-[radial-gradient(closest-side,rgba(201,87,136,0.26),rgba(201,87,136,0.1)_45%,rgba(201,87,136,0)_100%)]"
-        initial={{ x: '0%', y: '0%', opacity: 0.45 }}
+        initial={instant ? false : { x: '0%', y: '0%', opacity: 0.45 }}
         animate={loop ? { x: ['0%', '14%', '0%'], y: ['0%', '-12%', '0%'], opacity: [0.45, 0.85, 0.45] } : { x: '0%', y: '0%', opacity: 0.45 }}
-        transition={loop ? { duration: 14, ease: 'easeInOut', repeat: Infinity } : { duration: 1.2, ease: EASE }}
+        transition={instant ? NOW : loop ? { duration: 14, ease: 'easeInOut', repeat: Infinity } : { duration: 1.2, ease: EASE }}
       />
 
       {/* véu para o texto: base no celular, lateral esquerda no desktop */}

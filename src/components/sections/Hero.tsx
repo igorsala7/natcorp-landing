@@ -42,6 +42,8 @@ export function Hero() {
   const flag = heroFlag()
   const reduced = (useReducedMotion() ?? false) || flag === 'liso'
   const loops = !flag
+  /** ?hero=liso: a abertura nasce pronta, sem nenhuma animação de entrada. */
+  const instant = flag === 'liso'
   const ref = useRef<HTMLElement>(null)
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end start'] })
   /** A seta de rolar só balança com o hero na tela. */
@@ -50,11 +52,14 @@ export function Hero() {
   const opacityText = useTransform(scrollYProgress, [0, 0.6], [1, 0])
   const yStage = useTransform(scrollYProgress, [0, 1], [0, 80])
 
-  const show = (delay: number) => ({
-    initial: { opacity: 0, y: 20 },
-    animate: done ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 },
-    transition: { duration: 0.8, ease: EASE, delay },
-  })
+  const show = (delay: number) =>
+    instant
+      ? { initial: false as const, animate: { opacity: 1, y: 0 }, transition: { duration: 0 } }
+      : {
+          initial: { opacity: 0, y: 20 },
+          animate: done ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 },
+          transition: { duration: 0.8, ease: EASE, delay },
+        }
 
   const scrollHint = (
     <m.a
@@ -67,9 +72,9 @@ export function Hero() {
       }}
       aria-label="Rolar para a próxima seção"
       className="absolute bottom-5 left-1/2 hidden -translate-x-1/2 text-white/60 transition-colors hover:text-white lg:block"
-      initial={{ opacity: 0 }}
+      initial={instant ? false : { opacity: 0 }}
       animate={done ? { opacity: 1 } : { opacity: 0 }}
-      transition={{ delay: 1.8, duration: 0.8 }}
+      transition={instant ? { duration: 0 } : { delay: 1.8, duration: 0.8 }}
     >
       <m.span
         className="block"
@@ -96,6 +101,7 @@ export function Hero() {
         id="hero-title"
         mode="controlled"
         visible={done}
+        instant={instant}
         delay={0.15}
         stagger={0.08}
         text="Todo o RH. [[Um único sistema.]]"
@@ -137,7 +143,7 @@ export function Hero() {
   if (VARIANT === 'scene') {
     return (
       <section ref={ref} id="top" className="on-dark relative isolate flex min-h-[92svh] flex-col overflow-hidden bg-brand-blue text-white lg:min-h-0" aria-labelledby="hero-title">
-        <HeroScene on={done} reduced={reduced} loops={loops} y={reduced ? 0 : yStage} />
+        <HeroScene on={done} reduced={reduced} loops={loops} instant={instant} y={reduced ? 0 : yStage} />
         <div className="container relative mt-auto flex flex-col items-start pb-12 pt-[calc(var(--nav-h)+38svh)] sm:pb-14 sm:pt-[calc(var(--nav-h)+42svh)] lg:min-h-[min(760px,80vh)] lg:justify-center lg:py-[calc(var(--nav-h)+2.5rem)]">
           {text}
         </div>

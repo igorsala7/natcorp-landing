@@ -16,6 +16,8 @@ interface SplitTextProps {
   /** 'inView' (padrão) anima ao entrar na tela; 'controlled' usa `visible`. */
   mode?: 'inView' | 'controlled'
   visible?: boolean
+  /** Mostra o texto já revelado, sem animação (usado pelo interruptor de diagnóstico do hero). */
+  instant?: boolean
   id?: string
 }
 
@@ -88,6 +90,7 @@ export function SplitText({
   stagger = 0.045,
   mode = 'inView',
   visible = true,
+  instant = false,
   id,
 }: SplitTextProps) {
   const Comp = tags[as]
@@ -105,8 +108,12 @@ export function SplitText({
       className={cn(className)}
       aria-label={plain}
       variants={container}
-      initial="hidden"
-      {...(controlled ? { animate: visible ? 'visible' : 'hidden' } : { whileInView: 'visible', viewport: viewportOnce })}
+      initial={instant ? 'visible' : 'hidden'}
+      {...(instant
+        ? { animate: 'visible', transition: { duration: 0 } }
+        : controlled
+          ? { animate: visible ? 'visible' : 'hidden' }
+          : { whileInView: 'visible', viewport: viewportOnce })}
     >
       {tokens.map((w, i) => (
         <span key={i} aria-hidden>
