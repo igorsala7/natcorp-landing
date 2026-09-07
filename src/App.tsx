@@ -1,6 +1,6 @@
 import { Suspense, lazy, useEffect } from 'react'
 import { AnimatePresence } from 'motion/react'
-import { BrowserRouter, HashRouter, Navigate, Route, Routes, useLocation } from 'react-router'
+import { BrowserRouter, HashRouter, Navigate, Route, Routes, useLocation, useMatch } from 'react-router'
 import { Toaster } from '@/components/ui/sonner'
 import { MotionProvider } from '@/components/motion/MotionProvider'
 import { IntroProvider } from '@/components/motion/Intro'
@@ -29,6 +29,7 @@ const CommercialPage = lazy(() => import('@/pages/CommercialPage'))
 const NotFoundPage = lazy(() => import('@/pages/NotFoundPage'))
 const MotionPage = lazy(() => import('@/pages/MotionPage'))
 const PresentationPage = lazy(() => import('@/pages/PresentationPage'))
+const PortalHubPage = lazy(() => import('@/pages/PortalHubPage'))
 
 /** HashRouter apenas para prévias hospedadas fora da raiz de um domínio (VITE_ROUTER=hash). */
 const Router = import.meta.env.VITE_ROUTER === 'hash' ? HashRouter : BrowserRouter
@@ -132,6 +133,14 @@ function AppRoutes() {
         {/* Endereço antigo da página de grupos: agora é "Como é a sua estrutura?". */}
         <Route path="/grupos" element={<Navigate to="/estruturas" replace />} />
         <Route
+          path="/portais/:cliente"
+          element={
+            <Suspense fallback={<PageFallback />}>
+              <PortalHubPage />
+            </Suspense>
+          }
+        />
+        <Route
           path="/jornada-da-contratacao"
           element={
             <Suspense fallback={<PageFallback />}>
@@ -152,20 +161,24 @@ function AppRoutes() {
   )
 }
 
-/** A moldura do site (barra, rodapé, rolagem suave): fica de fora nas páginas em tela cheia, como a apresentação. */
+/**
+ * A moldura do site (barra, rodapé, rolagem suave): fica de fora nas páginas em tela cheia, como a apresentação.
+ * A porta de entrada dos portais (/portais/<cliente>) tem cabeçalho e rodapé próprios, sem o menu de marketing.
+ */
 function Shell() {
   const { pathname } = useLocation()
   const chromeless = pathname === paths.presentation
+  const hub = useMatch('/portais/:cliente') !== null
   return (
     <>
       {!chromeless && <SmoothScroll />}
       {!chromeless && <ScrollProgress />}
       <ScrollManager />
-      {!chromeless && <Navbar />}
+      {!chromeless && !hub && <Navbar />}
       <main id="conteudo">
         <AppRoutes />
       </main>
-      {!chromeless && <Footer />}
+      {!chromeless && !hub && <Footer />}
     </>
   )
 }

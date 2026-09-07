@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024" role="img" aria-label="Ícone do módulo Quadro de Vagas">
+  <defs>
+    <linearGradient id="ic-quadro-de-vagas-grad" gradientUnits="userSpaceOnUse" x1="219.96" y1="219.96" x2="804.04" y2="804.04">
+      <stop offset="0" stop-color="#B54E89"/>
+      <stop offset="1" stop-color="#6F2C7B"/>
+    </linearGradient>
+  </defs>
+  <path d="M582.92 165.73 L858.27 441.08 C897.44 480.25 897.44 543.75 858.27 582.92 L582.92 858.27 C543.75 897.44 480.25 897.44 441.08 858.27 L165.73 582.92 C126.56 543.75 126.56 480.25 165.73 441.08 L441.08 165.73 C480.25 126.56 543.75 126.56 582.92 165.73 Z" fill="url(#ic-quadro-de-vagas-grad)"/>
+  <g transform="translate(262 262) scale(20.833333333333332)" fill="none" stroke="#FFFFFF" stroke-width="1.15" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="3" y="7.5" width="18" height="12.5" rx="2.6"/>
+    <path d="M9 7.5V6a1.5 1.5 0 0 1 1.5-1.5h3A1.5 1.5 0 0 1 15 6v1.5"/>
+    <path d="M3 12.5h18"/>
+    <circle cx="12" cy="12.5" r="1" fill="#FFFFFF" stroke="none"/>
+  </g>
+</svg>

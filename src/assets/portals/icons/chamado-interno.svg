@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024" role="img" aria-label="Ícone do módulo Chamado Interno">
+  <defs>
+    <linearGradient id="ic-chamado-interno-grad" gradientUnits="userSpaceOnUse" x1="219.96" y1="219.96" x2="804.04" y2="804.04">
+      <stop offset="0" stop-color="#5C2377"/>
+      <stop offset="1" stop-color="#3A1D69"/>
+    </linearGradient>
+  </defs>
+  <path d="M582.92 165.73 L858.27 441.08 C897.44 480.25 897.44 543.75 858.27 582.92 L582.92 858.27 C543.75 897.44 480.25 897.44 441.08 858.27 L165.73 582.92 C126.56 543.75 126.56 480.25 165.73 441.08 L441.08 165.73 C480.25 126.56 543.75 126.56 582.92 165.73 Z" fill="url(#ic-chamado-interno-grad)"/>
+  <g transform="translate(262 262) scale(20.833333333333332)" fill="none" stroke="#FFFFFF" stroke-width="1.15" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M3.5 6a2 2 0 0 1 2-2h13a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-7.5L6 20.5V17H5.5a2 2 0 0 1-2-2z"/>
+    <circle cx="8.5" cy="10.5" r="0.9" fill="#FFFFFF" stroke="none"/><circle cx="12" cy="10.5" r="0.9" fill="#FFFFFF" stroke="none"/><circle cx="15.5" cy="10.5" r="0.9" fill="#FFFFFF" stroke="none"/>
+  </g>
+</svg>

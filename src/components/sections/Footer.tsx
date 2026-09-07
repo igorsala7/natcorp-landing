@@ -9,6 +9,7 @@ const footerLinks = [
   { to: paths.home, label: 'Início' },
   { to: paths.modules, label: 'Todos os módulos' },
   { to: paths.portals, label: 'Portais e autoatendimento' },
+  { to: '/portais/natcorp', label: 'Acesso aos portais (clientes)' },
   { to: paths.structures, label: 'Como é a sua estrutura?' },
   { to: paths.nati, label: 'NATI' },
   { to: paths.segments, label: 'Segmentos' },

@@ -9,8 +9,15 @@ const STORAGE_KEY = 'natcorp:intro'
 /** A assinatura completa mais um respiro antes de a cortina subir. */
 const HOLD_MS = LOGO_MOTION_MS + 450
 
+/** A porta de entrada dos portais (/portais/<cliente>) abre direto: quem chega ali quer entrar no sistema. */
+function isPortalHub() {
+  const where = `${window.location.pathname}${window.location.hash}`
+  return /(^|#)\/portais\/[^/]+\/?$/.test(where)
+}
+
 function shouldShow() {
   if (typeof window === 'undefined') return false
+  if (isPortalHub()) return false
   try {
     return window.sessionStorage.getItem(STORAGE_KEY) !== '1'
   } catch {
