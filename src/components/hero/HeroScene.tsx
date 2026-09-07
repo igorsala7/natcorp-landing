@@ -52,7 +52,13 @@ export function HeroScene({ on, reduced, y, scale }: HeroSceneProps) {
   const wait = prev.looped ? 0 : 1
   return (
     <div ref={root} className="absolute inset-0" aria-hidden>
-      {/* o quadro que cobre a seção (no celular, só a parte de cima): imagem e arte no mesmo sistema de coordenadas */}
+      {/*
+        O quadro que cobre a seção (no celular, só a parte de cima): imagem e arte no mesmo sistema de coordenadas.
+        A foto não desvanece na entrada. Quando desvanecia, o desvanecimento começava com a montagem e a foto só
+        aparecia quando terminava de decodificar, já no meio do caminho: via-se o roxo chapado, a foto entrando de
+        uma vez, o quadro continuando a clarear e depois escurecendo com os cartões. Era esse vaivém que se lia
+        como um piscar. Agora a foto entra uma vez só, assim que chega, e só a luz se desenha por cima.
+      */}
       <div className="absolute inset-x-0 top-0 h-[62%] overflow-hidden [container-type:size] lg:h-full">
         <m.div
           className="absolute [--fx:84%] [--fy:50%] lg:[--fx:62%] lg:[--fy:45%]"
@@ -60,16 +66,15 @@ export function HeroScene({ on, reduced, y, scale }: HeroSceneProps) {
             left: 'var(--fx)',
             top: 'var(--fy)',
             translate: 'calc(var(--fx) * -1) calc(var(--fy) * -1)',
-            width: `max(100cqw, calc(100cqh * ${(W / H).toFixed(4)}))`,
+            // cobre o contentor pelo lado que faltar; o 100% é a rede de segurança para o navegador
+            // que ainda não tiver medido o contentor (sem ele, o quadro nasceria com largura zero)
+            width: `max(100%, 100cqw, calc(100cqh * ${(W / H).toFixed(4)}))`,
             aspectRatio: `${W} / ${H}`,
             y,
             scale,
             // o quadro tem layer própria: a paralaxe da rolagem só recompõe, sem repintar a foto
             willChange: 'transform',
           }}
-          initial={{ opacity: 0 }}
-          animate={on ? { opacity: 1 } : { opacity: 0 }}
-          transition={{ duration: 1.4, ease: EASE }}
         >
           <img
             src={heroV2}
@@ -79,7 +84,7 @@ export function HeroScene({ on, reduced, y, scale }: HeroSceneProps) {
             width={W}
             height={H}
             fetchPriority="high"
-            decoding="async"
+            decoding="sync"
             draggable={false}
             className="absolute inset-0 h-full w-full"
           />
@@ -169,8 +174,10 @@ export function HeroScene({ on, reduced, y, scale }: HeroSceneProps) {
             />
           </svg>
 
-          {/* camada em movimento, numa layer própria do compositor: o que anima a cada quadro fica separado da foto e dos traços parados */}
-          <svg viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="none" className="absolute inset-0 h-full w-full overflow-visible will-change-transform">
+            {/* camada em movimento, separada da foto e dos traços parados: o que anima a cada quadro repinta sozinho.
+              Sem will-change aqui: este SVG não se move, e promover um SVG a layer própria faz o WebKit
+              repintá-lo em ladrilhos, o que aparece como um tremular. */}
+          <svg viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="none" className="absolute inset-0 h-full w-full overflow-visible">
             <defs>
               <linearGradient id="hv2-glass" x1="0" y1="0" x2="1" y2="1">
                 <stop offset="0" stopColor="#F3C9DA" stopOpacity="0.28" />
@@ -284,10 +291,10 @@ export function HeroScene({ on, reduced, y, scale }: HeroSceneProps) {
 
       {/* brilho que deriva devagar do lado do texto, para o roxo respirar.
           Entra já em 0.45, o mesmo valor em que o laço começa e termina: sem isso o brilho aparecia com a
-          opacidade cheia do CSS e depois caía em degraus, o que se via como um piscar na abertura. */}
+          opacidade cheia do CSS e depois caía em degraus, o que se via como um piscar na abertura.
+          Sem will-change à mão: a biblioteca pede a layer só enquanto anima. */}
       <m.div
         className="absolute left-[-12%] top-[18%] h-[95%] w-[58%] rounded-full bg-[radial-gradient(closest-side,rgba(201,87,136,0.26),rgba(201,87,136,0.1)_45%,rgba(201,87,136,0)_100%)]"
-        style={{ willChange: 'transform, opacity' }}
         initial={{ x: '0%', y: '0%', opacity: 0.45 }}
         animate={loop ? { x: ['0%', '14%', '0%'], y: ['0%', '-12%', '0%'], opacity: [0.45, 0.85, 0.45] } : { x: '0%', y: '0%', opacity: 0.45 }}
         transition={loop ? { duration: 14, ease: 'easeInOut', repeat: Infinity } : { duration: 1.2, ease: EASE }}

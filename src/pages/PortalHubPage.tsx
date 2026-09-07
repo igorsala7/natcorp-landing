@@ -23,7 +23,7 @@ import { clientLogo, greeting, hubPath, portalApps, portalHost, portalUrl, type 
 import { paths, siteConfig } from '@/content/site'
 import { EASE, viewportOnce } from '@/lib/motion'
 import { cn } from '@/lib/utils'
-import figureRafael from '@/assets/portals/figure-rafael.webp'
+import figureColaborador from '@/assets/portals/figure-colaborador.webp'
 import figureMarcos from '@/assets/portals/figure-marcos.webp'
 import figureBeatriz from '@/assets/portals/figure-beatriz.webp'
 import iconCandidato from '@/assets/portals/icons/quadro-de-vagas.svg'
@@ -32,9 +32,9 @@ import iconChamado from '@/assets/portals/icons/chamado-interno.svg'
 
 /** Quem ilustra cada portal do sistema: os personagens da jornada, na mesma família 3D da NATI. */
 const figures: Partial<Record<PortalApp['key'], { src: string; alt: string }>> = {
-  colaborador: { src: figureRafael, alt: 'Rafael, técnico de segurança, com o celular na mão' },
-  gestor: { src: figureMarcos, alt: 'Marcos, gerente de produção, de blazer roxo' },
-  operador: { src: figureBeatriz, alt: 'Beatriz, analista de admissão, com o notebook' },
+  colaborador: { src: figureColaborador, alt: 'Colaborador de camisa com a marca Natcorp, com o celular na mão' },
+  gestor: { src: figureMarcos, alt: 'Gestor de blazer roxo, com o tablet na mão' },
+  operador: { src: figureBeatriz, alt: 'Analista do RH com o notebook na mão' },
 }
 
 /** Ícones dos aplicativos e serviços: os mesmos ícones de módulo da marca. */
