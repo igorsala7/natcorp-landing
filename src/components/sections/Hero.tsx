@@ -16,6 +16,21 @@ import { scrollToElement } from '@/components/motion/ScrollManager'
 /** Qual composição abre a home: `scene` (cena completa fornecida) ou `stage` (recorte da pessoa no palco). */
 const VARIANT: 'scene' | 'stage' = 'scene'
 
+/**
+ * Interruptor de diagnóstico do hero, para isolar um tremular que só aparece em alguns navegadores.
+ * Fica fora do menu e do sitemap; é só um parâmetro na URL:
+ *   ?hero=liso       abertura parada: sem entrada, sem laços contínuos, sem paralaxe
+ *   ?hero=sem-lacos  a entrada roda, mas nada fica em laço e a paralaxe fica desligada
+ * Some assim que a causa estiver identificada.
+ */
+function heroFlag(): '' | 'liso' | 'sem-lacos' {
+  if (typeof window === 'undefined') return ''
+  const from = (q: string) => new URLSearchParams(q).get('hero')
+  const hash = window.location.hash
+  const v = from(window.location.search) || from(hash.slice(hash.indexOf('?') + 1)) || ''
+  return v === 'liso' || v === 'sem-lacos' ? v : ''
+}
+
 const trust = ['Todos os módulos integrados', '2.500 folhas por minuto', 'NATI, a IA do RH', 'Nuvem Oracle com contingência', 'Várias empresas e CNPJs, uma base']
 
 /**
@@ -24,7 +39,9 @@ const trust = ['Todos os módulos integrados', '2.500 folhas por minuto', 'NATI,
  */
 export function Hero() {
   const done = useIntroDone()
-  const reduced = useReducedMotion() ?? false
+  const flag = heroFlag()
+  const reduced = (useReducedMotion() ?? false) || flag === 'liso'
+  const loops = !flag
   const ref = useRef<HTMLElement>(null)
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end start'] })
   /** A seta de rolar só balança com o hero na tela. */
@@ -32,7 +49,6 @@ export function Hero() {
   const yText = useTransform(scrollYProgress, [0, 1], [0, -70])
   const opacityText = useTransform(scrollYProgress, [0, 0.6], [1, 0])
   const yStage = useTransform(scrollYProgress, [0, 1], [0, 80])
-  const scaleScene = useTransform(scrollYProgress, [0, 1], [1, 1.06])
 
   const show = (delay: number) => ({
     initial: { opacity: 0, y: 20 },
@@ -66,7 +82,7 @@ export function Hero() {
   )
 
   const text = (
-    <m.div style={{ y: reduced ? 0 : yText, opacity: reduced ? 1 : opacityText, willChange: reduced ? undefined : 'transform, opacity' }} className="relative z-10 max-w-2xl">
+    <m.div style={{ y: reduced ? 0 : yText, opacity: reduced ? 1 : opacityText }} className="relative z-10 max-w-2xl">
       <m.p
         {...show(0.05)}
         className="inline-flex items-center gap-2 whitespace-nowrap rounded-full border border-white/20 bg-white/[0.12] px-3.5 py-1.5 text-[11px] font-semibold uppercase tracking-[0.1em] text-white/90 sm:px-4 sm:text-[12px] sm:tracking-[0.14em]"
@@ -121,7 +137,7 @@ export function Hero() {
   if (VARIANT === 'scene') {
     return (
       <section ref={ref} id="top" className="on-dark relative isolate flex min-h-[92svh] flex-col overflow-hidden bg-brand-blue text-white lg:min-h-0" aria-labelledby="hero-title">
-        <HeroScene on={done} reduced={reduced} y={reduced ? 0 : yStage} scale={reduced ? 1 : scaleScene} />
+        <HeroScene on={done} reduced={reduced} loops={loops} y={reduced ? 0 : yStage} />
         <div className="container relative mt-auto flex flex-col items-start pb-12 pt-[calc(var(--nav-h)+38svh)] sm:pb-14 sm:pt-[calc(var(--nav-h)+42svh)] lg:min-h-[min(760px,80vh)] lg:justify-center lg:py-[calc(var(--nav-h)+2.5rem)]">
           {text}
         </div>

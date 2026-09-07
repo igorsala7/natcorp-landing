@@ -37,15 +37,16 @@ const flows = Array.from({ length: 7 }, (_, i) => {
 interface HeroSceneProps {
   on: boolean
   reduced: boolean
+  /** Desliga os laços contínuos (usado pelo interruptor de diagnóstico ?hero=sem-lacos). */
+  loops?: boolean
   y: MotionValue<number> | 0
-  scale: MotionValue<number> | 1
 }
 
-export function HeroScene({ on, reduced, y, scale }: HeroSceneProps) {
+export function HeroScene({ on, reduced, loops = true, y }: HeroSceneProps) {
   const root = useRef<HTMLDivElement>(null)
   /** Os laços contínuos (pacotes de luz, brilho na borda, respiração) só rodam com o hero na tela. */
   const inView = useInView(root, { margin: '120px 0px' })
-  const loop = on && inView && !reduced
+  const loop = on && inView && !reduced && loops
   /** Depois da primeira entrada, os laços voltam sem a espera da introdução (estado derivado durante a renderização). */
   const [prev, setPrev] = useState({ loop: false, looped: false })
   if (prev.loop !== loop) setPrev({ loop, looped: prev.looped || prev.loop })
@@ -71,8 +72,9 @@ export function HeroScene({ on, reduced, y, scale }: HeroSceneProps) {
             width: `max(100%, 100cqw, calc(100cqh * ${(W / H).toFixed(4)}))`,
             aspectRatio: `${W} / ${H}`,
             y,
-            scale,
-            // o quadro tem layer própria: a paralaxe da rolagem só recompõe, sem repintar a foto
+            // o quadro tem layer própria: a paralaxe da rolagem só recompõe, sem repintar a foto.
+            // Só desloca, não amplia: escalar uma layer que carrega a foto obriga o navegador a
+            // redesenhá-la a cada quadro da rolagem, e é aí que o WebKit tremula.
             willChange: 'transform',
           }}
         >
@@ -89,7 +91,7 @@ export function HeroScene({ on, reduced, y, scale }: HeroSceneProps) {
             className="absolute inset-0 h-full w-full"
           />
 
-          <svg viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="none" className="absolute inset-0 h-full w-full overflow-visible">
+          <svg viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="none" className="absolute inset-0 h-full w-full">
             <defs>
               <linearGradient id="hv2-edge" x1="0" y1="0" x2="1" y2="1">
                 <stop offset="0" stopColor="#F3C9DA" stopOpacity="0.95" />
@@ -177,7 +179,7 @@ export function HeroScene({ on, reduced, y, scale }: HeroSceneProps) {
             {/* camada em movimento, separada da foto e dos traços parados: o que anima a cada quadro repinta sozinho.
               Sem will-change aqui: este SVG não se move, e promover um SVG a layer própria faz o WebKit
               repintá-lo em ladrilhos, o que aparece como um tremular. */}
-          <svg viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="none" className="absolute inset-0 h-full w-full overflow-visible">
+          <svg viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="none" className="absolute inset-0 h-full w-full">
             <defs>
               <linearGradient id="hv2-glass" x1="0" y1="0" x2="1" y2="1">
                 <stop offset="0" stopColor="#F3C9DA" stopOpacity="0.28" />

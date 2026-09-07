@@ -111,7 +111,10 @@ export function SplitText({
       {tokens.map((w, i) => (
         <span key={i} aria-hidden>
           <span className="inline-block overflow-hidden align-bottom pb-[0.14em] -mb-[0.14em] pr-[0.02em]">
-            <m.span variants={word} className="inline-block will-change-transform">
+            {/* sem will-change fixo: a biblioteca pede a layer só enquanto a palavra sobe. Um will-change
+                permanente dentro de um recorte (overflow-hidden) deixa dezenas de layers presas na página,
+                que é onde o WebKit começa a repintar em ladrilhos e a imagem tremula. */}
+            <m.span variants={word} className="inline-block">
               {w.map((seg, j) => (
                 <span key={j} className={cn(seg.highlight && highlightClassName)}>
                   {seg.text}

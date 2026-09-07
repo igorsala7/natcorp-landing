@@ -21,7 +21,9 @@ const buttonVariants = cva(
         inverse:
           'bg-white text-brand-purple shadow-[0_1px_2px_rgba(0,0,0,0.15)] hover:bg-brand-off-white hover:shadow-[0_16px_32px_-12px_rgba(0,0,0,0.45)]',
         'outline-inverse':
-          'border border-white/35 bg-white/0 text-white backdrop-blur-sm hover:border-white/70 hover:bg-white/10',
+          // fundo translúcido em vez de backdrop-blur: o desfoque do fundo sobre uma cena animada
+          // (o hero) faz o WebKit repintar o botão a cada quadro, o que se vê como um tremular
+          'border border-white/35 bg-white/[0.08] text-white hover:border-white/70 hover:bg-white/20',
         accent: 'bg-brand-pink text-white hover:bg-[#b84a79]',
         destructive: 'bg-destructive text-destructive-foreground hover:bg-destructive/90',
       },
