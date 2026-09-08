@@ -1,4 +1,4 @@
-import { useRef } from 'react'
+import { useRef, type CSSProperties } from 'react'
 import { Link, useParams } from 'react-router'
 import { m, useInView, useReducedMotion } from 'motion/react'
 import { ArrowRight, ArrowUpRight, FlaskConical, KeyRound, LifeBuoy, LockKeyhole, MapPin, QrCode, ScanFace, ShieldCheck, WifiOff } from 'lucide-react'
@@ -37,30 +37,50 @@ import iconChamado from '@/assets/portals/icons/chamado-interno.svg'
  * Quem ilustra cada portal do sistema: os personagens da jornada, na mesma
  * família 3D do material da marca.
  *
- * `dupla` é o segundo personagem do quadro, opcional. Cada portal é usado por
- * mais de um tipo de pessoa, e um retrato só sugere o contrário — a dupla
- * mostra o portal como lugar compartilhado.
+ * `dupla` é o segundo personagem do quadro. Cada portal é usado por mais de um
+ * tipo de pessoa, e um retrato só sugere o contrário.
  *
- * Enquanto o arquivo do par não existe, a figura principal segue centralizada,
- * exatamente como antes: basta acrescentar `dupla` para o quadro virar duas
- * pessoas, sem tocar no componente.
+ * OS NÚMEROS NÃO SÃO CHUTE. Cada arquivo foi gerado com um enquadramento
+ * diferente, então a mesma largura em CSS deixava um personagem com a cabeça
+ * maior que a do outro. `larg` sai de medição do PNG — altura da cabeça,
+ * largura do ombro e altura do corpo, valendo a MEDIANA das três, porque
+ * cabelo volumoso estraga a medida da cabeça e ombro largo de homem estraga a
+ * do ombro. Com ela, os dois aparecem na MESMA escala: a altura exibida dos
+ * dois bate dentro de 1px em todos os pares.
+ *
+ * `esq` é o canto esquerdo da imagem medido A PARTIR DO CENTRO do palco, para
+ * a dupla ficar centrada em qualquer largura de cartão. O valor sai da
+ * silhueta real dentro da faixa que aparece (já contando o espelhamento, que
+ * troca as bordas de lado), com 16px de folga entre as duas pessoas — é o que
+ * garante que fiquem lado a lado, sem uma tapar a outra.
+ *
+ * Trocar um arquivo de figura exige refazer a conta; o LEIA-ME em
+ * src/assets/portals explica como.
  */
 interface Figura {
   src: string
   alt: string
+  /** Largura da imagem dentro do palco, em px. */
+  larg: number
+  /** Canto esquerdo da imagem, em px a partir do centro do palco. */
+  esq: number
+  /** Do topo do palco até o topo da cabeça, em px. */
+  topo: number
+  /** Espelha a figura, para as duas não olharem para o mesmo lado. */
+  espelhado?: boolean
 }
 const figures: Partial<Record<PortalApp['key'], { principal: Figura; dupla?: Figura }>> = {
   colaborador: {
-    principal: { src: figureColaborador, alt: 'Colaborador de camisa com a marca Natcorp, com o celular na mão' },
-    dupla: { src: figureColaboradorDupla, alt: 'Colaboradora de camiseta lilás, com o celular na mão' },
+    principal: { src: figureColaborador, alt: 'Colaborador de camisa com a marca Natcorp, com o celular na mão', larg: 186, esq: -31, topo: 20 },
+    dupla: { src: figureColaboradorDupla, alt: 'Colaboradora de camiseta lilás, com o celular na mão', larg: 135, esq: -176, topo: 20, espelhado: true },
   },
   gestor: {
-    principal: { src: figureMarcos, alt: 'Gestor de blazer roxo, com o tablet na mão' },
-    dupla: { src: figureGestorDupla, alt: 'Gestora de blazer rosa, com a prancheta na mão' },
+    principal: { src: figureMarcos, alt: 'Gestor de blazer roxo, com o tablet na mão', larg: 186, esq: -15, topo: 20 },
+    dupla: { src: figureGestorDupla, alt: 'Gestora de blazer rosa, com a prancheta na mão', larg: 142, esq: -171, topo: 20, espelhado: true },
   },
   operador: {
-    principal: { src: figureBeatriz, alt: 'Analista do RH com o notebook na mão' },
-    dupla: { src: figureOperadorDupla, alt: 'Operador de polo roxa da Natcorp, com o coletor na mão' },
+    principal: { src: figureBeatriz, alt: 'Analista do RH com o notebook na mão', larg: 165, esq: 22, topo: 20 },
+    dupla: { src: figureOperadorDupla, alt: 'Operador de polo roxa da Natcorp, com o coletor na mão', larg: 193, esq: -179, topo: 20, espelhado: true },
   },
 }
 
@@ -101,12 +121,8 @@ export default function PortalHubPage({ env = 'prod' }: { env?: PortalEnv }) {
       {/* ---------- portais do sistema ---------- */}
       <Section tone="off" id="portais" className="py-14 sm:py-16 lg:py-20">
         <div className="container">
-          <SectionHeader
-            eyebrow="Portais do sistema"
-            title="Entre pelo seu perfil."
-            lead="Cada portal mostra só o que faz sentido para você. O cadastro é um só: o que muda é o que você vê e o que pode fazer."
-          />
-          <Stagger className="mt-10 grid gap-6 md:grid-cols-2 xl:grid-cols-3" stagger={0.1}>
+          <Eyebrow>Portais do sistema</Eyebrow>
+          <Stagger className="mt-8 grid gap-6 md:grid-cols-2 xl:grid-cols-3" stagger={0.1}>
             {portalApps
               .filter((p) => p.kind === 'portal')
               .map((app) => (
@@ -410,6 +426,41 @@ function HubFooter({ client, env }: { client: PortalClient; env: PortalEnv }) {
   )
 }
 
+/**
+ * Uma figura no palco do cartão.
+ *
+ * O espelhamento e o zoom do hover moram AQUI, no wrapper, e não na <m.img>:
+ * ao terminar a animação de entrada o motion deixa `transform: none` inline no
+ * elemento, e inline vence classe. Um `scale-x-[-1]` ou um
+ * `group-hover:scale-[1.04]` na imagem simplesmente nunca chegava a valer.
+ * Como os dois são transform, vão juntos numa variável CSS.
+ */
+function Figurante({ fig, delay }: { fig: Figura; delay: number }) {
+  return (
+    <div
+      className="absolute transition-transform duration-700 ease-brand [transform:scaleX(var(--esp))] group-hover:[transform:scale(calc(var(--esp)*1.04),1.04)]"
+      style={{
+        width: fig.larg,
+        top: fig.topo,
+        height: `calc(100% - ${fig.topo}px)`,
+        left: `calc(50% + ${fig.esq}px)`,
+        '--esp': fig.espelhado ? -1 : 1,
+      } as CSSProperties}
+    >
+      <m.img
+        src={fig.src}
+        alt={fig.alt}
+        draggable={false}
+        className="h-full w-full object-cover object-top"
+        initial={{ opacity: 0, y: 18 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={viewportOnce}
+        transition={{ duration: 0.8, ease: EASE, delay }}
+      />
+    </div>
+  )
+}
+
 /* ---------------- cartões ---------------- */
 
 /** Cartão de um portal do sistema: o personagem no palco, o que a pessoa faz ali e o botão de entrar. */
@@ -423,45 +474,10 @@ function PortalCard({ app, href, dev }: { app: PortalApp; href: string; dev: boo
           <div className="absolute inset-x-0 bottom-0 h-40 bg-[radial-gradient(60%_80%_at_50%_100%,rgba(201,87,136,0.16),transparent_70%)]" aria-hidden />
           {fig && (
             <>
-              {/* Com dupla, as duas figuras se afastam do centro e a de trás
-                  entra menor e mais abaixo: é o que dá profundidade e faz
-                  lerem como duas pessoas juntas, não duas coladas.
-
-                  A centralização mora numa DIV, não na <m.img>: o motion
-                  escreve `transform` inline para animar o `y` e apagava o
-                  `-translate-x-1/2` da classe, jogando a figura meia largura
-                  para a direita — ela chegava a vazar do cartão. */}
-              {fig.dupla && (
-                <div className="absolute left-[38%] top-8 h-[calc(100%-2rem)] w-[164px] -translate-x-1/2">
-                  <m.img
-                    src={fig.dupla.src}
-                    alt={fig.dupla.alt}
-                    draggable={false}
-                    className="h-full w-full object-cover object-top transition-transform duration-700 ease-brand group-hover:scale-[1.03]"
-                    initial={{ opacity: 0, y: 18 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={viewportOnce}
-                    transition={{ duration: 0.8, ease: EASE, delay: 0.25 }}
-                  />
-                </div>
-              )}
-              <div
-                className={cn(
-                  'absolute top-5 h-[calc(100%-1.25rem)] -translate-x-1/2',
-                  fig.dupla ? 'left-[62%] w-[186px]' : 'left-1/2 w-[200px]',
-                )}
-              >
-                <m.img
-                  src={fig.principal.src}
-                  alt={fig.principal.alt}
-                  draggable={false}
-                  className="h-full w-full object-cover object-top transition-transform duration-700 ease-brand group-hover:scale-[1.04]"
-                  initial={{ opacity: 0, y: 18 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={viewportOnce}
-                  transition={{ duration: 0.8, ease: EASE, delay: 0.15 }}
-                />
-              </div>
+              {/* Lado a lado, no mesmo nível e na mesma escala, com a segunda
+                  espelhada para as duas não olharem para o mesmo lado. */}
+              {fig.dupla && <Figurante fig={fig.dupla} delay={0.25} />}
+              <Figurante fig={fig.principal} delay={0.15} />
             </>
           )}
           <div className="absolute inset-x-0 bottom-0 h-14 bg-gradient-to-t from-white to-transparent" aria-hidden />
@@ -473,13 +489,6 @@ function PortalCard({ app, href, dev }: { app: PortalApp; href: string; dev: boo
         <div className="flex flex-1 flex-col px-6 pb-6 pt-1 sm:px-7 sm:pb-7">
           <h3 className="text-[22px] font-extrabold leading-tight text-brand-ink">{app.name}</h3>
           <p className="mt-2 text-[14.5px] leading-relaxed text-brand-graphite">{app.description}</p>
-          <ul className="mt-4 flex flex-wrap gap-1.5" aria-label="O que você faz aqui">
-            {app.tasks.map((t) => (
-              <li key={t} className="rounded-md border border-brand-mist bg-brand-off-white px-2 py-0.5 text-[11.5px] font-semibold text-brand-graphite">
-                {t}
-              </li>
-            ))}
-          </ul>
           <div className="mt-auto pt-6">
             <Button asChild size="lg" className="w-full">
               <a href={href}>
@@ -525,13 +534,6 @@ function ServiceCard({ app, href, dev }: { app: PortalApp; href: string; dev: bo
         <h3 className="mt-5 text-[22px] font-extrabold leading-tight text-brand-ink">{app.name}</h3>
         <p className="mt-2 text-[14.5px] leading-relaxed text-brand-graphite">{app.description}</p>
         {app.note && <p className="mt-2 text-[12.5px] leading-relaxed text-brand-gray">{app.note}</p>}
-        <ul className="mt-4 flex flex-wrap gap-1.5" aria-label="O que você faz aqui">
-          {app.tasks.map((t) => (
-            <li key={t} className="rounded-md border border-brand-mist bg-brand-off-white px-2 py-0.5 text-[11.5px] font-semibold text-brand-graphite">
-              {t}
-            </li>
-          ))}
-        </ul>
         <div className="mt-auto pt-6">
           <Button asChild variant="secondary" size="lg" className="w-full">
             <a href={href}>

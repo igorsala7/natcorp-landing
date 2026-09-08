@@ -56,3 +56,30 @@ primeira tentativa. E o modelo não entrega alfa de verdade: se o prompt pedir
 "fundo transparente" ele DESENHA o xadrez. Peça fundo branco liso e recorte
 depois com `recorta.py` (preenchimento a partir das bordas, para não comer
 tênis branco), exportando em 360px de largura como as figuras antigas.
+
+## Como calcular `larg` e `esq` ao trocar uma figura
+
+As duas pessoas de um cartão precisam sair na MESMA escala e lado a lado. Como
+cada arquivo foi gerado com um enquadramento diferente, largura igual em CSS
+não significa tamanho igual na tela — foi o que deixou a moça com a cabeça
+maior que a do rapaz na primeira versão.
+
+A conta, a partir do alfa do `.webp`:
+
+1. **Escala.** Meça três invariantes: altura da cabeça (topo até o ponto mais
+   estreito depois do pico — o pescoço), largura do ombro (maior largura logo
+   abaixo do pescoço) e altura do corpo (a imagem já vem cortada na silhueta).
+   Calcule a largura que igualaria cada um deles à figura de referência e fique
+   com a **mediana**. Nenhum dos três serve sozinho: cabelo volumoso infla a
+   cabeça, ombro largo de homem infla o ombro. A mediana descarta o
+   contaminado. Confere se deu certo: a altura exibida das duas tem de bater
+   dentro de poucos pixels.
+
+2. **Posição.** Meça os extremos opacos dentro da faixa que aparece no cartão
+   (≈200px de altura), lembrando que espelhar TROCA as bordas de lado. Some as
+   duas silhuetas mais 16px de folga, e distribua a partir do centro do palco.
+   `esq` é o canto esquerdo da imagem em px a contar do centro — assim a dupla
+   fica centrada em qualquer largura de cartão.
+
+3. Se a soma não couber no cartão mais estreito (3 colunas, palco ~372px),
+   encolha as DUAS juntas até caber.
