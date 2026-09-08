@@ -29,6 +29,8 @@ const CommercialPage = lazy(() => import('@/pages/CommercialPage'))
 const NotFoundPage = lazy(() => import('@/pages/NotFoundPage'))
 const MotionPage = lazy(() => import('@/pages/MotionPage'))
 const PresentationPage = lazy(() => import('@/pages/PresentationPage'))
+const PortalPage = lazy(() => import('@/pages/PortalPage'))
+const PortalAdminPage = lazy(() => import('@/pages/PortalAdminPage'))
 
 /** HashRouter apenas para prévias hospedadas fora da raiz de um domínio (VITE_ROUTER=hash). */
 const Router = import.meta.env.VITE_ROUTER === 'hash' ? HashRouter : BrowserRouter
@@ -120,6 +122,33 @@ function AppRoutes() {
             </Suspense>
           }
         />
+        {/* Portal de acesso de um cliente. `/dev` ANTES de `/:slug`, senão a
+            rota genérica captura "dev" como se fosse o slug de um cliente. */}
+        <Route
+          path="/portais/dev/:slug"
+          element={
+            <Suspense fallback={<PageFallback />}>
+              <PortalPage ambiente="dev" />
+            </Suspense>
+          }
+        />
+        <Route
+          path="/portais/:slug"
+          element={
+            <Suspense fallback={<PageFallback />}>
+              <PortalPage />
+            </Suspense>
+          }
+        />
+        {/* Parametrização dos portais (fora do menu e do sitemap). */}
+        <Route
+          path="/admin/portais"
+          element={
+            <Suspense fallback={<PageFallback />}>
+              <PortalAdminPage />
+            </Suspense>
+          }
+        />
         {/* Página interna de motion da marca (fora do menu e do sitemap). */}
         <Route
           path="/motion"
@@ -155,7 +184,14 @@ function AppRoutes() {
 /** A moldura do site (barra, rodapé, rolagem suave): fica de fora nas páginas em tela cheia, como a apresentação. */
 function Shell() {
   const { pathname } = useLocation()
-  const chromeless = pathname === paths.presentation
+  /* Sem a moldura: apresentação, o portal de acesso de um cliente e a
+     parametrização. Quem abre /portais/<cliente> veio de um link do RH para
+     entrar num sistema — o menu institucional ali só oferece saídas erradas.
+     `/portais` sozinha é a página de marketing e MANTÉM a moldura. */
+  const chromeless =
+    pathname === paths.presentation ||
+    pathname.startsWith('/admin/') ||
+    (pathname.startsWith('/portais/') && pathname !== '/portais/')
   return (
     <>
       {!chromeless && <SmoothScroll />}

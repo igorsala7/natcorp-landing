@@ -75,6 +75,8 @@ export default {
         float: { '0%, 100%': { transform: 'translateY(0)' }, '50%': { transform: 'translateY(-8px)' } },
         'pulse-soft': { '0%, 100%': { opacity: '1' }, '50%': { opacity: '0.55' } },
         shimmer: { from: { backgroundPosition: '200% 0' }, to: { backgroundPosition: '-200% 0' } },
+        /* pacote de luz correndo por um traçado: exige pathLength="1" no path. */
+        fluxo: { from: { strokeDashoffset: '1' }, to: { strokeDashoffset: '-1' } },
       },
       animation: {
         'accordion-down': 'accordion-down 0.25s cubic-bezier(0.22, 1, 0.36, 1)',
@@ -83,6 +85,7 @@ export default {
         float: 'float 6s ease-in-out infinite',
         'pulse-soft': 'pulse-soft 2.4s ease-in-out infinite',
         shimmer: 'shimmer 2.5s linear infinite',
+        fluxo: 'fluxo 7s linear infinite',
       },
     },
   },
