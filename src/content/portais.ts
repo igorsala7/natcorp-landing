@@ -49,290 +49,317 @@ export interface Cliente {
   code: string
   /** Instância APEX onde o cliente está hospedado. */
   apex: string
-  /** Caminho do logotipo em /public. `null` usa a marca Natcorp. */
+  /** Logotipo do cliente. Só o nome do arquivo (`leadec.svg`): a pasta vem do
+   *  slug. Aceita também caminho absoluto ou URL, para exceções.
+   *  `null` usa a marca Natcorp. */
   logo: string | null
   /** Cliente inativo continua no arquivo, mas some da listagem. */
   active: boolean
   urls: Record<Ambiente, Record<SistemaKey, string>>
 }
 
+/**
+ * Onde ficam os logotipos dos clientes.
+ *
+ * Em `public/` porque é arquivo que uma pessoa troca sem recompilar: o que fica
+ * em `src/assets/` passa pelo empacotador e ganha nome com hash. Ver o LEIA-ME
+ * dentro da pasta.
+ */
+export const PASTA_LOGOS = '/sistema/portais/arquivos/logos'
+
+/** A pasta de um cliente: cada um tem a sua, nomeada pelo slug. */
+export const pastaDoCliente = (slug: string): string => `${PASTA_LOGOS}/${slug}`
+
+/**
+ * Monta o endereço do logotipo.
+ *
+ * Guardar só o nome do arquivo, e derivar a pasta do slug, evita repetir o
+ * caminho em cada cliente: PASTA_LOGOS vira o único lugar a mudar se a
+ * estrutura se mover, e renomear um cliente não deixa o logo para trás.
+ * Caminho absoluto e URL passam intactos, para um logotipo hospedado fora.
+ */
+export function urlLogo(cliente: Pick<Cliente, 'slug' | 'logo'>): string | null {
+  if (!cliente.logo) return null
+  return /^(https?:|\/)/.test(cliente.logo) ? cliente.logo : `${pastaDoCliente(cliente.slug)}/${cliente.logo}`
+}
+
 export const sistemas: Sistema[] = [
   {
-    key: "colaborador",
-    name: "Portal do Colaborador",
-    short: "Colaborador",
-    prefix: "PC",
-    kind: "portal",
-    audience: "Para todas as pessoas da empresa",
-    description: "Holerite, espelho de ponto, férias, benefícios, documentos e chamados internos, sem passar pelo RH.",
+    key: 'colaborador',
+    name: 'Portal do Colaborador',
+    short: 'Colaborador',
+    prefix: 'PC',
+    kind: 'portal',
+    audience: 'Para todas as pessoas da empresa',
+    description: 'Holerite, espelho de ponto, férias, benefícios, documentos e chamados internos, sem passar pelo RH.',
     tasks: [
-      "Holerite e informe de rendimentos",
-      "Espelho de ponto",
-      "Férias e requisições",
-      "Documentos para assinar"
+      'Holerite e informe de rendimentos',
+      'Espelho de ponto',
+      'Férias e requisições',
+      'Documentos para assinar'
     ],
-    color: "#9A408A"
+    color: '#9A408A'
   },
   {
-    key: "gestor",
-    name: "Portal do Gestor",
-    short: "Gestor",
-    prefix: "PG",
-    kind: "portal",
-    audience: "Para quem lidera uma equipe",
-    description: "A equipe inteira em uma tela: aprovações, ponto, férias, avaliações e os indicadores do time.",
+    key: 'gestor',
+    name: 'Portal do Gestor',
+    short: 'Gestor',
+    prefix: 'PG',
+    kind: 'portal',
+    audience: 'Para quem lidera uma equipe',
+    description: 'A equipe inteira em uma tela: aprovações, ponto, férias, avaliações e os indicadores do time.',
     tasks: [
-      "Aprovações de requisições e ponto",
-      "Férias e escalas da equipe",
-      "Avaliações e feedbacks",
-      "Indicadores do time"
+      'Aprovações de requisições e ponto',
+      'Férias e escalas da equipe',
+      'Avaliações e feedbacks',
+      'Indicadores do time'
     ],
-    color: "#511C76"
+    color: '#511C76'
   },
   {
-    key: "operador",
-    name: "Portal do Operador",
-    short: "Operador",
-    prefix: "PO",
-    kind: "portal",
-    audience: "Para o RH e o Departamento Pessoal",
-    description: "O sistema completo: folha, ponto, eSocial, admissão, benefícios, saúde e segurança e talentos.",
+    key: 'operador',
+    name: 'Portal do Operador',
+    short: 'Operador',
+    prefix: 'PO',
+    kind: 'portal',
+    audience: 'Para o RH e o Departamento Pessoal',
+    description: 'O sistema completo: folha, ponto, eSocial, admissão, benefícios, saúde e segurança e talentos.',
     tasks: [
-      "Folha, eSocial e NatPay",
-      "Admissão digital",
-      "Ponto e jornada",
-      "SESMT e talentos"
+      'Folha, eSocial e NatPay',
+      'Admissão digital',
+      'Ponto e jornada',
+      'SESMT e talentos'
     ],
-    color: "#2C1A63"
+    color: '#2C1A63'
   },
   {
-    key: "candidato",
-    name: "Portal do Candidato",
-    short: "Candidato",
-    prefix: "CV",
-    kind: "service",
-    audience: "Para quem quer trabalhar na empresa",
-    description: "Cadastre o currículo, candidate-se às vagas abertas e acompanhe cada etapa do processo seletivo.",
+    key: 'candidato',
+    name: 'Portal do Candidato',
+    short: 'Candidato',
+    prefix: 'CV',
+    kind: 'service',
+    audience: 'Para quem quer trabalhar na empresa',
+    description: 'Cadastre o currículo, candidate-se às vagas abertas e acompanhe cada etapa do processo seletivo.',
     tasks: [
-      "Cadastro de currículo",
-      "Vagas abertas",
-      "Acompanhamento da seleção"
+      'Cadastro de currículo',
+      'Vagas abertas',
+      'Acompanhamento da seleção'
     ],
-    color: "#C95788"
+    color: '#C95788'
   },
   {
-    key: "natdocs",
-    name: "NatDocs",
-    short: "NatDocs",
-    prefix: "NATDOCS",
-    kind: "service",
-    audience: "Assinatura eletrônica",
-    description: "Contratos, termos e documentos do RH assinados eletronicamente, com validade jurídica e trilha de auditoria.",
+    key: 'natdocs',
+    name: 'NatDocs',
+    short: 'NatDocs',
+    prefix: 'NATDOCS',
+    kind: 'service',
+    audience: 'Assinatura eletrônica',
+    description: 'Contratos, termos e documentos do RH assinados eletronicamente, com validade jurídica e trilha de auditoria.',
     tasks: [
-      "Assinar documentos",
-      "Acompanhar assinaturas",
-      "Baixar a via assinada"
+      'Assinar documentos',
+      'Acompanhar assinaturas',
+      'Baixar a via assinada'
     ],
-    color: "#81347D"
+    color: '#81347D'
   },
   {
-    key: "chamado",
-    name: "Chamado",
-    short: "Chamado",
-    prefix: "CHAMADO",
-    kind: "service",
-    audience: "Só para o RH: suporte Natcorp",
-    description: "O RH e o Departamento Pessoal abrem e acompanham chamados com a equipe de suporte da Natcorp. Cada pedido tem número, prazo e histórico.",
+    key: 'chamado',
+    name: 'Chamado',
+    short: 'Chamado',
+    prefix: 'CHAMADO',
+    kind: 'service',
+    audience: 'Só para o RH: suporte Natcorp',
+    description: 'O RH e o Departamento Pessoal abrem e acompanham chamados com a equipe de suporte da Natcorp. Cada pedido tem número, prazo e histórico.',
     tasks: [
-      "Abrir chamado",
-      "Acompanhar o andamento",
-      "Histórico de atendimentos"
+      'Abrir chamado',
+      'Acompanhar o andamento',
+      'Histórico de atendimentos'
     ],
-    note: "Colaboradores e gestores falam com o RH da própria empresa, pelo Portal do Colaborador.",
-    color: "#4A4460"
+    note: 'Colaboradores e gestores falam com o RH da própria empresa, pelo Portal do Colaborador.',
+    color: '#4A4460'
   }
 ]
 
 export const clientes: Cliente[] = [
   {
-    slug: "natcorp",
-    name: "Natcorp",
-    code: "NATCORP",
-    apex: "rh",
+    slug: 'natcorp',
+    name: 'Natcorp',
+    code: 'NATCORP',
+    apex: 'rh',
     logo: null,
     active: true,
     urls: {
       prod: {
-        colaborador: "https://www.natcorpbr.com.br/apex/rh/f?p=PC_NATCORP",
-        gestor: "https://www.natcorpbr.com.br/apex/rh/f?p=PG_NATCORP",
-        operador: "https://www.natcorpbr.com.br/apex/rh/f?p=PO_NATCORP",
-        candidato: "https://www.natcorpbr.com.br/apex/rh/f?p=CV_NATCORP",
-        natdocs: "https://www.natcorpbr.com.br/apex/rh/f?p=NATDOCS_NATCORP",
-        chamado: "https://www.natcorpbr.com.br/apex/rh/f?p=CHAMADO_NATCORP"
+        colaborador: 'https://www.natcorpbr.com.br/apex/rh/f?p=PC_NATCORP',
+        gestor: 'https://www.natcorpbr.com.br/apex/rh/f?p=PG_NATCORP',
+        operador: 'https://www.natcorpbr.com.br/apex/rh/f?p=PO_NATCORP',
+        candidato: 'https://www.natcorpbr.com.br/apex/rh/f?p=CV_NATCORP',
+        natdocs: 'https://www.natcorpbr.com.br/apex/rh/f?p=NATDOCS_NATCORP',
+        chamado: 'https://www.natcorpbr.com.br/apex/rh/f?p=CHAMADO_NATCORP'
       },
       dev: {
-        colaborador: "https://www.natcorpbr.com.br/apex/dev/f?p=PC_NATCORP",
-        gestor: "https://www.natcorpbr.com.br/apex/dev/f?p=PG_NATCORP",
-        operador: "https://www.natcorpbr.com.br/apex/dev/f?p=PO_NATCORP",
-        candidato: "https://www.natcorpbr.com.br/apex/dev/f?p=CV_NATCORP",
-        natdocs: "https://www.natcorpbr.com.br/apex/dev/f?p=NATDOCS_NATCORP",
-        chamado: "https://www.natcorpbr.com.br/apex/dev/f?p=CHAMADO_NATCORP"
+        colaborador: 'https://www.natcorpbr.com.br/apex/dev/f?p=PC_NATCORP',
+        gestor: 'https://www.natcorpbr.com.br/apex/dev/f?p=PG_NATCORP',
+        operador: 'https://www.natcorpbr.com.br/apex/dev/f?p=PO_NATCORP',
+        candidato: 'https://www.natcorpbr.com.br/apex/dev/f?p=CV_NATCORP',
+        natdocs: 'https://www.natcorpbr.com.br/apex/dev/f?p=NATDOCS_NATCORP',
+        chamado: 'https://www.natcorpbr.com.br/apex/dev/f?p=CHAMADO_NATCORP'
       }
     }
   },
   {
-    slug: "incor",
-    name: "Incor",
-    code: "INCOR",
-    apex: "rh",
+    slug: 'incor',
+    name: 'Incor',
+    code: 'INCOR',
+    apex: 'rh',
     logo: null,
     active: true,
     urls: {
       prod: {
-        colaborador: "https://www.natcorpbr.com.br/apex/rh/f?p=PC_INCOR",
-        gestor: "https://www.natcorpbr.com.br/apex/rh/f?p=PG_INCOR",
-        operador: "https://www.natcorpbr.com.br/apex/rh/f?p=PO_INCOR",
-        candidato: "https://www.natcorpbr.com.br/apex/rh/f?p=CV_INCOR",
-        natdocs: "https://www.natcorpbr.com.br/apex/rh/f?p=NATDOCS_INCOR",
-        chamado: "https://www.natcorpbr.com.br/apex/rh/f?p=CHAMADO_INCOR"
+        colaborador: 'https://www.natcorpbr.com.br/apex/rh/f?p=PC_INCOR',
+        gestor: 'https://www.natcorpbr.com.br/apex/rh/f?p=PG_INCOR',
+        operador: 'https://www.natcorpbr.com.br/apex/rh/f?p=PO_INCOR',
+        candidato: 'https://www.natcorpbr.com.br/apex/rh/f?p=CV_INCOR',
+        natdocs: 'https://www.natcorpbr.com.br/apex/rh/f?p=NATDOCS_INCOR',
+        chamado: 'https://www.natcorpbr.com.br/apex/rh/f?p=CHAMADO_INCOR'
       },
       dev: {
-        colaborador: "https://www.natcorpbr.com.br/apex/dev/f?p=PC_INCOR",
-        gestor: "https://www.natcorpbr.com.br/apex/dev/f?p=PG_INCOR",
-        operador: "https://www.natcorpbr.com.br/apex/dev/f?p=PO_INCOR",
-        candidato: "https://www.natcorpbr.com.br/apex/dev/f?p=CV_INCOR",
-        natdocs: "https://www.natcorpbr.com.br/apex/dev/f?p=NATDOCS_INCOR",
-        chamado: "https://www.natcorpbr.com.br/apex/dev/f?p=CHAMADO_INCOR"
+        colaborador: 'https://www.natcorpbr.com.br/apex/dev/f?p=PC_INCOR',
+        gestor: 'https://www.natcorpbr.com.br/apex/dev/f?p=PG_INCOR',
+        operador: 'https://www.natcorpbr.com.br/apex/dev/f?p=PO_INCOR',
+        candidato: 'https://www.natcorpbr.com.br/apex/dev/f?p=CV_INCOR',
+        natdocs: 'https://www.natcorpbr.com.br/apex/dev/f?p=NATDOCS_INCOR',
+        chamado: 'https://www.natcorpbr.com.br/apex/dev/f?p=CHAMADO_INCOR'
       }
     }
   },
   {
-    slug: "redeflex",
-    name: "Redeflex",
-    code: "REDEFLEX",
-    apex: "rh",
+    slug: 'redeflex',
+    name: 'Redeflex',
+    code: 'REDEFLEX',
+    apex: 'rh',
     logo: null,
     active: true,
     urls: {
       prod: {
-        colaborador: "https://www.natcorpbr.com.br/apex/rh/f?p=PC_REDEFLEX",
-        gestor: "https://www.natcorpbr.com.br/apex/rh/f?p=PG_REDEFLEX",
-        operador: "https://www.natcorpbr.com.br/apex/rh/f?p=PO_REDEFLEX",
-        candidato: "https://www.natcorpbr.com.br/apex/rh/f?p=CV_REDEFLEX",
-        natdocs: "https://www.natcorpbr.com.br/apex/rh/f?p=NATDOCS_REDEFLEX",
-        chamado: "https://www.natcorpbr.com.br/apex/rh/f?p=CHAMADO_REDEFLEX"
+        colaborador: 'https://www.natcorpbr.com.br/apex/rh/f?p=PC_REDEFLEX',
+        gestor: 'https://www.natcorpbr.com.br/apex/rh/f?p=PG_REDEFLEX',
+        operador: 'https://www.natcorpbr.com.br/apex/rh/f?p=PO_REDEFLEX',
+        candidato: 'https://www.natcorpbr.com.br/apex/rh/f?p=CV_REDEFLEX',
+        natdocs: 'https://www.natcorpbr.com.br/apex/rh/f?p=NATDOCS_REDEFLEX',
+        chamado: 'https://www.natcorpbr.com.br/apex/rh/f?p=CHAMADO_REDEFLEX'
       },
       dev: {
-        colaborador: "https://www.natcorpbr.com.br/apex/dev/f?p=PC_REDEFLEX",
-        gestor: "https://www.natcorpbr.com.br/apex/dev/f?p=PG_REDEFLEX",
-        operador: "https://www.natcorpbr.com.br/apex/dev/f?p=PO_REDEFLEX",
-        candidato: "https://www.natcorpbr.com.br/apex/dev/f?p=CV_REDEFLEX",
-        natdocs: "https://www.natcorpbr.com.br/apex/dev/f?p=NATDOCS_REDEFLEX",
-        chamado: "https://www.natcorpbr.com.br/apex/dev/f?p=CHAMADO_REDEFLEX"
+        colaborador: 'https://www.natcorpbr.com.br/apex/dev/f?p=PC_REDEFLEX',
+        gestor: 'https://www.natcorpbr.com.br/apex/dev/f?p=PG_REDEFLEX',
+        operador: 'https://www.natcorpbr.com.br/apex/dev/f?p=PO_REDEFLEX',
+        candidato: 'https://www.natcorpbr.com.br/apex/dev/f?p=CV_REDEFLEX',
+        natdocs: 'https://www.natcorpbr.com.br/apex/dev/f?p=NATDOCS_REDEFLEX',
+        chamado: 'https://www.natcorpbr.com.br/apex/dev/f?p=CHAMADO_REDEFLEX'
       }
     }
   },
   {
-    slug: "leadec",
-    name: "Leadec",
-    code: "LEADEC",
-    apex: "natrh",
+    slug: 'leadec',
+    name: 'Leadec',
+    code: 'LEADEC',
+    apex: 'natrh',
     logo: null,
     active: true,
     urls: {
       prod: {
-        colaborador: "https://www.natcorpbr.com.br/apex/natrh/f?p=PC_LEADEC",
-        gestor: "https://www.natcorpbr.com.br/apex/natrh/f?p=PG_LEADEC",
-        operador: "https://www.natcorpbr.com.br/apex/natrh/f?p=PO_LEADEC",
-        candidato: "https://www.natcorpbr.com.br/apex/natrh/f?p=CV_LEADEC",
-        natdocs: "https://www.natcorpbr.com.br/apex/natrh/f?p=NATDOCS_LEADEC",
-        chamado: "https://www.natcorpbr.com.br/apex/natrh/f?p=CHAMADO_LEADEC"
+        colaborador: 'https://www.natcorpbr.com.br/apex/natrh/f?p=PC_LEADEC',
+        gestor: 'https://www.natcorpbr.com.br/apex/natrh/f?p=PG_LEADEC',
+        operador: 'https://www.natcorpbr.com.br/apex/natrh/f?p=PO_LEADEC',
+        candidato: 'https://www.natcorpbr.com.br/apex/natrh/f?p=CV_LEADEC',
+        natdocs: 'https://www.natcorpbr.com.br/apex/natrh/f?p=NATDOCS_LEADEC',
+        chamado: 'https://www.natcorpbr.com.br/apex/natrh/f?p=CHAMADO_LEADEC'
       },
       dev: {
-        colaborador: "https://www.natcorpbr.com.br/apex/dev/f?p=PC_LEADEC",
-        gestor: "https://www.natcorpbr.com.br/apex/dev/f?p=PG_LEADEC",
-        operador: "https://www.natcorpbr.com.br/apex/dev/f?p=PO_LEADEC",
-        candidato: "https://www.natcorpbr.com.br/apex/dev/f?p=CV_LEADEC",
-        natdocs: "https://www.natcorpbr.com.br/apex/dev/f?p=NATDOCS_LEADEC",
-        chamado: "https://www.natcorpbr.com.br/apex/dev/f?p=CHAMADO_LEADEC"
+        colaborador: 'https://www.natcorpbr.com.br/apex/dev/f?p=PC_LEADEC',
+        gestor: 'https://www.natcorpbr.com.br/apex/dev/f?p=PG_LEADEC',
+        operador: 'https://www.natcorpbr.com.br/apex/dev/f?p=PO_LEADEC',
+        candidato: 'https://www.natcorpbr.com.br/apex/dev/f?p=CV_LEADEC',
+        natdocs: 'https://www.natcorpbr.com.br/apex/dev/f?p=NATDOCS_LEADEC',
+        chamado: 'https://www.natcorpbr.com.br/apex/dev/f?p=CHAMADO_LEADEC'
       }
     }
   },
   {
-    slug: "saude",
-    name: "Saúde",
-    code: "SAUDE",
-    apex: "hc",
+    slug: 'saude',
+    name: 'Saúde',
+    code: 'SAUDE',
+    apex: 'hc',
     logo: null,
     active: true,
     urls: {
       prod: {
-        colaborador: "https://www.natcorpbr.com.br/apex/hc/f?p=PC_SAUDE",
-        gestor: "https://www.natcorpbr.com.br/apex/hc/f?p=PG_SAUDE",
-        operador: "https://www.natcorpbr.com.br/apex/hc/f?p=PO_SAUDE",
-        candidato: "https://www.natcorpbr.com.br/apex/hc/f?p=CV_SAUDE",
-        natdocs: "https://www.natcorpbr.com.br/apex/hc/f?p=NATDOCS_SAUDE",
-        chamado: "https://www.natcorpbr.com.br/apex/hc/f?p=CHAMADO_SAUDE"
+        colaborador: 'https://www.natcorpbr.com.br/apex/hc/f?p=PC_SAUDE',
+        gestor: 'https://www.natcorpbr.com.br/apex/hc/f?p=PG_SAUDE',
+        operador: 'https://www.natcorpbr.com.br/apex/hc/f?p=PO_SAUDE',
+        candidato: 'https://www.natcorpbr.com.br/apex/hc/f?p=CV_SAUDE',
+        natdocs: 'https://www.natcorpbr.com.br/apex/hc/f?p=NATDOCS_SAUDE',
+        chamado: 'https://www.natcorpbr.com.br/apex/hc/f?p=CHAMADO_SAUDE'
       },
       dev: {
-        colaborador: "https://www.natcorpbr.com.br/apex/dev/f?p=PC_SAUDE",
-        gestor: "https://www.natcorpbr.com.br/apex/dev/f?p=PG_SAUDE",
-        operador: "https://www.natcorpbr.com.br/apex/dev/f?p=PO_SAUDE",
-        candidato: "https://www.natcorpbr.com.br/apex/dev/f?p=CV_SAUDE",
-        natdocs: "https://www.natcorpbr.com.br/apex/dev/f?p=NATDOCS_SAUDE",
-        chamado: "https://www.natcorpbr.com.br/apex/dev/f?p=CHAMADO_SAUDE"
+        colaborador: 'https://www.natcorpbr.com.br/apex/dev/f?p=PC_SAUDE',
+        gestor: 'https://www.natcorpbr.com.br/apex/dev/f?p=PG_SAUDE',
+        operador: 'https://www.natcorpbr.com.br/apex/dev/f?p=PO_SAUDE',
+        candidato: 'https://www.natcorpbr.com.br/apex/dev/f?p=CV_SAUDE',
+        natdocs: 'https://www.natcorpbr.com.br/apex/dev/f?p=NATDOCS_SAUDE',
+        chamado: 'https://www.natcorpbr.com.br/apex/dev/f?p=CHAMADO_SAUDE'
       }
     }
   },
   {
-    slug: "stefanini",
-    name: "Stefanini",
-    code: "STEFANINI",
-    apex: "hcm",
+    slug: 'stefanini',
+    name: 'Stefanini',
+    code: 'STEFANINI',
+    apex: 'hcm',
     logo: null,
     active: true,
     urls: {
       prod: {
-        colaborador: "https://www.natcorpbr.com.br/apex/hcm/f?p=PC_STEFANINI",
-        gestor: "https://www.natcorpbr.com.br/apex/hcm/f?p=PG_STEFANINI",
-        operador: "https://www.natcorpbr.com.br/apex/hcm/f?p=PO_STEFANINI",
-        candidato: "https://www.natcorpbr.com.br/apex/hcm/f?p=CV_STEFANINI",
-        natdocs: "https://www.natcorpbr.com.br/apex/hcm/f?p=NATDOCS_STEFANINI",
-        chamado: "https://www.natcorpbr.com.br/apex/hcm/f?p=CHAMADO_STEFANINI"
+        colaborador: 'https://www.natcorpbr.com.br/apex/hcm/f?p=PC_STEFANINI',
+        gestor: 'https://www.natcorpbr.com.br/apex/hcm/f?p=PG_STEFANINI',
+        operador: 'https://www.natcorpbr.com.br/apex/hcm/f?p=PO_STEFANINI',
+        candidato: 'https://www.natcorpbr.com.br/apex/hcm/f?p=CV_STEFANINI',
+        natdocs: 'https://www.natcorpbr.com.br/apex/hcm/f?p=NATDOCS_STEFANINI',
+        chamado: 'https://www.natcorpbr.com.br/apex/hcm/f?p=CHAMADO_STEFANINI'
       },
       dev: {
-        colaborador: "https://www.natcorpbr.com.br/apex/dev/f?p=PC_STEFANINI",
-        gestor: "https://www.natcorpbr.com.br/apex/dev/f?p=PG_STEFANINI",
-        operador: "https://www.natcorpbr.com.br/apex/dev/f?p=PO_STEFANINI",
-        candidato: "https://www.natcorpbr.com.br/apex/dev/f?p=CV_STEFANINI",
-        natdocs: "https://www.natcorpbr.com.br/apex/dev/f?p=NATDOCS_STEFANINI",
-        chamado: "https://www.natcorpbr.com.br/apex/dev/f?p=CHAMADO_STEFANINI"
+        colaborador: 'https://www.natcorpbr.com.br/apex/dev/f?p=PC_STEFANINI',
+        gestor: 'https://www.natcorpbr.com.br/apex/dev/f?p=PG_STEFANINI',
+        operador: 'https://www.natcorpbr.com.br/apex/dev/f?p=PO_STEFANINI',
+        candidato: 'https://www.natcorpbr.com.br/apex/dev/f?p=CV_STEFANINI',
+        natdocs: 'https://www.natcorpbr.com.br/apex/dev/f?p=NATDOCS_STEFANINI',
+        chamado: 'https://www.natcorpbr.com.br/apex/dev/f?p=CHAMADO_STEFANINI'
       }
     }
   },
   {
-    slug: "realfood",
-    name: "RealFood",
-    code: "REALFOOD",
-    apex: "cloud",
+    slug: 'realfood',
+    name: 'RealFood',
+    code: 'REALFOOD',
+    apex: 'cloud',
     logo: null,
     active: true,
     urls: {
       prod: {
-        colaborador: "https://www.natcorpbr.com.br/apex/cloud/f?p=PC_REALFOOD",
-        gestor: "https://www.natcorpbr.com.br/apex/cloud/f?p=PG_REALFOOD",
-        operador: "https://www.natcorpbr.com.br/apex/cloud/f?p=PO_REALFOOD",
-        candidato: "https://www.natcorpbr.com.br/apex/cloud/f?p=CV_REALFOOD",
-        natdocs: "https://www.natcorpbr.com.br/apex/cloud/f?p=NATDOCS_REALFOOD",
-        chamado: "https://www.natcorpbr.com.br/apex/cloud/f?p=CHAMADO_REALFOOD"
+        colaborador: 'https://www.natcorpbr.com.br/apex/cloud/f?p=PC_REALFOOD',
+        gestor: 'https://www.natcorpbr.com.br/apex/cloud/f?p=PG_REALFOOD',
+        operador: 'https://www.natcorpbr.com.br/apex/cloud/f?p=PO_REALFOOD',
+        candidato: 'https://www.natcorpbr.com.br/apex/cloud/f?p=CV_REALFOOD',
+        natdocs: 'https://www.natcorpbr.com.br/apex/cloud/f?p=NATDOCS_REALFOOD',
+        chamado: 'https://www.natcorpbr.com.br/apex/cloud/f?p=CHAMADO_REALFOOD'
       },
       dev: {
-        colaborador: "https://www.natcorpbr.com.br/apex/dev/f?p=PC_REALFOOD",
-        gestor: "https://www.natcorpbr.com.br/apex/dev/f?p=PG_REALFOOD",
-        operador: "https://www.natcorpbr.com.br/apex/dev/f?p=PO_REALFOOD",
-        candidato: "https://www.natcorpbr.com.br/apex/dev/f?p=CV_REALFOOD",
-        natdocs: "https://www.natcorpbr.com.br/apex/dev/f?p=NATDOCS_REALFOOD",
-        chamado: "https://www.natcorpbr.com.br/apex/dev/f?p=CHAMADO_REALFOOD"
+        colaborador: 'https://www.natcorpbr.com.br/apex/dev/f?p=PC_REALFOOD',
+        gestor: 'https://www.natcorpbr.com.br/apex/dev/f?p=PG_REALFOOD',
+        operador: 'https://www.natcorpbr.com.br/apex/dev/f?p=PO_REALFOOD',
+        candidato: 'https://www.natcorpbr.com.br/apex/dev/f?p=CV_REALFOOD',
+        natdocs: 'https://www.natcorpbr.com.br/apex/dev/f?p=NATDOCS_REALFOOD',
+        chamado: 'https://www.natcorpbr.com.br/apex/dev/f?p=CHAMADO_REALFOOD'
       }
     }
   }
@@ -389,7 +416,7 @@ export const copy = {
   },
   ajuda: {
     /* A NATI não é oferecida nestas páginas por decisão do cliente: ela não
-       fica ativa nos portais. Saíram daqui o cartão "Pergunte à NATI" e a
+       fica ativa nos portais. Saíram daqui o cartão 'Pergunte à NATI' e a
        menção no texto do hero. Se um dia for ligada, os dois voltam. */
     eyebrow: 'Precisa de ajuda?',
     titulo: 'Antes de abrir um chamado.',

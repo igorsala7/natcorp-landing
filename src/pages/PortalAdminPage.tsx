@@ -9,6 +9,8 @@ import {
   clientes as clientesIniciais,
   sistemas,
   urlEsperada,
+  urlLogo,
+  pastaDoCliente,
   type Ambiente,
   type Cliente,
   type SistemaKey,
@@ -71,7 +73,10 @@ export default function PortalAdminPage() {
             <p className="mt-2 max-w-2xl text-[13.5px] leading-relaxed text-brand-graphite">
               Cada cliente vira a página <code className="rounded bg-brand-off-white px-1 py-0.5 text-[12.5px]">/portais/&lt;slug&gt;</code>. As
               URLs seguem o padrão <code className="rounded bg-brand-off-white px-1 py-0.5 text-[12.5px]">apex/&lt;instância&gt;/f?p=&lt;PREFIXO&gt;_&lt;CODE&gt;</code> —
-              mude o código ou a instância e use <strong>Regerar URLs</strong>.
+              mude o código ou a instância e use <strong>Regerar URLs</strong>. O logo é só o nome do
+              arquivo; cada cliente tem a sua pasta em{' '}
+              <code className="rounded bg-brand-off-white px-1 py-0.5 text-[12.5px]">public/sistema/portais/arquivos/logos/&lt;slug&gt;/</code>.
+              Vazio usa a marca Natcorp.
             </p>
             <p className="mt-3 flex items-start gap-2 rounded-xl border border-amber-300 bg-amber-50 p-3 text-[13px] leading-relaxed text-amber-900">
               <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" aria-hidden />
@@ -169,9 +174,9 @@ function CartaoCliente({
         <Campo rotulo="Code (APEX)" valor={cliente.code} onChange={(v) => onAlterar({ code: v.toUpperCase() })} />
         <Campo rotulo="Instância" valor={cliente.apex} onChange={(v) => onAlterar({ apex: v })} />
         <Campo
-          rotulo="Logo (/public)"
+          rotulo={`Logo → ${pastaDoCliente(cliente.slug)}/`}
           valor={cliente.logo ?? ''}
-          placeholder="vazio = marca Natcorp"
+          placeholder="ex.: logo.svg"
           onChange={(v) => onAlterar({ logo: v.trim() === '' ? null : v.trim() })}
         />
         <div className="flex items-end gap-2">
@@ -195,6 +200,15 @@ function CartaoCliente({
       </div>
 
       <div className="mt-4 flex flex-wrap items-center gap-3">
+        {/* A prévia é a forma mais barata de descobrir que o arquivo não está
+            lá: some se o caminho estiver errado. */}
+        {urlLogo(cliente) && (
+          <img
+            src={urlLogo(cliente)!}
+            alt={`Logo de ${cliente.name}`}
+            className="h-8 w-auto max-w-[120px] rounded border border-brand-mist bg-white object-contain p-1"
+          />
+        )}
         <Button variant="outline" size="sm" onClick={regerar}>
           <RefreshCw className="h-3.5 w-3.5" aria-hidden />
           Regerar URLs

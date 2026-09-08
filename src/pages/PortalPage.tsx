@@ -29,6 +29,7 @@ import {
   copy,
   ilustracoes,
   sistemas,
+  urlLogo,
   type Ambiente,
   type Cliente,
   type Sistema,
@@ -190,8 +191,8 @@ function CartaoMarca({ cliente, ambiente }: { cliente: Cliente; ambiente: Ambien
       aria-label={`${cliente.name}, ambiente ${ambiente === 'dev' ? 'de homologação' : 'de produção'}`}
     >
       <div className="flex min-h-[88px] items-center justify-center rounded-xl bg-white px-6 py-4">
-        {cliente.logo ? (
-          <img src={cliente.logo} alt={cliente.name} className="max-h-12 w-auto object-contain" />
+        {urlLogo(cliente) ? (
+          <img src={urlLogo(cliente)!} alt={cliente.name} className="max-h-12 w-auto object-contain" />
         ) : (
           <Logo variant="horizontal" tone="gradient" title={cliente.name} className="block h-9 w-auto" />
         )}
