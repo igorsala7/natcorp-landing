@@ -26,6 +26,9 @@ import { cn } from '@/lib/utils'
 import figureColaborador from '@/assets/portals/figure-colaborador.webp'
 import figureMarcos from '@/assets/portals/figure-marcos.webp'
 import figureBeatriz from '@/assets/portals/figure-beatriz.webp'
+import figureColaboradorDupla from '@/assets/portals/figure-colaborador-dupla.webp'
+import figureGestorDupla from '@/assets/portals/figure-gestor-dupla.webp'
+import figureOperadorDupla from '@/assets/portals/figure-operador-dupla.webp'
 import iconCandidato from '@/assets/portals/icons/quadro-de-vagas.svg'
 import iconNatDocs from '@/assets/portals/icons/assinatura-eletronica.svg'
 import iconChamado from '@/assets/portals/icons/chamado-interno.svg'
@@ -49,12 +52,15 @@ interface Figura {
 const figures: Partial<Record<PortalApp['key'], { principal: Figura; dupla?: Figura }>> = {
   colaborador: {
     principal: { src: figureColaborador, alt: 'Colaborador de camisa com a marca Natcorp, com o celular na mão' },
+    dupla: { src: figureColaboradorDupla, alt: 'Colaboradora de camiseta lilás, com o celular na mão' },
   },
   gestor: {
     principal: { src: figureMarcos, alt: 'Gestor de blazer roxo, com o tablet na mão' },
+    dupla: { src: figureGestorDupla, alt: 'Gestora de blazer rosa, com a prancheta na mão' },
   },
   operador: {
     principal: { src: figureBeatriz, alt: 'Analista do RH com o notebook na mão' },
+    dupla: { src: figureOperadorDupla, alt: 'Operador de polo roxa da Natcorp, com o coletor na mão' },
   },
 }
 
@@ -420,32 +426,43 @@ function PortalCard({ app, href, dev }: { app: PortalApp; href: string; dev: boo
             <>
               {/* Com dupla, as duas figuras se afastam do centro e a de trás
                   entra menor e mais abaixo: é o que dá profundidade e faz
-                  lerem como duas pessoas juntas, não duas coladas. */}
+                  lerem como duas pessoas juntas, não duas coladas.
+
+                  A centralização mora numa DIV, não na <m.img>: o motion
+                  escreve `transform` inline para animar o `y` e apagava o
+                  `-translate-x-1/2` da classe, jogando a figura meia largura
+                  para a direita — ela chegava a vazar do cartão. */}
               {fig.dupla && (
+                <div className="absolute left-[38%] top-8 h-[calc(100%-2rem)] w-[164px] -translate-x-1/2">
+                  <m.img
+                    src={fig.dupla.src}
+                    alt={fig.dupla.alt}
+                    draggable={false}
+                    className="h-full w-full object-cover object-top transition-transform duration-700 ease-brand group-hover:scale-[1.03]"
+                    initial={{ opacity: 0, y: 18 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={viewportOnce}
+                    transition={{ duration: 0.8, ease: EASE, delay: 0.25 }}
+                  />
+                </div>
+              )}
+              <div
+                className={cn(
+                  'absolute top-5 h-[calc(100%-1.25rem)] -translate-x-1/2',
+                  fig.dupla ? 'left-[62%] w-[186px]' : 'left-1/2 w-[200px]',
+                )}
+              >
                 <m.img
-                  src={fig.dupla.src}
-                  alt={fig.dupla.alt}
+                  src={fig.principal.src}
+                  alt={fig.principal.alt}
                   draggable={false}
-                  className="absolute left-[38%] top-8 h-[calc(100%-2rem)] w-[168px] -translate-x-1/2 object-cover object-top transition-transform duration-700 ease-brand group-hover:scale-[1.03]"
+                  className="h-full w-full object-cover object-top transition-transform duration-700 ease-brand group-hover:scale-[1.04]"
                   initial={{ opacity: 0, y: 18 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={viewportOnce}
-                  transition={{ duration: 0.8, ease: EASE, delay: 0.25 }}
+                  transition={{ duration: 0.8, ease: EASE, delay: 0.15 }}
                 />
-              )}
-              <m.img
-                src={fig.principal.src}
-                alt={fig.principal.alt}
-                draggable={false}
-                className={cn(
-                  'absolute top-5 h-[calc(100%-1.25rem)] w-[200px] -translate-x-1/2 object-cover object-top transition-transform duration-700 ease-brand group-hover:scale-[1.04]',
-                  fig.dupla ? 'left-[62%]' : 'left-1/2',
-                )}
-                initial={{ opacity: 0, y: 18 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={viewportOnce}
-                transition={{ duration: 0.8, ease: EASE, delay: 0.15 }}
-              />
+              </div>
             </>
           )}
           <div className="absolute inset-x-0 bottom-0 h-14 bg-gradient-to-t from-white to-transparent" aria-hidden />
