@@ -1,7 +1,7 @@
 import { useRef } from 'react'
 import { Link, useParams } from 'react-router'
 import { m, useInView, useReducedMotion } from 'motion/react'
-import { ArrowRight, ArrowUpRight, FlaskConical, KeyRound, LifeBuoy, LockKeyhole, MapPin, QrCode, ScanFace, ShieldCheck, Sparkles, WifiOff } from 'lucide-react'
+import { ArrowRight, ArrowUpRight, FlaskConical, KeyRound, LifeBuoy, LockKeyhole, MapPin, QrCode, ScanFace, ShieldCheck, WifiOff } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Section, SectionHeader, Eyebrow } from '@/components/sections/Section'
 import { Reveal, Stagger, StaggerItem } from '@/components/motion/Reveal'
@@ -19,7 +19,7 @@ import { NATPONTO_SIZE } from '@/components/mockups/natponto/NatPontoFrame'
 import { NatPontoPhone } from '@/components/mockups/natponto/screens'
 import { useSeo } from '@/hooks/useSeo'
 import { usePortalClient, usePortalClients } from '@/hooks/usePortalClient'
-import { clientLogo, greeting, hubPath, portalApps, portalHost, portalUrl, type PortalApp, type PortalClient, type PortalEnv } from '@/content/portals'
+import { clientLogo, hubPath, portalApps, portalHost, portalUrl, type PortalApp, type PortalClient, type PortalEnv } from '@/content/portals'
 import { paths, siteConfig } from '@/content/site'
 import { EASE, viewportOnce } from '@/lib/motion'
 import { cn } from '@/lib/utils'
@@ -35,7 +35,7 @@ import iconChamado from '@/assets/portals/icons/chamado-interno.svg'
 
 /**
  * Quem ilustra cada portal do sistema: os personagens da jornada, na mesma
- * família 3D da NATI.
+ * família 3D do material da marca.
  *
  * `dupla` é o segundo personagem do quadro, opcional. Cada portal é usado por
  * mais de um tipo de pessoa, e um retrato só sugere o contrário — a dupla
@@ -158,7 +158,6 @@ function Opening({ client, env }: { client: PortalClient; env: PortalEnv }) {
   const inView = useInView(ref, { margin: '80px 0px' })
   const loop = inView && !reduced
   const dev = env === 'dev'
-  const hello = greeting()
   return (
     <section ref={ref} className="on-dark relative isolate overflow-hidden bg-brand-blue text-white" aria-labelledby="hub-title">
       <div className="absolute inset-0" aria-hidden>
@@ -208,7 +207,7 @@ function Opening({ client, env }: { client: PortalClient; env: PortalEnv }) {
           <SplitText
             as="h1"
             id="hub-title"
-            text={`${hello}. [[Por onde você entra hoje?]]`}
+            text="[[Portais]]"
             className="mt-4 text-[2rem] font-extrabold leading-[1.06] sm:text-4xl lg:text-[2.75rem]"
             highlightClassName={dev ? 'text-[#F2B84B]' : 'text-[#F3C9DA]'}
           />
@@ -216,7 +215,7 @@ function Opening({ client, env }: { client: PortalClient; env: PortalEnv }) {
             <p className="mt-4 max-w-xl text-[15px] leading-relaxed text-white/80 sm:text-base">
               {dev
                 ? 'Esta é a base de homologação: serve para testar. Os dados daqui não são os da operação e podem ser apagados.'
-                : 'Escolha o seu portal. É o mesmo sistema e a mesma base de dados, com a NATI para responder o que você precisar.'}
+                : 'Escolha o seu portal. É o mesmo sistema e a mesma base de dados: o que muda é o que você vê e o que pode fazer.'}
             </p>
           </Reveal>
           <Reveal delay={0.4} y={10}>
@@ -628,11 +627,6 @@ function Help({ client, env }: { client: PortalClient; env: PortalEnv }) {
       icon: KeyRound,
       title: 'Esqueci a senha',
       text: 'Peça a redefinição na tela de entrada do portal ou ao RH da sua empresa. A senha é sua: a Natcorp não tem acesso a ela.',
-    },
-    {
-      icon: Sparkles,
-      title: 'Pergunte à NATI',
-      text: 'Dúvidas sobre holerite, ponto, férias e benefícios a NATI responde dentro do portal, em linguagem natural.',
     },
     {
       icon: LifeBuoy,

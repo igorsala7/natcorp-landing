@@ -173,15 +173,6 @@ export function portalHost(client: PortalClient, env: PortalEnv): string {
 
 export const hubPath = (slug = 'natcorp', env: PortalEnv = 'prod') => (env === 'dev' ? `/portais/dev/${slug}` : `/portais/${slug}`)
 
-/** Saudação pela hora local de quem abre a página. */
-export function greeting(date = new Date()): string {
-  const h = date.getHours()
-  if (h < 5) return 'Boa noite'
-  if (h < 12) return 'Bom dia'
-  if (h < 18) return 'Boa tarde'
-  return 'Boa noite'
-}
-
 /* Logotipos dos clientes, descobertos pelo nome do arquivo em src/assets/portals/logos/. */
 const logoFiles = import.meta.glob<{ default: string }>('../assets/portals/logos/*.{svg,png,webp,jpg,jpeg}', { eager: true })
 
