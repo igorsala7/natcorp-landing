@@ -30,11 +30,32 @@ import iconCandidato from '@/assets/portals/icons/quadro-de-vagas.svg'
 import iconNatDocs from '@/assets/portals/icons/assinatura-eletronica.svg'
 import iconChamado from '@/assets/portals/icons/chamado-interno.svg'
 
-/** Quem ilustra cada portal do sistema: os personagens da jornada, na mesma família 3D da NATI. */
-const figures: Partial<Record<PortalApp['key'], { src: string; alt: string }>> = {
-  colaborador: { src: figureColaborador, alt: 'Colaborador de camisa com a marca Natcorp, com o celular na mão' },
-  gestor: { src: figureMarcos, alt: 'Gestor de blazer roxo, com o tablet na mão' },
-  operador: { src: figureBeatriz, alt: 'Analista do RH com o notebook na mão' },
+/**
+ * Quem ilustra cada portal do sistema: os personagens da jornada, na mesma
+ * família 3D da NATI.
+ *
+ * `dupla` é o segundo personagem do quadro, opcional. Cada portal é usado por
+ * mais de um tipo de pessoa, e um retrato só sugere o contrário — a dupla
+ * mostra o portal como lugar compartilhado.
+ *
+ * Enquanto o arquivo do par não existe, a figura principal segue centralizada,
+ * exatamente como antes: basta acrescentar `dupla` para o quadro virar duas
+ * pessoas, sem tocar no componente.
+ */
+interface Figura {
+  src: string
+  alt: string
+}
+const figures: Partial<Record<PortalApp['key'], { principal: Figura; dupla?: Figura }>> = {
+  colaborador: {
+    principal: { src: figureColaborador, alt: 'Colaborador de camisa com a marca Natcorp, com o celular na mão' },
+  },
+  gestor: {
+    principal: { src: figureMarcos, alt: 'Gestor de blazer roxo, com o tablet na mão' },
+  },
+  operador: {
+    principal: { src: figureBeatriz, alt: 'Analista do RH com o notebook na mão' },
+  },
 }
 
 /** Ícones dos aplicativos e serviços: os mesmos ícones de módulo da marca. */
@@ -396,16 +417,36 @@ function PortalCard({ app, href, dev }: { app: PortalApp; href: string; dev: boo
           <LogoOutline strokeWidth={1.25} className="absolute -right-12 -top-14 h-[260px] w-[260px] rotate-12 text-brand-purple/[0.12]" />
           <div className="absolute inset-x-0 bottom-0 h-40 bg-[radial-gradient(60%_80%_at_50%_100%,rgba(201,87,136,0.16),transparent_70%)]" aria-hidden />
           {fig && (
-            <m.img
-              src={fig.src}
-              alt={fig.alt}
-              draggable={false}
-              className="absolute left-1/2 top-5 h-[calc(100%-1.25rem)] w-[200px] -translate-x-1/2 object-cover object-top transition-transform duration-700 ease-brand group-hover:scale-[1.04]"
-              initial={{ opacity: 0, y: 18 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={viewportOnce}
-              transition={{ duration: 0.8, ease: EASE, delay: 0.15 }}
-            />
+            <>
+              {/* Com dupla, as duas figuras se afastam do centro e a de trás
+                  entra menor e mais abaixo: é o que dá profundidade e faz
+                  lerem como duas pessoas juntas, não duas coladas. */}
+              {fig.dupla && (
+                <m.img
+                  src={fig.dupla.src}
+                  alt={fig.dupla.alt}
+                  draggable={false}
+                  className="absolute left-[38%] top-8 h-[calc(100%-2rem)] w-[168px] -translate-x-1/2 object-cover object-top transition-transform duration-700 ease-brand group-hover:scale-[1.03]"
+                  initial={{ opacity: 0, y: 18 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={viewportOnce}
+                  transition={{ duration: 0.8, ease: EASE, delay: 0.25 }}
+                />
+              )}
+              <m.img
+                src={fig.principal.src}
+                alt={fig.principal.alt}
+                draggable={false}
+                className={cn(
+                  'absolute top-5 h-[calc(100%-1.25rem)] w-[200px] -translate-x-1/2 object-cover object-top transition-transform duration-700 ease-brand group-hover:scale-[1.04]',
+                  fig.dupla ? 'left-[62%]' : 'left-1/2',
+                )}
+                initial={{ opacity: 0, y: 18 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={viewportOnce}
+                transition={{ duration: 0.8, ease: EASE, delay: 0.15 }}
+              />
+            </>
           )}
           <div className="absolute inset-x-0 bottom-0 h-14 bg-gradient-to-t from-white to-transparent" aria-hidden />
           <span className="absolute left-5 top-5 inline-flex items-center gap-2 rounded-full border border-brand-mist bg-white/90 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.12em] text-brand-purple">
