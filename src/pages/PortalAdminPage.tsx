@@ -1,6 +1,6 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link } from 'react-router'
-import { AlertTriangle, Check, Copy, Download, ExternalLink, Plus, RefreshCw, Trash2 } from 'lucide-react'
+import { AlertTriangle, Check, Copy, Download, ExternalLink, ImageOff, Loader2, Plus, RefreshCw, Trash2, Upload } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { PageTransition } from '@/components/motion/PageTransition'
@@ -17,6 +17,9 @@ import {
 } from '@/content/portais'
 
 const AMBIENTES: Ambiente[] = ['prod', 'dev']
+
+/** Servidor de desenvolvimento presente? É ele que grava o arquivo. */
+const EM_DESENVOLVIMENTO = import.meta.env.DEV
 
 /**
  * Parametrização dos portais por cliente.
@@ -36,6 +39,32 @@ export default function PortalAdminPage() {
   })
 
   const [clientes, setClientes] = useState<Cliente[]>(() => structuredClone(clientesIniciais))
+
+  /* O disco manda sobre o arquivo: se alguém subiu um logotipo e ainda não
+     comitou o portais.ts, o arquivo está lá e a tela precisa saber. Sem isto o
+     logo ficaria órfão — presente na pasta, invisível aqui. */
+  useEffect(() => {
+    if (!EM_DESENVOLVIMENTO) return
+    let vivo = true
+    void Promise.all(
+      clientesIniciais.map(async (c) => {
+        try {
+          const r = await fetch(`/__logos/${c.slug}`)
+          const d = (await r.json()) as { arquivo?: string | null }
+          return [c.slug, d.arquivo ?? null] as const
+        } catch {
+          return [c.slug, c.logo] as const
+        }
+      }),
+    ).then((pares) => {
+      if (!vivo) return
+      const noDisco = new Map(pares)
+      setClientes((atual) => atual.map((c) => ({ ...c, logo: noDisco.get(c.slug) ?? null })))
+    })
+    return () => {
+      vivo = false
+    }
+  }, [])
   const [copiado, setCopiado] = useState(false)
 
   const alterar = (slug: string, mudanca: Partial<Cliente>) =>
@@ -73,16 +102,16 @@ export default function PortalAdminPage() {
             <p className="mt-2 max-w-2xl text-[13.5px] leading-relaxed text-brand-graphite">
               Cada cliente vira a página <code className="rounded bg-brand-off-white px-1 py-0.5 text-[12.5px]">/portais/&lt;slug&gt;</code>. As
               URLs seguem o padrão <code className="rounded bg-brand-off-white px-1 py-0.5 text-[12.5px]">apex/&lt;instância&gt;/f?p=&lt;PREFIXO&gt;_&lt;CODE&gt;</code> —
-              mude o código ou a instância e use <strong>Regerar URLs</strong>. O logo é só o nome do
-              arquivo; cada cliente tem a sua pasta em{' '}
-              <code className="rounded bg-brand-off-white px-1 py-0.5 text-[12.5px]">public/sistema/portais/arquivos/logos/&lt;slug&gt;/</code>.
-              Vazio usa a marca Natcorp.
+              mude o código ou a instância e use <strong>Regerar URLs</strong>. O logotipo é enviado pelo botão
+              <strong> Subir</strong>, e cai na pasta do cliente.
             </p>
             <p className="mt-3 flex items-start gap-2 rounded-xl border border-amber-300 bg-amber-50 p-3 text-[13px] leading-relaxed text-amber-900">
               <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" aria-hidden />
               <span>
-                Esta tela <strong>não grava no repositório</strong>: o site é estático. Edite aqui, copie ou baixe o
-                arquivo no fim da página e comite <code className="rounded bg-amber-100 px-1">src/content/portais.ts</code>.
+                O <strong>logotipo</strong> é gravado direto na pasta do cliente — mas só com{' '}
+                <code className="rounded bg-amber-100 px-1">npm run dev</code> rodando, porque quem grava é o servidor de
+                desenvolvimento. O <strong>resto</strong> não: copie ou baixe o arquivo no fim da página e comite{' '}
+                <code className="rounded bg-amber-100 px-1">src/content/portais.ts</code>. Os dois precisam de commit para ir ao ar.
               </span>
             </p>
           </div>
@@ -168,17 +197,11 @@ function CartaoCliente({
 
   return (
     <section className="rounded-2xl border border-brand-mist bg-white p-5">
-      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-6">
+      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
         <Campo rotulo="Nome" valor={cliente.name} onChange={(v) => onAlterar({ name: v })} />
         <Campo rotulo="Slug (URL)" valor={cliente.slug} onChange={(v) => onAlterar({ slug: v })} />
         <Campo rotulo="Code (APEX)" valor={cliente.code} onChange={(v) => onAlterar({ code: v.toUpperCase() })} />
         <Campo rotulo="Instância" valor={cliente.apex} onChange={(v) => onAlterar({ apex: v })} />
-        <Campo
-          rotulo={`Logo → ${pastaDoCliente(cliente.slug)}/`}
-          valor={cliente.logo ?? ''}
-          placeholder="ex.: logo.svg"
-          onChange={(v) => onAlterar({ logo: v.trim() === '' ? null : v.trim() })}
-        />
         <div className="flex items-end gap-2">
           <label className="flex flex-1 cursor-pointer items-center gap-2 pb-2 text-[13px] font-semibold text-brand-graphite">
             <input
@@ -199,16 +222,9 @@ function CartaoCliente({
         </div>
       </div>
 
-      <div className="mt-4 flex flex-wrap items-center gap-3">
-        {/* A prévia é a forma mais barata de descobrir que o arquivo não está
-            lá: some se o caminho estiver errado. */}
-        {urlLogo(cliente) && (
-          <img
-            src={urlLogo(cliente)!}
-            alt={`Logo de ${cliente.name}`}
-            className="h-8 w-auto max-w-[120px] rounded border border-brand-mist bg-white object-contain p-1"
-          />
-        )}
+      <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-3">
+        <ControleLogo cliente={cliente} onAlterar={onAlterar} />
+        <span className="hidden h-8 w-px bg-brand-mist sm:block" aria-hidden />
         <Button variant="outline" size="sm" onClick={regerar}>
           <RefreshCw className="h-3.5 w-3.5" aria-hidden />
           Regerar URLs
@@ -262,6 +278,120 @@ function CartaoCliente({
         </div>
       )}
     </section>
+  )
+}
+
+/**
+ * Subir, substituir e apagar o logotipo de um cliente.
+ *
+ * Só funciona com `npm run dev` rodando: quem grava é um plugin do servidor de
+ * desenvolvimento (ver vite/plugin-logos.ts). No site publicado o controle
+ * aparece desativado, com o motivo — em vez de um botão que falha em silêncio.
+ */
+function ControleLogo({ cliente, onAlterar }: { cliente: Cliente; onAlterar: (m: Partial<Cliente>) => void }) {
+  const entrada = useRef<HTMLInputElement>(null)
+  const [ocupado, setOcupado] = useState(false)
+  const [erro, setErro] = useState<string | null>(null)
+  /* Muda a cada gravação para furar o cache do navegador: o nome do arquivo
+     continua o mesmo (logo.svg), então sem isto a imagem antiga permaneceria. */
+  const [versao, setVersao] = useState(0)
+
+  const src = urlLogo(cliente)
+
+  const enviar = async (arquivo: File) => {
+    setOcupado(true)
+    setErro(null)
+    try {
+      const r = await fetch(`/__logos/${cliente.slug}`, {
+        method: 'POST',
+        headers: { 'content-type': arquivo.type },
+        body: arquivo,
+      })
+      const d = (await r.json()) as { ok?: boolean; arquivo?: string; erro?: string }
+      if (!d.ok) throw new Error(d.erro ?? 'falha ao gravar')
+      onAlterar({ logo: d.arquivo ?? null })
+      setVersao((v) => v + 1)
+    } catch (e) {
+      setErro(e instanceof Error ? e.message : 'falha ao gravar')
+    } finally {
+      setOcupado(false)
+      if (entrada.current) entrada.current.value = ''
+    }
+  }
+
+  const apagar = async () => {
+    setOcupado(true)
+    setErro(null)
+    try {
+      const r = await fetch(`/__logos/${cliente.slug}`, { method: 'DELETE' })
+      const d = (await r.json()) as { ok?: boolean; erro?: string }
+      if (!d.ok) throw new Error(d.erro ?? 'falha ao apagar')
+      onAlterar({ logo: null })
+      setVersao((v) => v + 1)
+    } catch (e) {
+      setErro(e instanceof Error ? e.message : 'falha ao apagar')
+    } finally {
+      setOcupado(false)
+    }
+  }
+
+  return (
+    <div>
+      <div className="flex items-center gap-2">
+        <span className="flex h-10 w-16 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-brand-mist bg-white">
+          {src ? (
+            <img src={`${src}?v=${versao}`} alt={`Logo de ${cliente.name}`} className="max-h-8 w-auto object-contain" />
+          ) : (
+            <ImageOff className="h-4 w-4 text-brand-gray" aria-hidden />
+          )}
+        </span>
+
+        <input
+          ref={entrada}
+          type="file"
+          accept="image/svg+xml,image/png,image/jpeg,image/webp"
+          className="hidden"
+          onChange={(e) => {
+            const f = e.target.files?.[0]
+            if (f) void enviar(f)
+          }}
+        />
+
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          disabled={!EM_DESENVOLVIMENTO || ocupado}
+          onClick={() => entrada.current?.click()}
+          title={`SVG, PNG, JPG ou WebP até 2 MB. Vai para ${pastaDoCliente(cliente.slug)}/ e substitui o anterior.`}
+        >
+          {ocupado ? <Loader2 className="h-3.5 w-3.5 animate-spin" aria-hidden /> : <Upload className="h-3.5 w-3.5" aria-hidden />}
+          {cliente.logo ? 'Trocar' : 'Subir'}
+        </Button>
+
+        {cliente.logo && (
+          <button
+            type="button"
+            onClick={() => void apagar()}
+            disabled={!EM_DESENVOLVIMENTO || ocupado}
+            aria-label={`Apagar o logotipo de ${cliente.name}`}
+            className="rounded-lg p-2 text-brand-gray transition-colors hover:bg-red-50 hover:text-red-600 disabled:opacity-40"
+          >
+            <Trash2 className="h-4 w-4" aria-hidden />
+          </button>
+        )}
+      </div>
+
+      {(erro || !EM_DESENVOLVIMENTO) && (
+        <p className="mt-1 max-w-[280px] text-[11.5px] leading-snug text-brand-gray">
+          {erro ? (
+            <span className="font-semibold text-red-600">{erro}</span>
+          ) : (
+            'Só com o servidor de desenvolvimento: o logotipo precisa ser comitado para ir ao ar.'
+          )}
+        </p>
+      )}
+    </div>
   )
 }
 
