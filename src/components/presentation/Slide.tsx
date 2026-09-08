@@ -1,4 +1,4 @@
-import { useLayoutEffect, useRef, type HTMLAttributes, type ReactNode } from 'react'
+import { type HTMLAttributes, type ReactNode } from 'react'
 import { m } from 'motion/react'
 import type { HTMLMotionProps, Variants } from 'motion/react'
 import { Logo, LogoOutline, ModuleTrail } from '@/components/brand/Logo'
@@ -6,6 +6,7 @@ import { Counter } from '@/components/motion/Counter'
 import { SplitText } from '@/components/motion/SplitText'
 import { deckMeta } from '@/content/presentation'
 import { useIsDesktop } from '@/hooks/useMediaQuery'
+import { useFitZoom } from './useFitZoom'
 import { DUR, EASE } from '@/lib/motion'
 import { cn } from '@/lib/utils'
 
@@ -47,59 +48,6 @@ const tones: Record<SlideTone, string> = {
 const isDarkTone = (tone: SlideTone) => tone === 'dark' || tone === 'gradient'
 
 const isPrintPreview = () => typeof window !== 'undefined' && window.matchMedia('print').matches
-
-/**
- * Em telas largas, o conteúdo do slide nunca é cortado: se ele for mais alto do que o espaço
- * disponível (projetor 1280x720, notebook com a barra do navegador), o bloco inteiro é
- * reduzido com `zoom` até caber. No celular o slide cresce e rola normalmente.
- */
-function useFitZoom(enabled: boolean) {
-  const outer = useRef<HTMLDivElement>(null)
-  const inner = useRef<HTMLDivElement>(null)
-  useLayoutEffect(() => {
-    const o = outer.current
-    const i = inner.current
-    if (!o || !i) return
-    if (!enabled) {
-      i.style.zoom = ''
-      return
-    }
-    let raf = 0
-    const printMedia = window.matchMedia('print')
-    const measure = () => {
-      i.style.zoom = '1'
-      const section = o.closest<HTMLElement>('.deck-slide')
-      // Na tela, o slide cresce junto com o conteúdo (min-height) e o espaço real é o da janela;
-      // na impressão, a página tem altura fixa e o conteúdo transborda dentro dela.
-      let excess = 0
-      if (section) {
-        excess = printMedia.matches ? section.scrollHeight - section.clientHeight : section.getBoundingClientRect().height - window.innerHeight
-      }
-      const cs = window.getComputedStyle(o)
-      const avail = o.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom) - Math.max(0, excess)
-      const need = i.scrollHeight
-      if (avail > 0 && need > avail) i.style.zoom = String(Math.max(0.5, Math.floor((avail / need) * 985) / 1000))
-    }
-    const fit = () => {
-      window.cancelAnimationFrame(raf)
-      raf = window.requestAnimationFrame(measure)
-    }
-    fit()
-    const ro = new ResizeObserver(fit)
-    ro.observe(o)
-    void document.fonts?.ready.then(fit)
-    // Antes de imprimir, mede de novo com as medidas da página (síncrono: a impressão não espera um quadro).
-    window.addEventListener('beforeprint', measure)
-    printMedia.addEventListener('change', measure)
-    return () => {
-      ro.disconnect()
-      window.cancelAnimationFrame(raf)
-      window.removeEventListener('beforeprint', measure)
-      printMedia.removeEventListener('change', measure)
-    }
-  }, [enabled])
-  return { outer, inner }
-}
 
 export function Slide({ id, index, total, label, tone = 'white', className, contour = false, bare = false, children }: SlideProps) {
   const dark = isDarkTone(tone)
@@ -180,6 +128,24 @@ export function SlideTitle({ text, as = 'h2', dark = false, className, id, delay
       )}
       highlightClassName={dark ? 'text-[#E4A9C4]' : 'text-brand-purple'}
     />
+  )
+}
+
+/** Texto curto com trechos [[destacados]] na cor da marca, sem animação. */
+export function Marked({ text, className, dark = false }: { text: string; className?: string; dark?: boolean }) {
+  const parts = text.split(/\[\[|\]\]/)
+  return (
+    <span className={className}>
+      {parts.map((part, i) =>
+        i % 2 === 1 ? (
+          <b key={`${part}-${i}`} className={cn('font-extrabold', dark ? 'text-[#E4A9C4]' : 'text-brand-purple')}>
+            {part}
+          </b>
+        ) : (
+          <span key={`${part}-${i}`}>{part}</span>
+        ),
+      )}
+    </span>
   )
 }
 

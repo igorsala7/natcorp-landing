@@ -11,6 +11,7 @@ import {
   TalentosSlide,
 } from './groups'
 import { AnalyticsSlide, AntesDepoisSlide, DiaNoRhSlide, FechamentoSlide, JornadaSlide, NatiCanaisSlide, PortaisSlide } from './story'
+import { ModulosSlide } from './module'
 import { ConexoesSlide, NatiSlide, SegurancaSlide } from './platform'
 import { CadeirasSlide, ComercialSlide, ComparativoSlide, ConfiancaSlide, ImplantacaoSlide, ResultadosSlide } from './business'
 import { ContatoSlide, EsperaSlide, ProximosSlide } from './closing'
@@ -28,6 +29,7 @@ const all: DeckSlideDef[] = (
     { id: 'momento', chapter: 'O problema', title: 'O momento', Component: MomentoSlide },
     { id: 'resposta', chapter: 'A resposta', title: 'Todo o RH. Um único sistema.', Component: RespostaSlide, short: true },
     { id: 'plataforma', chapter: 'A resposta', title: 'Sete frentes, mais de 30 módulos', Component: PlataformaSlide, short: true },
+    { id: 'modulos', chapter: 'A resposta', title: 'Todos os módulos, um por um', Component: ModulosSlide, short: true },
     { id: 'pessoal-e-folha', chapter: 'O sistema no dia a dia', title: 'Pessoal e Folha', Component: PessoalFolhaSlide },
     { id: 'fechamento', chapter: 'O sistema no dia a dia', title: 'O fechamento em quatro minutos', Component: FechamentoSlide, short: true },
     { id: 'ponto-e-jornada', chapter: 'O sistema no dia a dia', title: 'Ponto e Jornada', Component: PontoJornadaSlide, short: true },

@@ -1,14 +1,18 @@
-import { useCallback, useEffect, useLayoutEffect, useRef, useState, type ComponentType } from 'react'
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type ComponentType } from 'react'
 import { AnimatePresence, m, useReducedMotion } from 'motion/react'
 import { Link } from 'react-router'
-import { Check, ChevronLeft, ChevronRight, Copy, Download, FileText, List, Maximize2, MessageSquareText, Minimize2, Presentation, Printer, X } from 'lucide-react'
+import { Check, ChevronLeft, ChevronRight, Copy, Download, FileText, LayoutGrid, List, Maximize2, MessageSquareText, Minimize2, Presentation, Printer, X } from 'lucide-react'
 import { toast } from 'sonner'
 import { Logo } from '@/components/brand/Logo'
+import { getModuleEntry, moduleRegistry } from '@/content/modulePages'
 import { deckMeta, deckVersions, type DeckVersion } from '@/content/presentation'
 import { paths } from '@/content/site'
 import { EASE } from '@/lib/motion'
 import { cn } from '@/lib/utils'
 import { runExport, type ExportFormat, type ExportProgress } from './exporter'
+import { getModulePage, moduleSlideId, OpenModuleContext, preloadModulePages, useModulePagesReady } from './moduleData'
+import { ModulePanel, ModuleView } from './ModuleView'
+import { ModuleAppendixSlide } from './slides/module'
 import type { SlideMeta } from './Slide'
 
 /** Um slide registrado no deck: identidade, capítulo (para o índice), notas, componente e se entra na versão reduzida. */
@@ -33,13 +37,23 @@ function initialSlide(total: number) {
   return Number.isFinite(n) && n >= 1 && n <= total ? n - 1 : 0
 }
 
+/** `?modulos=1` deixa as páginas dos módulos na sequência (para imprimir ou passar uma a uma). */
+function initialAppendix() {
+  if (typeof window === 'undefined') return false
+  return new URLSearchParams(window.location.search).get('modulos') === '1'
+}
+
+/** O capítulo das páginas de módulo no índice. */
+const MODULES_CHAPTER = 'Os módulos, um a um'
+
 const shortcuts = [
   ['← →', 'navegar'],
+  ['M', 'módulos'],
   ['F', 'tela cheia'],
   ['N', 'notas'],
   ['G', 'índice'],
   ['E', 'exportar'],
-  ['Esc', 'fechar'],
+  ['Esc', 'voltar'],
 ]
 
 /** O PDF pré-gerado de cada versão (npm run export:deck), servido junto com o site: o plano B se a exportação no navegador falhar. */
@@ -70,17 +84,55 @@ export function Deck({ slides, version }: DeckProps) {
   const abortRef = useRef<AbortController | null>(null)
   const [fullscreen, setFullscreen] = useState(false)
   const [canFullscreen, setCanFullscreen] = useState(false)
+  /* Páginas dos módulos: abertas por cima da apresentação, ou na sequência (exportação e `?modulos=1`). */
+  const [moduleSlug, setModuleSlug] = useState<string | null>(null)
+  const [modulesOpen, setModulesOpen] = useState(false)
+  const appendixLocked = useRef(initialAppendix())
+  const [appendix, setAppendix] = useState(() => appendixLocked.current)
+  const moduleRef = useRef<string | null>(null)
+  const fromRef = useRef<string | undefined>(undefined)
+  const modulesReady = useModulePagesReady()
   const [idle, setIdle] = useState(false)
   const [copied, setCopied] = useState(false)
 
+  const showModules = appendix && modulesReady
+  const count = showModules ? total + moduleRegistry.length : total
   const slideEl = useCallback((i: number) => rootRef.current?.querySelector<HTMLElement>(`[data-slide="${i}"]`) ?? null, [])
+
+  /* A sequência para o índice e as notas: os slides e, quando montadas, as páginas dos módulos. */
+  const nav = useMemo(() => {
+    const base = slides.map((s) => ({ id: s.id, chapter: s.chapter, title: s.title, notes: s.notes }))
+    if (!showModules) return base
+    return [
+      ...base,
+      ...moduleRegistry.map((e) => ({ id: moduleSlideId(e.slug), chapter: MODULES_CHAPTER, title: e.name, notes: undefined as string[] | undefined })),
+    ]
+  }, [slides, showModules])
+
+  const openModule = useCallback(
+    (slug: string) => {
+      fromRef.current = nav[activeRef.current]?.title
+      setModuleSlug(slug)
+      setModulesOpen(false)
+    },
+    [nav],
+  )
+
+  useEffect(() => {
+    moduleRef.current = moduleSlug
+  }, [moduleSlug])
+
+  /* Carrega o conteúdo de todos os módulos assim que a apresentação abre. */
+  useEffect(() => {
+    void preloadModulePages()
+  }, [])
 
   const go = useCallback(
     (i: number, behavior?: ScrollBehavior) => {
-      const target = Math.max(0, Math.min(total - 1, i))
+      const target = Math.max(0, Math.min(count - 1, i))
       slideEl(target)?.scrollIntoView({ behavior: behavior ?? (reduced ? 'auto' : 'smooth'), block: 'start' })
     },
-    [total, reduced, slideEl],
+    [count, reduced, slideEl],
   )
 
   /* Abre já no slide pedido pela URL. */
@@ -105,12 +157,12 @@ export function Deck({ slides, version }: DeckProps) {
     )
     els.forEach((el) => io.observe(el))
     return () => io.disconnect()
-  }, [total])
+  }, [count])
 
   /* A posição na URL, sem passar pelo roteador (não deve rolar a página nem criar histórico). */
   useEffect(() => {
-    activeRef.current = active
     if (exportingRef.current) return
+    activeRef.current = active
     const url = new URL(window.location.href)
     url.searchParams.set('s', String(active + 1))
     window.history.replaceState(window.history.state, '', url)
@@ -140,13 +192,25 @@ export function Deck({ slides, version }: DeckProps) {
       abortRef.current = controller
       exportingRef.current = true
       setExporting({ format, progress: { stage: 'preparando', done: 0, total } })
+      setModuleSlug(null)
+      setModulesOpen(false)
+      setAppendix(true)
       const fileName = `natcorp-apresentacao-${version}`
       try {
+        // As páginas dos módulos entram no arquivo: espera o conteúdo e a montagem dos slides.
+        await preloadModulePages()
+        await new Promise<void>((r) => window.requestAnimationFrame(() => window.requestAnimationFrame(() => r())))
         await runExport(format, {
           root,
           title: `${deckMeta.title} · ${deckVersions[version].label}`,
           fileName,
-          notes: Object.fromEntries(slides.map((s) => [s.id, s.notes])),
+          notes: Object.fromEntries([
+            ...slides.map((s) => [s.id, s.notes] as const),
+            ...moduleRegistry.map((e) => {
+              const page = getModulePage(e.slug)
+              return [moduleSlideId(e.slug), page ? [page.summary] : [e.short]] as const
+            }),
+          ]),
           signal: controller.signal,
           onProgress: (progress) => setExporting({ format, progress }),
         })
@@ -164,6 +228,7 @@ export function Deck({ slides, version }: DeckProps) {
         exportingRef.current = false
         abortRef.current = null
         setExporting(null)
+        if (!appendixLocked.current) setAppendix(false)
         // volta para o slide em que estava
         slideEl(activeRef.current)?.scrollIntoView({ behavior: 'auto', block: 'start' })
       }
@@ -179,6 +244,25 @@ export function Deck({ slides, version }: DeckProps) {
       if (e.ctrlKey || e.metaKey || e.altKey) return
       if (exportingRef.current) {
         if (e.key === 'Escape') cancelExport()
+        return
+      }
+      /* Com a página de um módulo aberta, o teclado é dela. */
+      if (moduleRef.current) {
+        const pos = moduleRegistry.findIndex((x) => x.slug === moduleRef.current)
+        if (e.key === 'Escape') {
+          e.preventDefault()
+          setModuleSlug(null)
+        } else if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') {
+          e.preventDefault()
+          setModuleSlug(moduleRegistry[(pos + 1) % moduleRegistry.length].slug)
+        } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+          e.preventDefault()
+          setModuleSlug(moduleRegistry[(pos - 1 + moduleRegistry.length) % moduleRegistry.length].slug)
+        } else if (e.key === 'm' || e.key === 'M') {
+          setModulesOpen((v) => !v)
+        } else if (e.key === 'f' || e.key === 'F') {
+          toggleFullscreen()
+        }
         return
       }
       switch (e.key) {
@@ -204,7 +288,11 @@ export function Deck({ slides, version }: DeckProps) {
           break
         case 'End':
           e.preventDefault()
-          go(total - 1)
+          go(count - 1)
+          break
+        case 'm':
+        case 'M':
+          setModulesOpen((v) => !v)
           break
         case 'f':
         case 'F':
@@ -228,12 +316,13 @@ export function Deck({ slides, version }: DeckProps) {
           setNotesOpen(false)
           setIndexOpen(false)
           setExportOpen(false)
+          setModulesOpen(false)
           break
       }
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  }, [go, total, toggleFullscreen, cancelExport])
+  }, [go, count, toggleFullscreen, cancelExport])
 
   /* O menu de exportação fecha ao clicar fora. */
   useEffect(() => {
@@ -277,21 +366,23 @@ export function Deck({ slides, version }: DeckProps) {
     }
   }
 
-  const current = slides[active]
+  const current = nav[active]
+  const openEntry = moduleSlug ? getModuleEntry(moduleSlug) : undefined
   const hideUi = fullscreen && idle && !indexOpen && !notesOpen && !exportOpen
-  const chapters = slides.reduce<{ chapter: string; items: { i: number; title: string }[] }[]>((acc, s, i) => {
+  const chapters = nav.reduce<{ chapter: string; items: { i: number; title: string }[] }[]>((acc, s, i) => {
     const last = acc[acc.length - 1]
     if (last && last.chapter === s.chapter) last.items.push({ i, title: s.title })
     else acc.push({ chapter: s.chapter, items: [{ i, title: s.title }] })
     return acc
   }, [])
-  const pct = exporting ? Math.round(((exporting.progress.stage === 'montando' ? total : exporting.progress.done) / Math.max(1, total)) * 100) : 0
+  const exportTotal = exporting?.progress.total ?? count
+  const pct = exporting ? Math.round(((exporting.progress.stage === 'montando' ? exportTotal : exporting.progress.done) / Math.max(1, exportTotal)) * 100) : 0
 
   return (
     <div className="deck">
       {/* Progresso */}
       <div className="deck-ui pointer-events-none fixed inset-x-0 top-0 z-[60] h-[3px] bg-brand-ink/10" aria-hidden>
-        <div className="h-full origin-left bg-brand-gradient transition-transform duration-500 ease-brand" style={{ transform: `scaleX(${(active + 1) / total})` }} />
+        <div className="h-full origin-left bg-brand-gradient transition-transform duration-500 ease-brand" style={{ transform: `scaleX(${(active + 1) / count})` }} />
       </div>
 
       {/* Os slides */}
@@ -302,13 +393,19 @@ export function Deck({ slides, version }: DeckProps) {
         aria-roledescription="apresentação"
         aria-label={`${deckMeta.title} · ${deckVersions[version].label}`}
       >
-        {slides.map((s, i) => (
-          <s.Component key={s.id} id={s.id} index={i} total={total} label={s.title} />
-        ))}
+        <OpenModuleContext.Provider value={exporting ? null : openModule}>
+          {slides.map((s, i) => (
+            <s.Component key={s.id} id={s.id} index={i} total={count} label={s.title} />
+          ))}
+          {showModules &&
+            moduleRegistry.map((entry, k) => (
+              <ModuleAppendixSlide key={entry.slug} entry={entry} id={moduleSlideId(entry.slug)} index={total + k} total={count} label={entry.name} />
+            ))}
+        </OpenModuleContext.Provider>
       </div>
 
       <p className="sr-only" aria-live="polite">
-        Slide {active + 1} de {total}: {current?.title}
+        Slide {active + 1} de {count}: {current?.title}
       </p>
 
       {/* Barra de controle */}
@@ -328,14 +425,17 @@ export function Deck({ slides, version }: DeckProps) {
             <ChevronLeft />
           </ToolButton>
           <span className="min-w-[4.2rem] text-center text-[13px] font-semibold tabular text-brand-ink" aria-hidden>
-            {active + 1} / {total}
+            {active + 1} / {count}
           </span>
-          <ToolButton label="Próximo slide" onClick={() => go(active + 1)} disabled={active === total - 1}>
+          <ToolButton label="Próximo slide" onClick={() => go(active + 1)} disabled={active === count - 1}>
             <ChevronRight />
           </ToolButton>
           <span className="mx-0.5 h-5 w-px bg-brand-mist" aria-hidden />
           <VersionSwitch version={version} className="hidden md:inline-flex" />
           <span className="mx-0.5 hidden h-5 w-px bg-brand-mist md:block" aria-hidden />
+          <ToolButton label="Módulos (M)" onClick={() => setModulesOpen((v) => !v)} pressed={modulesOpen}>
+            <LayoutGrid />
+          </ToolButton>
           <ToolButton label="Índice (G)" onClick={() => setIndexOpen((v) => !v)} pressed={indexOpen}>
             <List />
           </ToolButton>
@@ -364,8 +464,8 @@ export function Deck({ slides, version }: DeckProps) {
                   transition={{ duration: 0.2, ease: EASE }}
                 >
                   <p className="px-3 pb-1 pt-2 text-[11px] font-semibold uppercase tracking-[0.14em] text-brand-gray">Exportar · versão {deckVersions[version].label.toLowerCase()}</p>
-                  <MenuItem icon={FileText} title="PDF" text="Um slide por página, 16:9, como está na tela." onClick={() => void startExport('pdf')} />
-                  <MenuItem icon={Presentation} title="PowerPoint" text="Um slide por slide, com as notas do apresentador." onClick={() => void startExport('pptx')} />
+                  <MenuItem icon={FileText} title="PDF" text="Um slide por página, 16:9, com as páginas dos módulos no fim." onClick={() => void startExport('pdf')} />
+                  <MenuItem icon={Presentation} title="PowerPoint" text="Um slide por slide, com os módulos e as notas do apresentador." onClick={() => void startExport('pptx')} />
                   <MenuItem icon={Printer} title="Imprimir" text="Pela impressão do navegador, em paisagem." onClick={() => { setExportOpen(false); window.print() }} />
                 </m.div>
               )}
@@ -385,14 +485,16 @@ export function Deck({ slides, version }: DeckProps) {
                 {exporting.progress.stage === 'capturando' && (
                   <span className="text-brand-graphite">
                     {' '}
-                    · {exporting.progress.done + 1} de {total}
+                    · {exporting.progress.done + 1} de {exportTotal}
                   </span>
                 )}
               </p>
               <div className="mt-4 h-2 overflow-hidden rounded-full bg-brand-mist" role="progressbar" aria-valuemin={0} aria-valuemax={100} aria-valuenow={pct}>
                 <div className="h-full rounded-full bg-brand-gradient transition-[width] duration-300" style={{ width: `${pct}%` }} />
               </div>
-              <p className="mt-3 text-[13px] leading-relaxed text-brand-graphite">A apresentação passa por todos os slides enquanto fotografa cada um. Leva cerca de um minuto. Não mude de aba até terminar.</p>
+              <p className="mt-3 text-[13px] leading-relaxed text-brand-graphite">
+                A apresentação passa por todos os slides, e pelas {moduleRegistry.length} páginas de módulo, enquanto fotografa cada um. Leva um ou dois minutos. Não mude de aba até terminar.
+              </p>
               <button type="button" onClick={cancelExport} className="mt-4 inline-flex h-9 items-center rounded-full border border-brand-mist px-4 text-[13px] font-semibold text-brand-ink hover:bg-brand-off-white">
                 Cancelar
               </button>
@@ -426,7 +528,7 @@ export function Deck({ slides, version }: DeckProps) {
               <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-brand-gray">Versão</p>
               <VersionSwitch version={version} className="mt-2 w-full" />
               <p className="mt-2 text-[12px] leading-snug text-brand-graphite">
-                {deckVersions[version].text} {total} slides, {deckVersions[version].duration}.
+                {deckVersions[version].text} {total} slides, {deckVersions[version].duration}. Mais {moduleRegistry.length} páginas de módulo, uma para cada um.
               </p>
             </div>
             <nav className="min-h-0 flex-1 overflow-y-auto px-3 py-3">
@@ -506,6 +608,25 @@ export function Deck({ slides, version }: DeckProps) {
             </p>
           </m.aside>
         )}
+      </AnimatePresence>
+
+      {/* A página de um módulo, por cima da apresentação */}
+      <AnimatePresence>
+        {openEntry && (
+          <ModuleView
+            key={openEntry.slug}
+            entry={openEntry}
+            from={fromRef.current}
+            onClose={() => setModuleSlug(null)}
+            onNavigate={(slug) => setModuleSlug(slug)}
+            onIndex={() => setModulesOpen(true)}
+          />
+        )}
+      </AnimatePresence>
+
+      {/* A lista de todos os módulos */}
+      <AnimatePresence>
+        {modulesOpen && <ModulePanel key="modules" current={moduleSlug ?? undefined} onPick={openModule} onClose={() => setModulesOpen(false)} />}
       </AnimatePresence>
     </div>
   )

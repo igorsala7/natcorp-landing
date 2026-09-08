@@ -17,6 +17,7 @@ import { analyticsSlide, antesDepois, diaNoRh, fechamento, jornadaResumo, natiCa
 import { EASE } from '@/lib/motion'
 import { cn } from '@/lib/utils'
 import { Big, Card, Chip, IconBox, Item, Rise, Slide, SlideLead, SlideTitle, Stagger, type SlideMeta } from '../Slide'
+import { ModuleChip } from './module'
 
 /**
  * Os slides que contam a história do RH: cada um mostra uma dor do dia a dia e o sistema
@@ -192,33 +193,49 @@ export function JornadaSlide(meta: SlideMeta) {
   return (
     <Slide {...meta} tone="white">
       <div ref={ref}>
-        <div className="max-w-[54rem]">
+        <div className="max-w-[52rem]">
           <SlideTitle text={jornadaResumo.title} />
           <SlideLead className="mt-3">{jornadaResumo.lead}</SlideLead>
         </div>
-        <Rise delay={0.3} className="mt-[clamp(0.75rem,2.5vh,1.5rem)] flex flex-wrap gap-2" role="tablist" aria-label="Fases da jornada">
-          {jornadaResumo.phases.map((ph, n) => {
-            const active = n === i
-            return (
-              <button
-                key={ph.key}
-                type="button"
-                role="tab"
-                aria-selected={active}
-                onClick={() => pick(n)}
-                className={cn(
-                  'flex items-center gap-2 rounded-full border px-[1em] py-[0.5em] text-[length:var(--dk-small)] font-bold transition-colors',
-                  active ? 'border-brand-purple bg-brand-purple text-white' : 'border-brand-mist bg-white text-brand-ink hover:border-brand-purple/40',
-                )}
-              >
-                <span className={cn('flex h-[1.6em] w-[1.6em] items-center justify-center rounded-full text-[0.85em] tabular', active ? 'bg-white/20' : 'bg-brand-purple/10 text-brand-purple')}>{n + 1}</span>
-                {ph.label}
-              </button>
-            )
-          })}
+
+        {/* A linha do tempo: quatro fases, uma de cada vez. */}
+        <Rise delay={0.3} className="mt-[clamp(0.9rem,3vh,1.9rem)]">
+          <div className="relative flex items-start justify-between gap-1" role="tablist" aria-label="Fases da jornada">
+            <span
+              className="absolute top-[0.82em] h-px bg-brand-mist"
+              style={{ left: `${50 / jornadaResumo.phases.length}%`, right: `${50 / jornadaResumo.phases.length}%` }}
+              aria-hidden
+            />
+            {jornadaResumo.phases.map((ph, n) => {
+              const active = n === i
+              const done = n < i
+              return (
+                <button
+                  key={ph.key}
+                  type="button"
+                  role="tab"
+                  aria-selected={active}
+                  onClick={() => pick(n)}
+                  className="relative flex flex-1 flex-col items-center gap-1.5 rounded-lg px-1 text-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-purple"
+                >
+                  <span
+                    className={cn(
+                      'flex h-[1.8em] w-[1.8em] items-center justify-center rounded-full border-2 text-[length:var(--dk-small)] font-bold tabular transition-colors',
+                      active ? 'border-brand-purple bg-brand-purple text-white' : done ? 'border-brand-purple/40 bg-white text-brand-purple' : 'border-brand-mist bg-white text-brand-gray',
+                    )}
+                  >
+                    {n + 1}
+                  </span>
+                  <span className={cn('text-[length:var(--dk-body)] font-bold leading-tight', active ? 'text-brand-ink' : 'text-brand-graphite')}>{ph.label}</span>
+                  <span className="text-[length:var(--dk-eyebrow)] font-semibold uppercase tracking-[0.12em] text-brand-gray">{ph.when}</span>
+                </button>
+              )
+            })}
+          </div>
         </Rise>
-        <div className="mt-[clamp(0.75rem,2.5vh,1.5rem)] grid gap-[clamp(1rem,2.5vw,3rem)] lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
-          <div className="flex min-h-[clamp(11rem,32vh,18rem)] items-end justify-center gap-[clamp(0.5rem,1.5vw,1.5rem)]" aria-hidden>
+
+        <div className="mt-[clamp(0.9rem,3vh,1.9rem)] grid gap-[clamp(1rem,2.5vw,3rem)] lg:grid-cols-[0.8fr_1.2fr] lg:items-center">
+          <div className="flex min-h-[clamp(10rem,30vh,17rem)] items-end justify-center gap-[clamp(0.5rem,1.5vw,1.5rem)]" aria-hidden>
             <AnimatePresence mode="wait" initial={false}>
               {phase.who.map((who, k) => (
                 <m.div
@@ -229,7 +246,7 @@ export function JornadaSlide(meta: SlideMeta) {
                   transition={{ duration: 0.4, ease: EASE, delay: k * 0.08 }}
                   className="flex flex-col items-center gap-2"
                 >
-                  <CastFigure who={who} alt="" className="h-[clamp(9rem,28vh,15rem)]" imgClassName="h-full w-auto drop-shadow-[0_12px_24px_rgba(27,18,56,0.18)]" />
+                  <CastFigure who={who} alt="" className="h-[clamp(8.5rem,26vh,14rem)]" imgClassName="h-full w-auto drop-shadow-[0_12px_24px_rgba(27,18,56,0.18)]" />
                   <span className="text-[length:var(--dk-small)] font-semibold text-brand-graphite">{castMember(who).name.split(' ')[0]}</span>
                 </m.div>
               ))}
@@ -237,24 +254,28 @@ export function JornadaSlide(meta: SlideMeta) {
           </div>
           <AnimatePresence mode="wait" initial={false}>
             <m.div key={phase.key} {...swap}>
-              <p className="text-[length:var(--dk-eyebrow)] font-semibold uppercase tracking-[0.14em] text-brand-purple">
-                Fase {i + 1} · {phase.label}
-              </p>
-              <p className="mt-2 text-[length:var(--dk-lead)] leading-relaxed text-brand-ink">{phase.text}</p>
-              <div className="mt-3 flex flex-wrap gap-2">
+              <p className="max-w-[26rem] text-[length:var(--dk-mid)] font-extrabold leading-[1.1] tracking-brand text-brand-ink">{phase.headline}</p>
+              <ul className="mt-[clamp(0.6rem,2vh,1.1rem)] space-y-[clamp(0.3rem,1vh,0.6rem)]">
+                {phase.beats.map((b) => (
+                  <li key={b} className="flex items-start gap-2.5 text-[length:var(--dk-lead)] font-medium leading-snug text-brand-graphite">
+                    <Check className="mt-[0.3em] h-[0.9em] w-[0.9em] shrink-0 text-brand-pink" strokeWidth={3} aria-hidden />
+                    {b}
+                  </li>
+                ))}
+              </ul>
+              <div className="mt-[clamp(0.7rem,2.2vh,1.25rem)] flex flex-wrap gap-2">
                 {phase.modules.map((mo) => (
-                  <Chip key={mo} tone="purple">
-                    {mo}
-                  </Chip>
+                  <ModuleChip key={mo.slug} slug={mo.slug} name={mo.name} />
                 ))}
               </div>
-              <p className="mt-[clamp(0.75rem,2.5vh,1.25rem)] flex items-start gap-2.5 border-t border-brand-mist pt-3 text-[length:var(--dk-small)] leading-snug text-brand-graphite">
-                <Logo variant="symbol" decorative className="mt-[0.1em] h-[1.4em] w-[1.4em] shrink-0" />
-                {jornadaResumo.hub}
-              </p>
             </m.div>
           </AnimatePresence>
         </div>
+
+        <Rise delay={0.5} y={10} className="mt-[clamp(0.75rem,2.5vh,1.25rem)] flex items-start gap-2.5 border-t border-brand-mist pt-3 text-[length:var(--dk-small)] leading-snug text-brand-graphite">
+          <Logo variant="symbol" decorative className="mt-[0.1em] h-[1.4em] w-[1.4em] shrink-0" />
+          {jornadaResumo.hub}
+        </Rise>
       </div>
     </Slide>
   )

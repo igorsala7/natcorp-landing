@@ -108,39 +108,69 @@ export const fechamento = {
   ],
 }
 
-/* A jornada de Ana, resumida em quatro fases. */
+/* O catálogo: todos os módulos, cada um com a sua página. */
+export const modulosCatalogo = {
+  title: 'Mais de 30 módulos. [[Clique em qualquer um]].',
+  lead: 'Cada módulo tem a sua página aqui dentro: o que faz, como funciona o processo e os números. Abra o que a conversa pedir e volte para o slide de onde saiu.',
+  leadPrint: 'Cada módulo tem a sua página nesta apresentação: o que faz, como funciona o processo e os números. As páginas vêm logo depois do último slide.',
+}
+
+/* A jornada de Ana, em quatro fases. Poucas palavras: quem apresenta conta o resto. */
 export const jornadaResumo = {
   title: 'Da vaga à promoção, [[uma história só]]: a de Ana.',
-  lead:
-    'Uma admissão de verdade passa por gestor, RH, Departamento Pessoal, SESMT e o próprio colaborador. No sistema, cada um faz a sua parte na mesma base, e o cadastro de Ana nasce uma vez só.',
+  lead: 'Cinco pessoas, um cadastro, o mesmo sistema em cada fase.',
   phases: [
     {
       key: 'vaga',
       label: 'Vaga e seleção',
+      when: 'Semana 1',
       who: ['marcos', 'juliana'] as CastKey[],
-      text: 'Marcos abre a requisição no celular, no meio da fábrica. A vaga sai com a marca da empresa e no LinkedIn. Cada fase do processo decide sozinha quem segue.',
-      modules: ['Requisição de Vaga', 'Recrutamento e Seleção', 'Quadro de Vagas'],
+      headline: 'A vaga abre pelo celular do gestor.',
+      beats: ['Requisição aprovada no fluxo', 'Vaga no ar com a marca da empresa', 'Triagem por fase, sem planilha'],
+      modules: [
+        { name: 'Requisições com Workflow', slug: 'requisicoes-com-workflow' },
+        { name: 'Recrutamento e Seleção', slug: 'recrutamento-e-selecao' },
+        { name: 'Quadro de Vagas', slug: 'quadro-de-vagas' },
+      ],
     },
     {
       key: 'admissao',
       label: 'Admissão sem papel',
+      when: 'Semana 3',
       who: ['ana', 'beatriz', 'henrique'] as CastKey[],
-      text: 'Ana preenche os próprios dados, o exame cai na agenda do médico e o contrato é assinado no celular. Beatriz confere tudo em uma tela e confirma.',
-      modules: ['Admissão Digital', 'Medicina Ocupacional', 'Assinatura Eletrônica'],
+      headline: 'Ana se admite sozinha, do celular.',
+      beats: ['A candidata preenche os próprios dados', 'Exame agendado e contrato assinado', 'O DP confere em uma tela só'],
+      modules: [
+        { name: 'Admissão Digital', slug: 'admissao-digital' },
+        { name: 'Medicina Ocupacional', slug: 'medicina-ocupacional' },
+        { name: 'Assinatura Eletrônica', slug: 'assinatura-eletronica' },
+      ],
     },
     {
       key: 'primeiro-dia',
       label: 'Primeiro dia',
+      when: 'Dia 1',
       who: ['ana', 'rafael'] as CastKey[],
-      text: 'Na portaria, o ponto por reconhecimento facial. Os EPIs do cargo já estavam separados e a trilha de treinamento, agendada.',
-      modules: ['NatPonto', 'EPIs', 'Treinamento e Desenvolvimento'],
+      headline: 'O primeiro dia já estava pronto.',
+      beats: ['Ponto por reconhecimento facial', 'EPIs do cargo separados', 'Treinamentos das NRs agendados'],
+      modules: [
+        { name: 'NatPonto', slug: 'natponto' },
+        { name: 'Segurança do Trabalho', slug: 'seguranca-do-trabalho' },
+        { name: 'Treinamento e Desenvolvimento', slug: 'treinamento-e-desenvolvimento' },
+      ],
     },
     {
       key: 'rotina',
       label: 'Rotina e crescimento',
+      when: 'Do 1º mês ao 1º ano',
       who: ['ana', 'paulo', 'marcos'] as CastKey[],
-      text: 'Férias, holerite e dúvidas se resolvem no portal. Enquanto isso, Paulo fecha 10.000 folhas em quatro minutos. Um ano depois, o mapa de sucessão aponta para Ana.',
-      modules: ['Portal do Colaborador', 'Folha de Pagamento', 'Carreira e Sucessão'],
+      headline: 'A rotina se resolve sem o RH no meio.',
+      beats: ['Férias e holerite no portal', '10.000 folhas em quatro minutos', 'O mapa de sucessão aponta para Ana'],
+      modules: [
+        { name: 'Portais', slug: 'portais' },
+        { name: 'Folha de Pagamento', slug: 'folha-de-pagamento' },
+        { name: 'Carreira e Sucessão', slug: 'carreira-e-sucessao' },
+      ],
     },
   ],
   hub: 'Uma confirmação, sete atualizações: folha, ponto, benefícios, SESMT, treinamento, portal e eSocial recebem a mesma admissão.',
@@ -483,8 +513,15 @@ export const notes: Record<string, string[]> = {
     'Pergunte quantas horas o fechamento leva hoje e quantas pessoas ficam nele.',
   ],
   jornada: [
-    'Conte a história de Ana em quatro fases. Toque nas fases para avançar. Cada personagem representa um perfil real da empresa.',
+    'Conte a história de Ana em quatro fases. Toque nas fases para avançar; o slide também passa sozinho.',
+    'Fase 1: Marcos abre a requisição no meio da fábrica, pelo celular. Fase 2: Ana preenche os próprios dados, o exame cai na agenda do médico e o contrato é assinado no celular; Beatriz confere em uma tela. Fase 3: na portaria, ponto por reconhecimento facial, EPIs separados e trilha de treinamento agendada. Fase 4: férias e holerite no portal, Paulo fecha 10.000 folhas em quatro minutos e, um ano depois, o mapa de sucessão aponta para Ana.',
     'Feche com o hub: uma confirmação, sete atualizações. É o argumento da base única.',
+    'Os módulos de cada fase são clicáveis: se perguntarem o detalhe, abra a página do módulo e volte.',
+  ],
+  modulos: [
+    'Este é o mapa do sistema: sete frentes, mais de 30 módulos, cada um com a sua página nesta apresentação.',
+    'Pergunte por onde eles querem começar e clique no módulo. A página mostra o que faz, o processo passo a passo e os números.',
+    'Esc volta para este slide. A tecla M abre a lista de módulos de qualquer lugar da apresentação.',
   ],
   portais: [
     'Três portais e o NatPonto sobre a mesma base. O RH deixa de ser o balcão de perguntas.',

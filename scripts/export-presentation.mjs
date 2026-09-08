@@ -22,7 +22,9 @@ const opt = (name, fallback) => {
   return i >= 0 && args[i + 1] ? args[i + 1] : fallback
 }
 const version = opt('version', 'completa') // completa | reduzida
-const url = opt('url', version === 'reduzida' ? 'http://localhost:4173/apresentacao/reduzida' : 'http://localhost:4173/apresentacao')
+// `?modulos=1` monta as páginas dos módulos na sequência: elas entram no PDF depois do último slide.
+const base = version === 'reduzida' ? 'http://localhost:4173/apresentacao/reduzida' : 'http://localhost:4173/apresentacao'
+const url = opt('url', `${base}?modulos=1`)
 const out = resolve(opt('out', version === 'reduzida' ? 'public/natcorp-apresentacao-reduzida.pdf' : 'public/natcorp-apresentacao.pdf'))
 const pngDir = opt('png', '')
 const width = Number(opt('width', '1920'))
@@ -41,6 +43,8 @@ await page.addInitScript(() => {
 })
 await page.goto(url, { waitUntil: 'networkidle' })
 await page.waitForSelector('.deck-root [data-slide]')
+// As páginas dos módulos chegam depois (um arquivo por módulo).
+if (url.includes('modulos=1')) await page.waitForSelector('.deck-root [data-slide-id="modulo-nati"]', { timeout: 30000 })
 await page.waitForTimeout(600)
 
 const total = await page.locator('.deck-root [data-slide]').count()

@@ -159,7 +159,8 @@
 /* ------------------------------------------------------------------------------------------------
  * Apresentação executiva (/apresentacao): tamanhos fluidos e impressão em 16:9, um slide por página.
  * ---------------------------------------------------------------------------------------------- */
-.deck-root {
+.deck-root,
+.deck-sheet {
   /* Margens de 8% (manual, seção 14); no celular, margens de leitura. */
   --dk-mx: clamp(1.25rem, 7vw, 8.5rem);
   --dk-mt: clamp(1.25rem, 5vh, 3.5rem);
