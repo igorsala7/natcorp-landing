@@ -13,6 +13,7 @@ import { PageTransition } from '@/components/motion/PageTransition'
 import { useSeo } from '@/hooks/useSeo'
 import { faqs } from '@/content/faq'
 import { paths, siteConfig } from '@/content/site'
+import { CTAInline } from '@/components/sections/CTAInline'
 
 /** Página inicial: convence e encaminha. O detalhe de cada assunto vive nas páginas. */
 export default function LandingPage() {
@@ -25,6 +26,7 @@ export default function LandingPage() {
       <PlatformSection />
       <StructureChooserSection />
       <JourneySection />
+      <CTAInline titulo="Já dá para ver o seu RH assim?" tom="marca" />
       <NatiSection />
       <SegmentsSection />
       <WhySection />

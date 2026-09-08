@@ -14,6 +14,7 @@ import { useSeo } from '@/hooks/useSeo'
 import type { FaqItem } from '@/content/faq'
 import { modulePath } from '@/content/modulePages'
 import { paths } from '@/content/site'
+import { CTAInline } from '@/components/sections/CTAInline'
 
 /* Os três pilares do modelo: como o sistema é contratado. */
 const pillars = [
@@ -262,6 +263,8 @@ export default function CommercialPage() {
           </Reveal>
         </div>
       </Section>
+
+      <CTAInline titulo="Quer uma proposta para o seu porte?" tom="marca" />
 
       <FAQSection id="comercial-faq" tone="off" items={faq} eyebrow="Perguntas sobre o modelo" title="Como cobra, o que vem junto, [[o que está incluído]]." lead="Sem surpresa na proposta." more={{ to: paths.faq, label: 'Ver todas as perguntas frequentes' }} />
 

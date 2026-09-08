@@ -212,7 +212,7 @@ export const clientes: Cliente[] = [
     name: 'Incor',
     code: 'INCOR',
     apex: 'rh',
-    logo: null,
+    logo: 'logo.png',
     active: true,
     urls: {
       prod: {
@@ -238,7 +238,7 @@ export const clientes: Cliente[] = [
     name: 'Redeflex',
     code: 'REDEFLEX',
     apex: 'rh',
-    logo: null,
+    logo: 'logo.png',
     active: true,
     urls: {
       prod: {
@@ -264,7 +264,7 @@ export const clientes: Cliente[] = [
     name: 'Leadec',
     code: 'LEADEC',
     apex: 'natrh',
-    logo: null,
+    logo: 'logo.png',
     active: true,
     urls: {
       prod: {
@@ -290,7 +290,7 @@ export const clientes: Cliente[] = [
     name: 'Saúde',
     code: 'SAUDE',
     apex: 'hc',
-    logo: null,
+    logo: 'logo.png',
     active: true,
     urls: {
       prod: {
@@ -316,7 +316,7 @@ export const clientes: Cliente[] = [
     name: 'Stefanini',
     code: 'STEFANINI',
     apex: 'hcm',
-    logo: null,
+    logo: 'logo.png',
     active: true,
     urls: {
       prod: {
@@ -342,7 +342,7 @@ export const clientes: Cliente[] = [
     name: 'RealFood',
     code: 'REALFOOD',
     apex: 'cloud',
-    logo: null,
+    logo: 'logo.png',
     active: true,
     urls: {
       prod: {
