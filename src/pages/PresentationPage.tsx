@@ -1,14 +1,20 @@
 import { Deck } from '@/components/presentation/Deck'
-import { deckSlides } from '@/components/presentation/slides'
-import { deckMeta } from '@/content/presentation'
+import { deckSlidesFor } from '@/components/presentation/slides'
+import { deckMeta, deckVersions, type DeckVersion } from '@/content/presentation'
 import { paths } from '@/content/site'
 import { useSeo } from '@/hooks/useSeo'
 
 /**
- * Apresentação executiva do sistema, em tela cheia (/apresentacao). Fora do menu e do sitemap:
- * é um material comercial compartilhado por link, com título e descrição próprios para a prévia.
+ * Apresentação comercial do sistema, em tela cheia: completa (/apresentacao) e reduzida
+ * (/apresentacao/reduzida). Fora do menu e do sitemap: é um material compartilhado por link.
  */
-export default function PresentationPage() {
-  useSeo({ title: deckMeta.seoTitle, description: deckMeta.seoDescription, path: paths.presentation, noindex: true })
-  return <Deck slides={deckSlides} />
+export default function PresentationPage({ version = 'completa' }: { version?: DeckVersion }) {
+  const short = version === 'reduzida'
+  useSeo({
+    title: short ? `${deckMeta.seoTitle} (versão reduzida)` : deckMeta.seoTitle,
+    description: `${deckMeta.seoDescription} Versão ${deckVersions[version].label.toLowerCase()}, ${deckVersions[version].duration}.`,
+    path: short ? paths.presentationShort : paths.presentation,
+    noindex: true,
+  })
+  return <Deck key={version} slides={deckSlidesFor(version)} version={version} />
 }

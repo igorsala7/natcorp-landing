@@ -55,6 +55,8 @@ export const paths = {
   motion: '/motion',
   /** Apresentação executiva em tela cheia (deck comercial), fora do menu e do sitemap. */
   presentation: '/apresentacao',
+  /** A mesma apresentação, na versão curta (reunião de 20 minutos). */
+  presentationShort: '/apresentacao/reduzida',
   /** Administração dos portais dos clientes (só para o administrador; fora do menu e do sitemap). */
   portalAdmin: '/admin/portais',
 } as const

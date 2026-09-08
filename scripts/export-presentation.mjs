@@ -7,7 +7,8 @@
 // O arquivo em public/ é o que o botão "Baixar em PDF" da apresentação entrega: gere de novo
 // depois de mudar o conteúdo e faça o build em seguida.
 //
-// Opções: --url <endereço> (padrão http://localhost:4173/apresentacao)
+// Opções: --version completa|reduzida (padrão completa)
+//         --url <endereço> (padrão http://localhost:4173/apresentacao ou /apresentacao/reduzida)
 //         --out <arquivo.pdf> (padrão public/natcorp-apresentacao.pdf)
 //         --png <pasta> (também salva slide-01.png, slide-02.png…)
 //         --width <px> --height <px> (janela usada nas capturas; padrão 1920x1080)
@@ -20,8 +21,9 @@ const opt = (name, fallback) => {
   const i = args.indexOf(`--${name}`)
   return i >= 0 && args[i + 1] ? args[i + 1] : fallback
 }
-const url = opt('url', 'http://localhost:4173/apresentacao')
-const out = resolve(opt('out', 'public/natcorp-apresentacao.pdf'))
+const version = opt('version', 'completa') // completa | reduzida
+const url = opt('url', version === 'reduzida' ? 'http://localhost:4173/apresentacao/reduzida' : 'http://localhost:4173/apresentacao')
+const out = resolve(opt('out', version === 'reduzida' ? 'public/natcorp-apresentacao-reduzida.pdf' : 'public/natcorp-apresentacao.pdf'))
 const pngDir = opt('png', '')
 const width = Number(opt('width', '1920'))
 const height = Number(opt('height', '1080'))

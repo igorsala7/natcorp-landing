@@ -3,22 +3,22 @@ import { moduleIcons } from '@/content/modulePages/icons'
 import type { GroupId } from '@/content/modulePages/types'
 import { moduleGroups } from '@/content/modules'
 import { groupAudience, groupHighlights, groupTitles } from '@/content/presentation'
-import { Big, Card, Chip, IconBox, Item, Rise, Slide, SlideLead, SlideTitle, Stagger, type SlideMeta, type SlideTone } from '../Slide'
+import { Big, Chip, Item, Rise, Slide, SlideLead, SlideTitle, Stagger, type SlideMeta, type SlideTone } from '../Slide'
+import { groupVisuals } from './visuals'
 
 interface GroupSlideProps extends SlideMeta {
   group: GroupId
   tone: SlideTone
 }
 
-/* Uma frente do sistema: título, o que ela entrega, três números e os módulos em cartões. */
+/* Uma frente do sistema: o que ela resolve, três números, os módulos e uma tela real do sistema. */
 function GroupSlide({ group, tone, ...meta }: GroupSlideProps) {
   const g = moduleGroups.find((x) => x.id === group)!
   const position = moduleGroups.indexOf(g) + 1
-  const mods = g.modules.filter((m) => !m.hash)
-  const feats = g.modules.filter((m) => m.hash)
+  const visual = groupVisuals[group]
   return (
     <Slide {...meta} tone={tone}>
-      <div className="grid gap-[clamp(1.25rem,3vw,3.5rem)] lg:grid-cols-[0.95fr_1.2fr] lg:items-center">
+      <div className="grid gap-[clamp(1.25rem,3vw,3.5rem)] lg:grid-cols-[0.95fr_1.05fr] lg:items-center">
         <div>
           <Rise y={8} className="flex flex-wrap items-center gap-2">
             <Chip tone="purple">
@@ -29,46 +29,35 @@ function GroupSlide({ group, tone, ...meta }: GroupSlideProps) {
             ))}
           </Rise>
           <SlideTitle text={groupTitles[group]} className="mt-4 text-[length:calc(var(--dk-h2)*0.86)]" />
-          <SlideLead className="mt-4 max-w-[34rem]">{g.description}</SlideLead>
-          <Stagger className="mt-[clamp(1.25rem,3.5vh,2.25rem)] grid grid-cols-3 gap-3" delay={0.45}>
+          <SlideLead className="mt-3 max-w-[34rem]">{g.description}</SlideLead>
+          <Stagger className="mt-[clamp(1rem,3vh,1.75rem)] grid grid-cols-3 gap-3" delay={0.45}>
             {groupHighlights[group].map((h, i) => (
               <Item key={h.label}>
                 <Big size="md" value={h.value} label={h.label} accent={i === 0 ? 'pink' : 'purple'} />
               </Item>
             ))}
           </Stagger>
-        </div>
-        <div className="min-w-0">
-          <Stagger className={mods.length > 4 ? 'grid gap-2.5 sm:grid-cols-2' : 'grid gap-2.5 sm:grid-cols-2'} delay={0.3} stagger={0.06}>
-            {mods.map((mod) => {
-              const entry = getModuleEntry(mod.slug)
+          <Stagger as="ul" className="mt-[clamp(0.75rem,2.5vh,1.5rem)] flex flex-wrap gap-2" delay={0.55} stagger={0.04} aria-label={`Módulos de ${g.name}`}>
+            {g.modules.map((mod) => {
+              const entry = mod.hash ? undefined : getModuleEntry(mod.slug)
               const Icon = entry ? moduleIcons[entry.icon] : moduleIcons.sparkles
               return (
-                <Item key={mod.name}>
-                  <Card className="flex h-full gap-3">
-                    <IconBox>
-                      <Icon strokeWidth={1.7} />
-                    </IconBox>
-                    <div className="min-w-0">
-                      <p className="text-[length:var(--dk-body)] font-bold leading-tight text-brand-ink">{mod.name}</p>
-                      <p className="mt-1 text-[length:var(--dk-small)] leading-snug text-brand-graphite">{mod.desc}</p>
-                    </div>
-                  </Card>
+                <Item key={mod.name} as="li">
+                  <Chip tone={mod.hash ? 'neutral' : 'purple'}>
+                    <Icon className="h-[1.1em] w-[1.1em]" strokeWidth={1.9} aria-hidden />
+                    {mod.name}
+                  </Chip>
                 </Item>
               )
             })}
           </Stagger>
-          {feats.length > 0 && (
-            <Rise delay={0.6} y={8} className="mt-3 flex flex-wrap items-center gap-2">
-              <span className="text-[length:var(--dk-small)] font-semibold text-brand-graphite">Também nesta frente:</span>
-              {feats.map((f) => (
-                <Chip key={f.name} tone="purple">
-                  {f.name}
-                </Chip>
-              ))}
-            </Rise>
-          )}
         </div>
+        <Rise delay={0.3} className="min-w-0">
+          <div role="img" aria-label={visual.label}>
+            {visual.render()}
+          </div>
+          <p className="mt-2.5 text-center text-[length:var(--dk-small)] leading-snug text-brand-graphite">{visual.caption}</p>
+        </Rise>
       </div>
     </Slide>
   )

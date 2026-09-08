@@ -1,4 +1,5 @@
 import type { GroupId } from './modulePages/types'
+import type { CastKey } from './hiringJourney'
 
 /**
  * Apresentação executiva (/apresentacao): o roteiro comercial do sistema, slide a slide.
@@ -8,11 +9,11 @@ import type { GroupId } from './modulePages/types'
  */
 
 export const deckMeta = {
-  edition: 'Apresentação executiva · 2026',
+  edition: 'Apresentação comercial · 2026',
   title: 'A transformação que seu RH precisa.',
   subtitle:
-    'Gestão completa para RH e Departamento Pessoal em um único sistema, com a NATI, a inteligência artificial que trabalha dentro dele.',
-  audience: ['CEO', 'CHRO', 'CFO', 'CTO', 'Diretoria e gerência de RH', 'Analistas de RH e DP'],
+    'Todo o RH em um único sistema: folha, ponto, eSocial, admissão, saúde e segurança, talentos e People Analytics, com a NATI, a inteligência artificial que trabalha dentro dele.',
+  audience: ['Gerência e diretoria de RH', 'Departamento Pessoal', 'SESMT', 'Diretoria de TI'],
   seoTitle: 'A transformação que seu RH precisa | Apresentação executiva Natcorp',
   seoDescription:
     'Apresentação executiva do sistema de RH da Natcorp: mais de 30 módulos integrados, a NATI, servidores dedicados na Oracle Cloud e os resultados que grandes empresas alcançam. Para CEO, CHRO, CFO, CTO e times de RH e DP.',
@@ -29,6 +30,172 @@ export const momento = {
     { title: 'Autonomia na ponta.', text: 'O gestor aprova no celular, o colaborador se resolve sozinho e o RH cuida do que é estratégico.' },
   ],
   punch: 'A pergunta não é se o seu RH vai passar por essa transformação. É se vai liderar ou correr atrás.',
+}
+
+
+/* As duas versões da apresentação. */
+export const deckVersions = {
+  completa: { label: 'Completa', duration: 'cerca de 45 minutos', text: 'Todas as frentes do sistema, uma a uma, com a tecnologia e o modelo comercial.' },
+  reduzida: { label: 'Reduzida', duration: 'cerca de 20 minutos', text: 'O dia do RH, o sistema resolvendo e os números. Para a primeira conversa.' },
+} as const
+export type DeckVersion = keyof typeof deckVersions
+
+/* 01 · Um dia no seu RH: as dores na ordem em que aparecem, e a resposta de cada uma. */
+export const diaNoRh = {
+  title: 'Você reconhece [[este dia]]?',
+  lead: 'Um dia comum em um RH que ainda trabalha com sistemas separados e planilhas. Cada hora tem uma dor. Todas têm resposta no mesmo sistema.',
+  moments: [
+    {
+      time: '07h50',
+      title: 'O eSocial rejeitou três eventos',
+      pain: 'O erro está no cadastro de um sistema e o envio saiu de outro. Alguém vai passar a manhã comparando telas.',
+      answer: 'Cadastro único e eSocial acompanhado na mesma tela em que a folha é calculada. A inconsistência aparece antes do envio.',
+      module: 'eSocial',
+    },
+    {
+      time: '09h10',
+      title: 'O gestor não aprovou as férias',
+      pain: 'O pedido está em um e-mail de duas semanas atrás. O colaborador liga para o RH. O RH liga para o gestor.',
+      answer: 'O gestor aprova no celular e a folha recebe as férias sozinha. Aprovou, efetivou.',
+      module: 'Requisições com Workflow',
+    },
+    {
+      time: '11h30',
+      title: 'A diretoria pediu o turnover por unidade',
+      pain: 'Exporta de um sistema, cola na planilha, confere com o mês passado. É a sétima versão da mesma planilha.',
+      answer: 'People Analytics com os dados de todos os módulos. Ou uma pergunta à NATI, em português, com o gráfico na resposta.',
+      module: 'People Analytics',
+    },
+    {
+      time: '14h00',
+      title: 'Um atestado sumiu no caminho',
+      pain: 'Foi entregue na portaria, passou pelo gestor e não chegou ao DP antes do corte. O desconto saiu errado.',
+      answer: 'O colaborador envia o atestado pelo portal ou pelo app. Medicina Ocupacional e folha recebem o mesmo registro.',
+      module: 'Medicina Ocupacional',
+    },
+    {
+      time: '16h20',
+      title: 'O fechamento começou. De novo.',
+      pain: 'Ponto em um sistema, folha em outro. Horas redigitadas, conferidas e cobradas por e-mail até tarde.',
+      answer: 'O ponto apurado entra direto na folha. 10.000 colaboradores calculados em cerca de quatro minutos, com 100% da folha auditada pela NATI.',
+      module: 'Folha de Pagamento',
+    },
+    {
+      time: '18h05',
+      title: 'A auditoria pediu quem acessou o quê',
+      pain: 'Salário, CPF e atestado circulam por e-mail e planilha. Ninguém sabe dizer quem viu o quê.',
+      answer: 'Perfis por empresa e filial, trilha de auditoria de cada acesso e os dados pessoais dentro do sistema, como a LGPD pede.',
+      module: 'Segurança e LGPD',
+    },
+  ],
+}
+
+/* O fechamento da folha: o número que muda a conversa. */
+export const fechamento = {
+  title: '10.000 colaboradores. [[Quatro minutos.]] Folha pronta para conferir.',
+  lead:
+    'A folha calcula 2.500 colaboradores por minuto sobre o ponto já apurado, com o eSocial acompanhado na mesma tela e a contabilização pronta para o ERP. A NATI audita 100% dos cálculos, sem amostragem, e aponta o desvio antes do pagamento.',
+  steps: [
+    { label: 'Ponto apurado', text: 'As horas certas já estão na folha, sem redigitar.' },
+    { label: 'Cálculo', text: '2.500 colaboradores por minuto, por empresa, CNPJ e centro de custo.' },
+    { label: 'Auditoria da NATI', text: 'Todos os cálculos conferidos. Cada inconsistência vem com o motivo.' },
+    { label: 'eSocial e contabilização', text: 'Eventos acompanhados e a folha contabilizada, pronta para o ERP.' },
+  ],
+  numbers: [
+    { value: 2500, label: 'colaboradores calculados por minuto' },
+    { value: '80%', label: 'mais rápido no fechamento' },
+    { value: '100%', label: 'da folha auditada, sem amostragem' },
+  ],
+}
+
+/* A jornada de Ana, resumida em quatro fases. */
+export const jornadaResumo = {
+  title: 'Da vaga à promoção, [[uma história só]]: a de Ana.',
+  lead:
+    'Uma admissão de verdade passa por gestor, RH, Departamento Pessoal, SESMT e o próprio colaborador. No sistema, cada um faz a sua parte na mesma base, e o cadastro de Ana nasce uma vez só.',
+  phases: [
+    {
+      key: 'vaga',
+      label: 'Vaga e seleção',
+      who: ['marcos', 'juliana'] as CastKey[],
+      text: 'Marcos abre a requisição no celular, no meio da fábrica. A vaga sai com a marca da empresa e no LinkedIn. Cada fase do processo decide sozinha quem segue.',
+      modules: ['Requisição de Vaga', 'Recrutamento e Seleção', 'Quadro de Vagas'],
+    },
+    {
+      key: 'admissao',
+      label: 'Admissão sem papel',
+      who: ['ana', 'beatriz', 'henrique'] as CastKey[],
+      text: 'Ana preenche os próprios dados, o exame cai na agenda do médico e o contrato é assinado no celular. Beatriz confere tudo em uma tela e confirma.',
+      modules: ['Admissão Digital', 'Medicina Ocupacional', 'Assinatura Eletrônica'],
+    },
+    {
+      key: 'primeiro-dia',
+      label: 'Primeiro dia',
+      who: ['ana', 'rafael'] as CastKey[],
+      text: 'Na portaria, o ponto por reconhecimento facial. Os EPIs do cargo já estavam separados e a trilha de treinamento, agendada.',
+      modules: ['NatPonto', 'EPIs', 'Treinamento e Desenvolvimento'],
+    },
+    {
+      key: 'rotina',
+      label: 'Rotina e crescimento',
+      who: ['ana', 'paulo', 'marcos'] as CastKey[],
+      text: 'Férias, holerite e dúvidas se resolvem no portal. Enquanto isso, Paulo fecha 10.000 folhas em quatro minutos. Um ano depois, o mapa de sucessão aponta para Ana.',
+      modules: ['Portal do Colaborador', 'Folha de Pagamento', 'Carreira e Sucessão'],
+    },
+  ],
+  hub: 'Uma confirmação, sete atualizações: folha, ponto, benefícios, SESMT, treinamento, portal e eSocial recebem a mesma admissão.',
+}
+
+/* Portais e NatPonto: cada pessoa entra pela sua porta. */
+export const portaisSlide = {
+  title: 'Cada pessoa entra pela [[sua porta]]. O RH deixa de ser o balcão.',
+  lead: 'Três portais e um app, sobre a mesma base. O colaborador se resolve sozinho, o gestor aprova onde estiver e o RH cuida do que precisa de gente.',
+  portals: [
+    { name: 'Portal do Colaborador', who: 'Para todas as pessoas da empresa', items: ['Holerite e informe de rendimentos', 'Espelho de ponto e banco de horas', 'Férias, requisições e documentos para assinar'] },
+    { name: 'Portal do Gestor', who: 'Para quem lidera uma equipe', items: ['Aprovações de requisições e ponto', 'Férias e escalas da equipe', 'Avaliações e indicadores do time'] },
+    { name: 'Portal do Operador', who: 'Para o RH e o Departamento Pessoal', items: ['O sistema completo: folha, ponto, eSocial, admissão', 'Benefícios, saúde e segurança, talentos', 'Painéis e a NATI'] },
+  ],
+  app: { name: 'NatPonto', text: 'Ponto por reconhecimento facial e geolocalização, com marcação offline que sincroniza depois. Holerite, escala e avisos no mesmo app.' },
+  stat: { value: '70%', label: 'menos chamados de dúvidas com o autoatendimento e a NATI' },
+}
+
+/* A mesma rotina, antes e depois. */
+export const antesDepois = {
+  title: 'A mesma rotina, [[antes e depois]].',
+  lead: 'O que muda no dia a dia de quem opera o RH.',
+  rows: [
+    { task: 'Fechar a folha', before: 'Exportar o ponto, redigitar horas, conferir por amostragem, cobrar pendências por e-mail.', after: 'Ponto apurado já na folha. Cálculo em minutos. 100% auditado pela NATI antes do pagamento.' },
+    { task: 'Admitir alguém', before: 'Papel, fichas, cópias e um cadastro em cada sistema. Dias até o primeiro dia.', after: 'A pessoa preenche os próprios dados. Um cadastro só. Contrato assinado no celular.' },
+    { task: 'Responder ao colaborador', before: 'Ligação, e-mail, chamado. O RH procura a informação e responde um a um.', after: 'A NATI responde em segundos, no portal, no WhatsApp ou no Teams. Holerite, saldo de férias, ponto.' },
+    { task: 'Aprovar férias e requisições', before: 'E-mail para o gestor, planilha de controle e lançamento manual no sistema.', after: 'O gestor aprova no celular. O sistema efetiva. Ninguém redigita.' },
+    { task: 'Responder à diretoria', before: 'Exportar, colar, conferir. A sétima versão da planilha de turnover.', after: 'Painel pronto com os dados de todos os módulos. Ou uma pergunta à NATI, com o gráfico na resposta.' },
+    { task: 'Cuidar dos prazos de SST', before: 'ASO vencendo descoberto tarde, S-2210 fora do prazo, multa.', after: 'Vencimentos avisados com antecedência. Eventos de SST do eSocial enviados no prazo, sem retrabalho.' },
+  ],
+}
+
+/* A NATI nos canais e avisando antes. */
+export const natiCanais = {
+  title: 'A NATI responde onde o colaborador [[já está]]. E avisa o RH antes.',
+  lead:
+    'No portal, no WhatsApp e no Microsoft Teams, 24 horas. Para o RH, a NATI lê todos os módulos ao mesmo tempo e aponta o desvio antes do fechamento, da auditoria e da multa.',
+  bullets: [
+    'Holerite, informe, saldo de férias e ponto respondidos em segundos',
+    'Requisições e atestados enviados pela própria conversa',
+    'Alertas de vencimento, desvio e prazo, com a ação já preparada',
+    'Executa só o que uma pessoa aprovou',
+  ],
+}
+
+/* People Analytics: a resposta pronta antes da pergunta. */
+export const analyticsSlide = {
+  title: 'A resposta para a diretoria [[já está pronta]] quando a pergunta chega.',
+  lead:
+    'People Analytics e BI com os dados de todos os módulos: headcount, turnover, custo por centro de custo, absenteísmo, medicina ocupacional. Painéis prontos, e o próprio usuário cruza, filtra e exporta, sem depender de TI.',
+  numbers: [
+    { value: '3.500+', label: 'telas customizáveis pelo usuário' },
+    { value: '1.800+', label: 'relatórios prontos para cruzar' },
+    { value: '900+', label: 'gráficos gerenciais na interface' },
+  ],
 }
 
 /* 02 · O custo do RH operacional. */
@@ -128,13 +295,13 @@ export const groupTitles: Record<GroupId, string> = {
 
 /* Para quem cada frente fala primeiro. */
 export const groupAudience: Record<GroupId, string[]> = {
-  'pessoal-e-folha': ['CFO', 'DP', 'Contabilidade'],
+  'pessoal-e-folha': ['DP', 'RH', 'Contabilidade'],
   'ponto-e-jornada': ['DP', 'Gestores', 'Jurídico'],
   'saude-e-seguranca': ['SESMT', 'RH', 'Jurídico'],
-  talentos: ['CHRO', 'RH', 'Gestores'],
-  desenvolvimento: ['CHRO', 'RH', 'Lideranças'],
+  talentos: ['RH', 'Gestores', 'Candidatos'],
+  desenvolvimento: ['RH', 'Lideranças', 'Colaboradores'],
   autoatendimento: ['Colaboradores', 'Gestores', 'RH'],
-  'dados-ia-plataforma': ['CEO', 'CHRO', 'CTO'],
+  'dados-ia-plataforma': ['Diretoria de RH', 'Diretoria', 'TI'],
 }
 
 /* 11 · NATI. */
@@ -306,6 +473,34 @@ export const notes: Record<string, string[]> = {
   momento: [
     'O RH que lidera o negócio já opera com dados, IA e autonomia. O objetivo aqui é criar urgência sem alarmismo.',
     'Feche com a frase: liderar ou correr atrás.',
+  ],
+  'dia-no-rh': [
+    'Peça para a plateia apontar qual dessas horas é a pior na empresa deles. A conversa começa aí.',
+    'Cada momento tem a dor e a resposta: toque no horário para trocar. O slide passa sozinho até alguém tocar.',
+  ],
+  fechamento: [
+    'O número que muda a conversa: 10.000 colaboradores em cerca de quatro minutos, com o ponto já apurado e 100% auditado.',
+    'Pergunte quantas horas o fechamento leva hoje e quantas pessoas ficam nele.',
+  ],
+  jornada: [
+    'Conte a história de Ana em quatro fases. Toque nas fases para avançar. Cada personagem representa um perfil real da empresa.',
+    'Feche com o hub: uma confirmação, sete atualizações. É o argumento da base única.',
+  ],
+  portais: [
+    'Três portais e o NatPonto sobre a mesma base. O RH deixa de ser o balcão de perguntas.',
+    'O celular ao lado troca de tela sozinho: início, reconhecimento facial e a marcação confirmada.',
+  ],
+  'antes-e-depois': [
+    'Deixe o "Hoje" na tela por alguns segundos, depois alterne para "Com a Natcorp". O contraste faz o trabalho.',
+    'Peça para a plateia escolher a linha que mais dói.',
+  ],
+  'nati-canais': [
+    'A NATI no WhatsApp e no Teams responde ao colaborador onde ele já está. Para o RH, ela avisa antes: vencimentos, desvios, prazos.',
+    'Executa só o que uma pessoa aprovou. Isso tranquiliza quem tem medo de automação.',
+  ],
+  analytics: [
+    'O painel ao lado é o Painel do Operador de verdade, com indicadores de Medicina Ocupacional. Tudo vem dos módulos, sem exportar.',
+    '3.500 telas, 1.800 relatórios, 900 gráficos: o usuário monta o que precisa, sem TI.',
   ],
   custo: [
     'Convide a plateia a reconhecer a própria rotina: quantos sistemas, quantas planilhas, quantas horas por fechamento.',

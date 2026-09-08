@@ -113,12 +113,20 @@ function AppRoutes() {
             </Suspense>
           }
         />
-        {/* Apresentação executiva em tela cheia (fora do menu e do sitemap). */}
+        {/* Apresentação comercial em tela cheia, completa e reduzida (fora do menu e do sitemap). */}
         <Route
           path={paths.presentation}
           element={
             <Suspense fallback={<PageFallback />}>
-              <PresentationPage />
+              <PresentationPage version="completa" />
+            </Suspense>
+          }
+        />
+        <Route
+          path={paths.presentationShort}
+          element={
+            <Suspense fallback={<PageFallback />}>
+              <PresentationPage version="reduzida" />
             </Suspense>
           }
         />
@@ -186,7 +194,7 @@ function AppRoutes() {
  */
 function Shell() {
   const { pathname } = useLocation()
-  const chromeless = pathname === paths.presentation
+  const chromeless = pathname === paths.presentation || pathname === paths.presentationShort
   const hubProd = useMatch('/portais/:cliente')
   const hubDev = useMatch('/portais/dev/:cliente')
   const admin = useMatch('/admin/*')

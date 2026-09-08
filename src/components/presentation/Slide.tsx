@@ -111,6 +111,8 @@ export function Slide({ id, index, total, label, tone = 'white', className, cont
       id={`slide-${index + 1}`}
       data-slide={index}
       data-slide-id={id}
+      data-tone={tone}
+      data-label={label}
       aria-label={`Slide ${index + 1} de ${total}: ${label}`}
       className={cn('deck-slide relative flex min-h-dvh w-full snap-start flex-col overflow-hidden lg:snap-always', tones[tone], className)}
     >
@@ -208,15 +210,20 @@ const itemUp: Variants = {
   visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: EASE } },
 }
 
+type ListTag = 'div' | 'ul' | 'ol' | 'li'
+
 interface StaggerProps extends HTMLMotionProps<'div'> {
   stagger?: number
   delay?: number
+  /** Elemento renderizado (lista semântica quando os itens são uma lista). */
+  as?: ListTag
 }
 
 /** Contêiner que orquestra a entrada escalonada dos filhos `Item`. */
-export function Stagger({ children, stagger = 0.07, delay = 0.15, className, ...rest }: StaggerProps) {
+export function Stagger({ children, stagger = 0.07, delay = 0.15, className, as = 'div', ...rest }: StaggerProps) {
+  const Comp = m[as] as typeof m.div
   return (
-    <m.div
+    <Comp
       className={className}
       variants={{ hidden: {}, visible: { transition: { staggerChildren: stagger, delayChildren: delay } } }}
       initial="hidden"
@@ -225,15 +232,16 @@ export function Stagger({ children, stagger = 0.07, delay = 0.15, className, ...
       {...rest}
     >
       {children}
-    </m.div>
+    </Comp>
   )
 }
 
-export function Item({ children, className, ...rest }: HTMLMotionProps<'div'>) {
+export function Item({ children, className, as = 'div', ...rest }: HTMLMotionProps<'div'> & { as?: ListTag }) {
+  const Comp = m[as] as typeof m.div
   return (
-    <m.div variants={itemUp} className={className} {...rest}>
+    <Comp variants={itemUp} className={className} {...rest}>
       {children}
-    </m.div>
+    </Comp>
   )
 }
 
