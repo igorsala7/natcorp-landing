@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link } from 'react-router'
-import { AlertTriangle, Check, Copy, Download, ExternalLink, ImageOff, Loader2, Plus, RefreshCw, Trash2, Upload } from 'lucide-react'
+import { AlertTriangle, Check, Copy, Download, ExternalLink, ImageOff, Loader2, Plus, RefreshCw, Save, Trash2, Upload } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { PageTransition } from '@/components/motion/PageTransition'
@@ -66,12 +66,35 @@ export default function PortalAdminPage() {
     }
   }, [])
   const [copiado, setCopiado] = useState(false)
+  const [salvando, setSalvando] = useState(false)
+  const [erroSalvar, setErroSalvar] = useState<string | null>(null)
 
   const alterar = (slug: string, mudanca: Partial<Cliente>) =>
     setClientes((atual) => atual.map((c) => (c.slug === slug ? { ...c, ...mudanca } : c)))
 
   const arquivo = useMemo(() => gerarArquivo(clientes), [clientes])
   const mudou = useMemo(() => JSON.stringify(clientes) !== JSON.stringify(clientesIniciais), [clientes])
+
+  /* Grava src/content/portais.ts pelo servidor de desenvolvimento. Depois de
+     escrever, o Vite recarrega o módulo: `clientesIniciais` passa a ser o que
+     está no disco e o aviso de alterações se apaga sozinho. */
+  const salvar = async () => {
+    setSalvando(true)
+    setErroSalvar(null)
+    try {
+      const r = await fetch('/__portais', {
+        method: 'POST',
+        headers: { 'content-type': 'text/plain;charset=utf-8' },
+        body: arquivo,
+      })
+      const d = (await r.json()) as { ok?: boolean; erro?: string }
+      if (!d.ok) throw new Error(d.erro ?? 'falha ao gravar')
+    } catch (e) {
+      setErroSalvar(e instanceof Error ? e.message : 'falha ao gravar')
+    } finally {
+      setSalvando(false)
+    }
+  }
 
   const copiar = async () => {
     try {
@@ -136,12 +159,26 @@ export default function PortalAdminPage() {
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div>
                 <h2 className="text-[15.5px] font-extrabold tracking-brand text-brand-ink">O arquivo</h2>
-                <p className="mt-1 text-[13px] text-brand-graphite">
-                  {mudou ? 'Há alterações não salvas.' : 'Igual ao que está no repositório.'} Substitua o conteúdo de{' '}
-                  <code className="rounded bg-brand-off-white px-1">src/content/portais.ts</code>.
+                <p className="mt-1 max-w-xl text-[13px] leading-relaxed text-brand-graphite">
+                  {erroSalvar ? (
+                    <span className="font-semibold text-red-600">{erroSalvar}</span>
+                  ) : mudou ? (
+                    <>
+                      Há alterações não salvas.{' '}
+                      {EM_DESENVOLVIMENTO
+                        ? 'Salvar grava direto em src/content/portais.ts — falta só o commit.'
+                        : 'Sem o servidor de desenvolvimento, copie ou baixe e substitua o arquivo à mão.'}
+                    </>
+                  ) : (
+                    'Igual ao que está no arquivo.'
+                  )}
                 </p>
               </div>
-              <div className="flex gap-2">
+              <div className="flex flex-wrap gap-2">
+                <Button onClick={() => void salvar()} disabled={!EM_DESENVOLVIMENTO || salvando || !mudou}>
+                  {salvando ? <Loader2 className="h-4 w-4 animate-spin" aria-hidden /> : <Save className="h-4 w-4" aria-hidden />}
+                  {salvando ? 'Salvando' : 'Salvar no arquivo'}
+                </Button>
                 <Button variant="outline" onClick={copiar}>
                   {copiado ? <Check className="h-4 w-4" aria-hidden /> : <Copy className="h-4 w-4" aria-hidden />}
                   {copiado ? 'Copiado' : 'Copiar'}

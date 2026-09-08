@@ -195,7 +195,7 @@ export const clientes: Cliente[] = [
         operador: 'https://www.natcorpbr.com.br/apex/rh/f?p=PO_NATCORP',
         candidato: 'https://www.natcorpbr.com.br/apex/rh/f?p=CV_NATCORP',
         natdocs: 'https://www.natcorpbr.com.br/apex/rh/f?p=NATDOCS_NATCORP',
-        chamado: 'https://www.natcorpbr.com.br/apex/rh/f?p=CHAMADO_NATCORP'
+        chamado: 'https://www.natcorpbr.com.br/apex/rh/f?p=CHAMADO_NATCORP',
       },
       dev: {
         colaborador: 'https://www.natcorpbr.com.br/apex/dev/f?p=PC_NATCORP',
@@ -203,9 +203,9 @@ export const clientes: Cliente[] = [
         operador: 'https://www.natcorpbr.com.br/apex/dev/f?p=PO_NATCORP',
         candidato: 'https://www.natcorpbr.com.br/apex/dev/f?p=CV_NATCORP',
         natdocs: 'https://www.natcorpbr.com.br/apex/dev/f?p=NATDOCS_NATCORP',
-        chamado: 'https://www.natcorpbr.com.br/apex/dev/f?p=CHAMADO_NATCORP'
-      }
-    }
+        chamado: 'https://www.natcorpbr.com.br/apex/dev/f?p=CHAMADO_NATCORP',
+      },
+    },
   },
   {
     slug: 'incor',
@@ -221,7 +221,7 @@ export const clientes: Cliente[] = [
         operador: 'https://www.natcorpbr.com.br/apex/rh/f?p=PO_INCOR',
         candidato: 'https://www.natcorpbr.com.br/apex/rh/f?p=CV_INCOR',
         natdocs: 'https://www.natcorpbr.com.br/apex/rh/f?p=NATDOCS_INCOR',
-        chamado: 'https://www.natcorpbr.com.br/apex/rh/f?p=CHAMADO_INCOR'
+        chamado: 'https://www.natcorpbr.com.br/apex/rh/f?p=CHAMADO_INCOR',
       },
       dev: {
         colaborador: 'https://www.natcorpbr.com.br/apex/dev/f?p=PC_INCOR',
@@ -229,9 +229,9 @@ export const clientes: Cliente[] = [
         operador: 'https://www.natcorpbr.com.br/apex/dev/f?p=PO_INCOR',
         candidato: 'https://www.natcorpbr.com.br/apex/dev/f?p=CV_INCOR',
         natdocs: 'https://www.natcorpbr.com.br/apex/dev/f?p=NATDOCS_INCOR',
-        chamado: 'https://www.natcorpbr.com.br/apex/dev/f?p=CHAMADO_INCOR'
-      }
-    }
+        chamado: 'https://www.natcorpbr.com.br/apex/dev/f?p=CHAMADO_INCOR',
+      },
+    },
   },
   {
     slug: 'redeflex',
@@ -247,7 +247,7 @@ export const clientes: Cliente[] = [
         operador: 'https://www.natcorpbr.com.br/apex/rh/f?p=PO_REDEFLEX',
         candidato: 'https://www.natcorpbr.com.br/apex/rh/f?p=CV_REDEFLEX',
         natdocs: 'https://www.natcorpbr.com.br/apex/rh/f?p=NATDOCS_REDEFLEX',
-        chamado: 'https://www.natcorpbr.com.br/apex/rh/f?p=CHAMADO_REDEFLEX'
+        chamado: 'https://www.natcorpbr.com.br/apex/rh/f?p=CHAMADO_REDEFLEX',
       },
       dev: {
         colaborador: 'https://www.natcorpbr.com.br/apex/dev/f?p=PC_REDEFLEX',
@@ -255,9 +255,9 @@ export const clientes: Cliente[] = [
         operador: 'https://www.natcorpbr.com.br/apex/dev/f?p=PO_REDEFLEX',
         candidato: 'https://www.natcorpbr.com.br/apex/dev/f?p=CV_REDEFLEX',
         natdocs: 'https://www.natcorpbr.com.br/apex/dev/f?p=NATDOCS_REDEFLEX',
-        chamado: 'https://www.natcorpbr.com.br/apex/dev/f?p=CHAMADO_REDEFLEX'
-      }
-    }
+        chamado: 'https://www.natcorpbr.com.br/apex/dev/f?p=CHAMADO_REDEFLEX',
+      },
+    },
   },
   {
     slug: 'leadec',
@@ -273,7 +273,7 @@ export const clientes: Cliente[] = [
         operador: 'https://www.natcorpbr.com.br/apex/natrh/f?p=PO_LEADEC',
         candidato: 'https://www.natcorpbr.com.br/apex/natrh/f?p=CV_LEADEC',
         natdocs: 'https://www.natcorpbr.com.br/apex/natrh/f?p=NATDOCS_LEADEC',
-        chamado: 'https://www.natcorpbr.com.br/apex/natrh/f?p=CHAMADO_LEADEC'
+        chamado: 'https://www.natcorpbr.com.br/apex/natrh/f?p=CHAMADO_LEADEC',
       },
       dev: {
         colaborador: 'https://www.natcorpbr.com.br/apex/dev/f?p=PC_LEADEC',
@@ -281,9 +281,9 @@ export const clientes: Cliente[] = [
         operador: 'https://www.natcorpbr.com.br/apex/dev/f?p=PO_LEADEC',
         candidato: 'https://www.natcorpbr.com.br/apex/dev/f?p=CV_LEADEC',
         natdocs: 'https://www.natcorpbr.com.br/apex/dev/f?p=NATDOCS_LEADEC',
-        chamado: 'https://www.natcorpbr.com.br/apex/dev/f?p=CHAMADO_LEADEC'
-      }
-    }
+        chamado: 'https://www.natcorpbr.com.br/apex/dev/f?p=CHAMADO_LEADEC',
+      },
+    },
   },
   {
     slug: 'saude',
@@ -299,7 +299,7 @@ export const clientes: Cliente[] = [
         operador: 'https://www.natcorpbr.com.br/apex/hc/f?p=PO_SAUDE',
         candidato: 'https://www.natcorpbr.com.br/apex/hc/f?p=CV_SAUDE',
         natdocs: 'https://www.natcorpbr.com.br/apex/hc/f?p=NATDOCS_SAUDE',
-        chamado: 'https://www.natcorpbr.com.br/apex/hc/f?p=CHAMADO_SAUDE'
+        chamado: 'https://www.natcorpbr.com.br/apex/hc/f?p=CHAMADO_SAUDE',
       },
       dev: {
         colaborador: 'https://www.natcorpbr.com.br/apex/dev/f?p=PC_SAUDE',
@@ -307,9 +307,9 @@ export const clientes: Cliente[] = [
         operador: 'https://www.natcorpbr.com.br/apex/dev/f?p=PO_SAUDE',
         candidato: 'https://www.natcorpbr.com.br/apex/dev/f?p=CV_SAUDE',
         natdocs: 'https://www.natcorpbr.com.br/apex/dev/f?p=NATDOCS_SAUDE',
-        chamado: 'https://www.natcorpbr.com.br/apex/dev/f?p=CHAMADO_SAUDE'
-      }
-    }
+        chamado: 'https://www.natcorpbr.com.br/apex/dev/f?p=CHAMADO_SAUDE',
+      },
+    },
   },
   {
     slug: 'stefanini',
@@ -325,7 +325,7 @@ export const clientes: Cliente[] = [
         operador: 'https://www.natcorpbr.com.br/apex/hcm/f?p=PO_STEFANINI',
         candidato: 'https://www.natcorpbr.com.br/apex/hcm/f?p=CV_STEFANINI',
         natdocs: 'https://www.natcorpbr.com.br/apex/hcm/f?p=NATDOCS_STEFANINI',
-        chamado: 'https://www.natcorpbr.com.br/apex/hcm/f?p=CHAMADO_STEFANINI'
+        chamado: 'https://www.natcorpbr.com.br/apex/hcm/f?p=CHAMADO_STEFANINI',
       },
       dev: {
         colaborador: 'https://www.natcorpbr.com.br/apex/dev/f?p=PC_STEFANINI',
@@ -333,9 +333,9 @@ export const clientes: Cliente[] = [
         operador: 'https://www.natcorpbr.com.br/apex/dev/f?p=PO_STEFANINI',
         candidato: 'https://www.natcorpbr.com.br/apex/dev/f?p=CV_STEFANINI',
         natdocs: 'https://www.natcorpbr.com.br/apex/dev/f?p=NATDOCS_STEFANINI',
-        chamado: 'https://www.natcorpbr.com.br/apex/dev/f?p=CHAMADO_STEFANINI'
-      }
-    }
+        chamado: 'https://www.natcorpbr.com.br/apex/dev/f?p=CHAMADO_STEFANINI',
+      },
+    },
   },
   {
     slug: 'realfood',
@@ -351,7 +351,7 @@ export const clientes: Cliente[] = [
         operador: 'https://www.natcorpbr.com.br/apex/cloud/f?p=PO_REALFOOD',
         candidato: 'https://www.natcorpbr.com.br/apex/cloud/f?p=CV_REALFOOD',
         natdocs: 'https://www.natcorpbr.com.br/apex/cloud/f?p=NATDOCS_REALFOOD',
-        chamado: 'https://www.natcorpbr.com.br/apex/cloud/f?p=CHAMADO_REALFOOD'
+        chamado: 'https://www.natcorpbr.com.br/apex/cloud/f?p=CHAMADO_REALFOOD',
       },
       dev: {
         colaborador: 'https://www.natcorpbr.com.br/apex/dev/f?p=PC_REALFOOD',
@@ -359,10 +359,10 @@ export const clientes: Cliente[] = [
         operador: 'https://www.natcorpbr.com.br/apex/dev/f?p=PO_REALFOOD',
         candidato: 'https://www.natcorpbr.com.br/apex/dev/f?p=CV_REALFOOD',
         natdocs: 'https://www.natcorpbr.com.br/apex/dev/f?p=NATDOCS_REALFOOD',
-        chamado: 'https://www.natcorpbr.com.br/apex/dev/f?p=CHAMADO_REALFOOD'
-      }
-    }
-  }
+        chamado: 'https://www.natcorpbr.com.br/apex/dev/f?p=CHAMADO_REALFOOD',
+      },
+    },
+  },
 ]
 
 /** Só os clientes ativos, na ordem do arquivo. */

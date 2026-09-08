@@ -1,4 +1,4 @@
-import { existsSync, mkdirSync, readdirSync, rmSync, writeFileSync } from 'node:fs'
+import { existsSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
 import path from 'node:path'
 import type { Plugin } from 'vite'
 
@@ -17,6 +17,8 @@ import type { Plugin } from 'vite'
 
 const PASTA = 'public/sistema/portais/arquivos/logos'
 const ROTA = '/__logos'
+const ROTA_DADOS = '/__portais'
+const ARQUIVO_DADOS = 'src/content/portais.ts'
 
 /** Só o que o quadro do hero sabe exibir. */
 const TIPOS: Record<string, string> = {
@@ -52,6 +54,65 @@ export function logosPortais(): Plugin {
     name: 'natcorp-logos-portais',
     apply: 'serve',
     configureServer(server) {
+      /**
+       * Grava o array `clientes` dentro de src/content/portais.ts.
+       *
+       * Substitui SÓ esse bloco: tipos, `sistemas`, `copy` e os utilitários do
+       * arquivo continuam onde estão. Reescrever o arquivo inteiro faria o diff
+       * do git perder o sentido — a mudança real sumiria no meio.
+       */
+      server.middlewares.use(ROTA_DADOS, (req, res) => {
+        if (req.method !== 'POST') return responder(res, 405, { ok: false, erro: 'método não suportado' })
+
+        const pedacos: Buffer[] = []
+        let total = 0
+        req.on('data', (c: Buffer) => {
+          total += c.length
+          if (total > LIMITE_BYTES) {
+            responder(res, 413, { ok: false, erro: 'conteúdo acima de 2 MB' })
+            req.destroy()
+            return
+          }
+          pedacos.push(c)
+        })
+        req.on('end', () => {
+          if (res.writableEnded) return
+          try {
+            const bloco = Buffer.concat(pedacos).toString('utf8')
+            const marca = 'export const clientes: Cliente[] = ['
+            if (!bloco.startsWith(marca)) {
+              return responder(res, 400, { ok: false, erro: 'conteúdo não começa pelo array de clientes' })
+            }
+
+            const caminho = path.resolve(server.config.root, ARQUIVO_DADOS)
+            const atual = readFileSync(caminho, 'utf8')
+            const ini = atual.indexOf(marca)
+            if (ini < 0) return responder(res, 500, { ok: false, erro: 'array de clientes não encontrado no arquivo' })
+
+            // fecha no colchete que casa com o de abertura, e não no primeiro `]`
+            let prof = 0
+            let fim = -1
+            for (let i = ini + marca.length - 1; i < atual.length; i++) {
+              const ch = atual[i]
+              if (ch === '[') prof++
+              else if (ch === ']') {
+                prof--
+                if (prof === 0) {
+                  fim = i + 1
+                  break
+                }
+              }
+            }
+            if (fim < 0) return responder(res, 500, { ok: false, erro: 'não achei o fim do array' })
+
+            writeFileSync(caminho, atual.slice(0, ini) + bloco.trimEnd() + atual.slice(fim))
+            responder(res, 200, { ok: true })
+          } catch (e) {
+            responder(res, 500, { ok: false, erro: String(e) })
+          }
+        })
+      })
+
       server.middlewares.use(ROTA, (req, res) => {
         const slug = decodeURIComponent((req.url ?? '/').split('?')[0]).replace(/^\//, '')
         if (!SLUG_VALIDO.test(slug)) return responder(res, 400, { ok: false, erro: 'slug inválido' })
