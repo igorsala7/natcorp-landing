@@ -42,8 +42,16 @@ interface HeroSceneProps {
 
 export function HeroScene({ on, reduced, y, scale }: HeroSceneProps) {
   const root = useRef<HTMLDivElement>(null)
-  /** Os laços contínuos (pacotes de luz, brilho na borda, respiração) só rodam com o hero na tela. */
-  const inView = useInView(root, { margin: '120px 0px' })
+  /** Os laços contínuos (pacotes de luz, brilho na borda, respiração) só rodam com o hero na tela.
+   *
+   * `initial: true` não é detalhe: sem ele o IntersectionObserver só responde no
+   * segundo quadro, e até lá `loop` é falso. O hero é o topo da página — está
+   * sempre visível no carregamento —, então esse "falso" inicial era sempre
+   * errado, e ao virar para verdadeiro (medido: 245–260ms) disparava de uma vez
+   * a montagem dos blocos guardados por `{loop && …}` e a troca de ramo do
+   * brilho. Era esse o piscar. Se alguém abrir a página já rolada, o observador
+   * corrige no quadro seguinte. */
+  const inView = useInView(root, { margin: '120px 0px', initial: true })
   const loop = on && inView && !reduced
   /** Depois da primeira entrada, os laços voltam sem a espera da introdução (estado derivado durante a renderização). */
   const [prev, setPrev] = useState({ loop: false, looped: false })
@@ -286,7 +294,18 @@ export function HeroScene({ on, reduced, y, scale }: HeroSceneProps) {
       <m.div
         className="absolute left-[-12%] top-[18%] h-[95%] w-[58%] rounded-full bg-[radial-gradient(closest-side,rgba(201,87,136,0.26),rgba(201,87,136,0.1)_45%,rgba(201,87,136,0)_100%)]"
         style={{ willChange: 'transform, opacity' }}
-        animate={loop ? { x: ['0%', '14%', '0%'], y: ['0%', '-12%', '0%'], opacity: [0.45, 0.85, 0.45] } : { x: '0%', y: '0%', opacity: 0.6 }}
+        // Sem `initial` o elemento partia da opacidade do CSS (1.0) e descia —
+        // um clarão a cada carregamento. E os dois ramos discordavam: parado
+        // repousava em 0.6, em laço começava em 0.45, então a troca dava um
+        // salto de 0.98 para 0.45 num único quadro. Os dois agora repousam no
+        // mesmo valor: trocar de ramo não muda nada na tela.
+        // `initial` no MESMO valor em que o laço começa. Com quadros-chave o
+        // motion assume o primeiro quadro de imediato, em vez de transicionar a
+        // partir do initial — partir de 0 trocava o clarão por um salto de
+        // 0 para 0.45. Igualando os três (initial, ramo parado, primeiro quadro
+        // do laço), não existe instante nenhum em que a opacidade mude sozinha.
+        initial={{ opacity: 0.45 }}
+        animate={loop ? { x: ['0%', '14%', '0%'], y: ['0%', '-12%', '0%'], opacity: [0.45, 0.85, 0.45] } : { x: '0%', y: '0%', opacity: 0.45 }}
         transition={loop ? { duration: 14, ease: 'easeInOut', repeat: Infinity } : { duration: 1.2, ease: EASE }}
       />
 
