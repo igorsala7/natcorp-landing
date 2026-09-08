@@ -15,7 +15,7 @@ import { cn } from '@/lib/utils'
 /* Os quatro pilares da marca (Manual de Identidade, seção 01). */
 const pillars = [
   { big: '1', title: 'Abrangência', text: 'Um único sistema para tudo o que o RH faz, com um único cadastro e uma única base.' },
-  { big: '35+', title: 'Solidez', text: 'Mais de 35 anos de especialização exclusiva em RH, plataforma premiada, parceira Oracle e servidores dedicados na Oracle Cloud, com contingência.' },
+  { big: '35+', title: 'Experiência', text: 'Mais de 35 anos de especialização exclusiva em RH, plataforma premiada, parceira Oracle e servidores dedicados na Oracle Cloud, com contingência.' },
   { big: 'NATI', title: 'Inteligência', text: 'A NATI, a Inteligência Artificial do RH, e o People Analytics transformando dado em decisão, dentro do sistema e sem depender de TI.' },
   { big: '1:1', title: 'Proximidade', text: 'Acompanhamento próximo, atenção e agilidade de resposta. Um time que conhece a sua operação pelo nome.' },
 ]

@@ -545,7 +545,7 @@ export const notes: Record<string, string[]> = {
   ],
   resposta: [
     'Posicionamento: HR Tech brasileira, 35 anos, uma única especialidade. DP, RH e SESMT na mesma base.',
-    'Os três números são a prova de solidez: tempo de mercado, abrangência e escala.',
+    'Os três números são a prova da experiência: tempo de mercado, abrangência e escala.',
   ],
   plataforma: [
     'As sete frentes são a forma oficial de apresentar os módulos. Um cadastro, uma base, uma experiência.',

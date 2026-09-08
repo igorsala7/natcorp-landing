@@ -32,7 +32,7 @@
       "name": "Incor",
       "code": "INCOR",
       "apex": "rh",
-      "logo": null,
+      "logo": "incor.png",
       "active": true,
       "urls": {
         "prod": {
@@ -58,7 +58,7 @@
       "name": "Redeflex",
       "code": "REDEFLEX",
       "apex": "rh",
-      "logo": null,
+      "logo": "redeflex.png",
       "active": true,
       "urls": {
         "prod": {
@@ -84,7 +84,7 @@
       "name": "Leadec",
       "code": "LEADEC",
       "apex": "natrh",
-      "logo": null,
+      "logo": "leadec.png",
       "active": true,
       "urls": {
         "prod": {
@@ -110,7 +110,7 @@
       "name": "Saúde",
       "code": "SAUDE",
       "apex": "hc",
-      "logo": null,
+      "logo": "saude.png",
       "active": true,
       "urls": {
         "prod": {
@@ -136,7 +136,7 @@
       "name": "Stefanini",
       "code": "STEFANINI",
       "apex": "hcm",
-      "logo": null,
+      "logo": "stefanini.png",
       "active": true,
       "urls": {
         "prod": {
@@ -162,7 +162,7 @@
       "name": "RealFood",
       "code": "REALFOOD",
       "apex": "cloud",
-      "logo": null,
+      "logo": "realfood.png",
       "active": true,
       "urls": {
         "prod": {

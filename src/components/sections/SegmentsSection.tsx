@@ -85,9 +85,17 @@ export function SegmentsSection() {
                 <span className="absolute left-4 top-4 flex h-9 w-9 items-center justify-center rounded-lg bg-white/15 backdrop-blur-sm" aria-hidden>
                   <Icon className="h-4.5 w-4.5" strokeWidth={1.7} />
                 </span>
+                {/* O SETOR é o que a pessoa procura no cartão: ela varre a
+                    fileira atrás do próprio ramo, não da dor. Por isso ele vem
+                    primeiro na hierarquia — antes ele era a legenda apagada de
+                    11px sobre a dor em 17px, e a ordem de leitura ficava
+                    invertida. Um fio rosa ancora o bloco. */}
                 <span className="absolute inset-x-0 bottom-0 p-5">
-                  <span className="block text-[11px] font-semibold uppercase tracking-[0.14em] text-white/70">{s.label}</span>
-                  <span className="mt-2 block text-[17px] font-bold leading-snug">{cover ? cover.pain : s.short}</span>
+                  <span className="block h-0.5 w-8 rounded-full bg-[#E4A9C4]" aria-hidden />
+                  <span className="mt-3 block text-[19px] font-extrabold uppercase leading-[1.15] tracking-[0.06em] text-white [text-shadow:0_1px_12px_rgba(27,18,56,.45)]">
+                    {s.label}
+                  </span>
+                  <span className="mt-2 block text-[14px] font-medium leading-snug text-white/85">{cover ? cover.pain : s.short}</span>
                   <span className="mt-3 inline-flex items-center gap-1.5 text-[13px] font-semibold text-[#E4A9C4]">
                     Ver como atendemos
                     <ArrowRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-0.5" aria-hidden />

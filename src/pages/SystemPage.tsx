@@ -16,6 +16,7 @@ import { Breadcrumb } from '@/components/seo/Breadcrumb'
 import { LogoOutline } from '@/components/brand/Logo'
 import { Button } from '@/components/ui/button'
 import { useSeo } from '@/hooks/useSeo'
+import { CTAInline } from '@/components/sections/CTAInline'
 
 const stats = [
   { value: '35+', label: 'anos de especialização em RH' },
@@ -82,6 +83,7 @@ export default function SystemPage() {
       <GroupTabs id="frentes" />
       <AnalyticsSection />
       <NatPontoSection />
+      <CTAInline titulo="Quer ver o sistema com a sua operação?" tom="marca" />
       <ResponsiveSection tone="off" />
       <ComparisonSection id="comparativo" />
       <PersonasSection />

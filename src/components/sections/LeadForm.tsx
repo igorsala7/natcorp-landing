@@ -29,20 +29,31 @@ export default function LeadForm() {
       organizacao: '',
       mensagem: '',
       novidades: false,
+      website: '',
     },
   })
 
   async function onSubmit(data: LeadFormData) {
     try {
       const result = await submitLead(data)
-      if (result.demo) {
-        toast.info('Modo demonstração: endpoint de leads ainda não configurado.', {
-          description: 'Configure VITE_LEAD_WEBHOOK_URL para receber os contatos.',
-        })
+
+      if (result.ok) {
+        setEnviado(true)
+        return
       }
-      setEnviado(true)
+
+      // Só o e-mail inválido vira erro de campo: é o único que a pessoa
+      // consegue corrigir. O CRM não detalha os outros de propósito.
+      if (result.motivo === 'email_invalido') {
+        form.setError('email', { message: 'Confira o e-mail digitado.' }, { shouldFocus: true })
+        return
+      }
+
+      toast.error('Não conseguimos enviar agora. Tente novamente em alguns minutos.', {
+        description: `Se preferir, escreva para ${siteConfig.email}.`,
+      })
     } catch {
-      toast.error('Não conseguimos enviar agora. Tente novamente em instantes.', {
+      toast.error('Não conseguimos enviar agora. Verifique sua conexão.', {
         description: `Se preferir, escreva para ${siteConfig.email}.`,
       })
     }
@@ -164,8 +175,8 @@ export default function LeadForm() {
                 </FormControl>
                 <SelectContent>
                   {colaboradoresOptions.map((c) => (
-                    <SelectItem key={c} value={c}>
-                      {c}
+                    <SelectItem key={c.value} value={c.value}>
+                      {c.label}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -217,6 +228,19 @@ export default function LeadForm() {
             </FormItem>
           )}
         />
+
+        {/*
+          Honeypot: invisível para gente, atraente para robô.
+          NÃO trocar por type="hidden" (robô ignora hidden) nem por classe
+          utilitária, que o robô reconhece pelo nome. Se vier preenchido, a API
+          responde sucesso e descarta — nada a tratar aqui.
+        */}
+        <div style={{ position: 'absolute', left: '-9999px' }} aria-hidden="true">
+          <label>
+            Website
+            <input type="text" tabIndex={-1} autoComplete="off" {...form.register('website')} />
+          </label>
+        </div>
 
         <Button type="submit" size="xl" className="w-full" disabled={form.formState.isSubmitting}>
           {form.formState.isSubmitting ? (

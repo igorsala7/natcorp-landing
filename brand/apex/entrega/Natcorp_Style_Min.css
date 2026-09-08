@@ -1,0 +1,1753 @@
+/* =============================================================================
+   Natcorp — camada de interface para Oracle APEX 19.2 (Universal Theme / Vita)
+   =============================================================================
+
+   SUBSTITUI o Natcorp_Style_Min.css — pelo CONTEÚDO, mantendo o nome do arquivo.
+   Assim a troca não encosta em nenhum objeto APEX: nada muda em File URLs, em
+   nenhuma das seis aplicações. Subir com outro nome exigiria editar o atributo
+   de aplicação em cada uma delas — o que a restrição do projeto não permite.
+
+   JUNTO COM ESTE ARQUIVO, subir os dois woff2 da Manrope para o MESMO diretório
+   de arquivos estáticos. Sem eles o @font-face falha e toda a tipografia cai
+   para fonte de sistema — a calibragem inteira foi feita em Manrope.
+
+   ORDEM DE CARGA (obrigatória) — Shared Components > User Interface Attributes >
+   Desktop > Cascading Style Sheets > File URLs. Esta folha precisa vir DEPOIS do
+   CSS compilado pelo Theme Roller:
+
+       oj-alta → Core.min → Theme-Standard.min → <theme roller>.css → ESTA FOLHA
+
+   Se ela subir na lista, dezenas de regras param de valer em silêncio.
+
+   ROLLBACK: subir de volta o arquivo antigo com o mesmo nome. Ele continua
+   versionado em brand/apex/APEX Style/APEX/Natcorp_Style_Min.css. Nenhuma outra
+   ação é necessária, porque a referência em File URLs nunca mudou.
+
+   ESCOPO DESTA VERSÃO (camadas 1, 2 e 3):
+     1. tipografia, superfície, foco e a correção do cabeçalho
+     2. regiões como cartão e tabelas sem grade vertical
+     3. botões e campos — cada categoria coberta 100%
+
+   FORA DE ESCOPO (segunda onda): densidade do Interactive Report, menu lateral
+   na marca, estados como pílula tonal. Foi decisão deliberada: cada categoria
+   entra inteira ou não entra, porque cobertura parcial é o que produz tela
+   discrepante.
+
+   NÃO COBRE o app 9300 (NatDocs), que carrega outra pilha
+   (theme_42/1.4 + Vita.min.css + Natcorp_Style.css + Natcorp_Zoom_Mobile.css).
+
+   O QUE NÃO FAZER
+     - não mover esta folha para antes do Theme Roller;
+     - não refatorar a camada `contracts` por estética — ela é contrato de
+       JavaScript, e cada regra cita a página onde foi verificada;
+     - não mexer em largura/altura de coluna do Interactive Report, nem em
+       margin-top de .t-Body-main, top de .t-Body-side/.t-Body-title, ou height
+       de #t_Body_content_offset: são escritos inline pelo theme42.js.
+   ========================================================================== */
+
+/* Organização do arquivo (era @layer; ver nota abaixo):
+     tokens · contracts · theme · components · utilities · overrides
+
+   NÃO usar @layer aqui. CSS em camada nomeada perde para CSS fora de camada,
+   sempre — e o Universal Theme inteiro (Core, Theme Roller, Theme-Standard)
+   está fora de camada. Envolver estas regras em @layer faz o arquivo inteiro
+   perder para o tema. Verificado ao vivo: com @layer, nem a fonte nem o fundo
+   aplicavam. A precedência aqui vem da ordem de carga (esta folha é a última)
+   somada à especificidade de body.t-PageBody. */
+
+/* -----------------------------------------------------------------------------
+   Manrope — self-hosted.
+   `font-display: optional` é uma decisão de engenharia, não de estilo: o widget
+   de cabeçalho fixo do Interactive Report mede a largura das colunas UMA vez, no
+   carregamento. Uma fonte que chega depois da medição muda as larguras e
+   desalinha cabeçalho e corpo — e o usuário não tem como forçar a remedição.
+   Com `optional` o navegador nunca troca a fonte no meio da página: usa Manrope
+   quando ela já está em cache (praticamente sempre, a partir do segundo acesso)
+   e o fallback quando não está. Zero deslocamento após a medição.
+   -------------------------------------------------------------------------- */
+/* URL RELATIVA, e não `#WORKSPACE_IMAGES#`: o APEX NÃO substitui tokens dentro de
+   arquivo estático. Medido em 07/09/2026 — o CSS de produção é servido com o token
+   literal (`url("#WORKSPACE_IMAGES#NATI - 128px.png")`), e o navegador lê o `#` como
+   âncora: a requisição nunca acontece. Como esta folha e os dois woff2 ficam no mesmo
+   diretório de arquivos estáticos, o caminho relativo resolve sozinho e sobrevive à
+   troca de versão do caminho (v995 → v996 → …), que o APEX gera automaticamente. */
+@font-face{
+  font-family:"Manrope";
+  src:url("manrope-latin.woff2") format("woff2");
+  font-weight:200 800; font-style:normal; font-display:optional;
+  unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,
+                U+0304,U+0308,U+0329,U+2000-206F,U+2074,U+20AC,U+2122,U+2191,
+                U+2193,U+2212,U+2215,U+FEFF,U+FFFD;
+}
+@font-face{
+  font-family:"Manrope";
+  src:url("manrope-latin-ext.woff2") format("woff2");
+  font-weight:200 800; font-style:normal; font-display:optional;
+  unicode-range:U+0100-02AF,U+0304,U+0308,U+0329,U+1E00-1E9F,U+1EF2-1EFF,
+                U+2020,U+20A0-20AB,U+20AD-20CF,U+2113,U+2C60-2C7F,U+A720-A7FF;
+}
+
+/* ==========================================================================
+   1. TOKENS
+   Um token por decisão, não por uso. A cor de foco é separada da cor de estado:
+   foi exatamente a confusão entre as duas que criou o bug de foco invisível no
+   grupo de botões-rádio da folha antiga.
+   ========================================================================== */
+/* ---- natcorp.tokens ---- */
+  :root{
+    /* marca — Manual de Identidade Visual Natcorp v1.2 */
+    --nc-azul:#2C1A63;
+    --nc-roxo:#511C76;
+    --nc-ameixa:#9A408A;
+    --nc-rosa:#C95788;
+    --nc-realce:#E4A9C4;
+    --nc-grad:linear-gradient(135deg,#2C1A63 0%,#511C76 55%,#9A408A 100%);
+
+    /* texto — três níveis, nenhum preto */
+    --nc-tinta:#1B1238;
+    --nc-grafite:#4A4460;
+    --nc-cinza:#8E88A3;
+
+    /* Micro-rótulo em caixa alta (cabeçalho de coluna, etiqueta de serviço).
+       DIVERGÊNCIA CONSCIENTE do app de referência: ele usa #8E88A3, que dá
+       3,39:1 sobre branco e reprova em WCAG AA (mínimo 4,5:1 para texto
+       pequeno). Aqui vale 5,55:1. O caráter discreto vem do tamanho, da caixa
+       alta e da entreletras — não de clarear a cor. O operador varre esses
+       rótulos a jornada inteira. */
+    --nc-rotulo:#6B6484;
+
+    /* superfícies */
+    /* Fundo da aplicação. Definido pelo cliente como #fdfdfd (o quase-branco do
+       tema). Nota registrada: com o fundo quase branco, a separação entre a
+       tela e o cartão branco passa a depender só da borda e da sombra — o
+       app de referência usa lavanda #F6F2FA justamente para o cartão "acender"
+       sozinho. Trocar aqui muda o sistema inteiro de uma vez. */
+    --nc-tela:#fdfdfd;
+    --nc-branco:#FFFFFF;
+    --nc-quase:#FBF9FD;   /* hover de linha, blocos tonais */
+    --nc-off:#F4F2F7;     /* fundo de controle */
+    --nc-linha:#E9E5F1;   /* borda estrutural e do cabeçalho de tabela */
+    --nc-linha2:#F1EDF6;  /* borda de repetição: célula */
+    /* Conector de organograma. Mais escuro que --nc-linha de propósito: num
+       organograma a LINHA é a informação (é ela que diz quem responde a quem),
+       não uma borda decorativa. A WCAG 1.4.11 pede 3:1 para elemento não-textual
+       que carrega informação, e #E9E5F1 sobre o fundo dava 1,22:1. */
+    --nc-conector:#8E88A3;
+
+    /* Estado. Os valores herdados reprovavam em 1.4.11 (mínimo 3:1 para
+       elemento não-textual): #47b74a=2,58:1 · #fcdc21=1,36:1 · #d1d1d1=1,53:1.
+       Estes passam. */
+    --nc-ok:#2E7D32;
+    --nc-aviso:#8A6D00;
+    --nc-perigo:#C0392B;
+    --nc-neutro:#6B6B6B;
+    --nc-ok-bg:#E6F4EE;
+    --nc-aviso-bg:#FBF0DC;
+    --nc-perigo-bg:#FBE6E9;
+    --nc-info-bg:#EFE6F5;
+
+    /* ---- PAPÉIS DE COR ----------------------------------------------------
+       As três cores da marca não são intercambiáveis: cada uma responde por
+       uma pergunta diferente do usuário. Misturá-las é o que fazia o sistema
+       antigo ter rosa como cromo E como dado ao mesmo tempo, sem que nenhum
+       dos dois significados fosse aprendível.
+
+         AZUL  #2C1A63 → AÇÃO      "o que eu clico para fazer acontecer"
+         ROSA  #C95788 → MARCAÇÃO  "o que está marcado, ativo ou em foco"
+         ROXO  #511C76 → ESTRUTURA "o que é da Natcorp": título, link, ícone
+
+       O gradiente sai dos botões e fica reservado a superfícies de marca
+       (menu lateral, login) — que são camada 4. Um botão primário em gradiente
+       em toda tela densa é ruído de marca, não identidade. */
+    --nc-acao:var(--nc-azul);
+    --nc-marcacao:var(--nc-rosa);
+    --nc-estrutura:var(--nc-roxo);
+
+    /* foco é uma forma de marcação */
+    --nc-foco:var(--nc-marcacao);
+    --nc-foco-alt:var(--nc-azul);
+
+    /* forma */
+    --nc-raio:20px;        /* região/cartão — --radius do modelo */
+    --nc-raio-campo:12px;  /* entrada de dado — --radius-sm do modelo */
+
+    /* Altura do campo, como TOKEN e não como número solto: o campo e o botão
+       colado nele (LOV, calendário) precisam ter exatamente a mesma altura, e
+       essa altura muda em contexto de rótulo flutuante. Um número repetido em
+       dois lugares vira, mais cedo ou mais tarde, um botão mais baixo que o
+       campo — foi o que aconteceu na primeira versão desta folha. */
+    --nc-alt-campo:3.8rem;
+    /* Altura dos controles de barra (busca, selects e botões do Interactive
+       Report). Menor que a do campo de formulário de propósito: barra é
+       navegação, formulário é entrada de dado. */
+    --nc-alt-controle:3.4rem;
+    /* Sombra da região. O modelo usa duas camadas com opacidade 0.35 no halo
+       principal; aqui ela foi suavizada a pedido: três camadas em vez de duas,
+       com a difusão crescendo e a opacidade caindo (0.03 → 0.09 → 0.16). Mais
+       camadas com menos opacidade cada é o que produz a queda suave — uma
+       camada só, por mais desfocada que seja, sempre marca uma borda. */
+    --nc-sombra:0 1px 1px rgba(81,28,118,.03),
+                0 5px 12px -8px rgba(81,28,118,.09),
+                0 20px 44px -28px rgba(81,28,118,.16);
+    --nc-sombra-alta:0 24px 50px -28px rgba(44,26,99,.45);
+
+    --nc-fonte:"Manrope",-apple-system,"Segoe UI",system-ui,Roboto,sans-serif;
+  }
+
+
+/* ==========================================================================
+   2. CONTRACTS — bloco blindado
+   Cada regra aqui é exigida por JavaScript, por Dynamic Action ou pela
+   estrutura da página. Se cair, a tela quebra — não fica feia, quebra.
+   Toda regra cita onde foi verificada. Nada entra sem evidência.
+   Não refatorar por estética.
+   ========================================================================== */
+/* ---- natcorp.contracts ---- */
+
+  /* [ESTRUTURA] Região da página global 9999 renderizada DENTRO do <header>.
+     Contém só itens ocultos (P9999_BASE e outros 6). Sem esta regra aparece um
+     cartão branco com um <h2> "parametros" no topo de toda página, empurrando a
+     marca e injetando um título espúrio na árvore lida por leitor de tela.
+     Verificado em: 18/18 páginas dos apps 100/200/700/9113/9610. */
+  #GLOBAL_PARAMETROS{display:none;}
+
+  /* [JS] Organograma. Os botões +/- montam a classe por concatenação:
+       element.classList.add("zoom" + zoom)   // P1_ORG_ZOOM
+     e o JS trava o intervalo em [10,120]. zoom130/140/150 eram inalcançáveis e
+     foram removidos. Verificado em: 100-1500.html, f100-1.html. */
+  .zoom10{zoom:10%}   .zoom20{zoom:20%}   .zoom30{zoom:30%}
+  .zoom40{zoom:40%}   .zoom50{zoom:50%}   .zoom60{zoom:60%}
+  .zoom70{zoom:70%}   .zoom80{zoom:80%}   .zoom90{zoom:90%}
+  .zoom100{zoom:100%} .zoom110{zoom:110%} .zoom120{zoom:120%}
+
+  /* [JS] Painel de parâmetros: classList.add/remove sobre #PARAMETROS_ITENS,
+     botões OPEN_PARAMETROS / CLOSE_PARAMETROS. O CSS é o único mecanismo de
+     exibição — não há aria-expanded (dívida conhecida, exige objeto APEX).
+     Verificado em: 200-2, 200-13, 200-13-feedbacks(-edit), f100-115. */
+  .expandRegion{display:block;}
+  .collapseRegion{display:none;}
+
+  /* [JS] Dynamic Action de ready em todas as páginas:
+       $('.sideuserdata').prependTo('#t_TreeNav')
+     As cinco regras só funcionam juntas. #t_TreeNav tem role="tree" e é
+     gerenciado pelo widget.treeView — o `>` evita atingir os <ul role="group">
+     aninhados. A última existe porque a mesma DA roda dentro de modais e
+     duplicaria o bloco. Verificado em: 18/18 páginas. */
+  #t_TreeNav{display:flex;flex-direction:column;height:100%;}
+  #t_TreeNav > ul{flex:1 0 auto;}
+  div.sideuserdata{flex:0 0 auto;}
+  #t_PageBody.apex-side-nav.js-navCollapsed .sideuserdata{display:none;}
+  .ui-dialog > div.sideuserdata{display:none !important;} /* [!] vence inline do jQuery UI */
+
+  /* [DADOS] Foto do colaborador em Classic Report com alias de coluna FOTO.
+     Interactive Report e Interactive Grid geram headers="C2802797…", então este
+     seletor não os atinge — é intencional. Não "modernizar" para [headers~=]
+     sem testar: mudaria o casamento. Verificado em: 100-1500, f100-1. */
+  td[headers=FOTO] img{width:60px;height:60px;border-radius:50%;object-fit:cover;}
+  .fotoColabSmall{width:50px;height:50px;border-radius:50%;object-fit:cover;}
+  .fotoColabMed{width:100px;height:100px;border-radius:50%;object-fit:cover;}
+
+  /* [JS] Botão flutuante da NATI: a imagem vem inline no HTML
+     (background-image:url('… NATI - 128px.png')). O :hover ganhou par
+     :focus-visible — o botão é operável por teclado e não dava retorno nenhum.
+     Verificado em: 18/18 páginas. */
+  .floatNati,.my-floatNati{
+    position:fixed;right:20px;bottom:200px;z-index:600;
+    width:58px;height:58px;border-radius:50%;background-size:cover;
+    box-shadow:0 8px 24px -10px rgba(81,28,118,.55);
+    transition:transform .15s ease-out,box-shadow .15s ease-out;
+  }
+  .floatNati:hover,.floatNati:focus-visible{
+    transform:scale(1.07);
+    box-shadow:0 12px 30px -10px rgba(81,28,118,.65);
+  }
+
+  /* [JS] A NATI NÃO ESTÁ SOZINHA: são TRÊS botões fixos empilhados à direita,
+     em alturas que a folha antiga definia — chatbase (7rem), chamado interno
+     (13rem) e NATI (20rem). Herdar só o da NATI faria os outros dois caírem no
+     fluxo do documento ou colidirem entre si, porque nada mais no tema os
+     posiciona. As três alturas são um conjunto: mover uma exige mover as três.
+     Nenhuma dessas classes aparece nas 32 páginas salvas nem nas telas que
+     alcancei ao vivo — mas a entrega SUBSTITUI a folha antiga, e o custo de
+     herdar uma regra morta (10 linhas) é menor que o de perder uma viva.
+     z-index desce de 9999 para 600 pelo mesmo motivo do .floatNati: 9999
+     passava por cima de modal aberto e de menu.
+     O ícone azul sobre o fundo rosa mede 3,60:1 — passa em 1.4.11 (objeto
+     gráfico, limite 3:1). Mantido no valor de produção porque o operador
+     reconhece o botão pela cor. */
+  .floatChamadoInterno,.my-floatChamadoInterno{
+    position:fixed;right:20px;bottom:130px;z-index:600;
+    width:58px;height:58px;border-radius:50%;
+    background-color:var(--nc-marcacao) !important;  /* [!] vence .t-Button */
+    color:var(--nc-acao) !important;
+    box-shadow:0 8px 24px -10px rgba(81,28,118,.55);
+    cursor:pointer;
+    transition:transform .15s ease-out,box-shadow .15s ease-out;
+  }
+  .floatChamadoInterno:hover,.floatChamadoInterno:focus-visible{
+    transform:scale(1.07);
+    box-shadow:0 12px 30px -10px rgba(81,28,118,.65);
+  }
+  #chatbase-bubble-button{bottom:70px !important;z-index:500 !important;}
+
+  /* [JS] Estados "ao vivo": o JS acrescenta btnNATIlive / btnIAlive quando há
+     algo a mostrar. Sem o @keyframes correspondente a animação não roda e a
+     falha é silenciosa — por isso os dois vêm junto das classes. */
+  .nati-avatar{
+    width:42px;height:42px;border-radius:50%;object-fit:cover;
+    border:1.5px solid var(--nc-marcacao);
+  }
+  .btnNATIlive{animation:btnNATIpulse 1500ms infinite;}
+  @keyframes btnNATIpulse{
+    0%{box-shadow:0 0 0 0 rgba(201,87,136,.7);}
+    75%{box-shadow:0 0 0 16px rgba(201,87,136,0);}
+  }
+  /* O botão da IA não declara `position` — quem posiciona é a classe base do
+     APEX. NÃO acrescentar `position:fixed` aqui: mudaria o comportamento. */
+  .btnIA{
+    right:1rem;left:unset;width:42px;height:42px;
+    background-color:transparent !important;
+    color:var(--nc-branco) !important;
+    border:0 !important;border-radius:14px !important;
+    overflow:visible;cursor:pointer;
+    transition:transform .25s ease-in-out;
+  }
+  .ia-natcorp-avatar{width:42px;height:42px;border-radius:14px;object-fit:cover;}
+  .fab-ia-natcorp:hover{
+    transform:scale(1.10);
+    border:0 !important;border-radius:14px !important;
+    box-shadow:0 0 12px 6px rgba(201,87,136,.6) !important;
+  }
+  .btnIAlive{border-radius:14px !important;animation:btnIApulse 1500ms infinite;}
+  @keyframes btnIApulse{
+    0%{box-shadow:0 0 0 0 rgba(201,87,136,.7);}
+    75%{box-shadow:0 0 0 14px rgba(201,87,136,0);}
+    100%{box-shadow:0 0 0 20px rgba(201,87,136,0);}
+  }
+  /* NÃO portado de propósito, da regra .btnIAlive antiga:
+       box-shadow:linear-gradient(...)  → inválido, o navegador já descartava
+       content:"";position:absolute;inset:-18px
+     O trio parece escrito para um ::after e aplicado ao próprio elemento: ao
+     ligar o estado, o botão MUDARIA DE LUGAR. Deixado de fora como defeito
+     provável; para restaurar, é uma linha. */
+
+  /* [DADOS] Foto do colaborador nos comentários — 42px, contorno da marca. */
+  .fotoColabSmallComments{
+    width:42px;height:42px;border-radius:50%;object-fit:cover;
+    border:1.5px solid var(--nc-estrutura);
+  }
+
+
+/* ==========================================================================
+   3. THEME
+   ========================================================================== */
+/* ---- natcorp.theme ---- */
+
+  /* ------------------------------------------------------------------------
+     CAMADA 1 — o que não tem irmão, logo não pode ficar discrepante
+     --------------------------------------------------------------------- */
+
+  /* Uma declaração de fonte propaga para o tema inteiro: o Core já define
+     button,input,select,textarea{font:inherit} e body .ui-widget{font-family:
+     inherit}. Os ícones não quebram — .fa:before força apex-5-icon-font. */
+  body.t-PageBody{
+    font-family:var(--nc-fonte);
+    background-color:var(--nc-tela);
+    color:var(--nc-tinta);
+    -webkit-font-smoothing:antialiased;
+    text-rendering:optimizeLegibility;
+  }
+  body.t-PageBody .a-IRR,
+  body.t-PageBody .a-GV,
+  body.t-PageBody .a-Menu,
+  body.t-PageBody .ui-widget,
+  body.t-PageBody .ui-datepicker,
+  body.t-PageBody .select2-container{font-family:var(--nc-fonte);}
+
+  /* Escala tipográfica. O tema usa html{font-size:62.5%}, logo 1rem = 10px.
+     Entreletras negativa só em título; positiva só em maiúscula pequena. */
+  body.t-PageBody .t-Body-title h1,
+  body.t-PageBody .t-Breadcrumb-label{
+    font-weight:800;letter-spacing:-.01em;color:var(--nc-tinta);
+  }
+
+  /* Foco visível global. A folha antiga tinha ZERO :focus-visible; o único
+     indicador de foco dos campos era uma borda de 1px trocando de matiz.
+     `outline` moderno acompanha border-radius e não afeta layout. */
+  /* NÃO declarar `border-radius` aqui: isto muda o raio do PRÓPRIO elemento ao
+     focar, achatando um campo de 10px ou uma pílula de 999px para 6px — foi o
+     "contorno retangular" observado. O `outline` já acompanha sozinho o raio de
+     quem ele contorna. */
+  body.t-PageBody :focus-visible{
+    /* `!important` obrigatório: o Theme Roller mata o foco de TODO botão com
+       `.t-Button:hover,.t-Button:focus{outline:none !important}`. Sem isto,
+       navegar por Tab não mostra anel nenhum — falha WCAG 2.4.7 verificada ao
+       vivo na barra do Interactive Report. É o caso (a) da política deste
+       arquivo: o tema usa !important no mesmo ponto. */
+    outline:2px solid var(--nc-foco) !important;
+    outline-offset:2px !important;
+  }
+  /* O <input> REAL do LOV múltiplo (id do item, ex. P2_EMPRESA) mede 26x38px e
+     vive dentro de <li class="apex-item-multi-item">, dentro do <ul>. Tratado
+     como campo comum, ele desenhava uma caixinha e um anel de 10px numa área
+     que o usuário vê como vazia — foi o "contorno interno" observado.
+     Aqui ele fica invisível como caixa (continua focável, digitável e anunciado
+     pelo leitor de tela) e QUEM responde pelo foco é a peça inteira.
+     Os `!important` são obrigatórios porque a regra global de foco acima também
+     tem — ela precisa vencer o tema, e sem estes venceria também esta exceção. */
+  body.t-PageBody ul.apex-item-multi input,
+  body.t-PageBody li.apex-item-multi-item input{
+    border:0 !important;
+    background:transparent !important;
+    box-shadow:none !important;
+    border-radius:0 !important;
+    height:auto !important;
+    min-height:0 !important;
+    padding:0 4px !important;
+    flex:1 1 60px;
+    min-width:60px;
+  }
+  /* Também no estado FOCADO. A seção de correções pinta fundo e halo em
+     `.apex-item-text:focus` com !important — para vencer o tema — e isso
+     alcançava este input, que não é um campo e sim a área de digitação de
+     dentro da peça. Estas regras têm especificidade maior e o desligam. */
+  body.t-PageBody ul.apex-item-multi input:focus,
+  body.t-PageBody ul.apex-item-multi input:focus-visible,
+  body.t-PageBody li.apex-item-multi-item input:focus,
+  body.t-PageBody li.apex-item-multi-item input:focus-visible{
+    outline:none !important;
+    outline-offset:0 !important;
+    background:transparent !important;
+    box-shadow:none !important;
+    border:0 !important;
+  }
+  /* O <li> que carrega o input tomava a linha inteira (148px de 167px), o que
+     empurrava a etiqueta para a linha de cima e fazia o campo virar duas
+     linhas por causa de um valor só. Aqui ele ocupa o espaço que sobra. */
+  body.t-PageBody ul.apex-item-multi li:has(> input){
+    flex:1 1 60px;
+    min-width:60px;
+  }
+  body.t-PageBody ul.apex-item-multi li{display:flex;align-items:center;}
+  /* o foco acende o campo inteiro, com a marcação da marca */
+  body.t-PageBody ul.apex-item-multi:focus-within{
+    border-color:var(--nc-marcacao);
+    box-shadow:0 0 0 3px rgba(201,87,136,.18);
+  }
+  /* ...e o botão colado acende junto: `:focus-within` no <ul> não alcança o
+     irmão, então a regra sobe para o invólucro. Sem isto a peça acende pela
+     metade, que é pior do que não acender. */
+  body.t-PageBody .apex-item-group--popup-lov:focus-within > .a-Button--popupLOV,
+  body.t-PageBody .t-Form-itemWrapper:focus-within > .ui-datepicker-trigger,
+  body.t-PageBody .t-Form-itemWrapper:focus-within > .a-Button--popupLOV{
+    border-color:var(--nc-marcacao);
+    box-shadow:inset 1px 0 0 var(--nc-marcacao);
+  }
+
+  /* Correção de layout: o border-bottom de 3px tornava o header fixo 51px de
+     altura, mas .apex-side-nav .t-Body-nav{top:48px} é CSS estático e o
+     theme42.js não o corrige — os 3px do topo do menu ficavam SOB o header.
+     `inset box-shadow` pinta a mesma faixa sem ocupar caixa. */
+  body.t-PageBody .t-Header{
+    border-bottom:0;
+    box-shadow:inset 0 -3px 0 var(--nc-rosa);
+  }
+
+  /* ------------------------------------------------------------------------
+     CAMADA 2a — REGIÕES
+     Categoria inteira: toda região vira cartão e a barra roxa vertical sai de
+     TODAS. Sem overflow:hidden — ele cortaria os menus a-Menu e os tooltips
+     que nascem dentro da região.
+     --------------------------------------------------------------------- */
+  body.t-PageBody .t-Region{
+    background-color:var(--nc-branco);
+    border:1px solid var(--nc-linha);
+    border-left:1px solid var(--nc-linha);   /* mata a barra roxa de 5px */
+    border-radius:var(--nc-raio);
+    box-shadow:var(--nc-sombra);
+    margin-bottom:18px;                       /* ritmo único de 18px */
+  }
+  /* CABEÇALHO DE REGIÃO = .card-head do modelo.
+     No modelo o cabeçalho não é uma barra de título: é uma linha flex dentro do
+     cartão, sem fundo próprio e SEM borda inferior, separada do corpo por
+     14px de margem. Quem dá o recuo é o padding do cartão (20px 22px), não o
+     cabeçalho. O tema entrega `display:table` com células de padding 16px 12px
+     e um filete embaixo — daí a aparência de "barra de título" que destoava. */
+  /* GUARDA OBRIGATÓRIA: `Remove Header` e `Hide Header` do APEX escondem o
+     cabeçalho por `display:none` e por `height:1px;overflow:hidden` — não por
+     uma classe própria no cabeçalho. Como esta regra tem a MESMA especificidade
+     e vem depois na cascata, sem o :not() ela ressuscita o título de toda
+     região marcada assim (foi o que fez "NATI", "Chatbot", "TERMOS" e "Footer"
+     aparecerem no rodapé). */
+  body.t-PageBody .t-Region:not(.t-Region--removeHeader):not(.t-Region--hideHeader) > .t-Region-header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    background-color:transparent;
+    border:0;
+    border-radius:var(--nc-raio) var(--nc-raio) 0 0;
+    padding:20px 22px 0;
+  }
+  body.t-PageBody .t-Region:not(.t-Region--removeHeader):not(.t-Region--hideHeader) > .t-Region-header .t-Region-headerItems--title{
+    display:block;
+    padding:0;
+    flex:1 1 auto;
+    min-width:0;
+  }
+  body.t-PageBody .t-Region:not(.t-Region--removeHeader):not(.t-Region--hideHeader) > .t-Region-header .t-Region-headerItems--buttons{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    padding:0;
+    margin:0;
+    flex:0 0 auto;
+    text-align:right;
+  }
+
+  /* BOTÃO DE EXPANDIR: último item do cabeçalho, no canto, com lugar reservado.
+     O APEX injeta esse botão só no hover da região (o <span> nasce vazio), e
+     como ele entra no fluxo o cabeçalho inteiro "pula" quando o mouse passa —
+     as ações da região deslizam para a esquerda.
+     `order:99` garante que ele seja sempre o último, mesmo que o APEX injete
+     antes de outros botões; a largura mínima reserva o espaço desde o começo,
+     então nada se move quando ele aparece. */
+  body.t-PageBody .t-Region-headerItems--buttons .js-maximizeButtonContainer{
+    order:99;
+    display:inline-flex;
+    align-items:center;
+    justify-content:flex-end;
+    flex:0 0 auto;
+    min-width:36px;
+    min-height:36px;
+    margin-left:4px;
+  }
+  body.t-PageBody .js-maximizeButtonContainer .t-Button{
+    width:36px;height:36px;min-width:36px;
+    padding:0;
+    border-radius:999px;
+    border:1px solid var(--nc-linha);
+    background-color:var(--nc-branco);
+    color:var(--nc-grafite);
+  }
+  body.t-PageBody .js-maximizeButtonContainer .t-Button:hover{
+    background-color:var(--nc-off);
+    color:var(--nc-estrutura);
+  }
+  /* o mesmo para o expandir da barra do Interactive Report */
+  body.t-PageBody .a-IRR-toolbar .js-maximizeButtonContainer,
+  body.t-PageBody .a-IRR-buttons{
+    order:99;
+    margin-left:auto;
+  }
+  /* título: h2 do modelo. O :not() preserva os 15 acentos do Theme Roller —
+     sem ele, esta regra mataria a cor de toda região marcada como accent. */
+  body.t-PageBody .t-Region:not([class*="t-Region--accent"]) > .t-Region-header .t-Region-title{
+    color:var(--nc-tinta);
+  }
+  body.t-PageBody .t-Region-header .t-Region-title{
+    font-size:1.55rem;
+    font-weight:800;
+    letter-spacing:-.005em;
+    line-height:1.3;
+  }
+  /* o <small> ao lado do título faz o papel do <p> de subtítulo do modelo */
+  body.t-PageBody .t-Region-header .t-Region-title small{
+    margin-left:8px;
+    font-size:1.25rem;
+    font-weight:400;
+    letter-spacing:0;
+    color:var(--nc-cinza);
+  }
+  /* os 14px que no modelo são o margin-bottom do .card-head */
+  body.t-PageBody .t-Region .t-Region-body{padding:14px 22px 20px;}
+
+  /* A BASE DO CARTÃO. Mesmo mecanismo que apareceu na modal: quem encosta na
+     borda inferior é o `.t-Region-body`, com fundo branco e raio 0 — ele cobre
+     o canto arredondado de 20px do pai, e o cartão fica com topo redondo e base
+     quadrada. Medido: o `.t-Region-bodyWrap` no meio é transparente, então não
+     pinta nada; o branco é do corpo.
+     `overflow:hidden` no .t-Region resolveria de uma vez, mas cortaria os menus
+     `a-Menu`, os tooltips e as listas do Select2 que nascem dentro da região e
+     precisam vazar. Então o raio vai em quem pinta. */
+  /* NÃO usar `:last-child` aqui: o APEX sempre emite um `div.t-Region-buttons`
+     depois do corpo, com ou sem botões dentro. Com a barra vazia, quem encosta
+     na base é o corpo — mas ele não é o último filho, e o seletor não casava
+     com nada (verificado: zero regras aplicadas em 24 cartões).
+     Arredondar OS DOIS resolve os dois casos sem depender da ordem: o corpo
+     quando a barra está vazia, a barra quando ela tem botões. */
+  body.t-PageBody .t-Region > .t-Region-bodyWrap,
+  body.t-PageBody .t-Region > .t-Region-bodyWrap > .t-Region-body,
+  body.t-PageBody .t-Region > .t-Region-bodyWrap > .t-Region-buttons{
+    border-bottom-left-radius:var(--nc-raio);
+    border-bottom-right-radius:var(--nc-raio);
+  }
+  /* sub-região, painel lateral e rodapé não são cartão: base reta */
+  body.t-PageBody .t-Region:not(.t-Region--noUI) .t-Region > .t-Region-bodyWrap,
+  body.t-PageBody .t-Region:not(.t-Region--noUI) .t-Region > .t-Region-bodyWrap > .t-Region-body,
+  body.t-PageBody .t-Body-side .t-Region > .t-Region-bodyWrap,
+  body.t-PageBody .t-Body-side .t-Region > .t-Region-bodyWrap > .t-Region-body,
+  body.t-PageBody .t-Footer .t-Region > .t-Region-bodyWrap,
+  body.t-PageBody .t-Footer .t-Region > .t-Region-bodyWrap > .t-Region-body{
+    border-bottom-left-radius:0;
+    border-bottom-right-radius:0;
+  }
+
+  /* SUB-REGIÃO = o padrão `.task` de "Pontos de atenção" (#/nati do modelo).
+     Lá dentro de um cartão não existe outro cartão: existem FILAS separadas por
+     um fio de 1px em --line-2, com título de 13px/700 e sublinha de 12px em
+     --muted. Sem caixa, sem sombra, sem raio.
+     Aqui as sub-regiões (Nascimento/Empresa, Admitidos/Desligados, Afastamentos,
+     Férias) vivem em `.col col-6` lado a lado — não são irmãs no DOM. Por isso
+     o fio entra ACIMA de cada bloco, como divisor de seção sob o cabeçalho do
+     pai, em vez de entre irmãos. */
+  /* Só é sub-região se o PAI for de fato um cartão.
+     Nesta aplicação (2010) a tela inteira vive dentro de uma região raiz
+     marcada como `Remove UI Decoration` (`--noUI`): um contêiner técnico, sem
+     cromo. As regiões reais — Vaga, Cargo, Frequência, Remuneração — são
+     filhas dela, e a regra de sub-região as achatava: sem cartão e com título
+     de 13px, quando são o conteúdo principal da tela.
+     `--noUI` é o sinal do próprio APEX para "esta região não tem cromo", então
+     um pai assim não conta como cartão e o filho volta a ser primeiro nível. */
+  body.t-PageBody .t-Region:not(.t-Region--noUI) .t-Region{
+    border:0;box-shadow:none;border-radius:0;background:transparent;
+    border-top:1px solid var(--nc-linha2);
+    margin:0 0 12px;
+  }
+  body.t-PageBody .t-Region:not(.t-Region--noUI) .t-Region:not(.t-Region--removeHeader):not(.t-Region--hideHeader) > .t-Region-header{
+    background:transparent;
+    border:0;
+    border-radius:0;
+    padding:11px 0 0;          /* o recuo lateral já vem do cartão pai */
+  }
+  /* título da sub-região = `.task b`: 13px/700, um degrau abaixo do pai (15.5/800) */
+  body.t-PageBody .t-Region:not(.t-Region--noUI) .t-Region > .t-Region-header .t-Region-title{
+    font-size:1.3rem;
+    font-weight:700;
+    letter-spacing:0;
+  }
+  body.t-PageBody .t-Region:not(.t-Region--noUI) .t-Region > .t-Region-header .t-Region-title small{
+    font-size:1.2rem;
+  }
+  body.t-PageBody .t-Region:not(.t-Region--noUI) .t-Region .t-Region-body{
+    padding:8px 0 0;
+  }
+  /* ...MAS se o cartão pai não tem recuo (Remove Padding no APEX), quem precisa
+     dar o recuo é a sub-região — senão o conteúdo cola nas bordas, como
+     acontecia com o organograma dentro de um pai `t-Region--noPadding`.
+     DUAS CORREÇÕES sobre a primeira versão desta regra, ambas medidas em
+     f?p=100:116 (a maior tela do app: 191 campos em 12 abas):
+     1. Especificidade. A versão anterior era (0,4,1) e PERDIA para a regra de
+        sub-região acima, que é (0,5,1) e zera o recuo lateral. Resultado
+        medido: conteúdo a 1px da borda do cartão.
+     2. Profundidade. Numa região de abas o aninhamento é cartão > painel de
+        aba > bloco, e uma regra de descendente aplicava os 22px NAS DUAS,
+        somando 44px de recuo. `:not(:has(.t-Region))` prende o recuo à região
+        folha — a única que de fato encosta na borda. */
+  body.t-PageBody .t-Region--noPadding .t-Region:not(.t-Region--noUI):not(:has(.t-Region)) .t-Region-body{
+    padding:8px 22px 20px;
+  }
+  /* o cabeçalho da sub-região não tem recuo lateral próprio (ele vem do cartão
+     pai); sem pai com recuo, o título fica colado no filete da borda. */
+  body.t-PageBody .t-Region--noPadding .t-Region:not(.t-Region--noUI):not(:has(.t-Region)):not(.t-Region--removeHeader):not(.t-Region--hideHeader) > .t-Region-header{
+    padding-left:22px;
+    padding-right:22px;
+  }
+  /* as linhas de dentro também são filas: fio em --line-2, sem zebra */
+  body.t-PageBody .t-Region .t-Region .t-MediaList-item,
+  body.t-PageBody .t-Region .t-Region .t-Report-cell{
+    border-top:1px solid var(--nc-linha2);
+    border-bottom:0;
+    background:transparent;
+  }
+  body.t-PageBody .t-Region .t-Region .t-MediaList-item:first-child{
+    border-top:0;
+  }
+  /* Região em painel lateral e em rodapé de página não é cartão. */
+  body.t-PageBody .t-Body-side .t-Region,
+  body.t-PageBody .t-Body-actions .t-Region{
+    border-radius:0;box-shadow:none;margin-bottom:0;
+  }
+
+  /* PAINEL LATERAL: densidade utilitária.
+     Campo de 38px e padding de 20/22 são medidas de formulário de conteúdo.
+     Aplicadas a um painel de 13 filtros, inflaram o conteúdo de 937px para
+     1234px num painel de 848px de altura fixa, e o "Pesquisar" saiu de
+     alcance. O contrato do modelo diz "densidade decidida por bloco"; aqui o
+     bloco é utilitário, então o token de altura é redefinido só para ele.
+     A rolagem continua sendo a do painel inteiro, como no comportamento
+     original: o botão acompanha os filtros no fim da lista. */
+  body.t-PageBody .t-Body-side{
+    --nc-alt-campo:3.2rem;     /* 32px: utilitário, não formulário */
+  }
+  body.t-PageBody .t-Body-side .t-Region .t-Region-body{
+    padding:14px 16px;
+  }
+  body.t-PageBody .t-Header .t-Region{border:0;box-shadow:none;background:transparent;}
+
+  /* CARTÃO É DECISÃO DE CONTEÚDO, NÃO DE SELETOR.
+     Dentro do <footer> vivem quatro regiões de infraestrutura — o botão da
+     NATI, o chatbot, os links de termos e a marca d'água. Transformadas em
+     cartão, elas criavam 524px de caixas brancas vazias no fim de TODA página,
+     o que faz a página parecer que não terminou.
+     `--noUI` é o sinal do próprio tema para "sem cromo" (ele já zera o fundo
+     com !important); respeitá-lo evita o mesmo erro em outras telas. */
+  body.t-PageBody .t-Footer .t-Region,
+  body.t-PageBody .t-Region--noUI{
+    border:0;
+    box-shadow:none;
+    background:transparent;
+    border-radius:0;
+    margin-bottom:0;
+  }
+  body.t-PageBody .t-Footer .t-Region .t-Region-body,
+  body.t-PageBody .t-Region--noUI .t-Region-body{
+    padding:0;
+  }
+
+  /* "REMOVE BORDERS" (`t-Region--noBorder`) NÃO É "SEM CARTÃO".
+     O Core.min apaga borda E sombra com `!important`:
+       .t-Region--noBorder{border:none!important;box-shadow:none!important}
+     Em produção a região ainda se separava da página, porque continuava
+     BRANCA sobre o fundo cinza do tema — a separação vinha do contraste de
+     superfície, não do filete. Com o fundo em #fdfdfd esse contraste acabou:
+     medido em f?p=100:116, onde as duas regiões principais da tela ("Editar:
+     Requisição de Alteração Funcional") são `--noBorder` e simplesmente
+     desapareceram no fundo.
+     Diferença que importa: `--noBorder` tira o filete e mantém o fundo;
+     `--noUI` tira tudo. Só o segundo é a saída explícita para "sem cromo",
+     e continua sendo respeitado.
+     O :where() de custo zero mantém as exclusões que a regra sem `!important`
+     já tinha: região aninhada segue sub-região (fila com fio, sem caixa),
+     rodapé, painel lateral e cabeçalho seguem sem cartão.
+     `!important` aqui é o mínimo para empatar com o tema, que usa `!important`
+     neste mesmo ponto — mesma justificativa do `:focus-visible`. */
+  body.t-PageBody .t-Region--noBorder:not(.t-Region--noUI):not(:where(
+      .t-Region .t-Region, .t-Footer .t-Region, .t-Body-side .t-Region, .t-Header .t-Region)){
+    border:1px solid var(--nc-linha) !important;
+    box-shadow:var(--nc-sombra) !important;
+  }
+
+  /* ------------------------------------------------------------------------
+     CAMADA 2b — TABELAS
+     Aparência apenas. A densidade (altura de linha, padding de célula) fica
+     para a segunda onda, por decisão do cliente: ela muda o hábito de quem usa
+     o sistema há anos e merece ser vista isolada.
+     Zero borda vertical. Zero zebra. A linha do cabeçalho é mais escura que a
+     das células — a hierarquia vem do peso da linha, não de caixas.
+     --------------------------------------------------------------------- */
+
+  /* Interactive Report */
+  /* O contêiner do IR é `.t-IRR-region` — um wrapper TRANSPARENTE que o
+     Core.min mesmo assim sombreia, e com sombra PRETA
+     (`rgba(0,0,0,.05) 0 1px 2px, rgba(0,0,0,.075) 0 2px 4px -2px`).
+     Como o cartão de verdade (`.a-IRR`) ocupa exatamente a mesma caixa, as duas
+     sombras se somam na mesma borda e sujam o roxo. O contrato do modelo é
+     explícito: nenhuma sombra preta. Medido em f?p=100:2. */
+  body.t-PageBody .t-IRR-region{box-shadow:none;}
+  /* O Interactive Report NÃO vem embrulhado em .t-Region nestas páginas
+     (verificado: `closest('.t-Region')` devolve nulo). Sem isto ele fica sem
+     borda nenhuma, flutuando no fundo — foi o que você viu. Então o próprio
+     .a-IRR recebe o tratamento de cartão do modelo. */
+  body.t-PageBody .a-IRR{
+    background-color:var(--nc-branco);
+    border:1px solid var(--nc-linha);
+    border-radius:var(--nc-raio);
+    box-shadow:var(--nc-sombra);
+    overflow:hidden;   /* mantém a barra e o rodapé dentro do canto arredondado */
+  }
+  /* a barra de ferramentas perde a borda de cima: ela já é a borda do cartão */
+  body.t-PageBody .a-IRR > .a-IRR-toolbar{border-top:0;}
+  /* BARRA DE FERRAMENTAS DO IR — categoria inteira.
+     Hoje são seis controles com seis tratamentos e quatro alturas diferentes
+     (busca, "Ir", relatório salvo, "Linhas", "Ações", maximizar), o que faz a
+     barra parecer montada por acaso. Aqui todos passam a ter a mesma altura e
+     o mesmo vocabulário de forma: pílula para filtro e ação, uma peça só para
+     a busca. A ORDEM não muda — o operador acerta esses controles por posição,
+     e reposicionar custaria mais do que o ganho visual. */
+  body.t-PageBody .a-IRR-toolbar{
+    background-color:var(--nc-branco);
+    border:0;border-bottom:1px solid var(--nc-linha);
+    display:flex;align-items:center;flex-wrap:wrap;gap:8px;
+    padding:10px 14px;
+  }
+  body.t-PageBody .a-IRR-controls{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+  body.t-PageBody .a-IRR-controlGroup{margin:0;display:flex;align-items:center;}
+
+  /* uma altura só para tudo que vive na barra */
+  body.t-PageBody .a-IRR-toolbar .a-Button,
+  body.t-PageBody .a-IRR-toolbar .t-Button,
+  body.t-PageBody .a-IRR-selectList,
+  body.t-PageBody .a-IRR-search-field,
+  body.t-PageBody .a-IRR-button{
+    height:var(--nc-alt-controle);
+    font-size:1.25rem;font-weight:700;
+    color:var(--nc-grafite);
+    box-shadow:none;
+  }
+
+  /* busca: o botão da lupa e o campo formam UMA pílula */
+  body.t-PageBody .a-IRR-search{
+    display:flex;align-items:center;
+    border:1px solid var(--nc-linha);
+    border-radius:999px;
+    background-color:var(--nc-off);
+    overflow:hidden;
+  }
+  body.t-PageBody .a-IRR-search-field{
+    border:0;background:transparent;padding:0 12px;min-width:220px;font-weight:400;
+  }
+  body.t-PageBody .a-IRR-search-field:focus{
+    box-shadow:none;border:0;outline:none;
+  }
+  body.t-PageBody .a-IRR-search:focus-within{
+    border-color:var(--nc-roxo);
+    box-shadow:0 0 0 3px rgba(81,28,118,.12);
+  }
+  /* o Theme Roller zera os seis cantos deste botão com !important */
+  body.t-PageBody .a-IRR-button--colSearch{
+    border:0 !important;background:transparent !important;
+    border-radius:999px 0 0 999px !important;
+    padding:0 4px 0 12px !important;color:var(--nc-cinza) !important;
+  }
+  body.t-PageBody .a-IRR-button--go{
+    border-radius:999px;border:1px solid var(--nc-linha);
+    background-color:var(--nc-branco);padding:0 14px;
+  }
+
+  /* seletores de relatório e de linhas: forma de filtro, não de campo */
+  body.t-PageBody .a-IRR-selectList{
+    border-radius:999px;border:1px solid var(--nc-linha);
+    background-color:var(--nc-branco);padding:0 30px 0 14px;
+  }
+
+  /* "Ações" e maximizar: ação secundária */
+  body.t-PageBody .a-IRR-button--actions,
+  body.t-PageBody .a-IRR-toolbar .a-Button--noUI{
+    border-radius:999px;border:1px solid var(--nc-linha);
+    background-color:var(--nc-branco);padding:0 14px;
+  }
+  body.t-PageBody .a-IRR-toolbar .a-Button:hover,
+  body.t-PageBody .a-IRR-selectList:hover{
+    background-color:var(--nc-off);color:var(--nc-roxo);
+  }
+  /* Rótulo "Linhas": é texto solto entre controles. Precisa ficar AO LADO do
+     seletor, não acima — `display:flex` num <label> o torna bloco e empilha. */
+  body.t-PageBody .a-IRR-toolbar label{
+    display:inline-flex;align-items:center;margin:0 4px 0 0;
+    font-size:1.15rem;font-weight:700;letter-spacing:.06em;
+    text-transform:uppercase;color:var(--nc-rotulo);white-space:nowrap;
+  }
+  body.t-PageBody .a-IRR-controlGroup--rowsPerPage,
+  body.t-PageBody .a-IRR-controlGroup--views,
+  body.t-PageBody .a-IRR-controlGroup--search{
+    display:flex;flex-direction:row;align-items:center;gap:8px;
+  }
+  body.t-PageBody .a-IRR-header{
+    background-color:var(--nc-branco);
+    border-top:0;
+    border-bottom:1px solid var(--nc-linha);
+    box-shadow:none;                      /* apaga o inset 1px 0 0 do roller */
+    text-align:left;
+  }
+  body.t-PageBody .a-IRR-header:hover{background-color:var(--nc-off);}
+  /* CABEÇALHO DO INTERACTIVE REPORT: só COR, nunca MÉTRICA.
+     Esta é a fronteira real do "só CSS" neste tema. O widget de cabeçalho fixo
+     esconde a linha de cabeçalho da tabela do corpo com uma margem negativa
+     INLINE igual à altura que ela tinha quando ele mediu (style="margin-top:
+     -74px"). Mudar tamanho de fonte, entreletras ou caixa muda essa altura,
+     a margem deixa de casar, e o primeiro registro aparece cortado.
+     Todas as saídas por CSS custam caro: zerar a margem duplica o cabeçalho;
+     esconder a linha de reserva tira do leitor de tela o que ele anuncia.
+     Então aqui vai só a cor — que não desloca um pixel. A tipografia em
+     micro-caps fica no relatório clássico (que não tem cabeçalho fixo) e a
+     métrica do IR entra na segunda onda, junto com a densidade, quando houver
+     roteiro de teste para ela. */
+  body.t-PageBody .a-IRR-headerLink,
+  body.t-PageBody .a-IRR-headerLabel,
+  body.t-PageBody .a-IRR-header a{
+    color:var(--nc-rotulo);
+  }
+  body.t-PageBody .a-IRR-table td{
+    border-left:0;border-top:0;
+    border-bottom:1px solid var(--nc-linha2);
+    color:var(--nc-tinta);
+  }
+  body.t-PageBody .a-IRR-table tr:hover td{background-color:var(--nc-quase);}
+  /* Números e datas alinham sem fonte monoespaçada. */
+  body.t-PageBody .a-IRR-table td,
+  body.t-PageBody .t-Report-cell{font-variant-numeric:tabular-nums;}
+
+  /* Relatório clássico */
+  body.t-PageBody .t-Report-colHead{
+    border:0;border-bottom:1px solid var(--nc-linha);
+    font-size:1.1rem;font-weight:700;letter-spacing:.10em;
+    text-transform:uppercase;color:var(--nc-rotulo);
+    text-align:left;vertical-align:middle;
+  }
+  body.t-PageBody .t-Report-cell{
+    border:0;border-bottom:1px solid var(--nc-linha2);color:var(--nc-tinta);
+  }
+
+  /* Interactive Grid — terra de ninguém: nem o Theme Roller nem o Vita o
+     tematizam, então ele ainda estava no azul cru da Oracle (#0572ce). */
+  body.t-PageBody .a-GV-hdr{background-color:var(--nc-branco);}
+  body.t-PageBody .a-GV-header,
+  body.t-PageBody .a-GV-headerGroup{
+    border-color:var(--nc-linha);color:var(--nc-rotulo);
+    font-size:1.1rem;font-weight:700;letter-spacing:.10em;text-transform:uppercase;
+  }
+  body.t-PageBody .a-GV-table .a-GV-cell{border-color:var(--nc-linha2);}
+  body.t-PageBody .a-GV-table tr.is-selected .a-GV-cell{background-color:var(--nc-info-bg);}
+  body.t-PageBody .a-GV .a-GV-cell.is-selected{background-color:var(--nc-info-bg);}
+  body.t-PageBody .a-GV-table .a-GV-cell.is-focused{
+    box-shadow:inset 0 0 0 2px var(--nc-roxo);
+  }
+  body.t-PageBody .a-GV-cell.is-error{color:var(--nc-perigo);}
+  body.t-PageBody .a-GV-cell.is-warning{color:var(--nc-aviso);}
+
+  /* ------------------------------------------------------------------------
+     CAMADA 3a — BOTÕES
+     Categoria inteira, incluindo os do cabeçalho e os a-Button do relatório,
+     que hoje formam um segundo sistema visual na mesma tela.
+     Não tocar nos 12 modificadores de espaçamento (--gapLeft, --padTop, --pill e afins):
+     são todos !important no Core e servem a agrupamentos.
+     Não remover ::before/::after: o ::before é o anel de foco do tema.
+     --------------------------------------------------------------------- */
+  body.t-PageBody .t-Button:not(.t-Button--header):not(.t-Button--noUI):not(.t-Button--link),
+  body.t-PageBody .a-Button:not(.a-Button--popupLOV):not(.a-Button--calendar){
+    border-radius:999px;
+    border:1px solid var(--nc-linha);
+    background-color:var(--nc-branco);
+    color:var(--nc-grafite);
+    font-family:var(--nc-fonte);
+    font-size:1.35rem;font-weight:700;
+    padding:.9rem 1.6rem;
+    box-shadow:none;
+    transition:background-color .15s,border-color .15s,color .15s;
+  }
+  body.t-PageBody .t-Button:not(.t-Button--header):not(.t-Button--noUI):hover,
+  body.t-PageBody .a-Button:hover{
+    background-color:var(--nc-off);
+    border-color:var(--nc-linha);
+    color:var(--nc-roxo);
+  }
+
+  /* Ação primária — uma por região. O gradiente é territorial: aparece aqui,
+     no menu e no avatar, e em nenhum fundo de conteúdo. */
+  /* A especificidade aqui PRECISA ser >= a da regra base acima, que tem três
+     :not() e vale (0,5,1). Sem o .t-Button extra, esta regra vale (0,4,1), a
+     base vence no `color`, e o rótulo sai em grafite sobre o gradiente — 1,52:1,
+     reprovado. Verificado ao vivo no botão "Pesquisar". */
+  body.t-PageBody .t-Button.t-Button--hot:not(.t-Button--simple):not(.t-Button--noUI):not(.t-Button--link),
+  body.t-PageBody .a-Button.a-Button--hot{
+    background:var(--nc-acao);
+    color:var(--nc-branco);
+    border-color:transparent;
+    box-shadow:0 8px 20px -14px rgba(44,26,99,.75);
+  }
+  body.t-PageBody .t-Button--hot:not(.t-Button--noUI):hover{background:#3A2280;}
+
+  /* Semânticos saem do vocabulário de PREENCHIMENTO e viram contorno: verde e
+     azul sólidos competindo com o roxo eram a maior inconsistência cromática do
+     sistema (Publicar Processo verde ao lado de Adicionar azul, na mesma tela).
+     Preenchimento sólido fica reservado à ação primária. */
+  body.t-PageBody .t-Button--success:not(.t-Button--noUI){
+    background:var(--nc-branco);color:var(--nc-ok);border-color:var(--nc-ok);
+  }
+  body.t-PageBody .t-Button--danger:not(.t-Button--noUI){
+    background:var(--nc-branco);color:var(--nc-perigo);border-color:var(--nc-perigo);
+  }
+  body.t-PageBody .t-Button--warning:not(.t-Button--noUI){
+    background:var(--nc-branco);color:var(--nc-aviso);border-color:var(--nc-aviso);
+  }
+
+  /* Link e sem-moldura NÃO viram botão. "Ver mais"/"Ver menos" chegam marcados
+     como t-Button--hot no app, mas são links: --noUI manda. Foi exatamente aqui
+     que a hierarquia se inverteu na primeira tentativa. */
+  body.t-PageBody .t-Button--noUI,
+  body.t-PageBody .t-Button--link{
+    background:transparent;border:0;box-shadow:none;
+    color:var(--nc-roxo);font-weight:700;padding:.4rem 0;
+  }
+  body.t-PageBody .t-Button--noUI:hover,
+  body.t-PageBody .t-Button--link:hover{text-decoration:underline;}
+  body.t-PageBody .t-Button--noUI .t-Icon,
+  body.t-PageBody .t-Button--link .t-Icon{color:currentColor;opacity:1;}
+
+  /* Botões do cabeçalho: alvo confortável, um tamanho só, sem virar pílula
+     branca sobre fundo branco. */
+  body.t-PageBody .t-Header .t-Button--header{
+    border-radius:8px;border:0;background:transparent;box-shadow:none;
+    color:var(--nc-branco);font-weight:600;font-size:1.25rem;
+    min-height:34px;padding:0 1.1rem;
+  }
+  body.t-PageBody .t-Header .t-Button--header:hover{background-color:rgba(255,255,255,.14);}
+
+  /* Botão de ícone: um diâmetro só em todo o sistema. */
+  body.t-PageBody .t-Button--icon:not(.t-Button--iconLeft):not(.t-Button--iconRight):not(.t-Button--header):not(.t-Button--noUI){
+    min-width:36px;border-radius:999px;
+  }
+
+  /* ------------------------------------------------------------------------
+     CAMADA 3b — CAMPOS
+     Precisa reproduzir a lista de seletores do Theme Roller (especificidade
+     0,2,1) ou perde. O :focus dele é !important, então o nosso também precisa
+     ser — está isolado em `overrides`.
+     A seta do <select> é um data-URI SVG com fill:#444 embutido: a cor dela é
+     imutável por CSS. Não tentar.
+     --------------------------------------------------------------------- */
+  body.t-PageBody .t-Form-inputContainer input[type="text"],
+  body.t-PageBody .t-Form-inputContainer input.text_field,
+  body.t-PageBody .t-Form-inputContainer input.password,
+  body.t-PageBody .t-Form-inputContainer input.datepicker,
+  body.t-PageBody .t-Form-inputContainer input.popup_lov,
+  body.t-PageBody .t-Form-inputContainer textarea.textarea,
+  body.t-PageBody .t-Form-inputContainer select,
+  body.t-PageBody .apex-item-text,
+  body.t-PageBody .apex-item-select,
+  body.t-PageBody .apex-item-textarea{
+    border-radius:var(--nc-raio-campo);
+    border:1px solid var(--nc-linha);
+    background-color:var(--nc-branco);
+    color:var(--nc-tinta);
+    font-family:var(--nc-fonte);
+    font-size:1.35rem;
+    transition:border-color .15s,box-shadow .15s;
+  }
+  /* A altura NÃO é aplicada em rótulo flutuante: o componente depende de
+     min-height:4.8rem e line-height:4.8rem no label para a animação funcionar.
+     Verificado em 9300-21 (41 ocorrências). */
+  /* Rótulo flutuante mantém a medida original: o componente depende de
+     min-height/line-height de 4.8rem para a animação do rótulo funcionar.
+     Redefinir o token aqui faz o botão colado acompanhar essa altura também. */
+  body.t-PageBody .t-Form-fieldContainer--floatingLabel{--nc-alt-campo:4.8rem;}
+
+  body.t-PageBody .t-Form-fieldContainer:not(.t-Form-fieldContainer--floatingLabel) .apex-item-text,
+  body.t-PageBody .t-Form-fieldContainer:not(.t-Form-fieldContainer--floatingLabel) .apex-item-select{
+    height:var(--nc-alt-campo);padding:0 1.2rem;
+  }
+  /* O <select> precisa de min-height E max-height, não só de height.
+     O tema fecha a altura dele por cima com
+       `.apex-item-select[size="1"]{min-height:2.4rem;max-height:2.4rem}`
+     e um `max-height` de 24px limita qualquer altura que se defina — por isso
+     o padding e o raio aplicavam e a altura não, estando na mesma regra.
+     Sem isto o select fica 8px mais baixo que o campo de texto ao lado. */
+  body.t-PageBody .t-Form-fieldContainer:not(.t-Form-fieldContainer--floatingLabel) .apex-item-select,
+  body.t-PageBody .t-Form-inputContainer select,
+  body.t-PageBody select.apex-item-select{
+    min-height:var(--nc-alt-campo);
+    max-height:var(--nc-alt-campo);
+    height:var(--nc-alt-campo);
+    line-height:normal;
+  }
+  /* a barra do Interactive Report tem altura própria e não pode ser arrastada
+     junto: ela usa --nc-alt-controle */
+  body.t-PageBody .a-IRR-selectList{
+    min-height:var(--nc-alt-controle);
+    max-height:var(--nc-alt-controle);
+    height:var(--nc-alt-controle);
+  }
+  body.t-PageBody .apex-item-textarea{min-height:8.4rem;padding:1rem 1.2rem;}
+
+  /* A LISTA ABERTA DO <select> NÃO É DOM.
+     Ela é desenhada pelo sistema operacional — um MutationObserver ativo no
+     clique não registrou um único elemento novo. Nenhuma regra de CSS a
+     alcança: nem cor, nem raio, nem espaçamento.
+     O que muda a percepção é a métrica que o popup herda do <option>. Com a
+     Manrope (altura-x bem maior que a da Helvetica Neue do tema) a lista fica
+     visivelmente maior que o campo fechado. Aqui o <option> volta à fonte do
+     sistema, na mesma métrica de antes; o select FECHADO continua em Manrope,
+     que é o que o usuário vê 99% do tempo.
+     Se o popup ainda destoar, o limite é do navegador, não da folha. */
+  body.t-PageBody select option,
+  body.t-PageBody select optgroup{
+    font-family:-apple-system,"Segoe UI",system-ui,Roboto,sans-serif;
+    font-size:12px;
+    font-weight:400;
+  }
+
+  /* Seleção múltipla com LOV (os campos abaixo do "Ver mais": Empresa, Filial,
+     Centro de Custo, Cargo, Colaboradores…). O APEX renderiza isto como um
+     <ul class="apex-item-multi">, não como <input> — por isso ficava fora de
+     toda regra de campo e aparecia como uma caixa cinza de raio 2px ao lado de
+     um botão de altura diferente. Recebe o mesmo tratamento dos demais campos. */
+  body.t-PageBody ul.apex-item-multi,
+  body.t-PageBody .apex-item-popup-lov{
+    min-height:var(--nc-alt-campo);
+    box-sizing:border-box;
+    margin:0;padding:.4rem .8rem;
+    list-style:none;
+    display:flex;flex-wrap:wrap;align-items:center;gap:4px;
+    border:1px solid var(--nc-linha);
+    border-radius:var(--nc-raio-campo);
+    background-color:var(--nc-branco);
+    color:var(--nc-tinta);
+    font-size:1.35rem;
+    overflow-y:auto;
+  }
+  /* ETIQUETA DO VALOR ESCOLHIDO.
+     A marcação foi verificada no ambiente: cada valor é um <span> dentro de um
+     <li class="apex-item-multi-item">, e o <li> do campo de digitação contém um
+     <input> em vez de <span>. Mirar no <span> resolve os dois de uma vez — foi
+     tentar pintar o <li> que antes acertava também o item vazio.
+     O tema deixa a etiqueta em rgba(0,0,0,.05), um cinza que não diz nada.
+     Como etiqueta é ESTRUTURA (um dado da Natcorp na tela), ela usa o roxo. */
+  body.t-PageBody ul.apex-item-multi li > span{
+    display:inline-flex;align-items:center;gap:6px;
+    background-color:var(--nc-info-bg);
+    color:var(--nc-estrutura);
+    border-radius:8px;
+    padding:2px 8px;
+    font-size:1.15rem;font-weight:700;
+    line-height:1.7;
+  }
+  /* o "x" de remover herda a cor da etiqueta e ganha alvo de clique decente */
+  body.t-PageBody ul.apex-item-multi li > span a,
+  body.t-PageBody ul.apex-item-multi li > span button{
+    color:currentColor;opacity:.7;padding:2px;
+  }
+  body.t-PageBody ul.apex-item-multi li > span a:hover,
+  body.t-PageBody ul.apex-item-multi li > span button:hover{opacity:1;}
+
+  body.t-PageBody .t-Form-label{
+    font-size:1.2rem;font-weight:700;color:var(--nc-grafite);
+  }
+  /* MARCAÇÃO em rosa: checkbox e radio marcados.
+     O <input> real tem 1x1px e fica escondido; o quadrado visível é o
+     ::before do <label> e o tique é o ::after, em apex-5-icon-font.
+     O tema pinta o marcado de cinza #737373 — indistinguível de "desabilitado".
+     Contraste do tique branco sobre o rosa: 4,04:1, acima do mínimo de 3:1
+     exigido para elemento não-textual (WCAG 1.4.11). */
+  body.t-PageBody .t-Form-inputContainer .checkbox_group input:checked + label::before,
+  body.t-PageBody .t-Form-inputContainer .radio_group input:checked + label::before,
+  body.t-PageBody .apex-item-option input:checked + label::before{
+    background-color:var(--nc-marcacao);
+    border-color:var(--nc-marcacao);
+  }
+  /* desmarcado: borda visível, não um fio quase invisível */
+  body.t-PageBody .t-Form-inputContainer .checkbox_group input + label::before,
+  body.t-PageBody .t-Form-inputContainer .radio_group input + label::before,
+  body.t-PageBody .apex-item-option input + label::before{
+    border-color:var(--nc-cinza);
+    border-radius:4px;
+  }
+  body.t-PageBody .t-Form-inputContainer .radio_group input + label::before,
+  body.t-PageBody .apex-item-option input[type=radio] + label::before{
+    border-radius:50%;
+  }
+  /* o anel de foco do checkbox também é marcação */
+  body.t-PageBody .apex-item-option input:focus-visible + label::before{
+    outline:2px solid var(--nc-marcacao);
+    outline-offset:2px;
+  }
+
+  /* Campo desabilitado precisa continuar LEGÍVEL: é dado que o usuário lê.
+     O opacity:.8 da folha antiga o apagava ainda mais. */
+  /* INATIVO em cinza claro, próximo do padrão do próprio APEX.
+     Fundo quase-branco e texto no cinza terciário: o campo continua legível,
+     mas lê como "não editável" à primeira vista, sem competir com os ativos.
+     `opacity:1` em vez do 0.8 da folha antiga — apagar por opacidade some com
+     o valor, e desabilitado ainda é dado que o usuário precisa ler. */
+  /* A especificidade aqui precisa vencer a regra BASE de campo desta mesma
+     folha, que vale (0,3,2) por causa de `.t-Form-inputContainer input[...]`.
+     A classe repetida sobe para (0,4,2). Sem isso a regra casa e perde — o
+     campo inativo saía branco com texto em tinta, igual ao ativo.
+     E `[readonly]` NÃO entra: o popup LOV é readonly por design (quem preenche
+     é o botão ao lado), e acinzentá-lo diria "desabilitado" para um campo que
+     está perfeitamente ativo. */
+  body.t-PageBody .apex_disabled.apex_disabled,
+  body.t-PageBody input[disabled][disabled],
+  body.t-PageBody select[disabled][disabled],
+  body.t-PageBody textarea[disabled][disabled],
+  body.t-PageBody .display_only.display_only,
+  body.t-PageBody .apex-item-wrapper--display-only .display_only{
+    opacity:1;
+    background-color:var(--nc-quase);
+    color:var(--nc-cinza);
+    border-color:var(--nc-linha2);
+  }
+  /* botão desabilitado segue a mesma escala */
+  body.t-PageBody .t-Button[disabled][disabled],
+  body.t-PageBody .t-Button.is-disabled.is-disabled,
+  body.t-PageBody .a-Button[disabled][disabled]{
+    opacity:1;
+    background-color:var(--nc-quase);
+    color:var(--nc-cinza);
+    border-color:var(--nc-linha2);
+    box-shadow:none;
+  }
+  /* rótulo de campo inativo acompanha */
+  body.t-PageBody .t-Form-fieldContainer:has([disabled]) .t-Form-label{
+    color:var(--nc-cinza);
+  }
+  /* LOV e datepicker: o botão e o campo viram uma peça só. */
+  body.t-PageBody .a-Button--popupLOV,
+  body.t-PageBody .ui-datepicker-trigger{
+    /* `min-height` + `align-self:stretch` em vez de `height` fixa: assim o
+       botão acompanha o campo mesmo quando ele cresce — o LOV de seleção
+       múltipla (ul.apex-item-multi) fica mais alto que um input comum, e com
+       altura fixa o botão voltava a ficar mais baixo que o campo. */
+    min-height:var(--nc-alt-campo);
+    align-self:stretch;
+    min-width:var(--nc-alt-campo);
+    width:var(--nc-alt-campo);
+    padding:0;
+    border:1px solid var(--nc-linha);border-left:0;
+    border-radius:0 var(--nc-raio-campo) var(--nc-raio-campo) 0;
+    /* mais claro que o --nc-off: o botão colado é apoio do campo, não um
+       controle concorrente. O fio interno já basta para dizer que é clicável. */
+    background-color:var(--nc-quase);color:var(--nc-cinza);
+    box-shadow:none;
+    display:inline-flex;align-items:center;justify-content:center;
+    vertical-align:top;                  /* alinha o topo com o do campo */
+    flex:0 0 auto;
+  }
+  /* O CAMPO E O BOTÃO SÃO UMA PEÇA SÓ.
+     São DOIS invólucros diferentes, e essa foi a armadilha: o seletor de data
+     vive em .t-Form-itemWrapper e o LOV vive em .apex-item-group--popup-lov.
+     Uma regra escrita para um deixa o outro com os quatro cantos arredondados
+     e a borda direita — e a emenda reaparece só naquele componente.
+     Por isso o campo é alcançado por `:has(+ botão)`: "qualquer campo que
+     tenha um botão colado logo depois", seja qual for o invólucro.
+     `:has()` está liberado (Chrome, Edge, Safari e Firefox atuais); navegador
+     sem suporte ignora estas regras e volta ao par encostado. */
+  body.t-PageBody .t-Form-itemWrapper:has(> .ui-datepicker-trigger),
+  body.t-PageBody .t-Form-itemWrapper:has(> .a-Button--popupLOV),
+  body.t-PageBody .apex-item-group--popup-lov,
+  body.t-PageBody .apex-item-group--datepicker{
+    display:flex;align-items:stretch;
+  }
+  /* A classe REPETIDA sobe a especificidade de propósito. A regra base de
+     campo, neste mesmo arquivo, tem o ramo `.t-Form-inputContainer
+     input.datepicker` que vale (0,3,2) — mais que os (0,3,1) desta regra — e
+     repunha os quatro cantos justamente no campo de data. Com a classe dobrada
+     esta vale (0,4,1) e vence, sem precisar de !important. */
+  body.t-PageBody .apex-item-text.apex-item-text:has(+ .ui-datepicker-trigger),
+  body.t-PageBody .apex-item-text.apex-item-text:has(+ .a-Button--popupLOV),
+  body.t-PageBody .apex-item-multi.apex-item-multi:has(+ .ui-datepicker-trigger),
+  body.t-PageBody .apex-item-multi.apex-item-multi:has(+ .a-Button--popupLOV),
+  body.t-PageBody .apex-item-popup-lov.apex-item-popup-lov:has(+ .a-Button--popupLOV){
+    border-top-right-radius:0;
+    border-bottom-right-radius:0;
+    border-right:0;
+    margin-right:0;
+  }
+  /* o botão encosta sem sobrepor, e um fio interno de 1px marca que ele é
+     clicável — é o que separa "uma peça" de "dois elementos fundidos" */
+  body.t-PageBody .ui-datepicker-trigger,
+  body.t-PageBody .a-Button--popupLOV{
+    margin-left:0;
+    box-shadow:inset 1px 0 0 var(--nc-linha);
+  }
+  body.t-PageBody .ui-datepicker-trigger:hover,
+  body.t-PageBody .a-Button--popupLOV:hover{
+    background-color:var(--nc-off);color:var(--nc-estrutura);
+  }
+  /* foco no campo acende a peça inteira, não só metade dela */
+  /* O halo de foco vai nos ELEMENTOS que têm forma (campo e botão), não no
+     invólucro — ele não tem borda nem fundo, e o halo saía como um retângulo
+     solto em volta do conjunto. */
+  body.t-PageBody .apex-item-text:has(+ .ui-datepicker-trigger):focus,
+  body.t-PageBody .apex-item-text:has(+ .a-Button--popupLOV):focus{
+    box-shadow:0 0 0 3px rgba(81,28,118,.12);
+  }
+  body.t-PageBody .apex-item-text:has(+ .ui-datepicker-trigger):focus,
+  body.t-PageBody .apex-item-text:has(+ .a-Button--popupLOV):focus{
+    border-color:var(--nc-roxo);
+  }
+
+  body.t-PageBody .apex-item-group--popup-lov .apex-item-text,
+  body.t-PageBody .apex-item-group--datepicker .apex-item-text{
+    border-right:0;border-radius:var(--nc-raio-campo) 0 0 var(--nc-raio-campo);
+  }
+
+  /* Modais: escurecer o fundo. Hoje a sobreposição é clara e as modais se
+     empilham sem contraste nenhum. Só a cor é nossa — z-index vem inline. */
+  body.t-PageBody ~ .ui-widget-overlay,
+  body .ui-widget-overlay{background:rgba(27,18,56,.45);opacity:1;}
+  body .ui-dialog{border-radius:20px;box-shadow:var(--nc-sombra-alta);}
+  body .ui-dialog .ui-dialog-titlebar{
+    background-color:var(--nc-branco);
+    border-bottom:1px solid var(--nc-linha);
+    border-radius:var(--nc-raio) var(--nc-raio) 0 0;
+  }
+  /* O TÍTULO herdava rgb(138,77,138) do `ui-widget-header` do jQuery UI — uma
+     cor que não pertence à identidade e que eu nunca havia declarado. */
+  body .ui-dialog .ui-dialog-title{
+    color:var(--nc-tinta);
+    font-family:var(--nc-fonte);
+    font-size:1.55rem;
+    font-weight:800;
+    letter-spacing:-.005em;
+  }
+  /* A BASE não arredondava porque o corpo da modal é `.t-DialogRegion` — não
+     `.ui-dialog-content`, que era o que eu mirava. Ele tem fundo branco, raio 0
+     e vai até a borda inferior do diálogo, cobrindo o canto do pai.
+     `overflow:hidden` no .ui-dialog resolveria, mas cortaria as listas do
+     Select2 que abrem para fora — então o raio vai no próprio corpo. */
+  body .ui-dialog > .t-DialogRegion,
+  body .ui-dialog > .ui-dialog-content,
+  body .ui-dialog .t-DialogRegion-bodyWrapperOut:last-child,
+  body .ui-dialog .t-Dialog-footer:last-child{
+    border-bottom-left-radius:var(--nc-raio);
+    border-bottom-right-radius:var(--nc-raio);
+  }
+  /* o rodapé de botões, quando existe, é quem encosta na base */
+  body .ui-dialog .t-ButtonRegion--dialogRegion,
+  body .ui-dialog .t-Dialog-buttons{
+    border-bottom-left-radius:var(--nc-raio);
+    border-bottom-right-radius:var(--nc-raio);
+    background-color:var(--nc-branco);
+    border-top:1px solid var(--nc-linha);
+  }
+  /* o botão de fechar entra no sistema de botão de ícone */
+  body .ui-dialog .ui-dialog-titlebar-close{
+    width:36px;height:36px;border-radius:999px;
+    border:1px solid var(--nc-linha);
+    background-color:var(--nc-branco);
+    color:var(--nc-grafite);
+  }
+  body .ui-dialog .ui-dialog-titlebar-close:hover{
+    background-color:var(--nc-off);color:var(--nc-estrutura);
+  }
+
+
+/* ==========================================================================
+   4. COMPONENTS — peças da Natcorp
+   ========================================================================== */
+/* ---- natcorp.components ---- */
+  /* Ícone de cartão. A folha antiga empilhava 3 gradientes com
+     background-blend-mode:screen, cujo resultado era #e179d8 — contraste 2,66:1
+     com o glifo branco, abaixo do mínimo de 3:1 para elemento não-textual.
+     O gradiente da marca resolve com folga. */
+  body.t-PageBody .t-Card-colorFill,
+  body.t-PageBody .t-Card-icon{
+    background:var(--nc-grad);background-blend-mode:normal;
+  }
+  body.t-PageBody .t-Cards-item > .t-Card .t-Card-icon{color:var(--nc-branco);}
+  body.t-PageBody .t-Card-wrap{
+    border-radius:var(--nc-raio);border-color:var(--nc-linha);
+  }
+  body.t-PageBody .t-Card-wrap:hover{
+    border-color:var(--nc-realce);box-shadow:var(--nc-sombra);
+  }
+
+  /* Alertas com fundo tonal por tipo, no lugar dos blocos saturados. */
+  body.t-PageBody .t-Alert--colorBG.t-Alert--success{background-color:var(--nc-ok-bg);}
+  body.t-PageBody .t-Alert--colorBG.t-Alert--warning{background-color:var(--nc-aviso-bg);}
+  body.t-PageBody .t-Alert--colorBG.t-Alert--danger{background-color:var(--nc-perigo-bg);}
+  body.t-PageBody .t-Alert--horizontal,
+  body.t-PageBody .t-Alert--wizard{border-radius:var(--nc-raio);}
+
+  /* ACENTOS DE MARCA HERDADOS. A substituição apaga tudo que a folha antiga
+     fazia e a nova não refaz; estes quatro têm uso confirmado nas páginas
+     salvas e não têm equivalente no tema:
+       .t-Region-headerIcon  76 ocorrências
+       .t-HeroRegion-icon    12
+       .t-WizardSteps-marker  4 (dois estados)
+       .a-IG-header           1
+     A barra de 3px sob o título de modal NÃO foi herdada: o tratamento de
+     modal desta folha (§ .ui-dialog) já resolve aquele mesmo papel. */
+  body.t-PageBody .t-Region-headerIcon{color:var(--nc-marcacao);}
+  body.t-PageBody .t-HeroRegion-icon{
+    background-color:var(--nc-marcacao);
+    color:var(--nc-acao);
+  }
+  body.t-PageBody .t-Alert--info .t-Alert-icon .t-Icon{color:var(--nc-acao);}
+  /* O Interactive Grid é o único widget grande sem tratamento próprio nesta
+     folha — herda o Universal Theme puro. Esta regra preserva o único acento
+     que ele tem hoje; um tratamento completo do IG fica para uma próxima onda. */
+  body.t-PageBody .a-IG-header{border-bottom:3px solid var(--nc-estrutura);}
+  body.t-PageBody .t-WizardSteps-step.is-active .t-WizardSteps-marker{
+    background-color:var(--nc-marcacao);
+    color:var(--nc-branco);
+  }
+  body.t-PageBody .t-WizardSteps-step.is-complete .t-WizardSteps-marker{
+    background-color:var(--nc-acao);
+    color:var(--nc-branco);
+  }
+
+
+  /* ORGANOGRAMA (Google Charts).
+     O `orgchart.css` da gstatic carrega DEPOIS desta folha (posição 12 contra 9),
+     então aqui `!important` é obrigatório — caso (c) da política: terceiro fora
+     do nosso alcance.
+     O nó vinha como um gradiente roxo em sintaxe `-webkit-gradient` antiga, com
+     fonte de 8,4px e texto #404040 POR CIMA do roxo — ilegível, e pesado porque
+     132 nós de cor cheia competem entre si. Vira cartão claro: a hierarquia
+     passa a ser lida pelos conectores e pela posição, não por blocos de cor. */
+  body.t-PageBody .google-visualization-orgchart-node{
+    background:var(--nc-branco) !important;
+    background-image:none !important;
+    border:1px solid var(--nc-linha) !important;
+    border-radius:10px !important;
+    padding:7px 10px !important;
+    font-family:var(--nc-fonte) !important;
+    font-size:11px !important;
+    font-weight:600 !important;
+    line-height:1.35 !important;
+    color:var(--nc-tinta) !important;
+    box-shadow:0 1px 2px rgba(81,28,118,.05) !important;
+    text-shadow:none !important;
+  }
+  body.t-PageBody .google-visualization-orgchart-node:hover{
+    border-color:var(--nc-realce) !important;
+    box-shadow:var(--nc-sombra) !important;
+  }
+  /* o nó escolhido usa MARCAÇÃO, como o resto do sistema */
+  body.t-PageBody .google-visualization-orgchart-node-selected{
+    background:var(--nc-info-bg) !important;
+    border-color:var(--nc-marcacao) !important;
+    box-shadow:0 0 0 3px rgba(201,87,136,.18) !important;
+    color:var(--nc-estrutura) !important;
+  }
+  /* conectores: fio de 1px na cor de linha, no lugar dos 2px em azul escuro.
+     São eles que devem carregar a hierarquia, discretamente. */
+  body.t-PageBody .google-visualization-orgchart-lineleft{
+    border-left:1px solid var(--nc-conector) !important;
+  }
+  body.t-PageBody .google-visualization-orgchart-lineright{
+    border-right:1px solid var(--nc-conector) !important;
+  }
+  body.t-PageBody .google-visualization-orgchart-linebottom{
+    border-bottom:1px solid var(--nc-conector) !important;
+  }
+  body.t-PageBody .google-visualization-orgchart-linetop{
+    border-top:1px solid var(--nc-conector) !important;
+  }
+
+  /* O CARTÃO DE VERDADE É `table.organograma`, não o nó.
+     Cada nó do Google Charts contém um <a> com uma <table class="organograma">
+     gerada pela própria aplicação, e é ELA que carrega o gradiente roxo com
+     texto branco — vindo do <style> da página, que carrega depois desta folha.
+     Estilizar só o nó deixava os cartões com foto intactos.
+     132 blocos de cor cheia competindo entre si é o que torna o organograma
+     pesado: a hierarquia deve ser lida pela posição e pelos conectores. */
+  body.t-PageBody table.organograma{
+    background:var(--nc-branco) !important;
+    background-image:none !important;
+    color:var(--nc-tinta) !important;
+    font-family:var(--nc-fonte) !important;
+    border-radius:10px !important;
+    border-collapse:separate !important;
+  }
+  body.t-PageBody table.organograma td,
+  body.t-PageBody table.organograma tr{
+    background:transparent !important;
+    color:var(--nc-tinta) !important;
+    border:0 !important;
+  }
+  /* nome do centro de custo: o título do cartão */
+  body.t-PageBody table.organograma tr.ccusto td,
+  body.t-PageBody table.organograma big,
+  body.t-PageBody table.organograma b{
+    color:var(--nc-tinta) !important;
+    font-weight:800 !important;
+    letter-spacing:-.005em !important;
+  }
+  body.t-PageBody table.organograma big{font-size:13px !important;}
+  /* código, cargo e demais linhas de apoio */
+  body.t-PageBody table.organograma td.info{
+    font-size:11px !important;
+    font-weight:400 !important;
+    color:var(--nc-grafite) !important;
+    padding:2px 8px !important;
+  }
+  /* a foto vira avatar redondo e some como bloco pesado */
+  body.t-PageBody table.organograma img{
+    width:52px !important;height:52px !important;
+    border-radius:50% !important;object-fit:cover !important;
+    border:0 !important;
+    box-shadow:0 0 0 1px var(--nc-linha) !important;
+  }
+  /* o link do nó não fica azul nem sublinhado */
+  body.t-PageBody .google-visualization-orgchart-node a{
+    color:inherit !important;text-decoration:none !important;
+  }
+
+  /* COR COM PAPEL: a rampa da marca desenrolada sobre a PROFUNDIDADE.
+     Num organograma o nível é a informação, e hoje ele só se lê pela posição.
+     O Google Charts monta as linhas de nós em `3n+2` (2, 5, 8, 11…), então
+     cada nível é alcançável — e a rampa do gradiente da marca
+     (Azul Profundo → Roxo → Ameixa → Rosa) vira uma escala de profundidade.
+
+     Duas decisões, ambas da skill:
+     · RARIDADE DÁ FORÇA — o nível 1 é único na tela, então é o único que
+       recebe cor cheia. Espalhar cor em 132 nós era o problema do desenho
+       antigo, não a solução.
+     · COR NÃO PODE SER O ÚNICO CÓDIGO — o nível já é dito pela posição
+       vertical e pelos conectores; a cor é redundante, não exclusiva. E a
+       escala cai em LUMINOSIDADE (escuro no topo, claro embaixo), então
+       sobrevive em escala de cinza e em daltonismo. */
+
+  /* nível 1 — a âncora: cor cheia, branco por cima (14,63:1) */
+  body.t-PageBody .google-visualization-orgchart-table > tbody > tr:nth-child(2) .google-visualization-orgchart-node{
+    background:var(--nc-azul) !important;
+    border-color:var(--nc-azul) !important;
+    color:var(--nc-branco) !important;
+    font-weight:700 !important;
+    box-shadow:0 6px 16px -10px rgba(44,26,99,.6) !important;
+  }
+  body.t-PageBody .google-visualization-orgchart-table > tbody > tr:nth-child(2) table.organograma,
+  body.t-PageBody .google-visualization-orgchart-table > tbody > tr:nth-child(2) table.organograma td,
+  body.t-PageBody .google-visualization-orgchart-table > tbody > tr:nth-child(2) table.organograma big,
+  body.t-PageBody .google-visualization-orgchart-table > tbody > tr:nth-child(2) table.organograma b{
+    background:transparent !important;
+    color:var(--nc-branco) !important;
+  }
+
+  /* níveis 2 a 5 — fio de 3px no topo, na cor do nível. Um por cartão, em
+     posição fixa: é marcação estrutural, não acento espalhado. */
+  body.t-PageBody .google-visualization-orgchart-table > tbody > tr:nth-child(5) .google-visualization-orgchart-node{
+    border-top:3px solid var(--nc-roxo) !important;
+  }
+  body.t-PageBody .google-visualization-orgchart-table > tbody > tr:nth-child(8) .google-visualization-orgchart-node{
+    border-top:3px solid var(--nc-ameixa) !important;
+  }
+  body.t-PageBody .google-visualization-orgchart-table > tbody > tr:nth-child(11) .google-visualization-orgchart-node{
+    border-top:3px solid var(--nc-rosa) !important;
+  }
+  body.t-PageBody .google-visualization-orgchart-table > tbody > tr:nth-child(14) .google-visualization-orgchart-node{
+    border-top:3px solid var(--nc-realce) !important;
+  }
+
+  /* o código do centro de custo ganha a cor de estrutura: é o dado que
+     identifica o nó, e estava no mesmo cinza do cargo */
+  body.t-PageBody table.organograma tr.ccusto td{
+    color:var(--nc-estrutura) !important;
+  }
+  /* o nome do gestor é o dado que o usuário procura: fica em tinta cheia */
+  body.t-PageBody table.organograma tr:last-child td.info{
+    color:var(--nc-grafite) !important;
+  }
+
+  /* PISTA DE ROLAGEM HORIZONTAL.
+     O organograma tem 24.243px de largura numa área de 1.238px, e o
+     Interactive Report tem 24 colunas em 2.160px. Os dois ROLAM — o
+     `.t-Region-body` e o `.t-fht-tbody` têm `overflow-x:auto` — mas nada na
+     tela diz isso, então o usuário lê o conteúdo cortado como "acabou".
+
+     A técnica são quatro camadas de fundo: duas TAMPAS na cor da superfície,
+     presas ao conteúdo (`local`), e duas SOMBRAS presas ao elemento (`scroll`).
+     Quando a rolagem está no início, a tampa esquerda cobre a sombra esquerda;
+     ao rolar, a tampa sai junto com o conteúdo e a sombra aparece. Ou seja: a
+     pista some sozinha quando não há mais nada para aquele lado, sem uma linha
+     de JavaScript. */
+  body.t-PageBody .t-Region--scrollBody > .t-Region-bodyWrap > .t-Region-body,
+  body.t-PageBody .t-fht-tbody,
+  body.t-PageBody .a-IRR-tableContainer{
+    background-color:var(--nc-branco);
+    background-image:
+      linear-gradient(to right, var(--nc-branco) 30%, rgba(255,255,255,0)),
+      linear-gradient(to left,  var(--nc-branco) 30%, rgba(255,255,255,0)),
+      linear-gradient(to right, rgba(27,18,56,.13), rgba(27,18,56,0)),
+      linear-gradient(to left,  rgba(27,18,56,.13), rgba(27,18,56,0));
+    background-position:left center, right center, left center, right center;
+    background-repeat:no-repeat;
+    background-size:44px 100%, 44px 100%, 16px 100%, 16px 100%;
+    background-attachment:local, local, scroll, scroll;
+  }
+
+  /* SELECT2 no padrão de campo.
+     O item aparece como `select.selectlist.select2-hidden-accessible`: o
+     <select> real está ESCONDIDO e quem o usuário vê é a marcação que o Select2
+     monta ao lado. Estilizar o <select> não muda nada na tela — foi o que fez
+     "Tipo de Vaga" e "Grau de Instrução" ficarem de fora do padrão, em 28px com
+     borda cinza #aaa e raio 4px, o visual de fábrica da biblioteca. */
+  body.t-PageBody .select2-container .select2-selection--single{
+    height:var(--nc-alt-campo);
+    border:1px solid var(--nc-linha);
+    border-radius:var(--nc-raio-campo);
+    background-color:var(--nc-branco);
+    display:flex;align-items:center;
+    transition:border-color .15s, box-shadow .15s;
+  }
+  body.t-PageBody .select2-container .select2-selection__rendered{
+    line-height:normal;
+    padding:0 30px 0 12px;
+    font-family:var(--nc-fonte);
+    font-size:1.35rem;
+    color:var(--nc-tinta);
+  }
+  body.t-PageBody .select2-container .select2-selection__arrow{
+    height:var(--nc-alt-campo);
+    right:8px;
+  }
+  body.t-PageBody .select2-container--open .select2-selection--single,
+  body.t-PageBody .select2-container--focus .select2-selection--single{
+    border-color:var(--nc-roxo);
+    box-shadow:0 0 0 3px rgba(81,28,118,.12);
+  }
+  /* a lista aberta do Select2 É DOM (ao contrário da do <select> nativo),
+     então aqui dá para aplicar o padrão do sistema */
+  body.t-PageBody .select2-dropdown{
+    border:1px solid var(--nc-linha);
+    border-radius:var(--nc-raio-campo);
+    box-shadow:var(--nc-sombra);
+    overflow:hidden;
+  }
+  body.t-PageBody .select2-results__option{
+    font-family:var(--nc-fonte);
+    font-size:1.3rem;
+    padding:8px 12px;
+    color:var(--nc-tinta);
+  }
+  body.t-PageBody .select2-results__option--highlighted[aria-selected]{
+    background-color:var(--nc-info-bg);
+    color:var(--nc-estrutura);
+  }
+  body.t-PageBody .select2-search__field{
+    height:3.2rem;
+    border:1px solid var(--nc-linha);
+    border-radius:8px;
+    font-family:var(--nc-fonte);
+    padding:0 10px;
+  }
+
+/* ==========================================================================
+   5. UTILITIES — contrato público com o App Builder
+   Estas classes são digitadas no atributo "CSS Classes" de regiões e itens.
+   As 32 páginas amostradas não as contêm, mas a amostra é muito menor que o
+   universo de páginas dos apps. Antes de remover, rodar no dicionário:
+     select * from apex_application_page_regions
+      where region_css_classes like '%colorPurple%';
+   (idem apex_application_page_items.item_css_classes e page_buttons)
+   ========================================================================== */
+/* ---- natcorp.utilities ---- */
+  .colorPurple{color:var(--nc-roxo);}
+  .colorBlue{color:var(--nc-azul);}
+  .colorPink{color:var(--nc-rosa);}
+  .backgroundColorPurple{background-color:var(--nc-roxo);}
+  .backgroundColorBlue{background-color:var(--nc-azul);}
+  .backgroundColorPink{background-color:var(--nc-rosa);}
+
+  /* Ícones de estado em relatório. Verificado em f100-115:
+       <span class="fa fa-check-circle colorSuccess"></span> Concluída
+     Não é informação só por cor — cada estado tem ícone distinto E texto ao
+     lado, então não viola 1.4.1. Mas as cores herdadas violavam 1.4.11
+     (2,58:1 / 1,53:1 / 1,36:1). Estas passam de 3:1. */
+  .colorSuccess{color:var(--nc-ok);}
+  .colorDanger{color:var(--nc-perigo);}
+  .colorAlert{color:var(--nc-aviso);}
+  .colorInfo{color:var(--nc-azul);}
+  .colorNone{color:var(--nc-neutro);}
+
+
+/* ==========================================================================
+   6. OVERRIDES — o que precisa ganhar de tudo
+   Meta: no máximo 8 !important no arquivo inteiro (a folha antiga tinha 91).
+   Cada um justificado por uma de três razões:
+     (a) o tema usa !important no mesmo ponto;
+     (b) o valor é escrito inline por JavaScript;
+     (c) é terceiro fora do nosso alcance.
+   ========================================================================== */
+/* ---- natcorp.overrides ---- */
+
+  /* (a) O Theme Roller marca o :focus dos campos como !important. Sem isto o
+     foco continua sendo o dele. O outline soma-se à borda: indicador de 2px,
+     não de matiz. */
+  body.t-PageBody .t-Form-inputContainer input[type="text"]:focus,
+  body.t-PageBody .t-Form-inputContainer input.text_field:focus,
+  body.t-PageBody .t-Form-inputContainer input.password:focus,
+  body.t-PageBody .t-Form-inputContainer input.datepicker:focus,
+  body.t-PageBody .t-Form-inputContainer input.popup_lov:focus,
+  body.t-PageBody .t-Form-inputContainer textarea.textarea:focus,
+  body.t-PageBody .t-Form-inputContainer select:focus,
+  body.t-PageBody .apex-item-text:focus,
+  body.t-PageBody .apex-item-select:focus,
+  body.t-PageBody .apex-item-textarea:focus{
+    border-color:var(--nc-roxo) !important;
+    box-shadow:0 0 0 3px rgba(81,28,118,.12) !important;
+    background-color:var(--nc-branco) !important;
+  }
+
+  /* (a) Grupo de botões-rádio. Havia dois defeitos somados na folha antiga:
+     o texto ficava #383838 sobre #c95788 (2,90:1, reprova 1.4.3) e o anel de
+     foco era rosa sobre fundo rosa (1,00:1 — o foco sumia por completo num item
+     já selecionado). Texto branco resolve o primeiro; anel azul, o segundo. */
+  body.t-PageBody .apex-button-group input:checked + label{
+    background-color:var(--nc-roxo) !important;
+    color:var(--nc-branco) !important;
+  }
+  body.t-PageBody .apex-button-group input:focus-visible + label{
+    box-shadow:0 0 0 2px var(--nc-foco-alt) inset !important;
+  }
+
+  /* (a) Hover de linha do relatório clássico: (0,3,1) + !important no roller. */
+  body.t-PageBody .t-Report--rowHighlight .t-Report-report tr:hover .t-Report-cell{
+    background-color:var(--nc-quase) !important;
+  }
+
+  /* (b) O cabeçalho recebe background-color inline em DEV, por
+     aviso-homologacao.js. Sem !important a marca fica divergente entre
+     homologação e produção. */
+  body.t-PageBody .t-Header-branding{
+    background-color:var(--nc-roxo) !important;
+  }
+
+  /* Menus suspensos. CORREÇÃO DE ACESSIBILIDADE de um defeito que está no ar
+     hoje: a folha antiga pintava .a-Menu-content de #2c1a63 e corrigia só o
+     rótulo. Os ícones, marcas de seleção e atalhos continuavam #404040 sobre
+     azul-marinho — 1,41:1, praticamente invisíveis nos menus de coluna do
+     Interactive Report e nos menus do Interactive Grid.
+     Aqui o menu volta a ser claro: some o problema inteiro em vez de remendar
+     quatro seletores. */
+  body.t-PageBody .a-Menu-content{
+    background-color:var(--nc-branco);
+    border:1px solid var(--nc-linha);
+    border-radius:12px;
+    box-shadow:var(--nc-sombra);
+  }
+  body.t-PageBody .a-Menu .a-Menu-item{color:var(--nc-tinta);}
+  body.t-PageBody .a-Menu .a-Menu-item.is-focused,
+  body.t-PageBody .a-Menu .a-Menu-item.is-expanded{
+    background-color:var(--nc-info-bg);
+    color:var(--nc-roxo) !important;   /* (a) o Theme-Standard usa !important */
+  }
+  body.t-PageBody .a-Menu-label,
+  body.t-PageBody .a-Menu-labelContainer{color:inherit;}
+
+  /* Movimento. Nem o tema nem a folha antiga tinham qualquer guarda — havia
+     animação infinita de 1500ms sem controle (WCAG 2.2.2). */
+  @media (prefers-reduced-motion:reduce){
+    body.t-PageBody *,
+    body.t-PageBody *::before,
+    body.t-PageBody *::after{
+      animation-duration:.01ms !important;
+      animation-iteration-count:1 !important;
+      transition-duration:.01ms !important;
+      scroll-behavior:auto !important;
+    }
+  }
+
+  /* IMPRESSÃO. Não existe UMA regra @media print em Core, Vita, Theme Roller,
+     Theme-Standard nem na folha antiga. Hoje o header (position:fixed) e o menu
+     lateral (fixed, 240px) entram em toda página impressa, e o
+     transform:translate3d(192px,0,0) do .t-Body-main empurra o conteúdo para
+     fora da folha. Ganho grande, risco zero: só afeta impressão.
+     Os !important aqui são caso (b): as medidas correspondentes são inline. */
+  @media print{
+    body.t-PageBody .t-Header,
+    body.t-PageBody .t-Body-nav,
+    body.t-PageBody .t-Body-title,
+    body.t-PageBody .t-Footer,
+    body.t-PageBody .floatNati,
+    body.t-PageBody .my-floatNati,
+    body.t-PageBody .floatChamadoInterno,
+    body.t-PageBody .my-floatChamadoInterno,
+    body.t-PageBody .btnIA,
+    body #chatbase-bubble-button,
+    body.t-PageBody #t_Body_content_offset{display:none !important;}
+
+    body.t-PageBody .t-Body-main,
+    body.t-PageBody .t-Body-content{
+      margin:0 !important;transform:none !important;overflow:visible !important;
+    }
+    body.t-PageBody .t-Region{
+      box-shadow:none;border:1px solid #ccc;break-inside:avoid;
+    }
+    body.t-PageBody .t-Region .t-Region-body{overflow:visible !important;}
+    body.t-PageBody{background:#fff;}
+  }
+

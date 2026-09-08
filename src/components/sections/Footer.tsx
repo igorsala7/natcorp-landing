@@ -4,6 +4,7 @@ import { Logo } from '@/components/brand/Logo'
 import { groups } from '@/content/modulePages'
 import { paths, siteConfig } from '@/content/site'
 import { segmentPath, segmentRegistry, segmentsPath } from '@/content/segments'
+import { reabrirConsentimento } from '@/lib/consent'
 
 const footerLinks = [
   { to: paths.home, label: 'Início' },
@@ -133,7 +134,18 @@ export function Footer() {
 
         <div className="mt-14 flex flex-col gap-4 border-t border-white/10 pt-6 text-xs text-white/50 md:flex-row md:items-center md:justify-between">
           <p>© {new Date().getFullYear()} Natcorp. Todos os direitos reservados.</p>
-          <p>Dados tratados em conformidade com a LGPD (Lei nº 13.709/2018).</p>
+          <p className="flex flex-wrap items-center gap-x-4 gap-y-1">
+            <span>Dados tratados em conformidade com a LGPD (Lei nº 13.709/2018).</span>
+            {/* Quem recusou precisa conseguir voltar atrás — e quem aceitou,
+                também. Consentimento sem saída não é escolha. */}
+            <button
+              type="button"
+              onClick={reabrirConsentimento}
+              className="underline-offset-2 transition-colors hover:text-white hover:underline"
+            >
+              Cookies
+            </button>
+          </p>
           <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
             <Link to={paths.motion} className="font-semibold text-white/70 transition-colors hover:text-white">
               Motion da marca

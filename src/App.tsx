@@ -9,6 +9,7 @@ import { ScrollProgress } from '@/components/motion/ScrollProgress'
 import { ScrollManager } from '@/components/motion/ScrollManager'
 import { Navbar } from '@/components/sections/Navbar'
 import { Footer } from '@/components/sections/Footer'
+import { CookieBar } from '@/components/sections/CookieBar'
 import LandingPage from '@/pages/LandingPage'
 import { paths } from '@/content/site'
 
@@ -209,6 +210,9 @@ function Shell() {
         <AppRoutes />
       </main>
       {!chromeless && !hub && <Footer />}
+      {/* Fora do `chromeless` e do `hub`: consentimento vale em toda página,
+          inclusive na apresentação e nos portais dos clientes. */}
+      <CookieBar />
     </>
   )
 }

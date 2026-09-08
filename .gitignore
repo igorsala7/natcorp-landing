@@ -22,3 +22,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Saída do Playwright (capturas e logs de sessão)
+.playwright-mcp/
