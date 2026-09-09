@@ -161,20 +161,67 @@ export function Navbar() {
     onDark ? 'text-white/85 hover:bg-white/10 hover:text-white' : 'text-brand-ink/80 hover:bg-brand-off-white hover:text-brand-purple',
   )
 
-  const megaButton = (which: MobileGroup) => (
-    <button
-      type="button"
-      className={cn(linkClass, 'inline-flex items-center gap-1', mega === which && !onDark && 'bg-brand-off-white text-brand-purple')}
-      aria-expanded={mega === which}
-      aria-controls={`menu-${which}`}
-      onPointerEnter={(e) => e.pointerType === 'mouse' && openMega(which)}
-      onPointerLeave={(e) => e.pointerType === 'mouse' && scheduleClose()}
-      onClick={() => (mega === which ? setMega(null) : openMega(which))}
-    >
-      {megaLabels[which]}
-      <ChevronDown className={cn('h-4 w-4 transition-transform duration-300', mega === which && 'rotate-180')} aria-hidden />
-    </button>
-  )
+  /**
+   * Item do menu que abre um mega-menu.
+   *
+   * Com `to`, o rótulo vira um LINK de verdade em vez de um <button>: no
+   * desktop o mouse abre o painel ao passar por cima e o clique navega para a
+   * página-índice. Sem isso a página-índice só é alcançável pelo rodapé do
+   * painel, e um item de navegação que não leva a lugar nenhum desperdiça a
+   * posição mais valiosa do site.
+   *
+   * No toque não existe "passar por cima": o primeiro toque abre o painel (e
+   * cancela a navegação), o segundo navega. É o padrão de menu suspenso em
+   * telas sensíveis — sem ele o painel nunca abriria no iPad.
+   */
+  const megaButton = (which: MobileGroup, to?: string) => {
+    const conteudo = (
+      <>
+        {megaLabels[which]}
+        <ChevronDown className={cn('h-4 w-4 transition-transform duration-300', mega === which && 'rotate-180')} aria-hidden />
+      </>
+    )
+    const classe = cn(linkClass, 'inline-flex items-center gap-1', mega === which && !onDark && 'bg-brand-off-white text-brand-purple')
+    const aoPassar = {
+      onPointerEnter: (e: React.PointerEvent) => e.pointerType === 'mouse' && openMega(which),
+      onPointerLeave: (e: React.PointerEvent) => e.pointerType === 'mouse' && scheduleClose(),
+    }
+    if (!to) {
+      return (
+        <button
+          type="button"
+          className={classe}
+          aria-expanded={mega === which}
+          aria-controls={`menu-${which}`}
+          {...aoPassar}
+          onClick={() => (mega === which ? setMega(null) : openMega(which))}
+        >
+          {conteudo}
+        </button>
+      )
+    }
+    return (
+      <Link
+        to={to}
+        className={classe}
+        aria-expanded={mega === which}
+        aria-controls={`menu-${which}`}
+        {...aoPassar}
+        onClick={(e) => {
+          // No toque o painel ainda não abriu, então o primeiro toque abre em
+          // vez de navegar. Com mouse o painel já está aberto e o clique segue.
+          if (mega !== which) {
+            e.preventDefault()
+            openMega(which)
+            return
+          }
+          closeAll()
+        }}
+      >
+        {conteudo}
+      </Link>
+    )
+  }
 
   const panelProps = (which: MobileGroup) => ({
     id: `menu-${which}`,
@@ -234,12 +281,12 @@ export function Navbar() {
         </Link>
 
         <nav className="hidden items-center gap-1 lg:flex" aria-label="Navegação principal">
-          {megaButton('sistema')}
+          {megaButton('sistema', paths.modules)}
           <Link to={paths.nati} onClick={closeAll} className={linkClass}>
             NATI
           </Link>
-          {megaButton('segmentos')}
-          {megaButton('empresa')}
+          {megaButton('segmentos', segmentsPath)}
+          {megaButton('empresa', paths.about)}
           <Link to={paths.contact} onClick={closeAll} className={linkClass}>
             Contato
           </Link>
