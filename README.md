@@ -48,6 +48,7 @@ npm run lint     # oxlint
 | `/admin/portais` | Administração do cadastro dos portais, só para o administrador. Nome, slug, código base do APEX, logotipo, ativo e os seis endereços em produção e em homologação, com preenchimento pelo padrão do servidor. Salvar grava `src/content/portals.json` e os logotipos no repositório pela API do GitHub, com um token que fica só no navegador; a publicação segue pela Vercel. Fora do menu, do sitemap e dos robôs |
 | `/apresentacao` | Apresentação comercial em tela cheia (fora do menu e do sitemap): 32 slides, mais uma página para cada um dos 31 módulos, com navegação por teclado, índice, notas do apresentador, tela cheia e exportação em PDF e PowerPoint. `?s=N` abre direto no slide N; `?modulos=1` põe as páginas dos módulos na sequência |
 | `/apresentacao/reduzida` | A mesma apresentação em 18 slides, para a primeira conversa (cerca de 20 minutos). |
+| `/hospedagem` | A documentação técnica de publicação (`HOSPEDAGEM.md`) lida como página, para mandar por link à empresa de hospedagem: índice fixo com a seção atual destacada, botão de copiar em cada bloco de configuração, Apache/Nginx/IIS em abas e o checklist de validação marcável, com o progresso guardado no navegador. Sem rolagem suave (as âncoras e o Ctrl+F precisam ser previsíveis) e com folha de impressão própria. Fora do menu, do sitemap e dos robôs |
 | `/jornada-da-contratacao` | Jornada do colaborador em 24 etapas e 4 fases, em uma indústria fictícia. Duas visões (`?modo=pratico` alterna): a história completa, com personagens 3D, mini mockups e o mapa que acompanha a rolagem, e a visão prática, um diagrama por raias (gestor, candidato, colaborador, RH, SESMT, sistema). Fecha com o diagrama animado dos módulos se integrando |
 | qualquer outra | Página 404 |
 
@@ -100,6 +101,19 @@ fine-grained do GitHub com `Contents: Read and write` apenas neste repositório;
 daquele navegador e nunca é enviado a outro lugar. `VITE_ADMIN_REPO_OWNER`, `VITE_ADMIN_REPO` e `VITE_ADMIN_BRANCH`
 mudam o destino da gravação (o padrão é `igorsala7/natcorp-landing`, branch `main`). Sem token, a página abre em
 prévia: dá para navegar e mexer, mas nada é gravado.
+
+## Documentação de publicação
+
+`HOSPEDAGEM.md`, na raiz, é o guia entregue à empresa de hospedagem: requisitos, os dois modelos de entrega,
+as quatro regras obrigatórias de servidor (SPA fallback, domínio canônico, 301 dos endereços antigos e a pasta
+`/portais/` que vem do servidor atual), cache, compressão, MIME, cabeçalhos, conexões de saída e o checklist de
+validação, com configuração pronta para Apache, Nginx e IIS.
+
+A rota `/hospedagem` **lê esse mesmo arquivo** (`import ... from '../../HOSPEDAGEM.md?raw'`) e o renderiza:
+não existe segunda cópia do texto para manter em dia. `src/lib/docMarkdown.ts` interpreta o subconjunto de
+Markdown que o documento usa e `src/components/docs/DocBlocks.tsx` desenha os blocos. As três configurações de
+servidor viram abas por causa dos marcadores `<!-- tabs -->` e `<!-- /tabs -->` no `.md`, que somem na leitura
+normal do arquivo; na impressão as abas se desfazem e os três blocos aparecem empilhados.
 
 ## Apresentação executiva
 

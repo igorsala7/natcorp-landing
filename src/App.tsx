@@ -32,6 +32,7 @@ const MotionPage = lazy(() => import('@/pages/MotionPage'))
 const PresentationPage = lazy(() => import('@/pages/PresentationPage'))
 const PortalHubPage = lazy(() => import('@/pages/PortalHubPage'))
 const PortalAdminPage = lazy(() => import('@/pages/PortalAdminPage'))
+const HostingDocsPage = lazy(() => import('@/pages/HostingDocsPage'))
 const AnimaticPage = lazy(() => import('@/pages/AnimaticPage')) // TEMPORÁRIO: animatic do filme de 30s
 
 /** HashRouter apenas para prévias hospedadas fora da raiz de um domínio (VITE_ROUTER=hash). */
@@ -168,6 +169,16 @@ function AppRoutes() {
             </Suspense>
           }
         />
+        {/* Documentação técnica de publicação, para a empresa de hospedagem
+            (fora do menu, do sitemap e dos robôs; compartilhada por link). */}
+        <Route
+          path="/hospedagem"
+          element={
+            <Suspense fallback={<PageFallback />}>
+              <HostingDocsPage />
+            </Suspense>
+          }
+        />
         {/* Administração do cadastro dos portais (só para o administrador; fora do menu e do sitemap). */}
         <Route
           path={paths.portalAdmin}
@@ -210,10 +221,14 @@ function Shell() {
   const hubProd = useMatch('/portais_beta/:cliente')
   const hubDev = useMatch('/portais_beta/dev/:cliente')
   const admin = useMatch('/admin/*')
-  const hub = hubProd !== null || hubDev !== null || admin !== null
+  const docs = useMatch('/hospedagem')
+  // Páginas com cabeçalho próprio: o menu de marketing não ajuda quem está lá.
+  const hub = hubProd !== null || hubDev !== null || admin !== null || docs !== null
   return (
     <>
-      {!chromeless && <SmoothScroll />}
+      {/* A documentação fica sem rolagem suave: com o Lenis no caminho, as âncoras do índice
+          e o Ctrl+F do navegador ficam imprevisíveis, e ali a pessoa está trabalhando. */}
+      {!chromeless && !docs && <SmoothScroll />}
       {!chromeless && <ScrollProgress />}
       <ScrollManager />
       {!chromeless && !hub && <Navbar />}

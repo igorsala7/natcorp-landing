@@ -220,3 +220,42 @@
     display: flex !important;
   }
 }
+
+/*
+ * Documentação técnica (/hospedagem) impressa em papel.
+ *
+ * Na tela os blocos de código são escuros; no papel isso vira uma mancha de tinta
+ * que muitas impressoras clareiam até o texto sumir. Então na impressão eles
+ * invertem: fundo branco, texto escuro, contorno fino. E nenhum bloco de código,
+ * tabela ou item de checklist pode ser partido no meio por uma quebra de página.
+ */
+@media print {
+  .doc-page pre,
+  .doc-page pre > code {
+    color: #1b1238 !important;
+  }
+  .doc-page pre {
+    background: #ffffff !important;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+  .doc-page pre,
+  .doc-page table,
+  .doc-page li {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+  .doc-page h2 {
+    break-before: page;
+    page-break-before: always;
+  }
+  .doc-page h2:first-of-type {
+    break-before: auto;
+    page-break-before: auto;
+  }
+  .doc-page h2,
+  .doc-page h3 {
+    break-after: avoid;
+    page-break-after: avoid;
+  }
+}

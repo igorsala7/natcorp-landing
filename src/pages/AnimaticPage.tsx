@@ -186,6 +186,94 @@ function Convergencia({ t }: { t: number }) {
  * mesmo SVG do site, e por isso chega ao filme sem deformação.
  * ?marca=simbolo | horizontal
  */
+/**
+ * Assinatura eletrônica: token de 6 dígitos, Confirmar, e o aviso de sucesso.
+ *
+ * É a única tela do filme que não existia como mockup — o AdmissionMockup cita
+ * a assinatura numa lista de etapas, mas não mostra o ato. E o ato é o que foi
+ * pedido: sem ele o filme fala de assinatura eletrônica sem nunca assiná-la.
+ */
+function AssinaturaMockup({ assinado = false }: { assinado?: boolean }) {
+  const digitos = ['4', '7', '2', '9', '1', '5']
+  return (
+    <div className="w-[420px] rounded-2xl border border-brand-mist bg-white p-6 shadow-soft">
+      <p className="text-[11px] font-semibold uppercase tracking-wider text-brand-plum">
+        Assinatura eletrônica
+      </p>
+      <p className="mt-1 text-[15px] font-semibold text-brand-ink">Contrato de trabalho</p>
+
+      {assinado ? (
+        <div className="mt-5 flex items-center gap-3 rounded-xl bg-emerald-50 p-4">
+          <span
+            aria-hidden
+            className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-emerald-500 text-[18px] font-bold text-white"
+          >
+            ✓
+          </span>
+          <p className="text-[14px] font-semibold leading-snug text-emerald-800">
+            Documento assinado com sucesso
+          </p>
+        </div>
+      ) : (
+        <>
+          <p className="mt-4 text-[12px] text-brand-slate">
+            Informe o token enviado para o seu celular
+          </p>
+          <div className="mt-3 flex gap-2" aria-label="Token de seis dígitos">
+            {digitos.map((d, i) => (
+              <span
+                key={i}
+                className="grid h-12 w-[58px] place-items-center rounded-lg border-2 border-brand-mist bg-brand-cloud text-[20px] font-bold tabular-nums text-brand-ink"
+              >
+                {d}
+              </span>
+            ))}
+          </div>
+          <div className="mt-5 rounded-lg bg-brand-plum py-3 text-center text-[14px] font-semibold text-white">
+            Confirmar
+          </div>
+        </>
+      )}
+    </div>
+  )
+}
+
+/**
+ * ?painel=<nome> — UM mockup isolado, sobre transparente.
+ *
+ * É o que se compõe sobre a filmagem: no filme a interface aparece FLUTUANDO no
+ * ar ao lado da pessoa, não colada no vidro do aparelho. Some assim a
+ * necessidade de rastrear os cantos da tela quadro a quadro, e a linguagem fica
+ * igual à do plano da NATI, que já foi montado desse jeito.
+ */
+const PAINEIS = {
+  natponto: (
+    <ScaledFrame width={NATPONTO_SIZE.width} height={NATPONTO_SIZE.height} className="w-[300px]">
+      <NatPontoPhone screen="success" />
+    </ScaledFrame>
+  ),
+  assinatura: <AssinaturaMockup />,
+  assinado: <AssinaturaMockup assinado />,
+  requisicao: <RequestMockup className="w-[560px] shadow-soft" />,
+  // Sem FitFrame aqui: ele é `w-full` e mede o pai, que num `inline-block` sem
+  // largura dá 0 — a captura vinha inteiramente transparente. Largura fixa.
+  folha: (
+    <div className="w-[760px]">
+      <DashboardMockup className="border-brand-mist shadow-soft" />
+    </div>
+  ),
+  portal: (
+    <ScaledFrame
+      width={EMPLOYEE_CARD_SIZE.width}
+      height={EMPLOYEE_CARD_SIZE.height}
+      className="w-[280px]"
+    >
+      <EmployeeCardMockup />
+    </ScaledFrame>
+  ),
+  sesmt: <SesmtMockup className="w-[560px] shadow-soft" />,
+} as const
+
 function MarcaPeito({ variante, tom }: { variante: 'symbol' | 'horizontal'; tom: 'white' | 'gradient' }) {
   return (
     <div className="flex h-[600px] w-[1200px] items-center justify-center">
@@ -207,6 +295,20 @@ export default function AnimaticPage() {
   const nu = busca.get('nu') === '1'
   const so = (n: number) => (q > 0 && q !== n ? { display: 'none' as const } : undefined)
   if (conv !== null) return <Convergencia t={Math.min(1, Math.max(0, conv))} />
+  // ?painel=<nome> devolve só o mockup, sobre transparente, encostado no canto
+  // superior esquerdo. A captura vem numa tela folgada e o recorte pelo canal
+  // alfa acha a caixa exata depois — mais confiável do que acertar o tamanho da
+  // janela para cada painel.
+  const painel = busca.get('painel') as keyof typeof PAINEIS | null
+  if (painel && painel in PAINEIS) {
+    return (
+      <>
+        <style>{'html,body,#root{background:transparent !important;margin:0}'}</style>
+        <div className="inline-block p-6">{PAINEIS[painel]}</div>
+      </>
+    )
+  }
+
   const marca = busca.get('marca')
   if (marca === 'simbolo' || marca === 'horizontal') {
     return (

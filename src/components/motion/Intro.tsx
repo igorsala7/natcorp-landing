@@ -10,18 +10,26 @@ const STORAGE_KEY = 'natcorp:intro'
 const HOLD_MS = LOGO_MOTION_MS + 450
 
 /**
- * A porta de entrada dos portais (/portais_beta/<cliente> e /portais_beta/dev/<cliente>) e a administração (/admin/...)
- * abrem direto: quem chega ali quer entrar no sistema ou trabalhar.
+ * Páginas de trabalho abrem direto, sem a assinatura.
+ *
+ * A porta de entrada dos portais (/portais_beta/<cliente> e /portais_beta/dev/<cliente>)
+ * e a administração (/admin/...): quem chega ali quer entrar no sistema. A documentação
+ * de publicação (/hospedagem): quem abre o link está com o servidor na mão. E '/animatic',
+ * TEMPORÁRIO, porque a abertura atrapalharia a fotografia dos quadros.
  */
-function isPortalHub() {
+function skipsIntro() {
   const where = `${window.location.pathname}${window.location.hash}`
-  // '/animatic' é TEMPORÁRIO: a abertura atrapalharia a fotografia dos quadros.
-  return /(^|#)\/portais\/(dev\/)?[^/]+\/?$/.test(where) || /(^|#)\/admin(\/|$)/.test(where) || /(^|#)\/animatic/.test(where)
+  return (
+    /(^|#)\/portais_beta\/(dev\/)?[^/]+\/?$/.test(where) ||
+    /(^|#)\/admin(\/|$)/.test(where) ||
+    /(^|#)\/hospedagem\/?$/.test(where) ||
+    /(^|#)\/animatic/.test(where)
+  )
 }
 
 function shouldShow() {
   if (typeof window === 'undefined') return false
-  if (isPortalHub()) return false
+  if (skipsIntro()) return false
   try {
     return window.sessionStorage.getItem(STORAGE_KEY) !== '1'
   } catch {

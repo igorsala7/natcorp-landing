@@ -230,6 +230,8 @@ O `'unsafe-inline'` em `script-src` é necessário: o `index.html` traz um scrip
 
 ## 6. Configurações prontas por servidor
 
+<!-- tabs -->
+
 ### 6.1 Apache — `.htaccess` na raiz
 
 ```apache
@@ -418,6 +420,8 @@ server {
   </system.webServer>
 </configuration>
 ```
+
+<!-- /tabs -->
 
 ---
 
