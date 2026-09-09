@@ -29,7 +29,7 @@ export default function StructuresIndexPage() {
   useSeo({
     title: 'Como é a sua estrutura? Empresa única, grupo, filiais | Natcorp',
     description:
-      'Empresa única, várias unidades, grupo com RH central, RH em cada unidade ou equipes em clientes: responda a três perguntas e veja como o sistema de RH da Natcorp, os módulos e o centro de serviços compartilhados se encaixam na sua estrutura.',
+      'Sistema de RH para empresa única, várias unidades, grupo com RH central, RH por unidade ou equipes em clientes: responda a três perguntas e veja o encaixe.',
     path: structuresPath,
   })
 

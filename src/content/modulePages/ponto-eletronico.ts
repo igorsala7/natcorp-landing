@@ -4,13 +4,13 @@ const page: ModulePage = {
   slug: 'ponto-eletronico',
   name: 'Ponto Eletrônico',
   group: 'ponto-e-jornada',
-  tagline: 'Frequência apurada, banco de horas em dia e [[folha pronta]].',
+  tagline: 'O sistema de ponto eletrônico que entrega a [[folha já apurada]].',
   summary:
-    'Escalas, plantões, banco de horas e abonos em um só lugar. As marcações chegam do NatPonto, de relógios de ponto ou de outros sistemas, o sistema aplica as regras da empresa e do sindicato, e o resultado vai direto para a folha, sem planilha nem digitação.',
+    'O sistema de ponto eletrônico da Natcorp reúne escalas, plantões, banco de horas e abonos em um só lugar. As marcações chegam do NatPonto, de relógios de ponto ou de outros sistemas, o sistema aplica as regras da empresa e do sindicato, e o resultado vai direto para a folha, sem planilha nem digitação.',
   seo: {
-    title: 'Ponto Eletrônico e Gestão de Jornada | Natcorp',
+    title: 'Sistema de Ponto Eletrônico e Gestão de Jornada | Natcorp',
     description:
-      'Ponto eletrônico para grandes empresas: escalas, plantões 12x36, banco de horas, abono com workflow e apuração integrada à folha. AFD, AEJ e espelho de ponto.',
+      'Sistema de ponto eletrônico para grandes empresas: escalas, plantões 12x36, banco de horas, abono com workflow e apuração integrada à folha. AFD e AEJ.',
   },
   highlights: [
     { value: '75%', label: 'menos tempo no tratamento do ponto' },

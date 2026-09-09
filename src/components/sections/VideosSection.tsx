@@ -53,7 +53,7 @@ export function VideosSection() {
                 >
                   <img
                     src={video.thumb}
-                    alt=""
+                    alt={`Miniatura do vídeo: ${video.title}`}
                     width={960}
                     height={540}
                     loading="lazy"
@@ -103,7 +103,7 @@ export function VideosSection() {
                       )}
                     >
                       <span className="relative aspect-video w-28 shrink-0 overflow-hidden rounded-lg bg-black sm:w-32">
-                        <img src={v.thumb} alt="" width={960} height={540} loading="lazy" decoding="async" className="h-full w-full object-cover" />
+                        <img src={v.thumb} alt={`Miniatura do vídeo: ${v.title}`} width={960} height={540} loading="lazy" decoding="async" className="h-full w-full object-cover" />
                         <span
                           className={cn(
                             'absolute inset-0 flex items-center justify-center bg-brand-blue/35 transition-opacity duration-300',

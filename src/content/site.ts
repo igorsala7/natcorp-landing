@@ -10,9 +10,9 @@ export const siteConfig = {
   city: 'Barueri e São Paulo · SP',
   coverage: 'Atendemos todo o território nacional.',
   youtube: 'https://www.youtube.com/@natcorpbr',
-  defaultTitle: 'Natcorp — Todo o RH em um único sistema | Sistema de RH para grandes empresas',
+  defaultTitle: 'Sistema de RH completo para grandes empresas | Natcorp',
   defaultDescription:
-    'Folha de pagamento, ponto eletrônico, eSocial, admissão digital, saúde e segurança do trabalho, people analytics e a NATI, nossa Inteligência Artificial: todos os módulos integrados em um único sistema de RH para grandes empresas. Há mais de 30 anos.',
+    'Sistema de RH completo para grandes empresas: folha de pagamento, ponto eletrônico, eSocial, admissão digital, SESMT, people analytics e a NATI, nossa IA.',
 }
 
 /** Escritórios da Natcorp, como constam na página "Fale conosco" do site anterior. */

@@ -14,6 +14,8 @@ interface FAQSectionProps {
   lead?: string
   /** Link para a lista completa, quando a seção mostra só uma parte. */
   more?: { to: string; label: string }
+  /** `false` quando a página já emite o próprio FAQPage com estas perguntas. */
+  schema?: boolean
 }
 
 export function FAQSection({
@@ -24,6 +26,7 @@ export function FAQSection({
   title = 'O que as empresas [[perguntam antes]] de escolher.',
   lead = 'Respostas diretas sobre abrangência, estrutura, volume, eSocial, ponto, NATI, segurança e implantação.',
   more,
+  schema = true,
 }: FAQSectionProps) {
   return (
     <Section id={id} tone={tone} aria-labelledby={`${id}-title`}>
@@ -45,7 +48,7 @@ export function FAQSection({
         </div>
 
         <Reveal delay={0.15}>
-          <FaqAccordion items={items} />
+          <FaqAccordion items={items} schema={schema} />
         </Reveal>
       </div>
     </Section>

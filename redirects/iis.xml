@@ -1,0 +1,515 @@
+<!-- 128 redirecionamentos 301 do site antigo para o novo — formato IIS (web.config).
+     GERADO por scripts/generate-redirects.mjs. Não edite à mão.
+     Cole dentro de <rules>, ANTES da regra de SPA fallback. -->
+<rule name="legacy-001" stopProcessing="true">
+  <match url="^solucao-de-rh/?$" />
+  <action type="Redirect" url="/modulos" redirectType="Permanent" />
+</rule>
+<rule name="legacy-002" stopProcessing="true">
+  <match url="^solucao-de-rh-old/?$" />
+  <action type="Redirect" url="/modulos" redirectType="Permanent" />
+</rule>
+<rule name="legacy-003" stopProcessing="true">
+  <match url="^solucao-de-rh/testefolha/?$" />
+  <action type="Redirect" url="/modulos/folha-de-pagamento" redirectType="Permanent" />
+</rule>
+<rule name="legacy-004" stopProcessing="true">
+  <match url="^sistema-de-rh-hcm/?$" />
+  <action type="Redirect" url="/modulos" redirectType="Permanent" />
+</rule>
+<rule name="legacy-005" stopProcessing="true">
+  <match url="^sistema-de-gestao-de-rh-completo/?$" />
+  <action type="Redirect" url="/modulos" redirectType="Permanent" />
+</rule>
+<rule name="legacy-006" stopProcessing="true">
+  <match url="^sistema-de-gestao-de-rh-completo-1/?$" />
+  <action type="Redirect" url="/modulos" redirectType="Permanent" />
+</rule>
+<rule name="legacy-007" stopProcessing="true">
+  <match url="^sistema-de-rh-completo-2-0/?$" />
+  <action type="Redirect" url="/modulos" redirectType="Permanent" />
+</rule>
+<rule name="legacy-008" stopProcessing="true">
+  <match url="^teste-nova-lp-sistema-completo/?$" />
+  <action type="Redirect" url="/modulos" redirectType="Permanent" />
+</rule>
+<rule name="legacy-009" stopProcessing="true">
+  <match url="^folha-de-pagamento/?$" />
+  <action type="Redirect" url="/modulos/folha-de-pagamento" redirectType="Permanent" />
+</rule>
+<rule name="legacy-010" stopProcessing="true">
+  <match url="^folha-de-pagamento1-0/?$" />
+  <action type="Redirect" url="/modulos/folha-de-pagamento" redirectType="Permanent" />
+</rule>
+<rule name="legacy-011" stopProcessing="true">
+  <match url="^folha-de-pagamento-2-0-2/?$" />
+  <action type="Redirect" url="/modulos/folha-de-pagamento" redirectType="Permanent" />
+</rule>
+<rule name="legacy-012" stopProcessing="true">
+  <match url="^folha-de-pagamento-2-1/?$" />
+  <action type="Redirect" url="/modulos/folha-de-pagamento" redirectType="Permanent" />
+</rule>
+<rule name="legacy-013" stopProcessing="true">
+  <match url="^folha-de-pagamento-teste-prototipo/?$" />
+  <action type="Redirect" url="/modulos/folha-de-pagamento" redirectType="Permanent" />
+</rule>
+<rule name="legacy-014" stopProcessing="true">
+  <match url="^sobre-nos/?$" />
+  <action type="Redirect" url="/sobre" redirectType="Permanent" />
+</rule>
+<rule name="legacy-015" stopProcessing="true">
+  <match url="^servicos/?$" />
+  <action type="Redirect" url="/sobre#servicos" redirectType="Permanent" />
+</rule>
+<rule name="legacy-016" stopProcessing="true">
+  <match url="^jobs/?$" />
+  <action type="Redirect" url="/sobre" redirectType="Permanent" />
+</rule>
+<rule name="legacy-017" stopProcessing="true">
+  <match url="^congerhi/?$" />
+  <action type="Redirect" url="/sobre" redirectType="Permanent" />
+</rule>
+<rule name="legacy-018" stopProcessing="true">
+  <match url="^fale-conosco/?$" />
+  <action type="Redirect" url="/contato" redirectType="Permanent" />
+</rule>
+<rule name="legacy-019" stopProcessing="true">
+  <match url="^fale-conosco-2/?$" />
+  <action type="Redirect" url="/contato" redirectType="Permanent" />
+</rule>
+<rule name="legacy-020" stopProcessing="true">
+  <match url="^agradecimento/?$" />
+  <action type="Redirect" url="/contato" redirectType="Permanent" />
+</rule>
+<rule name="legacy-021" stopProcessing="true">
+  <match url="^formulario-lgpd/?$" />
+  <action type="Redirect" url="/contato" redirectType="Permanent" />
+</rule>
+<rule name="legacy-022" stopProcessing="true">
+  <match url="^infrastructure/?$" />
+  <action type="Redirect" url="/seguranca" redirectType="Permanent" />
+</rule>
+<rule name="legacy-023" stopProcessing="true">
+  <match url="^oracle-cloud-natcorp/?$" />
+  <action type="Redirect" url="/seguranca" redirectType="Permanent" />
+</rule>
+<rule name="legacy-024" stopProcessing="true">
+  <match url="^carrossel/?$" />
+  <action type="Redirect" url="/" redirectType="Permanent" />
+</rule>
+<rule name="legacy-025" stopProcessing="true">
+  <match url="^landing-page/?$" />
+  <action type="Redirect" url="/" redirectType="Permanent" />
+</rule>
+<rule name="legacy-026" stopProcessing="true">
+  <match url="^1234-2/?$" />
+  <action type="Redirect" url="/" redirectType="Permanent" />
+</rule>
+<rule name="legacy-027" stopProcessing="true">
+  <match url="^blog/?$" />
+  <action type="Redirect" url="/sistema" redirectType="Permanent" />
+</rule>
+<rule name="legacy-028" stopProcessing="true">
+  <match url="^blog/2/?$" />
+  <action type="Redirect" url="/sistema" redirectType="Permanent" />
+</rule>
+<rule name="legacy-029" stopProcessing="true">
+  <match url="^blog/3/?$" />
+  <action type="Redirect" url="/sistema" redirectType="Permanent" />
+</rule>
+<rule name="legacy-030" stopProcessing="true">
+  <match url="^blog/4/?$" />
+  <action type="Redirect" url="/sistema" redirectType="Permanent" />
+</rule>
+<rule name="legacy-031" stopProcessing="true">
+  <match url="^blog/5/?$" />
+  <action type="Redirect" url="/sistema" redirectType="Permanent" />
+</rule>
+<rule name="legacy-032" stopProcessing="true">
+  <match url="^blog/6/?$" />
+  <action type="Redirect" url="/sistema" redirectType="Permanent" />
+</rule>
+<rule name="legacy-033" stopProcessing="true">
+  <match url="^blog/7/?$" />
+  <action type="Redirect" url="/sistema" redirectType="Permanent" />
+</rule>
+<rule name="legacy-034" stopProcessing="true">
+  <match url="^blog/8/?$" />
+  <action type="Redirect" url="/sistema" redirectType="Permanent" />
+</rule>
+<rule name="legacy-035" stopProcessing="true">
+  <match url="^blog/9/?$" />
+  <action type="Redirect" url="/sistema" redirectType="Permanent" />
+</rule>
+<rule name="legacy-036" stopProcessing="true">
+  <match url="^blog/10/?$" />
+  <action type="Redirect" url="/sistema" redirectType="Permanent" />
+</rule>
+<rule name="legacy-037" stopProcessing="true">
+  <match url="^category/gestao/?$" />
+  <action type="Redirect" url="/sistema" redirectType="Permanent" />
+</rule>
+<rule name="legacy-038" stopProcessing="true">
+  <match url="^category/gestao-estrategica/?$" />
+  <action type="Redirect" url="/sistema" redirectType="Permanent" />
+</rule>
+<rule name="legacy-039" stopProcessing="true">
+  <match url="^category/gestao-estrategica/page/2/?$" />
+  <action type="Redirect" url="/sistema" redirectType="Permanent" />
+</rule>
+<rule name="legacy-040" stopProcessing="true">
+  <match url="^category/gestao-estrategica/page/3/?$" />
+  <action type="Redirect" url="/sistema" redirectType="Permanent" />
+</rule>
+<rule name="legacy-041" stopProcessing="true">
+  <match url="^category/novidades/?$" />
+  <action type="Redirect" url="/sistema" redirectType="Permanent" />
+</rule>
+<rule name="legacy-042" stopProcessing="true">
+  <match url="^category/novidades/page/2/?$" />
+  <action type="Redirect" url="/sistema" redirectType="Permanent" />
+</rule>
+<rule name="legacy-043" stopProcessing="true">
+  <match url="^category/sistema/?$" />
+  <action type="Redirect" url="/modulos" redirectType="Permanent" />
+</rule>
+<rule name="legacy-044" stopProcessing="true">
+  <match url="^category/tributario/?$" />
+  <action type="Redirect" url="/modulos/esocial" redirectType="Permanent" />
+</rule>
+<rule name="legacy-045" stopProcessing="true">
+  <match url="^category/curiosidades/?$" />
+  <action type="Redirect" url="/sistema" redirectType="Permanent" />
+</rule>
+<rule name="legacy-046" stopProcessing="true">
+  <match url="^category/uncategorized/?$" />
+  <action type="Redirect" url="/sistema" redirectType="Permanent" />
+</rule>
+<rule name="legacy-047" stopProcessing="true">
+  <match url="^atualizacao-do-esocial-natcorp/?$" />
+  <action type="Redirect" url="/modulos/esocial" redirectType="Permanent" />
+</rule>
+<rule name="legacy-048" stopProcessing="true">
+  <match url="^saiba-mais-sobre-o-novo-esocial/?$" />
+  <action type="Redirect" url="/modulos/esocial" redirectType="Permanent" />
+</rule>
+<rule name="legacy-049" stopProcessing="true">
+  <match url="^mudancas-no-esocial-a-partir-de-julho/?$" />
+  <action type="Redirect" url="/modulos/esocial" redirectType="Permanent" />
+</rule>
+<rule name="legacy-050" stopProcessing="true">
+  <match url="^suspensao-do-evento-s-1200-no-esocial-o-que-isso-significa-para-sua-empresa/?$" />
+  <action type="Redirect" url="/modulos/esocial" redirectType="Permanent" />
+</rule>
+<rule name="legacy-051" stopProcessing="true">
+  <match url="^esocial-corrige-calculo-da-contribuicao-patronal-veja-o-impacto/?$" />
+  <action type="Redirect" url="/modulos/esocial" redirectType="Permanent" />
+</rule>
+<rule name="legacy-052" stopProcessing="true">
+  <match url="^dae-alteracao-no-vencimento-do-documento-de-arrecadacao-do-esocial/?$" />
+  <action type="Redirect" url="/modulos/esocial" redirectType="Permanent" />
+</rule>
+<rule name="legacy-053" stopProcessing="true">
+  <match url="^entenda-a-nota-orientativa-fgts-digital/?$" />
+  <action type="Redirect" url="/modulos/esocial" redirectType="Permanent" />
+</rule>
+<rule name="legacy-054" stopProcessing="true">
+  <match url="^fgts-digital-o-que-o-rh-precisa-saber-e-ficar-por-dentro-das-mudancas/?$" />
+  <action type="Redirect" url="/modulos/esocial" redirectType="Permanent" />
+</rule>
+<rule name="legacy-055" stopProcessing="true">
+  <match url="^fique-por-dentro-multa-rescisoria-no-fgts-digital/?$" />
+  <action type="Redirect" url="/modulos/esocial" redirectType="Permanent" />
+</rule>
+<rule name="legacy-056" stopProcessing="true">
+  <match url="^saque-do-fgts-no-rio-grande-do-sul-agora-esta-liberado/?$" />
+  <action type="Redirect" url="/modulos/esocial" redirectType="Permanent" />
+</rule>
+<rule name="legacy-057" stopProcessing="true">
+  <match url="^entenda-o-fim-da-dirf/?$" />
+  <action type="Redirect" url="/modulos/esocial" redirectType="Permanent" />
+</rule>
+<rule name="legacy-058" stopProcessing="true">
+  <match url="^fim-da-dirf-veja-o-que-muda/?$" />
+  <action type="Redirect" url="/modulos/esocial" redirectType="Permanent" />
+</rule>
+<rule name="legacy-059" stopProcessing="true">
+  <match url="^alteracoes-importantes-nas-normas-fiscais-entenda-o-que-mudou/?$" />
+  <action type="Redirect" url="/modulos/esocial" redirectType="Permanent" />
+</rule>
+<rule name="legacy-060" stopProcessing="true">
+  <match url="^legislacao-para-o-rh-2021-quais-as-principais-mudancas/?$" />
+  <action type="Redirect" url="/modulos/esocial" redirectType="Permanent" />
+</rule>
+<rule name="legacy-061" stopProcessing="true">
+  <match url="^news-lei-no14-151-21-afastamento-da-gestante/?$" />
+  <action type="Redirect" url="/modulos/administracao-de-pessoal" redirectType="Permanent" />
+</rule>
+<rule name="legacy-062" stopProcessing="true">
+  <match url="^erros-comuns-na-folha-de-pagamento-e-como-evita-los/?$" />
+  <action type="Redirect" url="/modulos/folha-de-pagamento" redirectType="Permanent" />
+</rule>
+<rule name="legacy-063" stopProcessing="true">
+  <match url="^os-beneficios-do-sistema-de-remuneracao-variavel/?$" />
+  <action type="Redirect" url="/modulos/metas-e-resultados" redirectType="Permanent" />
+</rule>
+<rule name="legacy-064" stopProcessing="true">
+  <match url="^igualdade-salarial/?$" />
+  <action type="Redirect" url="/modulos/cargos-e-salarios" redirectType="Permanent" />
+</rule>
+<rule name="legacy-065" stopProcessing="true">
+  <match url="^departamento-pessoal-e-recursos-humanos-voce-sabe-a-diferenca-entre-as-areas/?$" />
+  <action type="Redirect" url="/modulos/administracao-de-pessoal" redirectType="Permanent" />
+</rule>
+<rule name="legacy-066" stopProcessing="true">
+  <match url="^ponto-eletronico-com-reconhecimento-facial-como-funciona/?$" />
+  <action type="Redirect" url="/modulos/natponto" redirectType="Permanent" />
+</rule>
+<rule name="legacy-067" stopProcessing="true">
+  <match url="^escala-996/?$" />
+  <action type="Redirect" url="/modulos/ponto-eletronico" redirectType="Permanent" />
+</rule>
+<rule name="legacy-068" stopProcessing="true">
+  <match url="^home-office-tudo-o-que-voce-precisa-saber/?$" />
+  <action type="Redirect" url="/modulos/ponto-eletronico" redirectType="Permanent" />
+</rule>
+<rule name="legacy-069" stopProcessing="true">
+  <match url="^politica-de-home-office-como-implementar/?$" />
+  <action type="Redirect" url="/modulos/ponto-eletronico" redirectType="Permanent" />
+</rule>
+<rule name="legacy-070" stopProcessing="true">
+  <match url="^quais-sao-as-vantagens-da-flexibilidade-no-trabalho/?$" />
+  <action type="Redirect" url="/modulos/ponto-eletronico" redirectType="Permanent" />
+</rule>
+<rule name="legacy-071" stopProcessing="true">
+  <match url="^o-modelo-de-trabalho-ideal-nao-e-remoto-nem-presencial-e-eficiente/?$" />
+  <action type="Redirect" url="/modulos/ponto-eletronico" redirectType="Permanent" />
+</rule>
+<rule name="legacy-072" stopProcessing="true">
+  <match url="^engajamento-e-gestao-de-times-remotos-o-novo-desafio-continuo/?$" />
+  <action type="Redirect" url="/portais" redirectType="Permanent" />
+</rule>
+<rule name="legacy-073" stopProcessing="true">
+  <match url="^reunioes-online-de-sucesso/?$" />
+  <action type="Redirect" url="/portais" redirectType="Permanent" />
+</rule>
+<rule name="legacy-074" stopProcessing="true">
+  <match url="^voce-sabe-o-que-muda-com-as-alteracoes-simplificacoes-das-normas-regulamentadoras-nrs/?$" />
+  <action type="Redirect" url="/modulos/seguranca-do-trabalho" redirectType="Permanent" />
+</rule>
+<rule name="legacy-075" stopProcessing="true">
+  <match url="^empresas-terao-que-se-responsabilizar-pela-saude-mental-dos-colaboradores-a-partir-de-maio/?$" />
+  <action type="Redirect" url="/modulos/medicina-ocupacional" redirectType="Permanent" />
+</rule>
+<rule name="legacy-076" stopProcessing="true">
+  <match url="^saude-mental-no-trabalho-como-o-software-de-rh-transforma-o-bem-estar-em-2026/?$" />
+  <action type="Redirect" url="/modulos/medicina-ocupacional" redirectType="Permanent" />
+</rule>
+<rule name="legacy-077" stopProcessing="true">
+  <match url="^saude-mental-no-trabalho-em-2025-como-antecipar-mudancas-e-garantir-bem-estar-corporativo/?$" />
+  <action type="Redirect" url="/modulos/medicina-ocupacional" redirectType="Permanent" />
+</rule>
+<rule name="legacy-078" stopProcessing="true">
+  <match url="^a-felicidade-no-trabalho/?$" />
+  <action type="Redirect" url="/modulos/avaliacoes-e-feedbacks" redirectType="Permanent" />
+</rule>
+<rule name="legacy-079" stopProcessing="true">
+  <match url="^estresse-e-solidao-no-rh/?$" />
+  <action type="Redirect" url="/modulos/avaliacoes-e-feedbacks" redirectType="Permanent" />
+</rule>
+<rule name="legacy-080" stopProcessing="true">
+  <match url="^sobrecarga-dos-profissionais-de-rh/?$" />
+  <action type="Redirect" url="/modulos/nati" redirectType="Permanent" />
+</rule>
+<rule name="legacy-081" stopProcessing="true">
+  <match url="^kpis-relevantes-para-a-area-de-recrutamento-e-selecao/?$" />
+  <action type="Redirect" url="/modulos/recrutamento-e-selecao" redirectType="Permanent" />
+</rule>
+<rule name="legacy-082" stopProcessing="true">
+  <match url="^ghosting-no-recrutamento/?$" />
+  <action type="Redirect" url="/modulos/recrutamento-e-selecao" redirectType="Permanent" />
+</rule>
+<rule name="legacy-083" stopProcessing="true">
+  <match url="^fit-cultural-sua-importancia-e-como-aplicar-este-conceito-no-rh/?$" />
+  <action type="Redirect" url="/modulos/recrutamento-e-selecao" redirectType="Permanent" />
+</rule>
+<rule name="legacy-084" stopProcessing="true">
+  <match url="^futuro-da-contratacao-tendencias-2025/?$" />
+  <action type="Redirect" url="/jornada-da-contratacao" redirectType="Permanent" />
+</rule>
+<rule name="legacy-085" stopProcessing="true">
+  <match url="^como-reter-talentos-e-diminuir-turnover-da-sua-empresa/?$" />
+  <action type="Redirect" url="/modulos/carreira-e-sucessao" redirectType="Permanent" />
+</rule>
+<rule name="legacy-086" stopProcessing="true">
+  <match url="^a-importancia-do-plano-de-carreira/?$" />
+  <action type="Redirect" url="/modulos/carreira-e-sucessao" redirectType="Permanent" />
+</rule>
+<rule name="legacy-087" stopProcessing="true">
+  <match url="^a-relevancia-do-treinamento-para-o-desenvolvimento-das-pessoas-nas-organizacoes/?$" />
+  <action type="Redirect" url="/modulos/treinamento-e-desenvolvimento" redirectType="Permanent" />
+</rule>
+<rule name="legacy-088" stopProcessing="true">
+  <match url="^requalificar-ou-demitir-o-dilema-do-rh-na-era-da-eficiencia/?$" />
+  <action type="Redirect" url="/modulos/treinamento-e-desenvolvimento" redirectType="Permanent" />
+</rule>
+<rule name="legacy-089" stopProcessing="true">
+  <match url="^indicadores-estrategicos-de-rh/?$" />
+  <action type="Redirect" url="/modulos/people-analytics" redirectType="Permanent" />
+</rule>
+<rule name="legacy-090" stopProcessing="true">
+  <match url="^people-analytics-transforme-dados-em-estrategias-com-sistemas-de-rh/?$" />
+  <action type="Redirect" url="/modulos/people-analytics" redirectType="Permanent" />
+</rule>
+<rule name="legacy-091" stopProcessing="true">
+  <match url="^a-inteligencia-artificial-chegou-no-rh-com-a-natcorp/?$" />
+  <action type="Redirect" url="/modulos/nati" redirectType="Permanent" />
+</rule>
+<rule name="legacy-092" stopProcessing="true">
+  <match url="^como-a-ia-pode-melhorar-o-dia-a-dia-do-rh-mesmo-sem-ser-um-especialista-em-tecnologia/?$" />
+  <action type="Redirect" url="/modulos/nati" redirectType="Permanent" />
+</rule>
+<rule name="legacy-093" stopProcessing="true">
+  <match url="^inteligencia-comportamental-o-diferencial-para-o-rh-em-2025/?$" />
+  <action type="Redirect" url="/modulos/nati" redirectType="Permanent" />
+</rule>
+<rule name="legacy-094" stopProcessing="true">
+  <match url="^assinatura-eletronica-e-a-revolucao-no-rh-e-departamento-pessoal/?$" />
+  <action type="Redirect" url="/modulos/assinatura-eletronica" redirectType="Permanent" />
+</rule>
+<rule name="legacy-095" stopProcessing="true">
+  <match url="^lgpd-como-funciona-a-nova-lei-e-como-adequar-sua-empresa-a-ela/?$" />
+  <action type="Redirect" url="/seguranca" redirectType="Permanent" />
+</rule>
+<rule name="legacy-096" stopProcessing="true">
+  <match url="^seguranca-de-dados-no-rh-digital/?$" />
+  <action type="Redirect" url="/seguranca" redirectType="Permanent" />
+</rule>
+<rule name="legacy-097" stopProcessing="true">
+  <match url="^software-de-rh-em-2026/?$" />
+  <action type="Redirect" url="/modulos" redirectType="Permanent" />
+</rule>
+<rule name="legacy-098" stopProcessing="true">
+  <match url="^quando-e-a-hora-de-trocar-seu-sistema-de-rh/?$" />
+  <action type="Redirect" url="/perguntas-frequentes" redirectType="Permanent" />
+</rule>
+<rule name="legacy-099" stopProcessing="true">
+  <match url="^rh-na-era-da-transformacao-digital/?$" />
+  <action type="Redirect" url="/sistema" redirectType="Permanent" />
+</rule>
+<rule name="legacy-100" stopProcessing="true">
+  <match url="^de-planilha-a-plataforma-os-estagios-da-transformacao-digital-no-rh/?$" />
+  <action type="Redirect" url="/sistema" redirectType="Permanent" />
+</rule>
+<rule name="legacy-101" stopProcessing="true">
+  <match url="^como-a-tecnologia-pode-auxiliar-estrategicamente-o-rh/?$" />
+  <action type="Redirect" url="/sistema" redirectType="Permanent" />
+</rule>
+<rule name="legacy-102" stopProcessing="true">
+  <match url="^tecnologia-e-automacao-no-rh-nao-e-mais-questao-de-escolha/?$" />
+  <action type="Redirect" url="/sistema" redirectType="Permanent" />
+</rule>
+<rule name="legacy-103" stopProcessing="true">
+  <match url="^3-tendencias-em-automacao-de-rh-para-ficar-de-olho/?$" />
+  <action type="Redirect" url="/sistema" redirectType="Permanent" />
+</rule>
+<rule name="legacy-104" stopProcessing="true">
+  <match url="^por-que-a-area-de-rh-ainda-e-a-ultima-a-receber-tecnologia/?$" />
+  <action type="Redirect" url="/sistema" redirectType="Permanent" />
+</rule>
+<rule name="legacy-105" stopProcessing="true">
+  <match url="^estrategias-de-tecnologia-de-rh-focadas-em-capacidade-por-que-elas-falham/?$" />
+  <action type="Redirect" url="/sistema" redirectType="Permanent" />
+</rule>
+<rule name="legacy-106" stopProcessing="true">
+  <match url="^rh-4-0-transformando-a-gestao-de-recursos-humanos/?$" />
+  <action type="Redirect" url="/sistema" redirectType="Permanent" />
+</rule>
+<rule name="legacy-107" stopProcessing="true">
+  <match url="^10-dicas-essenciais-para-otimizar-seu-rh/?$" />
+  <action type="Redirect" url="/sistema" redirectType="Permanent" />
+</rule>
+<rule name="legacy-108" stopProcessing="true">
+  <match url="^o-futuro-do-rh-em-2025-principais-tendencias-e-estrategias/?$" />
+  <action type="Redirect" url="/sistema" redirectType="Permanent" />
+</rule>
+<rule name="legacy-109" stopProcessing="true">
+  <match url="^descubra-como-o-futuro-do-rh-esta-se-transformando/?$" />
+  <action type="Redirect" url="/sistema" redirectType="Permanent" />
+</rule>
+<rule name="legacy-110" stopProcessing="true">
+  <match url="^tendencias-para-o-rh-em-2020/?$" />
+  <action type="Redirect" url="/sistema" redirectType="Permanent" />
+</rule>
+<rule name="legacy-111" stopProcessing="true">
+  <match url="^novo-papel-do-gestor-de-rh/?$" />
+  <action type="Redirect" url="/sistema" redirectType="Permanent" />
+</rule>
+<rule name="legacy-112" stopProcessing="true">
+  <match url="^autonomia-do-rh-como-a-falta-de-espaco-para-decisoes-impacta-os-profissionais-e-como-mudar-esse-cenario/?$" />
+  <action type="Redirect" url="/sistema" redirectType="Permanent" />
+</rule>
+<rule name="legacy-113" stopProcessing="true">
+  <match url="^por-que-os-profissionais-de-rh-estao-pedindo-demissao/?$" />
+  <action type="Redirect" url="/sistema" redirectType="Permanent" />
+</rule>
+<rule name="legacy-114" stopProcessing="true">
+  <match url="^por-que-planejar-e-essencial-o-impacto-da-falta-de-planejamento-nas-empresas/?$" />
+  <action type="Redirect" url="/sistema" redirectType="Permanent" />
+</rule>
+<rule name="legacy-115" stopProcessing="true">
+  <match url="^o-estado-do-trabalho-global/?$" />
+  <action type="Redirect" url="/sistema" redirectType="Permanent" />
+</rule>
+<rule name="legacy-116" stopProcessing="true">
+  <match url="^60-dias-para-2024-quais-datas-o-rh-deve-levar-em-conta-no-planejamento/?$" />
+  <action type="Redirect" url="/sistema" redirectType="Permanent" />
+</rule>
+<rule name="legacy-117" stopProcessing="true">
+  <match url="^importante-datas-para-o-seu-rh-em-2024/?$" />
+  <action type="Redirect" url="/sistema" redirectType="Permanent" />
+</rule>
+<rule name="legacy-118" stopProcessing="true">
+  <match url="^dia-do-profissional-do-rh-entenda-a-historia-do-dia-3-de-junho-e-a-importancia-da-area/?$" />
+  <action type="Redirect" url="/sobre" redirectType="Permanent" />
+</rule>
+<rule name="legacy-119" stopProcessing="true">
+  <match url="^a-importancia-da-diversidade-de-geracoes-no-ambiente-de-trabalho/?$" />
+  <action type="Redirect" url="/modulos/avaliacoes-e-feedbacks" redirectType="Permanent" />
+</rule>
+<rule name="legacy-120" stopProcessing="true">
+  <match url="^os-desafios-da-gestao-da-diversidade-no-trabalho/?$" />
+  <action type="Redirect" url="/modulos/avaliacoes-e-feedbacks" redirectType="Permanent" />
+</rule>
+<rule name="legacy-121" stopProcessing="true">
+  <match url="^a-geracao-z-chegou-a-lideranca-e-ja-esta-reclamando-da-propria-geracao/?$" />
+  <action type="Redirect" url="/modulos/avaliacoes-e-feedbacks" redirectType="Permanent" />
+</rule>
+<rule name="legacy-122" stopProcessing="true">
+  <match url="^geracao-z-caracteristicas-dilemas-e-impactos-no-mercado-de-trabalho/?$" />
+  <action type="Redirect" url="/modulos/avaliacoes-e-feedbacks" redirectType="Permanent" />
+</rule>
+<rule name="legacy-123" stopProcessing="true">
+  <match url="^employee-experience-o-que-e-suas-vantagens-e-como-aplica-lo/?$" />
+  <action type="Redirect" url="/portais" redirectType="Permanent" />
+</rule>
+<rule name="legacy-124" stopProcessing="true">
+  <match url="^e-por-mais-um-ano-a-natcorp-e-indicada-ao-23o-top-of-mind-de-rh/?$" />
+  <action type="Redirect" url="/sobre#reconhecimento" redirectType="Permanent" />
+</rule>
+<rule name="legacy-125" stopProcessing="true">
+  <match url="^top-of-mind-de-rh-2019/?$" />
+  <action type="Redirect" url="/sobre#reconhecimento" redirectType="Permanent" />
+</rule>
+<rule name="legacy-126" stopProcessing="true">
+  <match url="^privacidade/?$" />
+  <action type="Redirect" url="/contato" redirectType="Permanent" />
+</rule>
+<rule name="legacy-127" stopProcessing="true">
+  <match url="^politica-de-cookies/?$" />
+  <action type="Redirect" url="/contato" redirectType="Permanent" />
+</rule>
+<rule name="legacy-128" stopProcessing="true">
+  <match url="^termos-de-uso/?$" />
+  <action type="Redirect" url="/contato" redirectType="Permanent" />
+</rule>

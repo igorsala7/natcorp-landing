@@ -93,7 +93,7 @@ export function Hero() {
         className="inline-flex items-center gap-2 whitespace-nowrap rounded-full border border-white/20 bg-white/[0.12] px-3.5 py-1.5 text-[11px] font-semibold uppercase tracking-[0.1em] text-white/90 sm:px-4 sm:text-[12px] sm:tracking-[0.14em]"
       >
         <Sparkles className="h-3.5 w-3.5 text-[#E4A9C4]" strokeWidth={2} />
-        HR Tech brasileira · há mais de 35 anos
+        Sistema de RH · HR Tech brasileira há mais de 35 anos
       </m.p>
 
       <SplitText
@@ -110,9 +110,9 @@ export function Hero() {
       />
 
       <m.p {...show(0.55)} className="mt-5 max-w-xl text-[15.5px] leading-relaxed text-white/85 sm:mt-6 sm:text-xl">
-        Folha, ponto, eSocial, admissão digital, saúde e segurança do trabalho, talentos e People Analytics.
-        Todos os módulos integrados, com a NATI, nossa Inteligência Artificial, trabalhando dentro do sistema.
-        Para grandes empresas que querem um RH protagonista.
+        Um sistema de RH completo: folha de pagamento, ponto eletrônico, eSocial, admissão digital, saúde e segurança do
+        trabalho, talentos e People Analytics. Todos os módulos integrados em um único software de RH, com a NATI, nossa
+        Inteligência Artificial, trabalhando dentro dele. Para grandes empresas que querem um RH protagonista.
       </m.p>
 
       <m.div {...show(0.7)} className="mt-7 flex flex-wrap items-center gap-3 sm:mt-9">

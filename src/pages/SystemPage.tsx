@@ -26,9 +26,9 @@ const stats = [
 
 export default function SystemPage() {
   useSeo({
-    title: 'O sistema de RH Natcorp: sete frentes, um único sistema | Natcorp',
+    title: 'Sistema de Recursos Humanos: as sete frentes do RH | Natcorp',
     description:
-      'Departamento Pessoal, RH e Medicina e Segurança do Trabalho na mesma base, com a NATI dentro de tudo. Veja as sete frentes do sistema Natcorp, tela a tela.',
+      'Sistema de recursos humanos com Departamento Pessoal, RH e Medicina e Segurança do Trabalho na mesma base, e a NATI dentro de tudo. As sete frentes, tela a tela.',
     path: '/sistema',
   })
 

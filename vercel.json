@@ -1,17 +1,654 @@
 {
   "redirects": [
-    { "source": "/solucao-de-rh", "destination": "/modulos", "permanent": true },
-    { "source": "/sistema-de-rh-hcm", "destination": "/modulos", "permanent": true },
-    { "source": "/sistema-de-gestao-de-rh-completo", "destination": "/modulos", "permanent": true },
-    { "source": "/sistema-de-rh-completo-2-0", "destination": "/modulos", "permanent": true },
-    { "source": "/folha-de-pagamento", "destination": "/modulos/folha-de-pagamento", "permanent": true },
-    { "source": "/sobre-nos", "destination": "/sobre", "permanent": true },
-    { "source": "/servicos", "destination": "/sobre#servicos", "permanent": true },
-    { "source": "/fale-conosco", "destination": "/contato", "permanent": true },
-    { "source": "/fale-conosco-2", "destination": "/contato", "permanent": true }
+    {
+      "source": "/solucao-de-rh",
+      "destination": "/modulos",
+      "permanent": true
+    },
+    {
+      "source": "/solucao-de-rh-old",
+      "destination": "/modulos",
+      "permanent": true
+    },
+    {
+      "source": "/solucao-de-rh/testefolha",
+      "destination": "/modulos/folha-de-pagamento",
+      "permanent": true
+    },
+    {
+      "source": "/sistema-de-rh-hcm",
+      "destination": "/modulos",
+      "permanent": true
+    },
+    {
+      "source": "/sistema-de-gestao-de-rh-completo",
+      "destination": "/modulos",
+      "permanent": true
+    },
+    {
+      "source": "/sistema-de-gestao-de-rh-completo-1",
+      "destination": "/modulos",
+      "permanent": true
+    },
+    {
+      "source": "/sistema-de-rh-completo-2-0",
+      "destination": "/modulos",
+      "permanent": true
+    },
+    {
+      "source": "/teste-nova-lp-sistema-completo",
+      "destination": "/modulos",
+      "permanent": true
+    },
+    {
+      "source": "/folha-de-pagamento",
+      "destination": "/modulos/folha-de-pagamento",
+      "permanent": true
+    },
+    {
+      "source": "/folha-de-pagamento1-0",
+      "destination": "/modulos/folha-de-pagamento",
+      "permanent": true
+    },
+    {
+      "source": "/folha-de-pagamento-2-0-2",
+      "destination": "/modulos/folha-de-pagamento",
+      "permanent": true
+    },
+    {
+      "source": "/folha-de-pagamento-2-1",
+      "destination": "/modulos/folha-de-pagamento",
+      "permanent": true
+    },
+    {
+      "source": "/folha-de-pagamento-teste-prototipo",
+      "destination": "/modulos/folha-de-pagamento",
+      "permanent": true
+    },
+    {
+      "source": "/sobre-nos",
+      "destination": "/sobre",
+      "permanent": true
+    },
+    {
+      "source": "/servicos",
+      "destination": "/sobre#servicos",
+      "permanent": true
+    },
+    {
+      "source": "/jobs",
+      "destination": "/sobre",
+      "permanent": true
+    },
+    {
+      "source": "/congerhi",
+      "destination": "/sobre",
+      "permanent": true
+    },
+    {
+      "source": "/fale-conosco",
+      "destination": "/contato",
+      "permanent": true
+    },
+    {
+      "source": "/fale-conosco-2",
+      "destination": "/contato",
+      "permanent": true
+    },
+    {
+      "source": "/agradecimento",
+      "destination": "/contato",
+      "permanent": true
+    },
+    {
+      "source": "/formulario-lgpd",
+      "destination": "/contato",
+      "permanent": true
+    },
+    {
+      "source": "/infrastructure",
+      "destination": "/seguranca",
+      "permanent": true
+    },
+    {
+      "source": "/oracle-cloud-natcorp",
+      "destination": "/seguranca",
+      "permanent": true
+    },
+    {
+      "source": "/carrossel",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/landing-page",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/1234-2",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/blog",
+      "destination": "/sistema",
+      "permanent": true
+    },
+    {
+      "source": "/blog/2",
+      "destination": "/sistema",
+      "permanent": true
+    },
+    {
+      "source": "/blog/3",
+      "destination": "/sistema",
+      "permanent": true
+    },
+    {
+      "source": "/blog/4",
+      "destination": "/sistema",
+      "permanent": true
+    },
+    {
+      "source": "/blog/5",
+      "destination": "/sistema",
+      "permanent": true
+    },
+    {
+      "source": "/blog/6",
+      "destination": "/sistema",
+      "permanent": true
+    },
+    {
+      "source": "/blog/7",
+      "destination": "/sistema",
+      "permanent": true
+    },
+    {
+      "source": "/blog/8",
+      "destination": "/sistema",
+      "permanent": true
+    },
+    {
+      "source": "/blog/9",
+      "destination": "/sistema",
+      "permanent": true
+    },
+    {
+      "source": "/blog/10",
+      "destination": "/sistema",
+      "permanent": true
+    },
+    {
+      "source": "/category/gestao",
+      "destination": "/sistema",
+      "permanent": true
+    },
+    {
+      "source": "/category/gestao-estrategica",
+      "destination": "/sistema",
+      "permanent": true
+    },
+    {
+      "source": "/category/gestao-estrategica/page/2",
+      "destination": "/sistema",
+      "permanent": true
+    },
+    {
+      "source": "/category/gestao-estrategica/page/3",
+      "destination": "/sistema",
+      "permanent": true
+    },
+    {
+      "source": "/category/novidades",
+      "destination": "/sistema",
+      "permanent": true
+    },
+    {
+      "source": "/category/novidades/page/2",
+      "destination": "/sistema",
+      "permanent": true
+    },
+    {
+      "source": "/category/sistema",
+      "destination": "/modulos",
+      "permanent": true
+    },
+    {
+      "source": "/category/tributario",
+      "destination": "/modulos/esocial",
+      "permanent": true
+    },
+    {
+      "source": "/category/curiosidades",
+      "destination": "/sistema",
+      "permanent": true
+    },
+    {
+      "source": "/category/uncategorized",
+      "destination": "/sistema",
+      "permanent": true
+    },
+    {
+      "source": "/atualizacao-do-esocial-natcorp",
+      "destination": "/modulos/esocial",
+      "permanent": true
+    },
+    {
+      "source": "/saiba-mais-sobre-o-novo-esocial",
+      "destination": "/modulos/esocial",
+      "permanent": true
+    },
+    {
+      "source": "/mudancas-no-esocial-a-partir-de-julho",
+      "destination": "/modulos/esocial",
+      "permanent": true
+    },
+    {
+      "source": "/suspensao-do-evento-s-1200-no-esocial-o-que-isso-significa-para-sua-empresa",
+      "destination": "/modulos/esocial",
+      "permanent": true
+    },
+    {
+      "source": "/esocial-corrige-calculo-da-contribuicao-patronal-veja-o-impacto",
+      "destination": "/modulos/esocial",
+      "permanent": true
+    },
+    {
+      "source": "/dae-alteracao-no-vencimento-do-documento-de-arrecadacao-do-esocial",
+      "destination": "/modulos/esocial",
+      "permanent": true
+    },
+    {
+      "source": "/entenda-a-nota-orientativa-fgts-digital",
+      "destination": "/modulos/esocial",
+      "permanent": true
+    },
+    {
+      "source": "/fgts-digital-o-que-o-rh-precisa-saber-e-ficar-por-dentro-das-mudancas",
+      "destination": "/modulos/esocial",
+      "permanent": true
+    },
+    {
+      "source": "/fique-por-dentro-multa-rescisoria-no-fgts-digital",
+      "destination": "/modulos/esocial",
+      "permanent": true
+    },
+    {
+      "source": "/saque-do-fgts-no-rio-grande-do-sul-agora-esta-liberado",
+      "destination": "/modulos/esocial",
+      "permanent": true
+    },
+    {
+      "source": "/entenda-o-fim-da-dirf",
+      "destination": "/modulos/esocial",
+      "permanent": true
+    },
+    {
+      "source": "/fim-da-dirf-veja-o-que-muda",
+      "destination": "/modulos/esocial",
+      "permanent": true
+    },
+    {
+      "source": "/alteracoes-importantes-nas-normas-fiscais-entenda-o-que-mudou",
+      "destination": "/modulos/esocial",
+      "permanent": true
+    },
+    {
+      "source": "/legislacao-para-o-rh-2021-quais-as-principais-mudancas",
+      "destination": "/modulos/esocial",
+      "permanent": true
+    },
+    {
+      "source": "/news-lei-no14-151-21-afastamento-da-gestante",
+      "destination": "/modulos/administracao-de-pessoal",
+      "permanent": true
+    },
+    {
+      "source": "/erros-comuns-na-folha-de-pagamento-e-como-evita-los",
+      "destination": "/modulos/folha-de-pagamento",
+      "permanent": true
+    },
+    {
+      "source": "/os-beneficios-do-sistema-de-remuneracao-variavel",
+      "destination": "/modulos/metas-e-resultados",
+      "permanent": true
+    },
+    {
+      "source": "/igualdade-salarial",
+      "destination": "/modulos/cargos-e-salarios",
+      "permanent": true
+    },
+    {
+      "source": "/departamento-pessoal-e-recursos-humanos-voce-sabe-a-diferenca-entre-as-areas",
+      "destination": "/modulos/administracao-de-pessoal",
+      "permanent": true
+    },
+    {
+      "source": "/ponto-eletronico-com-reconhecimento-facial-como-funciona",
+      "destination": "/modulos/natponto",
+      "permanent": true
+    },
+    {
+      "source": "/escala-996",
+      "destination": "/modulos/ponto-eletronico",
+      "permanent": true
+    },
+    {
+      "source": "/home-office-tudo-o-que-voce-precisa-saber",
+      "destination": "/modulos/ponto-eletronico",
+      "permanent": true
+    },
+    {
+      "source": "/politica-de-home-office-como-implementar",
+      "destination": "/modulos/ponto-eletronico",
+      "permanent": true
+    },
+    {
+      "source": "/quais-sao-as-vantagens-da-flexibilidade-no-trabalho",
+      "destination": "/modulos/ponto-eletronico",
+      "permanent": true
+    },
+    {
+      "source": "/o-modelo-de-trabalho-ideal-nao-e-remoto-nem-presencial-e-eficiente",
+      "destination": "/modulos/ponto-eletronico",
+      "permanent": true
+    },
+    {
+      "source": "/engajamento-e-gestao-de-times-remotos-o-novo-desafio-continuo",
+      "destination": "/portais",
+      "permanent": true
+    },
+    {
+      "source": "/reunioes-online-de-sucesso",
+      "destination": "/portais",
+      "permanent": true
+    },
+    {
+      "source": "/voce-sabe-o-que-muda-com-as-alteracoes-simplificacoes-das-normas-regulamentadoras-nrs",
+      "destination": "/modulos/seguranca-do-trabalho",
+      "permanent": true
+    },
+    {
+      "source": "/empresas-terao-que-se-responsabilizar-pela-saude-mental-dos-colaboradores-a-partir-de-maio",
+      "destination": "/modulos/medicina-ocupacional",
+      "permanent": true
+    },
+    {
+      "source": "/saude-mental-no-trabalho-como-o-software-de-rh-transforma-o-bem-estar-em-2026",
+      "destination": "/modulos/medicina-ocupacional",
+      "permanent": true
+    },
+    {
+      "source": "/saude-mental-no-trabalho-em-2025-como-antecipar-mudancas-e-garantir-bem-estar-corporativo",
+      "destination": "/modulos/medicina-ocupacional",
+      "permanent": true
+    },
+    {
+      "source": "/a-felicidade-no-trabalho",
+      "destination": "/modulos/avaliacoes-e-feedbacks",
+      "permanent": true
+    },
+    {
+      "source": "/estresse-e-solidao-no-rh",
+      "destination": "/modulos/avaliacoes-e-feedbacks",
+      "permanent": true
+    },
+    {
+      "source": "/sobrecarga-dos-profissionais-de-rh",
+      "destination": "/modulos/nati",
+      "permanent": true
+    },
+    {
+      "source": "/kpis-relevantes-para-a-area-de-recrutamento-e-selecao",
+      "destination": "/modulos/recrutamento-e-selecao",
+      "permanent": true
+    },
+    {
+      "source": "/ghosting-no-recrutamento",
+      "destination": "/modulos/recrutamento-e-selecao",
+      "permanent": true
+    },
+    {
+      "source": "/fit-cultural-sua-importancia-e-como-aplicar-este-conceito-no-rh",
+      "destination": "/modulos/recrutamento-e-selecao",
+      "permanent": true
+    },
+    {
+      "source": "/futuro-da-contratacao-tendencias-2025",
+      "destination": "/jornada-da-contratacao",
+      "permanent": true
+    },
+    {
+      "source": "/como-reter-talentos-e-diminuir-turnover-da-sua-empresa",
+      "destination": "/modulos/carreira-e-sucessao",
+      "permanent": true
+    },
+    {
+      "source": "/a-importancia-do-plano-de-carreira",
+      "destination": "/modulos/carreira-e-sucessao",
+      "permanent": true
+    },
+    {
+      "source": "/a-relevancia-do-treinamento-para-o-desenvolvimento-das-pessoas-nas-organizacoes",
+      "destination": "/modulos/treinamento-e-desenvolvimento",
+      "permanent": true
+    },
+    {
+      "source": "/requalificar-ou-demitir-o-dilema-do-rh-na-era-da-eficiencia",
+      "destination": "/modulos/treinamento-e-desenvolvimento",
+      "permanent": true
+    },
+    {
+      "source": "/indicadores-estrategicos-de-rh",
+      "destination": "/modulos/people-analytics",
+      "permanent": true
+    },
+    {
+      "source": "/people-analytics-transforme-dados-em-estrategias-com-sistemas-de-rh",
+      "destination": "/modulos/people-analytics",
+      "permanent": true
+    },
+    {
+      "source": "/a-inteligencia-artificial-chegou-no-rh-com-a-natcorp",
+      "destination": "/modulos/nati",
+      "permanent": true
+    },
+    {
+      "source": "/como-a-ia-pode-melhorar-o-dia-a-dia-do-rh-mesmo-sem-ser-um-especialista-em-tecnologia",
+      "destination": "/modulos/nati",
+      "permanent": true
+    },
+    {
+      "source": "/inteligencia-comportamental-o-diferencial-para-o-rh-em-2025",
+      "destination": "/modulos/nati",
+      "permanent": true
+    },
+    {
+      "source": "/assinatura-eletronica-e-a-revolucao-no-rh-e-departamento-pessoal",
+      "destination": "/modulos/assinatura-eletronica",
+      "permanent": true
+    },
+    {
+      "source": "/lgpd-como-funciona-a-nova-lei-e-como-adequar-sua-empresa-a-ela",
+      "destination": "/seguranca",
+      "permanent": true
+    },
+    {
+      "source": "/seguranca-de-dados-no-rh-digital",
+      "destination": "/seguranca",
+      "permanent": true
+    },
+    {
+      "source": "/software-de-rh-em-2026",
+      "destination": "/modulos",
+      "permanent": true
+    },
+    {
+      "source": "/quando-e-a-hora-de-trocar-seu-sistema-de-rh",
+      "destination": "/perguntas-frequentes",
+      "permanent": true
+    },
+    {
+      "source": "/rh-na-era-da-transformacao-digital",
+      "destination": "/sistema",
+      "permanent": true
+    },
+    {
+      "source": "/de-planilha-a-plataforma-os-estagios-da-transformacao-digital-no-rh",
+      "destination": "/sistema",
+      "permanent": true
+    },
+    {
+      "source": "/como-a-tecnologia-pode-auxiliar-estrategicamente-o-rh",
+      "destination": "/sistema",
+      "permanent": true
+    },
+    {
+      "source": "/tecnologia-e-automacao-no-rh-nao-e-mais-questao-de-escolha",
+      "destination": "/sistema",
+      "permanent": true
+    },
+    {
+      "source": "/3-tendencias-em-automacao-de-rh-para-ficar-de-olho",
+      "destination": "/sistema",
+      "permanent": true
+    },
+    {
+      "source": "/por-que-a-area-de-rh-ainda-e-a-ultima-a-receber-tecnologia",
+      "destination": "/sistema",
+      "permanent": true
+    },
+    {
+      "source": "/estrategias-de-tecnologia-de-rh-focadas-em-capacidade-por-que-elas-falham",
+      "destination": "/sistema",
+      "permanent": true
+    },
+    {
+      "source": "/rh-4-0-transformando-a-gestao-de-recursos-humanos",
+      "destination": "/sistema",
+      "permanent": true
+    },
+    {
+      "source": "/10-dicas-essenciais-para-otimizar-seu-rh",
+      "destination": "/sistema",
+      "permanent": true
+    },
+    {
+      "source": "/o-futuro-do-rh-em-2025-principais-tendencias-e-estrategias",
+      "destination": "/sistema",
+      "permanent": true
+    },
+    {
+      "source": "/descubra-como-o-futuro-do-rh-esta-se-transformando",
+      "destination": "/sistema",
+      "permanent": true
+    },
+    {
+      "source": "/tendencias-para-o-rh-em-2020",
+      "destination": "/sistema",
+      "permanent": true
+    },
+    {
+      "source": "/novo-papel-do-gestor-de-rh",
+      "destination": "/sistema",
+      "permanent": true
+    },
+    {
+      "source": "/autonomia-do-rh-como-a-falta-de-espaco-para-decisoes-impacta-os-profissionais-e-como-mudar-esse-cenario",
+      "destination": "/sistema",
+      "permanent": true
+    },
+    {
+      "source": "/por-que-os-profissionais-de-rh-estao-pedindo-demissao",
+      "destination": "/sistema",
+      "permanent": true
+    },
+    {
+      "source": "/por-que-planejar-e-essencial-o-impacto-da-falta-de-planejamento-nas-empresas",
+      "destination": "/sistema",
+      "permanent": true
+    },
+    {
+      "source": "/o-estado-do-trabalho-global",
+      "destination": "/sistema",
+      "permanent": true
+    },
+    {
+      "source": "/60-dias-para-2024-quais-datas-o-rh-deve-levar-em-conta-no-planejamento",
+      "destination": "/sistema",
+      "permanent": true
+    },
+    {
+      "source": "/importante-datas-para-o-seu-rh-em-2024",
+      "destination": "/sistema",
+      "permanent": true
+    },
+    {
+      "source": "/dia-do-profissional-do-rh-entenda-a-historia-do-dia-3-de-junho-e-a-importancia-da-area",
+      "destination": "/sobre",
+      "permanent": true
+    },
+    {
+      "source": "/a-importancia-da-diversidade-de-geracoes-no-ambiente-de-trabalho",
+      "destination": "/modulos/avaliacoes-e-feedbacks",
+      "permanent": true
+    },
+    {
+      "source": "/os-desafios-da-gestao-da-diversidade-no-trabalho",
+      "destination": "/modulos/avaliacoes-e-feedbacks",
+      "permanent": true
+    },
+    {
+      "source": "/a-geracao-z-chegou-a-lideranca-e-ja-esta-reclamando-da-propria-geracao",
+      "destination": "/modulos/avaliacoes-e-feedbacks",
+      "permanent": true
+    },
+    {
+      "source": "/geracao-z-caracteristicas-dilemas-e-impactos-no-mercado-de-trabalho",
+      "destination": "/modulos/avaliacoes-e-feedbacks",
+      "permanent": true
+    },
+    {
+      "source": "/employee-experience-o-que-e-suas-vantagens-e-como-aplica-lo",
+      "destination": "/portais",
+      "permanent": true
+    },
+    {
+      "source": "/e-por-mais-um-ano-a-natcorp-e-indicada-ao-23o-top-of-mind-de-rh",
+      "destination": "/sobre#reconhecimento",
+      "permanent": true
+    },
+    {
+      "source": "/top-of-mind-de-rh-2019",
+      "destination": "/sobre#reconhecimento",
+      "permanent": true
+    },
+    {
+      "source": "/privacidade",
+      "destination": "/contato",
+      "permanent": true
+    },
+    {
+      "source": "/politica-de-cookies",
+      "destination": "/contato",
+      "permanent": true
+    },
+    {
+      "source": "/termos-de-uso",
+      "destination": "/contato",
+      "permanent": true
+    }
   ],
   "rewrites": [
-    { "source": "/portais/:path+", "destination": "/portais_beta/:path+" },
-    { "source": "/(.*)", "destination": "/index.html" }
+    {
+      "source": "/portais/:path+",
+      "destination": "/portais_beta/:path+"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
   ]
 }

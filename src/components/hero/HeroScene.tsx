@@ -87,7 +87,7 @@ export function HeroScene({ on, reduced, loops = true, instant = false, y }: Her
             src={heroV2}
             srcSet={`${heroV2} 2000w, ${heroV2Large} 3152w`}
             sizes="(min-width: 1024px) 125vw, 150vw"
-            alt=""
+            alt="Equipe de RH usando o sistema Natcorp no computador e no celular"
             width={W}
             height={H}
             fetchPriority="high"

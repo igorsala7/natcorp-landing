@@ -8,7 +8,7 @@ const page: ModulePage = {
   summary:
     'Qualquer listagem do sistema vira análise com o botão Ações: filtre, agrupe, monte a matriz, calcule, destaque e gere o gráfico. Salve o relatório, exporte para Excel ou PDF. Dados de todos os módulos, em tempo real.',
   seo: {
-    title: 'People Analytics sem depender de TI | Natcorp',
+    title: 'People Analytics para RH sem depender de TI | Natcorp',
     description:
       'People Analytics no sistema de RH: filtros, agrupamentos, pivô, cálculos, destaques e gráficos em tempo real, relatórios salvos e exportação para Excel e PDF.',
   },

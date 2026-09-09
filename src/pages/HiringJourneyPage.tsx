@@ -39,7 +39,7 @@ export default function HiringJourneyPage() {
   useSeo({
     title: 'Da vaga à promoção: a jornada do colaborador, etapa por etapa | Natcorp',
     description:
-      'As 24 etapas da jornada do colaborador na Natcorp, em uma indústria: da requisição da vaga à admissão digital, do primeiro dia com NatPonto, EPIs e treinamento até a promoção, com o RH operando em paralelo. Em história ou em diagrama, com os módulos que entram em cada etapa.',
+      'As 24 etapas da jornada do colaborador no sistema de RH da Natcorp: da requisição da vaga à admissão digital, do primeiro dia com ponto e EPIs à promoção.',
     path: journeyPath,
   })
 

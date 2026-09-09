@@ -4,13 +4,13 @@ const page: ModulePage = {
   slug: 'medicina-ocupacional',
   name: 'Medicina Ocupacional',
   group: 'saude-e-seguranca',
-  tagline: 'Saúde ocupacional [[sem papel e sem prazo perdido]].',
+  tagline: 'Medicina do trabalho [[sem papel e sem prazo perdido]].',
   summary:
-    'Exames, ASOs, PCMSO, atestados e afastamentos em um só lugar, ligados ao risco de cada função. O sistema agenda exames, avisa vencimentos, emite o ASO com assinatura digital e envia o S-2220 ao eSocial. Tudo integrado ao ponto e à folha.',
+    'O sistema de medicina do trabalho da Natcorp reúne exames, ASOs, PCMSO, atestados e afastamentos em um só lugar, ligados ao risco de cada função. O sistema agenda exames, avisa vencimentos, emite o ASO com assinatura digital e envia o S-2220 ao eSocial. Tudo integrado ao ponto e à folha.',
   seo: {
-    title: 'Medicina Ocupacional: ASO, PCMSO e afastamentos | Natcorp',
+    title: 'Sistema de Medicina do Trabalho: ASO e PCMSO | Natcorp',
     description:
-      'Medicina ocupacional integrada ao RH: PCMSO com cronograma automático, ASO digital, atestados, afastamentos, clínicas e médicos, e evento S-2220 do eSocial.',
+      'Sistema de medicina do trabalho e saúde ocupacional: PCMSO com cronograma automático, ASO digital, atestados, afastamentos, clínicas e S-2220 do eSocial.',
   },
   highlights: [
     { value: '100%', label: 'digital: exames, atestados e ASOs sem papel' },

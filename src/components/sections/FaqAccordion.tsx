@@ -2,8 +2,15 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/
 import { JsonLd } from '@/components/seo/JsonLd'
 import type { FaqItem } from '@/content/faq'
 
-/** Acordeão de perguntas com JSON-LD FAQPage. */
-export function FaqAccordion({ items, className }: { items: FaqItem[]; className?: string }) {
+/**
+ * Acordeão de perguntas com JSON-LD FAQPage.
+ *
+ * O Google usa UM bloco FAQPage por página. Onde houver dois acordeões na mesma
+ * página, um deles precisa ficar com `schema={false}` e a página emite um bloco
+ * só, com as perguntas das duas listas — senão o segundo bloco é descartado em
+ * silêncio e aquelas perguntas somem do resultado de busca.
+ */
+export function FaqAccordion({ items, className, schema = true }: { items: FaqItem[]; className?: string; schema?: boolean }) {
   const data = {
     '@context': 'https://schema.org',
     '@type': 'FAQPage',
@@ -15,7 +22,7 @@ export function FaqAccordion({ items, className }: { items: FaqItem[]; className
   }
   return (
     <>
-      <JsonLd data={data} />
+      {schema && <JsonLd data={data} />}
       <Accordion
         type="single"
         collapsible

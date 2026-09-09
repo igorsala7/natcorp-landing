@@ -8,7 +8,7 @@ const page: ModulePage = {
   summary:
     'Folha, ponto, SESMT e jurídico geram os eventos do eSocial a partir dos dados já validados. Um validador prévio aponta divergências antes do envio, o retorno de cada layout fica visível e a IA prevê inconsistências. Sem retrabalho, sem multa por prazo.',
   seo: {
-    title: 'eSocial integrado e automático | Natcorp',
+    title: 'Sistema de eSocial integrado e automático | Natcorp',
     description:
       'eSocial integrado: envio automático dos eventos de folha, SST e processos trabalhistas, validação prévia de divergências e retorno de cada layout acompanhado.',
   },

@@ -4,13 +4,13 @@ const page: ModulePage = {
   slug: 'seguranca-do-trabalho',
   name: 'Segurança do Trabalho',
   group: 'saude-e-seguranca',
-  tagline: 'Riscos mapeados, EPIs entregues, [[eSocial em dia]].',
+  tagline: 'Sistema de segurança do trabalho: riscos mapeados, EPIs entregues, [[eSocial em dia]].',
   summary:
-    'PGR, EPIs com CA validado, CAT, LTCAT, PPP e CIPA em um só sistema, no escritório ou em campo. Cada risco mapeado alimenta o GHE, o PCMSO, o PPP e os eventos S-2210 e S-2240 do eSocial. Menos papel, menos passivo, mais prevenção.',
+    'O sistema de SESMT da Natcorp reúne PGR, EPIs com CA validado, CAT, LTCAT, PPP e CIPA em um só lugar, no escritório ou em campo. Cada risco mapeado alimenta o GHE, o PCMSO, o PPP e os eventos S-2210 e S-2240 do eSocial. Menos papel, menos passivo, mais prevenção.',
   seo: {
-    title: 'Segurança do Trabalho: PGR, EPIs, CAT e PPP | Natcorp',
+    title: 'Sistema de Segurança do Trabalho e SESMT | Natcorp',
     description:
-      'Segurança do trabalho integrada ao RH: PGR/GRO, EPIs com CA validado, CAT com S-2210 no prazo legal, LTCAT, PPP eletrônico, CIPA digital e checklists de NRs.',
+      'Sistema de segurança do trabalho e SESMT integrado ao RH: PGR/GRO, EPIs com CA, CAT com S-2210 no prazo, LTCAT, PPP eletrônico, CIPA e checklist de NRs.',
   },
   highlights: [
     { value: '1 dia útil', label: 'prazo do S-2210 após o acidente, com envio automático' },

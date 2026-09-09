@@ -4,13 +4,13 @@ const page: ModulePage = {
   slug: 'recrutamento-e-selecao',
   name: 'Recrutamento e Seleção',
   group: 'talentos',
-  tagline: 'Da vaga aprovada ao [[candidato contratado]], em um só fluxo.',
+  tagline: 'Sistema de recrutamento e seleção: da vaga aprovada ao [[candidato contratado]].',
   summary:
-    'A requisição de vaga aprovada no workflow abre o processo seletivo sozinha. O RH conduz etapas, recrutadores e prazos em uma tela, a NATI cruza o banco de talentos com a vaga e o aprovado segue direto para a Admissão Digital.',
+    'No sistema de recrutamento e seleção da Natcorp, a requisição de vaga aprovada no workflow abre o processo seletivo sozinha. O RH conduz etapas, recrutadores e prazos em uma tela, a NATI cruza o banco de talentos com a vaga e o aprovado segue direto para a Admissão Digital.',
   seo: {
-    title: 'Recrutamento e Seleção integrado | Natcorp',
+    title: 'Sistema de Recrutamento e Seleção integrado | Natcorp',
     description:
-      'Recrutamento e seleção para grandes empresas: processo seletivo aberto pela requisição de vaga, banco de talentos com IA, SLAs por vaga e admissão digital.',
+      'Sistema de recrutamento e seleção para grandes empresas: processo seletivo aberto pela requisição de vaga, banco de talentos com IA, SLAs e admissão digital.',
   },
   highlights: [
     { value: '100%', label: 'digital, da requisição de vaga à contratação' },

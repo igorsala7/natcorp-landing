@@ -115,7 +115,19 @@ Os endereços da tabela estão indexados no Google, aparecem em links de terceir
 
 Com o **301**, o servidor do site novo responde "este endereço mudou de lugar" e entrega a página certa: o visitante nem percebe, e o Google transfere o ranqueamento do endereço antigo para o novo em vez de descartá-lo. É configuração do servidor novo, e independe de qualquer coisa do site antigo continuar existindo.
 
-Todos **permanentes (301)** — não 302, que faria o Google manter o endereço antigo no índice esperando ele voltar. Válidos **com e sem barra final**:
+Todos **permanentes (301)** — não 302, que faria o Google manter o endereço antigo no índice esperando ele voltar. Válidos **com e sem barra final**.
+
+**São 128 regras, geradas — não digitadas.** A fonte é `src/content/legacyRedirects.ts`; `npm run redirects` (que roda sozinho no `npm run build`) gera a partir dela os arquivos prontos para colar:
+
+| Servidor | Arquivo na entrega | Onde colar |
+| --- | --- | --- |
+| Apache | `redirects/apache.txt` | depois do bloco HTTPS/www, antes do SPA fallback |
+| Nginx | `redirects/nginx.conf` | dentro de `server{}`, antes do `location /` |
+| IIS | `redirects/iis.xml` | dentro de `<rules>`, antes da regra de fallback |
+
+Os blocos das seções 6.1 a 6.3 mostram **apenas as 9 primeiras regras**, como exemplo do formato. A lista completa está nos arquivos acima — cole o arquivo inteiro, não o exemplo.
+
+Amostra das páginas institucionais:
 
 | De | Para |
 | --- | --- |
@@ -129,7 +141,7 @@ Todos **permanentes (301)** — não 302, que faria o Google manter o endereço 
 | `/fale-conosco` | `/contato` |
 | `/fale-conosco-2` | `/contato` |
 
-> **`/blog/` não entra na lista.** Não há blog hoje, e nenhum endereço `/blog/*` precisa ser redirecionado. Se um blog for publicado no futuro, tratamos como um caso novo.
+> **O blog entra na lista, e é a maior parte dela.** O site antigo publicava os artigos na **raiz**, no padrão de permalink do WordPress (`/titulo-do-artigo/`), e não sob `/blog/`. São cerca de 90 endereços indexados, além do índice `/blog/`, das páginas de paginação e dos arquivos de categoria. Todos estão no mapa gerado.
 
 ### 5.4 A pasta `/portais/` tem de ser migrada junto — **obrigatório**
 
@@ -242,7 +254,7 @@ RewriteRule ^(.*)$ https://www.natcorp.com.br/$1 [R=301,L]
 RewriteCond %{HTTP_HOST} ^natcorp\.com\.br$ [NC]
 RewriteRule ^(.*)$ https://www.natcorp.com.br/$1 [R=301,L]
 
-# ── Endereços do site institucional antigo, que deixam de existir ───────
+# ── Endereços do site antigo (AMOSTRA — cole redirects/apache.txt inteiro) ─
 RewriteRule ^solucao-de-rh/?$                    /modulos [R=301,L]
 RewriteRule ^sistema-de-rh-hcm/?$                /modulos [R=301,L]
 RewriteRule ^sistema-de-gestao-de-rh-completo/?$ /modulos [R=301,L]

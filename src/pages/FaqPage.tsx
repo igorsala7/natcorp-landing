@@ -7,6 +7,7 @@ import { PageTransition } from '@/components/motion/PageTransition'
 import { SplitText } from '@/components/motion/SplitText'
 import { Reveal, Stagger, StaggerItem } from '@/components/motion/Reveal'
 import { Breadcrumb } from '@/components/seo/Breadcrumb'
+import { JsonLd } from '@/components/seo/JsonLd'
 import { LogoOutline } from '@/components/brand/Logo'
 import { useSeo } from '@/hooks/useSeo'
 import { faqs } from '@/content/faq'
@@ -22,6 +23,20 @@ const shortcuts = [
   { to: paths.modules, title: 'Todos os módulos', text: 'Uma página por módulo, com funcionalidades e FAQ.' },
 ]
 
+/* Um bloco FAQPage com TODAS as perguntas da página. As duas seções abaixo entram
+   com `schema={false}`: dois blocos FAQPage na mesma página fazem o Google usar um
+   e descartar o outro, e as perguntas de estrutura — as que grupos mais buscam —
+   eram justamente as do bloco descartado. */
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: [...faqs, ...structureFaqs].map((f) => ({
+    '@type': 'Question',
+    name: f.q,
+    acceptedAnswer: { '@type': 'Answer', text: f.a },
+  })),
+}
+
 export default function FaqPage() {
   useSeo({
     title: 'Perguntas frequentes sobre o sistema de RH da Natcorp | Natcorp',
@@ -32,6 +47,7 @@ export default function FaqPage() {
 
   return (
     <PageTransition>
+      <JsonLd data={faqSchema} />
       <Section tone="off" className="overflow-hidden pb-10 pt-[calc(var(--nav-h)+3rem)] sm:pt-[calc(var(--nav-h)+4rem)] lg:pb-12 lg:pt-[calc(var(--nav-h)+5rem)]" aria-labelledby="faq-page-title">
         <LogoOutline className="pointer-events-none absolute -right-[12%] -top-[30%] h-[140%] w-auto text-brand-purple/[0.12]" />
         <div className="container relative">
@@ -73,11 +89,20 @@ export default function FaqPage() {
         </div>
       </Section>
 
-      <FAQSection id="faq-geral" tone="white" items={faqs} eyebrow="Sobre o sistema" title="Abrangência, porte, [[volume e estrutura]]." lead="As perguntas mais comuns de quem está trocando de sistema de RH." />
+      <FAQSection
+        id="faq-geral"
+        tone="white"
+        items={faqs}
+        schema={false}
+        eyebrow="Sobre o sistema"
+        title="Abrangência, porte, [[volume e estrutura]]."
+        lead="As perguntas mais comuns de quem está trocando de sistema de RH."
+      />
       <FAQSection
         id="faq-grupos"
         tone="off"
         items={structureFaqs}
+        schema={false}
         eyebrow="Para grupos"
         title="Várias empresas, [[várias filiais]], uma base."
         lead="O que grupos com RH central ou com RH em cada filial perguntam antes de qualquer outra coisa."

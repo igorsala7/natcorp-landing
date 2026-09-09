@@ -4,13 +4,13 @@ const page: ModulePage = {
   slug: 'folha-de-pagamento',
   name: 'Folha de Pagamento',
   group: 'pessoal-e-folha',
-  tagline: 'Folha calculada a [[2.500 colaboradores por minuto]], conferida pela NATI.',
+  tagline: 'O sistema de folha de pagamento que calcula [[2.500 colaboradores por minuto]].',
   summary:
-    'Ponto, benefícios, admissões e afastamentos chegam prontos à folha, sem redigitar. O cálculo roda em minutos, a NATI aponta inconsistências antes do fechamento e o eSocial recebe os dados validados. Férias, 13º, rescisões e EFD-Reinf no mesmo motor.',
+    'O software de folha de pagamento da Natcorp recebe ponto, benefícios, admissões e afastamentos prontos, sem redigitar. O cálculo roda em minutos, a NATI aponta inconsistências antes do fechamento e o eSocial recebe os dados validados. Férias, 13º, rescisões e EFD-Reinf no mesmo motor.',
   seo: {
-    title: 'Folha de Pagamento para grandes empresas | Natcorp',
+    title: 'Sistema de Folha de Pagamento para grandes empresas | Natcorp',
     description:
-      'Folha de pagamento integrada a ponto, benefícios e eSocial: 2.500 colaboradores por minuto, folha por empresa e conferência por IA antes do fechamento.',
+      'Sistema de folha de pagamento integrado a ponto, benefícios e eSocial: 2.500 colaboradores por minuto, folha por empresa e conferência por IA no fechamento.',
   },
   highlights: [
     { value: '2.500', label: 'colaboradores calculados por minuto' },

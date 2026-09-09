@@ -61,9 +61,9 @@ const fold = (s: string) =>
 
 export default function ModulesIndexPage() {
   useSeo({
-    title: 'Módulos do sistema de RH Natcorp | Natcorp',
+    title: 'Software de RH: todos os módulos do sistema | Natcorp',
     description:
-      'Conheça todos os módulos da Natcorp: folha de pagamento, ponto eletrônico, eSocial, admissão digital, SESMT, recrutamento, avaliações, treinamento, people analytics e a NATI.',
+      'Todos os módulos do software de RH da Natcorp: folha de pagamento, ponto eletrônico, eSocial, admissão digital, SESMT, recrutamento, treinamento e people analytics.',
     path: '/modulos',
   })
 

@@ -73,7 +73,7 @@ export function SegmentsSection() {
                 {cover && (
                   <img
                     src={cover.photo}
-                    alt=""
+                    alt={cover.alt}
                     loading="lazy"
                     decoding="async"
                     style={{ objectPosition: cover.position }}

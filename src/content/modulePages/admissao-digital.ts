@@ -4,13 +4,13 @@ const page: ModulePage = {
   slug: 'admissao-digital',
   name: 'Admissão Digital',
   group: 'talentos',
-  tagline: 'A admissão que leva [[minutos, não dias]].',
+  tagline: 'O sistema de admissão digital que leva [[minutos, não dias]].',
   summary:
-    'O candidato preenche os próprios dados, anexa os documentos e assina o contrato eletronicamente. O RH valida e admite em poucos cliques. Folha, ponto e benefícios já nascem prontos, sem papel e sem digitar nada de novo.',
+    'No sistema de admissão digital da Natcorp, o candidato preenche os próprios dados, anexa os documentos e assina o contrato eletronicamente. O RH valida e admite em poucos cliques. Folha, ponto e benefícios já nascem prontos, sem papel e sem digitar nada de novo.',
   seo: {
-    title: 'Admissão Digital sem papel | Natcorp',
+    title: 'Sistema de Admissão Digital sem papel | Natcorp',
     description:
-      'Admissão digital para grandes empresas: dados e documentos pelo portal, assinatura com validade jurídica e cadastro direto na folha, sem papel e sem redigitar.',
+      'Sistema de admissão digital para grandes empresas: dados e documentos pelo portal, assinatura com validade jurídica e cadastro direto na folha, sem papel.',
   },
   highlights: [
     { value: '1 vez', label: 'o colaborador é cadastrado e já existe em todos os módulos' },

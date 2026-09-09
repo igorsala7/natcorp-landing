@@ -101,7 +101,7 @@ export default function CommercialPage() {
   useSeo({
     title: 'Modelo comercial: SaaS modular pelo número de colaboradores | Natcorp',
     description:
-      'Como a Natcorp é contratada: sistema modular em nuvem, como serviço, com valor calculado pelo número de colaboradores. Implantação com o histórico completo da empresa e contabilização da folha integrada ao ERP.',
+      'Como o sistema de RH da Natcorp é contratado: SaaS modular em nuvem, com valor pelo número de colaboradores, implantação com histórico e folha integrada ao ERP.',
     path: paths.commercial,
   })
 
