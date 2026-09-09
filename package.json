@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "prebuild": "node scripts/generate-sitemap.mjs && node scripts/generate-redirects.mjs && node scripts/build-portais.mjs",
+    "prebuild": "node scripts/generate-sitemap.mjs && node scripts/generate-redirects.mjs && node scripts/generate-module-segments.mjs && node scripts/build-portais.mjs",
     "build": "tsc -b && vite build && node scripts/prerender.mjs",
     "lint": "oxlint",
     "preview": "vite preview",
@@ -14,7 +14,8 @@
     "portais": "node scripts/build-portais.mjs",
     "hospedagem": "node scripts/build-hospedagem.mjs",
     "prerender": "node scripts/prerender.mjs",
-    "redirects": "node scripts/generate-redirects.mjs"
+    "redirects": "node scripts/generate-redirects.mjs",
+    "module-segments": "node scripts/generate-module-segments.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.9.1",

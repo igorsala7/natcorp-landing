@@ -1,0 +1,164 @@
+{
+  "folha-de-pagamento": [
+    "bens-industriais",
+    "bens-de-consumo",
+    "saude-e-ciencias-biologicas",
+    "recursos-naturais"
+  ],
+  "administracao-de-pessoal": [
+    "setor-publico-e-social",
+    "saude-e-ciencias-biologicas",
+    "recursos-naturais",
+    "servicos-financeiros"
+  ],
+  "cargos-e-salarios": [
+    "setor-publico-e-social",
+    "bens-industriais",
+    "saude-e-ciencias-biologicas",
+    "recursos-naturais"
+  ],
+  "gestao-de-beneficios": [
+    "bens-de-consumo",
+    "servicos-financeiros",
+    "varejo"
+  ],
+  "natpay": [
+    "bens-de-consumo",
+    "servicos-financeiros",
+    "varejo"
+  ],
+  "esocial": [
+    "bens-industriais",
+    "saude-e-ciencias-biologicas",
+    "recursos-naturais",
+    "setor-publico-e-social"
+  ],
+  "juridico-trabalhista": [
+    "telecom"
+  ],
+  "ponto-eletronico": [
+    "bens-industriais",
+    "bens-de-consumo",
+    "servicos-ao-consumidor",
+    "saude-e-ciencias-biologicas"
+  ],
+  "natponto": [
+    "bens-de-consumo",
+    "servicos-ao-consumidor",
+    "saude-e-ciencias-biologicas",
+    "recursos-naturais"
+  ],
+  "medicina-ocupacional": [
+    "bens-industriais",
+    "saude-e-ciencias-biologicas",
+    "bens-de-consumo",
+    "servicos-ao-consumidor"
+  ],
+  "seguranca-do-trabalho": [
+    "bens-industriais",
+    "saude-e-ciencias-biologicas",
+    "recursos-naturais",
+    "telecom"
+  ],
+  "recrutamento-e-selecao": [
+    "servicos-ao-consumidor",
+    "bens-de-consumo",
+    "recursos-naturais",
+    "servicos-financeiros"
+  ],
+  "quadro-de-vagas": [
+    "servicos-ao-consumidor",
+    "varejo"
+  ],
+  "admissao-digital": [
+    "bens-de-consumo",
+    "varejo",
+    "servicos-ao-consumidor",
+    "recursos-naturais"
+  ],
+  "onboarding": [
+    "servicos-ao-consumidor",
+    "varejo"
+  ],
+  "offboarding": [
+    "bens-de-consumo",
+    "recursos-naturais",
+    "servicos-financeiros",
+    "telecom"
+  ],
+  "avaliacoes-e-feedbacks": [
+    "bens-de-consumo",
+    "servicos-ao-consumidor",
+    "servicos-financeiros",
+    "varejo"
+  ],
+  "metas-e-resultados": [
+    "bens-de-consumo",
+    "servicos-ao-consumidor",
+    "servicos-financeiros",
+    "varejo"
+  ],
+  "treinamento-e-desenvolvimento": [
+    "bens-industriais",
+    "recursos-naturais",
+    "telecom",
+    "bens-de-consumo"
+  ],
+  "carreira-e-sucessao": [
+    "servicos-financeiros",
+    "setor-publico-e-social",
+    "varejo"
+  ],
+  "portais": [
+    "servicos-ao-consumidor",
+    "varejo",
+    "telecom",
+    "bens-industriais"
+  ],
+  "requisicoes-com-workflow": [
+    "setor-publico-e-social",
+    "bens-industriais",
+    "bens-de-consumo",
+    "servicos-ao-consumidor"
+  ],
+  "chamado-interno": [
+    "servicos-ao-consumidor",
+    "varejo"
+  ],
+  "assinatura-eletronica": [
+    "bens-industriais",
+    "servicos-ao-consumidor",
+    "setor-publico-e-social",
+    "servicos-financeiros"
+  ],
+  "ged": [
+    "setor-publico-e-social"
+  ],
+  "people-analytics": [
+    "varejo",
+    "bens-industriais",
+    "saude-e-ciencias-biologicas",
+    "setor-publico-e-social"
+  ],
+  "business-intelligence": [
+    "bens-industriais",
+    "setor-publico-e-social",
+    "varejo"
+  ],
+  "nati": [
+    "servicos-ao-consumidor",
+    "bens-industriais",
+    "bens-de-consumo",
+    "saude-e-ciencias-biologicas"
+  ],
+  "conexao-com-outros-sistemas": [
+    "setor-publico-e-social",
+    "bens-industriais",
+    "bens-de-consumo",
+    "recursos-naturais"
+  ],
+  "infraestrutura-e-seguranca": [
+    "setor-publico-e-social",
+    "servicos-financeiros"
+  ]
+}

@@ -19,7 +19,7 @@ import { getGroup, getModuleEntry, modulePath, type ModuleEntry } from '@/conten
 import type { ModulePage as ModulePageData } from '@/content/modulePages/types'
 import { structurePath } from '@/content/structures'
 import { EASE, viewportOnce } from '@/lib/motion'
-import { ImplantationBlock, ModuleFaqAccordion, ModuleNav, SeeAlsoStrip } from './ModulePage'
+import { ImplantationBlock, ModuleFaqAccordion, ModuleNav, SeeAlsoStrip, SegmentsForModule } from './ModulePage'
 
 const journey: { screen: NatPontoScreen; title: string; text: string }[] = [
   { screen: 'home', title: 'Abrir o app', text: 'Relógio, dados da pessoa, escala do dia e o botão Registrar Ponto. Um toque para começar.' },
@@ -273,6 +273,7 @@ export default function NatPontoModulePage({ entry, page }: { entry: ModuleEntry
       </Section>
 
       <ImplantationBlock tone="off" />
+      <SegmentsForModule slug={entry.slug} name={page.name} />
       <SeeAlsoStrip tone="white" />
       <ModuleNav slug={entry.slug} />
 

@@ -3,21 +3,25 @@ import { Link } from 'react-router'
 import { Logo } from '@/components/brand/Logo'
 import { groups } from '@/content/modulePages'
 import { paths, siteConfig } from '@/content/site'
+import { hubPath } from '@/content/portals'
 import { segmentPath, segmentRegistry, segmentsPath } from '@/content/segments'
 
 /** `external` sai como <a> e força navegação de verdade, fora do roteamento do React. */
 const footerLinks: { to: string; label: string; external?: boolean }[] = [
   { to: paths.home, label: 'Início' },
+  /* A visão geral do sistema precisa estar AQUI, e não só no menu: o mega-menu vive
+     dentro de <AnimatePresence> e só entra no DOM quando alguém abre. No HTML que o
+     rastreador lê, ele não existe — e era por isso que /sistema não recebia um único
+     link em todo o site, apesar de estar no sitemap. */
+  { to: paths.system, label: 'Visão geral do sistema' },
   { to: paths.modules, label: 'Todos os módulos' },
   { to: paths.portals, label: 'Portais e autoatendimento' },
   /*
-   * O acesso que os clientes usam de verdade continua sendo a página do servidor antigo, no mesmo
-   * domínio: /portais/natcorp/ (com a barra final, que é o que faz o servidor entregar a pasta em
-   * vez de cair no roteamento do site). Por isso `external`: precisa de navegação de verdade, não
-   * de rota do React — o site novo não tem /portais/<cliente>, e sim /portais_beta/<cliente>.
-   * Quando a virada acontecer, basta trocar por hubPath('natcorp') e tirar o `external`.
+   * Até a virada, o acesso dos clientes é a página do site novo, em /portais_beta/<cliente>, que já
+   * está no ar e é a que estamos testando. Depois de publicar e conferir em produção, /portais_beta/
+   * volta a ser /portais/ — e aqui basta trocar o prefixo em hubPath(), no content/portals.ts.
    */
-  { to: '/portais/natcorp/', label: 'Acesso aos portais (clientes)', external: true },
+  { to: hubPath('natcorp'), label: 'Acesso aos portais (clientes)' },
   { to: paths.structures, label: 'Como é a sua estrutura?' },
   { to: paths.nati, label: 'NATI' },
   { to: paths.segments, label: 'Segmentos' },

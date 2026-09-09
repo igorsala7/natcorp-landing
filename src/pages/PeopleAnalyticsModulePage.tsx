@@ -21,7 +21,7 @@ import { getGroup, getModuleEntry, type ModuleEntry } from '@/content/modulePage
 import type { ModulePage as ModulePageData } from '@/content/modulePages/types'
 import { EASE } from '@/lib/motion'
 import { cn } from '@/lib/utils'
-import { ImplantationBlock, ModuleFaqAccordion, ModuleNav, SeeAlsoStrip } from './ModulePage'
+import { ImplantationBlock, ModuleFaqAccordion, ModuleNav, SeeAlsoStrip, SegmentsForModule } from './ModulePage'
 
 const actions = [
   { icon: Filter, title: 'Filtrar e selecionar colunas', text: 'Mostre só o que importa: colaboradores ativos de um centro de custo, rubricas de um tipo, um período.' },
@@ -302,6 +302,7 @@ export default function PeopleAnalyticsModulePage({ entry, page }: { entry: Modu
       </Section>
 
       <ImplantationBlock tone="off" />
+      <SegmentsForModule slug={entry.slug} name={page.name} />
       <SeeAlsoStrip tone="white" />
       <ModuleNav slug={entry.slug} />
 

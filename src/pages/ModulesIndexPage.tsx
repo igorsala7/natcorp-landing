@@ -109,6 +109,18 @@ export default function ModulesIndexPage() {
                   com o que ele faz, como funciona e o que muda para a sua empresa. Escolha por onde começar.
                 </p>
               </Reveal>
+              {/* Link dentro do texto, e não só botão: quem chega aqui buscando "software de RH"
+                  muitas vezes quer primeiro a visão do todo, não a lista de peças. É também o
+                  único link editorial que /sistema recebe — no resto do site ela vive do rodapé. */}
+              <Reveal delay={0.3}>
+                <p className="mt-4 max-w-2xl text-[15.5px] leading-relaxed text-brand-graphite">
+                  Prefere ver o conjunto antes das partes? A{' '}
+                  <Link to={paths.system} className="font-semibold text-brand-purple underline-offset-2 hover:underline">
+                    visão geral do sistema de recursos humanos
+                  </Link>{' '}
+                  mostra as sete frentes do RH funcionando juntas, tela a tela.
+                </p>
+              </Reveal>
               <Reveal delay={0.35} className="mt-8 flex flex-wrap gap-3">
                 <Button asChild size="lg">
                   <Link to="#contato">

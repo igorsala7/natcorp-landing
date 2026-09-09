@@ -49,9 +49,9 @@ const localFaq: FaqItem[] = [
 
 export default function PortalsPage() {
   useSeo({
-    title: 'Portais e autoatendimento do RH | Natcorp',
+    title: 'Portal do Colaborador e do Gestor: autoatendimento | Natcorp',
     description:
-      'Portais do Gestor, do Colaborador e do Candidato: holerite, ponto, férias, aprovações, admissão digital e requisições com workflow, no celular ou no computador.',
+      'Portal do Colaborador, do Gestor e do Candidato: holerite, ponto, férias, aprovações e requisições com workflow, no celular ou no computador. Sem fila no RH.',
     path: paths.portals,
   })
   const modules = modulesByGroup('autoatendimento')

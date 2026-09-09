@@ -61,7 +61,7 @@ import { structurePath } from '@/content/structures'
 import type { ModulePage as ModulePageData } from '@/content/modulePages/types'
 import { cn } from '@/lib/utils'
 import { EASE, fadeUp, staggerContainer, viewportOnce } from '@/lib/motion'
-import { ImplantationBlock, ModuleFaqAccordion, ModuleNav, SeeAlsoStrip } from './ModulePage'
+import { ImplantationBlock, ModuleFaqAccordion, ModuleNav, SeeAlsoStrip, SegmentsForModule } from './ModulePage'
 
 /* Dados de exemplo (colaboradora fictícia), no formato em que a NATI responde. */
 const salaryHistory = {
@@ -677,6 +677,7 @@ export default function NatiModulePage({ entry, page }: { entry: ModuleEntry; pa
       </Section>
 
       <ImplantationBlock tone="off" />
+      <SegmentsForModule slug={entry.slug} name={page.name} />
       <SeeAlsoStrip tone="white" />
       <ModuleNav slug={entry.slug} />
 

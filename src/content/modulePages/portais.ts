@@ -4,13 +4,13 @@ const page: ModulePage = {
   slug: 'portais',
   name: 'Portais',
   group: 'autoatendimento',
-  tagline: 'Cada pessoa vê o que precisa, [[sem depender do RH]].',
+  tagline: 'O módulo de portais: [[um acesso por perfil]], configurado pelo RH.',
   summary:
-    'Portais do Gestor, do Colaborador e do Candidato. Cada perfil acessa os próprios dados, faz requisições e resolve o dia a dia sozinho, no celular ou no computador. O que aparece depende do contexto e do acesso de cada usuário.',
+    'O módulo que o RH configura para liberar cada portal: perfis de acesso por empresa, filial e centro de custo, permissões por função e identidade visual da empresa. O que cada pessoa vê depende do contexto e do acesso dela.',
   seo: {
-    title: 'Portais do Gestor, Colaborador e Candidato | Natcorp',
+    title: 'Módulo de Portais: perfis e permissões de acesso | Natcorp',
     description:
-      'Portais de autoatendimento de RH: o gestor aprova e acompanha a equipe, o colaborador consulta holerite e faz pedidos, o candidato acompanha a seleção.',
+      'O módulo de portais do sistema de RH: perfis de acesso por empresa, filial e centro de custo, permissões por função, identidade da empresa e trilha de auditoria.',
   },
   highlights: [
     { value: '250+', label: 'funções gerenciais no Portal do Gestor e do Colaborador' },

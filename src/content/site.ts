@@ -78,15 +78,17 @@ export interface NavLink {
 
 /** Menu "Sistema": entradas gerais, antes das colunas de módulos por grupo. */
 export const systemLinks: NavLink[] = [
+  /* A visão geral abre a lista porque é a página que responde "o que é o sistema" —
+     e porque, fora do menu, ela não recebia UM link em todo o site: nem no rodapé,
+     nem no breadcrumb, nem no conteúdo. A página funcionava ao digitar o endereço,
+     e era invisível para quem chega pelo Google. */
+  { to: paths.system, label: 'Visão geral do sistema', short: 'As sete frentes, com telas e módulos' },
   { to: paths.modules, label: 'Todos os módulos', short: 'Cada módulo com a sua página' },
   { to: paths.structures, label: 'Como é a sua estrutura?', short: 'Empresa única, grupo, filiais, RH central ou por unidade' },
   { to: paths.journey, label: 'Jornada do colaborador', short: 'O ciclo completo, da vaga à promoção' },
   { to: paths.security, label: 'Segurança e infraestrutura', short: 'Nuvem Oracle, contingência e LGPD' },
   { to: paths.portals, label: 'Portais e autoatendimento', short: 'Gestor, colaborador e candidato' },
 ]
-
-/** Visão geral do sistema (/sistema): escondida do menu por enquanto, mas a página continua no ar. */
-export const systemOverviewLink: NavLink = { to: paths.system, label: 'Visão geral do sistema', short: 'As sete frentes, com telas e módulos' }
 
 /** Produtos com nome próprio dentro do sistema (escondidos do menu por enquanto). */
 export const appLinks: NavLink[] = [

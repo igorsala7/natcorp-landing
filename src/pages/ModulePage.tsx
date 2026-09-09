@@ -17,6 +17,8 @@ import { ResponsiveSection } from '@/components/sections/ResponsiveSection'
 import { useSeo } from '@/hooks/useSeo'
 import { getGroup, getModuleEntry, loadModulePage, modulePath, moduleRegistry, type ModuleEntry } from '@/content/modulePages'
 import { moduleIcons } from '@/content/modulePages/icons'
+import moduleSegments from '@/content/modulePages/segments.json'
+import { getSegmentEntry, segmentIcons, segmentPath } from '@/content/segments'
 import type { ModulePage as ModulePageData } from '@/content/modulePages/types'
 import type { FaqItem } from '@/content/faq'
 import { journeyPath, paths } from '@/content/site'
@@ -272,6 +274,7 @@ function ModuleContent({ entry, page }: { entry: ModuleEntry; page: ModulePageDa
       </Section>
 
       <ImplantationBlock tone="off" />
+      <SegmentsForModule slug={entry.slug} name={page.name} />
       <SeeAlsoStrip tone="white" />
       <ModuleNav slug={entry.slug} />
 
@@ -339,6 +342,69 @@ export function ImplantationBlock({ id = 'implantacao', tone = 'off' }: { id?: s
             </StaggerItem>
           ))}
         </Stagger>
+      </div>
+    </Section>
+  )
+}
+
+/**
+ * "Onde este módulo mais pesa": os segmentos em que ele resolve a dor central.
+ *
+ * Era a única aresta faltando no grafo de links do site — nenhuma das 31 páginas de
+ * módulo linkava para uma página de segmento, e por isso as 9 de segmento eram as
+ * menos alimentadas de todas, com 3 a 4 links contra 20 a 32 das de módulo. São
+ * justamente elas que respondem por "sistema de RH para indústria" e "RH para
+ * hospitais", que é busca de quem já sabe o que quer.
+ *
+ * A lista vem de `segments.json`, gerado no build a partir do `spotlight` e do
+ * `answers` de cada página de segmento — a mesma curadoria, só lida ao contrário.
+ * Módulo sem segmento declarado não mostra o bloco, em vez de mostrar um genérico.
+ */
+export function SegmentsForModule({ slug, name }: { slug: string; name: string }) {
+  const slugs = (moduleSegments as Record<string, string[] | undefined>)[slug]
+  if (!slugs?.length) return null
+  const segs = slugs.map((s) => getSegmentEntry(s)).filter((s) => s !== undefined)
+  if (!segs.length) return null
+
+  return (
+    <Section tone="white" flush className="py-12 sm:py-14 lg:py-16" aria-labelledby="segmentos-do-modulo-title">
+      <div className="container">
+        <Reveal y={12} duration={0.5}>
+          <Eyebrow>Onde mais pesa</Eyebrow>
+        </Reveal>
+        <Reveal delay={0.1}>
+          <h2 id="segmentos-do-modulo-title" className="mt-4 max-w-2xl text-2xl font-extrabold leading-tight text-brand-ink sm:text-3xl">
+            {name} na realidade de cada operação.
+          </h2>
+        </Reveal>
+        <Stagger className="mt-7 grid gap-3 sm:grid-cols-2 lg:grid-cols-4" stagger={0.06}>
+          {segs.map((s) => {
+            const Icon = segmentIcons[s.icon]
+            return (
+              <StaggerItem key={s.slug}>
+                <Link
+                  to={segmentPath(s.slug)}
+                  className="group flex h-full flex-col rounded-2xl border border-brand-mist bg-brand-off-white/40 p-4 transition-[border-color,background-color,transform,box-shadow] duration-300 ease-brand hover:-translate-y-0.5 hover:border-brand-purple/30 hover:bg-white hover:shadow-soft"
+                >
+                  <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-white text-brand-purple shadow-soft transition-colors duration-300 group-hover:bg-brand-purple group-hover:text-white">
+                    <Icon className="h-4.5 w-4.5" strokeWidth={1.7} aria-hidden />
+                  </span>
+                  <span className="mt-3 flex items-center gap-1.5 text-[14.5px] font-bold leading-snug text-brand-ink">
+                    {s.name}
+                    <ArrowRight className="h-3.5 w-3.5 shrink-0 text-brand-purple opacity-0 transition-[opacity,transform] duration-300 group-hover:translate-x-0.5 group-hover:opacity-100" aria-hidden />
+                  </span>
+                  <span className="mt-1 block text-[13px] leading-snug text-brand-graphite">{s.short}</span>
+                </Link>
+              </StaggerItem>
+            )
+          })}
+        </Stagger>
+        <Reveal delay={0.3} className="mt-6">
+          <Link to={paths.segments} className="group inline-flex items-center gap-2 text-[15px] font-semibold text-brand-purple">
+            Ver todos os segmentos atendidos
+            <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5" />
+          </Link>
+        </Reveal>
       </div>
     </Section>
   )
