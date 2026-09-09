@@ -19,7 +19,7 @@ Sem Docker, sem contêiner, sem runtime no servidor.
 **Os dois pontos que exigem atenção**, e que não são óbvios num site estático comum:
 
 1. O site é uma *Single Page Application*: **o servidor precisa devolver `index.html` para caminhos que não existem em disco** (seção 5.1). Sem isso tudo funciona ao navegar, mas dá 404 ao recarregar a página ou abrir um link direto.
-2. **A pasta `/portais/` do servidor atual precisa ser migrada junto** (seção 5.4). Ela não sai do nosso build e não é WordPress: é o acesso dos clientes ao sistema, em uso todos os dias.
+2. **A pasta `/portais/` do servidor atual precisa ser migrada junto** (seção 5.4). Ela não sai do nosso build: é o acesso dos clientes ao sistema, em uso todos os dias, e o endereço dela não muda agora.
 
 ---
 
@@ -109,11 +109,11 @@ O canônico é **`https://www.natcorp.com.br`**. É esse endereço que está no 
 
 ### 5.3 Redirecionamentos 301 dos endereços que deixam de existir — **obrigatório**
 
-O site novo substitui um WordPress que **sai do ar por completo** — não fica no ar em lugar nenhum, nem em subdomínio. Estas regras existem por causa disso, não apesar disso.
+O site institucional atual é **substituído por completo** na virada: as páginas dele deixam de existir, e não ficam no ar em lugar nenhum, nem em subdomínio. Estas regras existem por causa disso.
 
 Os endereços da tabela estão indexados no Google, aparecem em links de terceiros e estão salvos nos favoritos e em e-mails de clientes. O site novo não tem esses caminhos: onde havia `/fale-conosco`, agora há `/contato`. Sem as regras, cada um desses links vira 404 no dia da virada.
 
-Com o **301**, o servidor do site novo responde "este endereço mudou de lugar" e entrega a página certa: o visitante nem percebe, e o Google transfere o ranqueamento do endereço antigo para o novo em vez de descartá-lo. É configuração do servidor novo — **não depende do WordPress estar rodando**, e pode ser aplicada com ele já desligado.
+Com o **301**, o servidor do site novo responde "este endereço mudou de lugar" e entrega a página certa: o visitante nem percebe, e o Google transfere o ranqueamento do endereço antigo para o novo em vez de descartá-lo. É configuração do servidor novo, e independe de qualquer coisa do site antigo continuar existindo.
 
 Todos **permanentes (301)** — não 302, que faria o Google manter o endereço antigo no índice esperando ele voltar. Válidos **com e sem barra final**:
 
@@ -135,9 +135,16 @@ Todos **permanentes (301)** — não 302, que faria o Google manter o endereço 
 
 Este é o ponto mais fácil de errar na migração, e o único que pode tirar clientes do ar.
 
-**A situação.** `www.natcorp.com.br/portais/<cliente>/` é a página por onde colaboradores, gestores e candidatos entram no sistema Natcorp, todos os dias. Ela **está no ar hoje** e **continua sendo o endereço em uso** depois da publicação do site novo.
+**A situação.** O domínio `www.natcorp.com.br` hospeda hoje duas coisas independentes, e elas mudam em datas diferentes:
 
-Ela **não é WordPress** e **não faz parte do build** descrito na seção 3: é uma pasta de HTML estático que vive no servidor atual, ao lado do WordPress. Quando o WordPress for desligado, ela **não pode ir junto**.
+| | O que é | O que acontece na virada |
+| --- | --- | --- |
+| **A raiz e as páginas institucionais** | O site de marketing da Natcorp | **Substituído de imediato** pela entrega desta documentação |
+| **`/portais/<cliente>/`** | Por onde colaboradores, gestores e candidatos entram no sistema Natcorp, todos os dias | **Não muda.** Continua exatamente como está |
+
+A pasta `/portais/` **não faz parte do build** descrito na seção 3: é HTML estático que vive no servidor atual, ao lado do site institucional. Trocar essas páginas exige avisar os clientes com antecedência, e esse prazo ainda está correndo — por isso elas seguem no ar, no mesmo endereço, enquanto o site institucional já é o novo.
+
+Em outras palavras: **substituir o site institucional não pode encostar em `/portais/`.**
 
 **O que fazer:**
 
@@ -152,10 +159,12 @@ Ela **não é WordPress** e **não faz parte do build** descrito na seção 3: �
 
 **Duas ressalvas:**
 
-1. **Barra final.** `/portais/natcorp/` funciona porque o servidor resolve `pasta/` → `pasta/index.html`. Não criem regra global que **remova** ou **force** barra final — qualquer uma das duas quebra este caso. Basta o `DirectoryIndex index.html` / `index index.html` padrão.
-2. **`/portais` sozinho é do site novo.** Sem nada depois, `/portais` é uma **página de marketing** do site novo ("Portais e autoatendimento"), que está no menu e no sitemap. Ou seja: `/portais` → site novo; `/portais/<qualquer-coisa>/` → pasta migrada do servidor atual. A regra 5.1 já separa os dois corretamente, desde que **não exista** uma regra de proxy ou redirecionamento capturando o prefixo `/portais/*` inteiro.
+1. **Os dois formatos do endereço precisam funcionar.** Os clientes usam **sem** barra final — `www.natcorp.com.br/portais/natcorp` —, que é como o endereço está nos comunicados e nos favoritos deles. O comportamento padrão do servidor já resolve: ele reconhece `/portais/natcorp` como pasta, redireciona para `/portais/natcorp/` e entrega o `index.html` de dentro. Para continuar valendo, basta **não desligar** o padrão (`DirectoryIndex`/`DirectorySlash` no Apache, `index index.html` no Nginx, documento padrão no IIS) e **não criar regra global** que remova ou force barra final. O checklist da seção 9 testa os dois formatos.
+2. **`/portais` sozinho é do site novo.** Sem nada depois, `/portais` é uma **página de marketing** do site novo ("Portais e autoatendimento"), que está no menu e no sitemap. Ou seja: `/portais` → site novo; `/portais/<cliente>` e `/portais/<cliente>/` → pasta atual, intocada. A regra 5.1 já separa os dois corretamente, desde que **não exista** uma regra de proxy ou redirecionamento capturando o prefixo `/portais/*` inteiro.
 
-**E o `/portais_beta/`?** O site novo traz a sua própria versão dessas páginas, em `/portais_beta/<cliente>/`. É uma prévia para aprovação interna: sai com `noindex`, está fora do `sitemap.xml` e **não deve ser divulgada**. Não requer configuração nenhuma — é arquivo estático comum. Quando decidirmos fazer a virada, avisaremos e o conteúdo passa a `/portais/`.
+**E o `/portais_beta/`?** A entrega inclui a nossa versão futura dessas páginas, em `/portais_beta/<cliente>/`. Ela existe para aprovação interna enquanto o prazo de aviso aos clientes corre: sai com `noindex`, está fora do `sitemap.xml` e **não deve ser divulgada**. Não requer configuração nenhuma — é arquivo estático comum.
+
+**A segunda virada, mais adiante.** Terminado o aviso aos clientes, avisaremos vocês e entregaremos uma versão em que este conteúdo passa a responder em `/portais/`. Só nesse momento a pasta atual é substituída — e aí sim, com a nossa confirmação por escrito. **Até lá, `/portais/` não se toca.**
 
 ### 5.5 Compressão
 
@@ -231,7 +240,7 @@ RewriteRule ^(.*)$ https://www.natcorp.com.br/$1 [R=301,L]
 RewriteCond %{HTTP_HOST} ^natcorp\.com\.br$ [NC]
 RewriteRule ^(.*)$ https://www.natcorp.com.br/$1 [R=301,L]
 
-# ── Redirecionamentos do site anterior (WordPress) ──────────────────────
+# ── Endereços do site institucional antigo, que deixam de existir ───────
 RewriteRule ^solucao-de-rh/?$                    /modulos [R=301,L]
 RewriteRule ^sistema-de-rh-hcm/?$                /modulos [R=301,L]
 RewriteRule ^sistema-de-gestao-de-rh-completo/?$ /modulos [R=301,L]
@@ -289,7 +298,7 @@ server {
     root /var/www/natcorp;
     index index.html;
 
-    # ── Redirecionamentos do site anterior ─────────────────────────────
+    # ── Endereços do site institucional antigo, que deixam de existir ──
     location ~ ^/(solucao-de-rh|sistema-de-rh-hcm|sistema-de-gestao-de-rh-completo|sistema-de-rh-completo-2-0)/?$ {
         return 301 /modulos;
     }
@@ -374,23 +383,23 @@ server {
           <action type="Redirect" url="https://www.natcorp.com.br/{R:1}" redirectType="Permanent" />
         </rule>
 
-        <rule name="WP: modulos" stopProcessing="true">
+        <rule name="Antigo: modulos" stopProcessing="true">
           <match url="^(solucao-de-rh|sistema-de-rh-hcm|sistema-de-gestao-de-rh-completo|sistema-de-rh-completo-2-0)/?$" />
           <action type="Redirect" url="/modulos" redirectType="Permanent" />
         </rule>
-        <rule name="WP: folha" stopProcessing="true">
+        <rule name="Antigo: folha" stopProcessing="true">
           <match url="^folha-de-pagamento/?$" />
           <action type="Redirect" url="/modulos/folha-de-pagamento" redirectType="Permanent" />
         </rule>
-        <rule name="WP: sobre" stopProcessing="true">
+        <rule name="Antigo: sobre" stopProcessing="true">
           <match url="^sobre-nos/?$" />
           <action type="Redirect" url="/sobre" redirectType="Permanent" />
         </rule>
-        <rule name="WP: servicos" stopProcessing="true">
+        <rule name="Antigo: servicos" stopProcessing="true">
           <match url="^servicos/?$" />
           <action type="Redirect" url="/sobre#servicos" redirectType="Permanent" />
         </rule>
-        <rule name="WP: contato" stopProcessing="true">
+        <rule name="Antigo: contato" stopProcessing="true">
           <match url="^fale-conosco(-2)?/?$" />
           <action type="Redirect" url="/contato" redirectType="Permanent" />
         </rule>
@@ -456,8 +465,10 @@ Percorrer na ordem. Os cinco primeiros pegam quase todos os erros de configuraç
 - [ ] `https://www.natcorp.com.br/` abre a home com a animação de abertura.
 - [ ] **Link direto:** colar `https://www.natcorp.com.br/modulos/folha-de-pagamento` na barra de endereços (não navegar até lá) → abre a página, **não** um 404. *Falha aqui = SPA fallback (5.1) inativo.*
 - [ ] **Recarregar (F5)** numa página interna qualquer → continua na mesma página.
-- [ ] **`https://www.natcorp.com.br/portais/natcorp/`** (com barra final) abre a **página de acesso aos portais migrada do servidor atual** — **não** a home do site novo. *Falha aqui = o fallback está engolindo os arquivos reais (5.1/5.4).*
-- [ ] **`https://www.natcorp.com.br/portais`** (sem barra, sem cliente) abre a **página de marketing "Portais e autoatendimento"** do site novo.
+- [ ] **`https://www.natcorp.com.br/portais/natcorp`** (sem barra final — é o formato que os clientes usam) abre a **página de acesso ao sistema, igual a hoje** — não a home do site novo, não um 404. *Este é o teste que garante que ninguém ficou sem acesso.*
+- [ ] **`https://www.natcorp.com.br/portais/natcorp/`** (com barra final) abre a mesma página. *Falha em um dos dois formatos = regra de barra final atrapalhando (5.4, ressalva 1); falha nos dois = o fallback está engolindo os arquivos reais (5.1).*
+- [ ] **Repetir os dois testes acima para cada cliente** que tenha página em `/portais/`, não só `natcorp`.
+- [ ] **`https://www.natcorp.com.br/portais`** (sem cliente) abre a **página de marketing "Portais e autoatendimento"** do site novo.
 - [ ] `https://natcorp.com.br/sobre` (sem `www`) redireciona com **301** para `https://www.natcorp.com.br/sobre`.
 - [ ] `https://www.natcorp.com.br/sobre-nos` redireciona com **301** para `/sobre` (verificar o código, não só o destino).
 

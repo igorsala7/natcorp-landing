@@ -55,11 +55,11 @@ O roteamento é feito no cliente com [React Router](https://reactrouter.com) (`B
 precisa devolver `index.html` para qualquer caminho: já estão incluídos `vercel.json` (Vercel) e `public/_redirects`
 (Netlify/Cloudflare Pages). Em outros provedores, configure o "SPA fallback" equivalente.
 
-Os mesmos dois arquivos trazem **redirecionamentos permanentes (301)** dos endereços do site anterior em WordPress
+Os mesmos dois arquivos trazem **redirecionamentos permanentes (301)** dos endereços do site institucional antigo
 (`/solucao-de-rh/` → `/modulos`, `/sobre-nos/` → `/sobre`, `/fale-conosco/` → `/contato`, `/servicos/` → `/sobre#servicos`,
-`/folha-de-pagamento/` → `/modulos/folha-de-pagamento` etc.) para as rotas novas,
-para que os links já indexados pelo Google e salvos por clientes continuem funcionando. O `/blog/` ficou de fora:
-depende de onde o WordPress vai continuar publicado.
+`/folha-de-pagamento/` → `/modulos/folha-de-pagamento` etc.) para as rotas novas. O site antigo é substituído por
+completo, então sem os 301 cada link indexado pelo Google ou salvo por um cliente viraria 404 no dia da virada.
+`/blog/` fica de fora porque não existe blog.
 
 `npm run build` roda antes `scripts/generate-sitemap.mjs`, que gera `public/sitemap.xml` e `public/robots.txt`
 a partir dos registros em `src/content/modulePages`, `src/content/segments` e `src/content/structures` (use `VITE_SITE_URL`
