@@ -55,7 +55,7 @@ export const legacyRedirects: LegacyRedirect[] = [
   { from: '/folha-de-pagamento-2-1', to: '/modulos/folha-de-pagamento' },
   { from: '/folha-de-pagamento-teste-prototipo', to: '/modulos/folha-de-pagamento' },
   { from: '/sobre-nos', to: '/sobre' },
-  { from: '/servicos', to: '/sobre#servicos' },
+  { from: '/servicos', to: '/implantacao' },
   { from: '/jobs', to: '/sobre' },
   { from: '/congerhi', to: '/sobre' },
   { from: '/fale-conosco', to: '/contato' },

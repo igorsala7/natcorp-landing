@@ -47,7 +47,7 @@ const keystones = [
     title: 'O histórico completo da sua empresa vem junto.',
     text: 'A implantação migra todo o histórico, não só os últimos anos. Cada colaborador chega com a trajetória inteira: admissões, movimentações, férias, afastamentos, cálculos e documentos. As consultas, auditorias e cálculos que dependem do passado funcionam desde o primeiro dia.',
     links: [
-      { to: `${paths.about}#servicos`, label: 'Como é a implantação' },
+      { to: paths.implantation, label: 'Como é a implantação' },
       { to: modulePath('ged'), label: 'GED' },
     ],
   },
@@ -255,7 +255,7 @@ export default function CommercialPage() {
             ))}
           </Stagger>
           <Reveal delay={0.2} className="mt-8">
-            <Link to={`${paths.about}#servicos`} className="group inline-flex items-center gap-2 text-[15px] font-semibold text-brand-purple">
+            <Link to={paths.implantation} className="group inline-flex items-center gap-2 text-[15px] font-semibold text-brand-purple">
               Ver implantação, suporte e serviços
               <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5" aria-hidden />
             </Link>

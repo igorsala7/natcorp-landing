@@ -27,6 +27,7 @@ const urls = [
   { loc: '/termos-de-uso', priority: '0.3', changefreq: 'yearly' },
   { loc: '/politica-de-cookies', priority: '0.3', changefreq: 'yearly' },
   { loc: '/modelo-comercial', priority: '0.8', changefreq: 'monthly' },
+  { loc: '/implantacao', priority: '0.8', changefreq: 'monthly' },
   { loc: '/jornada-da-contratacao', priority: '0.8', changefreq: 'monthly' },
   ...registry.map((m) => ({ loc: `/modulos/${m.slug}`, priority: '0.8', changefreq: 'monthly' })),
   { loc: '/segmentos', priority: '0.9', changefreq: 'monthly' },

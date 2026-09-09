@@ -54,6 +54,7 @@ export const paths = {
   terms: '/termos-de-uso',
   cookies: '/politica-de-cookies',
   commercial: '/modelo-comercial',
+  implantation: '/implantacao',
   /** Página interna com as peças de motion da marca (fora do menu e do sitemap). */
   motion: '/motion',
   /** Apresentação executiva em tela cheia (deck comercial), fora do menu e do sitemap. */
@@ -102,7 +103,7 @@ export const appLinks: NavLink[] = [
 export const companyLinks: NavLink[] = [
   { to: paths.about, label: 'Sobre a Natcorp', short: '35 anos, missão, visão e valores' },
   { to: `${paths.about}#reconhecimento`, label: 'Clientes e reconhecimentos', short: 'Quem usa o sistema e os prêmios' },
-  { to: `${paths.about}#servicos`, label: 'Implantação, suporte e serviços', short: 'Implantação, migração, BPO, treinamento e suporte' },
+  { to: paths.implantation, label: 'Implantação, suporte e serviços', short: 'Implantação, migração, BPO, treinamento e suporte' },
   { to: paths.commercial, label: 'Modelo comercial', short: 'Modular, em nuvem, pelo número de colaboradores' },
   { to: `${paths.about}#videos`, label: 'Vídeos', short: 'O canal da Natcorp' },
 ]

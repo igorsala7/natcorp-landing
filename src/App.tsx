@@ -28,6 +28,7 @@ const ContactPage = lazy(() => import('@/pages/ContactPage'))
 const PortalsPage = lazy(() => import('@/pages/PortalsPage'))
 const FaqPage = lazy(() => import('@/pages/FaqPage'))
 const CommercialPage = lazy(() => import('@/pages/CommercialPage'))
+const ImplantationPage = lazy(() => import('@/pages/ImplantationPage'))
 const LegalPage = lazy(() => import('@/pages/LegalPage'))
 const NotFoundPage = lazy(() => import('@/pages/NotFoundPage'))
 const MotionPage = lazy(() => import('@/pages/MotionPage'))
@@ -67,6 +68,7 @@ function AppRoutes() {
           ['/portais', <PortalsPage />],
           ['/perguntas-frequentes', <FaqPage />],
           ['/modelo-comercial', <CommercialPage />],
+          ['/implantacao', <ImplantationPage />],
         ].map(([path, element]) => (
           <Route key={path as string} path={path as string} element={<Suspense fallback={<PageFallback />}>{element}</Suspense>} />
         ))}

@@ -100,6 +100,14 @@ export default function LegalPage({ doc }: { doc: LegalDoc }) {
                     Segurança e infraestrutura
                   </Link>
                 </li>
+                {/* Estas páginas não têm o formulário de demonstração, e não devem ter: quem
+                    abre a política está resolvendo outra coisa. Mas ficar sem nenhuma saída
+                    para falar com a empresa é pior — daí o link para /contato. */}
+                <li>
+                  <Link to={paths.contact} className="font-semibold text-brand-purple underline-offset-2 hover:underline">
+                    Falar com a Natcorp
+                  </Link>
+                </li>
               </ul>
             </div>
           </div>

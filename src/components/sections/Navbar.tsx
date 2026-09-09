@@ -62,7 +62,7 @@ const linkIcons: Record<string, LucideIcon> = {
   '/modulos/people-analytics': PieChart,
   [paths.about]: Building2,
   [`${paths.about}#reconhecimento`]: Trophy,
-  [`${paths.about}#servicos`]: Handshake,
+  [paths.implantation]: Handshake,
   [`${paths.about}#videos`]: PlayCircle,
   [paths.contact]: Mail,
 }

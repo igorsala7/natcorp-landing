@@ -41,6 +41,7 @@ const fontes = {
   '/portais': ['src/pages/PortalsPage.tsx'],
   '/perguntas-frequentes': ['src/pages/FaqPage.tsx', 'src/content/faq.ts', 'src/content/structure.ts'],
   '/modelo-comercial': ['src/pages/CommercialPage.tsx'],
+  '/implantacao': ['src/pages/ImplantationPage.tsx', 'src/content/implantation.ts'],
   '/jornada-da-contratacao': ['src/pages/HiringJourneyPage.tsx', 'src/content/hiringJourney.ts'],
   '/privacidade': ['src/content/legal/privacidade.ts'],
   '/termos-de-uso': ['src/content/legal/termos-de-uso.ts'],

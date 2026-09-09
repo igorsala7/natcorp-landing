@@ -27,6 +27,7 @@ const footerLinks: { to: string; label: string; external?: boolean }[] = [
   { to: paths.segments, label: 'Segmentos' },
   { to: paths.journey, label: 'Jornada do colaborador' },
   { to: paths.security, label: 'Segurança e infraestrutura' },
+  { to: paths.implantation, label: 'Implantação e serviços' },
   { to: paths.commercial, label: 'Modelo comercial' },
   { to: paths.faq, label: 'Perguntas frequentes' },
   { to: paths.about, label: 'Sobre a Natcorp' },

@@ -26,7 +26,7 @@ const steps: { title: string; text: string; links?: { label: string; to: string 
     text: 'Contratação modular, como serviço em nuvem, com o valor calculado pelo número de colaboradores. Depois, cronograma, marcos e o time que acompanha do início ao primeiro fechamento de folha.',
     links: [
       { label: 'Como cobramos', to: paths.commercial },
-      { label: 'Como é a implantação', to: `${paths.about}#servicos` },
+      { label: 'Como é a implantação', to: paths.implantation },
     ],
   },
 ]

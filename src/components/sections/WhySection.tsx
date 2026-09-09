@@ -141,7 +141,7 @@ export function WhySection() {
               Ver o comparativo com outros sistemas
               <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5" aria-hidden />
             </Link>
-            <Link to={`${paths.about}#servicos`} className="group inline-flex items-center gap-2">
+            <Link to={paths.implantation} className="group inline-flex items-center gap-2">
               Conhecer os serviços que acompanham o sistema
               <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5" aria-hidden />
             </Link>

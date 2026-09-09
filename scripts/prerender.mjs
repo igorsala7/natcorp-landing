@@ -66,6 +66,7 @@ const rotas = [
   '/termos-de-uso',
   '/politica-de-cookies',
   '/modelo-comercial',
+  '/implantacao',
   '/jornada-da-contratacao',
   ...modulos.map((m) => `/modulos/${m.slug}`),
   '/segmentos',

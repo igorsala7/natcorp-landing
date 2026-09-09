@@ -2,7 +2,6 @@ import { Link } from 'react-router'
 import { ArrowRight, Eye, HeartHandshake, Target } from 'lucide-react'
 import { Section, Eyebrow, SectionHeader } from '@/components/sections/Section'
 import { RecognitionSection } from '@/components/sections/RecognitionSection'
-import { ServicesSection } from '@/components/sections/ServicesSection'
 import { VideosSection } from '@/components/sections/VideosSection'
 import { CTASection } from '@/components/sections/CTASection'
 import { PageTransition } from '@/components/motion/PageTransition'
@@ -151,12 +150,46 @@ export default function AboutPage() {
       </Section>
 
       <RecognitionSection />
-      <ServicesSection id="servicos" />
+      {/* O conteúdo de serviços virou /implantacao: aqui ficaria duplicado, competindo
+          com a própria página. O rodapé de "quem somos" leva para lá. */}
+      <ServicesTeaser />
       <VideosSection />
       <CTASection
         title="Conheça a Natcorp de perto."
         text="Marque uma conversa com o nosso time. Mostramos o sistema com exemplos da sua operação."
       />
     </PageTransition>
+  )
+}
+
+/**
+ * Chamada para /implantacao.
+ *
+ * O bloco completo de serviços virou página própria. Repetir a grade aqui faria duas
+ * páginas do mesmo site disputarem "implantação de sistema de RH" — a canibalização
+ * que acabamos de resolver entre os dois /portais. Aqui fica o convite, lá fica o
+ * conteúdo.
+ */
+function ServicesTeaser() {
+  return (
+    <Section id="servicos" tone="off" flush className="py-14 sm:py-16" aria-labelledby="servicos-title">
+      <div className="container">
+        <p className="text-[12px] font-semibold uppercase tracking-[0.16em] text-brand-purple">Além do sistema</p>
+        <h2 id="servicos-title" className="mt-3 max-w-2xl text-2xl font-extrabold leading-tight text-brand-ink sm:text-3xl">
+          Um time que entrega junto, da implantação ao dia a dia.
+        </h2>
+        <p className="mt-4 max-w-2xl text-[16px] leading-relaxed text-brand-graphite">
+          Sistema é metade da história. A outra metade é quem implanta, migra o histórico, treina, desenvolve e
+          atende — tudo feito pela própria Natcorp, sem intermediário.
+        </p>
+        <Link
+          to={paths.implantation}
+          className="group mt-6 inline-flex items-center gap-2 text-[15px] font-semibold text-brand-purple"
+        >
+          Ver como é a implantação, a migração e o suporte
+          <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5" />
+        </Link>
+      </div>
+    </Section>
   )
 }

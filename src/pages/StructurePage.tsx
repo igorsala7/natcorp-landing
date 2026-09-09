@@ -435,7 +435,7 @@ function StructureContent({ entry, page }: { entry: StructureEntry; page: Struct
             <FaqAccordion items={page.faq} />
             <p className="mt-4 px-1 text-[14px] leading-snug text-brand-graphite">
               Implantação, migração, treinamento e suporte, em detalhe:{' '}
-              <Link to={`${paths.about}#servicos`} className="group inline-flex items-center gap-1.5 font-semibold text-brand-purple">
+              <Link to={paths.implantation} className="group inline-flex items-center gap-1.5 font-semibold text-brand-purple">
                 Ver implantação, suporte e serviços
                 <ArrowRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-0.5" aria-hidden />
               </Link>
