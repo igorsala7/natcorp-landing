@@ -9,9 +9,24 @@ export const DUR = { fast: 0.18, base: 0.32, slow: 0.7, scene: 0.9 } as const
 
 export const spring = { type: 'spring', stiffness: 260, damping: 26, mass: 0.8 } satisfies Transition
 
+/*
+ * POR QUE NENHUMA ENTRADA ANIMA A OPACIDADE
+ *
+ * As entradas usam `whileInView`. No HTML pré-renderizado, quem está abaixo da
+ * dobra nunca entra na viewport do Chrome sem interface — e o estado inicial da
+ * animação fica congelado no arquivo salvo. Com `opacity: 0` ali, as 57 páginas
+ * eram entregues com H1, H2 e blocos de texto marcados como invisíveis.
+ *
+ * O Google executa JavaScript e vê o conteúdo. Bing e os rastreadores de IA leem
+ * o HTML cru, e `opacity: 0` embutido é o sinal clássico de texto oculto.
+ *
+ * A entrada agora é só deslocamento: o texto nasce visível e desliza para o
+ * lugar. Nada some do HTML, e não há piscada na hidratação — que é o que
+ * aconteceria se o arquivo mostrasse o conteúdo e o motion o escondesse de novo.
+ */
 export const fadeUp: Variants = {
-  hidden: { opacity: 0, y: 24 },
-  visible: { opacity: 1, y: 0, transition: { duration: DUR.slow, ease: EASE } },
+  hidden: { y: 24 },
+  visible: { y: 0, transition: { duration: DUR.slow, ease: EASE } },
 }
 
 export const fadeIn: Variants = {

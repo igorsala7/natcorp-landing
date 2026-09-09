@@ -24,8 +24,8 @@ interface SplitTextProps {
 const tags = { h1: m.h1, h2: m.h2, h3: m.h3, p: m.p, span: m.span, div: m.div } as const
 
 const word: Variants = {
-  hidden: { y: '110%', opacity: 0 },
-  visible: { y: '0%', opacity: 1, transition: { duration: DUR.scene, ease: EASE } },
+  hidden: { y: '110%' },
+  visible: { y: '0%', transition: { duration: DUR.scene, ease: EASE } },
 }
 
 interface Segment {

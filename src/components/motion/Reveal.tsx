@@ -14,8 +14,8 @@ interface RevealProps extends HTMLMotionProps<'div'> {
 export function Reveal({ children, delay = 0, y = 24, duration = DUR.slow, once = true, ...rest }: RevealProps) {
   return (
     <m.div
-      initial={{ opacity: 0, y }}
-      whileInView={{ opacity: 1, y: 0 }}
+      initial={{ y }}
+      whileInView={{ y: 0 }}
       viewport={{ ...viewportOnce, once }}
       transition={{ duration, ease: EASE, delay }}
       {...rest}

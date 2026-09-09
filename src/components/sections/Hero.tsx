@@ -52,12 +52,16 @@ export function Hero() {
   const opacityText = useTransform(scrollYProgress, [0, 0.6], [1, 0])
   const yStage = useTransform(scrollYProgress, [0, 1], [0, 80])
 
+  /* Só deslocamento, nunca opacidade: o hero é a primeira coisa que um rastreador
+     lê, e `opacity: 0` embutido no HTML pré-renderizado é o sinal clássico de
+     texto oculto. Enquanto a abertura não termina, o texto fica deslocado — some
+     do enquadramento sem sumir do documento. */
   const show = (delay: number) =>
     instant
-      ? { initial: false as const, animate: { opacity: 1, y: 0 }, transition: { duration: 0 } }
+      ? { initial: false as const, animate: { y: 0 }, transition: { duration: 0 } }
       : {
-          initial: { opacity: 0, y: 20 },
-          animate: done ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 },
+          initial: { y: 20 },
+          animate: done ? { y: 0 } : { y: 20 },
           transition: { duration: 0.8, ease: EASE, delay },
         }
 
