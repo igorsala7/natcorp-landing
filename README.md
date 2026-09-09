@@ -23,6 +23,8 @@ npm run dev      # servidor de desenvolvimento
 npm run build    # typecheck + build de produção em dist/
 npm run preview  # serve o build localmente
 npm run lint     # oxlint
+
+npm run hospedagem  # gera HOSPEDAGEM.html, o arquivo único para a hospedagem
 ```
 
 ## Páginas e rotas
@@ -109,11 +111,23 @@ as quatro regras obrigatórias de servidor (SPA fallback, domínio canônico, 30
 `/portais/` que vem do servidor atual), cache, compressão, MIME, cabeçalhos, conexões de saída e o checklist de
 validação, com configuração pronta para Apache, Nginx e IIS.
 
-A rota `/hospedagem` **lê esse mesmo arquivo** (`import ... from '../../HOSPEDAGEM.md?raw'`) e o renderiza:
-não existe segunda cópia do texto para manter em dia. `src/lib/docMarkdown.ts` interpreta o subconjunto de
-Markdown que o documento usa e `src/components/docs/DocBlocks.tsx` desenha os blocos. As três configurações de
-servidor viram abas por causa dos marcadores `<!-- tabs -->` e `<!-- /tabs -->` no `.md`, que somem na leitura
-normal do arquivo; na impressão as abas se desfazem e os três blocos aparecem empilhados.
+**`HOSPEDAGEM.html` é a entrega**: um arquivo único, gerado por `npm run hospedagem`, com React, CSS e a fonte
+Manrope embutidos. Abre com duplo clique — sem servidor, sem internet, sem instalar nada — e por isso pode ir por
+e-mail ou WhatsApp. A hospedagem precisa ler a documentação **antes** de publicar o site, então o documento não
+pode depender daquilo que ele mesmo ensina a fazer.
+
+A rota `/hospedagem` monta a mesma leitura dentro do site, para quando ele já estiver no ar. As duas **leem o
+mesmo `HOSPEDAGEM.md`** (`import ... from '../../HOSPEDAGEM.md?raw'`): não existe segunda cópia do texto para
+manter em dia. `src/lib/docMarkdown.ts` interpreta o subconjunto de Markdown que o documento usa,
+`src/components/docs/DocBlocks.tsx` desenha os blocos e `DocPage.tsx` é a moldura compartilhada.
+
+- As três configurações de servidor viram abas pelos marcadores `<!-- tabs -->` e `<!-- /tabs -->` no `.md`, que
+  somem na leitura normal do arquivo. Na impressão as abas se desfazem e os três blocos aparecem empilhados.
+- O botão de copiar tem caminho alternativo por `execCommand`: `navigator.clipboard` não existe em `file://`, que
+  é exatamente onde o arquivo é aberto.
+- O checklist da seção 9 guarda o progresso no `localStorage` de quem marca.
+- **Depois de mexer no `HOSPEDAGEM.md`, rode `npm run hospedagem` de novo** — o `.html` não é regenerado pelo
+  `npm run build`.
 
 ## Apresentação executiva
 

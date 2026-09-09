@@ -85,14 +85,41 @@ export function CodeBlock({ code, lang }: { code: string; lang: string }) {
     return () => window.clearTimeout(t)
   }, [copied])
 
+  /**
+   * Copiar sem depender de contexto seguro.
+   *
+   * `navigator.clipboard` só existe em https e em localhost. O arquivo autônomo
+   * `HOSPEDAGEM.html` é aberto de `file://`, onde ela simplesmente não está lá —
+   * e é justamente ali que o botão mais importa, porque é o arquivo que a
+   * hospedagem recebe. Daí o caminho antigo (`execCommand`) como reserva: feio,
+   * obsoleto, mas é o que funciona fora de https.
+   */
   const copy = useCallback(async () => {
     try {
-      await navigator.clipboard.writeText(code)
-      setCopied(true)
+      if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(code)
+        setCopied(true)
+        return
+      }
     } catch {
-      /* Sem permissão de área de transferência (http, navegador antigo): o texto
-         continua selecionável na tela, então não há o que avisar. */
+      /* Negada ou indisponível: cai na reserva abaixo. */
     }
+
+    const area = document.createElement('textarea')
+    area.value = code
+    // Fora da vista e sem rolar a página ao receber o foco.
+    area.setAttribute('readonly', '')
+    area.style.position = 'fixed'
+    area.style.top = '0'
+    area.style.opacity = '0'
+    document.body.appendChild(area)
+    area.select()
+    try {
+      setCopied(document.execCommand('copy'))
+    } catch {
+      /* Nem isso: o texto continua selecionável na tela, então não há o que avisar. */
+    }
+    document.body.removeChild(area)
   }, [code])
 
   return (

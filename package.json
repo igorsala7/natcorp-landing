@@ -11,7 +11,8 @@
     "preview": "vite preview",
     "sitemap": "node scripts/generate-sitemap.mjs",
     "export:deck": "node scripts/export-presentation.mjs",
-    "portais": "node scripts/build-portais.mjs"
+    "portais": "node scripts/build-portais.mjs",
+    "hospedagem": "node scripts/build-hospedagem.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.9.1",

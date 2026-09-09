@@ -25,3 +25,6 @@ dist-ssr
 
 # Saída do Playwright (capturas e logs de sessão)
 .playwright-mcp/
+
+# Pasta temporária do gerador do HOSPEDAGEM.html
+.tmp-hospedagem/
