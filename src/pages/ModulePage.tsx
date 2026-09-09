@@ -10,6 +10,7 @@ import { SplitText } from '@/components/motion/SplitText'
 import { Reveal, Stagger, StaggerItem } from '@/components/motion/Reveal'
 import { Parallax } from '@/components/motion/Parallax'
 import { Breadcrumb } from '@/components/seo/Breadcrumb'
+import { JsonLd } from '@/components/seo/JsonLd'
 import { Logo, LogoOutline } from '@/components/brand/Logo'
 import { Button } from '@/components/ui/button'
 import { BenefitsGrid, FeaturesGrid, FlowSteps, PersonasGrid, RelatedModules } from '@/components/modules/blocks'
@@ -21,7 +22,7 @@ import moduleSegments from '@/content/modulePages/segments.json'
 import { getSegmentEntry, segmentIcons, segmentPath } from '@/content/segments'
 import type { ModulePage as ModulePageData } from '@/content/modulePages/types'
 import type { FaqItem } from '@/content/faq'
-import { journeyPath, paths } from '@/content/site'
+import { journeyPath, paths, siteConfig } from '@/content/site'
 import { cn } from '@/lib/utils'
 import { EASE } from '@/lib/motion'
 import NotFoundPage from './NotFoundPage'
@@ -193,6 +194,33 @@ function ModuleContent({ entry, page }: { entry: ModuleEntry; page: ModulePageDa
 
       {page.flow && page.flow.steps.length >= 3 && (
         <Section id="como-funciona" tone="white" aria-labelledby="fluxo-title">
+          {/* O fluxo é um processo de verdade, em ordem, com passo nomeado e descrito —
+              e é por isso que ele pode virar HowTo. Marcar como HowTo uma lista qualquer
+              seria schema inventado, que os motores filtram e que queima a confiança no
+              resto da marcação.
+
+              O bloco nasce AQUI, junto da seção que desenha os passos, e não no topo da
+              página: schema tem de descrever o que está visível. São 28 módulos, e não os
+              30 que declaram `flow` — natponto e people-analytics têm os dados no arquivo
+              de conteúdo mas montam a página com seções próprias, sem mostrar os passos.
+              Marcar os dois seria descrever conteúdo que o visitante não vê. */}
+          <JsonLd
+            data={{
+              '@context': 'https://schema.org',
+              '@type': 'HowTo',
+              name: page.flow.title,
+              description: page.summary,
+              inLanguage: 'pt-BR',
+              publisher: { '@id': `${siteConfig.url}/#org` },
+              step: page.flow.steps.map((s, i) => ({
+                '@type': 'HowToStep',
+                position: i + 1,
+                name: s.title,
+                text: s.text,
+                url: `${siteConfig.url}${modulePath(entry.slug, '#como-funciona')}`,
+              })),
+            }}
+          />
           <div className="container">
             <SectionHeader id="fluxo-title" eyebrow="Como funciona" title={page.flow.title} />
             <FlowSteps steps={page.flow.steps} />
