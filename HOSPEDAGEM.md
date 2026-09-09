@@ -19,7 +19,7 @@ Sem Docker, sem contêiner, sem runtime no servidor.
 **Os dois pontos que exigem atenção**, e que não são óbvios num site estático comum:
 
 1. O site é uma *Single Page Application*: **o servidor precisa devolver `index.html` para caminhos que não existem em disco** (seção 5.1). Sem isso tudo funciona ao navegar, mas dá 404 ao recarregar a página ou abrir um link direto.
-2. **A pasta `/portais/` continua sendo do site antigo** (seção 5.4). Ela não faz parte desta entrega e **não pode ser apagada nem sobrescrita**.
+2. **A pasta `/portais/` do servidor atual precisa ser migrada junto** (seção 5.4). Ela não sai do nosso build e não é WordPress: é o acesso dos clientes ao sistema, em uso todos os dias.
 
 ---
 
@@ -79,9 +79,9 @@ Antes do build, definir as variáveis da seção 7.
 
 1. Copiar **o conteúdo** de `dist/` (não a pasta em si) para a raiz do documento do site — `public_html/`, `htdocs/`, `/var/www/natcorp/` ou equivalente.
 2. Preservar a estrutura de subpastas exatamente como está (`assets/`, `fonts/`, `brand/`, `portais_beta/`, `img/`…).
-3. **Não apagar a pasta `/portais/` existente** — ela é do site antigo e continua no ar (seção 5.4).
+3. **Copiar a pasta `/portais/` do servidor atual** para o mesmo caminho, e nunca apagá-la ao publicar (seção 5.4).
 4. Permissões: `644` para arquivos, `755` para pastas. Nada precisa ser gravável pelo servidor.
-5. Em atualizações, substituir os arquivos da entrega. O site não grava dados no servidor, então nada precisa ser preservado entre versões — **exceto `/portais/`**, que não é nosso.
+5. Em atualizações, substituir os arquivos da entrega. O site não grava dados no servidor, então nada precisa ser preservado entre versões — **exceto `/portais/`**, que vem do servidor atual (seção 5.4).
 
 > **Sobre os nomes com hash.** Os arquivos em `assets/` têm nomes como `index-B7xK2p.js`. É intencional: a cada publicação o nome muda, então o cache antigo nunca é servido por engano. É o que permite o cache de 1 ano da seção 5.7.
 
@@ -97,7 +97,7 @@ O site usa roteamento no cliente (React Router). Existe **um único `index.html`
 
 **Regra:** se o caminho pedido não corresponder a um arquivo ou pasta existente, devolver `/index.html` com **HTTP 200** (não 302, não 404).
 
-> ⚠️ **A ordem importa.** O fallback só pode valer **depois** de tentar o arquivo real. Se a regra for aplicada antes, ela engole a pasta `/portais/` do site antigo, o `sitemap.xml`, o `robots.txt` e os PDFs. No Apache isso são as duas condições `!-f` / `!-d`; no Nginx, o `try_files $uri $uri/` antes do `/index.html`.
+> ⚠️ **A ordem importa.** O fallback só pode valer **depois** de tentar o arquivo real. Se a regra for aplicada antes, ela engole a pasta `/portais/` migrada do servidor atual, o `sitemap.xml`, o `robots.txt` e os PDFs. No Apache isso são as duas condições `!-f` / `!-d`; no Nginx, o `try_files $uri $uri/` antes do `/index.html`.
 
 ### 5.2 Domínio canônico e HTTPS — **obrigatório**
 
@@ -107,9 +107,15 @@ O canônico é **`https://www.natcorp.com.br`**. É esse endereço que está no 
 - **`natcorp.com.br` → `www.natcorp.com.br`**, com 301, preservando o caminho.
 - **HSTS** depois de confirmar que todo o site responde em HTTPS.
 
-### 5.3 Redirecionamentos 301 do site anterior — **obrigatório**
+### 5.3 Redirecionamentos 301 dos endereços que deixam de existir — **obrigatório**
 
-Endereços do WordPress antigo que o Google ainda indexa e que clientes têm salvos. Todos **permanentes (301)**, válidos **com e sem barra final**:
+O site novo substitui um WordPress que **sai do ar por completo** — não fica no ar em lugar nenhum, nem em subdomínio. Estas regras existem por causa disso, não apesar disso.
+
+Os endereços da tabela estão indexados no Google, aparecem em links de terceiros e estão salvos nos favoritos e em e-mails de clientes. O site novo não tem esses caminhos: onde havia `/fale-conosco`, agora há `/contato`. Sem as regras, cada um desses links vira 404 no dia da virada.
+
+Com o **301**, o servidor do site novo responde "este endereço mudou de lugar" e entrega a página certa: o visitante nem percebe, e o Google transfere o ranqueamento do endereço antigo para o novo em vez de descartá-lo. É configuração do servidor novo — **não depende do WordPress estar rodando**, e pode ser aplicada com ele já desligado.
+
+Todos **permanentes (301)** — não 302, que faria o Google manter o endereço antigo no índice esperando ele voltar. Válidos **com e sem barra final**:
 
 | De | Para |
 | --- | --- |
@@ -125,24 +131,29 @@ Endereços do WordPress antigo que o Google ainda indexa e que clientes têm sal
 
 > **`/blog/` não entra na lista.** Não há blog hoje, e nenhum endereço `/blog/*` precisa ser redirecionado. Se um blog for publicado no futuro, tratamos como um caso novo.
 
-### 5.4 A pasta `/portais/` fica com o site antigo — **obrigatório**
+### 5.4 A pasta `/portais/` tem de ser migrada junto — **obrigatório**
 
-Este é o ponto mais fácil de errar na migração.
+Este é o ponto mais fácil de errar na migração, e o único que pode tirar clientes do ar.
 
-**A situação.** `www.natcorp.com.br/portais/<cliente>/` é a página por onde colaboradores, gestores e candidatos entram no sistema Natcorp. Ela **já está no ar hoje** e **continua sendo o endereço em uso** depois da publicação do site novo. Não faz parte desta entrega.
+**A situação.** `www.natcorp.com.br/portais/<cliente>/` é a página por onde colaboradores, gestores e candidatos entram no sistema Natcorp, todos os dias. Ela **está no ar hoje** e **continua sendo o endereço em uso** depois da publicação do site novo.
+
+Ela **não é WordPress** e **não faz parte do build** descrito na seção 3: é uma pasta de HTML estático que vive no servidor atual, ao lado do WordPress. Quando o WordPress for desligado, ela **não pode ir junto**.
 
 **O que fazer:**
 
-- **Preservar** a pasta `/portais/` como está, no mesmo caminho, no mesmo domínio.
-- **Não** apagá-la, movê-la nem sobrescrevê-la ao publicar o site novo.
-- Garantir que `https://www.natcorp.com.br/portais/natcorp/` continue abrindo a página atual, e não a home do site novo.
+- **Copiar a pasta `/portais/` do servidor atual** para o servidor novo, no mesmo caminho e no mesmo domínio, com o conteúdo intacto.
+- Publicá-la **junto** com o site novo, não depois — qualquer janela sem ela é uma janela com os clientes sem acesso.
+- **Não** apagá-la, movê-la nem sobrescrevê-la ao publicar atualizações do site.
+- Confirmar, depois da virada, que `https://www.natcorp.com.br/portais/natcorp/` abre a página de acesso, e não a home do site novo.
+
+> Se a migração for feita por cópia integral do servidor atual, isso acontece sozinho. Se for feita publicando só a entrega do site novo, **esta pasta precisa ser copiada à parte** — é o caso em que ela some sem ninguém notar até um cliente reclamar.
 
 **Por que isso funciona sem regra extra.** Com o SPA fallback escrito corretamente (5.1), o servidor tenta o arquivo real primeiro. Como `/portais/natcorp/` é uma **pasta de verdade com `index.html` dentro**, ela é servida diretamente. O fallback nem chega a ser consultado.
 
 **Duas ressalvas:**
 
 1. **Barra final.** `/portais/natcorp/` funciona porque o servidor resolve `pasta/` → `pasta/index.html`. Não criem regra global que **remova** ou **force** barra final — qualquer uma das duas quebra este caso. Basta o `DirectoryIndex index.html` / `index index.html` padrão.
-2. **`/portais` sozinho é do site novo.** Sem nada depois, `/portais` é uma **página de marketing** do site novo ("Portais e autoatendimento"), que está no menu e no sitemap. Ou seja: `/portais` → site novo; `/portais/<qualquer-coisa>/` → pasta antiga. A regra 5.1 já separa os dois corretamente, desde que **não exista** uma regra de proxy ou redirecionamento capturando o prefixo `/portais/*` inteiro.
+2. **`/portais` sozinho é do site novo.** Sem nada depois, `/portais` é uma **página de marketing** do site novo ("Portais e autoatendimento"), que está no menu e no sitemap. Ou seja: `/portais` → site novo; `/portais/<qualquer-coisa>/` → pasta migrada do servidor atual. A regra 5.1 já separa os dois corretamente, desde que **não exista** uma regra de proxy ou redirecionamento capturando o prefixo `/portais/*` inteiro.
 
 **E o `/portais_beta/`?** O site novo traz a sua própria versão dessas páginas, em `/portais_beta/<cliente>/`. É uma prévia para aprovação interna: sai com `noindex`, está fora do `sitemap.xml` e **não deve ser divulgada**. Não requer configuração nenhuma — é arquivo estático comum. Quando decidirmos fazer a virada, avisaremos e o conteúdo passa a `/portais/`.
 
@@ -232,7 +243,7 @@ RewriteRule ^fale-conosco/?$                     /contato [R=301,L]
 RewriteRule ^fale-conosco-2/?$                   /contato [R=301,L]
 
 # ── SPA fallback: SÓ quando não existe arquivo nem pasta ────────────────
-#    As duas condições abaixo são o que preserva /portais/<cliente>/ do site antigo.
+#    As duas condições abaixo são o que preservam a pasta /portais/<cliente>/ migrada do servidor atual.
 DirectoryIndex index.html
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
@@ -301,7 +312,7 @@ server {
     }
 
     # ── SPA fallback: arquivo real, depois pasta, e só então index.html ─
-    #    O "$uri/" é o que faz /portais/<cliente>/ do site antigo continuar servido.
+    #    O "$uri/" é o que faz a pasta /portais/<cliente>/, migrada do servidor atual, continuar servida.
     location / {
         try_files $uri $uri/ /index.html;
     }
@@ -384,7 +395,7 @@ server {
           <action type="Redirect" url="/contato" redirectType="Permanent" />
         </rule>
 
-        <!-- SPA fallback: as duas condições preservam /portais/<cliente>/ do site antigo -->
+        <!-- SPA fallback: as duas condições preservam a pasta /portais/<cliente>/ migrada do servidor atual -->
         <rule name="SPA fallback" stopProcessing="true">
           <match url=".*" />
           <conditions logicalGrouping="MatchAll">
@@ -445,7 +456,7 @@ Percorrer na ordem. Os cinco primeiros pegam quase todos os erros de configuraç
 - [ ] `https://www.natcorp.com.br/` abre a home com a animação de abertura.
 - [ ] **Link direto:** colar `https://www.natcorp.com.br/modulos/folha-de-pagamento` na barra de endereços (não navegar até lá) → abre a página, **não** um 404. *Falha aqui = SPA fallback (5.1) inativo.*
 - [ ] **Recarregar (F5)** numa página interna qualquer → continua na mesma página.
-- [ ] **`https://www.natcorp.com.br/portais/natcorp/`** (com barra final) abre a **página de acesso aos portais do site antigo** — **não** a home do site novo. *Falha aqui = o fallback está engolindo os arquivos reais (5.1/5.4).*
+- [ ] **`https://www.natcorp.com.br/portais/natcorp/`** (com barra final) abre a **página de acesso aos portais migrada do servidor atual** — **não** a home do site novo. *Falha aqui = o fallback está engolindo os arquivos reais (5.1/5.4).*
 - [ ] **`https://www.natcorp.com.br/portais`** (sem barra, sem cliente) abre a **página de marketing "Portais e autoatendimento"** do site novo.
 - [ ] `https://natcorp.com.br/sobre` (sem `www`) redireciona com **301** para `https://www.natcorp.com.br/sobre`.
 - [ ] `https://www.natcorp.com.br/sobre-nos` redireciona com **301** para `/sobre` (verificar o código, não só o destino).
@@ -458,7 +469,7 @@ Percorrer na ordem. Os cinco primeiros pegam quase todos os erros de configuraç
 - [ ] **Console do navegador (F12):** nenhum erro vermelho ao carregar a home.
 - [ ] **Formulário:** preencher "Agende uma demonstração" em `/contato` e enviar → mensagem de sucesso, e o lead chega ao comercial. *Confirmar com o time comercial, não só pela tela.*
 - [ ] **Vídeos:** em `/sobre#videos`, clicar num vídeo → o player abre.
-- [ ] **Rodapé:** o link "Acesso aos portais (clientes)" leva à página do site antigo, funcionando.
+- [ ] **Rodapé:** o link "Acesso aos portais (clientes)" leva à página de acesso migrada, funcionando.
 - [ ] **Página inexistente:** `/qualquer-coisa` mostra a página 404 do site (com a identidade da Natcorp), não a do servidor.
 - [ ] **HTTP → HTTPS** redireciona com 301.
 - [ ] **Celular:** abrir a home num aparelho real; menu e rolagem funcionam.
@@ -503,10 +514,10 @@ Nenhuma destas existe como arquivo em disco. Todas dependem da regra 5.1.
 /natcorp-apresentacao.pdf  /natcorp-apresentacao-reduzida.pdf
 ```
 
-**Fora desta entrega, e que deve permanecer no servidor:**
+**Fora do nosso build, e que precisa ser migrado do servidor atual (seção 5.4):**
 
 ```
-/portais/<cliente>/…                 páginas de acesso do site antigo, EM USO
+/portais/<cliente>/…                 páginas de acesso dos clientes, EM USO — migradas do servidor atual
 ```
 
 ---
