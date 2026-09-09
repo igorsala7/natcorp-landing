@@ -1,4 +1,4 @@
-# 128 redirecionamentos 301 do site antigo para o novo — formato Apache (.htaccess).
+# 125 redirecionamentos 301 do site antigo para o novo — formato Apache (.htaccess).
 # GERADO por scripts/generate-redirects.mjs. Não edite à mão.
 # Cada regra vale com e sem barra final.
 # Cole DEPOIS do bloco de HTTPS/www e ANTES do SPA fallback.
@@ -128,6 +128,3 @@ RewriteRule ^geracao-z-caracteristicas-dilemas-e-impactos-no-mercado-de-trabalho
 RewriteRule ^employee-experience-o-que-e-suas-vantagens-e-como-aplica-lo/?$ /portais [R=301,L]
 RewriteRule ^e-por-mais-um-ano-a-natcorp-e-indicada-ao-23o-top-of-mind-de-rh/?$ /sobre#reconhecimento [R=301,L]
 RewriteRule ^top-of-mind-de-rh-2019/?$ /sobre#reconhecimento [R=301,L]
-RewriteRule ^privacidade/?$ /contato [R=301,L]
-RewriteRule ^politica-de-cookies/?$ /contato [R=301,L]
-RewriteRule ^termos-de-uso/?$ /contato [R=301,L]

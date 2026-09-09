@@ -62,7 +62,7 @@ export function CookieBar() {
             <p className="flex-1 text-[13.5px] leading-relaxed text-brand-graphite">
               Usamos cookies para entender como o site é usado e melhorar a experiência. Os de medição e marketing só
               são ativados se você aceitar.{' '}
-              <Link to={paths.security} className="font-semibold text-brand-purple underline-offset-2 hover:underline">
+              <Link to={paths.privacy} className="font-semibold text-brand-purple underline-offset-2 hover:underline">
                 Como tratamos seus dados
               </Link>
               .

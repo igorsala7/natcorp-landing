@@ -201,9 +201,7 @@ export const legacyRedirects: LegacyRedirect[] = [
   { from: '/top-of-mind-de-rh-2019', to: '/sobre#reconhecimento' },
 
   /* ── Páginas legais ───────────────────────────────────────────────────────
-     Existem no site antigo e ainda não no novo. Enquanto não existirem, apontam
-     para a página de contato, onde estão os canais para pedido do titular (LGPD). */
-  { from: '/privacidade', to: '/contato' },
-  { from: '/politica-de-cookies', to: '/contato' },
-  { from: '/termos-de-uso', to: '/contato' },
+     Privacidade, termos de uso e política de cookies existem agora como páginas de
+     verdade, nos mesmos endereços do site antigo. Não precisam de redirecionamento
+     — e por isso saíram desta lista. */
 ]

@@ -1,0 +1,5 @@
+export type { Block, ListItem, LegalDoc, LegalSection } from './types'
+export { dpo, empresa } from './types'
+export { privacidade } from './privacidade'
+export { termosDeUso } from './termos-de-uso'
+export { politicaDeCookies } from './politica-de-cookies'

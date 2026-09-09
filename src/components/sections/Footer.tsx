@@ -4,7 +4,6 @@ import { Logo } from '@/components/brand/Logo'
 import { groups } from '@/content/modulePages'
 import { paths, siteConfig } from '@/content/site'
 import { segmentPath, segmentRegistry, segmentsPath } from '@/content/segments'
-import { reabrirConsentimento } from '@/lib/consent'
 
 /** `external` sai como <a> e força navegação de verdade, fora do roteamento do React. */
 const footerLinks: { to: string; label: string; external?: boolean }[] = [
@@ -150,15 +149,18 @@ export function Footer() {
           <p>© {new Date().getFullYear()} Natcorp. Todos os direitos reservados.</p>
           <p className="flex flex-wrap items-center gap-x-4 gap-y-1">
             <span>Dados tratados em conformidade com a LGPD (Lei nº 13.709/2018).</span>
+            <Link to={paths.privacy} className="underline-offset-2 transition-colors hover:text-white hover:underline">
+              Política de Privacidade
+            </Link>
+            <Link to={paths.terms} className="underline-offset-2 transition-colors hover:text-white hover:underline">
+              Termos de Uso
+            </Link>
             {/* Quem recusou precisa conseguir voltar atrás — e quem aceitou,
-                também. Consentimento sem saída não é escolha. */}
-            <button
-              type="button"
-              onClick={reabrirConsentimento}
-              className="underline-offset-2 transition-colors hover:text-white hover:underline"
-            >
-              Cookies
-            </button>
+                também. Consentimento sem saída não é escolha. O link leva à política,
+                onde a explicação e o botão de rever ficam juntos. */}
+            <Link to={paths.cookies} className="underline-offset-2 transition-colors hover:text-white hover:underline">
+              Política de Cookies
+            </Link>
           </p>
           <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
             <Link to={paths.motion} className="font-semibold text-white/70 transition-colors hover:text-white">

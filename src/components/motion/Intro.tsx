@@ -23,7 +23,11 @@ function skipsIntro() {
     /(^|#)\/portais_beta\/(dev\/)?[^/]+\/?$/.test(where) ||
     /(^|#)\/admin(\/|$)/.test(where) ||
     /(^|#)\/hospedagem\/?$/.test(where) ||
-    /(^|#)\/animatic/.test(where)
+    /(^|#)\/animatic/.test(where) ||
+    // Documentos legais: quem abre a política de privacidade está no meio de uma
+    // tarefa — quer exercer um direito ou conferir uma cláusula. Uma abertura de
+    // marca antes disso é atrito, não boas-vindas.
+    /(^|#)\/(privacidade|termos-de-uso|politica-de-cookies)\/?$/.test(where)
   )
 }
 

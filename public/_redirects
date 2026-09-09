@@ -2,7 +2,7 @@
 # GERADO por scripts/generate-redirects.mjs a partir de src/content/legacyRedirects.ts.
 # Não edite à mão: rode `npm run redirects`.
 #
-# 128 regras, cada uma com e sem barra final.
+# 125 regras, cada uma com e sem barra final.
 
 /solucao-de-rh                                                                                            /modulos  301
 /solucao-de-rh/                                                                                           /modulos  301
@@ -254,12 +254,6 @@
 /e-por-mais-um-ano-a-natcorp-e-indicada-ao-23o-top-of-mind-de-rh/                                         /sobre#reconhecimento  301
 /top-of-mind-de-rh-2019                                                                                   /sobre#reconhecimento  301
 /top-of-mind-de-rh-2019/                                                                                  /sobre#reconhecimento  301
-/privacidade                                                                                              /contato  301
-/privacidade/                                                                                             /contato  301
-/politica-de-cookies                                                                                      /contato  301
-/politica-de-cookies/                                                                                     /contato  301
-/termos-de-uso                                                                                            /contato  301
-/termos-de-uso/                                                                                           /contato  301
 
 # Acesso aos portais dos clientes.
 #

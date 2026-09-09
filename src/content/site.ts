@@ -50,6 +50,9 @@ export const paths = {
   groups: '/grupos',
   structures: '/estruturas',
   faq: '/perguntas-frequentes',
+  privacy: '/privacidade',
+  terms: '/termos-de-uso',
+  cookies: '/politica-de-cookies',
   commercial: '/modelo-comercial',
   /** Página interna com as peças de motion da marca (fora do menu e do sitemap). */
   motion: '/motion',

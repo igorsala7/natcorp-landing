@@ -624,21 +624,6 @@
       "source": "/top-of-mind-de-rh-2019",
       "destination": "/sobre#reconhecimento",
       "permanent": true
-    },
-    {
-      "source": "/privacidade",
-      "destination": "/contato",
-      "permanent": true
-    },
-    {
-      "source": "/politica-de-cookies",
-      "destination": "/contato",
-      "permanent": true
-    },
-    {
-      "source": "/termos-de-uso",
-      "destination": "/contato",
-      "permanent": true
     }
   ],
   "rewrites": [

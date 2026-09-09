@@ -1,4 +1,4 @@
-<!-- 128 redirecionamentos 301 do site antigo para o novo — formato IIS (web.config).
+<!-- 125 redirecionamentos 301 do site antigo para o novo — formato IIS (web.config).
      GERADO por scripts/generate-redirects.mjs. Não edite à mão.
      Cole dentro de <rules>, ANTES da regra de SPA fallback. -->
 <rule name="legacy-001" stopProcessing="true">
@@ -500,16 +500,4 @@
 <rule name="legacy-125" stopProcessing="true">
   <match url="^top-of-mind-de-rh-2019/?$" />
   <action type="Redirect" url="/sobre#reconhecimento" redirectType="Permanent" />
-</rule>
-<rule name="legacy-126" stopProcessing="true">
-  <match url="^privacidade/?$" />
-  <action type="Redirect" url="/contato" redirectType="Permanent" />
-</rule>
-<rule name="legacy-127" stopProcessing="true">
-  <match url="^politica-de-cookies/?$" />
-  <action type="Redirect" url="/contato" redirectType="Permanent" />
-</rule>
-<rule name="legacy-128" stopProcessing="true">
-  <match url="^termos-de-uso/?$" />
-  <action type="Redirect" url="/contato" redirectType="Permanent" />
 </rule>

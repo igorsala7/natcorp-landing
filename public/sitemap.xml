@@ -85,6 +85,24 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://www.natcorp.com.br/privacidade</loc>
+    <lastmod>2026-09-09</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://www.natcorp.com.br/termos-de-uso</loc>
+    <lastmod>2026-09-09</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://www.natcorp.com.br/politica-de-cookies</loc>
+    <lastmod>2026-09-09</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  <url>
     <loc>https://www.natcorp.com.br/modelo-comercial</loc>
     <lastmod>2026-09-09</lastmod>
     <changefreq>monthly</changefreq>

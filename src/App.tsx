@@ -12,6 +12,7 @@ import { Footer } from '@/components/sections/Footer'
 import { CookieBar } from '@/components/sections/CookieBar'
 import LandingPage from '@/pages/LandingPage'
 import { paths } from '@/content/site'
+import { politicaDeCookies, privacidade, termosDeUso } from '@/content/legal'
 
 const ModulesIndexPage = lazy(() => import('@/pages/ModulesIndexPage'))
 const ModulePage = lazy(() => import('@/pages/ModulePage'))
@@ -27,6 +28,7 @@ const ContactPage = lazy(() => import('@/pages/ContactPage'))
 const PortalsPage = lazy(() => import('@/pages/PortalsPage'))
 const FaqPage = lazy(() => import('@/pages/FaqPage'))
 const CommercialPage = lazy(() => import('@/pages/CommercialPage'))
+const LegalPage = lazy(() => import('@/pages/LegalPage'))
 const NotFoundPage = lazy(() => import('@/pages/NotFoundPage'))
 const MotionPage = lazy(() => import('@/pages/MotionPage'))
 const PresentationPage = lazy(() => import('@/pages/PresentationPage'))
@@ -68,6 +70,32 @@ function AppRoutes() {
         ].map(([path, element]) => (
           <Route key={path as string} path={path as string} element={<Suspense fallback={<PageFallback />}>{element}</Suspense>} />
         ))}
+        {/* Documentos legais: existiam no site antigo e são pedidos por comprador corporativo
+            antes de preencher formulário. O conteúdo vive em src/content/legal. */}
+        <Route
+          path={paths.privacy}
+          element={
+            <Suspense fallback={<PageFallback />}>
+              <LegalPage doc={privacidade} />
+            </Suspense>
+          }
+        />
+        <Route
+          path={paths.terms}
+          element={
+            <Suspense fallback={<PageFallback />}>
+              <LegalPage doc={termosDeUso} />
+            </Suspense>
+          }
+        />
+        <Route
+          path={paths.cookies}
+          element={
+            <Suspense fallback={<PageFallback />}>
+              <LegalPage doc={politicaDeCookies} />
+            </Suspense>
+          }
+        />
         <Route
           path="/modulos"
           element={
