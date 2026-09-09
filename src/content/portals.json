@@ -1,5 +1,5 @@
 {
-  "_comentario": "Cadastro dos clientes da página /portais/<slug> (e /portais/dev/<slug>). Editado em /admin/portais, que grava este arquivo no repositório; a Vercel publica em seguida. Cada portal tem o endereço por extenso, em produção (urls.prod) e em homologação (urls.dev): a estrutura é a do servidor do cliente e não é remontada pelo site. Um endereço vazio usa o padrão do APEX (https://www.natcorpbr.com.br/apex/<apex>/f?p=<PREFIXO>_<code>). O logotipo é o nome de um arquivo em src/assets/portals/logos/.",
+  "_comentario": "Cadastro dos clientes da página /portais_beta/<slug> (e /portais_beta/dev/<slug>). Editado em /admin/portais, que grava este arquivo no repositório; a Vercel publica em seguida. Cada portal tem o endereço por extenso, em produção (urls.prod) e em homologação (urls.dev): a estrutura é a do servidor do cliente e não é remontada pelo site. Um endereço vazio usa o padrão do APEX (https://www.natcorpbr.com.br/apex/<apex>/f?p=<PREFIXO>_<code>). O logotipo é o nome de um arquivo em src/assets/portals/logos/.",
   "clients": [
     {
       "slug": "natcorp",

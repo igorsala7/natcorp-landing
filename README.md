@@ -43,8 +43,8 @@ npm run lint     # oxlint
 | `/estruturas/:slug` | Página por estrutura (empresa única, várias unidades, grupo com RH central, RH por unidade, equipes em clientes): como o RH costuma funcionar, dores e respostas, quem faz o quê, o fluxo animado do centro de serviços, os 31 módulos aplicados, o caminho para o CSC, personas e FAQ |
 | `/perguntas-frequentes` | Todas as perguntas frequentes, gerais e para grupos, com atalhos para as páginas que aprofundam (a seção de grupos leva a `/estruturas`) |
 | `/modelo-comercial` | Modular, em nuvem e pelo número de colaboradores: os três pilares, histórico completo na implantação, contabilização integrada ao ERP, diferenciais frente a outros sistemas, comparativo e como funciona a contratação |
-| `/portais/natcorp/` | Página estática de acesso aos portais do cliente (gerada em `public/portais/<cliente>/` por `scripts/build-portais.mjs` a partir de `src/content/clientPortals.json`): Gestor, Operador, Colaborador, Cadastro de Currículo, Assinatura Eletrônica e Chamado, com "continuar de onde parou" e ajuda para entrar. Autônoma, pode ser copiada para o servidor atual |
-| `/portais/:cliente` e `/portais/dev/:cliente` | Porta de entrada dos portais no site novo (React): abertura baixa com saudação, acesso rápido e o logotipo do cliente envolvido pelos losangos em luz do hero da home (módulo desenhando-se, brilho na borda, linhas de fluxo); cartões dos portais do sistema (Colaborador, Gestor, Operador) com os personagens da jornada; aplicativos e serviços (Candidato, NatDocs e Chamado, este só para o RH); seção do NatPonto com os selos da App Store e do Google Play; ajuda e segurança. Sem o menu de marketing e sem a abertura animada. Os clientes e os endereços de cada portal (produção e homologação) vêm de `src/content/portals.json`. A rota `dev/` é a base de homologação, com faixa e identidade âmbar |
+| `/portais_beta/natcorp/` | Página estática de acesso aos portais do cliente (gerada em `public/portais_beta/<cliente>/` por `scripts/build-portais.mjs` a partir de `src/content/clientPortals.json`): Gestor, Operador, Colaborador, Cadastro de Currículo, Assinatura Eletrônica e Chamado, com "continuar de onde parou" e ajuda para entrar. Autônoma, pode ser copiada para o servidor atual |
+| `/portais_beta/:cliente` e `/portais_beta/dev/:cliente` | Porta de entrada dos portais no site novo (React): abertura baixa com saudação, acesso rápido e o logotipo do cliente envolvido pelos losangos em luz do hero da home (módulo desenhando-se, brilho na borda, linhas de fluxo); cartões dos portais do sistema (Colaborador, Gestor, Operador) com os personagens da jornada; aplicativos e serviços (Candidato, NatDocs e Chamado, este só para o RH); seção do NatPonto com os selos da App Store e do Google Play; ajuda e segurança. Sem o menu de marketing e sem a abertura animada. Os clientes e os endereços de cada portal (produção e homologação) vêm de `src/content/portals.json`. A rota `dev/` é a base de homologação, com faixa e identidade âmbar |
 | `/admin/portais` | Administração do cadastro dos portais, só para o administrador. Nome, slug, código base do APEX, logotipo, ativo e os seis endereços em produção e em homologação, com preenchimento pelo padrão do servidor. Salvar grava `src/content/portals.json` e os logotipos no repositório pela API do GitHub, com um token que fica só no navegador; a publicação segue pela Vercel. Fora do menu, do sitemap e dos robôs |
 | `/apresentacao` | Apresentação comercial em tela cheia (fora do menu e do sitemap): 32 slides, mais uma página para cada um dos 31 módulos, com navegação por teclado, índice, notas do apresentador, tela cheia e exportação em PDF e PowerPoint. `?s=N` abre direto no slide N; `?modulos=1` põe as páginas dos módulos na sequência |
 | `/apresentacao/reduzida` | A mesma apresentação em 18 slides, para a primeira conversa (cerca de 20 minutos). |
@@ -67,10 +67,20 @@ para o domínio final).
 
 ## Portais de acesso dos clientes
 
-`/portais/<cliente>/` é a página que colaboradores, gestores e candidatos usam para entrar no sistema (a atual fica em
+> **Por que `portais_beta` e não `portais`.** O endereço que os clientes usam continua sendo o do servidor
+> antigo, no mesmo domínio: `www.natcorp.com.br/portais/<cliente>/`. Enquanto os dois coexistirem, o prefixo
+> `/portais/` inteiro pertence ao site antigo e o site novo publica a sua versão em `/portais_beta/` — com
+> `noindex` e fora do sitemap, para não virar conteúdo duplicado. O link do rodapé aponta para o endereço em
+> uso (`/portais/natcorp/`, com barra final e como `<a>`, não como rota do React).
+>
+> Na virada, trocar `portais_beta` por `portais` em: `scripts/build-portais.mjs`, `scripts/generate-sitemap.mjs`
+> (e devolver as páginas ao sitemap), `hubPath` em `src/content/portals.ts`, as rotas em `src/App.tsx` e o item
+> `external` em `src/components/sections/Footer.tsx`.
+
+`/portais_beta/<cliente>/` é a página que colaboradores, gestores e candidatos usam para entrar no sistema (a atual fica em
 `www.natcorp.com.br/portais/natcorp/`). Cada cliente é uma entrada em `src/content/clientPortals.json` (nome, título, os
 portais com descrição, público, ilustração e URL, textos de ajuda); `npm run portais` (também executado antes do build)
-gera `public/portais/<cliente>/index.html` com CSS e JS embutidos, favicon em data URI e as ilustrações de marca de
+gera `public/portais_beta/<cliente>/index.html` com CSS e JS embutidos, favicon em data URI e as ilustrações de marca de
 `brand/modulos/ilustracoes` copiadas para `img/`. Por ser autônoma, a pasta pode ser copiada para o servidor atual sem
 depender do site novo. A página guarda o último portal usado no navegador e oferece "continuar de onde parou"; portais
 sem URL aparecem como "Em configuração" e apontam para a ajuda. As URLs dos portais devem ser confirmadas com o time
@@ -78,7 +88,7 @@ antes de publicar (o campo `confirmar` marca as que vieram por dedução).
 
 ### Cadastro dos portais e a administração
 
-Os clientes da página `/portais/<cliente>` ficam em `src/content/portals.json`: slug, nome, código base do APEX,
+Os clientes da página `/portais_beta/<cliente>` ficam em `src/content/portals.json`: slug, nome, código base do APEX,
 servidor de produção, logotipo, se está ativo e os endereços dos seis portais em produção e em homologação. Os
 endereços são gravados por extenso, porque a estrutura é a do servidor de cada cliente; um campo vazio usa o padrão
 `https://www.natcorpbr.com.br/apex/<servidor>/f?p=<PREFIXO>_<CÓDIGO>`. Os logotipos ficam em
@@ -271,7 +281,8 @@ Payload:
 - `index.html` com título, descrição, Open Graph/Twitter, canonical, tema, manifest e JSON-LD (Organization,
   WebSite, SoftwareApplication). Cada rota atualiza título, descrição, canonical e Open Graph (`useSeo`) e injeta
   JSON-LD próprio: `FAQPage` (landing e módulos) e `BreadcrumbList` (módulos).
-- Antes de publicar, ajuste o domínio em `src/content/site.ts` (`url`) e as URLs absolutas em `index.html`.
+- O domínio canônico é **`https://www.natcorp.com.br`** (com `www`), em `src/content/site.ts` (`url`), nas URLs
+  absolutas de `index.html` e no padrão de `VITE_SITE_URL` dos dois scripts de build.
 - Marcação semântica (landmarks, cabeçalhos por seção, `aria-labelledby`), link "Pular para o conteúdo", foco visível,
   tabs com `role="tablist"`, textos animados com `aria-label` completo, mockups com descrição alternativa.
 
@@ -279,6 +290,10 @@ Payload:
 
 Site estático: `npm run build` gera `dist/`. Publique em qualquer CDN (Vercel, Netlify, Cloudflare Pages, S3 +
 CloudFront). Configure as variáveis `VITE_*` no provedor antes do build.
+
+**[HOSPEDAGEM.md](HOSPEDAGEM.md)** é a documentação para entregar à empresa de hospedagem: requisitos do
+servidor, SPA fallback, redirecionamentos 301, o prefixo `/portais/` que fica com o site antigo, cache,
+compressão, MIME, cabeçalhos e o checklist de validação, com configuração pronta para Apache, Nginx e IIS.
 
 ## Referência de aplicação (SaaS)
 

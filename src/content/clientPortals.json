@@ -1,5 +1,5 @@
 {
-  "_comentario": "Portais de acesso por cliente (/portais/<slug>/). Gerado por scripts/build-portais.mjs em public/portais/<slug>/. As URLs seguem o padrão do APEX: prefixo do portal + código do cliente (PG_NATCORP, PC_NATCORP...).",
+  "_comentario": "Portais de acesso por cliente (/portais_beta/<slug>/, prévia: o endereço em uso continua em /portais/<slug>/ no servidor antigo). Gerado por scripts/build-portais.mjs em public/portais_beta/<slug>/. As URLs seguem o padrão do APEX: prefixo do portal + código do cliente (PG_NATCORP, PC_NATCORP...).",
   "natcorp": {
     "name": "Natcorp",
     "titulo": "Acesse os portais",

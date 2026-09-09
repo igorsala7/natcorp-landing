@@ -1,7 +1,7 @@
 export const siteConfig = {
   name: 'Natcorp',
   tagline: 'Todo o RH em um único sistema.',
-  url: 'https://natcorp.com.br',
+  url: 'https://www.natcorp.com.br',
   email: 'contato@natcorp.com.br',
   phone: '+55 11 5096-0711',
   phoneHref: 'tel:+551150960711',

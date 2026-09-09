@@ -1,6 +1,6 @@
 /**
- * Portais que os clientes usam para entrar no sistema (a página /portais/<cliente> e, para a base de
- * homologação, /portais/dev/<cliente>).
+ * Portais que os clientes usam para entrar no sistema (a página /portais_beta/<cliente> e, para a base de
+ * homologação, /portais_beta/dev/<cliente>). O prefixo é `portais_beta` porque /portais/ continua servido pelo site antigo.
  *
  * O cadastro dos clientes fica em src/content/portals.json, editado em /admin/portais (que grava o arquivo no
  * repositório; a Vercel publica em seguida). Cada cliente guarda o endereço de cada portal, em produção e em
@@ -107,7 +107,7 @@ export const portalKeys = portalApps.map((a) => a.key)
 export type PortalUrls = Partial<Record<PortalKey, string>>
 
 export interface PortalClient {
-  /** Trecho da URL da página: /portais/<slug>. */
+  /** Trecho da URL da página: /portais_beta/<slug>. */
   slug: string
   name: string
   /** Código do cliente no APEX (o que vem depois do prefixo em f?p=PO_<CÓDIGO>). */
@@ -171,7 +171,7 @@ export function portalHost(client: PortalClient, env: PortalEnv): string {
   }
 }
 
-export const hubPath = (slug = 'natcorp', env: PortalEnv = 'prod') => (env === 'dev' ? `/portais/dev/${slug}` : `/portais/${slug}`)
+export const hubPath = (slug = 'natcorp', env: PortalEnv = 'prod') => (env === 'dev' ? `/portais_beta/dev/${slug}` : `/portais_beta/${slug}`)
 
 /* Logotipos dos clientes, descobertos pelo nome do arquivo em src/assets/portals/logos/. */
 const logoFiles = import.meta.glob<{ default: string }>('../assets/portals/logos/*.{svg,png,webp,jpg,jpeg}', { eager: true })

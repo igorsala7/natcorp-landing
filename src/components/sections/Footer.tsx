@@ -6,11 +6,19 @@ import { paths, siteConfig } from '@/content/site'
 import { segmentPath, segmentRegistry, segmentsPath } from '@/content/segments'
 import { reabrirConsentimento } from '@/lib/consent'
 
-const footerLinks = [
+/** `external` sai como <a> e força navegação de verdade, fora do roteamento do React. */
+const footerLinks: { to: string; label: string; external?: boolean }[] = [
   { to: paths.home, label: 'Início' },
   { to: paths.modules, label: 'Todos os módulos' },
   { to: paths.portals, label: 'Portais e autoatendimento' },
-  { to: '/portais/natcorp', label: 'Acesso aos portais (clientes)' },
+  /*
+   * O acesso que os clientes usam de verdade continua sendo a página do servidor antigo, no mesmo
+   * domínio: /portais/natcorp/ (com a barra final, que é o que faz o servidor entregar a pasta em
+   * vez de cair no roteamento do site). Por isso `external`: precisa de navegação de verdade, não
+   * de rota do React — o site novo não tem /portais/<cliente>, e sim /portais_beta/<cliente>.
+   * Quando a virada acontecer, basta trocar por hubPath('natcorp') e tirar o `external`.
+   */
+  { to: '/portais/natcorp/', label: 'Acesso aos portais (clientes)', external: true },
   { to: paths.structures, label: 'Como é a sua estrutura?' },
   { to: paths.nati, label: 'NATI' },
   { to: paths.segments, label: 'Segmentos' },
@@ -44,9 +52,15 @@ export function Footer() {
             <ul className="mt-4 space-y-2.5">
               {footerLinks.map((l) => (
                 <li key={l.to}>
-                  <Link to={l.to} className="text-sm font-medium text-white/80 transition-colors hover:text-white">
-                    {l.label}
-                  </Link>
+                  {l.external ? (
+                    <a href={l.to} className="text-sm font-medium text-white/80 transition-colors hover:text-white">
+                      {l.label}
+                    </a>
+                  ) : (
+                    <Link to={l.to} className="text-sm font-medium text-white/80 transition-colors hover:text-white">
+                      {l.label}
+                    </Link>
+                  )}
                 </li>
               ))}
               <li>

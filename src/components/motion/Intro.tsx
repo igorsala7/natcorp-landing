@@ -10,12 +10,13 @@ const STORAGE_KEY = 'natcorp:intro'
 const HOLD_MS = LOGO_MOTION_MS + 450
 
 /**
- * A porta de entrada dos portais (/portais/<cliente> e /portais/dev/<cliente>) e a administração (/admin/...)
+ * A porta de entrada dos portais (/portais_beta/<cliente> e /portais_beta/dev/<cliente>) e a administração (/admin/...)
  * abrem direto: quem chega ali quer entrar no sistema ou trabalhar.
  */
 function isPortalHub() {
   const where = `${window.location.pathname}${window.location.hash}`
-  return /(^|#)\/portais\/(dev\/)?[^/]+\/?$/.test(where) || /(^|#)\/admin(\/|$)/.test(where)
+  // '/animatic' é TEMPORÁRIO: a abertura atrapalharia a fotografia dos quadros.
+  return /(^|#)\/portais\/(dev\/)?[^/]+\/?$/.test(where) || /(^|#)\/admin(\/|$)/.test(where) || /(^|#)\/animatic/.test(where)
 }
 
 function shouldShow() {

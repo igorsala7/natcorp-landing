@@ -32,6 +32,7 @@ const MotionPage = lazy(() => import('@/pages/MotionPage'))
 const PresentationPage = lazy(() => import('@/pages/PresentationPage'))
 const PortalHubPage = lazy(() => import('@/pages/PortalHubPage'))
 const PortalAdminPage = lazy(() => import('@/pages/PortalAdminPage'))
+const AnimaticPage = lazy(() => import('@/pages/AnimaticPage')) // TEMPORÁRIO: animatic do filme de 30s
 
 /** HashRouter apenas para prévias hospedadas fora da raiz de um domínio (VITE_ROUTER=hash). */
 const Router = import.meta.env.VITE_ROUTER === 'hash' ? HashRouter : BrowserRouter
@@ -131,6 +132,15 @@ function AppRoutes() {
             </Suspense>
           }
         />
+        {/* TEMPORÁRIO: animatic do filme institucional, só para ser fotografado. */}
+        <Route
+          path="/animatic"
+          element={
+            <Suspense fallback={<PageFallback />}>
+              <AnimaticPage />
+            </Suspense>
+          }
+        />
         {/* Página interna de motion da marca (fora do menu e do sitemap). */}
         <Route
           path="/motion"
@@ -143,7 +153,7 @@ function AppRoutes() {
         {/* Endereço antigo da página de grupos: agora é "Como é a sua estrutura?". */}
         <Route path="/grupos" element={<Navigate to="/estruturas" replace />} />
         <Route
-          path="/portais/dev/:cliente"
+          path="/portais_beta/dev/:cliente"
           element={
             <Suspense fallback={<PageFallback />}>
               <PortalHubPage env="dev" />
@@ -151,7 +161,7 @@ function AppRoutes() {
           }
         />
         <Route
-          path="/portais/:cliente"
+          path="/portais_beta/:cliente"
           element={
             <Suspense fallback={<PageFallback />}>
               <PortalHubPage />
@@ -190,14 +200,15 @@ function AppRoutes() {
 
 /**
  * A moldura do site (barra, rodapé, rolagem suave): fica de fora nas páginas em tela cheia, como a apresentação.
- * A porta de entrada dos portais (/portais/<cliente>) e a administração (/admin/portais) têm cabeçalho e rodapé
+ * A porta de entrada dos portais (/portais_beta/<cliente>) e a administração (/admin/portais) têm cabeçalho e rodapé
  * próprios, sem o menu de marketing.
  */
 function Shell() {
   const { pathname } = useLocation()
-  const chromeless = pathname === paths.presentation || pathname === paths.presentationShort
-  const hubProd = useMatch('/portais/:cliente')
-  const hubDev = useMatch('/portais/dev/:cliente')
+  // '/animatic' é TEMPORÁRIO: página fotografada quadro a quadro, sem moldura.
+  const chromeless = pathname === paths.presentation || pathname === paths.presentationShort || pathname === '/animatic'
+  const hubProd = useMatch('/portais_beta/:cliente')
+  const hubDev = useMatch('/portais_beta/dev/:cliente')
   const admin = useMatch('/admin/*')
   const hub = hubProd !== null || hubDev !== null || admin !== null
   return (
@@ -212,7 +223,7 @@ function Shell() {
       {!chromeless && !hub && <Footer />}
       {/* Fora do `chromeless` e do `hub`: consentimento vale em toda página,
           inclusive na apresentação e nos portais dos clientes. */}
-      <CookieBar />
+      {pathname !== '/animatic' && <CookieBar />}
     </>
   )
 }

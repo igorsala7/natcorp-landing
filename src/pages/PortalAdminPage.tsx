@@ -55,7 +55,7 @@ import { cn } from '@/lib/utils'
 
 /**
  * Administração do cadastro dos portais (/admin/portais): só para o administrador.
- * Aqui entram o nome, o slug (/portais/<slug>), o código base do APEX (f?p=PO_<CÓDIGO>), o logotipo e os
+ * Aqui entram o nome, o slug (/portais_beta/<slug>), o código base do APEX (f?p=PO_<CÓDIGO>), o logotipo e os
  * endereços de cada portal em produção e em homologação. Salvar grava src/content/portals.json no repositório,
  * pela API do GitHub, com o token que fica só neste navegador; a Vercel publica em seguida.
  */
@@ -347,7 +347,7 @@ function Workspace({ token, preview, onLogin, onTokenInvalid }: WorkspaceProps) 
                   <span className="min-w-0 flex-1">
                     <span className="block truncate text-[14px] font-bold">{c.name}</span>
                     <span className={cn('block truncate text-[12px]', active ? 'text-white/75' : 'text-brand-gray')}>
-                      /portais/{c.slug} · {c.code}
+                      /portais_beta/{c.slug} · {c.code}
                     </span>
                   </span>
                   {c.active === false && (
@@ -474,7 +474,7 @@ function ClientForm({ initial, isNew, token, onSaved, onDeleted, onCancel }: Cli
   }
 
   const remove = async () => {
-    if (!window.confirm(`Excluir ${initial.name}? A página /portais/${initial.slug} deixa de existir.`)) return
+    if (!window.confirm(`Excluir ${initial.name}? A página /portais_beta/${initial.slug} deixa de existir.`)) return
     if (!token) {
       onDeleted(initial.slug)
       toast.info('Prévia: nada foi apagado no repositório.')
@@ -524,9 +524,9 @@ function ClientForm({ initial, isNew, token, onSaved, onDeleted, onCancel }: Cli
               {draft.active !== false ? 'Página no ar' : 'Página fora do ar'}
             </label>
           </Field>
-          <Field label="Slug (endereço da página)" htmlFor="c-slug" hint={`natcorp.com.br/portais/${slug} e /portais/dev/${slug}`}>
+          <Field label="Slug (endereço da página)" htmlFor="c-slug" hint={`natcorp.com.br/portais_beta/${slug} e /portais_beta/dev/${slug}`}>
             <div className="flex items-center rounded-md border border-input bg-white focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2">
-              <span className="pl-3 text-[13px] text-brand-gray">/portais/</span>
+              <span className="pl-3 text-[13px] text-brand-gray">/portais_beta/</span>
               <input
                 id="c-slug"
                 value={draft.slug}
@@ -678,7 +678,7 @@ function UrlsCard({ env, draft, onUrl, onFill, onApex }: UrlsCardProps) {
       title={dev ? 'Endereços de homologação' : 'Endereços de produção'}
       lead={
         dev
-          ? 'Os portais da base de testes (/portais/dev/<slug>). Um campo vazio usa o padrão em /apex/dev/.'
+          ? 'Os portais da base de testes (/portais_beta/dev/<slug>). Um campo vazio usa o padrão em /apex/dev/.'
           : 'Os portais que os clientes usam no dia a dia. Um campo vazio usa o padrão do servidor escolhido.'
       }
       accent={dev ? 'amber' : 'purple'}

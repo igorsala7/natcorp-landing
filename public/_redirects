@@ -9,5 +9,15 @@
 /fale-conosco                      /contato                     301
 /fale-conosco-2                    /contato                     301
 
+# Acesso aos portais dos clientes.
+#
+# Em PRODUÇÃO (www.natcorp.com.br) o prefixo /portais/ é servido pelo servidor antigo, que continua no
+# ar — nada disto vale lá, porque este arquivo é da Vercel/Netlify. Aqui, nas prévias, a pasta antiga não
+# existe: sem esta regra o link do rodapé cairia no 404. É reescrita (200) e não redirecionamento, para o
+# endereço na barra continuar sendo o que a pessoa clicou.
+#
+# /portais sozinho NÃO entra: é a página de marketing "Portais e autoatendimento", do próprio site.
+/portais/*  /portais_beta/:splat  200
+
 # SPA: qualquer outro caminho devolve o index.html
 /*    /index.html   200
