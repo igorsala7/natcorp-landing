@@ -166,6 +166,17 @@ export default function ImplantationPage() {
                 Segurança e infraestrutura
               </Link>
             </li>
+            {/* O caminho de volta para /sobre.
+                Ao mover os serviços para cá, os 49 links que apontavam para /sobre#servicos
+                vieram junto — e /sobre ficou sem nenhum link de conteúdo. Ela segue no menu
+                e no rodapé, então não é órfã, mas é onde mora TODA a prova da empresa: HCFMUSP,
+                Stefanini, Leadec, 500 mil colaboradores, Top of Mind. Quem acabou de ler como é
+                a implantação é exatamente quem quer saber quem está por trás dela. */}
+            <li>
+              <Link to={paths.about} className="font-semibold text-brand-purple underline-offset-2 hover:underline">
+                Quem é a Natcorp: 35 anos e quem já usa
+              </Link>
+            </li>
             <li>
               <Link to={paths.contact} className="font-semibold text-brand-purple underline-offset-2 hover:underline">
                 Falar com a Natcorp

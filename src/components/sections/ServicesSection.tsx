@@ -66,6 +66,10 @@ export function ServicesSection({ id = 'servicos', tone = 'off' }: ServicesSecti
           </Stagger>
 
           <Reveal delay={0.1} className="mt-10 flex flex-wrap items-center gap-x-8 gap-y-2 text-[15px] font-semibold text-brand-purple">
+            <Link to={`${paths.about}#reconhecimento`} className="group inline-flex items-center gap-2">
+              Ver quem já usa o sistema
+              <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5" />
+            </Link>
             <Link to="#contato" className="group inline-flex items-center gap-2">
               Falar sobre a implantação
               <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5" aria-hidden />
