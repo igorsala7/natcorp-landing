@@ -26,10 +26,16 @@ import heroV2Large from '@/assets/people/hero-v2-3152.webp'
  *
  * POR QUE A IMAGEM TEM 489px DE TELA ESTENDIDA À ESQUERDA
  *
- * Rosto e letreiro estão a 910px um do outro na foto. Para o rosto ficar em 62% da tela (longe do véu
- * e do título) e o "a" do natcorp continuar visível, a janela teria de começar 335px ANTES da borda
- * esquerda da foto. Nenhum recorte resolve isso — a conta não fecha com a foto original, e recortar
- * mais fechado só deixa a pessoa maior, porque o quadro é sempre esticado para cobrir a seção.
+ * Rosto e letreiro estão a 910px um do outro na foto, e a janela mostra ~75% da largura da imagem.
+ * Empurrar o rosto para a direita empurra o letreiro para fora — é uma gangorra, não um ajuste.
+ * Recortar mais fechado não ajuda: só deixa a pessoa maior, porque o quadro é sempre esticado para
+ * cobrir a seção.
+ *
+ * HOJE A GANGORRA ESTÁ NO ROSTO, NÃO NO LETREIRO.
+ *
+ * Com --fx:0% o rosto fica em 68% da largura, bem longe do título, e do letreiro sobra só o símbolo —
+ * o "a" do natcorp fica fora por poucos pixels. Para trazer o letreiro de volta, --fx:16% devolve o
+ * "a" e traz o rosto para 63%. Os dois extremos foram vistos e funcionam; é escolha de composição.
  *
  * Então a tela cresceu: os 489px à esquerda são os 489px da própria foto, espelhados e com desfoque
  * forte. Eles caem na faixa onde o véu tem 78% a 92% de roxo, e por isso não se veem. A alternativa
@@ -89,7 +95,7 @@ export function HeroScene({ on, reduced, loops = true, instant = false, y }: Her
       */}
       <div className="absolute inset-x-0 top-0 h-[62%] overflow-hidden [container-type:size] lg:h-full">
         <m.div
-          className="absolute [--fx:51%] [--fy:50%] lg:[--fx:17%] lg:[--fy:45%]"
+          className="absolute [--fx:52%] [--fy:50%] lg:[--fx:0%] lg:[--fy:45%]"
           style={{
             left: 'var(--fx)',
             top: 'var(--fy)',
@@ -107,7 +113,7 @@ export function HeroScene({ on, reduced, loops = true, instant = false, y }: Her
         >
           <img
             src={heroV2}
-            srcSet={`${heroV2} 2000w, ${heroV2Large} 3249w`}
+            srcSet={`${heroV2} 2000w, ${heroV2Large} 3318w`}
             sizes="(min-width: 1024px) 125vw, 150vw"
             alt="Profissional de RH sorrindo no escritório da Natcorp, com o logotipo da empresa na parede ao fundo"
             width={W}
