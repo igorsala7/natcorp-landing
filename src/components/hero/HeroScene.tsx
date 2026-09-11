@@ -17,11 +17,18 @@ import heroV2Large from '@/assets/people/hero-v2-3152.webp'
  *
  * O ENQUADRAMENTO É FEITO POR --fx / --fy, NÃO PELO RECORTE DA IMAGEM.
  *
- * O quadro é mais largo que a seção, então só uma janela dele aparece: em 1440 x 810, de 15,6% a 90,5%
- * da largura com --fx em 62%. Mudar a foto quase sempre exige mexer nesses dois valores — foi o que
- * aconteceu aqui. A foto anterior tinha a pessoa à direita (54% a 86% da imagem) e pedia --fx:62% no
- * desktop e 84% no celular. Esta tem a pessoa ao centro, e por isso 10% e 46%: baixar o --fx mostra
- * mais do lado esquerdo da imagem e empurra a pessoa para a direita na tela, longe do título.
+ * O quadro é mais largo que a seção, então só uma janela dele aparece: em 1440 x 810, cerca de 75% da
+ * largura da imagem. O --fx decide QUAL pedaço: subir mostra mais do lado direito da imagem e puxa a
+ * pessoa para a esquerda na tela; descer faz o contrário. Mudar a foto quase sempre exige recalibrar.
+ *
+ * A foto anterior tinha a pessoa à direita da imagem (54% a 86%) e pedia --fx:62% no desktop, 84% no
+ * celular. Esta tem a pessoa ao centro (22% a 60%) e o letreiro da parede à direita (55% a 97%), então
+ * a janela precisa ser larga o bastante para pegar os dois: a imagem usa a largura inteira da foto, e
+ * o --fx em 24% deixa o rosto limpo do véu com o "natc" do letreiro legível atrás. Abaixo disso o
+ * letreiro some; acima, a pessoa avança sobre o título.
+ *
+ * Recortar mais fechado NÃO resolve: cada recorte mais apertado deixa a pessoa maior, porque o quadro
+ * é sempre esticado para cobrir a seção. Quem enquadra é o --fx, não a tesoura.
  */
 
 const W = 2000
@@ -75,7 +82,7 @@ export function HeroScene({ on, reduced, loops = true, instant = false, y }: Her
       */}
       <div className="absolute inset-x-0 top-0 h-[62%] overflow-hidden [container-type:size] lg:h-full">
         <m.div
-          className="absolute [--fx:46%] [--fy:50%] lg:[--fx:10%] lg:[--fy:45%]"
+          className="absolute [--fx:36%] [--fy:50%] lg:[--fx:24%] lg:[--fy:45%]"
           style={{
             left: 'var(--fx)',
             top: 'var(--fy)',
@@ -93,7 +100,7 @@ export function HeroScene({ on, reduced, loops = true, instant = false, y }: Her
         >
           <img
             src={heroV2}
-            srcSet={`${heroV2} 2000w, ${heroV2Large} 2300w`}
+            srcSet={`${heroV2} 2000w, ${heroV2Large} 2760w`}
             sizes="(min-width: 1024px) 125vw, 150vw"
             alt="Profissional de RH sorrindo no escritório da Natcorp, com o logotipo da empresa na parede ao fundo"
             width={W}
