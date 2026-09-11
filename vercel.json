@@ -72,7 +72,7 @@
     },
     {
       "source": "/servicos",
-      "destination": "/sobre#servicos",
+      "destination": "/implantacao",
       "permanent": true
     },
     {

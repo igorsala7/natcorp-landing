@@ -7,13 +7,21 @@ import heroV2 from '@/assets/people/hero-v2.webp'
 import heroV2Large from '@/assets/people/hero-v2-3152.webp'
 
 /**
- * Fundo do hero: a cena natcorp_hero_v2 (a profissional com o tablet junto à janela, o módulo do símbolo
- * em contorno e as linhas de fluxo), com a arte da marca animada por cima, em código, alinhada à imagem:
+ * Fundo do hero: a profissional no escritório da Natcorp, com o logotipo na parede ao fundo, e a arte
+ * da marca animada por cima, em código:
  * - o contorno do módulo redesenhado em luz, que se desenha na entrada e recebe um brilho percorrendo a borda;
  * - linhas de fluxo com pacotes de luz correndo em direção à pessoa;
- * - um módulo menor em vidro, respirando, perto do tablet;
+ * - um módulo menor em vidro, respirando, à direita;
  * - o véu para o texto e os cartões do sistema.
  * A imagem e o SVG ficam no mesmo quadro (2000 x 843), que cobre a seção como um object-fit: cover.
+ *
+ * O ENQUADRAMENTO É FEITO POR --fx / --fy, NÃO PELO RECORTE DA IMAGEM.
+ *
+ * O quadro é mais largo que a seção, então só uma janela dele aparece: em 1440 x 810, de 15,6% a 90,5%
+ * da largura com --fx em 62%. Mudar a foto quase sempre exige mexer nesses dois valores — foi o que
+ * aconteceu aqui. A foto anterior tinha a pessoa à direita (54% a 86% da imagem) e pedia --fx:62% no
+ * desktop e 84% no celular. Esta tem a pessoa ao centro, e por isso 10% e 46%: baixar o --fx mostra
+ * mais do lado esquerdo da imagem e empurra a pessoa para a direita na tela, longe do título.
  */
 
 const W = 2000
@@ -67,7 +75,7 @@ export function HeroScene({ on, reduced, loops = true, instant = false, y }: Her
       */}
       <div className="absolute inset-x-0 top-0 h-[62%] overflow-hidden [container-type:size] lg:h-full">
         <m.div
-          className="absolute [--fx:84%] [--fy:50%] lg:[--fx:62%] lg:[--fy:45%]"
+          className="absolute [--fx:46%] [--fy:50%] lg:[--fx:10%] lg:[--fy:45%]"
           style={{
             left: 'var(--fx)',
             top: 'var(--fy)',
@@ -85,9 +93,9 @@ export function HeroScene({ on, reduced, loops = true, instant = false, y }: Her
         >
           <img
             src={heroV2}
-            srcSet={`${heroV2} 2000w, ${heroV2Large} 3152w`}
+            srcSet={`${heroV2} 2000w, ${heroV2Large} 2300w`}
             sizes="(min-width: 1024px) 125vw, 150vw"
-            alt="Equipe de RH usando o sistema Natcorp no computador e no celular"
+            alt="Profissional de RH sorrindo no escritório da Natcorp, com o logotipo da empresa na parede ao fundo"
             width={W}
             height={H}
             fetchPriority="high"

@@ -59,7 +59,7 @@
 </rule>
 <rule name="legacy-015" stopProcessing="true">
   <match url="^servicos/?$" />
-  <action type="Redirect" url="/sobre#servicos" redirectType="Permanent" />
+  <action type="Redirect" url="/implantacao" redirectType="Permanent" />
 </rule>
 <rule name="legacy-016" stopProcessing="true">
   <match url="^jobs/?$" />
