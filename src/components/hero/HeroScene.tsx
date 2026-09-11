@@ -21,14 +21,21 @@ import heroV2Large from '@/assets/people/hero-v2-3152.webp'
  * largura da imagem. O --fx decide QUAL pedaço: subir mostra mais do lado direito da imagem e puxa a
  * pessoa para a esquerda na tela; descer faz o contrário. Mudar a foto quase sempre exige recalibrar.
  *
- * A foto anterior tinha a pessoa à direita da imagem (54% a 86%) e pedia --fx:62% no desktop, 84% no
- * celular. Esta tem a pessoa ao centro (22% a 60%) e o letreiro da parede à direita (55% a 97%), então
- * a janela precisa ser larga o bastante para pegar os dois: a imagem usa a largura inteira da foto, e
- * o --fx em 24% deixa o rosto limpo do véu com o "natc" do letreiro legível atrás. Abaixo disso o
- * letreiro some; acima, a pessoa avança sobre o título.
+ * A foto anterior tinha a pessoa à direita da imagem e pedia --fx:62%. Esta tem a pessoa ao centro e o
+ * letreiro da parede à direita, e os dois precisam caber na mesma janela.
  *
- * Recortar mais fechado NÃO resolve: cada recorte mais apertado deixa a pessoa maior, porque o quadro
- * é sempre esticado para cobrir a seção. Quem enquadra é o --fx, não a tesoura.
+ * POR QUE A IMAGEM TEM 489px DE TELA ESTENDIDA À ESQUERDA
+ *
+ * Rosto e letreiro estão a 910px um do outro na foto. Para o rosto ficar em 62% da tela (longe do véu
+ * e do título) e o "a" do natcorp continuar visível, a janela teria de começar 335px ANTES da borda
+ * esquerda da foto. Nenhum recorte resolve isso — a conta não fecha com a foto original, e recortar
+ * mais fechado só deixa a pessoa maior, porque o quadro é sempre esticado para cobrir a seção.
+ *
+ * Então a tela cresceu: os 489px à esquerda são os 489px da própria foto, espelhados e com desfoque
+ * forte. Eles caem na faixa onde o véu tem 78% a 92% de roxo, e por isso não se veem. A alternativa
+ * seria deixar o quadro recuar (--fx negativo), e aí aparece uma emenda vertical nítida na borda.
+ *
+ * Se a foto mudar, esta extensão precisa ser refeita — o script está no histórico deste commit.
  */
 
 const W = 2000
@@ -82,7 +89,7 @@ export function HeroScene({ on, reduced, loops = true, instant = false, y }: Her
       */}
       <div className="absolute inset-x-0 top-0 h-[62%] overflow-hidden [container-type:size] lg:h-full">
         <m.div
-          className="absolute [--fx:36%] [--fy:50%] lg:[--fx:24%] lg:[--fy:45%]"
+          className="absolute [--fx:51%] [--fy:50%] lg:[--fx:17%] lg:[--fy:45%]"
           style={{
             left: 'var(--fx)',
             top: 'var(--fy)',
@@ -100,7 +107,7 @@ export function HeroScene({ on, reduced, loops = true, instant = false, y }: Her
         >
           <img
             src={heroV2}
-            srcSet={`${heroV2} 2000w, ${heroV2Large} 2760w`}
+            srcSet={`${heroV2} 2000w, ${heroV2Large} 3249w`}
             sizes="(min-width: 1024px) 125vw, 150vw"
             alt="Profissional de RH sorrindo no escritório da Natcorp, com o logotipo da empresa na parede ao fundo"
             width={W}
