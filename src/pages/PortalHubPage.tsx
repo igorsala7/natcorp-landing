@@ -29,9 +29,12 @@ import figureBeatriz from '@/assets/portals/figure-beatriz.webp'
 import figureColaboradorDupla from '@/assets/portals/figure-colaborador-dupla.webp'
 import figureGestorDupla from '@/assets/portals/figure-gestor-dupla.webp'
 import figureOperadorDupla from '@/assets/portals/figure-operador-dupla.webp'
-import iconCandidato from '@/assets/portals/icons/quadro-de-vagas.svg'
-import iconNatDocs from '@/assets/portals/icons/assinatura-eletronica.svg'
-import iconChamado from '@/assets/portals/icons/chamado-interno.svg'
+import figureCandidato from '@/assets/portals/figure-candidato.webp'
+import figureCandidatoDupla from '@/assets/portals/figure-candidato-dupla.webp'
+import figureNatDocs from '@/assets/portals/figure-natdocs.webp'
+import figureNatDocsDupla from '@/assets/portals/figure-natdocs-dupla.webp'
+import figureChamado from '@/assets/portals/figure-chamado.webp'
+import figureChamadoDupla from '@/assets/portals/figure-chamado-dupla.webp'
 
 /**
  * Quem ilustra cada portal do sistema: os personagens da jornada, na mesma
@@ -40,13 +43,24 @@ import iconChamado from '@/assets/portals/icons/chamado-interno.svg'
  * `dupla` é o segundo personagem do quadro. Cada portal é usado por mais de um
  * tipo de pessoa, e um retrato só sugere o contrário.
  *
- * OS NÚMEROS NÃO SÃO CHUTE. Cada arquivo foi gerado com um enquadramento
- * diferente, então a mesma largura em CSS deixava um personagem com a cabeça
- * maior que a do outro. `larg` sai de medição do PNG — altura da cabeça,
- * largura do ombro e altura do corpo, valendo a MEDIANA das três, porque
- * cabelo volumoso estraga a medida da cabeça e ombro largo de homem estraga a
- * do ombro. Com ela, os dois aparecem na MESMA escala: a altura exibida dos
- * dois bate dentro de 1px em todos os pares.
+ * OS NÚMEROS NÃO SÃO CHUTE — saem de `scripts/medir-figuras.py`. Cada arquivo
+ * vem do gerador com um enquadramento diferente, então a mesma largura em CSS
+ * deixava um personagem com a cabeça maior que a do outro.
+ *
+ * A regra é: a ALTURA EXIBIDA das duas figuras do par tem de ser igual. Uma
+ * versão anterior deste comentário dizia que `larg` vinha da mediana de três
+ * invariantes (cabeça, ombro, corpo) — não vem, e a mediana reprova: a
+ * `colaborador-dupla` tem cabelo comprido e mede "cabeça" 56px contra 214px da
+ * parceira, porque sem pescoço estreito visível o mínimo cai no lugar errado.
+ * Isso daria larg 185 onde este arquivo usa 135. O script mede a silhueta e
+ * reproduz os três pares antigos (o do operador, exato; o do colaborador, 1px).
+ *
+ * `esq` distribui as duas a partir do centro do palco, com 16px de folga. Se a
+ * soma não couber nos 372px do cartão mais estreito, as DUAS encolhem juntas —
+ * por isso natdocs e chamado saem a 398px e 384px de altura, e não 484px: os
+ * braços estendidos (o contrato e o gesto) ocupam mais largura, e a dupla não
+ * pode passar de ~86% do palco — que é a folga lateral que os três pares
+ * antigos têm (78%, 86%, 90%).
  *
  * `esq` é o canto esquerdo da imagem medido A PARTIR DO CENTRO do palco, para
  * a dupla ficar centrada em qualquer largura de cartão. O valor sai da
@@ -82,13 +96,18 @@ const figures: Partial<Record<PortalApp['key'], { principal: Figura; dupla?: Fig
     principal: { src: figureBeatriz, alt: 'Analista do RH com o notebook na mão', larg: 165, esq: 22, topo: 20 },
     dupla: { src: figureOperadorDupla, alt: 'Operador de polo roxa da Natcorp, com o coletor na mão', larg: 193, esq: -179, topo: 20, espelhado: true },
   },
-}
-
-/** Ícones dos aplicativos e serviços: os mesmos ícones de módulo da marca. */
-const icons: Partial<Record<PortalApp['key'], string>> = {
-  candidato: iconCandidato,
-  natdocs: iconNatDocs,
-  chamado: iconChamado,
+  candidato: {
+    principal: { src: figureCandidato, alt: 'Candidato de camisa azul, com o celular na mão e a mochila no ombro', larg: 182, esq: -12, topo: 20 },
+    dupla: { src: figureCandidatoDupla, alt: 'Candidata de blusa lilás, com a pasta do currículo nas mãos', larg: 153, esq: -181, topo: 20, espelhado: true },
+  },
+  natdocs: {
+    principal: { src: figureNatDocs, alt: 'Analista de blazer roxo assinando um documento no tablet', larg: 132, esq: 38, topo: 20 },
+    dupla: { src: figureNatDocsDupla, alt: 'Homem de camisa lilás mostrando o contrato já assinado', larg: 191, esq: -170, topo: 20, espelhado: true },
+  },
+  chamado: {
+    principal: { src: figureChamado, alt: 'Atendente do suporte Natcorp, de polo roxa e headset', larg: 146, esq: 27, topo: 20 },
+    dupla: { src: figureChamadoDupla, alt: 'Analista de RH com o notebook, acompanhando o chamado', larg: 180, esq: -169, topo: 20, espelhado: true },
+  },
 }
 
 /**
@@ -468,29 +487,48 @@ function Figurante({ fig, delay }: { fig: Figura; delay: number }) {
 
 /* ---------------- cartões ---------------- */
 
+/**
+ * O palco do cartão: o fundo, o contorno da marca, as duas figuras e o selo de
+ * público. É o mesmo nos dois tipos de cartão — antes só o PortalCard tinha
+ * palco, e Candidato, NatDocs e Chamado apareciam como um ícone de 84px num
+ * canto. Eram os mesmos portais, anunciados com metade do peso visual.
+ */
+function Palco({ app }: { app: PortalApp }) {
+  const fig = figures[app.key]
+  /* O Chamado é o único restrito ao RH, e o selo cheio diz isso antes do texto. */
+  const restrito = app.key === 'chamado'
+  return (
+    <div className="relative h-[220px] shrink-0 overflow-hidden bg-[linear-gradient(180deg,#F4F2F7_0%,#FBFAFD_100%)]">
+      <LogoOutline strokeWidth={1.25} className="absolute -right-12 -top-14 h-[260px] w-[260px] rotate-12 text-brand-purple/[0.12]" />
+      <div className="absolute inset-x-0 bottom-0 h-40 bg-[radial-gradient(60%_80%_at_50%_100%,rgba(201,87,136,0.16),transparent_70%)]" aria-hidden />
+      {fig && (
+        <>
+          {/* Lado a lado, no mesmo nível e na mesma escala, com a segunda
+              espelhada para as duas não olharem para o mesmo lado. */}
+          {fig.dupla && <Figurante fig={fig.dupla} delay={0.25} />}
+          <Figurante fig={fig.principal} delay={0.15} />
+        </>
+      )}
+      <div className="absolute inset-x-0 bottom-0 h-14 bg-gradient-to-t from-white to-transparent" aria-hidden />
+      <span
+        className={cn(
+          'absolute left-5 top-5 inline-flex items-center gap-2 rounded-full border px-3 py-1 text-[11px] font-bold uppercase tracking-[0.12em]',
+          restrito ? 'border-brand-purple/30 bg-brand-purple text-white' : 'border-brand-mist bg-white/90 text-brand-purple',
+        )}
+      >
+        {!restrito && <span className="h-1.5 w-1.5 rotate-45 rounded-[1px] bg-brand-gradient" aria-hidden />}
+        {app.audience}
+      </span>
+    </div>
+  )
+}
+
 /** Cartão de um portal do sistema: o personagem no palco, o que a pessoa faz ali e o botão de entrar. */
 function PortalCard({ app, href, dev }: { app: PortalApp; href: string; dev: boolean }) {
-  const fig = figures[app.key]
   return (
     <SpotlightCard className="group h-full overflow-hidden rounded-[28px] border border-brand-mist bg-white shadow-soft transition-[transform,box-shadow] duration-500 ease-brand hover:-translate-y-1 hover:shadow-lift">
       <div className="flex h-full flex-col">
-        <div className="relative h-[220px] shrink-0 overflow-hidden bg-[linear-gradient(180deg,#F4F2F7_0%,#FBFAFD_100%)]">
-          <LogoOutline strokeWidth={1.25} className="absolute -right-12 -top-14 h-[260px] w-[260px] rotate-12 text-brand-purple/[0.12]" />
-          <div className="absolute inset-x-0 bottom-0 h-40 bg-[radial-gradient(60%_80%_at_50%_100%,rgba(201,87,136,0.16),transparent_70%)]" aria-hidden />
-          {fig && (
-            <>
-              {/* Lado a lado, no mesmo nível e na mesma escala, com a segunda
-                  espelhada para as duas não olharem para o mesmo lado. */}
-              {fig.dupla && <Figurante fig={fig.dupla} delay={0.25} />}
-              <Figurante fig={fig.principal} delay={0.15} />
-            </>
-          )}
-          <div className="absolute inset-x-0 bottom-0 h-14 bg-gradient-to-t from-white to-transparent" aria-hidden />
-          <span className="absolute left-5 top-5 inline-flex items-center gap-2 rounded-full border border-brand-mist bg-white/90 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.12em] text-brand-purple">
-            <span className="h-1.5 w-1.5 rotate-45 rounded-[1px] bg-brand-gradient" aria-hidden />
-            {app.audience}
-          </span>
-        </div>
+        <Palco app={app} />
         <div className="flex flex-1 flex-col px-6 pb-6 pt-1 sm:px-7 sm:pb-7">
           <h3 className="text-[22px] font-extrabold leading-tight text-brand-ink">{app.name}</h3>
           <p className="mt-2 text-[14.5px] leading-relaxed text-brand-graphite">{app.description}</p>
@@ -509,44 +547,33 @@ function PortalCard({ app, href, dev }: { app: PortalApp; href: string; dev: boo
   )
 }
 
-/** Cartão de aplicativo ou serviço: o ícone de módulo da marca, para quem é e o botão de abrir. */
+/**
+ * Cartão de aplicativo ou serviço: mesmo palco e mesmo botão do portal.
+ *
+ * A diferença que sobra é textual — o verbo é "abrir", não "entrar", e o
+ * Chamado traz uma nota dizendo quem NÃO deve usá-lo. O ícone de módulo de
+ * 84px saiu: com as figuras no palco ele repetia o assunto com menos força.
+ */
 function ServiceCard({ app, href, dev }: { app: PortalApp; href: string; dev: boolean }) {
-  const icon = icons[app.key]
-  const restricted = app.key === 'chamado'
+  const rotulo =
+    app.key === 'candidato' ? 'Abrir o Portal do Candidato' : app.key === 'chamado' ? 'Abrir chamado (RH)' : `Abrir o ${app.short}`
   return (
-    <SpotlightCard className="group h-full rounded-[28px] border border-brand-mist bg-white shadow-soft transition-[transform,box-shadow] duration-500 ease-brand hover:-translate-y-1 hover:shadow-lift">
-      <div className="flex h-full flex-col p-6 sm:p-7">
-        <div className="flex items-start justify-between gap-4">
-          {icon && (
-            <img
-              src={icon}
-              alt=""
-              width={84}
-              height={84}
-              className="h-[84px] w-[84px] shrink-0 transition-transform duration-700 ease-brand group-hover:-rotate-3 group-hover:scale-105"
-              draggable={false}
-            />
-          )}
-          <span
-            className={cn(
-              'rounded-full border px-3 py-1 text-right text-[11px] font-bold uppercase tracking-[0.12em]',
-              restricted ? 'border-brand-purple/30 bg-brand-purple text-white' : 'border-brand-mist bg-brand-off-white text-brand-purple',
-            )}
-          >
-            {app.audience}
-          </span>
-        </div>
-        <h3 className="mt-5 text-[22px] font-extrabold leading-tight text-brand-ink">{app.name}</h3>
-        <p className="mt-2 text-[14.5px] leading-relaxed text-brand-graphite">{app.description}</p>
-        {app.note && <p className="mt-2 text-[12.5px] leading-relaxed text-brand-gray">{app.note}</p>}
-        <div className="mt-auto pt-6">
-          <Button asChild variant="secondary" size="lg" className="w-full">
-            <a href={href}>
-              {app.key === 'candidato' ? 'Abrir o Portal do Candidato' : app.key === 'chamado' ? 'Abrir chamado (RH)' : `Abrir o ${app.short}`}
-              <ArrowUpRight className="transition-transform duration-300 group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5" />
-            </a>
-          </Button>
-          {dev && <DevNote />}
+    <SpotlightCard className="group h-full overflow-hidden rounded-[28px] border border-brand-mist bg-white shadow-soft transition-[transform,box-shadow] duration-500 ease-brand hover:-translate-y-1 hover:shadow-lift">
+      <div className="flex h-full flex-col">
+        <Palco app={app} />
+        <div className="flex flex-1 flex-col px-6 pb-6 pt-1 sm:px-7 sm:pb-7">
+          <h3 className="text-[22px] font-extrabold leading-tight text-brand-ink">{app.name}</h3>
+          <p className="mt-2 text-[14.5px] leading-relaxed text-brand-graphite">{app.description}</p>
+          {app.note && <p className="mt-2 text-[12.5px] leading-relaxed text-brand-gray">{app.note}</p>}
+          <div className="mt-auto pt-6">
+            <Button asChild size="lg" className="w-full">
+              <a href={href}>
+                {rotulo}
+                <ArrowUpRight className="transition-transform duration-300 group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5" />
+              </a>
+            </Button>
+            {dev && <DevNote />}
+          </div>
         </div>
       </div>
     </SpotlightCard>

@@ -1,18 +1,7 @@
 # Figuras dos portais
 
-Cada cartão de portal aceita **duas** pessoas: a principal e a dupla. Hoje só a
-principal existe; a dupla entra assim que os arquivos forem gerados.
-
-## O que falta gerar
-
-Três personagens, na mesma família 3D das figuras atuais (ver
-`figure-marcos.webp` como referência de estilo):
-
-| Portal | Personagem | Arquivo esperado |
-| --- | --- | --- |
-| Colaborador | Mulher, 20 anos, pele clara, cabelo castanho com **uma mecha azul** | `figure-colaborador-dupla.webp` |
-| Gestor | Mulher, 50 anos, morena clara, **blazer rosa** e camisa roxa, cabelo ondulado na altura do pescoço | `figure-gestor-dupla.webp` |
-| Operador | Homem, 35 anos, japonês, **camiseta polo roxa com o símbolo da Natcorp no peito** | `figure-operador-dupla.webp` |
+Cada cartão de portal aceita **duas** pessoas: a principal e a dupla. Os seis
+cartões têm as duas — nada falta gerar.
 
 ## Requisitos da arte
 
@@ -59,27 +48,62 @@ tênis branco), exportando em 360px de largura como as figuras antigas.
 
 ## Como calcular `larg` e `esq` ao trocar uma figura
 
-As duas pessoas de um cartão precisam sair na MESMA escala e lado a lado. Como
-cada arquivo foi gerado com um enquadramento diferente, largura igual em CSS
-não significa tamanho igual na tela — foi o que deixou a moça com a cabeça
-maior que a do rapaz na primeira versão.
+Não calcule à mão:
 
-A conta, a partir do alfa do `.webp`:
+```
+python3 scripts/medir-figuras.py figure-chamado.webp figure-chamado-dupla.webp
+```
 
-1. **Escala.** Meça três invariantes: altura da cabeça (topo até o ponto mais
-   estreito depois do pico — o pescoço), largura do ombro (maior largura logo
-   abaixo do pescoço) e altura do corpo (a imagem já vem cortada na silhueta).
-   Calcule a largura que igualaria cada um deles à figura de referência e fique
-   com a **mediana**. Nenhum dos três serve sozinho: cabelo volumoso infla a
-   cabeça, ombro largo de homem infla o ombro. A mediana descarta o
-   contaminado. Confere se deu certo: a altura exibida das duas tem de bater
-   dentro de poucos pixels.
+Ele imprime as duas linhas prontas para colar no mapa `figures` de
+`src/pages/PortalHubPage.tsx`.
 
-2. **Posição.** Meça os extremos opacos dentro da faixa que aparece no cartão
-   (≈200px de altura), lembrando que espelhar TROCA as bordas de lado. Some as
-   duas silhuetas mais 16px de folga, e distribua a partir do centro do palco.
-   `esq` é o canto esquerdo da imagem em px a contar do centro — assim a dupla
-   fica centrada em qualquer largura de cartão.
+### A regra é a ALTURA EXIBIDA, não a mediana
 
-3. Se a soma não couber no cartão mais estreito (3 colunas, palco ~372px),
-   encolha as DUAS juntas até caber.
+Uma versão anterior deste arquivo mandava medir três invariantes — altura da
+cabeça, largura do ombro, altura do corpo — e ficar com a **mediana**. Medido:
+não é o que os pares no ar fazem, e a mediana reprova.
+
+O que os três pares fazem é bater a altura exibida ao pixel: 507/508, 457/457,
+504/504. A mediana erra porque a `colaborador-dupla` é a moça de cabelo comprido
+e mede "cabeça" **56px** contra 214px da parceira — sem pescoço estreito
+visível, o mínimo cai no lugar errado e contamina a conta. Ela daria `larg: 185`
+onde o arquivo usa 135.
+
+O script, medindo só a silhueta, reproduz o par do operador **exato** e o do
+colaborador com 1px. O do gestor sai com `--altura 457`, que é a altura dele.
+
+### A folga lateral faz parte da composição
+
+A dupla não pode ocupar mais que ~86% do palco. Os três pares antigos ficam em
+78%, 86% e 90% de um palco de **395px** (medido no navegador — não os 372 que
+este arquivo estimava). Encher os 100% cola as figuras na borda: foi o que
+aconteceu na primeira tentativa de candidato/natdocs/chamado, e o notebook do
+analista saía raspando a lateral do cartão.
+
+Quando a soma não cabe, as DUAS encolhem juntas — encolher uma só quebra a
+igualdade de altura, que é o ponto do cálculo. É por isso que natdocs e chamado
+ficam a 398px e 384px de altura, e não nos 484px do candidato: o contrato
+estendido e o gesto da atendente ocupam mais largura.
+
+## Feito em 12/09/2026 — Candidato, NatDocs e Chamado
+
+Seis figuras, mesmo pipeline da leva anterior (`gemini-3-pro-image`,
+`figure-marcos.webp` como referência de ESTILO, `aspect_ratio: 9:16`,
+`resolution: 2K`, duas variações por personagem para escolher).
+
+| arquivo | personagem |
+| --- | --- |
+| `figure-candidato.webp` | rapaz de 24 anos, camisa azul-petróleo, mochila no ombro, celular com as vagas |
+| `figure-candidato-dupla.webp` | moça de 23 anos, blusa lilás, pasta do currículo nas mãos |
+| `figure-natdocs.webp` | analista de 32 anos, blazer roxo, assinando no tablet com a caneta |
+| `figure-natdocs-dupla.webp` | homem de 40 anos, camisa lilás, mostrando o contrato assinado |
+| `figure-chamado.webp` | atendente do suporte, polo roxa com o losango, headset com microfone |
+| `figure-chamado-dupla.webp` | analista de RH do cliente, óculos, notebook no antebraço |
+
+Os dois candidatos **não** usam nada da marca, de propósito: ainda não são da
+empresa. A atendente do Chamado usa; o analista de RH que abre o chamado, não.
+
+O recorte do fundo é o `scripts/recorta.py`. Ele preenche a partir das bordas,
+então branco CERCADO pela figura sobrevive — os tênis, a camisa sob o blazer e,
+o caso mais visível, a folha do contrato na mão do NatDocs. Limiar simples
+comeria os três.
