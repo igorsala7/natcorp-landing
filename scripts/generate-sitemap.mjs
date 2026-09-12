@@ -17,7 +17,7 @@ const urls = [
   { loc: '/sobre', priority: '0.7', changefreq: 'monthly' },
   { loc: '/contato', priority: '0.8', changefreq: 'monthly' },
   { loc: '/portais', priority: '0.8', changefreq: 'monthly' },
-  // As páginas de acesso dos clientes (/portais_beta/<slug>/) ficam FORA do sitemap e saem com
+  // As páginas de acesso dos clientes (/portais/<slug>/) ficam FORA do sitemap e saem com
   // `noindex`: o endereço em uso é o do servidor antigo (/portais/<slug>/), e indexar as duas
   // criaria conteúdo duplicado. Voltam para cá quando a virada acontecer.
   { loc: '/estruturas', priority: '0.9', changefreq: 'monthly' },

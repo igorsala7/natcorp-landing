@@ -28,3 +28,13 @@ dist-ssr
 
 # Pasta temporária do gerador do HOSPEDAGEM.html
 .tmp-hospedagem/
+
+# Material de trabalho interno: pesado e fora do site.
+# Ficam no disco, não no repositório — juntos passam de 380 MB.
+material-interno/
+filme/
+brand/apex/APEX Style/
+
+# Artefatos de deploy e cópias baixadas do servidor (referência, não fonte).
+dist.zip
+/stefanini/

@@ -184,7 +184,7 @@ function AppRoutes() {
         {/* Endereço antigo da página de grupos: agora é "Como é a sua estrutura?". */}
         <Route path="/grupos" element={<Navigate to="/estruturas" replace />} />
         <Route
-          path="/portais_beta/dev/:cliente"
+          path="/portais/dev/:cliente"
           element={
             <Suspense fallback={<PageFallback />}>
               <PortalHubPage env="dev" />
@@ -192,7 +192,7 @@ function AppRoutes() {
           }
         />
         <Route
-          path="/portais_beta/:cliente"
+          path="/portais/:cliente"
           element={
             <Suspense fallback={<PageFallback />}>
               <PortalHubPage />
@@ -241,15 +241,15 @@ function AppRoutes() {
 
 /**
  * A moldura do site (barra, rodapé, rolagem suave): fica de fora nas páginas em tela cheia, como a apresentação.
- * A porta de entrada dos portais (/portais_beta/<cliente>) e a administração (/admin/portais) têm cabeçalho e rodapé
+ * A porta de entrada dos portais (/portais/<cliente>) e a administração (/admin/portais) têm cabeçalho e rodapé
  * próprios, sem o menu de marketing.
  */
 function Shell() {
   const { pathname } = useLocation()
   // '/animatic' é TEMPORÁRIO: página fotografada quadro a quadro, sem moldura.
   const chromeless = pathname === paths.presentation || pathname === paths.presentationShort || pathname === '/animatic'
-  const hubProd = useMatch('/portais_beta/:cliente')
-  const hubDev = useMatch('/portais_beta/dev/:cliente')
+  const hubProd = useMatch('/portais/:cliente')
+  const hubDev = useMatch('/portais/dev/:cliente')
   const admin = useMatch('/admin/*')
   const docs = useMatch('/hospedagem')
   // Páginas com cabeçalho próprio: o menu de marketing não ajuda quem está lá.

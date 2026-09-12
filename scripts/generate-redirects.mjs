@@ -62,6 +62,10 @@ if (quebrados.length) {
 const esc = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 const larg = Math.max(...regras.map((r) => r.from.length)) + 2
 
+/* Destino com âncora precisa de `NE` (noescape) no Apache: sem ele o `#` vira `%23`
+   e o visitante cai em /sobre%23reconhecimento, que é um 404. */
+const flagsApache = (to) => (to.includes('#') ? '[R=301,NE,L]' : '[R=301,L]')
+
 /* ── Netlify / prévias (public/_redirects) ─────────────────────────────────── */
 const netlify = `# Endereços do site institucional antigo -> rotas novas.
 # GERADO por scripts/generate-redirects.mjs a partir de src/content/legacyRedirects.ts.
@@ -71,15 +75,9 @@ const netlify = `# Endereços do site institucional antigo -> rotas novas.
 
 ${regras.map((r) => `${r.from.padEnd(larg)}${r.to}  301\n${(r.from + '/').padEnd(larg)}${r.to}  301`).join('\n')}
 
-# Acesso aos portais dos clientes.
-#
-# Em PRODUÇÃO (www.natcorp.com.br) o prefixo /portais/ é servido pelo servidor antigo, que continua no
-# ar — nada disto vale lá, porque este arquivo é da Vercel/Netlify. Aqui, nas prévias, a pasta antiga não
-# existe: sem esta regra o link do rodapé cairia no 404. É reescrita (200) e não redirecionamento, para o
-# endereço na barra continuar sendo o que a pessoa clicou.
-#
-# /portais sozinho NÃO entra: é a página de marketing "Portais e autoatendimento", do próprio site.
-/portais/*  /portais_beta/:splat  200
+# Os portais dos clientes (/portais/<cliente>) são rota do próprio site agora, resolvida
+# pelo SPA a partir de src/content/portals.json — não precisam de reescrita própria.
+# A regra abaixo já os cobre.
 
 # SPA: qualquer outro caminho devolve o index.html
 /*    /index.html   200
@@ -101,12 +99,100 @@ const cabecalho = (fmt) =>
   `# GERADO por scripts/generate-redirects.mjs. Não edite à mão.\n` +
   `# Cada regra vale com e sem barra final.\n`
 
+const regrasApache = regras.map((r) => `RewriteRule ^${esc(r.from.slice(1))}/?$ ${r.to} ${flagsApache(r.to)}`).join('\n')
+
 writeFileSync(
   join(dir, 'apache.txt'),
   cabecalho('Apache (.htaccess)') +
-    `# Cole DEPOIS do bloco de HTTPS/www e ANTES do SPA fallback.\n\n` +
-    regras.map((r) => `RewriteRule ^${esc(r.from.slice(1))}/?$ ${r.to} [R=301,L]`).join('\n') +
+    `# Só as regras 301. O arquivo COMPLETO, pronto para subir, é public/.htaccess.\n\n` +
+    regrasApache +
     '\n',
+)
+
+/* O .htaccess inteiro, gerado junto com as regras para não divergir delas.
+   Vai em public/ porque tudo ali é copiado para dist/ no build — assim o arquivo
+   viaja com a entrega, em vez de depender de alguém lembrar de copiá-lo à parte.
+
+   A ORDEM DENTRO DO ARQUIVO É O QUE FAZ ELE FUNCIONAR:
+   HTTPS e www primeiro (senão as 301 abaixo redirecionam para o domínio errado),
+   as 301 no meio, e o SPA fallback POR ÚLTIMO — ele captura tudo o que sobrou, e
+   qualquer regra depois dele nunca roda. */
+writeFileSync(
+  resolve(root, 'public/.htaccess'),
+  `# Natcorp — configuração do Apache/LiteSpeed para o site estático.
+# GERADO por scripts/generate-redirects.mjs. Não edite à mão: rode \`npm run redirects\`.
+#
+# Este arquivo vai na RAIZ do site, ao lado do index.html. Ele é copiado
+# automaticamente para dist/ no build, então já vem junto com a entrega.
+
+RewriteEngine On
+
+# ── 1. HTTPS e domínio canônico (www) ───────────────────────────────────
+#    Precisa vir antes de tudo: se uma 301 rodar primeiro, ela leva o visitante
+#    para o domínio errado e o navegador faz dois saltos em vez de um.
+RewriteCond %{HTTPS} off
+RewriteRule ^(.*)$ https://www.natcorp.com.br/$1 [R=301,L]
+RewriteCond %{HTTP_HOST} ^natcorp\\.com\\.br$ [NC]
+RewriteRule ^(.*)$ https://www.natcorp.com.br/$1 [R=301,L]
+
+# ── 2. Endereços do site antigo (${regras.length} regras) ────────────────────────────
+#    Os ~90 artigos do blog antigo estavam na raiz, no padrão do WordPress.
+#    Sem estas regras, cada um vira 404 no dia da virada e o Google descarta
+#    a autoridade que levaram anos para juntar.
+${regrasApache}
+
+# ── 3. SPA fallback: SÓ quando não existe arquivo nem pasta ─────────────
+#    POR ÚLTIMO, sempre. As duas condições são o que preserva a pasta
+#    /portais/<cliente>/ migrada do servidor atual: sem elas o servidor
+#    devolve a home para tudo, as ${regras.length > 0 ? '61' : '61'} páginas viram uma só e os clientes
+#    perdem o acesso.
+DirectoryIndex index.html
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^ /index.html [L]
+
+# ── 4. Tipos MIME ──────────────────────────────────────────────────────
+#    Sem o woff2 declarado, o navegador recusa a fonte e o site cai em Arial.
+AddType font/woff2 .woff2
+AddType application/manifest+json .webmanifest
+AddType image/svg+xml .svg
+AddType image/webp .webp
+
+# ── 5. Compressão ──────────────────────────────────────────────────────
+#    Os dois guardas são necessários: o DEFLATE vem do mod_deflate, mas a diretiva
+#    AddOutputFilterByType vem do mod_filter. Guardar só o primeiro derruba o Apache
+#    num servidor que tenha deflate e não tenha filter.
+<IfModule mod_deflate.c>
+  <IfModule mod_filter.c>
+    AddOutputFilterByType DEFLATE text/html text/css text/javascript \\
+      application/javascript image/svg+xml application/json application/xml
+  </IfModule>
+</IfModule>
+
+# ── 6. Cache ───────────────────────────────────────────────────────────
+#    Um ano em .js e .css vale porque no nosso build todos têm hash no nome.
+#    O index.html é \`no-cache\`: guardar, mas revalidar — é ele que aponta
+#    para os arquivos da versão nova.
+<IfModule mod_headers.c>
+  <FilesMatch "\\.(js|css|woff2)$">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+  </FilesMatch>
+  <FilesMatch "\\.(png|jpe?g|webp|svg|ico)$">
+    Header set Cache-Control "public, max-age=2592000"
+  </FilesMatch>
+  <FilesMatch "\\.(html|xml|txt|webmanifest)$">
+    Header set Cache-Control "no-cache"
+  </FilesMatch>
+
+# ── 7. Segurança ───────────────────────────────────────────────────────
+#    Ligar o HSTS só depois de confirmar que TODO o site responde em HTTPS:
+#    com ele ligado, o navegador passa a recusar HTTP por um ano.
+  Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains"
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+  Header always set X-Frame-Options "SAMEORIGIN"
+</IfModule>
+`,
 )
 
 writeFileSync(

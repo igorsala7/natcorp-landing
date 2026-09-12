@@ -255,15 +255,9 @@
 /top-of-mind-de-rh-2019                                                                                   /sobre#reconhecimento  301
 /top-of-mind-de-rh-2019/                                                                                  /sobre#reconhecimento  301
 
-# Acesso aos portais dos clientes.
-#
-# Em PRODUÇÃO (www.natcorp.com.br) o prefixo /portais/ é servido pelo servidor antigo, que continua no
-# ar — nada disto vale lá, porque este arquivo é da Vercel/Netlify. Aqui, nas prévias, a pasta antiga não
-# existe: sem esta regra o link do rodapé cairia no 404. É reescrita (200) e não redirecionamento, para o
-# endereço na barra continuar sendo o que a pessoa clicou.
-#
-# /portais sozinho NÃO entra: é a página de marketing "Portais e autoatendimento", do próprio site.
-/portais/*  /portais_beta/:splat  200
+# Os portais dos clientes (/portais/<cliente>) são rota do próprio site agora, resolvida
+# pelo SPA a partir de src/content/portals.json — não precisam de reescrita própria.
+# A regra abaixo já os cobre.
 
 # SPA: qualquer outro caminho devolve o index.html
 /*    /index.html   200

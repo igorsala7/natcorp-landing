@@ -92,7 +92,7 @@ const icons: Partial<Record<PortalApp['key'], string>> = {
 }
 
 /**
- * Página de acesso aos portais de um cliente (/portais_beta/<cliente> e /portais_beta/dev/<cliente> na homologação):
+ * Página de acesso aos portais de um cliente (/portais/<cliente> e /portais/dev/<cliente> na homologação):
  * a porta de entrada do sistema, com a identidade do site, o logotipo do cliente e os endereços dos portais
  * dele, como estão no cadastro. Não usa o menu e o rodapé de marketing: quem chega aqui quer entrar.
  */
@@ -136,12 +136,17 @@ export default function PortalHubPage({ env = 'prod' }: { env?: PortalEnv }) {
 
       {/* ---------- aplicativos e serviços ---------- */}
       <Section tone="white" id="servicos" className="py-14 sm:py-16 lg:py-20">
+
         <div className="container">
+
+          {/*
           <SectionHeader
             eyebrow="Aplicativos e serviços"
             title="Candidatura, documentos e suporte."
             lead="Três entradas fora do dia a dia: para quem ainda não é da empresa, para quem tem algo a assinar e para o RH falar com a Natcorp."
           />
+          */}
+
           <Stagger className="mt-10 grid gap-6 md:grid-cols-3" stagger={0.1}>
             {portalApps
               .filter((p) => p.kind === 'service')
@@ -705,7 +710,7 @@ function NotFound({ slug, env }: { slug: string; env: PortalEnv }) {
           <Eyebrow>Portais Natcorp{env === 'dev' ? ' · Homologação' : ''}</Eyebrow>
           <h1 className="mt-5 text-[2rem] font-extrabold leading-tight text-brand-ink sm:text-4xl">Não encontramos o ambiente "{slug}".</h1>
           <p className="mt-4 text-[16px] leading-relaxed text-brand-graphite">
-            Cada empresa tem o próprio endereço, no formato natcorp.com.br/portais_beta/<b>nome-da-empresa</b>. Confira o endereço que o RH da sua empresa enviou ou escolha
+            Cada empresa tem o próprio endereço, no formato natcorp.com.br/portais/<b>nome-da-empresa</b>. Confira o endereço que o RH da sua empresa enviou ou escolha
             abaixo.
           </p>
           <ul className="mt-8 flex flex-wrap gap-2">

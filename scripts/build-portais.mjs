@@ -1,13 +1,8 @@
-// Gera as páginas estáticas de acesso aos portais dos clientes (public/portais_beta/<slug>/index.html)
+// Gera as páginas estáticas de acesso aos portais dos clientes (public/portais/<slug>/index.html)
 // a partir de src/content/clientPortals.json, com as ilustrações de marca dos módulos.
 // A página é autônoma (CSS e JS embutidos, favicon em data URI, fonte pelo Google Fonts), então a
 // mesma pasta pode ser copiada para o servidor atual.
 //
-// `portais_beta` e não `portais`: o endereço em uso continua sendo o do servidor antigo
-// (www.natcorp.com.br/portais/<slug>/). Enquanto os dois coexistirem, estas páginas são a prévia —
-// por isso saem com `noindex` e ficam fora do sitemap, para não virarem duplicata das que já estão
-// no ar. Quando a virada acontecer, basta trocar `portais_beta` por `portais` aqui, em
-// generate-sitemap.mjs, em hubPath (src/content/portals.ts) e nas rotas do App.tsx.
 import { copyFileSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { resolve } from 'node:path'
 
@@ -145,7 +140,7 @@ function page(slug, c) {
 
   const title = `Portais ${c.name}: acesso ao sistema | Natcorp`
   const description = `Acesse os portais ${c.name}: ${c.portais.map((p) => p.titulo).join(', ')}. Entre com o usuário e a senha fornecidos pela sua empresa.`
-  const canonical = `${siteUrl}/portais_beta/${slug}/`
+  const canonical = `${siteUrl}/portais/${slug}/`
 
   return `<!doctype html>
 <html lang="pt-BR">
@@ -248,7 +243,7 @@ ${cards}
 let total = 0
 for (const [slug, c] of Object.entries(clients)) {
   if (slug.startsWith('_')) continue
-  const dir = resolve(root, 'public/portais_beta', slug)
+  const dir = resolve(root, 'public/portais', slug)
   mkdirSync(resolve(dir, 'img'), { recursive: true })
   for (const p of c.portais) {
     copyFileSync(resolve(root, 'brand/modulos/ilustracoes/svg', `${p.ilustracao}.svg`), resolve(dir, 'img', `${p.id}.svg`))
@@ -258,4 +253,4 @@ for (const [slug, c] of Object.entries(clients)) {
   console.log(`portais/${slug}: ${c.portais.length} portais${pend.length ? ` (sem URL: ${pend.join(', ')})` : ''}`)
   total++
 }
-console.log(`portais: ${total} cliente(s) em public/portais_beta`)
+console.log(`portais: ${total} cliente(s) em public/portais`)

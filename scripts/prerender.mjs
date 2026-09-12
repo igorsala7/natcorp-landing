@@ -133,28 +133,64 @@ const base = `http://127.0.0.1:${porta}`
 let feitas = 0
 let falhas = 0
 
+/* Teto de tempo por rota.
+   Sem ele, um Chrome que sobe e não responde deixa o `await` pendurado para
+   sempre: o build fica vivo, sem processo filho, sem erro e sem fim — aconteceu
+   aqui, parado na rota 54 de 61 por 40 minutos. 45s é folga generosa para uma
+   página que leva ~2s; `SIGKILL` porque um Chrome travado ignora o TERM. */
+const TIMEOUT_MS = 45_000
+
+function renderizar(rota) {
+  // --dump-dom serializa o DOM já renderizado. O orçamento de tempo virtual
+  // faz o Chrome avançar os temporizadores sem esperar em tempo real.
+  return execFileAsync(
+    chrome,
+    [
+      '--headless',
+      '--disable-gpu',
+      '--no-sandbox',
+      '--hide-scrollbars',
+      '--virtual-time-budget=8000',
+      '--dump-dom',
+      `${base}${rota}`,
+    ],
+    { maxBuffer: 64 * 1024 * 1024, timeout: TIMEOUT_MS, killSignal: 'SIGKILL' },
+  )
+}
+
 for (const rota of rotas) {
   try {
-    // --dump-dom serializa o DOM já renderizado. O orçamento de tempo virtual
-    // faz o Chrome avançar os temporizadores sem esperar em tempo real.
-    const { stdout } = await execFileAsync(
-      chrome,
-      [
-        '--headless',
-        '--disable-gpu',
-        '--no-sandbox',
-        '--hide-scrollbars',
-        '--virtual-time-budget=8000',
-        '--dump-dom',
-        `${base}${rota}`,
-      ],
-      { maxBuffer: 64 * 1024 * 1024 },
-    )
+    let stdout
+    /* Uma segunda chance: o estouro de tempo costuma ser um Chrome que não subiu,
+       não uma página que não renderiza. Duas falhas seguidas já são a página. */
+    try {
+      ;({ stdout } = await renderizar(rota))
+    } catch (e) {
+      if (e.killed || e.signal) {
+        console.error(`prerender: ${rota} estourou ${TIMEOUT_MS / 1000}s — tentando de novo`)
+        ;({ stdout } = await renderizar(rota))
+      } else throw e
+    }
     if (!stdout.includes('<title>') || stdout.length < 2000) throw new Error('DOM vazio ou sem título')
+
+    /* Tira o endereço do servidor de build de dentro do HTML.
+
+       O helper de preload do Vite injeta <link rel="modulepreload"> para os chunks
+       das rotas lazy e resolve o caminho com `new URL(dep, import.meta.url).href`, que
+       devolve a URL ABSOLUTA — com a origem http://127.0.0.1:<porta> desta build.
+       O --dump-dom serializa isso, e o endereço da máquina de build ia parar no
+       servidor: 1141 links em 61 páginas, todos apontando para o nada.
+
+       O efeito era intermitente, que é o pior tipo. O preload falhava, o navegador
+       repetia o pedido pelo caminho certo e às vezes chegava a tempo; quando não
+       chegava, o import() da rota rejeitava e o React renderizava o NotFoundPage.
+       A mesma URL abria ou dava "página não encontrada" conforme a corrida. E como
+       a porta é sorteada a cada build, o sintoma mudava sem o código mudar. */
+    const limpo = stdout.split(base).join('')
 
     const destino = rota === '/' ? join(dist, 'index.html') : join(dist, rota, 'index.html')
     mkdirSync(resolve(destino, '..'), { recursive: true })
-    writeFileSync(destino, `<!doctype html>\n${stdout.trim()}\n`)
+    writeFileSync(destino, `<!doctype html>\n${limpo.trim()}\n`)
     feitas += 1
   } catch (e) {
     falhas += 1
@@ -163,6 +199,18 @@ for (const rota of rotas) {
 }
 
 servidor.close()
+
+/* Rede de segurança para o caso acima: se um `http://127.0.0.1:` escapar por um
+   caminho que eu não previ, é melhor o build morrer aqui do que o site publicar
+   61 páginas que pedem recursos à máquina do visitante. */
+const vazados = rotas
+  .map((r) => (r === '/' ? join(dist, 'index.html') : join(dist, r, 'index.html')))
+  .filter((f) => existsSync(f) && readFileSync(f, 'utf8').includes('http://127.0.0.1:'))
+if (vazados.length) {
+  console.error(`prerender: ${vazados.length} páginas ainda citam o servidor de build — ${vazados[0]}`)
+  process.exit(1)
+}
+
 console.log(`prerender: ${feitas} rotas geradas${falhas ? `, ${falhas} falharam` : ''}`)
 console.log('prerender: a hospedagem precisa resolver <caminho>/index.html antes do index da raiz')
 console.log('prerender:   nginx   try_files $uri $uri/index.html /index.html;')

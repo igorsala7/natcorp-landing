@@ -1,8 +1,23 @@
-# 125 redirecionamentos 301 do site antigo para o novo — formato Apache (.htaccess).
-# GERADO por scripts/generate-redirects.mjs. Não edite à mão.
-# Cada regra vale com e sem barra final.
-# Só as regras 301. O arquivo COMPLETO, pronto para subir, é public/.htaccess.
+# Natcorp — configuração do Apache/LiteSpeed para o site estático.
+# GERADO por scripts/generate-redirects.mjs. Não edite à mão: rode `npm run redirects`.
+#
+# Este arquivo vai na RAIZ do site, ao lado do index.html. Ele é copiado
+# automaticamente para dist/ no build, então já vem junto com a entrega.
 
+RewriteEngine On
+
+# ── 1. HTTPS e domínio canônico (www) ───────────────────────────────────
+#    Precisa vir antes de tudo: se uma 301 rodar primeiro, ela leva o visitante
+#    para o domínio errado e o navegador faz dois saltos em vez de um.
+RewriteCond %{HTTPS} off
+RewriteRule ^(.*)$ https://www.natcorp.com.br/$1 [R=301,L]
+RewriteCond %{HTTP_HOST} ^natcorp\.com\.br$ [NC]
+RewriteRule ^(.*)$ https://www.natcorp.com.br/$1 [R=301,L]
+
+# ── 2. Endereços do site antigo (125 regras) ────────────────────────────
+#    Os ~90 artigos do blog antigo estavam na raiz, no padrão do WordPress.
+#    Sem estas regras, cada um vira 404 no dia da virada e o Google descarta
+#    a autoridade que levaram anos para juntar.
 RewriteRule ^solucao-de-rh/?$ /modulos [R=301,L]
 RewriteRule ^solucao-de-rh-old/?$ /modulos [R=301,L]
 RewriteRule ^solucao-de-rh/testefolha/?$ /modulos/folha-de-pagamento [R=301,L]
@@ -128,3 +143,55 @@ RewriteRule ^geracao-z-caracteristicas-dilemas-e-impactos-no-mercado-de-trabalho
 RewriteRule ^employee-experience-o-que-e-suas-vantagens-e-como-aplica-lo/?$ /portais [R=301,L]
 RewriteRule ^e-por-mais-um-ano-a-natcorp-e-indicada-ao-23o-top-of-mind-de-rh/?$ /sobre#reconhecimento [R=301,NE,L]
 RewriteRule ^top-of-mind-de-rh-2019/?$ /sobre#reconhecimento [R=301,NE,L]
+
+# ── 3. SPA fallback: SÓ quando não existe arquivo nem pasta ─────────────
+#    POR ÚLTIMO, sempre. As duas condições são o que preserva a pasta
+#    /portais/<cliente>/ migrada do servidor atual: sem elas o servidor
+#    devolve a home para tudo, as 61 páginas viram uma só e os clientes
+#    perdem o acesso.
+DirectoryIndex index.html
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^ /index.html [L]
+
+# ── 4. Tipos MIME ──────────────────────────────────────────────────────
+#    Sem o woff2 declarado, o navegador recusa a fonte e o site cai em Arial.
+AddType font/woff2 .woff2
+AddType application/manifest+json .webmanifest
+AddType image/svg+xml .svg
+AddType image/webp .webp
+
+# ── 5. Compressão ──────────────────────────────────────────────────────
+#    Os dois guardas são necessários: o DEFLATE vem do mod_deflate, mas a diretiva
+#    AddOutputFilterByType vem do mod_filter. Guardar só o primeiro derruba o Apache
+#    num servidor que tenha deflate e não tenha filter.
+<IfModule mod_deflate.c>
+  <IfModule mod_filter.c>
+    AddOutputFilterByType DEFLATE text/html text/css text/javascript \
+      application/javascript image/svg+xml application/json application/xml
+  </IfModule>
+</IfModule>
+
+# ── 6. Cache ───────────────────────────────────────────────────────────
+#    Um ano em .js e .css vale porque no nosso build todos têm hash no nome.
+#    O index.html é `no-cache`: guardar, mas revalidar — é ele que aponta
+#    para os arquivos da versão nova.
+<IfModule mod_headers.c>
+  <FilesMatch "\.(js|css|woff2)$">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+  </FilesMatch>
+  <FilesMatch "\.(png|jpe?g|webp|svg|ico)$">
+    Header set Cache-Control "public, max-age=2592000"
+  </FilesMatch>
+  <FilesMatch "\.(html|xml|txt|webmanifest)$">
+    Header set Cache-Control "no-cache"
+  </FilesMatch>
+
+# ── 7. Segurança ───────────────────────────────────────────────────────
+#    Ligar o HSTS só depois de confirmar que TODO o site responde em HTTPS:
+#    com ele ligado, o navegador passa a recusar HTTP por um ano.
+  Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains"
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+  Header always set X-Frame-Options "SAMEORIGIN"
+</IfModule>

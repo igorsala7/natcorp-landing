@@ -17,8 +17,8 @@ const footerLinks: { to: string; label: string; external?: boolean }[] = [
   { to: paths.modules, label: 'Todos os módulos' },
   { to: paths.portals, label: 'Portais e autoatendimento' },
   /*
-   * Até a virada, o acesso dos clientes é a página do site novo, em /portais_beta/<cliente>, que já
-   * está no ar e é a que estamos testando. Depois de publicar e conferir em produção, /portais_beta/
+   * Até a virada, o acesso dos clientes é a página do site novo, em /portais/<cliente>, que já
+   * está no ar e é a que estamos testando. Depois de publicar e conferir em produção, /portais/
    * volta a ser /portais/ — e aqui basta trocar o prefixo em hubPath(), no content/portals.ts.
    */
   { to: hubPath('natcorp'), label: 'Acesso aos portais (clientes)' },

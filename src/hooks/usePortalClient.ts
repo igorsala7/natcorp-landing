@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 import { portalClients, resolveClient, type PortalClient } from '@/content/portals'
 
-/** O cliente da página /portais_beta/<slug>, do cadastro embutido no site (src/content/portals.json). */
+/** O cliente da página /portais/<slug>, do cadastro embutido no site (src/content/portals.json). */
 export function usePortalClient(raw: string | undefined): PortalClient | null {
   return useMemo(() => resolveClient(raw), [raw])
 }

@@ -629,7 +629,7 @@
   "rewrites": [
     {
       "source": "/portais/:path+",
-      "destination": "/portais_beta/:path+"
+      "destination": "/portais/:path+"
     },
     {
       "source": "/(.*)",
