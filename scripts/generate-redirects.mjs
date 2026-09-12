@@ -135,6 +135,20 @@ RewriteRule ^(.*)$ https://www.natcorp.com.br/$1 [R=301,L]
 RewriteCond %{HTTP_HOST} ^natcorp\\.com\\.br$ [NC]
 RewriteRule ^(.*)$ https://www.natcorp.com.br/$1 [R=301,L]
 
+# ── 1b. Pastas guardadas como backup: no disco, fora do ar ──────────────
+#    Renomear uma pasta no servidor NÃO a tira do ar: o Apache serve tudo
+#    abaixo da raiz, então /portais_old/ continuaria público — com os
+#    form-handler.php do site antigo dentro, sem manutenção, e com o
+#    conteúdo legado rastreável pelo Google num endereço novo.
+#    O ideal é guardar o backup FORA da raiz do site. Esta regra é a rede
+#    para quando ele fica dentro, e vem antes do fallback, senão nunca roda.
+#
+#    Só o prefixo `portais`, de propósito. Uma regra genérica (qualquer pasta
+#    terminada em _old) parecia mais segura e não é: ela engoliria
+#    /solucao-de-rh-old, que é uma das 125 origens de redirect do site antigo
+#    — o visitante levaria 403 no lugar do 301. Testado, não suposto.
+RewriteRule ^portais[_-]?(old|antigo|antiga|backup|bkp|legado)(/|$) - [F,L]
+
 # ── 2. Endereços do site antigo (${regras.length} regras) ────────────────────────────
 #    Os ~90 artigos do blog antigo estavam na raiz, no padrão do WordPress.
 #    Sem estas regras, cada um vira 404 no dia da virada e o Google descarta
