@@ -20,10 +20,13 @@ RewriteRule ^(.*)$ https://www.natcorp.com.br/$1 [R=301,L]
 #    form-handler.php do site antigo dentro, sem manutenção, e com o
 #    conteúdo legado rastreável pelo Google num endereço novo.
 #    O ideal é guardar o backup FORA da raiz do site. Esta regra é a rede
-#    para quando ele fica dentro: 403 em qualquer nome do padrão, e vem
-#    antes do fallback, senão nunca roda.
+#    para quando ele fica dentro, e vem antes do fallback, senão nunca roda.
+#
+#    Só o prefixo "portais", de propósito. Uma regra genérica (qualquer pasta
+#    terminada em _old) parecia mais segura e não é: ela engoliria
+#    /solucao-de-rh-old, que é uma das 125 origens de redirect do site antigo
+#    — o visitante levaria 403 no lugar do 301. Testado, não suposto.
 RewriteRule ^portais[_-]?(old|antigo|antiga|backup|bkp|legado)(/|$) - [F,L]
-RewriteRule ^[a-z0-9-]+[_-](old|antigo|antiga|backup|bkp|legado)(/|$) - [F,L]
 
 # ── 2. Endereços do site antigo (125 regras) ────────────────────────────
 #    Os ~90 artigos do blog antigo estavam na raiz, no padrão do WordPress.

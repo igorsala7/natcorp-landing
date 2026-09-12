@@ -38,3 +38,4 @@ brand/apex/APEX Style/
 # Artefatos de deploy e cópias baixadas do servidor (referência, não fonte).
 dist.zip
 /stefanini/
+portais-standalone/

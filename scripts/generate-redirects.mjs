@@ -143,7 +143,7 @@ RewriteRule ^(.*)$ https://www.natcorp.com.br/$1 [R=301,L]
 #    O ideal é guardar o backup FORA da raiz do site. Esta regra é a rede
 #    para quando ele fica dentro, e vem antes do fallback, senão nunca roda.
 #
-#    Só o prefixo `portais`, de propósito. Uma regra genérica (qualquer pasta
+#    Só o prefixo "portais", de propósito. Uma regra genérica (qualquer pasta
 #    terminada em _old) parecia mais segura e não é: ela engoliria
 #    /solucao-de-rh-old, que é uma das 125 origens de redirect do site antigo
 #    — o visitante levaria 403 no lugar do 301. Testado, não suposto.

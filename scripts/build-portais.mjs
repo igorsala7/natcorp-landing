@@ -1,7 +1,13 @@
-// Gera as páginas estáticas de acesso aos portais dos clientes (public/portais/<slug>/index.html)
+// Gera as páginas estáticas de acesso aos portais dos clientes (portais-standalone/<slug>/index.html)
 // a partir de src/content/clientPortals.json, com as ilustrações de marca dos módulos.
 // A página é autônoma (CSS e JS embutidos, favicon em data URI, fonte pelo Google Fonts), então a
 // mesma pasta pode ser copiada para o servidor atual.
+//
+// NÃO escreve mais em public/. O site novo atende /portais/<cliente> pela rota do SPA, agora
+// pré-renderizada como todas as outras — e o prerender roda depois da cópia do public/, então
+// esta página sobrescreveria aquela (ou o contrário, dependendo da ordem). Duas páginas
+// diferentes disputando a mesma URL é bug esperando a hora. Esta continua sendo gerada, fora
+// da entrega, para quem precisar subir a pasta num servidor sem o site novo.
 //
 import { copyFileSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { resolve } from 'node:path'
@@ -243,7 +249,7 @@ ${cards}
 let total = 0
 for (const [slug, c] of Object.entries(clients)) {
   if (slug.startsWith('_')) continue
-  const dir = resolve(root, 'public/portais', slug)
+  const dir = resolve(root, 'portais-standalone', slug)
   mkdirSync(resolve(dir, 'img'), { recursive: true })
   for (const p of c.portais) {
     copyFileSync(resolve(root, 'brand/modulos/ilustracoes/svg', `${p.ilustracao}.svg`), resolve(dir, 'img', `${p.id}.svg`))
@@ -253,4 +259,4 @@ for (const [slug, c] of Object.entries(clients)) {
   console.log(`portais/${slug}: ${c.portais.length} portais${pend.length ? ` (sem URL: ${pend.join(', ')})` : ''}`)
   total++
 }
-console.log(`portais: ${total} cliente(s) em public/portais`)
+console.log(`portais: ${total} cliente(s) em portais-standalone/ (fora da entrega)`)

@@ -50,6 +50,7 @@ const ler = (p) => JSON.parse(readFileSync(resolve(root, p), 'utf8'))
 const modulos = ler('src/content/modulePages/registry.json')
 const segmentos = ler('src/content/segments/registry.json')
 const estruturas = ler('src/content/structures/registry.json')
+const portais = ler('src/content/portals.json').clients
 
 const rotas = [
   '/',
@@ -71,6 +72,17 @@ const rotas = [
   ...modulos.map((m) => `/modulos/${m.slug}`),
   '/segmentos',
   ...segmentos.map((s) => `/segmentos/${s.slug}`),
+  /* As páginas de acesso dos clientes, em produção e homologação.
+  
+     FORA do sitemap de propósito — são tela de entrada de cliente, não conteúdo
+     para buscar — e a própria página já declara noindex quando é homologação ou
+     quando não é a Natcorp. Mesmo assim precisam de HTML próprio: eram as ÚNICAS
+     rotas do site sem arquivo, e o fallback entregava a home pré-renderizada.
+     O cliente abria o endereço do portal dele e via 400 KB da home comercial da
+     Natcorp até o React trocar — na primeira visita, com os chunks frios, isso
+     dura o suficiente para a pessoa concluir que não funcionou. */
+  ...portais.map((c) => `/portais/${c.slug}`),
+  ...portais.map((c) => `/portais/dev/${c.slug}`),
 ]
 
 const TIPOS = {
