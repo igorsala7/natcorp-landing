@@ -488,6 +488,24 @@ function Figurante({ fig, delay }: { fig: Figura; delay: number }) {
 /* ---------------- cartões ---------------- */
 
 /**
+ * Faz o CARTÃO INTEIRO ser o alvo do link, não só o botão.
+ *
+ * É o padrão "stretched link": o <a> continua sendo o único elemento focável e
+ * ganha um ::after invisível que cobre o cartão. Não há <a> extra nem onClick
+ * num <div> — a árvore de acessibilidade segue com UM link, com o rótulo certo,
+ * e o teclado não ganha parada nova. O ::after se posiciona contra o wrapper
+ * `relative` do SpotlightCard, que cobre o cartão todo; o brilho que segue o
+ * cursor é `pointer-events-none` e não disputa o clique.
+ *
+ * `active:translate-y-0` não é enfeite. A variante do Button traz
+ * `active:translate-y-px`, e transform cria bloco de contenção: no mousedown o
+ * ::after encolheria para o tamanho do botão, o mouseup cairia fora do <a> e o
+ * clique simplesmente não dispararia fora da área do botão. O feedback de
+ * pressão foi para o cartão, que é o alvo de verdade agora.
+ */
+const ESTICA_LINK = "after:absolute after:inset-0 after:content-[''] active:translate-y-0"
+
+/**
  * O palco do cartão: o fundo, o contorno da marca, as duas figuras e o selo de
  * público. É o mesmo nos dois tipos de cartão — antes só o PortalCard tinha
  * palco, e Candidato, NatDocs e Chamado apareciam como um ícone de 84px num
@@ -526,14 +544,14 @@ function Palco({ app }: { app: PortalApp }) {
 /** Cartão de um portal do sistema: o personagem no palco, o que a pessoa faz ali e o botão de entrar. */
 function PortalCard({ app, href, dev }: { app: PortalApp; href: string; dev: boolean }) {
   return (
-    <SpotlightCard className="group h-full overflow-hidden rounded-[28px] border border-brand-mist bg-white shadow-soft transition-[transform,box-shadow] duration-500 ease-brand hover:-translate-y-1 hover:shadow-lift">
+    <SpotlightCard className="group h-full overflow-hidden rounded-[28px] border border-brand-mist bg-white shadow-soft transition-[transform,box-shadow] duration-500 ease-brand hover:-translate-y-1 hover:shadow-lift active:translate-y-px active:duration-100">
       <div className="flex h-full flex-col">
         <Palco app={app} />
         <div className="flex flex-1 flex-col px-6 pb-6 pt-1 sm:px-7 sm:pb-7">
           <h3 className="text-[22px] font-extrabold leading-tight text-brand-ink">{app.name}</h3>
           <p className="mt-2 text-[14.5px] leading-relaxed text-brand-graphite">{app.description}</p>
           <div className="mt-auto pt-6">
-            <Button asChild size="lg" className="w-full">
+            <Button asChild size="lg" className={cn('w-full', ESTICA_LINK)}>
               <a href={href}>
                 Entrar no Portal do {app.short}
                 <ArrowRight className="transition-transform duration-300 group-hover/btn:translate-x-0.5" />
@@ -558,7 +576,7 @@ function ServiceCard({ app, href, dev }: { app: PortalApp; href: string; dev: bo
   const rotulo =
     app.key === 'candidato' ? 'Abrir o Portal do Candidato' : app.key === 'chamado' ? 'Abrir chamado (RH)' : `Abrir o ${app.short}`
   return (
-    <SpotlightCard className="group h-full overflow-hidden rounded-[28px] border border-brand-mist bg-white shadow-soft transition-[transform,box-shadow] duration-500 ease-brand hover:-translate-y-1 hover:shadow-lift">
+    <SpotlightCard className="group h-full overflow-hidden rounded-[28px] border border-brand-mist bg-white shadow-soft transition-[transform,box-shadow] duration-500 ease-brand hover:-translate-y-1 hover:shadow-lift active:translate-y-px active:duration-100">
       <div className="flex h-full flex-col">
         <Palco app={app} />
         <div className="flex flex-1 flex-col px-6 pb-6 pt-1 sm:px-7 sm:pb-7">
@@ -566,7 +584,7 @@ function ServiceCard({ app, href, dev }: { app: PortalApp; href: string; dev: bo
           <p className="mt-2 text-[14.5px] leading-relaxed text-brand-graphite">{app.description}</p>
           {app.note && <p className="mt-2 text-[12.5px] leading-relaxed text-brand-gray">{app.note}</p>}
           <div className="mt-auto pt-6">
-            <Button asChild size="lg" className="w-full">
+            <Button asChild size="lg" className={cn('w-full', ESTICA_LINK)}>
               <a href={href}>
                 {rotulo}
                 <ArrowUpRight className="transition-transform duration-300 group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5" />

@@ -184,9 +184,29 @@ AddType image/webp .webp
 </IfModule>
 
 # ── 6. Cache ───────────────────────────────────────────────────────────
-#    Um ano em .js e .css vale porque no nosso build todos têm hash no nome.
-#    O index.html é \`no-cache\`: guardar, mas revalidar — é ele que aponta
-#    para os arquivos da versão nova.
+#    O HTML NÃO PODE SER GUARDADO. É ele que aponta para os arquivos da versão
+#    nova: se o visitante recebe um index.html velho, ele pede os assets velhos
+#    e o site fica congelado, por mais que o servidor já tenha o novo.
+#
+#    O bloco de mod_expires vem antes DE PROPÓSITO. Medido em produção em
+#    13/09/2026 (LiteSpeed atrás do CDN da noc.org): o bloco mod_headers abaixo
+#    é IGNORADO — nenhum Cache-Control chega ao navegador, nem forçando MISS no
+#    CDN para falar direto com a origem. <IfModule> sem o módulo pula o bloco em
+#    silêncio, sem erro no log; foi por isso que passou despercebido. Já
+#    mod_expires responde: os .js e .svg de lá saem com max-age=86400 mais
+#    Expires, que não vêm deste arquivo.
+#
+#    Os dois ficam: onde mod_headers existir ele é mais preciso (tem
+#    "immutable"); onde não existir, mod_expires segura o que importa.
+<IfModule mod_expires.c>
+  ExpiresActive On
+  ExpiresByType text/html "access plus 0 seconds"
+  ExpiresByType application/xml "access plus 0 seconds"
+  ExpiresByType text/xml "access plus 0 seconds"
+  ExpiresByType text/plain "access plus 0 seconds"
+  ExpiresByType application/json "access plus 0 seconds"
+</IfModule>
+
 <IfModule mod_headers.c>
   <FilesMatch "\\.(js|css|woff2)$">
     Header set Cache-Control "public, max-age=31536000, immutable"
@@ -199,6 +219,13 @@ AddType image/webp .webp
   </FilesMatch>
 
 # ── 7. Segurança ───────────────────────────────────────────────────────
+#    ATENÇÃO: em 13/09/2026 este bloco NÃO estava valendo em produção. Só
+#    X-Content-Type-Options chegava ao navegador, e provavelmente do próprio
+#    servidor: o HSTS entregue vem SEM includeSubDomains (o daqui tem) e ainda
+#    aparece um X-XSS-Protection que não existe neste arquivo. Referrer-Policy
+#    e X-Frame-Options não chegam. Cabeçalho de resposta arbitrário só sai por
+#    mod_headers — peça à hospedagem para habilitar.
+#
 #    Ligar o HSTS só depois de confirmar que TODO o site responde em HTTPS:
 #    com ele ligado, o navegador passa a recusar HTTP por um ano.
   Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains"
