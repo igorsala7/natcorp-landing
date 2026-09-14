@@ -35,6 +35,18 @@ export interface PortalApp {
   tasks: string[]
   /** Aviso curto sobre quem deve usar, quando o público é restrito. */
   note?: string
+  /**
+   * Endereço fixo, igual para TODO cliente e TODO ambiente.
+   *
+   * O padrão monta a URL com o caminho do APEX do cliente e o código dele
+   * (`/apex/<apex>/f?p=<PREFIXO>_<CODE>`). Para o Chamado isso está errado: o
+   * suporte é da Natcorp, não do cliente, e mora sempre na mesma instância. Sem
+   * isto, a Stefanini caía em `/apex/hcm/f?p=CHAMADO_NATCORP` — caminho do
+   * cliente apontando para o código da Natcorp, que não existe lá. Em
+   * homologação era pior: `/apex/dev/...`, uma base de testes para abrir
+   * chamado real.
+   */
+  fixedUrl?: string
 }
 
 export const portalApps: PortalApp[] = [
@@ -98,6 +110,7 @@ export const portalApps: PortalApp[] = [
     description: 'O RH e o Departamento Pessoal abrem e acompanham chamados com a equipe de suporte da Natcorp. Cada pedido tem número, prazo e histórico.',
     tasks: ['Abrir chamado', 'Acompanhar o andamento', 'Histórico de atendimentos'],
     note: 'Colaboradores e gestores falam com o RH da própria empresa, pelo Portal do Colaborador.',
+    fixedUrl: 'https://www.natcorpbr.com.br/apex/rh/f?p=CHAMADO_NATCORP',
   },
 ]
 
@@ -145,7 +158,8 @@ export function apexPath(client: Pick<PortalClient, 'apex'>, env: PortalEnv): st
 }
 
 /** Endereço padrão do APEX para um aplicativo, ambiente e cliente. */
-export function defaultPortalUrl(app: Pick<PortalApp, 'prefix'>, client: Pick<PortalClient, 'apex' | 'code' | 'slug'>, env: PortalEnv = 'prod'): string {
+export function defaultPortalUrl(app: Pick<PortalApp, 'prefix' | 'fixedUrl'>, client: Pick<PortalClient, 'apex' | 'code' | 'slug'>, env: PortalEnv = 'prod'): string {
+  if (app.fixedUrl) return app.fixedUrl
   const code = (client.code || client.slug).toUpperCase()
   return `${APEX_HOST}${apexPath(client, env)}/f?p=${app.prefix}_${code}`
 }
@@ -157,6 +171,9 @@ export function defaultPortalUrls(client: Pick<PortalClient, 'apex' | 'code' | '
 
 /** Endereço de um portal: o informado no cadastro ou, na falta dele, o padrão do APEX. */
 export function portalUrl(app: PortalApp, client: PortalClient, env: PortalEnv = 'prod'): string {
+  /* O fixo vence até o cadastro: um endereço de chamado digitado por engano no
+     /admin de um cliente mandaria o RH dele para a instância errada. */
+  if (app.fixedUrl) return app.fixedUrl
   const custom = client.urls?.[env]?.[app.key]?.trim()
   return custom || defaultPortalUrl(app, client, env)
 }
