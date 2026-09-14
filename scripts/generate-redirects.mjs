@@ -117,8 +117,7 @@ writeFileSync(
    HTTPS e www primeiro (senão as 301 abaixo redirecionam para o domínio errado),
    as 301 no meio, e o SPA fallback POR ÚLTIMO — ele captura tudo o que sobrou, e
    qualquer regra depois dele nunca roda. */
-writeFileSync(
-  resolve(root, 'public/.htaccess'),
+const htaccess =
   `# Natcorp — configuração do Apache/LiteSpeed para o site estático.
 # GERADO por scripts/generate-redirects.mjs. Não edite à mão: rode \`npm run redirects\`.
 #
@@ -134,6 +133,28 @@ RewriteCond %{HTTPS} off
 RewriteRule ^(.*)$ https://www.natcorp.com.br/$1 [R=301,L]
 RewriteCond %{HTTP_HOST} ^natcorp\\.com\\.br$ [NC]
 RewriteRule ^(.*)$ https://www.natcorp.com.br/$1 [R=301,L]
+
+# ── 1a. Marcador de versão deste arquivo ────────────────────────────────
+#    Responde, em UM pedido, "o .htaccess novo subiu?".
+#
+#    O arquivo começa com ponto e a maioria dos clientes de FTP não envia
+#    arquivo oculto sem que se peça. Quando isso acontece, o site fica com o
+#    HTML novo e as REGRAS velhas — e o sintoma (cache do CDN que não solta)
+#    não diz qual dos dois está errado. Ficamos dois dias sem conseguir separar
+#    as duas hipóteses, porque o único sinal do arquivo novo era justamente o
+#    cabeçalho que não aparecia.
+#
+#    Agora é direto: abrir /__htaccess-2026-09-14__
+#      403           = o arquivo novo está no servidor
+#      a home do site = ainda é o antigo
+#
+#    A data no nome é o que faz o teste valer: muda a cada versão que importa,
+#    então um 403 nunca vem de um arquivo antigo por engano.
+RewriteRule ^__htaccess-2026-09-14__$ - [F,L]
+
+#    E a cópia de nome visível nunca é servida: ela existe só para atravessar o
+#    FTP, e publicar a configuração entrega de graça quais caminhos bloqueamos.
+RewriteRule ^htaccess\\.txt$ - [F,L]
 
 # ── 1b. Pastas guardadas como backup: no disco, fora do ar ──────────────
 #    Renomear uma pasta no servidor NÃO a tira do ar: o Apache serve tudo
@@ -233,8 +254,21 @@ AddType image/webp .webp
   Header always set Referrer-Policy "strict-origin-when-cross-origin"
   Header always set X-Frame-Options "SAMEORIGIN"
 </IfModule>
-`,
-)
+`
+
+writeFileSync(resolve(root, 'public/.htaccess'), htaccess)
+
+/* A MESMA configuração, com um nome que o FTP não esconde.
+
+   O arquivo de verdade começa com ponto, e a maioria dos clientes de FTP não
+   envia arquivo oculto sem que se peça. Foi o que deixou o servidor rodando
+   com as regras de um dia e o HTML de outro por dois dias, com um sintoma
+   (cache que não solta) que não dizia qual dos dois estava velho.
+
+   Sobe-se esta cópia, renomeia-se para .htaccess no painel e apaga-se ela. A
+   regra da seção 1a garante que, enquanto estiver lá, ninguém a leia pelo
+   navegador: publicar a configuração entrega de graça o que está bloqueado. */
+writeFileSync(resolve(root, 'public/htaccess.txt'), htaccess)
 
 writeFileSync(
   join(dir, 'nginx.conf'),
