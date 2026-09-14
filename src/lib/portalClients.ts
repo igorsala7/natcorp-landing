@@ -1,4 +1,4 @@
-import { normalizeSlug, portalClients, type PortalClient, type PortalUrls } from '@/content/portals'
+import { normalizeSlug, portalApps, portalClients, type PortalClient, type PortalUrls } from '@/content/portals'
 
 /**
  * Gravação do cadastro dos portais no repositório, pela API do GitHub.
@@ -160,8 +160,34 @@ function cleanUrls(urls: PortalUrls | undefined): PortalUrls {
   return out
 }
 
+/**
+ * Toda chave de PortalClient precisa ser DECIDIDA no cleanClient abaixo.
+ *
+ * Este mapa existe para o TypeScript cobrar isso. `cleanClient` reconstrói o
+ * objeto campo a campo, e campo esquecido não dá erro — some em silêncio, a
+ * cada gravação. Foi o que aconteceu com `apps` e `natponto`: entraram no tipo,
+ * não entraram aqui, e a primeira edição de um cliente APAGOU os dois do
+ * arquivo. O sintoma não foi "não salvou": foi a página continuar mostrando o
+ * que o cliente pediu para tirar, porque campo ausente vale "tudo ligado".
+ *
+ * Com `Record<keyof PortalClient, true>`, acrescentar um campo ao tipo sem
+ * tratá-lo no cleanClient passa a quebrar a compilação.
+ */
+const CAMPOS_TRATADOS: Record<keyof PortalClient, true> = {
+  slug: true,
+  name: true,
+  code: true,
+  apex: true,
+  logo: true,
+  active: true,
+  apps: true,
+  natponto: true,
+  urls: true,
+}
+
 /** O cliente como vai para o arquivo: campos na ordem fixa, sem lixo. */
 export function cleanClient(c: PortalClient): PortalClient {
+  void CAMPOS_TRATADOS
   return {
     slug: normalizeSlug(c.slug),
     name: c.name.trim(),
@@ -169,6 +195,13 @@ export function cleanClient(c: PortalClient): PortalClient {
     apex: c.apex.trim().toLowerCase() || 'rh',
     logo: c.logo ?? null,
     active: c.active !== false,
+    /* Sempre por extenso, e na ordem canônica — não na ordem em que foi clicado.
+       Gravar explícito tira a ambiguidade de "ausente = tudo": o arquivo passa a
+       dizer o que o cliente tem, em vez de omitir e deixar o código adivinhar.
+       `??` e não `||`: lista vazia é uma escolha legítima (cliente sem nenhum
+       aplicativo daquela família), e `||` a trocaria por tudo ligado. */
+    apps: portalApps.map((a) => a.key).filter((k) => (c.apps ?? portalApps.map((a) => a.key)).includes(k)),
+    natponto: c.natponto !== false,
     urls: { prod: cleanUrls(c.urls?.prod), dev: cleanUrls(c.urls?.dev) },
   }
 }

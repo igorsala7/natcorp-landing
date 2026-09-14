@@ -51,7 +51,7 @@
         "natdocs",
         "chamado"
       ],
-      "natponto": true,
+      "natponto": false,
       "urls": {
         "prod": {
           "colaborador": "https://www.natcorpbr.com.br/apex/rh/f?p=PC_INCOR",
