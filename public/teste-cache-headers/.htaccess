@@ -1,0 +1,3 @@
+# EXPERIMENTO — pode apagar depois de conferido. Igual ao par, para mod_headers.
+Header set Cache-Control "no-store, must-revalidate"
+Header set X-Teste-Natcorp "mod_headers-vivo"
