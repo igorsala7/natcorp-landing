@@ -43,15 +43,6 @@
       "apex": "rh",
       "logo": "incor.png",
       "active": true,
-      "apps": [
-        "colaborador",
-        "gestor",
-        "operador",
-        "candidato",
-        "natdocs",
-        "chamado"
-      ],
-      "natponto": true,
       "urls": {
         "prod": {
           "colaborador": "https://www.natcorpbr.com.br/apex/rh/f?p=PC_INCOR",
