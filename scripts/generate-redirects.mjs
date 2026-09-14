@@ -156,7 +156,25 @@ RewriteRule ^__htaccess-2026-09-14__$ - [F,L]
 #    FTP, e publicar a configuração entrega de graça quais caminhos bloqueamos.
 RewriteRule ^htaccess\\.txt$ - [F,L]
 
-# ── 1b. Pastas guardadas como backup: no disco, fora do ar ──────────────
+# ── 1b. Quadro de vagas: /jobs e /jobs_dev sem redirecionamento ─────────
+#    Sem estas duas linhas, /jobs?company=... (sem barra) depende do
+#    DirectorySlash do Apache, que responde 301 para /jobs/?company=... — e 301
+#    é permanente: navegadores e CDN guardam, cada um por sua conta.
+#
+#    Isso já custou caro. Enquanto existiu uma 301 de /jobs para /sobre nesta
+#    lista, os links de vaga clicados naquela janela ficaram PRESOS: mesmo
+#    depois de o servidor ser corrigido, o CDN seguia entregando o 301 velho
+#    para aquelas URLs exatas. Medido: vaga nova abre certo (MISS), a URL já
+#    pedida continua caindo em /sobre (HIT).
+#
+#    Reescrita interna resolve de vez: o servidor ENTREGA o redirecionador em
+#    /jobs, sem responder redirecionamento nenhum. Não há 301 para ninguém
+#    guardar, e o candidato economiza uma ida e volta. A query string viaja
+#    sozinha — reescrita interna não mexe nela.
+RewriteRule ^jobs$ /jobs/index.html [L]
+RewriteRule ^jobs_dev$ /jobs_dev/index.html [L]
+
+# ── 1c. Pastas guardadas como backup: no disco, fora do ar ──────────────
 #    Renomear uma pasta no servidor NÃO a tira do ar: o Apache serve tudo
 #    abaixo da raiz, então /portais_old/ continuaria público — com os
 #    form-handler.php do site antigo dentro, sem manutenção, e com o
