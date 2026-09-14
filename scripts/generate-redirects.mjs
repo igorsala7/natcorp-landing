@@ -79,8 +79,18 @@ ${regras.map((r) => `${r.from.padEnd(larg)}${r.to}  301\n${(r.from + '/').padEnd
 # pelo SPA a partir de src/content/portals.json — não precisam de reescrita própria.
 # A regra abaixo já os cobre.
 
-# SPA: qualquer outro caminho devolve o index.html
-/*    /index.html   200
+# NÃO há catch-all de SPA aqui, de propósito.
+#
+# No Netlify o _redirects roda DEPOIS de procurar o arquivo estático, então um
+# "/*  /index.html  200" no fim é inofensivo. No Cloudflare Pages a documentação
+# diz o contrário — "redirects are always followed, regardless of whether or not
+# an asset matches" — e relatos da comunidade dizem o oposto disso. Com 75
+# páginas pré-renderizadas em jogo, apostar em qualquer das duas leituras é
+# apostar o site inteiro.
+#
+# A saída não depende de quem está certo: sem catch-all, as páginas reais são
+# servidas como arquivo, e o que não existe cai no 404.html, que é a casca do
+# SPA. As rotas que só existem no cliente (a administração) carregam por ali.
 `
 writeFileSync(resolve(root, 'public/_redirects'), netlify)
 
@@ -325,6 +335,32 @@ writeFileSync(
 )
 
 console.log(`redirects: ${regras.length} regras geradas`)
+/* O _headers do Cloudflare Pages: é ele o motivo da mudança de hospedagem.
+   Na hospedagem anterior, medido, o .htaccess só executava mod_rewrite — nem
+   mod_headers nem mod_expires produziam cabeçalho algum. Sem Cache-Control, o
+   CDN guardava o HTML por conta própria e publicação nova não chegava ao
+   visitante. Aqui cabeçalho é um arquivo, não um módulo que pode faltar.
+
+   A ORDEM VAI DO GERAL PARA O ESPECÍFICO. Se a sobreposição não valer nesta
+   plataforma, o pior caso é o asset revalidar à toa — custo de um 304, não de
+   uma página errada. O contrário, HTML em cache, é o bug que nos trouxe aqui. */
+const headers = `# Cabeçalhos servidos pelo Cloudflare Pages.
+# GERADO por scripts/generate-redirects.mjs. Não edite à mão.
+
+/*
+  Cache-Control: no-cache
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: SAMEORIGIN
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: geolocation=(), microphone=(), camera=()
+  Strict-Transport-Security: max-age=31536000; includeSubDomains
+
+# Tudo aqui tem hash no nome: conteúdo novo, nome novo. Um ano, sem revalidar.
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable
+`
+writeFileSync(resolve(root, 'public/_headers'), headers)
+console.log(`redirects:   public/_headers (Cloudflare Pages)`)
 console.log(`redirects:   public/_redirects (Netlify/prévias)`)
 console.log(`redirects:   vercel.json`)
 console.log(`redirects:   redirects/apache.txt, nginx.conf, iis.xml`)

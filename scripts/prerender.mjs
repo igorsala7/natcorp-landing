@@ -32,7 +32,7 @@
 // controle normalmente. Muda só o que o primeiro pedido entrega.
 import { createServer } from 'node:http'
 import { execFile } from 'node:child_process'
-import { mkdirSync, readFileSync, writeFileSync, existsSync, statSync } from 'node:fs'
+import { copyFileSync, mkdirSync, readFileSync, writeFileSync, existsSync, statSync } from 'node:fs'
 import { extname, join, resolve } from 'node:path'
 import { promisify } from 'node:util'
 
@@ -139,6 +139,17 @@ if (!chrome) {
   console.error('prerender: Chrome não encontrado. Defina CHROME_PATH.')
   process.exit(1)
 }
+
+/* A casca do SPA, guardada ANTES do prerender sobrescrever o index.html.
+   
+   O Cloudflare Pages serve 404.html quando nenhum arquivo casa com o pedido. É
+   por ali que carregam as rotas que só existem no cliente — a administração, por
+   exemplo —, sem precisar de um catch-all no _redirects, que naquela plataforma
+   pode passar na frente dos arquivos reais e engolir as 75 páginas.
+   
+   E é a casca CRUA, não a home pré-renderizada: assim quem cai num endereço
+   inexistente não lê por um instante o conteúdo da home antes do React trocar. */
+copyFileSync(join(dist, 'index.html'), join(dist, '404.html'))
 
 const { servidor, porta } = await subirServidor()
 const base = `http://127.0.0.1:${porta}`
