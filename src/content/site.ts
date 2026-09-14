@@ -62,7 +62,13 @@ export const paths = {
   /** A mesma apresentação, na versão curta (reunião de 20 minutos). */
   presentationShort: '/apresentacao/reduzida',
   /** Administração dos portais dos clientes (só para o administrador; fora do menu e do sitemap). */
-  portalAdmin: '/admin/portais',
+  /* NÃO é /admin/portais. O WAF da hospedagem (noc.org) devolve 403 em
+     /admin/<qualquer coisa> — regra padrão contra varredura de painel, wp-admin
+     e afins. O pedido nem chega ao servidor, então não havia o que corrigir no
+     site. Medido: /admin/portais e /admin/qualquercoisa dão 403; /admin
+     sozinho, /administrativo e /modulos/administracao-de-pessoal passam.
+     Este caminho foi testado contra o WAF real antes de ser escolhido. */
+  portalAdmin: '/gestao/portais',
 } as const
 
 /** O app NatPonto nas lojas. */

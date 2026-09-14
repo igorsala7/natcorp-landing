@@ -2,7 +2,7 @@
  * Portais que os clientes usam para entrar no sistema (a página /portais/<cliente> e, para a base de
  * homologação, /portais/dev/<cliente>). O cadastro dos clientes fica em src/content/portals.json.
  *
- * O cadastro dos clientes fica em src/content/portals.json, editado em /admin/portais (que grava o arquivo no
+ * O cadastro dos clientes fica em src/content/portals.json, editado em /gestao/portais (que grava o arquivo no
  * repositório; a Vercel publica em seguida). Cada cliente guarda o endereço de cada portal, em produção e em
  * homologação, porque a estrutura dessas URLs é a do servidor de cada cliente e não pode ser alterada pelo site.
  * Quando um endereço não foi informado, vale o padrão do APEX:

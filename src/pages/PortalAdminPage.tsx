@@ -55,7 +55,7 @@ import { paths, siteConfig } from '@/content/site'
 import { cn } from '@/lib/utils'
 
 /**
- * Administração do cadastro dos portais (/admin/portais): só para o administrador.
+ * Administração do cadastro dos portais (/gestao/portais): só para o administrador.
  * Aqui entram o nome, o slug (/portais/<slug>), o código base do APEX (f?p=PO_<CÓDIGO>), o logotipo e os
  * endereços de cada portal em produção e em homologação. Salvar grava src/content/portals.json no repositório,
  * pela API do GitHub, com o token que fica só neste navegador; a Vercel publica em seguida.

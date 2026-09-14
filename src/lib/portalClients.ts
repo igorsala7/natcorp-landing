@@ -3,7 +3,7 @@ import { normalizeSlug, portalClients, type PortalClient, type PortalUrls } from
 /**
  * Gravação do cadastro dos portais no repositório, pela API do GitHub.
  *
- * A administração (/admin/portais) edita src/content/portals.json e os logotipos em src/assets/portals/logos/ e
+ * A administração (/gestao/portais) edita src/content/portals.json e os logotipos em src/assets/portals/logos/ e
  * faz o commit direto na branch de publicação; a Vercel publica em seguida. O token do GitHub (fine-grained, com
  * "Contents: Read and write" só neste repositório) fica apenas no navegador do administrador e nunca entra no site.
  */

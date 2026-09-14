@@ -209,7 +209,18 @@ function AppRoutes() {
             </Suspense>
           }
         />
-        {/* Administração do cadastro dos portais (só para o administrador; fora do menu e do sitemap). */}
+        {/* Administração do cadastro dos portais (só para o administrador; fora do menu e do sitemap).
+            O endereço antigo continua atendendo: se um dia o WAF liberar /admin/, o link que
+            alguém guardou volta a funcionar sozinho — e enquanto não liberar, esta rota só
+            responde em desenvolvimento, onde não há WAF. */}
+        <Route
+          path="/admin/portais"
+          element={
+            <Suspense fallback={<PageFallback />}>
+              <PortalAdminPage />
+            </Suspense>
+          }
+        />
         <Route
           path={paths.portalAdmin}
           element={
@@ -241,7 +252,7 @@ function AppRoutes() {
 
 /**
  * A moldura do site (barra, rodapé, rolagem suave): fica de fora nas páginas em tela cheia, como a apresentação.
- * A porta de entrada dos portais (/portais/<cliente>) e a administração (/admin/portais) têm cabeçalho e rodapé
+ * A porta de entrada dos portais (/portais/<cliente>) e a administração (/gestao/portais) têm cabeçalho e rodapé
  * próprios, sem o menu de marketing.
  */
 function Shell() {
@@ -250,7 +261,12 @@ function Shell() {
   const chromeless = pathname === paths.presentation || pathname === paths.presentationShort || pathname === '/animatic'
   const hubProd = useMatch('/portais/:cliente')
   const hubDev = useMatch('/portais/dev/:cliente')
-  const admin = useMatch('/admin/*')
+  /* Os dois `useMatch` são chamados SEMPRE, e a escolha vem depois. Com `??`
+     entre eles, o segundo só rodaria quando o primeiro falhasse — hook em
+     ordem variável, que é o erro que o lint apontou. */
+  const adminNovo = useMatch('/gestao/*')
+  const adminAntigo = useMatch('/admin/*')
+  const admin = adminNovo ?? adminAntigo
   const docs = useMatch('/hospedagem')
   // Páginas com cabeçalho próprio: o menu de marketing não ajuda quem está lá.
   const hub = hubProd !== null || hubDev !== null || admin !== null || docs !== null
