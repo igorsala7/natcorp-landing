@@ -4,7 +4,7 @@ import { normalizeSlug, portalApps, portalClients, type PortalClient, type Porta
  * Gravação do cadastro dos portais no repositório, pela API do GitHub.
  *
  * A administração (/gestao/portais) edita src/content/portals.json e os logotipos em src/assets/portals/logos/ e
- * faz o commit direto na branch de publicação; a Vercel publica em seguida. O token do GitHub (fine-grained, com
+ * faz o commit direto na branch de publicação. O site NÃO publica sozinho: é preciso reconstruir e enviar o dist/. O token do GitHub (fine-grained, com
  * "Contents: Read and write" só neste repositório) fica apenas no navegador do administrador e nunca entra no site.
  */
 
@@ -132,7 +132,7 @@ const textToBase64 = (text: string) => bytesToBase64(new TextEncoder().encode(te
 
 /* ---------------- cadastro ---------------- */
 
-interface Registry {
+export interface Registry {
   _comentario?: string
   clients: PortalClient[]
 }
@@ -206,7 +206,16 @@ export function cleanClient(c: PortalClient): PortalClient {
   }
 }
 
-const serialize = (registry: Registry) => `${JSON.stringify(registry, null, 2)}\n`
+/**
+ * O arquivo, exatamente como vai para o repositório.
+ *
+ * Exportado porque a tela de administração também precisa gerar o conteúdo sem
+ * commitar — quem não tem token do GitHub edita, baixa o arquivo e o coloca no
+ * projeto à mão. Usar a MESMA função dos dois lados é o ponto: se o download
+ * produzisse um formato ligeiramente diferente do que o commit produz, o
+ * arquivo baixado viraria um diff sujo a cada vez.
+ */
+export const serialize = (registry: Registry) => `${JSON.stringify(registry, null, 2)}\n`
 
 export interface SaveOptions {
   /** Slug anterior, quando o cliente já existia (o slug pode ter mudado). */

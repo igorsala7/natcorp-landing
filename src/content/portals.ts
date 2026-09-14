@@ -3,7 +3,7 @@
  * homologação, /portais/dev/<cliente>). O cadastro dos clientes fica em src/content/portals.json.
  *
  * O cadastro dos clientes fica em src/content/portals.json, editado em /gestao/portais (que grava o arquivo no
- * repositório; a Vercel publica em seguida). Cada cliente guarda o endereço de cada portal, em produção e em
+ * repositório). O site NÃO publica sozinho: é preciso reconstruir e enviar o dist/. Cada cliente guarda o endereço de cada portal, em produção e em
  * homologação, porque a estrutura dessas URLs é a do servidor de cada cliente e não pode ser alterada pelo site.
  * Quando um endereço não foi informado, vale o padrão do APEX:
  *   https://www.natcorpbr.com.br/apex/<ambiente>/f?p=<PREFIXO>_<CÓDIGO DO CLIENTE>
@@ -147,6 +147,9 @@ export interface PortalClient {
 
 /** O cadastro, como está em src/content/portals.json, na ordem do arquivo. */
 export const portalClients: PortalClient[] = (registry as { clients: PortalClient[] }).clients
+
+/** O cabeçalho explicativo do portals.json, para quem regrava o arquivo não o perder. */
+export const registryComment: string = (registry as { _comentario?: string })._comentario ?? ''
 
 /** Servidores conhecidos do APEX de produção (para o preenchimento automático no cadastro). */
 export const apexServers = ['rh', 'natrh', 'hc', 'hcm', 'cloud'] as const

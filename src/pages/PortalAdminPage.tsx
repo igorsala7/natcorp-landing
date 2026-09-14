@@ -18,6 +18,7 @@ import {
   Trash2,
   Wand2,
   X,
+  Download,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -31,11 +32,13 @@ import {
   TOKEN_URL,
   bundledClients,
   checkAccess,
+  cleanClient,
   fetchRegistry,
   friendlyError,
   getToken,
   removeClient,
   saveClient,
+  serialize,
   setToken,
 } from '@/lib/portalClients'
 import {
@@ -48,6 +51,7 @@ import {
   portalApps,
   type PortalClient,
   type PortalEnv,
+  registryComment,
   type PortalKey,
   type PortalUrls,
 } from '@/content/portals'
@@ -58,13 +62,23 @@ import { cn } from '@/lib/utils'
  * Administração do cadastro dos portais (/gestao/portais): só para o administrador.
  * Aqui entram o nome, o slug (/portais/<slug>), o código base do APEX (f?p=PO_<CÓDIGO>), o logotipo e os
  * endereços de cada portal em produção e em homologação. Salvar grava src/content/portals.json no repositório,
- * pela API do GitHub, com o token que fica só neste navegador; a Vercel publica em seguida.
+ * pela API do GitHub, com o token que fica só neste navegador.
+ *
+ * SALVAR NÃO PUBLICA. Isto dizia "a Vercel publica em seguida", de quando o site
+ * era publicado lá; hoje ele é um build estático enviado ao servidor. Entre o
+ * commit e o ar é preciso `git pull`, `npm run build` e subir o dist/ — e quem
+ * constrói sem dar pull constrói do arquivo local, sem a alteração feita aqui.
+ * Foi assim que um "salvei e não refletiu" custou uma tarde.
  */
 export default function PortalAdminPage() {
   useSeo({ title: 'Administração dos portais | Natcorp', description: 'Cadastro dos clientes e dos endereços dos portais.', path: paths.portalAdmin, noindex: true })
   const [token, setTokenState] = useState<string | null>(() => getToken())
   const [login, setLogin] = useState<string | null>(null)
-  const [preview, setPreview] = useState(false)
+  /* Abre direto no editor, sem a tela de conexão na frente.
+     A tela de conexão continua existindo, num botão: ela é o que habilita
+     GRAVAR no repositório. Sem token dá para editar e BAIXAR o arquivo, que é
+     o suficiente para quem vai reconstruir e publicar à mão de qualquer jeito. */
+  const [preview, setPreview] = useState(() => getToken() === null)
 
   const disconnect = () => {
     setToken(null)
@@ -109,7 +123,7 @@ export default function PortalAdminPage() {
           <div className="border-b border-[#F2B84B]/50 bg-[#FFF4DB] text-[13px] text-[#6B4A00]">
             <div className="container flex flex-wrap items-center gap-x-3 gap-y-1 py-2">
               <span className="font-bold">Prévia.</span>
-              <span>As alterações ficam só nesta tela. Para salvar de verdade, conecte um token do GitHub.</span>
+              <span>As alterações ficam só nesta tela — baixe o arquivo ao terminar, ou conecte um token para gravar direto no repositório.</span>
             </div>
           </div>
         )}
@@ -135,7 +149,7 @@ export default function PortalAdminPage() {
               © {new Date().getFullYear()} {siteConfig.name}. Uso interno.
             </span>
             <span>
-              Salvar grava {REGISTRY_PATH} em {REPO.owner}/{REPO.repo} ({REPO.branch}). O site publica em seguida.
+              Salvar grava {REGISTRY_PATH} em {REPO.owner}/{REPO.repo} ({REPO.branch}). O site só muda no próximo build e publicação.
             </span>
           </div>
         </footer>
@@ -307,6 +321,13 @@ function Workspace({ token, preview, onLogin, onTokenInvalid }: WorkspaceProps) 
             <Plus /> Novo cliente
           </Button>
         </div>
+        {/* Sem token não há como gravar, mas o trabalho não precisa se perder:
+            o arquivo sai daqui pronto para entrar no projeto. */}
+        {preview && (
+          <div className="mt-3">
+            <BaixarCadastro clients={clients} />
+          </div>
+        )}
         <div className="relative mt-4">
           <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-brand-gray" />
           <Input
@@ -387,7 +408,7 @@ function Workspace({ token, preview, onLogin, onTokenInvalid }: WorkspaceProps) 
             <h2 className="mt-5 text-[20px] font-extrabold">Escolha um cliente ao lado</h2>
             <p className="mt-2 max-w-md text-[14.5px] leading-relaxed text-brand-graphite">
               Cada cliente tem nome, slug, código base, logotipo e os endereços dos seis portais em produção e em homologação. Salvar grava o cadastro no repositório e o
-              site publica em seguida.
+              site só muda no próximo build e publicação.
             </p>
           </div>
         )}
@@ -875,6 +896,32 @@ function ContratadoCard({
         </p>
       )}
     </Card>
+  )
+}
+
+/**
+ * Baixa o cadastro como o arquivo do projeto.
+ *
+ * Sem token do GitHub não há como gravar — mas o trabalho não precisa se perder.
+ * Aqui sai `portals.json` byte a byte como o commit o escreveria (mesma função
+ * `serialize`, mesmo `cleanClient`), para ser colocado em src/content/ e entrar
+ * no próximo build.
+ */
+function BaixarCadastro({ clients }: { clients: PortalClient[] }) {
+  const baixar = () => {
+    const conteudo = serialize({ _comentario: registryComment, clients: clients.map(cleanClient) })
+    const url = URL.createObjectURL(new Blob([conteudo], { type: 'application/json' }))
+    const a = document.createElement('a')
+    a.href = url
+    a.download = 'portals.json'
+    a.click()
+    URL.revokeObjectURL(url)
+    toast.success('portals.json baixado. Coloque em src/content/ e reconstrua o site.')
+  }
+  return (
+    <Button type="button" variant="secondary" size="sm" onClick={baixar} className="gap-2">
+      <Download className="h-3.5 w-3.5" /> Baixar portals.json
+    </Button>
   )
 }
 
