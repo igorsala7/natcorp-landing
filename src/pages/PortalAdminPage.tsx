@@ -48,6 +48,7 @@ import {
   portalApps,
   type PortalClient,
   type PortalEnv,
+  type PortalKey,
   type PortalUrls,
 } from '@/content/portals'
 import { paths, siteConfig } from '@/content/site'
@@ -597,6 +598,8 @@ function ClientForm({ initial, isNew, token, onSaved, onDeleted, onCancel }: Cli
         </div>
       </Card>
 
+      <ContratadoCard draft={draft} onApps={(v) => set('apps', v)} onNatPonto={(v) => set('natponto', v)} />
+
       <UrlsCard env="prod" draft={draft} onUrl={setUrl} onFill={() => fill('prod')} onApex={(v) => set('apex', v)} />
       <UrlsCard env="dev" draft={draft} onUrl={setUrl} onFill={() => fill('dev')} />
 
@@ -791,6 +794,87 @@ function Card({
       </div>
       <div className="mt-6">{children}</div>
     </section>
+  )
+}
+
+/**
+ * O que o cliente contratou.
+ *
+ * Nasceu de reclamação de cliente: a página oferecia ao funcionário portais que
+ * a empresa dele não tem, e sobrava para o RH explicar, um a um, por que não era
+ * para clicar ali. Desmarcar aqui tira o cartão, o atalho do topo e o link do
+ * rodapé de uma vez — os três lugares leem a mesma lista.
+ *
+ * Fica num cartão próprio, e não espalhado entre os endereços, porque a pergunta
+ * é comercial ("o que este cliente comprou?") e quem responde não é quem
+ * configura URL de APEX.
+ */
+function ContratadoCard({
+  draft,
+  onApps,
+  onNatPonto,
+}: {
+  draft: PortalClient
+  onApps: (v: PortalKey[]) => void
+  onNatPonto: (v: boolean) => void
+}) {
+  /* Ausente = tudo, para cadastro antigo não sumir da página. Ao mexer aqui a
+     lista passa a ser explícita, e é assim que ela fica daí em diante. */
+  const atuais = draft.apps ?? portalApps.map((a) => a.key)
+  const alterna = (key: PortalKey, ligado: boolean) =>
+    /* Reordena pela ordem canônica, não pela ordem dos cliques — o JSON fica
+       legível e o diff do commit mostra só o que mudou de verdade. */
+    onApps(portalApps.map((a) => a.key).filter((k) => (k === key ? ligado : atuais.includes(k))))
+
+  const nenhum = atuais.length === 0
+  return (
+    <Card
+      title="O que este cliente contratou"
+      lead="O que estiver desmarcado não aparece na página dele: nem cartão, nem atalho, nem link no rodapé."
+    >
+      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        {portalApps.map((app) => (
+          <label
+            key={app.key}
+            htmlFor={`c-app-${app.key}`}
+            className="flex cursor-pointer items-start gap-3 rounded-md border border-input bg-white px-3 py-2.5 text-[14px]"
+          >
+            <input
+              id={`c-app-${app.key}`}
+              type="checkbox"
+              checked={atuais.includes(app.key)}
+              onChange={(e) => alterna(app.key, e.target.checked)}
+              className="mt-0.5 h-4 w-4 accent-[#511C76]"
+            />
+            <span className="min-w-0">
+              <span className="block font-semibold text-brand-ink">{app.name}</span>
+              <span className="block truncate text-[12px] text-brand-gray">{app.audience}</span>
+            </span>
+          </label>
+        ))}
+        <label
+          htmlFor="c-natponto"
+          className="flex cursor-pointer items-start gap-3 rounded-md border border-input bg-white px-3 py-2.5 text-[14px]"
+        >
+          <input
+            id="c-natponto"
+            type="checkbox"
+            checked={draft.natponto !== false}
+            onChange={(e) => onNatPonto(e.target.checked)}
+            className="mt-0.5 h-4 w-4 accent-[#511C76]"
+          />
+          <span className="min-w-0">
+            <span className="block font-semibold text-brand-ink">NatPonto</span>
+            <span className="block truncate text-[12px] text-brand-gray">A seção do app de ponto</span>
+          </span>
+        </label>
+      </div>
+      {nenhum && (
+        <p className="mt-4 rounded-md border border-[#B8791F]/30 bg-[#B8791F]/[0.07] px-3 py-2 text-[13px] text-[#8A5A14]">
+          Sem nenhum aplicativo marcado, a página do cliente fica só com a abertura e a ajuda. Foi essa a intenção?
+        </p>
+      )}
+    </Card>
   )
 }
 

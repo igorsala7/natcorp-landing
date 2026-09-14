@@ -130,6 +130,17 @@ export interface PortalClient {
   /** Nome do arquivo do logotipo em src/assets/portals/logos/ (null: sem logotipo, mostra o nome). */
   logo?: string | null
   active?: boolean
+  /**
+   * O que este cliente CONTRATOU. Ausente = tudo, para o cadastro antigo não
+   * quebrar; o /admin sempre grava a lista por extenso.
+   *
+   * Existe porque o contrário saía caro para o cliente: a página oferecia ao
+   * funcionário um portal que a empresa dele não tem, e sobrava para o RH
+   * explicar, um a um, por que não era para clicar ali.
+   */
+  apps?: PortalKey[]
+  /** O cliente usa o NatPonto. Ausente = sim, pelo mesmo motivo de `apps`. */
+  natponto?: boolean
   /** Endereços informados no cadastro, por ambiente. */
   urls?: { prod?: PortalUrls; dev?: PortalUrls }
 }
@@ -176,6 +187,30 @@ export function portalUrl(app: PortalApp, client: PortalClient, env: PortalEnv =
   if (app.fixedUrl) return app.fixedUrl
   const custom = client.urls?.[env]?.[app.key]?.trim()
   return custom || defaultPortalUrl(app, client, env)
+}
+
+/* ---------------- o que cada cliente tem ---------------- */
+
+/**
+ * Este cliente tem este aplicativo?
+ *
+ * A pergunta é feita em cinco lugares da página — os dois grids de cartão, os
+ * atalhos do topo, o rodapé e a ajuda. Fica numa função só de propósito: cinco
+ * filtros escritos à mão divergem, e divergir aqui significa esconder o cartão
+ * mas deixar o atalho, que é pior que não esconder nada.
+ */
+export function temApp(client: Pick<PortalClient, 'apps'>, key: PortalKey): boolean {
+  return client.apps ? client.apps.includes(key) : true
+}
+
+/** Os aplicativos deste cliente, na ordem canônica — não na ordem do cadastro. */
+export function appsDoCliente(client: Pick<PortalClient, 'apps'>): PortalApp[] {
+  return portalApps.filter((a) => temApp(client, a.key))
+}
+
+/** O cliente usa o NatPonto? Governa a seção inteira do app de ponto. */
+export function temNatPonto(client: Pick<PortalClient, 'natponto'>): boolean {
+  return client.natponto !== false
 }
 
 /** Domínio onde os portais abrem (pelo Portal do Operador), para o rodapé. */

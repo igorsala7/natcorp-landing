@@ -19,7 +19,7 @@ import { NATPONTO_SIZE } from '@/components/mockups/natponto/NatPontoFrame'
 import { NatPontoPhone } from '@/components/mockups/natponto/screens'
 import { useSeo } from '@/hooks/useSeo'
 import { usePortalClient, usePortalClients } from '@/hooks/usePortalClient'
-import { clientLogo, hubPath, portalApps, portalHost, portalUrl, type PortalApp, type PortalClient, type PortalEnv } from '@/content/portals'
+import { appsDoCliente, clientLogo, hubPath, portalHost, portalUrl, temNatPonto, type PortalApp, type PortalClient, type PortalEnv } from '@/content/portals'
 import { paths, siteConfig } from '@/content/site'
 import { EASE, viewportOnce } from '@/lib/motion'
 import { cn } from '@/lib/utils'
@@ -131,6 +131,13 @@ export default function PortalHubPage({ env = 'prod' }: { env?: PortalEnv }) {
 
   if (!client) return <NotFound slug={cliente ?? ''} env={env} />
 
+  /* Um cliente pode não ter nenhum aplicativo de uma das famílias. Nesse caso a
+     seção inteira sai — título, grade e tudo. Renderizar um cabeçalho
+     "Aplicativos e serviços" sobre o vazio é pior que não ter a seção. */
+  const meus = appsDoCliente(client)
+  const temPortais = meus.some((a) => a.kind === 'portal')
+  const temServicos = meus.some((a) => a.kind === 'service')
+
   return (
     <PageTransition>
       {dev && <EnvBanner client={client} />}
@@ -138,47 +145,41 @@ export default function PortalHubPage({ env = 'prod' }: { env?: PortalEnv }) {
       <Opening client={client} env={env} />
 
       {/* ---------- portais do sistema ---------- */}
-      <Section tone="off" id="portais" className="py-14 sm:py-16 lg:py-20">
-        <div className="container">
-          <Eyebrow>Portais do sistema</Eyebrow>
-          <Stagger className="mt-8 grid gap-6 md:grid-cols-2 xl:grid-cols-3" stagger={0.1}>
-            {portalApps
-              .filter((p) => p.kind === 'portal')
-              .map((app) => (
-                <StaggerItem key={app.key} className="h-full">
-                  <PortalCard app={app} href={portalUrl(app, client, env)} dev={dev} />
-                </StaggerItem>
-              ))}
-          </Stagger>
-        </div>
-      </Section>
+      {temPortais && (
+        <Section tone="off" id="portais" className="py-14 sm:py-16 lg:py-20">
+          <div className="container">
+            <Eyebrow>Portais do sistema</Eyebrow>
+            <Stagger className={cn('mt-8', gradeDe(meus.filter((p) => p.kind === 'portal').length))} stagger={0.1}>
+              {meus
+                .filter((p) => p.kind === 'portal')
+                .map((app) => (
+                  <StaggerItem key={app.key} className="h-full">
+                    <PortalCard app={app} href={portalUrl(app, client, env)} dev={dev} />
+                  </StaggerItem>
+                ))}
+            </Stagger>
+          </div>
+        </Section>
+      )}
 
       {/* ---------- aplicativos e serviços ---------- */}
-      <Section tone="white" id="servicos" className="py-14 sm:py-16 lg:py-20">
+      {temServicos && (
+        <Section tone="white" id="servicos" className="py-14 sm:py-16 lg:py-20">
+          <div className="container">
+            <Stagger className={cn('mt-10', gradeDe(meus.filter((p) => p.kind === 'service').length))} stagger={0.1}>
+              {meus
+                .filter((p) => p.kind === 'service')
+                .map((app) => (
+                  <StaggerItem key={app.key} className="h-full">
+                    <ServiceCard app={app} href={portalUrl(app, client, env)} dev={dev} />
+                  </StaggerItem>
+                ))}
+            </Stagger>
+          </div>
+        </Section>
+      )}
 
-        <div className="container">
-
-          {/*
-          <SectionHeader
-            eyebrow="Aplicativos e serviços"
-            title="Candidatura, documentos e suporte."
-            lead="Três entradas fora do dia a dia: para quem ainda não é da empresa, para quem tem algo a assinar e para o RH falar com a Natcorp."
-          />
-          */}
-
-          <Stagger className="mt-10 grid gap-6 md:grid-cols-3" stagger={0.1}>
-            {portalApps
-              .filter((p) => p.kind === 'service')
-              .map((app) => (
-                <StaggerItem key={app.key} className="h-full">
-                  <ServiceCard app={app} href={portalUrl(app, client, env)} dev={dev} />
-                </StaggerItem>
-              ))}
-          </Stagger>
-        </div>
-      </Section>
-
-      <NatPonto />
+      {temNatPonto(client) && <NatPonto />}
       <Help client={client} env={env} />
       <HubFooter client={client} env={env} />
     </PageTransition>
@@ -260,7 +261,7 @@ function Opening({ client, env }: { client: PortalClient; env: PortalEnv }) {
           </Reveal>
           <Reveal delay={0.4} y={10}>
             <ul className="mt-6 flex flex-wrap gap-2" aria-label="Acesso rápido">
-              {portalApps.map((app) => (
+              {appsDoCliente(client).map((app) => (
                 <li key={app.key}>
                   <a
                     href={portalUrl(app, client, env)}
@@ -403,7 +404,10 @@ function HubHeader({ client, env }: { client: PortalClient; env: PortalEnv }) {
 }
 
 function HubFooter({ client, env }: { client: PortalClient; env: PortalEnv }) {
-  const chamado = portalApps.find((p) => p.key === 'chamado')!
+  /* `find` e não `!`: quando o cliente não tem Chamado, não há link de suporte
+     no rodapé — oferecer um atalho para o que ele não contratou é o mesmo
+     problema do cartão, só que em letra menor. */
+  const chamado = appsDoCliente(client).find((p) => p.key === 'chamado')
   return (
     <footer className="on-dark bg-brand-blue py-10 text-white">
       <div className="container flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
@@ -428,11 +432,13 @@ function HubFooter({ client, env }: { client: PortalClient; env: PortalEnv }) {
               Contato
             </Link>
           </li>
-          <li>
-            <a href={portalUrl(chamado, client, env)} className="text-white/85 hover:text-white">
-              Suporte (RH)
-            </a>
-          </li>
+          {chamado && (
+            <li>
+              <a href={portalUrl(chamado, client, env)} className="text-white/85 hover:text-white">
+                Suporte (RH)
+              </a>
+            </li>
+          )}
           <li>
             <Link to={hubPath(client.slug, env === 'dev' ? 'prod' : 'dev')} className="text-white/60 hover:text-white">
               {env === 'dev' ? 'Produção' : 'Homologação'}
@@ -486,6 +492,24 @@ function Figurante({ fig, delay }: { fig: Figura; delay: number }) {
 }
 
 /* ---------------- cartões ---------------- */
+
+/**
+ * A grade acompanha a quantidade de cartões.
+ *
+ * Com colunas fixas, um cliente que contratou um só aplicativo de uma família
+ * ficava com o cartão sozinho numa linha de três, com dois terços de vazio ao
+ * lado — parecia defeito, não escolha. Aqui o número de colunas é o número de
+ * cartões, até três, e a grade centraliza.
+ *
+ * As classes são literais de propósito: o Tailwind lê o código-fonte para saber
+ * o que gerar, e uma string montada em tempo de execução não chega ao CSS.
+ */
+const gradeDe = (n: number) =>
+  n <= 1
+    ? 'mx-auto grid max-w-sm gap-6'
+    : n === 2
+      ? 'mx-auto grid max-w-3xl gap-6 md:grid-cols-2'
+      : 'grid gap-6 md:grid-cols-2 xl:grid-cols-3'
 
 /**
  * Faz o CARTÃO INTEIRO ser o alvo do link, não só o botão.
@@ -668,7 +692,7 @@ function NatPonto() {
 /* ---------------- ajuda ---------------- */
 
 function Help({ client, env }: { client: PortalClient; env: PortalEnv }) {
-  const chamado = portalApps.find((p) => p.key === 'chamado')!
+  const chamado = appsDoCliente(client).find((p) => p.key === 'chamado')
   const items = [
     {
       icon: LockKeyhole,
@@ -680,20 +704,32 @@ function Help({ client, env }: { client: PortalClient; env: PortalEnv }) {
       title: 'Esqueci a senha',
       text: 'Peça a redefinição na tela de entrada do portal ou ao RH da sua empresa. A senha é sua: a Natcorp não tem acesso a ela.',
     },
-    {
-      icon: LifeBuoy,
-      title: 'Suporte Natcorp (RH)',
-      text: 'Problema no sistema? O RH da empresa abre um chamado com a Natcorp. Colaboradores e gestores falam com o próprio RH.',
-      href: portalUrl(chamado, client, env),
-      cta: 'Abrir chamado',
-    },
+    /* Sem o Chamado contratado, este bloco vira instrução em vez de botão:
+       o problema do funcionário continua existindo, e mandá-lo ao RH da
+       empresa é a resposta certa — só não há para onde clicar. */
+    chamado
+      ? {
+          icon: LifeBuoy,
+          title: 'Suporte Natcorp (RH)',
+          text: 'Problema no sistema? O RH da empresa abre um chamado com a Natcorp. Colaboradores e gestores falam com o próprio RH.',
+          href: portalUrl(chamado, client, env),
+          cta: 'Abrir chamado',
+        }
+      : {
+          icon: LifeBuoy,
+          title: 'Problema no sistema',
+          text: 'Fale com o RH da sua empresa. É ele que aciona o suporte da Natcorp quando precisa.',
+        },
   ]
   return (
     <Section tone="off" id="ajuda" className="py-14 sm:py-16 lg:py-20">
       <div className="container">
         <SectionHeader
           eyebrow="Precisa de ajuda?"
-          title="Antes de abrir um chamado."
+          /* Sem o Chamado contratado, "antes de abrir um chamado" promete um
+             fluxo que este cliente não tem. O conteúdo da seção continua valendo
+             — primeiro acesso, senha, segurança —, só o título muda. */
+          title={chamado ? 'Antes de abrir um chamado.' : 'Dúvidas mais comuns.'}
           lead="O acesso é criado pela sua empresa. Os problemas mais comuns se resolvem em um minuto."
         />
         <Stagger className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4" stagger={0.08}>

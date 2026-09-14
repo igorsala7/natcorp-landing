@@ -1,5 +1,5 @@
 {
-  "_comentario": "Cadastro dos clientes da página /portais/<slug> (e /portais/dev/<slug>). Editado em /admin/portais, que grava este arquivo no repositório; a Vercel publica em seguida. Cada portal tem o endereço por extenso, em produção (urls.prod) e em homologação (urls.dev): a estrutura é a do servidor do cliente e não é remontada pelo site. Um endereço vazio usa o padrão do APEX (https://www.natcorpbr.com.br/apex/<apex>/f?p=<PREFIXO>_<code>). O logotipo é o nome de um arquivo em src/assets/portals/logos/.",
+  "_comentario": "Cadastro dos clientes da página /portais/<slug> (e /portais/dev/<slug>). Editado em /admin/portais, que grava este arquivo no repositório; a Vercel publica em seguida. Cada portal tem o endereço por extenso, em produção (urls.prod) e em homologação (urls.dev): a estrutura é a do servidor do cliente e não é remontada pelo site. Um endereço vazio usa o padrão do APEX (https://www.natcorpbr.com.br/apex/<apex>/f?p=<PREFIXO>_<code>). O logotipo é o nome de um arquivo em src/assets/portals/logos/. `apps` lista o que o cliente CONTRATOU: o que não estiver ali não aparece na página dele, nem como cartão, nem como atalho, nem no rodapé. `natponto` governa a seção inteira do app de ponto. Os dois começaram com tudo ligado em todos os clientes, para não mudar nada no dia em que foram criados — desligar é decisão comercial, não técnica.",
   "clients": [
     {
       "slug": "natcorp",
@@ -8,6 +8,15 @@
       "apex": "rh",
       "logo": null,
       "active": true,
+      "apps": [
+        "colaborador",
+        "gestor",
+        "operador",
+        "candidato",
+        "natdocs",
+        "chamado"
+      ],
+      "natponto": true,
       "urls": {
         "prod": {
           "colaborador": "https://www.natcorpbr.com.br/apex/rh/f?p=PC_NATCORP",
@@ -34,6 +43,15 @@
       "apex": "rh",
       "logo": "incor.png",
       "active": true,
+      "apps": [
+        "colaborador",
+        "gestor",
+        "operador",
+        "candidato",
+        "natdocs",
+        "chamado"
+      ],
+      "natponto": true,
       "urls": {
         "prod": {
           "colaborador": "https://www.natcorpbr.com.br/apex/rh/f?p=PC_INCOR",
@@ -60,6 +78,15 @@
       "apex": "rh",
       "logo": "redeflex.png",
       "active": true,
+      "apps": [
+        "colaborador",
+        "gestor",
+        "operador",
+        "candidato",
+        "natdocs",
+        "chamado"
+      ],
+      "natponto": true,
       "urls": {
         "prod": {
           "colaborador": "https://www.natcorpbr.com.br/apex/rh/f?p=PC_REDEFLEX",
@@ -86,6 +113,15 @@
       "apex": "natrh",
       "logo": "leadec.png",
       "active": true,
+      "apps": [
+        "colaborador",
+        "gestor",
+        "operador",
+        "candidato",
+        "natdocs",
+        "chamado"
+      ],
+      "natponto": true,
       "urls": {
         "prod": {
           "colaborador": "https://www.natcorpbr.com.br/apex/natrh/f?p=PC_LEADEC",
@@ -112,6 +148,15 @@
       "apex": "hc",
       "logo": "saude.png",
       "active": true,
+      "apps": [
+        "colaborador",
+        "gestor",
+        "operador",
+        "candidato",
+        "natdocs",
+        "chamado"
+      ],
+      "natponto": true,
       "urls": {
         "prod": {
           "colaborador": "https://www.natcorpbr.com.br/apex/hc/f?p=PC_SAUDE",
@@ -138,6 +183,15 @@
       "apex": "hcm",
       "logo": "stefanini.png",
       "active": true,
+      "apps": [
+        "colaborador",
+        "gestor",
+        "operador",
+        "candidato",
+        "natdocs",
+        "chamado"
+      ],
+      "natponto": true,
       "urls": {
         "prod": {
           "colaborador": "https://www.natcorpbr.com.br/apex/hcm/f?p=PC_STEFANINI",
@@ -164,6 +218,15 @@
       "apex": "cloud",
       "logo": "realfood.png",
       "active": true,
+      "apps": [
+        "colaborador",
+        "gestor",
+        "operador",
+        "candidato",
+        "natdocs",
+        "chamado"
+      ],
+      "natponto": true,
       "urls": {
         "prod": {
           "colaborador": "https://www.natcorpbr.com.br/apex/cloud/f?p=PC_REALFOOD",
