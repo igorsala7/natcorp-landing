@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+<meta charset="UTF-8">
+<title>Vagas | NATCORP</title>
+
+<!--
+  REDIRECIONADOR DO QUADRO DE VAGAS — homologação.
+
+  Gêmeo de /jobs/, com UMA diferença: o destino é sempre a instância de testes
+  (/apex/dev), para qualquer cliente. Por isso não há a escolha por empresa que
+  a versão de produção faz — o `company` aqui só entra no nome do quadro
+  (QUADRO_VAGAS_<company>), não no caminho.
+
+  Na versão antiga essa escolha existia comentada logo acima da atribuição
+  final. Foi removida: código comentado num arquivo de produção é armadilha,
+  porque parece que decide algo e não decide.
+
+  As mesmas duas correções de /jobs/ valem aqui — a tag do CryptoJS
+  (googlecode morto, 404, bloqueante e sem uso) saiu, e o <head> agora fecha.
+  A regra de montagem da URL não mudou.
+-->
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Visualize a Vaga.">
+<!-- Homologação nunca deve ser indexada. -->
+<meta name="robots" content="noindex, nofollow">
+
+<link rel="icon" href="https://www.natcorp.com.br/jobs_dev/favicon-32x32.png" sizes="32x32">
+<link rel="icon" href="https://www.natcorp.com.br/jobs_dev/favicon-180x180.png" sizes="192x192">
+<link rel="apple-touch-icon-precomposed" href="https://www.natcorp.com.br/jobs_dev/favicon-180x180.png">
+
+<meta property="og:locale" content="pt_BR">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Vagas | NATCORP">
+<meta property="og:description" content="Visualize a Vaga.">
+<meta property="og:image" content="https://www.natcorp.com.br/jobs_dev/favicon-16x16.png">
+<meta property="og:image:secure_url" content="https://www.natcorp.com.br/jobs_dev/favicon-16x16.png">
+<meta property="og:url" content="https://www.natcorp.com.br/jobs_dev">
+<meta property="og:site_name" content="Natcorp">
+
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Vagas | NATCORP">
+<meta name="twitter:description" content="Visualize a Vaga.">
+<meta name="twitter:image" content="https://www.natcorp.com.br/jobs_dev/favicon-16x16.png">
+
+<link rel="canonical" href="https://www.natcorp.com.br/jobs_dev">
+</head>
+
+<body>
+<script>
+  function queryString(parameter) {
+    var loc = location.search.substring(1, location.search.length)
+    var param_value = false
+    var params = loc.split('&')
+    for (var i = 0; i < params.length; i++) {
+      var param_name = params[i].substring(0, params[i].indexOf('='))
+      if (param_name == parameter) {
+        param_value = params[i].substring(params[i].indexOf('=') + 1)
+      }
+    }
+    return param_value !== false ? param_value : undefined
+  }
+
+  var company = queryString('company')
+  var id = queryString('id')
+  var board = queryString('board')
+
+  /* Homologação: uma instância só, para todo cliente. */
+  var url_base = 'https://www.natcorpbr.com.br/apex/dev'
+
+  var url
+  if (company && id && board) {
+    url = url_base + '/f?p=QUADRO_VAGAS_' + company + ':3::::3:P_ID,P3_COD:' + board + ',' + id
+  } else if (company && board) {
+    url = url_base + '/f?p=QUADRO_VAGAS_' + company + ':1::::1:P_ID:' + board
+  } else {
+    console.error('Parâmetros ausentes.')
+    url = 'https://www.natcorp.com.br'
+  }
+
+  window.location.replace(url)
+</script>
+</body>
+
+</html>

@@ -1,4 +1,4 @@
-# 125 redirecionamentos 301 do site antigo para o novo — formato Apache (.htaccess).
+# 124 redirecionamentos 301 do site antigo para o novo — formato Apache (.htaccess).
 # GERADO por scripts/generate-redirects.mjs. Não edite à mão.
 # Cada regra vale com e sem barra final.
 # Só as regras 301. O arquivo COMPLETO, pronto para subir, é public/.htaccess.
@@ -18,7 +18,6 @@ RewriteRule ^folha-de-pagamento-2-1/?$ /modulos/folha-de-pagamento [R=301,L]
 RewriteRule ^folha-de-pagamento-teste-prototipo/?$ /modulos/folha-de-pagamento [R=301,L]
 RewriteRule ^sobre-nos/?$ /sobre [R=301,L]
 RewriteRule ^servicos/?$ /implantacao [R=301,L]
-RewriteRule ^jobs/?$ /sobre [R=301,L]
 RewriteRule ^congerhi/?$ /sobre [R=301,L]
 RewriteRule ^fale-conosco/?$ /contato [R=301,L]
 RewriteRule ^fale-conosco-2/?$ /contato [R=301,L]

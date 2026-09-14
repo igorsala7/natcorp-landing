@@ -50,7 +50,7 @@ RewriteRule ^htaccess\.txt$ - [F,L]
 #    — o visitante levaria 403 no lugar do 301. Testado, não suposto.
 RewriteRule ^portais[_-]?(old|antigo|antiga|backup|bkp|legado)(/|$) - [F,L]
 
-# ── 2. Endereços do site antigo (125 regras) ────────────────────────────
+# ── 2. Endereços do site antigo (124 regras) ────────────────────────────
 #    Os ~90 artigos do blog antigo estavam na raiz, no padrão do WordPress.
 #    Sem estas regras, cada um vira 404 no dia da virada e o Google descarta
 #    a autoridade que levaram anos para juntar.
@@ -69,7 +69,6 @@ RewriteRule ^folha-de-pagamento-2-1/?$ /modulos/folha-de-pagamento [R=301,L]
 RewriteRule ^folha-de-pagamento-teste-prototipo/?$ /modulos/folha-de-pagamento [R=301,L]
 RewriteRule ^sobre-nos/?$ /sobre [R=301,L]
 RewriteRule ^servicos/?$ /implantacao [R=301,L]
-RewriteRule ^jobs/?$ /sobre [R=301,L]
 RewriteRule ^congerhi/?$ /sobre [R=301,L]
 RewriteRule ^fale-conosco/?$ /contato [R=301,L]
 RewriteRule ^fale-conosco-2/?$ /contato [R=301,L]

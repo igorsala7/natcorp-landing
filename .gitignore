@@ -39,3 +39,8 @@ brand/apex/APEX Style/
 dist.zip
 /stefanini/
 portais-standalone/
+
+# Cópias legadas de /jobs e /jobs_dev baixadas do servidor antigo, mantidas como
+# referência. O que vai para o ar é public/jobs/ e public/jobs_dev/.
+/jobs/
+/jobs_dev/

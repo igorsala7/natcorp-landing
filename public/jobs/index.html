@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+<meta charset="UTF-8">
+<title>Vagas | NATCORP</title>
+
+<!--
+  REDIRECIONADOR DO QUADRO DE VAGAS — produção.
+
+  Recebe /jobs?company=X&board=Y[&id=Z] e manda para o quadro de vagas do
+  cliente no APEX. Veio do site antigo e continua no ar porque os links já
+  publicados (anúncios, e-mails, redes) apontam para cá: mudar o endereço
+  quebraria candidatura em andamento.
+
+  O par de homologação é /jobs_dev/, idêntico a este menos a instância de
+  destino, que lá é sempre /apex/dev.
+
+  DUAS COISAS SAÍRAM DA VERSÃO ANTIGA, DE PROPÓSITO:
+
+  1. A tag que carregava https://crypto-js.googlecode.com/... foi removida. O
+     Google Code fechou em 2016 e o endereço devolve 404 — medido. Era script
+     bloqueante no <head>, então TODO candidato que clicava num link de vaga
+     esperava esse 404 (~0,6s daqui, pior em rede móvel) antes do redirecionamento
+     acontecer. A biblioteca nem era usada: as três chamadas a hashString()
+     estavam dentro de um bloco comentado.
+
+  2. O <head> não era fechado — o <body> vinha direto. O navegador se recupera,
+     mas é sorte, não projeto.
+
+  A REGRA DE MONTAGEM DA URL NÃO MUDOU EM NADA. Ela é contrato com o APEX.
+-->
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Visualize a Vaga.">
+<!-- Redirecionador não é conteúdo: fora do índice de busca. -->
+<meta name="robots" content="noindex, follow">
+
+<link rel="icon" href="https://www.natcorp.com.br/jobs/favicon-32x32.png" sizes="32x32">
+<link rel="icon" href="https://www.natcorp.com.br/jobs/favicon-180x180.png" sizes="192x192">
+<link rel="apple-touch-icon-precomposed" href="https://www.natcorp.com.br/jobs/favicon-180x180.png">
+
+<meta property="og:locale" content="pt_BR">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Vagas | NATCORP">
+<meta property="og:description" content="Visualize a Vaga.">
+<meta property="og:image" content="https://www.natcorp.com.br/jobs/favicon-16x16.png">
+<meta property="og:image:secure_url" content="https://www.natcorp.com.br/jobs/favicon-16x16.png">
+<meta property="og:url" content="https://www.natcorp.com.br/jobs">
+<meta property="og:site_name" content="Natcorp">
+
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Vagas | NATCORP">
+<meta name="twitter:description" content="Visualize a Vaga.">
+<meta name="twitter:image" content="https://www.natcorp.com.br/jobs/favicon-16x16.png">
+
+<link rel="canonical" href="https://www.natcorp.com.br/jobs">
+</head>
+
+<body>
+<script>
+  function queryString(parameter) {
+    var loc = location.search.substring(1, location.search.length)
+    var param_value = false
+    var params = loc.split('&')
+    for (var i = 0; i < params.length; i++) {
+      var param_name = params[i].substring(0, params[i].indexOf('='))
+      if (param_name == parameter) {
+        param_value = params[i].substring(params[i].indexOf('=') + 1)
+      }
+    }
+    return param_value !== false ? param_value : undefined
+  }
+
+  var company = queryString('company')
+  var id = queryString('id')
+  var board = queryString('board')
+  var url_base
+
+  /* Cada cliente vive numa instância diferente do APEX. */
+  if (company) {
+    if (company == 'STEFANINI') {
+      url_base = 'https://www.natcorpbr.com.br/apex/hcm'
+    } else if (company == 'LEADEC') {
+      url_base = 'https://www.natcorpbr.com.br/apex/natrh'
+    } else if (company == 'SAUDE') {
+      url_base = 'https://www.natcorpbr.com.br/apex/hc'
+    } else {
+      url_base = 'https://www.natcorpbr.com.br/apex/rh'
+    }
+  }
+
+  var url
+  if (company && id && board) {
+    /* Vaga específica, aberta direto na página 3. */
+    url = url_base + '/f?p=QUADRO_VAGAS_' + company + ':3::::3:P_ID,P3_COD:' + board + ',' + id
+  } else if (company && board) {
+    /* Quadro inteiro daquele board. */
+    url = url_base + '/f?p=QUADRO_VAGAS_' + company + ':1::::1:P_ID:' + board
+  } else {
+    console.error('Parâmetros ausentes.')
+    url = 'https://www.natcorp.com.br'
+  }
+
+  /* replace() e não href: o redirecionador não fica no histórico, então o
+     "voltar" do navegador leva o candidato de onde ele veio, e não para cá —
+     que o mandaria de volta para a vaga num laço. */
+  window.location.replace(url)
+</script>
+</body>
+
+</html>

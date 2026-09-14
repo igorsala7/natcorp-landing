@@ -76,11 +76,6 @@
       "permanent": true
     },
     {
-      "source": "/jobs",
-      "destination": "/sobre",
-      "permanent": true
-    },
-    {
       "source": "/congerhi",
       "destination": "/sobre",
       "permanent": true

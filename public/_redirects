@@ -2,7 +2,7 @@
 # GERADO por scripts/generate-redirects.mjs a partir de src/content/legacyRedirects.ts.
 # Não edite à mão: rode `npm run redirects`.
 #
-# 125 regras, cada uma com e sem barra final.
+# 124 regras, cada uma com e sem barra final.
 
 /solucao-de-rh                                                                                            /modulos  301
 /solucao-de-rh/                                                                                           /modulos  301
@@ -34,8 +34,6 @@
 /sobre-nos/                                                                                               /sobre  301
 /servicos                                                                                                 /implantacao  301
 /servicos/                                                                                                /implantacao  301
-/jobs                                                                                                     /sobre  301
-/jobs/                                                                                                    /sobre  301
 /congerhi                                                                                                 /sobre  301
 /congerhi/                                                                                                /sobre  301
 /fale-conosco                                                                                             /contato  301

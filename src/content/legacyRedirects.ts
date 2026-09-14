@@ -56,7 +56,13 @@ export const legacyRedirects: LegacyRedirect[] = [
   { from: '/folha-de-pagamento-teste-prototipo', to: '/modulos/folha-de-pagamento' },
   { from: '/sobre-nos', to: '/sobre' },
   { from: '/servicos', to: '/implantacao' },
-  { from: '/jobs', to: '/sobre' },
+  /* /jobs NÃO entra aqui, e /jobs_dev também não.
+     São os redirecionadores do quadro de vagas, pastas reais em public/jobs/ e
+     public/jobs_dev/ que leem company/board/id da URL e mandam o candidato para
+     o APEX do cliente. Havia uma 301 de /jobs para /sobre nesta lista: ela roda
+     ANTES do DirectoryIndex, então vencia a pasta real e todo link de vaga já
+     publicado ia parar na página "quem somos", perdendo os parâmetros no
+     caminho. Foi assim que /jobs sumiu na migração. */
   { from: '/congerhi', to: '/sobre' },
   { from: '/fale-conosco', to: '/contato' },
   { from: '/fale-conosco-2', to: '/contato' },
