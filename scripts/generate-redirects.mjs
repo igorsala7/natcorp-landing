@@ -204,6 +204,29 @@ RewriteRule ^portais[_-]?(old|antigo|antiga|backup|bkp|legado)(/|$) - [F,L]
 #    a autoridade que levaram anos para juntar.
 ${regrasApache}
 
+# ── 2b. Arquivo que não existe devolve 404 DE VERDADE ───────────────────
+#    Sem isto, o fallback abaixo captura TAMBÉM os pedidos de imagem, CSS e PDF
+#    — e um arquivo inexistente responde 200 com os 400 KB da home.
+#
+#    Descoberto em 16/09, quando uma assinatura de e-mail parou de aparecer:
+#    /email/Assinatura-Carlos-Alberto.png devolvia text/html com 400.120 bytes.
+#    O Outlook pede uma imagem, recebe uma página, e mostra ícone quebrado —
+#    baixando 400 KB a cada abertura para isso.
+#
+#    Pior para a busca: o Google lê 200 OK em endereço que não existe. São
+#    soft-404, que gastam orçamento de rastreamento e sujam o índice.
+#
+#    E pior para nós: arquivo faltando falhava em SILÊNCIO, com cara de sucesso.
+#    Foi assim que a pasta /email/ sumiu na migração sem ninguém perceber.
+#
+#    As duas primeiras condições preservam o que existe; a terceira limita a
+#    regra a pedidos com extensão de arquivo — rota de SPA não tem extensão, e
+#    por isso continua caindo no fallback.
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_URI} \\.(png|jpe?g|gif|webp|avif|svg|ico|bmp|css|js|mjs|map|json|woff2?|ttf|otf|eot|pdf|zip|rar|mp4|webm|mp3|wav|txt|xml|csv|doc|docx|xls|xlsx|ppt|pptx)$ [NC]
+RewriteRule ^ - [R=404,L]
+
 # ── 3. SPA fallback: SÓ quando não existe arquivo nem pasta ─────────────
 #    POR ÚLTIMO, sempre. As duas condições são o que preserva a pasta
 #    /portais/<cliente>/ migrada do servidor atual: sem elas o servidor
