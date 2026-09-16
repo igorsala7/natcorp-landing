@@ -216,12 +216,14 @@ ${regrasApache}
 #    Pior para a busca: o Google lê 200 OK em endereço que não existe. São
 #    soft-404, que gastam orçamento de rastreamento e sujam o índice.
 #
-#    E pior para nós: arquivo faltando falha em SILÊNCIO, com cara de sucesso.
-#    No caso da assinatura, isso me fez concluir errado duas vezes. Só depois
-#    de medir \`NOC-CDN-CacheStatus: MISS\` ficou claro que a resposta vinha da
-#    ORIGEM, e que era o LiteSpeed — não a CDN, não o nome do arquivo — que
-#    não enxergava \`/app/html/email/\`, mesmo o \`ls\` do dono mostrando os
-#    arquivos lá. Um 404 de verdade teria dito isso na primeira tentativa.
+#    E pior para nós: arquivo faltando falha em SILÊNCIO, com cara de sucesso —
+#    "existe mas está bloqueado" e "não existe" davam a MESMA resposta.
+#
+#    Custou meia hora de diagnóstico errado. O arquivo pedido era
+#    Assinatura-Carlos-Alberto.png e o real era Assinatura_Carlos_Alberto.png:
+#    hífen contra sublinhado. Com 404 de verdade a resposta teria sido óbvia na
+#    primeira tentativa; com 200 e a home no corpo, eu fui inventar teoria sobre
+#    permissão de arquivo. Ver docs/assinaturas-de-email.md.
 #
 #    As duas primeiras condições preservam o que existe; a terceira limita a
 #    regra a pedidos com extensão de arquivo — rota de SPA não tem extensão, e
