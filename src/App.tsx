@@ -1,4 +1,4 @@
-import { Suspense, lazy, useEffect } from 'react'
+import { Suspense, lazy, useEffect, useRef } from 'react'
 import { AnimatePresence } from 'motion/react'
 import { BrowserRouter, HashRouter, Navigate, Route, Routes, useLocation, useMatch } from 'react-router'
 import { Toaster } from '@/components/ui/sonner'
@@ -10,6 +10,7 @@ import { ScrollManager } from '@/components/motion/ScrollManager'
 import { Navbar } from '@/components/sections/Navbar'
 import { Footer } from '@/components/sections/Footer'
 import { CookieBar } from '@/components/sections/CookieBar'
+import { registrarPagina } from '@/lib/analytics'
 import LandingPage from '@/pages/LandingPage'
 import { paths } from '@/content/site'
 import { politicaDeCookies, privacidade, termosDeUso } from '@/content/legal'
@@ -251,12 +252,37 @@ function AppRoutes() {
 }
 
 /**
+ * Conta cada rota no Google Analytics.
+ *
+ * Numa SPA a troca de rota não recarrega a página, e o GA4 só dispara sozinho
+ * um page_view — o do carregamento. Sem isto o relatório mostraria apenas por
+ * onde a pessoa entrou, e a tag pareceria funcionar medindo uma fração do site.
+ *
+ * A primeira rota é PULADA de propósito: essa o `config` do GA4 já contou, e
+ * contá-la de novo dobraria a página de entrada em todo relatório.
+ *
+ * Nada acontece sem consentimento: `registrarPagina` só fala com o gtag se ele
+ * existir, e ele só existe depois do aceite na barra de cookies.
+ */
+function usePageViews(pathname: string) {
+  const primeira = useRef(true)
+  useEffect(() => {
+    if (primeira.current) {
+      primeira.current = false
+      return
+    }
+    registrarPagina(pathname)
+  }, [pathname])
+}
+
+/**
  * A moldura do site (barra, rodapé, rolagem suave): fica de fora nas páginas em tela cheia, como a apresentação.
  * A porta de entrada dos portais (/portais/<cliente>) e a administração (/gestao/portais) têm cabeçalho e rodapé
  * próprios, sem o menu de marketing.
  */
 function Shell() {
   const { pathname } = useLocation()
+  usePageViews(pathname)
   // '/animatic' é TEMPORÁRIO: página fotografada quadro a quadro, sem moldura.
   const chromeless = pathname === paths.presentation || pathname === paths.presentationShort || pathname === '/animatic'
   const hubProd = useMatch('/portais/:cliente')
