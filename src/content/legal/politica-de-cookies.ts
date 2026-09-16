@@ -79,6 +79,22 @@ export const politicaDeCookies: LegalDoc = {
           ],
         },
         {
+          t: 'h3',
+          text: 'A exceção: os endereços /jobs e /jobs_dev',
+        },
+        {
+          t: 'p',
+          text: 'Os endereços natcorp.com.br/jobs e natcorp.com.br/jobs_dev não são páginas: são encaminhamentos. Quem clica no anúncio de uma vaga passa por eles em fração de segundo e segue direto para o quadro de vagas da empresa contratante, em natcorpbr.com.br. Não há tela onde perguntar, nem tempo para responder.',
+        },
+        {
+          t: 'p',
+          text: 'Por isso, e apenas nesses dois endereços, as tags de medição do Google Analytics e do Meta são acionadas sem a barra de consentimento, registrando o acesso e os parâmetros da vaga (empresa, quadro e código da vaga). Preferimos declarar isso aqui, com todas as letras, a manter uma promessa que o código não cumpre.',
+        },
+        {
+          t: 'p',
+          text: 'O que isso NÃO muda: no restante do site — todas as demais páginas, incluindo as dos portais — nada de medição ou marketing é carregado antes do seu aceite. E se você recusou na barra, essa recusa continua valendo em todo o resto da navegação.',
+        },
+        {
           t: 'note',
           title: 'Uma observação técnica honesta',
           text: 'Depois que uma tag de terceiro é carregada em uma página, não há como descarregá-la daquela sessão. Por isso, quando você revoga o consentimento, a mudança passa a valer no próximo carregamento de página — e é também por isso que a recusa é respeitada antes, e não depois.',

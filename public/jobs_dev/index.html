@@ -46,6 +46,69 @@
 <meta name="twitter:image" content="https://www.natcorp.com.br/jobs_dev/favicon-16x16.png">
 
 <link rel="canonical" href="https://www.natcorp.com.br/jobs_dev">
+
+<!--
+  MEDIÇÃO NESTE REDIRECIONADOR — decisão do dono em 16/09/2026.
+
+  Aqui as tags disparam SEM barra de consentimento, ao contrário do resto do
+  site. O candidato chega de um anúncio direto nesta URL e sai em seguida: não
+  há página onde perguntar. A política de cookies e os termos de uso foram
+  reescritos no mesmo commit para descrever exatamente isto — site que promete
+  uma coisa e faz outra é prova documental contra a própria empresa.
+
+  O PROBLEMA DE TEMPO, que é o que decide se a medição existe: esta página salta
+  para o APEX em milissegundos. Disparar a tag e redirecionar em seguida não
+  mede nada — o script nem termina de carregar. Por isso o redirecionamento
+  espera, com TETO de 600 ms: sai quando as duas tags acusarem envio, ou quando
+  o teto vencer, o que vier primeiro. O candidato paga no máximo seis décimos.
+
+  O Pixel vai por IMAGEM (o beacon oficial `tr?...&noscript=1`), não por
+  biblioteca: imagem dispara na hora, sem esperar script, que é o que esta
+  página precisa. O GA4 não tem equivalente e vai pelo gtag mesmo, com
+  `transport_type: beacon` para sobreviver à navegação.
+-->
+<script>
+  (function () {
+    var GA4 = 'G-BBE99E2LWM'
+    var PIXEL = '856605322636853'
+    var TETO_MS = 600
+
+    window.__natcorpMedir = function (parametros, seguir) {
+      var saiu = false
+      var faltam = 2
+      function sair() {
+        if (saiu) return
+        saiu = true
+        seguir()
+      }
+      function pronto() {
+        if (--faltam <= 0) sair()
+      }
+      setTimeout(sair, TETO_MS)
+
+      /* Meta: beacon por imagem, dispara imediatamente. */
+      var img = new Image()
+      img.onload = img.onerror = pronto
+      img.src = 'https://www.facebook.com/tr?id=' + PIXEL + '&ev=PageView&noscript=1'
+
+      /* GA4 */
+      window.dataLayer = window.dataLayer || []
+      function gtag() { window.dataLayer.push(arguments) }
+      var s = document.createElement('script')
+      s.async = true
+      s.onerror = pronto
+      s.onload = function () {
+        gtag('js', new Date())
+        gtag('config', GA4, { transport_type: 'beacon' })
+        gtag('event', 'clique_vaga', parametros)
+        /* Um respiro para o gtag montar e despachar a requisição. */
+        setTimeout(pronto, 120)
+      }
+      s.src = 'https://www.googletagmanager.com/gtag/js?id=' + GA4
+      document.head.appendChild(s)
+    }
+  })()
+</script>
 </head>
 
 <body>
@@ -80,7 +143,19 @@
     url = 'https://www.natcorp.com.br'
   }
 
-  window.location.replace(url)
+  /* replace() e não href: o redirecionador não fica no histórico, então o
+     "voltar" do navegador leva o candidato de onde ele veio, e não para cá —
+     que o mandaria de volta para a vaga num laço.
+
+     Passa pela medição antes: ela dispara as tags e chama de volta quando
+     terminarem, ou quando o teto de tempo vencer. Os parâmetros da vaga vão
+     junto — sem eles o relatório diria só "alguém clicou em alguma vaga". */
+  window.__natcorpMedir(
+    { empresa: company || '(sem empresa)', quadro: board || '(sem quadro)', vaga: id || '(quadro inteiro)' },
+    function () {
+      window.location.replace(url)
+    },
+  )
 </script>
 </body>
 
