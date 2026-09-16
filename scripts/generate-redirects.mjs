@@ -216,8 +216,12 @@ ${regrasApache}
 #    Pior para a busca: o Google lê 200 OK em endereço que não existe. São
 #    soft-404, que gastam orçamento de rastreamento e sujam o índice.
 #
-#    E pior para nós: arquivo faltando falhava em SILÊNCIO, com cara de sucesso.
-#    Foi assim que a pasta /email/ sumiu na migração sem ninguém perceber.
+#    E pior para nós: arquivo faltando falha em SILÊNCIO, com cara de sucesso.
+#    No caso da assinatura, isso me fez concluir errado duas vezes. Só depois
+#    de medir \`NOC-CDN-CacheStatus: MISS\` ficou claro que a resposta vinha da
+#    ORIGEM, e que era o LiteSpeed — não a CDN, não o nome do arquivo — que
+#    não enxergava \`/app/html/email/\`, mesmo o \`ls\` do dono mostrando os
+#    arquivos lá. Um 404 de verdade teria dito isso na primeira tentativa.
 #
 #    As duas primeiras condições preservam o que existe; a terceira limita a
 #    regra a pedidos com extensão de arquivo — rota de SPA não tem extensão, e
