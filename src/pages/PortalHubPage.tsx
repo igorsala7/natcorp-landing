@@ -18,7 +18,7 @@ import { ModuleLights, amberPalette, rosePalette } from '@/components/portals/Mo
 import { NATPONTO_SIZE } from '@/components/mockups/natponto/NatPontoFrame'
 import { NatPontoPhone } from '@/components/mockups/natponto/screens'
 import { useSeo } from '@/hooks/useSeo'
-import { usePortalClient, usePortalClients } from '@/hooks/usePortalClient'
+import { usePortalClient } from '@/hooks/usePortalClient'
 import { appsDoCliente, clientLogo, hubPath, portalHost, portalUrl, temNatPonto, type PortalApp, type PortalClient, type PortalEnv } from '@/content/portals'
 import { paths, siteConfig } from '@/content/site'
 import { EASE, viewportOnce } from '@/lib/motion'
@@ -775,8 +775,16 @@ function Help({ client, env }: { client: PortalClient; env: PortalEnv }) {
 
 /* ---------------- ambiente não encontrado ---------------- */
 
+/**
+ * A carteira de clientes NÃO aparece aqui. Esta tela já listou todas as empresas
+ * atendidas, uma por botão, para quem digitasse qualquer endereço errado — bastava
+ * abrir /portais/dev/qualquer-coisa para ler a carteira inteira. Retirado a pedido do
+ * dono em 21/09/2026: "JAMAIS pode expor essas informações".
+ *
+ * Quem chega aqui erra o endereço, e o caminho de volta é o RH da própria empresa —
+ * que é quem tem o endereço certo. Nenhum nome de cliente pode ser impresso nesta página.
+ */
 function NotFound({ slug, env }: { slug: string; env: PortalEnv }) {
-  const known = usePortalClients()
   return (
     <PageTransition>
       <header className="on-dark border-b border-white/10 bg-brand-blue text-white">
@@ -791,21 +799,23 @@ function NotFound({ slug, env }: { slug: string; env: PortalEnv }) {
           <Eyebrow>Portais Natcorp{env === 'dev' ? ' · Homologação' : ''}</Eyebrow>
           <h1 className="mt-5 text-[2rem] font-extrabold leading-tight text-brand-ink sm:text-4xl">Não encontramos o ambiente "{slug}".</h1>
           <p className="mt-4 text-[16px] leading-relaxed text-brand-graphite">
-            Cada empresa tem o próprio endereço, no formato natcorp.com.br/portais/<b>nome-da-empresa</b>. Confira o endereço que o RH da sua empresa enviou ou escolha
-            abaixo.
+            Cada empresa tem o próprio endereço, no formato natcorp.com.br/portais/<b>nome-da-empresa</b>. Confira o endereço exato com o RH da sua empresa — é ele quem
+            envia o link de acesso.
           </p>
-          <ul className="mt-8 flex flex-wrap gap-2">
-            {known.map((c) => (
-              <li key={c.slug}>
-                <Link
-                  to={hubPath(c.slug, env)}
-                  className="inline-flex items-center gap-1.5 rounded-full border border-brand-mist bg-white px-4 py-2 text-[13.5px] font-bold text-brand-purple shadow-soft hover:border-brand-purple/40"
-                >
-                  {c.name} <ArrowRight className="h-3.5 w-3.5" />
-                </Link>
-              </li>
-            ))}
-          </ul>
+          <div className="mt-8 flex flex-wrap gap-3">
+            <Link
+              to={paths.home}
+              className="inline-flex items-center gap-1.5 rounded-full bg-brand-purple px-5 py-2.5 text-[13.5px] font-bold text-white shadow-soft hover:bg-brand-purple/90"
+            >
+              Ir para o site da Natcorp <ArrowRight className="h-3.5 w-3.5" />
+            </Link>
+            <Link
+              to={paths.contact}
+              className="inline-flex items-center gap-1.5 rounded-full border border-brand-mist bg-white px-5 py-2.5 text-[13.5px] font-bold text-brand-purple shadow-soft hover:border-brand-purple/40"
+            >
+              Falar com a Natcorp <ArrowRight className="h-3.5 w-3.5" />
+            </Link>
+          </div>
         </div>
       </Section>
     </PageTransition>
