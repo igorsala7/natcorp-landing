@@ -1,0 +1,34 @@
+{
+  "slug": "saude",
+  "name": "Saúde",
+  "code": "SAUDE",
+  "apex": "hc",
+  "logoUrl": "/portais/logos/saude.png",
+  "apps": [
+    "colaborador",
+    "gestor",
+    "operador",
+    "candidato",
+    "natdocs",
+    "chamado"
+  ],
+  "natponto": true,
+  "urls": {
+    "prod": {
+      "colaborador": "https://www.natcorpbr.com.br/apex/hc/f?p=PC_SAUDE",
+      "gestor": "https://www.natcorpbr.com.br/apex/hc/f?p=PG_SAUDE",
+      "operador": "https://www.natcorpbr.com.br/apex/hc/f?p=PO_SAUDE",
+      "candidato": "https://www.natcorpbr.com.br/apex/hc/f?p=CV_SAUDE",
+      "natdocs": "https://www.natcorpbr.com.br/apex/hc/f?p=NATDOCS_SAUDE",
+      "chamado": "https://www.natcorpbr.com.br/apex/rh/f?p=CHAMADO_NATCORP"
+    },
+    "dev": {
+      "colaborador": "https://www.natcorpbr.com.br/apex/dev/f?p=PC_SAUDE",
+      "gestor": "https://www.natcorpbr.com.br/apex/dev/f?p=PG_SAUDE",
+      "operador": "https://www.natcorpbr.com.br/apex/dev/f?p=PO_SAUDE",
+      "candidato": "https://www.natcorpbr.com.br/apex/dev/f?p=CV_SAUDE",
+      "natdocs": "https://www.natcorpbr.com.br/apex/dev/f?p=NATDOCS_SAUDE",
+      "chamado": "https://www.natcorpbr.com.br/apex/dev/f?p=CHAMADO_NATCORP"
+    }
+  }
+}

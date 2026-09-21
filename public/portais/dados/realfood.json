@@ -1,0 +1,34 @@
+{
+  "slug": "realfood",
+  "name": "RealFood",
+  "code": "REALFOOD",
+  "apex": "cloud",
+  "logoUrl": "/portais/logos/realfood.png",
+  "apps": [
+    "colaborador",
+    "gestor",
+    "operador",
+    "candidato",
+    "natdocs",
+    "chamado"
+  ],
+  "natponto": true,
+  "urls": {
+    "prod": {
+      "colaborador": "https://www.natcorpbr.com.br/apex/cloud/f?p=PC_REALFOOD",
+      "gestor": "https://www.natcorpbr.com.br/apex/cloud/f?p=PG_REALFOOD",
+      "operador": "https://www.natcorpbr.com.br/apex/cloud/f?p=PO_REALFOOD",
+      "candidato": "https://www.natcorpbr.com.br/apex/cloud/f?p=CV_REALFOOD",
+      "natdocs": "https://www.natcorpbr.com.br/apex/cloud/f?p=NATDOCS_REALFOOD",
+      "chamado": "https://www.natcorpbr.com.br/apex/rh/f?p=CHAMADO_NATCORP"
+    },
+    "dev": {
+      "colaborador": "https://www.natcorpbr.com.br/apex/dev/f?p=PC_REALFOOD",
+      "gestor": "https://www.natcorpbr.com.br/apex/dev/f?p=PG_REALFOOD",
+      "operador": "https://www.natcorpbr.com.br/apex/dev/f?p=PO_REALFOOD",
+      "candidato": "https://www.natcorpbr.com.br/apex/dev/f?p=CV_REALFOOD",
+      "natdocs": "https://www.natcorpbr.com.br/apex/dev/f?p=NATDOCS_REALFOOD",
+      "chamado": "https://www.natcorpbr.com.br/apex/dev/f?p=CHAMADO_REALFOOD"
+    }
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "slug": "natcorp",
+  "name": "Natcorp",
+  "code": "NATCORP",
+  "apex": "rh",
+  "apps": [
+    "colaborador",
+    "gestor",
+    "operador",
+    "candidato",
+    "natdocs",
+    "chamado"
+  ],
+  "natponto": true,
+  "urls": {
+    "prod": {
+      "colaborador": "https://www.natcorpbr.com.br/apex/rh/f?p=PC_NATCORP",
+      "gestor": "https://www.natcorpbr.com.br/apex/rh/f?p=PG_NATCORP",
+      "operador": "https://www.natcorpbr.com.br/apex/rh/f?p=PO_NATCORP",
+      "candidato": "https://www.natcorpbr.com.br/apex/rh/f?p=CV_NATCORP",
+      "natdocs": "https://www.natcorpbr.com.br/apex/rh/f?p=NATDOCS_NATCORP",
+      "chamado": "https://www.natcorpbr.com.br/apex/rh/f?p=CHAMADO_NATCORP"
+    },
+    "dev": {
+      "colaborador": "https://www.natcorpbr.com.br/apex/dev/f?p=PC_NATCORP",
+      "gestor": "https://www.natcorpbr.com.br/apex/dev/f?p=PG_NATCORP",
+      "operador": "https://www.natcorpbr.com.br/apex/dev/f?p=PO_NATCORP",
+      "candidato": "https://www.natcorpbr.com.br/apex/dev/f?p=CV_NATCORP",
+      "natdocs": "https://www.natcorpbr.com.br/apex/dev/f?p=NATDOCS_NATCORP",
+      "chamado": "https://www.natcorpbr.com.br/apex/dev/f?p=CHAMADO_NATCORP"
+    }
+  }
+}

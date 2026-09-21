@@ -1,0 +1,34 @@
+{
+  "slug": "incor",
+  "name": "Incor",
+  "code": "INCOR",
+  "apex": "rh",
+  "logoUrl": "/portais/logos/incor.png",
+  "apps": [
+    "colaborador",
+    "gestor",
+    "operador",
+    "candidato",
+    "natdocs",
+    "chamado"
+  ],
+  "natponto": false,
+  "urls": {
+    "prod": {
+      "colaborador": "https://www.natcorpbr.com.br/apex/rh/f?p=PC_INCOR",
+      "gestor": "https://www.natcorpbr.com.br/apex/rh/f?p=PG_INCOR",
+      "operador": "https://www.natcorpbr.com.br/apex/rh/f?p=PO_INCOR",
+      "candidato": "https://www.natcorpbr.com.br/apex/rh/f?p=CV_INCOR",
+      "natdocs": "https://www.natcorpbr.com.br/apex/rh/f?p=NATDOCS_INCOR",
+      "chamado": "https://www.natcorpbr.com.br/apex/rh/f?p=CHAMADO_NATCORP"
+    },
+    "dev": {
+      "colaborador": "https://www.natcorpbr.com.br/apex/dev/f?p=PC_INCOR",
+      "gestor": "https://www.natcorpbr.com.br/apex/dev/f?p=PG_INCOR",
+      "operador": "https://www.natcorpbr.com.br/apex/dev/f?p=PO_INCOR",
+      "candidato": "https://www.natcorpbr.com.br/apex/dev/f?p=CV_INCOR",
+      "natdocs": "https://www.natcorpbr.com.br/apex/dev/f?p=NATDOCS_INCOR",
+      "chamado": "https://www.natcorpbr.com.br/apex/dev/f?p=CHAMADO_NATCORP"
+    }
+  }
+}

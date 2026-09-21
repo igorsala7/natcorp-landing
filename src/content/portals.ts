@@ -10,8 +10,23 @@
  * O <ambiente> muda conforme o servidor do cliente (rh, natrh, hc, hcm, cloud) e é "dev" na homologação.
  *
  * O logotipo é um arquivo em src/assets/portals/logos/ (o nome fica no cadastro; sem ele, vale <slug>.svg|png|webp).
+ *
+ * ESTE MÓDULO NÃO CONHECE A LISTA DE CLIENTES, e não pode voltar a conhecer.
+ *
+ * Até 21/09/2026 ele fazia `import registry from './portals.json'`. O rodapé
+ * importa daqui uma função de uma linha (hubPath) e está em toda página — então
+ * o empacotador levava o cadastro inteiro para o pacote principal, e qualquer
+ * visitante lia os sete clientes com código e endereços no DevTools. O dono:
+ * "JAMAIS pode expor essas informações".
+ *
+ * A separação que conserta: aqui ficam TIPOS e FUNÇÕES PURAS, que não custam
+ * nada a quem importa. Os dados de UM cliente vêm em tempo de execução, de
+ * /portais/dados/<slug>.json (gerado por scripts/build-portal-data.mjs), e só
+ * a página daquele cliente os carrega. A lista não existe em arquivo publicado.
+ *
+ * Quem precisa do cadastro inteiro é a administração, e ela o lê do GitHub com
+ * o token do administrador — nunca do site.
  */
-import registry from './portals.json'
 
 export const APEX_HOST = 'https://www.natcorpbr.com.br/apex/'
 
@@ -129,6 +144,8 @@ export interface PortalClient {
   apex: string
   /** Nome do arquivo do logotipo em src/assets/portals/logos/ (null: sem logotipo, mostra o nome). */
   logo?: string | null
+  /** Caminho público do logotipo, gravado por scripts/build-portal-data.mjs no arquivo do cliente. */
+  logoUrl?: string
   active?: boolean
   /**
    * O que este cliente CONTRATOU. Ausente = tudo, para o cadastro antigo não
@@ -145,12 +162,6 @@ export interface PortalClient {
   urls?: { prod?: PortalUrls; dev?: PortalUrls }
 }
 
-/** O cadastro, como está em src/content/portals.json, na ordem do arquivo. */
-export const portalClients: PortalClient[] = (registry as { clients: PortalClient[] }).clients
-
-/** O cabeçalho explicativo do portals.json, para quem regrava o arquivo não o perder. */
-export const registryComment: string = (registry as { _comentario?: string })._comentario ?? ''
-
 /** Servidores conhecidos do APEX de produção (para o preenchimento automático no cadastro). */
 export const apexServers = ['rh', 'natrh', 'hc', 'hcm', 'cloud'] as const
 
@@ -159,12 +170,6 @@ export const normalizeSlug = (raw: string) =>
     .trim()
     .toLowerCase()
     .replace(/^\/+|\/+$/g, '')
-
-/** Resolve o cliente a partir do trecho da URL; null quando não há ambiente ativo com esse nome. */
-export function resolveClient(raw: string | undefined): PortalClient | null {
-  const slug = normalizeSlug(raw ?? '')
-  return portalClients.find((c) => c.slug === slug && c.active !== false) ?? null
-}
 
 /** Caminho do ambiente no APEX: o do cliente em produção, "dev" na homologação. */
 export function apexPath(client: Pick<PortalClient, 'apex'>, env: PortalEnv): string {
@@ -228,23 +233,17 @@ export function portalHost(client: PortalClient, env: PortalEnv): string {
 
 export const hubPath = (slug = 'natcorp', env: PortalEnv = 'prod') => (env === 'dev' ? `/portais/dev/${slug}` : `/portais/${slug}`)
 
-/* Logotipos dos clientes, descobertos pelo nome do arquivo em src/assets/portals/logos/. */
-const logoFiles = import.meta.glob<{ default: string }>('../assets/portals/logos/*.{svg,png,webp,jpg,jpeg}', { eager: true })
+/* Logotipos: por URL, nunca por import.meta.glob.
+   O glob antigo (`../assets/portals/logos/*`) escrevia a lista de arquivos —
+   realfood.png, redeflex.png, stefanini.png — dentro do pacote publicado, o que
+   entregava a carteira pelo nome dos logotipos mesmo sem o cadastro. Agora o
+   build copia cada arquivo para public/portais/logos/ e grava a URL no JSON do
+   próprio cliente. */
 
-/** URL do arquivo de logotipo pelo nome (ex.: "stefanini.svg"), quando existe na pasta. */
-export function logoFile(name: string | null | undefined): string | undefined {
-  if (!name) return undefined
-  for (const [path, mod] of Object.entries(logoFiles)) if (path.split('/').pop() === name) return mod.default
-  return undefined
-}
+/** Caminho público do logotipo de um cliente, pelo nome do arquivo no cadastro. */
+export const logoUrlFromName = (name: string | null | undefined): string | undefined => (name ? `/portais/logos/${name}` : undefined)
 
-/** Logotipo do cliente: o arquivo do cadastro ou, na falta dele, <slug>.(svg|png|webp) na mesma pasta. */
-export function clientLogo(client: Pick<PortalClient, 'slug' | 'logo'>): string | undefined {
-  const named = logoFile(client.logo)
-  if (named) return named
-  for (const [path, mod] of Object.entries(logoFiles)) {
-    const file = path.split('/').pop() ?? ''
-    if (file.replace(/\.(svg|png|webp|jpe?g)$/, '') === client.slug) return mod.default
-  }
-  return undefined
+/** Logotipo do cliente, como veio no arquivo de dados dele. */
+export function clientLogo(client: Pick<PortalClient, 'logoUrl'>): string | undefined {
+  return client.logoUrl || undefined
 }

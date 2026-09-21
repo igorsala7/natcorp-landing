@@ -30,7 +30,6 @@ import {
   REGISTRY_PATH,
   REPO,
   TOKEN_URL,
-  bundledClients,
   checkAccess,
   cleanClient,
   fetchRegistry,
@@ -46,12 +45,11 @@ import {
   defaultPortalUrl,
   defaultPortalUrls,
   hubPath,
-  logoFile,
+  logoUrlFromName,
   normalizeSlug,
   portalApps,
   type PortalClient,
   type PortalEnv,
-  registryComment,
   type PortalKey,
   type PortalUrls,
 } from '@/content/portals'
@@ -257,7 +255,12 @@ interface WorkspaceProps {
 }
 
 function Workspace({ token, preview, onLogin, onTokenInvalid }: WorkspaceProps) {
-  const [clients, setClients] = useState<PortalClient[]>(() => bundledClients())
+  /* Começa VAZIO e espera o GitHub: o site não carrega mais a lista de clientes. */
+  const [clients, setClients] = useState<PortalClient[]>([])
+  /* O cabeçalho do portals.json vem junto do cadastro, para o download não o
+     perder. Antes ele era uma constante compilada no site; agora chega do
+     repositório com o resto. */
+  const [comentario, setComentario] = useState('')
   const [loading, setLoading] = useState(!preview)
   const [selected, setSelected] = useState<string | null>(null)
   const [creating, setCreating] = useState(false)
@@ -274,6 +277,7 @@ function Workspace({ token, preview, onLogin, onTokenInvalid }: WorkspaceProps) 
       .then((snap) => {
         if (!alive) return
         setClients(snap.clients)
+        setComentario(snap.registry._comentario ?? '')
         setLoading(false)
       })
       .catch((err) => {
@@ -325,7 +329,7 @@ function Workspace({ token, preview, onLogin, onTokenInvalid }: WorkspaceProps) 
             o arquivo sai daqui pronto para entrar no projeto. */}
         {preview && (
           <div className="mt-3">
-            <BaixarCadastro clients={clients} />
+            <BaixarCadastro clients={clients} comentario={comentario} />
           </div>
         )}
         <div className="relative mt-4">
@@ -466,7 +470,7 @@ function ClientForm({ initial, isNew, token, onSaved, onDeleted, onCancel }: Cli
     }))
 
   const errors = validate(draft)
-  const logoUrl = logo?.url ?? logoFile(draft.logo)
+  const logoUrl = logo?.url ?? logoUrlFromName(draft.logo)
 
   const save = async (e: FormEvent) => {
     e.preventDefault()
@@ -907,9 +911,9 @@ function ContratadoCard({
  * `serialize`, mesmo `cleanClient`), para ser colocado em src/content/ e entrar
  * no próximo build.
  */
-function BaixarCadastro({ clients }: { clients: PortalClient[] }) {
+function BaixarCadastro({ clients, comentario }: { clients: PortalClient[]; comentario: string }) {
   const baixar = () => {
-    const conteudo = serialize({ _comentario: registryComment, clients: clients.map(cleanClient) })
+    const conteudo = serialize({ _comentario: comentario, clients: clients.map(cleanClient) })
     const url = URL.createObjectURL(new Blob([conteudo], { type: 'application/json' }))
     const a = document.createElement('a')
     a.href = url

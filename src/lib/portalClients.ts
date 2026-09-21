@@ -1,4 +1,4 @@
-import { normalizeSlug, portalApps, portalClients, type PortalClient, type PortalUrls } from '@/content/portals'
+import { normalizeSlug, portalApps, type PortalClient, type PortalUrls } from '@/content/portals'
 
 /**
  * Gravação do cadastro dos portais no repositório, pela API do GitHub.
@@ -143,8 +143,11 @@ export interface RegistrySnapshot {
   registry: Registry
 }
 
-/** O cadastro embutido no site (o que estava no repositório no último build). */
-export const bundledClients = (): PortalClient[] => portalClients.map((c) => ({ ...c }))
+/* NÃO EXISTE MAIS UM CADASTRO EMBUTIDO. Havia um `bundledClients()` aqui, que
+   devolvia a lista de clientes compilada dentro do site — e era ela que fazia o
+   pacote publicado carregar as sete empresas, legíveis por qualquer visitante.
+   Retirado em 21/09/2026. A administração passa a ler o cadastro SÓ do GitHub,
+   com o token do administrador, que é quem tem direito de ver a lista inteira. */
 
 /** O cadastro como está no repositório agora (pode estar à frente do site publicado). */
 export async function fetchRegistry(token: string): Promise<RegistrySnapshot> {
@@ -179,6 +182,9 @@ const CAMPOS_TRATADOS: Record<keyof PortalClient, true> = {
   code: true,
   apex: true,
   logo: true,
+  /* Publicado, nunca gravado: quem escreve logoUrl é scripts/build-portal-data.mjs,
+     no arquivo de cada cliente. Está aqui só para o Record obrigar a decisão. */
+  logoUrl: true,
   active: true,
   apps: true,
   natponto: true,

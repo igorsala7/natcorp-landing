@@ -117,7 +117,7 @@ const figures: Partial<Record<PortalApp['key'], { principal: Figura; dupla?: Fig
  */
 export default function PortalHubPage({ env = 'prod' }: { env?: PortalEnv }) {
   const { cliente } = useParams()
-  const client = usePortalClient(cliente)
+  const { status, client } = usePortalClient(cliente)
   const dev = env === 'dev'
 
   useSeo({
@@ -129,7 +129,11 @@ export default function PortalHubPage({ env = 'prod' }: { env?: PortalEnv }) {
     noindex: dev || !client || client.slug !== 'natcorp',
   })
 
-  if (!client) return <NotFound slug={cliente ?? ''} env={env} />
+  /* Os dados do cliente chegam por rede (ver usePortalClient: a lista não pode
+     estar no pacote). Enquanto não chegam, a tela fica NEUTRA — mostrar o 404
+     aqui faria o cliente certo ver "não encontramos" a cada visita. */
+  if (status === 'carregando') return <Carregando env={env} />
+  if (status !== 'ok' || !client) return <NotFound slug={cliente ?? ''} env={env} />
 
   /* Um cliente pode não ter nenhum aplicativo de uma das famílias. Nesse caso a
      seção inteira sai — título, grade e tudo. Renderizar um cabeçalho
@@ -770,6 +774,35 @@ function Help({ client, env }: { client: PortalClient; env: PortalEnv }) {
         </Reveal>
       </div>
     </Section>
+  )
+}
+
+/* ---------------- espera e ambiente não encontrado ---------------- */
+
+/**
+ * O primeiro quadro, enquanto o arquivo do cliente não chegou.
+ *
+ * Repete o cabeçalho escuro da página pronta em vez de um indicador genérico:
+ * assim a troca não pisca, e quem chega já vê a marca certa. Sem nome de
+ * cliente nenhum — este é o estado em que ainda não se sabe quem é.
+ */
+function Carregando({ env }: { env: PortalEnv }) {
+  return (
+    <PageTransition>
+      <header className="on-dark border-b border-white/10 bg-brand-blue text-white">
+        <div className="container flex h-16 items-center">
+          <Link to={paths.home} aria-label="Natcorp, ir para o site">
+            <Logo variant="horizontal" tone="white" decorative className="h-8 w-auto" />
+          </Link>
+        </div>
+      </header>
+      <Section tone="off" className="min-h-[calc(100vh-4rem)] py-16">
+        <div className="container max-w-2xl" role="status" aria-live="polite">
+          <Eyebrow>Portais Natcorp{env === 'dev' ? ' · Homologação' : ''}</Eyebrow>
+          <p className="mt-5 text-[16px] leading-relaxed text-brand-graphite">Abrindo o seu ambiente…</p>
+        </div>
+      </Section>
+    </PageTransition>
   )
 }
 
