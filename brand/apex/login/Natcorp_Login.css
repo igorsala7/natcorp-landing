@@ -14,13 +14,21 @@
 
    REVERTER: apagar a linha do File URLs. Nada mais foi alterado.
 
-   A ORDEM NÃO IMPORTA: toda regra começa com body.t-PageBody--login e vence
-   por especificidade o Theme Roller, o Natcorp_Style_Min.css antigo e o
-   <style> inline da página 900 — carregada antes ou depois deles.
-   Os !important que restam competem com:
-     - o style="" inline do <body> (imagem BACKGROUND.png);
-     - o <style> inline da página 900 (.t-Login-title, .t-Login-header);
-     - o Natcorp_Style_Min.css antigo (.t-Form-fieldContainer, :focus rosa).
+   PRIORIDADE — esta folha vale por cima de qualquer outra, sem editá-las.
+   O gerador faz três coisas que a fonte não mostra:
+     1. toda declaração ganha !important;
+     2. todo "body.t-PageBody--login" ganha :not(#nc-p1):not(#nc-p2), o
+        peso de DOIS IDs sem ID nenhum na página. Entre dois !important
+        decide a especificidade, e as regras mais fortes das outras folhas
+        do APEX pesam no máximo um ID (o :not(#nc-fake-id) do
+        Natcorp_Style_Min.css do workspace natcorp);
+     3. a seção "Zerar o outro redesenho do login" (no fim) desfaz as
+        propriedades que SÓ a outra folha declara — prioridade não decide
+        o que só um lado escreve. Essa lista foi medida em 26/09 no app 100
+        com medir-conflitos.js; se aquela folha mudar, meça de novo.
+   O que CSS nenhum vence: style="" com !important gravado por JavaScript,
+   uma folha com três IDs ou mais, ou um script que tire a classe
+   t-PageBody--login do <body>.
 
    NÃO EDITE ESTE ARQUIVO À MÃO: ele é gerado a partir de
    brand/apex/login/Natcorp_Login.src.css por gerar-login.mjs
@@ -42,7 +50,7 @@
    O :has() prende a raiz ao login. O :where() é tolerante: um navegador sem
    :has() descarta só aquele item, o body continua recebendo os tokens e só a
    frase de apoio some (numa lista comum, a regra INTEIRA seria descartada). */
-:where(:root:has(body.t-PageBody--login), body.t-PageBody--login) {
+:where(:root:has(body.t-PageBody--login:not(#nc-p1):not(#nc-p2)), body.t-PageBody--login:not(#nc-p1):not(#nc-p2)) {
   --nc-roxo: #511C76;
   --nc-azul: #2C1A63;
   --nc-ameixa: #9A408A;
@@ -64,11 +72,11 @@
   --nc-pad: clamp(48px, 6vw, 112px);   /* margem lateral do painel */
 }
 
-body.t-PageBody--login {
+body.t-PageBody--login:not(#nc-p1):not(#nc-p2) {
   background: #fff !important;        /* vence o style="" inline */
-  font-family: Manrope, "Segoe UI", system-ui, sans-serif;
-  color: var(--nc-tinta);
-  -webkit-font-smoothing: antialiased;
+  font-family: Manrope, "Segoe UI", system-ui, sans-serif !important;
+  color: var(--nc-tinta) !important;
+  -webkit-font-smoothing: antialiased !important;
 }
 
 /* ---------- Painel de marca (direita) -------------------------------
@@ -85,299 +93,557 @@ body.t-PageBody--login {
      html::after            frase de apoio
    -------------------------------------------------------------------- */
 
-body.t-PageBody--login::before {
-  content: "";
-  position: fixed;
-  inset: 0 0 0 calc(100% - var(--nc-painel));
+body.t-PageBody--login:not(#nc-p1):not(#nc-p2)::before {
+  content: "" !important;
+  position: fixed !important;
+  inset: 0 0 0 calc(100% - var(--nc-painel)) !important;
   background:
     url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1000 1250' preserveAspectRatio='xMidYMid slice'%3E%3Cstyle%3E.draw{stroke-dasharray:1 1;stroke-dashoffset:1;opacity:0;animation:draw 2.2s cubic-bezier(.22,1,.36,1) .2s forwards}.d2{animation-duration:2.6s;animation-delay:.7s}.fl{animation-duration:1.8s}@keyframes draw{to{stroke-dashoffset:0;opacity:1}}.run{stroke-dasharray:.07 1;opacity:0;animation:run 14s linear infinite,in 1.2s ease 2.4s forwards}.run.w{stroke-dasharray:.055 1}@keyframes run{from{stroke-dashoffset:0}to{stroke-dashoffset:-2}}.pk{stroke-dasharray:.08 1;stroke-dashoffset:1;opacity:0;animation:pk linear infinite,in 1s ease forwards}@keyframes pk{from{stroke-dashoffset:1}to{stroke-dashoffset:-1}}@keyframes in{to{opacity:var(--o,1)}}.small{opacity:0;transform-box:fill-box;transform-origin:center;animation:in 1.2s cubic-bezier(.22,1,.36,1) 1.2s forwards,breathe 6s ease-in-out 2.4s infinite}@keyframes breathe{50%25{transform:scale(1.05)}}.glow{animation:drift 12s ease-in-out infinite}@keyframes drift{0%25,100%25{transform:translate(0,0);opacity:.5}50%25{transform:translate(180px,125px);opacity:.9}}.net{animation:slide 150s linear infinite}@keyframes slide{to{transform:translateX(-1000px)}}%3C/style%3E%3Cdefs%3E%3CradialGradient id='g' cx='.5' cy='.5' r='.5'%3E%3Cstop offset='0' stop-color='%23C95788' stop-opacity='.3'/%3E%3Cstop offset='.45' stop-color='%23C95788' stop-opacity='.1'/%3E%3Cstop offset='1' stop-color='%23C95788' stop-opacity='0'/%3E%3C/radialGradient%3E%3Cpattern id='grid' width='56' height='56' patternUnits='userSpaceOnUse'%3E%3Cpath d='M56 0H0V56' fill='none' stroke='%23fff' stroke-opacity='.06'/%3E%3C/pattern%3E%3CradialGradient id='gm' cx='0.85' cy='0.86' r='.62'%3E%3Cstop offset='0' stop-color='%23fff'/%3E%3Cstop offset='.75' stop-color='%23fff' stop-opacity='0'/%3E%3C/radialGradient%3E%3Cmask id='mg'%3E%3Crect width='1000' height='1250' fill='url(%23gm)'/%3E%3C/mask%3E%3ClinearGradient id='nm' x1='0' x2='1'%3E%3Cstop offset='.05' stop-color='%23fff' stop-opacity='.15'/%3E%3Cstop offset='.6' stop-color='%23fff' stop-opacity='.7'/%3E%3C/linearGradient%3E%3Cmask id='mn'%3E%3Crect width='1000' height='1250' fill='url(%23nm)'/%3E%3C/mask%3E%3ClinearGradient id='edge' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%23F3C9DA' stop-opacity='.95'/%3E%3Cstop offset='.5' stop-color='%23E4A9C4' stop-opacity='.75'/%3E%3Cstop offset='1' stop-color='%23C95788' stop-opacity='.4'/%3E%3C/linearGradient%3E%3ClinearGradient id='edge2' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%23E4A9C4' stop-opacity='.9'/%3E%3Cstop offset='.5' stop-color='%23C95788' stop-opacity='.75'/%3E%3Cstop offset='1' stop-color='%23C95788' stop-opacity='.45'/%3E%3C/linearGradient%3E%3ClinearGradient id='glass' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%23F3C9DA' stop-opacity='.3'/%3E%3Cstop offset='.55' stop-color='%23C95788' stop-opacity='.16'/%3E%3Cstop offset='1' stop-color='%23511C76' stop-opacity='.1'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='1000' height='1250' fill='url(%23grid)' mask='url(%23mg)'/%3E%3Cg mask='url(%23mn)'%3E%3Cg class='net'%3E%3Cg id='t'%3E%3Cg stroke='%23E4A9C4' stroke-width='1'%3E%3Cline x1='0.1' y1='1151.0' x2='77.9' y2='1245.3' stroke-opacity='0.052'/%3E%3Cline x1='0.1' y1='1151.0' x2='-115.4' y2='1113.2' stroke-opacity='0.053'/%3E%3Cline x1='210.6' y1='911.7' x2='329.3' y2='940.1' stroke-opacity='0.052'/%3E%3Cline x1='329.3' y1='940.1' x2='344.1' y2='830.5' stroke-opacity='0.074'/%3E%3Cline x1='542.9' y1='855.6' x2='557.4' y2='911.6' stroke-opacity='0.172'/%3E%3Cline x1='542.9' y1='855.6' x2='565.3' y2='849.2' stroke-opacity='0.236'/%3E%3Cline x1='816.8' y1='302.5' x2='807.4' y2='153.5' stroke-opacity='0.001'/%3E%3Cline x1='816.8' y1='302.5' x2='900.1' y2='235.2' stroke-opacity='0.080'/%3E%3Cline x1='707.9' y1='872.6' x2='565.3' y2='849.2' stroke-opacity='0.010'/%3E%3Cline x1='683.9' y1='584.9' x2='741.1' y2='611.7' stroke-opacity='0.162'/%3E%3Cline x1='683.9' y1='584.9' x2='714.1' y2='622.7' stroke-opacity='0.190'/%3E%3Cline x1='807.4' y1='153.5' x2='909.0' y2='68.6' stroke-opacity='0.033'/%3E%3Cline x1='807.4' y1='153.5' x2='877.6' y2='138.8' stroke-opacity='0.146'/%3E%3Cline x1='807.4' y1='153.5' x2='900.1' y2='235.2' stroke-opacity='0.050'/%3E%3Cline x1='923.2' y1='860.6' x2='863.0' y2='793.9' stroke-opacity='0.112'/%3E%3Cline x1='923.2' y1='860.6' x2='907.8' y2='951.4' stroke-opacity='0.108'/%3E%3Cline x1='923.2' y1='860.6' x2='1001.6' y2='771.1' stroke-opacity='0.058'/%3E%3Cline x1='577.4' y1='1140.0' x2='489.3' y2='1253.7' stroke-opacity='0.011'/%3E%3Cline x1='577.4' y1='1140.0' x2='636.9' y2='1152.6' stroke-opacity='0.166'/%3E%3Cline x1='372.2' y1='419.2' x2='428.5' y2='368.6' stroke-opacity='0.139'/%3E%3Cline x1='372.2' y1='419.2' x2='283.6' y2='455.6' stroke-opacity='0.101'/%3E%3Cline x1='372.2' y1='419.2' x2='330.6' y2='489.3' stroke-opacity='0.128'/%3E%3Cline x1='332.3' y1='190.7' x2='222.8' y2='261.2' stroke-opacity='0.037'/%3E%3Cline x1='557.4' y1='911.6' x2='565.3' y2='849.2' stroke-opacity='0.163'/%3E%3Cline x1='58.6' y1='341.9' x2='10.5' y2='310.4' stroke-opacity='0.173'/%3E%3Cline x1='508.8' y1='526.8' x2='516.2' y2='631.2' stroke-opacity='0.085'/%3E%3Cline x1='909.0' y1='68.6' x2='877.6' y2='138.8' stroke-opacity='0.136'/%3E%3Cline x1='344.1' y1='830.5' x2='251.1' y2='733.6' stroke-opacity='0.029'/%3E%3Cline x1='514.9' y1='206.9' x2='632.4' y2='180.3' stroke-opacity='0.055'/%3E%3Cline x1='514.9' y1='206.9' x2='592.9' y2='172.2' stroke-opacity='0.121'/%3E%3Cline x1='283.6' y1='455.6' x2='330.6' y2='489.3' stroke-opacity='0.172'/%3E%3Cline x1='332.6' y1='664.6' x2='251.1' y2='733.6' stroke-opacity='0.081'/%3E%3Cline x1='233.2' y1='1133.1' x2='238.0' y2='1102.6' stroke-opacity='0.222'/%3E%3Cline x1='233.2' y1='1133.1' x2='373.9' y2='1117.8' stroke-opacity='0.016'/%3E%3Cline x1='863.0' y1='793.9' x2='1001.6' y2='771.1' stroke-opacity='0.018'/%3E%3Cline x1='939.6' y1='495.9' x2='1077.7' y2='508.5' stroke-opacity='0.021'/%3E%3Cline x1='877.6' y1='138.8' x2='900.1' y2='235.2' stroke-opacity='0.095'/%3E%3Cline x1='632.4' y1='180.3' x2='592.9' y2='172.2' stroke-opacity='0.205'/%3E%3Cline x1='907.8' y1='951.4' x2='1052.3' y2='961.8' stroke-opacity='0.009'/%3E%3Cline x1='10.5' y1='310.4' x2='-99.9' y2='235.2' stroke-opacity='0.031'/%3E%3Cline x1='741.1' y1='611.7' x2='714.1' y2='622.7' stroke-opacity='0.225'/%3E%3Cline x1='238.0' y1='1102.6' x2='373.9' y2='1117.8' stroke-opacity='0.025'/%3E%3C/g%3E%3Cg fill='rgba(228,169,196,.75)'%3E%3Ccircle cx='0.1' cy='1151.0' r='1.85'/%3E%3Ccircle cx='210.6' cy='911.7' r='2.31'/%3E%3Ccircle cx='329.3' cy='940.1' r='2.73'/%3E%3Ccircle cx='542.9' cy='855.6' r='2.51'/%3E%3Ccircle cx='816.8' cy='302.5' r='2.01'/%3E%3Ccircle cx='707.9' cy='872.6' r='1.40'/%3E%3Ccircle cx='683.9' cy='584.9' r='3.05'/%3E%3Ccircle cx='807.4' cy='153.5' r='2.27'/%3E%3Ccircle cx='923.2' cy='860.6' r='2.52'/%3E%3Ccircle cx='577.4' cy='1140.0' r='3.03'/%3E%3Ccircle cx='372.2' cy='419.2' r='2.89'/%3E%3Ccircle cx='332.3' cy='190.7' r='1.87'/%3E%3Ccircle cx='428.5' cy='368.6' r='3.08'/%3E%3Ccircle cx='557.4' cy='911.6' r='2.97'/%3E%3Ccircle cx='58.6' cy='341.9' r='2.37'/%3E%3Ccircle cx='508.8' cy='526.8' r='1.67'/%3E%3Ccircle cx='909.0' cy='68.6' r='1.99'/%3E%3Ccircle cx='344.1' cy='830.5' r='3.06'/%3E%3Ccircle cx='514.9' cy='206.9' r='2.07'/%3E%3Ccircle cx='283.6' cy='455.6' r='2.11'/%3E%3Ccircle cx='332.6' cy='664.6' r='2.47'/%3E%3Ccircle cx='233.2' cy='1133.1' r='2.17'/%3E%3Ccircle cx='863.0' cy='793.9' r='2.51'/%3E%3Ccircle cx='516.2' cy='631.2' r='2.61'/%3E%3Ccircle cx='939.6' cy='495.9' r='2.65'/%3E%3Ccircle cx='251.1' cy='733.6' r='1.97'/%3E%3Ccircle cx='330.6' cy='489.3' r='2.81'/%3E%3Ccircle cx='877.6' cy='138.8' r='2.86'/%3E%3Ccircle cx='77.7' cy='508.5' r='1.59'/%3E%3Ccircle cx='77.9' cy='1245.3' r='1.72'/%3E%3Ccircle cx='632.4' cy='180.3' r='2.17'/%3E%3Ccircle cx='592.9' cy='172.2' r='3.05'/%3E%3Ccircle cx='884.6' cy='1113.2' r='2.98'/%3E%3Ccircle cx='907.8' cy='951.4' r='1.82'/%3E%3Ccircle cx='10.5' cy='310.4' r='1.44'/%3E%3Ccircle cx='1.6' cy='771.1' r='1.74'/%3E%3Ccircle cx='741.1' cy='611.7' r='2.61'/%3E%3Ccircle cx='238.0' cy='1102.6' r='1.75'/%3E%3Ccircle cx='373.9' cy='1117.8' r='1.52'/%3E%3Ccircle cx='489.3' cy='3.7' r='3.03'/%3E%3Ccircle cx='636.9' cy='1152.6' r='1.34'/%3E%3Ccircle cx='900.1' cy='235.2' r='3.14'/%3E%3Ccircle cx='565.3' cy='849.2' r='1.81'/%3E%3Ccircle cx='222.8' cy='261.2' r='2.37'/%3E%3Ccircle cx='52.3' cy='961.8' r='2.63'/%3E%3Ccircle cx='714.1' cy='622.7' r='1.36'/%3E%3C/g%3E%3C/g%3E%3Cuse href='%23t' x='1000'/%3E%3C/g%3E%3C/g%3E%3Cellipse class='glow' cx='330' cy='260' rx='300' ry='720' fill='url(%23g)'/%3E%3Cg transform='translate(850 1075) scale(0.52) translate(-1412 -425)' fill='none' stroke-linecap='round'%3E%3Cpath class='draw fl' d='M-128 945 C 412 905, 712 725, 992 645 S 1492 425, 2352 365' pathLength='1' stroke='%23F3C9DA' stroke-width='1.6' stroke-opacity='.3'/%3E%3Cpath class='draw fl' d='M-128 989 C 412 949, 712 751, 992 671 S 1492 455, 2352 395' pathLength='1' stroke='%23F3C9DA' stroke-width='1.6' stroke-opacity='.3'/%3E%3Cpath class='draw fl' d='M-128 1033 C 412 993, 712 777, 992 697 S 1492 485, 2352 425' pathLength='1' stroke='%23F3C9DA' stroke-width='1.6' stroke-opacity='.3'/%3E%3Cpath class='draw fl' d='M-128 1077 C 412 1037, 712 803, 992 723 S 1492 515, 2352 455' pathLength='1' stroke='%23F3C9DA' stroke-width='1.6' stroke-opacity='.3'/%3E%3Cpath class='draw fl' d='M-128 1121 C 412 1081, 712 829, 992 749 S 1492 545, 2352 485' pathLength='1' stroke='%23F3C9DA' stroke-width='1.6' stroke-opacity='.3'/%3E%3Cg transform='translate(1300 500) rotate(12) scale(1.12) translate(-1412 -425)'%3E%3Cpath class='draw d2' d='M1588 -114 L1889 226 C1986 336 1986 514 1889 624 L1588 964 C1491 1074 1333 1074 1236 964 L935 624 C838 514 838 336 935 226 L1236 -114 C1333 -224 1491 -224 1588 -114 Z' pathLength='1' stroke='%23C95788' stroke-width='8' stroke-opacity='.16'/%3E%3Cpath class='draw d2' d='M1588 -114 L1889 226 C1986 336 1986 514 1889 624 L1588 964 C1491 1074 1333 1074 1236 964 L935 624 C838 514 838 336 935 226 L1236 -114 C1333 -224 1491 -224 1588 -114 Z' pathLength='1' stroke='url(%23edge2)' stroke-width='2.4'/%3E%3C/g%3E%3Cpath class='draw' d='M1588 -114 L1889 226 C1986 336 1986 514 1889 624 L1588 964 C1491 1074 1333 1074 1236 964 L935 624 C838 514 838 336 935 226 L1236 -114 C1333 -224 1491 -224 1588 -114 Z' pathLength='1' stroke='%23E4A9C4' stroke-width='30' stroke-opacity='.1'/%3E%3Cpath class='draw' d='M1588 -114 L1889 226 C1986 336 1986 514 1889 624 L1588 964 C1491 1074 1333 1074 1236 964 L935 624 C838 514 838 336 935 226 L1236 -114 C1333 -224 1491 -224 1588 -114 Z' pathLength='1' stroke='%23E4A9C4' stroke-width='12' stroke-opacity='.2'/%3E%3Cpath class='draw' d='M1588 -114 L1889 226 C1986 336 1986 514 1889 624 L1588 964 C1491 1074 1333 1074 1236 964 L935 624 C838 514 838 336 935 226 L1236 -114 C1333 -224 1491 -224 1588 -114 Z' pathLength='1' stroke='url(%23edge)' stroke-width='3.5'/%3E%3Cpath class='pk' d='M-128 945 C 412 905, 712 725, 992 645 S 1492 425, 2352 365' pathLength='1' stroke='%23fff' stroke-width='2.2' stroke-opacity='.9' style='animation-duration:7s,1s;animation-delay:0s,0s'/%3E%3Cpath class='pk' d='M-128 989 C 412 949, 712 751, 992 671 S 1492 455, 2352 395' pathLength='1' stroke='%23fff' stroke-width='2.2' stroke-opacity='.9' style='animation-duration:7.8s,1s;animation-delay:0.6s,0.6s'/%3E%3Cpath class='pk' d='M-128 1033 C 412 993, 712 777, 992 697 S 1492 485, 2352 425' pathLength='1' stroke='%23fff' stroke-width='2.2' stroke-opacity='.9' style='animation-duration:8.6s,1s;animation-delay:1.2s,1.2s'/%3E%3Cpath class='pk' d='M-128 1077 C 412 1037, 712 803, 992 723 S 1492 515, 2352 455' pathLength='1' stroke='%23fff' stroke-width='2.2' stroke-opacity='.9' style='animation-duration:9.4s,1s;animation-delay:1.7999999999999998s,1.7999999999999998s'/%3E%3Cpath class='pk' d='M-128 1121 C 412 1081, 712 829, 992 749 S 1492 545, 2352 485' pathLength='1' stroke='%23fff' stroke-width='2.2' stroke-opacity='.9' style='animation-duration:10.2s,1s;animation-delay:2.4s,2.4s'/%3E%3Cpath class='run' d='M1588 -114 L1889 226 C1986 336 1986 514 1889 624 L1588 964 C1491 1074 1333 1074 1236 964 L935 624 C838 514 838 336 935 226 L1236 -114 C1333 -224 1491 -224 1588 -114 Z' pathLength='1' stroke='%23F3C9DA' stroke-width='14' style='--o:.45'/%3E%3Cpath class='run w' d='M1588 -114 L1889 226 C1986 336 1986 514 1889 624 L1588 964 C1491 1074 1333 1074 1236 964 L935 624 C838 514 838 336 935 226 L1236 -114 C1333 -224 1491 -224 1588 -114 Z' pathLength='1' stroke='%23fff' stroke-width='5'/%3E%3Cg class='small'%3E%3Cg transform='translate(942 855) scale(0.26) translate(-1412 -425)'%3E%3Cpath d='M1588 -114 L1889 226 C1986 336 1986 514 1889 624 L1588 964 C1491 1074 1333 1074 1236 964 L935 624 C838 514 838 336 935 226 L1236 -114 C1333 -224 1491 -224 1588 -114 Z' fill='url(%23glass)' stroke='%23F3C9DA' stroke-width='5' stroke-opacity='.8'/%3E%3Cpath d='M1588 -114 L1889 226 C1986 336 1986 514 1889 624 L1588 964 C1491 1074 1333 1074 1236 964 L935 624 C838 514 838 336 935 226 L1236 -114 C1333 -224 1491 -224 1588 -114 Z' stroke='%23fff' stroke-width='2.5' stroke-opacity='.5' transform='translate(-16 -16)'/%3E%3C/g%3E%3C/g%3E%3C/g%3E%3C/svg%3E") center / cover no-repeat,
     radial-gradient(60% 80% at 85% 50%, rgba(160, 105, 205, .55), transparent 70%),
     radial-gradient(45% 60% at 100% 100%, rgba(201, 87, 136, .4), transparent 70%),
-    linear-gradient(180deg, #2C1A63 0%, #3A1A66 60%, #4A1B72 100%);
-  z-index: 0;
+    linear-gradient(180deg, #2C1A63 0%, #3A1A66 60%, #4A1B72 100%) !important;
+  z-index: 0 !important;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  body.t-PageBody--login::before {
+  body.t-PageBody--login:not(#nc-p1):not(#nc-p2)::before {
     background-image:
       url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1000 1250' preserveAspectRatio='xMidYMid slice'%3E%3Cstyle%3E.pk,.run{display:none}.glow{opacity:.6}%3C/style%3E%3Cdefs%3E%3CradialGradient id='g' cx='.5' cy='.5' r='.5'%3E%3Cstop offset='0' stop-color='%23C95788' stop-opacity='.3'/%3E%3Cstop offset='.45' stop-color='%23C95788' stop-opacity='.1'/%3E%3Cstop offset='1' stop-color='%23C95788' stop-opacity='0'/%3E%3C/radialGradient%3E%3Cpattern id='grid' width='56' height='56' patternUnits='userSpaceOnUse'%3E%3Cpath d='M56 0H0V56' fill='none' stroke='%23fff' stroke-opacity='.06'/%3E%3C/pattern%3E%3CradialGradient id='gm' cx='0.85' cy='0.86' r='.62'%3E%3Cstop offset='0' stop-color='%23fff'/%3E%3Cstop offset='.75' stop-color='%23fff' stop-opacity='0'/%3E%3C/radialGradient%3E%3Cmask id='mg'%3E%3Crect width='1000' height='1250' fill='url(%23gm)'/%3E%3C/mask%3E%3ClinearGradient id='nm' x1='0' x2='1'%3E%3Cstop offset='.05' stop-color='%23fff' stop-opacity='.15'/%3E%3Cstop offset='.6' stop-color='%23fff' stop-opacity='.7'/%3E%3C/linearGradient%3E%3Cmask id='mn'%3E%3Crect width='1000' height='1250' fill='url(%23nm)'/%3E%3C/mask%3E%3ClinearGradient id='edge' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%23F3C9DA' stop-opacity='.95'/%3E%3Cstop offset='.5' stop-color='%23E4A9C4' stop-opacity='.75'/%3E%3Cstop offset='1' stop-color='%23C95788' stop-opacity='.4'/%3E%3C/linearGradient%3E%3ClinearGradient id='edge2' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%23E4A9C4' stop-opacity='.9'/%3E%3Cstop offset='.5' stop-color='%23C95788' stop-opacity='.75'/%3E%3Cstop offset='1' stop-color='%23C95788' stop-opacity='.45'/%3E%3C/linearGradient%3E%3ClinearGradient id='glass' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%23F3C9DA' stop-opacity='.3'/%3E%3Cstop offset='.55' stop-color='%23C95788' stop-opacity='.16'/%3E%3Cstop offset='1' stop-color='%23511C76' stop-opacity='.1'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='1000' height='1250' fill='url(%23grid)' mask='url(%23mg)'/%3E%3Cg mask='url(%23mn)'%3E%3Cg class='net'%3E%3Cg id='t'%3E%3Cg stroke='%23E4A9C4' stroke-width='1'%3E%3Cline x1='0.1' y1='1151.0' x2='77.9' y2='1245.3' stroke-opacity='0.052'/%3E%3Cline x1='0.1' y1='1151.0' x2='-115.4' y2='1113.2' stroke-opacity='0.053'/%3E%3Cline x1='210.6' y1='911.7' x2='329.3' y2='940.1' stroke-opacity='0.052'/%3E%3Cline x1='329.3' y1='940.1' x2='344.1' y2='830.5' stroke-opacity='0.074'/%3E%3Cline x1='542.9' y1='855.6' x2='557.4' y2='911.6' stroke-opacity='0.172'/%3E%3Cline x1='542.9' y1='855.6' x2='565.3' y2='849.2' stroke-opacity='0.236'/%3E%3Cline x1='816.8' y1='302.5' x2='807.4' y2='153.5' stroke-opacity='0.001'/%3E%3Cline x1='816.8' y1='302.5' x2='900.1' y2='235.2' stroke-opacity='0.080'/%3E%3Cline x1='707.9' y1='872.6' x2='565.3' y2='849.2' stroke-opacity='0.010'/%3E%3Cline x1='683.9' y1='584.9' x2='741.1' y2='611.7' stroke-opacity='0.162'/%3E%3Cline x1='683.9' y1='584.9' x2='714.1' y2='622.7' stroke-opacity='0.190'/%3E%3Cline x1='807.4' y1='153.5' x2='909.0' y2='68.6' stroke-opacity='0.033'/%3E%3Cline x1='807.4' y1='153.5' x2='877.6' y2='138.8' stroke-opacity='0.146'/%3E%3Cline x1='807.4' y1='153.5' x2='900.1' y2='235.2' stroke-opacity='0.050'/%3E%3Cline x1='923.2' y1='860.6' x2='863.0' y2='793.9' stroke-opacity='0.112'/%3E%3Cline x1='923.2' y1='860.6' x2='907.8' y2='951.4' stroke-opacity='0.108'/%3E%3Cline x1='923.2' y1='860.6' x2='1001.6' y2='771.1' stroke-opacity='0.058'/%3E%3Cline x1='577.4' y1='1140.0' x2='489.3' y2='1253.7' stroke-opacity='0.011'/%3E%3Cline x1='577.4' y1='1140.0' x2='636.9' y2='1152.6' stroke-opacity='0.166'/%3E%3Cline x1='372.2' y1='419.2' x2='428.5' y2='368.6' stroke-opacity='0.139'/%3E%3Cline x1='372.2' y1='419.2' x2='283.6' y2='455.6' stroke-opacity='0.101'/%3E%3Cline x1='372.2' y1='419.2' x2='330.6' y2='489.3' stroke-opacity='0.128'/%3E%3Cline x1='332.3' y1='190.7' x2='222.8' y2='261.2' stroke-opacity='0.037'/%3E%3Cline x1='557.4' y1='911.6' x2='565.3' y2='849.2' stroke-opacity='0.163'/%3E%3Cline x1='58.6' y1='341.9' x2='10.5' y2='310.4' stroke-opacity='0.173'/%3E%3Cline x1='508.8' y1='526.8' x2='516.2' y2='631.2' stroke-opacity='0.085'/%3E%3Cline x1='909.0' y1='68.6' x2='877.6' y2='138.8' stroke-opacity='0.136'/%3E%3Cline x1='344.1' y1='830.5' x2='251.1' y2='733.6' stroke-opacity='0.029'/%3E%3Cline x1='514.9' y1='206.9' x2='632.4' y2='180.3' stroke-opacity='0.055'/%3E%3Cline x1='514.9' y1='206.9' x2='592.9' y2='172.2' stroke-opacity='0.121'/%3E%3Cline x1='283.6' y1='455.6' x2='330.6' y2='489.3' stroke-opacity='0.172'/%3E%3Cline x1='332.6' y1='664.6' x2='251.1' y2='733.6' stroke-opacity='0.081'/%3E%3Cline x1='233.2' y1='1133.1' x2='238.0' y2='1102.6' stroke-opacity='0.222'/%3E%3Cline x1='233.2' y1='1133.1' x2='373.9' y2='1117.8' stroke-opacity='0.016'/%3E%3Cline x1='863.0' y1='793.9' x2='1001.6' y2='771.1' stroke-opacity='0.018'/%3E%3Cline x1='939.6' y1='495.9' x2='1077.7' y2='508.5' stroke-opacity='0.021'/%3E%3Cline x1='877.6' y1='138.8' x2='900.1' y2='235.2' stroke-opacity='0.095'/%3E%3Cline x1='632.4' y1='180.3' x2='592.9' y2='172.2' stroke-opacity='0.205'/%3E%3Cline x1='907.8' y1='951.4' x2='1052.3' y2='961.8' stroke-opacity='0.009'/%3E%3Cline x1='10.5' y1='310.4' x2='-99.9' y2='235.2' stroke-opacity='0.031'/%3E%3Cline x1='741.1' y1='611.7' x2='714.1' y2='622.7' stroke-opacity='0.225'/%3E%3Cline x1='238.0' y1='1102.6' x2='373.9' y2='1117.8' stroke-opacity='0.025'/%3E%3C/g%3E%3Cg fill='rgba(228,169,196,.75)'%3E%3Ccircle cx='0.1' cy='1151.0' r='1.85'/%3E%3Ccircle cx='210.6' cy='911.7' r='2.31'/%3E%3Ccircle cx='329.3' cy='940.1' r='2.73'/%3E%3Ccircle cx='542.9' cy='855.6' r='2.51'/%3E%3Ccircle cx='816.8' cy='302.5' r='2.01'/%3E%3Ccircle cx='707.9' cy='872.6' r='1.40'/%3E%3Ccircle cx='683.9' cy='584.9' r='3.05'/%3E%3Ccircle cx='807.4' cy='153.5' r='2.27'/%3E%3Ccircle cx='923.2' cy='860.6' r='2.52'/%3E%3Ccircle cx='577.4' cy='1140.0' r='3.03'/%3E%3Ccircle cx='372.2' cy='419.2' r='2.89'/%3E%3Ccircle cx='332.3' cy='190.7' r='1.87'/%3E%3Ccircle cx='428.5' cy='368.6' r='3.08'/%3E%3Ccircle cx='557.4' cy='911.6' r='2.97'/%3E%3Ccircle cx='58.6' cy='341.9' r='2.37'/%3E%3Ccircle cx='508.8' cy='526.8' r='1.67'/%3E%3Ccircle cx='909.0' cy='68.6' r='1.99'/%3E%3Ccircle cx='344.1' cy='830.5' r='3.06'/%3E%3Ccircle cx='514.9' cy='206.9' r='2.07'/%3E%3Ccircle cx='283.6' cy='455.6' r='2.11'/%3E%3Ccircle cx='332.6' cy='664.6' r='2.47'/%3E%3Ccircle cx='233.2' cy='1133.1' r='2.17'/%3E%3Ccircle cx='863.0' cy='793.9' r='2.51'/%3E%3Ccircle cx='516.2' cy='631.2' r='2.61'/%3E%3Ccircle cx='939.6' cy='495.9' r='2.65'/%3E%3Ccircle cx='251.1' cy='733.6' r='1.97'/%3E%3Ccircle cx='330.6' cy='489.3' r='2.81'/%3E%3Ccircle cx='877.6' cy='138.8' r='2.86'/%3E%3Ccircle cx='77.7' cy='508.5' r='1.59'/%3E%3Ccircle cx='77.9' cy='1245.3' r='1.72'/%3E%3Ccircle cx='632.4' cy='180.3' r='2.17'/%3E%3Ccircle cx='592.9' cy='172.2' r='3.05'/%3E%3Ccircle cx='884.6' cy='1113.2' r='2.98'/%3E%3Ccircle cx='907.8' cy='951.4' r='1.82'/%3E%3Ccircle cx='10.5' cy='310.4' r='1.44'/%3E%3Ccircle cx='1.6' cy='771.1' r='1.74'/%3E%3Ccircle cx='741.1' cy='611.7' r='2.61'/%3E%3Ccircle cx='238.0' cy='1102.6' r='1.75'/%3E%3Ccircle cx='373.9' cy='1117.8' r='1.52'/%3E%3Ccircle cx='489.3' cy='3.7' r='3.03'/%3E%3Ccircle cx='636.9' cy='1152.6' r='1.34'/%3E%3Ccircle cx='900.1' cy='235.2' r='3.14'/%3E%3Ccircle cx='565.3' cy='849.2' r='1.81'/%3E%3Ccircle cx='222.8' cy='261.2' r='2.37'/%3E%3Ccircle cx='52.3' cy='961.8' r='2.63'/%3E%3Ccircle cx='714.1' cy='622.7' r='1.36'/%3E%3C/g%3E%3C/g%3E%3Cuse href='%23t' x='1000'/%3E%3C/g%3E%3C/g%3E%3Cellipse class='glow' cx='330' cy='260' rx='300' ry='720' fill='url(%23g)'/%3E%3Cg transform='translate(850 1075) scale(0.52) translate(-1412 -425)' fill='none' stroke-linecap='round'%3E%3Cpath  d='M-128 945 C 412 905, 712 725, 992 645 S 1492 425, 2352 365' pathLength='1' stroke='%23F3C9DA' stroke-width='1.6' stroke-opacity='.3'/%3E%3Cpath  d='M-128 989 C 412 949, 712 751, 992 671 S 1492 455, 2352 395' pathLength='1' stroke='%23F3C9DA' stroke-width='1.6' stroke-opacity='.3'/%3E%3Cpath  d='M-128 1033 C 412 993, 712 777, 992 697 S 1492 485, 2352 425' pathLength='1' stroke='%23F3C9DA' stroke-width='1.6' stroke-opacity='.3'/%3E%3Cpath  d='M-128 1077 C 412 1037, 712 803, 992 723 S 1492 515, 2352 455' pathLength='1' stroke='%23F3C9DA' stroke-width='1.6' stroke-opacity='.3'/%3E%3Cpath  d='M-128 1121 C 412 1081, 712 829, 992 749 S 1492 545, 2352 485' pathLength='1' stroke='%23F3C9DA' stroke-width='1.6' stroke-opacity='.3'/%3E%3Cg transform='translate(1300 500) rotate(12) scale(1.12) translate(-1412 -425)'%3E%3Cpath  d='M1588 -114 L1889 226 C1986 336 1986 514 1889 624 L1588 964 C1491 1074 1333 1074 1236 964 L935 624 C838 514 838 336 935 226 L1236 -114 C1333 -224 1491 -224 1588 -114 Z' pathLength='1' stroke='%23C95788' stroke-width='8' stroke-opacity='.16'/%3E%3Cpath  d='M1588 -114 L1889 226 C1986 336 1986 514 1889 624 L1588 964 C1491 1074 1333 1074 1236 964 L935 624 C838 514 838 336 935 226 L1236 -114 C1333 -224 1491 -224 1588 -114 Z' pathLength='1' stroke='url(%23edge2)' stroke-width='2.4'/%3E%3C/g%3E%3Cpath  d='M1588 -114 L1889 226 C1986 336 1986 514 1889 624 L1588 964 C1491 1074 1333 1074 1236 964 L935 624 C838 514 838 336 935 226 L1236 -114 C1333 -224 1491 -224 1588 -114 Z' pathLength='1' stroke='%23E4A9C4' stroke-width='30' stroke-opacity='.1'/%3E%3Cpath  d='M1588 -114 L1889 226 C1986 336 1986 514 1889 624 L1588 964 C1491 1074 1333 1074 1236 964 L935 624 C838 514 838 336 935 226 L1236 -114 C1333 -224 1491 -224 1588 -114 Z' pathLength='1' stroke='%23E4A9C4' stroke-width='12' stroke-opacity='.2'/%3E%3Cpath  d='M1588 -114 L1889 226 C1986 336 1986 514 1889 624 L1588 964 C1491 1074 1333 1074 1236 964 L935 624 C838 514 838 336 935 226 L1236 -114 C1333 -224 1491 -224 1588 -114 Z' pathLength='1' stroke='url(%23edge)' stroke-width='3.5'/%3E%3Cpath class='pk' d='M-128 945 C 412 905, 712 725, 992 645 S 1492 425, 2352 365' pathLength='1' stroke='%23fff' stroke-width='2.2' stroke-opacity='.9' style='animation-duration:7s,1s;animation-delay:0s,0s'/%3E%3Cpath class='pk' d='M-128 989 C 412 949, 712 751, 992 671 S 1492 455, 2352 395' pathLength='1' stroke='%23fff' stroke-width='2.2' stroke-opacity='.9' style='animation-duration:7.8s,1s;animation-delay:0.6s,0.6s'/%3E%3Cpath class='pk' d='M-128 1033 C 412 993, 712 777, 992 697 S 1492 485, 2352 425' pathLength='1' stroke='%23fff' stroke-width='2.2' stroke-opacity='.9' style='animation-duration:8.6s,1s;animation-delay:1.2s,1.2s'/%3E%3Cpath class='pk' d='M-128 1077 C 412 1037, 712 803, 992 723 S 1492 515, 2352 455' pathLength='1' stroke='%23fff' stroke-width='2.2' stroke-opacity='.9' style='animation-duration:9.4s,1s;animation-delay:1.7999999999999998s,1.7999999999999998s'/%3E%3Cpath class='pk' d='M-128 1121 C 412 1081, 712 829, 992 749 S 1492 545, 2352 485' pathLength='1' stroke='%23fff' stroke-width='2.2' stroke-opacity='.9' style='animation-duration:10.2s,1s;animation-delay:2.4s,2.4s'/%3E%3Cpath class='run' d='M1588 -114 L1889 226 C1986 336 1986 514 1889 624 L1588 964 C1491 1074 1333 1074 1236 964 L935 624 C838 514 838 336 935 226 L1236 -114 C1333 -224 1491 -224 1588 -114 Z' pathLength='1' stroke='%23F3C9DA' stroke-width='14' style='--o:.45'/%3E%3Cpath class='run w' d='M1588 -114 L1889 226 C1986 336 1986 514 1889 624 L1588 964 C1491 1074 1333 1074 1236 964 L935 624 C838 514 838 336 935 226 L1236 -114 C1333 -224 1491 -224 1588 -114 Z' pathLength='1' stroke='%23fff' stroke-width='5'/%3E%3Cg %3E%3Cg transform='translate(942 855) scale(0.26) translate(-1412 -425)'%3E%3Cpath d='M1588 -114 L1889 226 C1986 336 1986 514 1889 624 L1588 964 C1491 1074 1333 1074 1236 964 L935 624 C838 514 838 336 935 226 L1236 -114 C1333 -224 1491 -224 1588 -114 Z' fill='url(%23glass)' stroke='%23F3C9DA' stroke-width='5' stroke-opacity='.8'/%3E%3Cpath d='M1588 -114 L1889 226 C1986 336 1986 514 1889 624 L1588 964 C1491 1074 1333 1074 1236 964 L935 624 C838 514 838 336 935 226 L1236 -114 C1333 -224 1491 -224 1588 -114 Z' stroke='%23fff' stroke-width='2.5' stroke-opacity='.5' transform='translate(-16 -16)'/%3E%3C/g%3E%3C/g%3E%3C/g%3E%3C/svg%3E"),
       radial-gradient(60% 80% at 85% 50%, rgba(160, 105, 205, .55), transparent 70%),
       radial-gradient(45% 60% at 100% 100%, rgba(201, 87, 136, .4), transparent 70%),
-      linear-gradient(180deg, #2C1A63 0%, #3A1A66 60%, #4A1B72 100%);
+      linear-gradient(180deg, #2C1A63 0%, #3A1A66 60%, #4A1B72 100%) !important;
   }
 }
 
 /* O título em duas peças: a primeira presa por baixo ao meio da tela, a
    segunda presa por cima. Se "Um único sistema." quebrar numa tela estreita,
    ela cresce para baixo e nunca encavala na primeira linha. */
-body.t-PageBody--login::after,
-body.t-PageBody--login #wwvFlowForm::before {
-  position: fixed;
-  left: calc(100% - var(--nc-painel));
-  right: 0;
-  padding: 0 var(--nc-pad);
-  font: 800 var(--nc-fs)/1.02 Manrope, system-ui, sans-serif;
-  letter-spacing: -.02em;
-  z-index: 1;
-  pointer-events: none;
+body.t-PageBody--login:not(#nc-p1):not(#nc-p2)::after,
+body.t-PageBody--login:not(#nc-p1):not(#nc-p2) #wwvFlowForm::before {
+  position: fixed !important;
+  left: calc(100% - var(--nc-painel)) !important;
+  right: 0 !important;
+  padding: 0 var(--nc-pad) !important;
+  font: 800 var(--nc-fs)/1.02 Manrope, system-ui, sans-serif !important;
+  letter-spacing: -.02em !important;
+  z-index: 1 !important;
+  pointer-events: none !important;
 }
 
-body.t-PageBody--login::after {
-  content: var(--nc-login-titulo);
-  bottom: 50%;
-  color: #fff;
+body.t-PageBody--login:not(#nc-p1):not(#nc-p2)::after {
+  content: var(--nc-login-titulo) !important;
+  bottom: 50% !important;
+  color: #fff !important;
 }
 
-body.t-PageBody--login #wwvFlowForm::before {
-  content: var(--nc-login-destaque);
-  top: 50%;
-  color: #F3C9DA;                       /* o destaque do hero da home */
+body.t-PageBody--login:not(#nc-p1):not(#nc-p2) #wwvFlowForm::before {
+  content: var(--nc-login-destaque) !important;
+  top: 50% !important;
+  color: #F3C9DA !important;                       /* o destaque do hero da home */
 }
 
-body.t-PageBody--login #wwvFlowForm::after {   /* a assinatura Natcorp */
-  content: "";
-  position: fixed;
-  top: clamp(32px, 6vh, 56px);
-  left: calc(100% - var(--nc-painel) + var(--nc-pad));
-  width: 150px;
-  height: 38px;
-  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 31.596 8' fill='%23fff'%3E%3Cpath d='M4.322 0.322L5.573 1.573A0.456 0.456 0 0 1 5.573 2.218L4.322 3.469A0.456 0.456 0 0 1 3.678 3.469L2.427 2.218A0.456 0.456 0 0 1 2.427 1.573L3.678 0.322A0.456 0.456 0 0 1 4.322 0.322Z'/%3E%3Cpath d='M6.427 2.427L7.678 3.678A0.456 0.456 0 0 1 7.678 4.322L6.427 5.573A0.456 0.456 0 0 1 5.782 5.573L4.531 4.322A0.456 0.456 0 0 1 4.531 3.678L5.782 2.427A0.456 0.456 0 0 1 6.427 2.427Z'/%3E%3Cpath d='M2.218 2.427L3.469 3.678A0.456 0.456 0 0 1 3.469 4.322L2.218 5.573A0.456 0.456 0 0 1 1.573 5.573L0.322 4.322A0.456 0.456 0 0 1 0.322 3.678L1.573 2.427A0.456 0.456 0 0 1 2.218 2.427Z'/%3E%3Cpath d='M4.322 4.531L5.573 5.782A0.456 0.456 0 0 1 5.573 6.427L4.322 7.678A0.456 0.456 0 0 1 3.678 7.678L2.427 6.427A0.456 0.456 0 0 1 2.427 5.782L3.678 4.531A0.456 0.456 0 0 1 4.322 4.531Z'/%3E%3Cpath d='M11.61 5.69V4.04Q11.61 3.86 11.58 3.66Q11.55 3.46 11.47 3.28Q11.38 3.10 11.22 2.99Q11.05 2.87 10.78 2.87Q10.62 2.87 10.47 2.93Q10.32 2.98 10.21 3.10Q10.09 3.23 10.02 3.43Q9.95 3.64 9.95 3.94L9.53 3.77Q9.53 3.32 9.70 2.97Q9.87 2.62 10.19 2.42Q10.52 2.22 10.98 2.22Q11.34 2.22 11.58 2.34Q11.82 2.45 11.97 2.64Q12.11 2.83 12.19 3.05Q12.26 3.26 12.29 3.46Q12.31 3.67 12.31 3.81V5.69ZM9.25 5.69V2.31H9.87V3.32H9.95V5.69Z'/%3E%3Cpath d='M13.95 5.78Q13.58 5.78 13.32 5.64Q13.07 5.50 12.94 5.27Q12.81 5.04 12.81 4.77Q12.81 4.52 12.90 4.32Q12.99 4.13 13.16 3.99Q13.33 3.85 13.60 3.76Q13.81 3.70 14.09 3.65Q14.37 3.59 14.69 3.55Q15.00 3.51 15.33 3.46L15.08 3.60Q15.09 3.22 14.92 3.04Q14.75 2.86 14.35 2.86Q14.10 2.86 13.88 2.97Q13.66 3.09 13.57 3.36L12.93 3.17Q13.06 2.73 13.41 2.48Q13.76 2.22 14.35 2.22Q14.80 2.22 15.14 2.37Q15.48 2.52 15.64 2.86Q15.72 3.03 15.74 3.21Q15.76 3.40 15.76 3.61V5.69H15.15V4.93L15.26 5.04Q15.05 5.42 14.73 5.60Q14.41 5.78 13.95 5.78ZM14.08 5.22Q14.35 5.22 14.54 5.13Q14.73 5.03 14.85 4.89Q14.96 4.74 15.00 4.60Q15.06 4.45 15.06 4.26Q15.07 4.07 15.07 3.96L15.29 4.04Q14.97 4.09 14.72 4.12Q14.47 4.16 14.28 4.20Q14.09 4.23 13.94 4.28Q13.80 4.33 13.71 4.39Q13.61 4.46 13.55 4.55Q13.49 4.64 13.49 4.76Q13.49 4.89 13.56 4.99Q13.62 5.10 13.75 5.16Q13.88 5.22 14.08 5.22Z'/%3E%3Cpath d='M18.40 5.69Q18.07 5.75 17.76 5.74Q17.45 5.73 17.20 5.62Q16.96 5.51 16.83 5.28Q16.72 5.06 16.71 4.84Q16.71 4.62 16.71 4.34V1.38H17.40V4.30Q17.40 4.51 17.40 4.66Q17.41 4.81 17.47 4.91Q17.58 5.10 17.83 5.12Q18.07 5.15 18.40 5.10ZM16.07 2.86V2.31H18.40V2.86Z'/%3E%3Cpath d='M20.44 5.78Q19.92 5.78 19.56 5.55Q19.19 5.32 19.00 4.91Q18.80 4.51 18.80 4.00Q18.80 3.48 19.00 3.08Q19.20 2.68 19.57 2.45Q19.94 2.22 20.45 2.22Q21.01 2.22 21.41 2.50Q21.80 2.78 21.93 3.27L21.24 3.46Q21.14 3.18 20.93 3.03Q20.71 2.87 20.44 2.87Q20.13 2.87 19.93 3.02Q19.73 3.16 19.63 3.42Q19.54 3.67 19.54 4.00Q19.54 4.51 19.77 4.82Q19.99 5.13 20.44 5.13Q20.75 5.13 20.94 4.99Q21.12 4.84 21.22 4.58L21.93 4.74Q21.76 5.24 21.38 5.51Q20.99 5.78 20.44 5.78Z'/%3E%3Cpath d='M23.91 5.78Q23.40 5.78 23.03 5.55Q22.66 5.33 22.45 4.92Q22.25 4.52 22.25 4.00Q22.25 3.47 22.46 3.07Q22.67 2.67 23.04 2.44Q23.41 2.22 23.91 2.22Q24.42 2.22 24.79 2.45Q25.17 2.67 25.37 3.08Q25.58 3.48 25.58 4.00Q25.58 4.53 25.37 4.93Q25.17 5.33 24.79 5.56Q24.42 5.78 23.91 5.78ZM23.91 5.13Q24.38 5.13 24.61 4.81Q24.84 4.50 24.84 4.00Q24.84 3.48 24.61 3.18Q24.38 2.87 23.91 2.87Q23.59 2.87 23.39 3.01Q23.18 3.16 23.08 3.41Q22.98 3.66 22.98 4.00Q22.98 4.51 23.22 4.82Q23.45 5.13 23.91 5.13Z'/%3E%3Cpath d='M26.14 5.69V2.31H26.76V3.13L26.68 3.03Q26.74 2.86 26.84 2.72Q26.94 2.59 27.08 2.50Q27.21 2.41 27.36 2.36Q27.52 2.31 27.68 2.30Q27.84 2.29 28.00 2.31V2.96Q27.84 2.92 27.64 2.93Q27.44 2.95 27.27 3.06Q27.12 3.15 27.02 3.29Q26.93 3.43 26.88 3.61Q26.84 3.78 26.84 3.98V5.69Z'/%3E%3Cpath d='M30.06 5.78Q29.58 5.78 29.24 5.55Q28.91 5.31 28.75 4.91Q28.58 4.50 28.58 4.00Q28.58 3.49 28.74 3.09Q28.91 2.69 29.24 2.45Q29.57 2.22 30.04 2.22Q30.52 2.22 30.87 2.45Q31.22 2.68 31.41 3.09Q31.60 3.49 31.60 4.00Q31.60 4.50 31.41 4.91Q31.22 5.31 30.88 5.55Q30.53 5.78 30.06 5.78ZM28.46 7.19V2.31H29.07V4.72H29.16V7.19ZM29.96 5.16Q30.27 5.16 30.47 5.00Q30.67 4.85 30.76 4.59Q30.86 4.32 30.86 4.00Q30.86 3.68 30.76 3.42Q30.66 3.15 30.46 3.00Q30.26 2.84 29.94 2.84Q29.64 2.84 29.45 2.99Q29.26 3.13 29.17 3.40Q29.07 3.66 29.07 4.00Q29.07 4.34 29.17 4.60Q29.26 4.86 29.45 5.01Q29.65 5.16 29.96 5.16Z'/%3E%3C/svg%3E") left center / contain no-repeat;
-  z-index: 1;
-  pointer-events: none;
+body.t-PageBody--login:not(#nc-p1):not(#nc-p2) #wwvFlowForm::after {   /* a assinatura Natcorp */
+  content: "" !important;
+  position: fixed !important;
+  top: clamp(32px, 6vh, 56px) !important;
+  left: calc(100% - var(--nc-painel) + var(--nc-pad)) !important;
+  width: 150px !important;
+  height: 38px !important;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 31.596 8' fill='%23fff'%3E%3Cpath d='M4.322 0.322L5.573 1.573A0.456 0.456 0 0 1 5.573 2.218L4.322 3.469A0.456 0.456 0 0 1 3.678 3.469L2.427 2.218A0.456 0.456 0 0 1 2.427 1.573L3.678 0.322A0.456 0.456 0 0 1 4.322 0.322Z'/%3E%3Cpath d='M6.427 2.427L7.678 3.678A0.456 0.456 0 0 1 7.678 4.322L6.427 5.573A0.456 0.456 0 0 1 5.782 5.573L4.531 4.322A0.456 0.456 0 0 1 4.531 3.678L5.782 2.427A0.456 0.456 0 0 1 6.427 2.427Z'/%3E%3Cpath d='M2.218 2.427L3.469 3.678A0.456 0.456 0 0 1 3.469 4.322L2.218 5.573A0.456 0.456 0 0 1 1.573 5.573L0.322 4.322A0.456 0.456 0 0 1 0.322 3.678L1.573 2.427A0.456 0.456 0 0 1 2.218 2.427Z'/%3E%3Cpath d='M4.322 4.531L5.573 5.782A0.456 0.456 0 0 1 5.573 6.427L4.322 7.678A0.456 0.456 0 0 1 3.678 7.678L2.427 6.427A0.456 0.456 0 0 1 2.427 5.782L3.678 4.531A0.456 0.456 0 0 1 4.322 4.531Z'/%3E%3Cpath d='M11.61 5.69V4.04Q11.61 3.86 11.58 3.66Q11.55 3.46 11.47 3.28Q11.38 3.10 11.22 2.99Q11.05 2.87 10.78 2.87Q10.62 2.87 10.47 2.93Q10.32 2.98 10.21 3.10Q10.09 3.23 10.02 3.43Q9.95 3.64 9.95 3.94L9.53 3.77Q9.53 3.32 9.70 2.97Q9.87 2.62 10.19 2.42Q10.52 2.22 10.98 2.22Q11.34 2.22 11.58 2.34Q11.82 2.45 11.97 2.64Q12.11 2.83 12.19 3.05Q12.26 3.26 12.29 3.46Q12.31 3.67 12.31 3.81V5.69ZM9.25 5.69V2.31H9.87V3.32H9.95V5.69Z'/%3E%3Cpath d='M13.95 5.78Q13.58 5.78 13.32 5.64Q13.07 5.50 12.94 5.27Q12.81 5.04 12.81 4.77Q12.81 4.52 12.90 4.32Q12.99 4.13 13.16 3.99Q13.33 3.85 13.60 3.76Q13.81 3.70 14.09 3.65Q14.37 3.59 14.69 3.55Q15.00 3.51 15.33 3.46L15.08 3.60Q15.09 3.22 14.92 3.04Q14.75 2.86 14.35 2.86Q14.10 2.86 13.88 2.97Q13.66 3.09 13.57 3.36L12.93 3.17Q13.06 2.73 13.41 2.48Q13.76 2.22 14.35 2.22Q14.80 2.22 15.14 2.37Q15.48 2.52 15.64 2.86Q15.72 3.03 15.74 3.21Q15.76 3.40 15.76 3.61V5.69H15.15V4.93L15.26 5.04Q15.05 5.42 14.73 5.60Q14.41 5.78 13.95 5.78ZM14.08 5.22Q14.35 5.22 14.54 5.13Q14.73 5.03 14.85 4.89Q14.96 4.74 15.00 4.60Q15.06 4.45 15.06 4.26Q15.07 4.07 15.07 3.96L15.29 4.04Q14.97 4.09 14.72 4.12Q14.47 4.16 14.28 4.20Q14.09 4.23 13.94 4.28Q13.80 4.33 13.71 4.39Q13.61 4.46 13.55 4.55Q13.49 4.64 13.49 4.76Q13.49 4.89 13.56 4.99Q13.62 5.10 13.75 5.16Q13.88 5.22 14.08 5.22Z'/%3E%3Cpath d='M18.40 5.69Q18.07 5.75 17.76 5.74Q17.45 5.73 17.20 5.62Q16.96 5.51 16.83 5.28Q16.72 5.06 16.71 4.84Q16.71 4.62 16.71 4.34V1.38H17.40V4.30Q17.40 4.51 17.40 4.66Q17.41 4.81 17.47 4.91Q17.58 5.10 17.83 5.12Q18.07 5.15 18.40 5.10ZM16.07 2.86V2.31H18.40V2.86Z'/%3E%3Cpath d='M20.44 5.78Q19.92 5.78 19.56 5.55Q19.19 5.32 19.00 4.91Q18.80 4.51 18.80 4.00Q18.80 3.48 19.00 3.08Q19.20 2.68 19.57 2.45Q19.94 2.22 20.45 2.22Q21.01 2.22 21.41 2.50Q21.80 2.78 21.93 3.27L21.24 3.46Q21.14 3.18 20.93 3.03Q20.71 2.87 20.44 2.87Q20.13 2.87 19.93 3.02Q19.73 3.16 19.63 3.42Q19.54 3.67 19.54 4.00Q19.54 4.51 19.77 4.82Q19.99 5.13 20.44 5.13Q20.75 5.13 20.94 4.99Q21.12 4.84 21.22 4.58L21.93 4.74Q21.76 5.24 21.38 5.51Q20.99 5.78 20.44 5.78Z'/%3E%3Cpath d='M23.91 5.78Q23.40 5.78 23.03 5.55Q22.66 5.33 22.45 4.92Q22.25 4.52 22.25 4.00Q22.25 3.47 22.46 3.07Q22.67 2.67 23.04 2.44Q23.41 2.22 23.91 2.22Q24.42 2.22 24.79 2.45Q25.17 2.67 25.37 3.08Q25.58 3.48 25.58 4.00Q25.58 4.53 25.37 4.93Q25.17 5.33 24.79 5.56Q24.42 5.78 23.91 5.78ZM23.91 5.13Q24.38 5.13 24.61 4.81Q24.84 4.50 24.84 4.00Q24.84 3.48 24.61 3.18Q24.38 2.87 23.91 2.87Q23.59 2.87 23.39 3.01Q23.18 3.16 23.08 3.41Q22.98 3.66 22.98 4.00Q22.98 4.51 23.22 4.82Q23.45 5.13 23.91 5.13Z'/%3E%3Cpath d='M26.14 5.69V2.31H26.76V3.13L26.68 3.03Q26.74 2.86 26.84 2.72Q26.94 2.59 27.08 2.50Q27.21 2.41 27.36 2.36Q27.52 2.31 27.68 2.30Q27.84 2.29 28.00 2.31V2.96Q27.84 2.92 27.64 2.93Q27.44 2.95 27.27 3.06Q27.12 3.15 27.02 3.29Q26.93 3.43 26.88 3.61Q26.84 3.78 26.84 3.98V5.69Z'/%3E%3Cpath d='M30.06 5.78Q29.58 5.78 29.24 5.55Q28.91 5.31 28.75 4.91Q28.58 4.50 28.58 4.00Q28.58 3.49 28.74 3.09Q28.91 2.69 29.24 2.45Q29.57 2.22 30.04 2.22Q30.52 2.22 30.87 2.45Q31.22 2.68 31.41 3.09Q31.60 3.49 31.60 4.00Q31.60 4.50 31.41 4.91Q31.22 5.31 30.88 5.55Q30.53 5.78 30.06 5.78ZM28.46 7.19V2.31H29.07V4.72H29.16V7.19ZM29.96 5.16Q30.27 5.16 30.47 5.00Q30.67 4.85 30.76 4.59Q30.86 4.32 30.86 4.00Q30.86 3.68 30.76 3.42Q30.66 3.15 30.46 3.00Q30.26 2.84 29.94 2.84Q29.64 2.84 29.45 2.99Q29.26 3.13 29.17 3.40Q29.07 3.66 29.07 4.00Q29.07 4.34 29.17 4.60Q29.26 4.86 29.45 5.01Q29.65 5.16 29.96 5.16Z'/%3E%3C/svg%3E") left center / contain no-repeat !important;
+  z-index: 1 !important;
+  pointer-events: none !important;
 }
 
-html:has(body.t-PageBody--login)::after {       /* a frase de apoio */
-  content: var(--nc-login-texto);
-  position: fixed;
-  left: calc(100% - var(--nc-painel));
-  right: 0;
-  bottom: clamp(32px, 6vh, 56px);
-  padding: 0 var(--nc-pad);
-  font: 500 15px/1.5 Manrope, system-ui, sans-serif;
-  color: rgba(255, 255, 255, .75);
-  z-index: 1;
-  pointer-events: none;
+html:has(body.t-PageBody--login:not(#nc-p1):not(#nc-p2))::after {       /* a frase de apoio */
+  content: var(--nc-login-texto) !important;
+  position: fixed !important;
+  left: calc(100% - var(--nc-painel)) !important;
+  right: 0 !important;
+  bottom: clamp(32px, 6vh, 56px) !important;
+  padding: 0 var(--nc-pad) !important;
+  font: 500 15px/1.5 Manrope, system-ui, sans-serif !important;
+  color: rgba(255, 255, 255, .75) !important;
+  z-index: 1 !important;
+  pointer-events: none !important;
 }
 
 /* ---------- Coluna do formulário (esquerda) ------------------------- */
 
-body.t-PageBody--login .t-Body {
-  right: var(--nc-painel);             /* a página 900 fixa inset:0 */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 48px clamp(24px, 5vw, 64px);
-  overflow-y: auto;
-  z-index: 2;
+body.t-PageBody--login:not(#nc-p1):not(#nc-p2) .t-Body {
+  right: var(--nc-painel) !important;             /* a página 900 fixa inset:0 */
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 48px clamp(24px, 5vw, 64px) !important;
+  overflow-y: auto !important;
+  z-index: 2 !important;
 }
 
-body.t-PageBody--login .t-Body-wrap,
-body.t-PageBody--login .t-Body-col--main,
-body.t-PageBody--login .t-Login-container {
-  width: 100%;
-  max-width: 420px;
-  margin: 0 auto;
-  padding: 0;
-  background: none;
-  min-height: 0;
-  display: block;
+body.t-PageBody--login:not(#nc-p1):not(#nc-p2) .t-Body-wrap,
+body.t-PageBody--login:not(#nc-p1):not(#nc-p2) .t-Body-col--main,
+body.t-PageBody--login:not(#nc-p1):not(#nc-p2) .t-Login-container {
+  width: 100% !important;
+  max-width: 420px !important;
+  margin: 0 auto !important;
+  padding: 0 !important;
+  background: none !important;
+  min-height: 0 !important;
+  display: block !important;
 }
 
-body.t-PageBody--login .t-Login-container .container,
-body.t-PageBody--login .t-Login-container .row,
-body.t-PageBody--login .t-Login-container .col {
-  width: 100%;
-  margin: 0;
-  padding: 0;
+/* Universal Theme 1.4 (ex.: app 600): o login NÃO tem .t-Body. A estrutura é
+     form#wwvFlowForm > .t-Login-container > main.t-Login-containerBody > .container…
+   Então a coluna esquerda vai no .t-Login-container. "Filho direto do form"
+   só existe no 1.4: no 1.1 (apps 100 e 202) ele mora dentro do .t-Body. */
+body.t-PageBody--login:not(#nc-p1):not(#nc-p2) #wwvFlowForm > .t-Login-container {
+  position: fixed !important;
+  top: 0 !important;
+  bottom: 0 !important;
+  left: 0 !important;
+  right: var(--nc-painel) !important;
+  width: auto !important;
+  max-width: none !important;
+  height: auto !important;
+  margin: 0 !important;
+  padding: 48px clamp(24px, 5vw, 64px) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  overflow-y: auto !important;
+  background: #fff !important;
+  z-index: 2 !important;
 }
 
-body.t-PageBody--login .t-Login-region,
-body.t-PageBody--login .t-Login-body,
-body.t-PageBody--login .t-Form-inputContainer {
-  overflow: visible;                    /* o tema corta anel de foco, ícone e sombra */
+body.t-PageBody--login:not(#nc-p1):not(#nc-p2) .t-Login-containerBody {
+  display: block !important;
+  width: 100% !important;
+  max-width: 420px !important;
+  margin: 0 !important;
+  padding: 0 !important;
 }
 
-body.t-PageBody--login .t-Login-region {
-  width: 100%;
-  max-width: none;
-  margin: 0;
-  padding: 0;
-  background: none;
-  border: 0;
-  border-radius: 0;
-  box-shadow: none;
+body.t-PageBody--login:not(#nc-p1):not(#nc-p2) .t-Login-container .container,
+body.t-PageBody--login:not(#nc-p1):not(#nc-p2) .t-Login-container .row,
+body.t-PageBody--login:not(#nc-p1):not(#nc-p2) .t-Login-container .col {
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+body.t-PageBody--login:not(#nc-p1):not(#nc-p2) .t-Login-region,
+body.t-PageBody--login:not(#nc-p1):not(#nc-p2) .t-Login-body,
+body.t-PageBody--login:not(#nc-p1):not(#nc-p2) .t-Form-inputContainer {
+  overflow: visible !important;                    /* o tema corta anel de foco, ícone e sombra */
+}
+
+body.t-PageBody--login:not(#nc-p1):not(#nc-p2) .t-Login-region {
+  width: 100% !important;
+  max-width: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  background: none !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
 }
 
 /* Cabeçalho: logo do cliente, título, subtítulo — tudo à esquerda */
 
-body.t-PageBody--login .t-Login-header {
+body.t-PageBody--login:not(#nc-p1):not(#nc-p2) .t-Login-header {
   padding: 0 !important;
-  margin: 0;
-  text-align: left;
+  margin: 0 !important;
+  text-align: left !important;
 }
 
-body.t-PageBody--login .t-Login-logo {
-  display: block;
-  width: 180px;
-  height: 56px;
-  margin: 0 0 40px;
-  background-position: left center;
+body.t-PageBody--login:not(#nc-p1):not(#nc-p2) .t-Login-logo {
+  display: block !important;
+  width: 180px !important;
+  height: 56px !important;
+  margin: 0 0 40px !important;
+  background-position: left center !important;
 }
 
-body.t-PageBody--login .t-Login-title {
+body.t-PageBody--login:not(#nc-p1):not(#nc-p2) .t-Login-title {
   font: 700 32px/1.15 Manrope, system-ui, sans-serif !important;
   font-size: 32px !important;
-  letter-spacing: -.02em;
-  color: var(--nc-tinta);
+  letter-spacing: -.02em !important;
+  color: var(--nc-tinta) !important;
   margin: 0 0 8px !important;
-  text-align: left;
+  text-align: left !important;
 }
 
-body.t-PageBody--login .t-Login-header::after {
-  content: var(--nc-login-subtitulo);
-  display: block;
-  font: 500 15px/1.5 Manrope, system-ui, sans-serif;
-  color: var(--nc-grafite);
+body.t-PageBody--login:not(#nc-p1):not(#nc-p2) .t-Login-header::after {
+  content: var(--nc-login-subtitulo) !important;
+  display: block !important;
+  font: 500 15px/1.5 Manrope, system-ui, sans-serif !important;
+  color: var(--nc-grafite) !important;
 }
 
-body.t-PageBody--login .t-Login-body {
-  margin-top: 32px;
-  padding: 0;
+/* O subtítulo diz o que o formulário pede: no Portal do Candidato (app 600) o
+   primeiro campo é E-mail, não Usuário. Sem suporte a :has(), fica o texto padrão. */
+body.t-PageBody--login:not(#nc-p1):not(#nc-p2):has(#P900_EMAIL) .t-Login-header::after {
+  content: "Entre com seu e-mail e senha para continuar." !important;
+}
+
+body.t-PageBody--login:not(#nc-p1):not(#nc-p2) .t-Login-body {
+  margin-top: 32px !important;
+  padding: 0 !important;
 }
 
 /* Campos */
 
-body.t-PageBody--login .t-Login-body .t-Form-fieldContainer {
+body.t-PageBody--login:not(#nc-p1):not(#nc-p2) .t-Login-body .t-Form-fieldContainer {
   margin: 0 0 18px !important;
-  padding: 0;
+  padding: 0 !important;
 }
 
-body.t-PageBody--login .t-Form-labelContainer,
-body.t-PageBody--login .t-Form-inputContainer {
-  padding: 0;
-  width: 100%;
+body.t-PageBody--login:not(#nc-p1):not(#nc-p2) .t-Form-labelContainer,
+body.t-PageBody--login:not(#nc-p1):not(#nc-p2) .t-Form-inputContainer {
+  padding: 0 !important;
+  width: 100% !important;
 }
 
-body.t-PageBody--login .t-Form-label {
-  display: block;
-  padding: 0 0 6px;
-  font: 600 13px/1.4 Manrope, system-ui, sans-serif;
-  color: var(--nc-grafite);
+body.t-PageBody--login:not(#nc-p1):not(#nc-p2) .t-Form-label {
+  display: block !important;
+  padding: 0 0 6px !important;
+  font: 600 13px/1.4 Manrope, system-ui, sans-serif !important;
+  color: var(--nc-grafite) !important;
 }
 
-body.t-PageBody--login .t-Form-itemWrapper {
-  position: relative;
+body.t-PageBody--login:not(#nc-p1):not(#nc-p2) .t-Form-itemWrapper {
+  position: relative !important;
 }
 
-body.t-PageBody--login .t-Login-body input.apex-item-text {
-  width: 100%;
-  height: 48px;
-  padding: 0 14px 0 44px;
-  border: 1px solid var(--nc-nevoa);
-  border-radius: 12px;
-  background: #fff;
-  font: 500 15px Manrope, system-ui, sans-serif;
-  color: var(--nc-tinta);
-  box-shadow: 0 1px 2px rgba(27, 18, 56, .04);
-  transition: border-color .15s, box-shadow .15s;
+body.t-PageBody--login:not(#nc-p1):not(#nc-p2) .t-Login-body input.apex-item-text {
+  width: 100% !important;
+  height: 48px !important;
+  padding: 0 14px 0 44px !important;
+  text-indent: 0 !important;                       /* o tema 1.4 soma 2rem–3.1rem ao padding */
+  border: 1px solid var(--nc-nevoa) !important;
+  border-radius: 12px !important;
+  background: #fff !important;
+  font: 500 15px Manrope, system-ui, sans-serif !important;
+  color: var(--nc-tinta) !important;
+  box-shadow: 0 1px 2px rgba(27, 18, 56, .04) !important;
+  transition: border-color .15s, box-shadow .15s !important;
 }
 
-body.t-PageBody--login .t-Login-body input.apex-item-text::placeholder {
-  color: var(--nc-cinza);
+body.t-PageBody--login:not(#nc-p1):not(#nc-p2) .t-Login-body input.apex-item-text::placeholder {
+  color: var(--nc-cinza) !important;
 }
 
-body.t-PageBody--login .t-Login-body input.apex-item-text:hover {
-  border-color: #D6CFE4;
+body.t-PageBody--login:not(#nc-p1):not(#nc-p2) .t-Login-body input.apex-item-text:hover {
+  border-color: #D6CFE4 !important;
 }
 
-body.t-PageBody--login .t-Login-body input.apex-item-text:focus {
+body.t-PageBody--login:not(#nc-p1):not(#nc-p2) .t-Login-body input.apex-item-text:focus {
   border-color: var(--nc-roxo) !important;   /* o CSS antigo força rosa */
-  box-shadow: 0 0 0 4px rgba(81, 28, 118, .14);
-  outline: none;
+  box-shadow: 0 0 0 4px rgba(81, 28, 118, .14) !important;
+  outline: none !important;
 }
 
-body.t-PageBody--login .t-Login-body .apex-item-icon {
-  position: absolute;
-  top: 0;
-  left: 0;
-  margin: 0;                            /* o tema desloca o ícone -40px */
-  z-index: 1;
-  pointer-events: none;
-  width: 44px;
-  height: 48px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--nc-cinza);
-  background: none;
-  transition: color .15s;
+body.t-PageBody--login:not(#nc-p1):not(#nc-p2) .t-Login-body .apex-item-icon {
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  margin: 0 !important;                            /* o tema desloca o ícone -40px */
+  z-index: 3 !important;                           /* o campo é item de flex: o z-index do
+                                           tema vale nele e cobria a chave no foco */
+  pointer-events: none !important;
+  width: 44px !important;
+  height: 48px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  color: var(--nc-cinza) !important;
+  background: none !important;
+  box-shadow: none !important;                     /* o Theme Roller do rótulo flutuante
+                                           desenha um divisor com sombra interna */
+  transition: color .15s !important;
 }
 
-body.t-PageBody--login .t-Login-body input.apex-item-text:focus + .apex-item-icon {
-  color: var(--nc-roxo);
+body.t-PageBody--login:not(#nc-p1):not(#nc-p2) .t-Login-body input.apex-item-text:focus + .apex-item-icon {
+  color: var(--nc-roxo) !important;
+}
+
+/* Rótulo flutuante (Universal Theme 1.4, ex.: app 500). O tema monta cada campo
+   como uma LINHA flex — rótulo e campo lado a lado (order 2 e 3), rótulo absolute,
+   movido para dentro do campo. Aqui ele vira o mesmo desenho dos outros apps:
+   rótulo acima, campo na largura toda. O ponto e o ícone vermelhos de
+   "obrigatório" saem: num login os dois campos são obviamente obrigatórios. */
+
+body.t-PageBody--login:not(#nc-p1):not(#nc-p2) .t-Login-body .t-Form-fieldContainer--floatingLabel {
+  display: block !important;
+}
+
+body.t-PageBody--login:not(#nc-p1):not(#nc-p2) .t-Form-fieldContainer--floatingLabel .t-Form-labelContainer,
+body.t-PageBody--login:not(#nc-p1):not(#nc-p2) .t-Form-fieldContainer--floatingLabel .t-Form-inputContainer {
+  position: relative !important;
+  order: 0 !important;
+  width: 100% !important;
+  height: auto !important;
+  min-height: 0 !important;
+  padding: 0 !important;
+}
+
+body.t-PageBody--login:not(#nc-p1):not(#nc-p2) .t-Form-fieldContainer--floatingLabel .t-Form-label {
+  position: static !important;
+  top: auto !important;
+  left: auto !important;
+  transform: none !important;
+  margin: 0 !important;
+  background: none !important;
+  white-space: normal !important;
+  pointer-events: auto !important;
+}
+
+body.t-PageBody--login:not(#nc-p1):not(#nc-p2) .t-Form-fieldContainer--floatingLabel::before,
+body.t-PageBody--login:not(#nc-p1):not(#nc-p2) .t-Form-fieldContainer--floatingLabel .t-Form-label::before,
+body.t-PageBody--login:not(#nc-p1):not(#nc-p2) .t-Form-fieldContainer--floatingLabel .t-Form-label::after {
+  content: none !important;
+  display: none !important;
 }
 
 /* Botão Entrar */
 
-body.t-PageBody--login .t-Login-buttons {
-  padding: 0;
-  margin-top: 8px;
+body.t-PageBody--login:not(#nc-p1):not(#nc-p2) .t-Login-buttons {
+  padding: 0 !important;
+  margin-top: 8px !important;
 }
 
-body.t-PageBody--login .t-Login-buttons .t-Button--hot {
-  width: 100%;
-  height: 50px;
-  margin: 0;
-  border: 0;
-  border-radius: 12px;
-  background: linear-gradient(135deg, var(--nc-roxo), var(--nc-ameixa));
-  box-shadow: 0 10px 24px -10px rgba(81, 28, 118, .55);
-  font: 700 15px Manrope, system-ui, sans-serif;
-  color: #fff;
-  transition: box-shadow .15s, filter .15s;
+body.t-PageBody--login:not(#nc-p1):not(#nc-p2) .t-Login-buttons .t-Button--hot {
+  width: 100% !important;
+  height: 50px !important;
+  margin: 0 !important;
+  border: 0 !important;
+  border-radius: 12px !important;
+  background: linear-gradient(135deg, var(--nc-roxo), var(--nc-ameixa)) !important;
+  box-shadow: 0 10px 24px -10px rgba(81, 28, 118, .55) !important;
+  font: 700 15px Manrope, system-ui, sans-serif !important;
+  color: #fff !important;
+  transition: box-shadow .15s, filter .15s !important;
 }
 
-body.t-PageBody--login .t-Login-buttons .t-Button--hot:hover {
-  filter: brightness(1.08);
-  box-shadow: 0 14px 28px -10px rgba(81, 28, 118, .6);
+body.t-PageBody--login:not(#nc-p1):not(#nc-p2) .t-Login-buttons .t-Button--hot:hover {
+  filter: brightness(1.08) !important;
+  box-shadow: 0 14px 28px -10px rgba(81, 28, 118, .6) !important;
 }
 
-body.t-PageBody--login .t-Login-buttons .t-Button--hot:focus-visible {
-  outline: 3px solid var(--nc-roxo);
-  outline-offset: 3px;
+body.t-PageBody--login:not(#nc-p1):not(#nc-p2) .t-Login-buttons .t-Button--hot:focus-visible {
+  outline: 3px solid var(--nc-roxo) !important;
+  outline-offset: 3px !important;
 }
 
-body.t-PageBody--login .t-Login-buttons .t-Button--hot .t-Icon {
-  display: none;                        /* o ícone "desligar" some */
+body.t-PageBody--login:not(#nc-p1):not(#nc-p2) .t-Login-buttons .t-Button--hot .t-Icon {
+  display: none !important;                        /* o ícone "desligar" some */
 }
 
-body.t-PageBody--login .t-Login-links {
-  padding: 16px 0 0;
-  text-align: left;
+body.t-PageBody--login:not(#nc-p1):not(#nc-p2) .t-Login-links {
+  padding: 16px 0 0 !important;
+  text-align: left !important;
+}
+
+/* ---------- Botões secundários (apps com SSO e recuperação de senha) --
+   Hierarquia: Entrar é a ação principal; Entrar SSO, a alternativa, em
+   contorno; Alterar e Esqueci senha, caminhos de exceção, como links
+   discretos lado a lado. Por classe, nunca pelo id gerado do botão:
+     .t-Button--hot                      Entrar
+     .t-Button--hot.t-Button--simple     Entrar SSO
+     .t-Button:not(.t-Button--hot)       Alterar Senha, Esqueci Senha
+   -------------------------------------------------------------------- */
+
+body.t-PageBody--login:not(#nc-p1):not(#nc-p2) .t-Login-buttons {
+  display: flex !important;
+  flex-flow: row wrap !important;
+  justify-content: space-between !important;
+  gap: 12px 16px !important;
+}
+
+body.t-PageBody--login:not(#nc-p1):not(#nc-p2) .t-Login-buttons .t-Button {
+  flex: 1 1 100% !important;
+  margin: 0 !important;
+  letter-spacing: normal !important;
+  justify-content: center !important;
+}
+
+body.t-PageBody--login:not(#nc-p1):not(#nc-p2) .t-Login-buttons .t-Button .t-Icon {
+  display: none !important;
+}
+
+body.t-PageBody--login:not(#nc-p1):not(#nc-p2) .t-Login-buttons .t-Button .t-Button-label {
+  font-family: inherit !important;
+  color: inherit !important;
+}
+
+body.t-PageBody--login:not(#nc-p1):not(#nc-p2) .t-Login-buttons .t-Button--hot.t-Button--simple {
+  height: 48px !important;
+  border: 1.5px solid var(--nc-roxo) !important;
+  border-radius: 12px !important;
+  background: #fff !important;
+  box-shadow: none !important;
+  color: var(--nc-roxo) !important;
+  filter: none !important;
+}
+
+body.t-PageBody--login:not(#nc-p1):not(#nc-p2) .t-Login-buttons .t-Button--hot.t-Button--simple:hover {
+  background: var(--nc-off) !important;
+  box-shadow: none !important;
+}
+
+body.t-PageBody--login:not(#nc-p1):not(#nc-p2) .t-Login-buttons .t-Button:not(.t-Button--hot) {
+  flex: 0 0 auto !important;
+  width: auto !important;                          /* tema e Natcorp_Style_Min fixam 100% */
+  height: auto !important;
+  padding: 4px 0 !important;
+  border: 0 !important;
+  border-radius: 4px !important;
+  background: none !important;
+  box-shadow: none !important;
+  font: 600 14px/1.4 Manrope, system-ui, sans-serif !important;
+  color: var(--nc-roxo) !important;
+}
+
+body.t-PageBody--login:not(#nc-p1):not(#nc-p2) .t-Login-buttons .t-Button:not(.t-Button--hot):hover {
+  background: none !important;
+  text-decoration: underline !important;
+  text-underline-offset: 3px !important;
+}
+
+body.t-PageBody--login:not(#nc-p1):not(#nc-p2) .t-Login-buttons .t-Button:focus-visible {
+  outline: 3px solid var(--nc-roxo) !important;
+  outline-offset: 3px !important;
+}
+
+/* ---------- Zerar o outro redesenho do login ------------------------
+   O Natcorp_Style_Min.css do workspace natcorp (app 100) desenha um
+   login próprio. Prioridade só decide as propriedades que as DUAS folhas
+   declaram; as que só ele declara continuariam valendo. Esta lista foi
+   MEDIDA em 26/09 no app 100: para cada elemento do login, as
+   propriedades que só ele escreve, com o valor que o elemento tem com
+   aquela folha desligada. Alturas vão como auto, nunca em px: o valor
+   medido em uma tela quebraria as outras.
+   Se aquela folha mudar, meça de novo: medir-conflitos.js.
+   -------------------------------------------------------------------- */
+
+body.t-PageBody--login:not(#nc-p1):not(#nc-p2) .t-Login-container::before,
+body.t-PageBody--login:not(#nc-p1):not(#nc-p2) .t-Login-header::before,
+body.t-PageBody--login:not(#nc-p1):not(#nc-p2) .t-Login-body::before {
+  content: none !important;
+  display: none !important;
+  background: none !important;
+}
+
+body.t-PageBody--login:not(#nc-p1):not(#nc-p2) {
+  min-height: 0 !important;
+  overflow-y: visible !important;
+}
+
+body.t-PageBody--login:not(#nc-p1):not(#nc-p2) .t-Body {
+  position: absolute !important;
+  height: auto !important;
+  min-height: 0 !important;
+  background-color: transparent !important;
+  color: var(--nc-tinta) !important;
+}
+
+body.t-PageBody--login:not(#nc-p1):not(#nc-p2) .t-Body-wrap,
+body.t-PageBody--login:not(#nc-p1):not(#nc-p2) .t-Body-col {
+  top: auto !important;
+  height: auto !important;
+  border: 0 none !important;
+  border-image: none !important;
+  gap: normal !important;
+  align-items: normal !important;
+  justify-content: normal !important;
+}
+
+body.t-PageBody--login:not(#nc-p1):not(#nc-p2) .t-Login-container .container,
+body.t-PageBody--login:not(#nc-p1):not(#nc-p2) .t-Login-container .row,
+body.t-PageBody--login:not(#nc-p1):not(#nc-p2) .t-Login-container .col {
+  row-gap: normal !important;
+}
+
+body.t-PageBody--login:not(#nc-p1):not(#nc-p2) .t-Login-header {
+  position: static !important;
+  display: block !important;
+  height: auto !important;
+  align-items: normal !important;
+  background: none !important;
+}
+
+body.t-PageBody--login:not(#nc-p1):not(#nc-p2) .t-Login-title {
+  height: auto !important;
+  overflow: visible !important;
+}
+
+body.t-PageBody--login:not(#nc-p1):not(#nc-p2) .t-Login-body .t-Form-fieldContainer {
+  position: static !important;
+  min-width: 0 !important;
+}
+
+body.t-PageBody--login:not(#nc-p1):not(#nc-p2) .t-Form-label {
+  text-transform: none !important;
+  letter-spacing: normal !important;
+  margin-bottom: 0 !important;
+}
+
+body.t-PageBody--login:not(#nc-p1):not(#nc-p2) .t-Login-body .t-Form-inputContainer {
+  display: block !important;
+  position: relative !important;
+  align-items: normal !important;
+  flex-wrap: nowrap !important;
+  gap: normal !important;
+  min-width: 0 !important;
+}
+
+body.t-PageBody--login:not(#nc-p1):not(#nc-p2) .t-Login-body .t-Form-itemWrapper {
+  display: flex !important;
+  flex: 0 1 auto !important;
+  flex-wrap: nowrap !important;
+  align-items: flex-start !important;
+  gap: normal !important;
+  min-width: 0 !important;
+}
+
+body.t-PageBody--login:not(#nc-p1):not(#nc-p2) .t-Login-body input.apex-item-text {
+  appearance: auto !important;
+  backface-visibility: visible !important;
+  box-sizing: border-box !important;
+  flex: 1 1 0% !important;
+  min-width: 0 !important;
+  min-height: auto !important;
+  max-width: 100% !important;
+  opacity: 1 !important;
+}
+
+body.t-PageBody--login:not(#nc-p1):not(#nc-p2) .t-Login-body .apex-item-icon {
+  flex: 0 1 auto !important;
+  min-width: 0 !important;
 }
 
 /* ---------- Celular e tablet: só o formulário ----------------------- */
 
 @media (max-width: 991px) {
-  body.t-PageBody--login::before,
-  body.t-PageBody--login::after,
-  body.t-PageBody--login #wwvFlowForm::before,
-  body.t-PageBody--login #wwvFlowForm::after,
-  html:has(body.t-PageBody--login)::after {
-    display: none;
+  body.t-PageBody--login:not(#nc-p1):not(#nc-p2)::before,
+  body.t-PageBody--login:not(#nc-p1):not(#nc-p2)::after,
+  body.t-PageBody--login:not(#nc-p1):not(#nc-p2) #wwvFlowForm::before,
+  body.t-PageBody--login:not(#nc-p1):not(#nc-p2) #wwvFlowForm::after,
+  html:has(body.t-PageBody--login:not(#nc-p1):not(#nc-p2))::after {
+    display: none !important;
   }
 
-  body.t-PageBody--login .t-Body {
-    right: 0;
-    align-items: flex-start;
-    padding: 12vh 24px 32px;
+  body.t-PageBody--login:not(#nc-p1):not(#nc-p2) .t-Body,
+  body.t-PageBody--login:not(#nc-p1):not(#nc-p2) #wwvFlowForm > .t-Login-container {
+    right: 0 !important;
+    align-items: flex-start !important;
+    padding: 12vh 24px 32px !important;
   }
 
-  body.t-PageBody--login .t-Login-logo {
-    margin-bottom: 32px;
+  body.t-PageBody--login:not(#nc-p1):not(#nc-p2) .t-Login-logo {
+    margin-bottom: 32px !important;
   }
 
-  body.t-PageBody--login .t-Login-title {
+  body.t-PageBody--login:not(#nc-p1):not(#nc-p2) .t-Login-title {
     font-size: 28px !important;
   }
 }

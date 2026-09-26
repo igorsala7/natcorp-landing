@@ -14,13 +14,21 @@
 
    REVERTER: apagar a linha do File URLs. Nada mais foi alterado.
 
-   A ORDEM NÃO IMPORTA: toda regra começa com body.t-PageBody--login e vence
-   por especificidade o Theme Roller, o Natcorp_Style_Min.css antigo e o
-   <style> inline da página 900 — carregada antes ou depois deles.
-   Os !important que restam competem com:
-     - o style="" inline do <body> (imagem BACKGROUND.png);
-     - o <style> inline da página 900 (.t-Login-title, .t-Login-header);
-     - o Natcorp_Style_Min.css antigo (.t-Form-fieldContainer, :focus rosa).
+   PRIORIDADE — esta folha vale por cima de qualquer outra, sem editá-las.
+   O gerador faz três coisas que a fonte não mostra:
+     1. toda declaração ganha !important;
+     2. todo "body.t-PageBody--login" ganha :not(#nc-p1):not(#nc-p2), o
+        peso de DOIS IDs sem ID nenhum na página. Entre dois !important
+        decide a especificidade, e as regras mais fortes das outras folhas
+        do APEX pesam no máximo um ID (o :not(#nc-fake-id) do
+        Natcorp_Style_Min.css do workspace natcorp);
+     3. a seção "Zerar o outro redesenho do login" (no fim) desfaz as
+        propriedades que SÓ a outra folha declara — prioridade não decide
+        o que só um lado escreve. Essa lista foi medida em 26/09 no app 100
+        com medir-conflitos.js; se aquela folha mudar, meça de novo.
+   O que CSS nenhum vence: style="" com !important gravado por JavaScript,
+   uma folha com três IDs ou mais, ou um script que tire a classe
+   t-PageBody--login do <body>.
 
    NÃO EDITE ESTE ARQUIVO À MÃO: ele é gerado a partir de
    brand/apex/login/Natcorp_Login.src.css por gerar-login.mjs
@@ -183,6 +191,37 @@ body.t-PageBody--login .t-Login-container {
   display: block;
 }
 
+/* Universal Theme 1.4 (ex.: app 600): o login NÃO tem .t-Body. A estrutura é
+     form#wwvFlowForm > .t-Login-container > main.t-Login-containerBody > .container…
+   Então a coluna esquerda vai no .t-Login-container. "Filho direto do form"
+   só existe no 1.4: no 1.1 (apps 100 e 202) ele mora dentro do .t-Body. */
+body.t-PageBody--login #wwvFlowForm > .t-Login-container {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: var(--nc-painel);
+  width: auto;
+  max-width: none;
+  height: auto;
+  margin: 0;
+  padding: 48px clamp(24px, 5vw, 64px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow-y: auto;
+  background: #fff;
+  z-index: 2;
+}
+
+body.t-PageBody--login .t-Login-containerBody {
+  display: block;
+  width: 100%;
+  max-width: 420px;
+  margin: 0;
+  padding: 0;
+}
+
 body.t-PageBody--login .t-Login-container .container,
 body.t-PageBody--login .t-Login-container .row,
 body.t-PageBody--login .t-Login-container .col {
@@ -240,6 +279,12 @@ body.t-PageBody--login .t-Login-header::after {
   color: var(--nc-grafite);
 }
 
+/* O subtítulo diz o que o formulário pede: no Portal do Candidato (app 600) o
+   primeiro campo é E-mail, não Usuário. Sem suporte a :has(), fica o texto padrão. */
+body.t-PageBody--login:has(#P900_EMAIL) .t-Login-header::after {
+  content: "Entre com seu e-mail e senha para continuar.";
+}
+
 body.t-PageBody--login .t-Login-body {
   margin-top: 32px;
   padding: 0;
@@ -273,6 +318,7 @@ body.t-PageBody--login .t-Login-body input.apex-item-text {
   width: 100%;
   height: 48px;
   padding: 0 14px 0 44px;
+  text-indent: 0;                       /* o tema 1.4 soma 2rem–3.1rem ao padding */
   border: 1px solid var(--nc-nevoa);
   border-radius: 12px;
   background: #fff;
@@ -301,7 +347,8 @@ body.t-PageBody--login .t-Login-body .apex-item-icon {
   top: 0;
   left: 0;
   margin: 0;                            /* o tema desloca o ícone -40px */
-  z-index: 1;
+  z-index: 3;                           /* o campo é item de flex: o z-index do
+                                           tema vale nele e cobria a chave no foco */
   pointer-events: none;
   width: 44px;
   height: 48px;
@@ -310,11 +357,51 @@ body.t-PageBody--login .t-Login-body .apex-item-icon {
   justify-content: center;
   color: var(--nc-cinza);
   background: none;
+  box-shadow: none;                     /* o Theme Roller do rótulo flutuante
+                                           desenha um divisor com sombra interna */
   transition: color .15s;
 }
 
 body.t-PageBody--login .t-Login-body input.apex-item-text:focus + .apex-item-icon {
   color: var(--nc-roxo);
+}
+
+/* Rótulo flutuante (Universal Theme 1.4, ex.: app 500). O tema monta cada campo
+   como uma LINHA flex — rótulo e campo lado a lado (order 2 e 3), rótulo absolute,
+   movido para dentro do campo. Aqui ele vira o mesmo desenho dos outros apps:
+   rótulo acima, campo na largura toda. O ponto e o ícone vermelhos de
+   "obrigatório" saem: num login os dois campos são obviamente obrigatórios. */
+
+body.t-PageBody--login .t-Login-body .t-Form-fieldContainer--floatingLabel {
+  display: block;
+}
+
+body.t-PageBody--login .t-Form-fieldContainer--floatingLabel .t-Form-labelContainer,
+body.t-PageBody--login .t-Form-fieldContainer--floatingLabel .t-Form-inputContainer {
+  position: relative;
+  order: 0;
+  width: 100%;
+  height: auto;
+  min-height: 0;
+  padding: 0;
+}
+
+body.t-PageBody--login .t-Form-fieldContainer--floatingLabel .t-Form-label {
+  position: static;
+  top: auto;
+  left: auto;
+  transform: none;
+  margin: 0;
+  background: none;
+  white-space: normal;
+  pointer-events: auto;
+}
+
+body.t-PageBody--login .t-Form-fieldContainer--floatingLabel::before,
+body.t-PageBody--login .t-Form-fieldContainer--floatingLabel .t-Form-label::before,
+body.t-PageBody--login .t-Form-fieldContainer--floatingLabel .t-Form-label::after {
+  content: none;
+  display: none;
 }
 
 /* Botão Entrar */
@@ -356,6 +443,184 @@ body.t-PageBody--login .t-Login-links {
   text-align: left;
 }
 
+/* ---------- Botões secundários (apps com SSO e recuperação de senha) --
+   Hierarquia: Entrar é a ação principal; Entrar SSO, a alternativa, em
+   contorno; Alterar e Esqueci senha, caminhos de exceção, como links
+   discretos lado a lado. Por classe, nunca pelo id gerado do botão:
+     .t-Button--hot                      Entrar
+     .t-Button--hot.t-Button--simple     Entrar SSO
+     .t-Button:not(.t-Button--hot)       Alterar Senha, Esqueci Senha
+   -------------------------------------------------------------------- */
+
+body.t-PageBody--login .t-Login-buttons {
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: space-between;
+  gap: 12px 16px;
+}
+
+body.t-PageBody--login .t-Login-buttons .t-Button {
+  flex: 1 1 100%;
+  margin: 0;
+  letter-spacing: normal;
+  justify-content: center;
+}
+
+body.t-PageBody--login .t-Login-buttons .t-Button .t-Icon {
+  display: none;
+}
+
+body.t-PageBody--login .t-Login-buttons .t-Button .t-Button-label {
+  font-family: inherit;
+  color: inherit;
+}
+
+body.t-PageBody--login .t-Login-buttons .t-Button--hot.t-Button--simple {
+  height: 48px;
+  border: 1.5px solid var(--nc-roxo);
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: none;
+  color: var(--nc-roxo);
+  filter: none;
+}
+
+body.t-PageBody--login .t-Login-buttons .t-Button--hot.t-Button--simple:hover {
+  background: var(--nc-off);
+  box-shadow: none;
+}
+
+body.t-PageBody--login .t-Login-buttons .t-Button:not(.t-Button--hot) {
+  flex: 0 0 auto;
+  width: auto;                          /* tema e Natcorp_Style_Min fixam 100% */
+  height: auto;
+  padding: 4px 0;
+  border: 0;
+  border-radius: 4px;
+  background: none;
+  box-shadow: none;
+  font: 600 14px/1.4 Manrope, system-ui, sans-serif;
+  color: var(--nc-roxo);
+}
+
+body.t-PageBody--login .t-Login-buttons .t-Button:not(.t-Button--hot):hover {
+  background: none;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+body.t-PageBody--login .t-Login-buttons .t-Button:focus-visible {
+  outline: 3px solid var(--nc-roxo);
+  outline-offset: 3px;
+}
+
+/* ---------- Zerar o outro redesenho do login ------------------------
+   O Natcorp_Style_Min.css do workspace natcorp (app 100) desenha um
+   login próprio. Prioridade só decide as propriedades que as DUAS folhas
+   declaram; as que só ele declara continuariam valendo. Esta lista foi
+   MEDIDA em 26/09 no app 100: para cada elemento do login, as
+   propriedades que só ele escreve, com o valor que o elemento tem com
+   aquela folha desligada. Alturas vão como auto, nunca em px: o valor
+   medido em uma tela quebraria as outras.
+   Se aquela folha mudar, meça de novo: medir-conflitos.js.
+   -------------------------------------------------------------------- */
+
+body.t-PageBody--login .t-Login-container::before,
+body.t-PageBody--login .t-Login-header::before,
+body.t-PageBody--login .t-Login-body::before {
+  content: none;
+  display: none;
+  background: none;
+}
+
+body.t-PageBody--login {
+  min-height: 0;
+  overflow-y: visible;
+}
+
+body.t-PageBody--login .t-Body {
+  position: absolute;
+  height: auto;
+  min-height: 0;
+  background-color: transparent;
+  color: var(--nc-tinta);
+}
+
+body.t-PageBody--login .t-Body-wrap,
+body.t-PageBody--login .t-Body-col {
+  top: auto;
+  height: auto;
+  border: 0 none;
+  border-image: none;
+  gap: normal;
+  align-items: normal;
+  justify-content: normal;
+}
+
+body.t-PageBody--login .t-Login-container .container,
+body.t-PageBody--login .t-Login-container .row,
+body.t-PageBody--login .t-Login-container .col {
+  row-gap: normal;
+}
+
+body.t-PageBody--login .t-Login-header {
+  position: static;
+  display: block;
+  height: auto;
+  align-items: normal;
+  background: none;
+}
+
+body.t-PageBody--login .t-Login-title {
+  height: auto;
+  overflow: visible;
+}
+
+body.t-PageBody--login .t-Login-body .t-Form-fieldContainer {
+  position: static;
+  min-width: 0;
+}
+
+body.t-PageBody--login .t-Form-label {
+  text-transform: none;
+  letter-spacing: normal;
+  margin-bottom: 0;
+}
+
+body.t-PageBody--login .t-Login-body .t-Form-inputContainer {
+  display: block;
+  position: relative;
+  align-items: normal;
+  flex-wrap: nowrap;
+  gap: normal;
+  min-width: 0;
+}
+
+body.t-PageBody--login .t-Login-body .t-Form-itemWrapper {
+  display: flex;
+  flex: 0 1 auto;
+  flex-wrap: nowrap;
+  align-items: flex-start;
+  gap: normal;
+  min-width: 0;
+}
+
+body.t-PageBody--login .t-Login-body input.apex-item-text {
+  appearance: auto;
+  backface-visibility: visible;
+  box-sizing: border-box;
+  flex: 1 1 0%;
+  min-width: 0;
+  min-height: auto;
+  max-width: 100%;
+  opacity: 1;
+}
+
+body.t-PageBody--login .t-Login-body .apex-item-icon {
+  flex: 0 1 auto;
+  min-width: 0;
+}
+
 /* ---------- Celular e tablet: só o formulário ----------------------- */
 
 @media (max-width: 991px) {
@@ -367,7 +632,8 @@ body.t-PageBody--login .t-Login-links {
     display: none;
   }
 
-  body.t-PageBody--login .t-Body {
+  body.t-PageBody--login .t-Body,
+  body.t-PageBody--login #wwvFlowForm > .t-Login-container {
     right: 0;
     align-items: flex-start;
     padding: 12vh 24px 32px;
