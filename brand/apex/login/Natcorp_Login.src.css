@@ -1,0 +1,383 @@
+/* =====================================================================
+   Natcorp_Login.css — login em tela dividida para APEX 19.2 (Universal Theme 42)
+   ---------------------------------------------------------------------
+   UM arquivo, sem dependências: a fonte Manrope, o logo e o painel animado
+   vêm embutidos. Nada é buscado fora (nem Google Fonts).
+
+   INSTALAR
+   1. Shared Components › Static Workspace Files › Upload: este arquivo.
+   2. Página de login (900) › CSS › File URLs:
+          #WORKSPACE_IMAGES#Natcorp_Login.css
+      (ou Shared Components › User Interface Attributes › CSS File URLs,
+      para todos os apps: é seguro, toda regra só vale no login.)
+   3. Ctrl+Shift+R no navegador.
+
+   REVERTER: apagar a linha do File URLs. Nada mais foi alterado.
+
+   A ORDEM NÃO IMPORTA: toda regra começa com body.t-PageBody--login e vence
+   por especificidade o Theme Roller, o Natcorp_Style_Min.css antigo e o
+   <style> inline da página 900 — carregada antes ou depois deles.
+   Os !important que restam competem com:
+     - o style="" inline do <body> (imagem BACKGROUND.png);
+     - o <style> inline da página 900 (.t-Login-title, .t-Login-header);
+     - o Natcorp_Style_Min.css antigo (.t-Form-fieldContainer, :focus rosa).
+
+   NÃO EDITE ESTE ARQUIVO À MÃO: ele é gerado a partir de
+   brand/apex/login/Natcorp_Login.src.css por gerar-login.mjs
+   (node brand/apex/login/gerar-login.mjs).
+   ===================================================================== */
+
+/* Manrope variável (pesos 200–800), subconjunto latino: cobre todo o
+   português. Embutida porque os .woff2 dão 404 no servidor do APEX. */
+@font-face {
+  font-family: "Manrope";
+  font-style: normal;
+  font-weight: 200 800;
+  font-display: swap;
+  src: @@FONTE@@ format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+/* Os tokens ficam na raiz: html::after (a frase de apoio) não herda do body.
+   O :has() prende a raiz ao login. O :where() é tolerante: um navegador sem
+   :has() descarta só aquele item, o body continua recebendo os tokens e só a
+   frase de apoio some (numa lista comum, a regra INTEIRA seria descartada). */
+:where(:root:has(body.t-PageBody--login), body.t-PageBody--login) {
+  --nc-roxo: #511C76;
+  --nc-azul: #2C1A63;
+  --nc-ameixa: #9A408A;
+  --nc-rosa: #C95788;
+  --nc-tinta: #1B1238;
+  --nc-grafite: #4A4460;
+  --nc-cinza: #8E88A3;
+  --nc-nevoa: #E9E5F1;
+  --nc-off: #F4F2F7;
+  --nc-painel: 50%;            /* largura do painel de marca */
+
+  /* O texto do painel é o do hero da home (src/components/sections/Hero.tsx):
+     "Todo o RH. [[Um único sistema.]]" — a segunda frase no rosa-claro. */
+  --nc-login-titulo: "Todo o RH.";
+  --nc-login-destaque: "Um único sistema.";
+  --nc-login-texto: "HR Tech brasileira há mais de 35 anos.";
+  --nc-login-subtitulo: "Entre com seu usuário e senha para continuar.";
+  --nc-fs: clamp(34px, 3.7vw, 60px);  /* corpo do título do painel */
+  --nc-pad: clamp(48px, 6vw, 112px);   /* margem lateral do painel */
+}
+
+body.t-PageBody--login {
+  background: #fff !important;        /* vence o style="" inline */
+  font-family: Manrope, "Segoe UI", system-ui, sans-serif;
+  color: var(--nc-tinta);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ---------- Painel de marca (direita) -------------------------------
+   As camadas do hero dos portais (PortalHubPage › Opening), numa imagem só:
+   malha técnica, rede de pontos à deriva, brilho rosa que respira e os
+   losangos do ModuleLights desenhando-se, com a luz correndo na borda.
+   O SVG é gerado por gerar-painel.mjs a partir do código do site e vem
+   embutido aqui: o APEX não recebe arquivo, template nem JavaScript.
+   Pseudo-elementos usados (todos fora de .t-Body, que empilha à parte):
+     body::before           fundo + efeitos
+     body::after            "Todo o RH."
+     #wwvFlowForm::before   "Um único sistema."
+     #wwvFlowForm::after    logo Natcorp
+     html::after            frase de apoio
+   -------------------------------------------------------------------- */
+
+body.t-PageBody--login::before {
+  content: "";
+  position: fixed;
+  inset: 0 0 0 calc(100% - var(--nc-painel));
+  background:
+    @@PAINEL_ANIMADO@@ center / cover no-repeat,
+    radial-gradient(60% 80% at 85% 50%, rgba(160, 105, 205, .55), transparent 70%),
+    radial-gradient(45% 60% at 100% 100%, rgba(201, 87, 136, .4), transparent 70%),
+    linear-gradient(180deg, #2C1A63 0%, #3A1A66 60%, #4A1B72 100%);
+  z-index: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body.t-PageBody--login::before {
+    background-image:
+      @@PAINEL_PARADO@@,
+      radial-gradient(60% 80% at 85% 50%, rgba(160, 105, 205, .55), transparent 70%),
+      radial-gradient(45% 60% at 100% 100%, rgba(201, 87, 136, .4), transparent 70%),
+      linear-gradient(180deg, #2C1A63 0%, #3A1A66 60%, #4A1B72 100%);
+  }
+}
+
+/* O título em duas peças: a primeira presa por baixo ao meio da tela, a
+   segunda presa por cima. Se "Um único sistema." quebrar numa tela estreita,
+   ela cresce para baixo e nunca encavala na primeira linha. */
+body.t-PageBody--login::after,
+body.t-PageBody--login #wwvFlowForm::before {
+  position: fixed;
+  left: calc(100% - var(--nc-painel));
+  right: 0;
+  padding: 0 var(--nc-pad);
+  font: 800 var(--nc-fs)/1.02 Manrope, system-ui, sans-serif;
+  letter-spacing: -.02em;
+  z-index: 1;
+  pointer-events: none;
+}
+
+body.t-PageBody--login::after {
+  content: var(--nc-login-titulo);
+  bottom: 50%;
+  color: #fff;
+}
+
+body.t-PageBody--login #wwvFlowForm::before {
+  content: var(--nc-login-destaque);
+  top: 50%;
+  color: #F3C9DA;                       /* o destaque do hero da home */
+}
+
+body.t-PageBody--login #wwvFlowForm::after {   /* a assinatura Natcorp */
+  content: "";
+  position: fixed;
+  top: clamp(32px, 6vh, 56px);
+  left: calc(100% - var(--nc-painel) + var(--nc-pad));
+  width: 150px;
+  height: 38px;
+  background: @@LOGO@@ left center / contain no-repeat;
+  z-index: 1;
+  pointer-events: none;
+}
+
+html:has(body.t-PageBody--login)::after {       /* a frase de apoio */
+  content: var(--nc-login-texto);
+  position: fixed;
+  left: calc(100% - var(--nc-painel));
+  right: 0;
+  bottom: clamp(32px, 6vh, 56px);
+  padding: 0 var(--nc-pad);
+  font: 500 15px/1.5 Manrope, system-ui, sans-serif;
+  color: rgba(255, 255, 255, .75);
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* ---------- Coluna do formulário (esquerda) ------------------------- */
+
+body.t-PageBody--login .t-Body {
+  right: var(--nc-painel);             /* a página 900 fixa inset:0 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 48px clamp(24px, 5vw, 64px);
+  overflow-y: auto;
+  z-index: 2;
+}
+
+body.t-PageBody--login .t-Body-wrap,
+body.t-PageBody--login .t-Body-col--main,
+body.t-PageBody--login .t-Login-container {
+  width: 100%;
+  max-width: 420px;
+  margin: 0 auto;
+  padding: 0;
+  background: none;
+  min-height: 0;
+  display: block;
+}
+
+body.t-PageBody--login .t-Login-container .container,
+body.t-PageBody--login .t-Login-container .row,
+body.t-PageBody--login .t-Login-container .col {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body.t-PageBody--login .t-Login-region,
+body.t-PageBody--login .t-Login-body,
+body.t-PageBody--login .t-Form-inputContainer {
+  overflow: visible;                    /* o tema corta anel de foco, ícone e sombra */
+}
+
+body.t-PageBody--login .t-Login-region {
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  padding: 0;
+  background: none;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+/* Cabeçalho: logo do cliente, título, subtítulo — tudo à esquerda */
+
+body.t-PageBody--login .t-Login-header {
+  padding: 0 !important;
+  margin: 0;
+  text-align: left;
+}
+
+body.t-PageBody--login .t-Login-logo {
+  display: block;
+  width: 180px;
+  height: 56px;
+  margin: 0 0 40px;
+  background-position: left center;
+}
+
+body.t-PageBody--login .t-Login-title {
+  font: 700 32px/1.15 Manrope, system-ui, sans-serif !important;
+  font-size: 32px !important;
+  letter-spacing: -.02em;
+  color: var(--nc-tinta);
+  margin: 0 0 8px !important;
+  text-align: left;
+}
+
+body.t-PageBody--login .t-Login-header::after {
+  content: var(--nc-login-subtitulo);
+  display: block;
+  font: 500 15px/1.5 Manrope, system-ui, sans-serif;
+  color: var(--nc-grafite);
+}
+
+body.t-PageBody--login .t-Login-body {
+  margin-top: 32px;
+  padding: 0;
+}
+
+/* Campos */
+
+body.t-PageBody--login .t-Login-body .t-Form-fieldContainer {
+  margin: 0 0 18px !important;
+  padding: 0;
+}
+
+body.t-PageBody--login .t-Form-labelContainer,
+body.t-PageBody--login .t-Form-inputContainer {
+  padding: 0;
+  width: 100%;
+}
+
+body.t-PageBody--login .t-Form-label {
+  display: block;
+  padding: 0 0 6px;
+  font: 600 13px/1.4 Manrope, system-ui, sans-serif;
+  color: var(--nc-grafite);
+}
+
+body.t-PageBody--login .t-Form-itemWrapper {
+  position: relative;
+}
+
+body.t-PageBody--login .t-Login-body input.apex-item-text {
+  width: 100%;
+  height: 48px;
+  padding: 0 14px 0 44px;
+  border: 1px solid var(--nc-nevoa);
+  border-radius: 12px;
+  background: #fff;
+  font: 500 15px Manrope, system-ui, sans-serif;
+  color: var(--nc-tinta);
+  box-shadow: 0 1px 2px rgba(27, 18, 56, .04);
+  transition: border-color .15s, box-shadow .15s;
+}
+
+body.t-PageBody--login .t-Login-body input.apex-item-text::placeholder {
+  color: var(--nc-cinza);
+}
+
+body.t-PageBody--login .t-Login-body input.apex-item-text:hover {
+  border-color: #D6CFE4;
+}
+
+body.t-PageBody--login .t-Login-body input.apex-item-text:focus {
+  border-color: var(--nc-roxo) !important;   /* o CSS antigo força rosa */
+  box-shadow: 0 0 0 4px rgba(81, 28, 118, .14);
+  outline: none;
+}
+
+body.t-PageBody--login .t-Login-body .apex-item-icon {
+  position: absolute;
+  top: 0;
+  left: 0;
+  margin: 0;                            /* o tema desloca o ícone -40px */
+  z-index: 1;
+  pointer-events: none;
+  width: 44px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--nc-cinza);
+  background: none;
+  transition: color .15s;
+}
+
+body.t-PageBody--login .t-Login-body input.apex-item-text:focus + .apex-item-icon {
+  color: var(--nc-roxo);
+}
+
+/* Botão Entrar */
+
+body.t-PageBody--login .t-Login-buttons {
+  padding: 0;
+  margin-top: 8px;
+}
+
+body.t-PageBody--login .t-Login-buttons .t-Button--hot {
+  width: 100%;
+  height: 50px;
+  margin: 0;
+  border: 0;
+  border-radius: 12px;
+  background: linear-gradient(135deg, var(--nc-roxo), var(--nc-ameixa));
+  box-shadow: 0 10px 24px -10px rgba(81, 28, 118, .55);
+  font: 700 15px Manrope, system-ui, sans-serif;
+  color: #fff;
+  transition: box-shadow .15s, filter .15s;
+}
+
+body.t-PageBody--login .t-Login-buttons .t-Button--hot:hover {
+  filter: brightness(1.08);
+  box-shadow: 0 14px 28px -10px rgba(81, 28, 118, .6);
+}
+
+body.t-PageBody--login .t-Login-buttons .t-Button--hot:focus-visible {
+  outline: 3px solid var(--nc-roxo);
+  outline-offset: 3px;
+}
+
+body.t-PageBody--login .t-Login-buttons .t-Button--hot .t-Icon {
+  display: none;                        /* o ícone "desligar" some */
+}
+
+body.t-PageBody--login .t-Login-links {
+  padding: 16px 0 0;
+  text-align: left;
+}
+
+/* ---------- Celular e tablet: só o formulário ----------------------- */
+
+@media (max-width: 991px) {
+  body.t-PageBody--login::before,
+  body.t-PageBody--login::after,
+  body.t-PageBody--login #wwvFlowForm::before,
+  body.t-PageBody--login #wwvFlowForm::after,
+  html:has(body.t-PageBody--login)::after {
+    display: none;
+  }
+
+  body.t-PageBody--login .t-Body {
+    right: 0;
+    align-items: flex-start;
+    padding: 12vh 24px 32px;
+  }
+
+  body.t-PageBody--login .t-Login-logo {
+    margin-bottom: 32px;
+  }
+
+  body.t-PageBody--login .t-Login-title {
+    font-size: 28px !important;
+  }
+}
