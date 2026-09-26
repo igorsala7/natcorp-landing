@@ -103,6 +103,8 @@ body.t-PageBody--login:not(#nc-p1):not(#nc-p2)::before {
     radial-gradient(45% 60% at 100% 100%, rgba(201, 87, 136, .4), transparent 70%),
     linear-gradient(180deg, #2C1A63 0%, #3A1A66 60%, #4A1B72 100%) !important;
   z-index: 0 !important;
+  pointer-events: none !important;                 /* decorativo: se o formulário encostar no
+                                           painel (outro tema, zoom), o clique passa */
 }
 
 @media (prefers-reduced-motion: reduce) {
