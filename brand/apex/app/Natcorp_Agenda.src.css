@@ -1,0 +1,525 @@
+/* ╔════════════════════════════════════════════════════════════════════════════════════════╗
+   ║  NATCORP · AGENDA DO EXAME  —  a "roupa" da tela (CSS)                                    ║
+   ║  App 2937 · Página 75 · a janela "Pesquisar Horário para Encaminhamento" da Requisição   ║
+   ║  de Exames                                                                               ║
+   ╚════════════════════════════════════════════════════════════════════════════════════════╝
+
+   Primeira vez num arquivo destes? Leia antes o manual: brand/apex/MANUAL-APEX.md (parte 1).
+
+   ── O QUE ESTE ARQUIVO FAZ ────────────────────────────────────────────────────────────────
+   Dá a aparência da janela: o título do alto, os campos com o nome em cima e caixas no padrão
+   das outras telas, os atalhos de dia e de horário, o botão "Ver horários livres" na largura
+   toda e a lista de horários livres agrupada por dia. Ele NÃO muda nada de lugar e não troca
+   textos: quem faz isso é o arquivo-irmão Natcorp_Agenda.js. Os dois trabalham juntos:
+     o JS cria um botão para cada horário livre  →  este arquivo diz como o botão se parece.
+   Sem o JS, este arquivo não faz nada (todas as regras dependem da marca nc-ag que o JS põe
+   na página).
+
+   ── ONDE ELE ENTRA NO APEX ────────────────────────────────────────────────────────────────
+     App 2937 › Página 75 › CSS › File URLs:   #WORKSPACE_IMAGES#Natcorp_Agenda.css
+     CUIDADO: edite ESTE arquivo (Natcorp_Agenda.src.css, a fonte) e gere o arquivo que sobe com
+     node brand/apex/app/gerar-app.mjs  — o gerador troca @app pelo prefixo longo e põe
+     !important em toda linha. O Natcorp_Agenda.css da pasta login/ é refeito a cada geração:
+     o que for mudado só nele se perde. (Manual, parte 2.)
+
+   ── ÍNDICE: as partes deste arquivo (Ctrl+F pelo código entre colchetes) ──────────────────
+     [C1] Ícones e o que fica escondido
+     [C2] O cabeçalho (título e frase)                ← montado pelo JS em [J3]
+     [C3] Os campos, os atalhos e o botão             ← montados pelo JS em [J3]
+     [C4] A lista de horários livres                  ← montada pelo JS em [J4]
+     [C5] Celular                                     (ajustes para telas pequenas)
+
+   ── RECEITAS RÁPIDAS ──────────────────────────────────────────────────────────────────────
+     Quero mudar uma cor
+       → use uma das cores da marca, pelo nome: var(--nc-roxo), var(--nc-grafite)… A lista
+         completa, com amostras, está no manual (parte 3). Assim a cor acompanha o tema que
+         o usuário escolheu em "Cores". Evite escrever cores soltas, como #511C76.
+     Quero o título maior ou menor                → [C2], a regra .nc-ag-tit (font-size).
+     Quero o botão "Ver horários livres" mais alto → [C3], a regra .nc-ag-acao .t-Button (height).
+     Algo ficou bom no computador e ruim no celular → [C5]: o que está dentro de
+                                                   @media (max-width: 479px) só vale no celular.
+
+   ── COMO LER UM ARQUIVO CSS EM 30 SEGUNDOS ────────────────────────────────────────────────
+     Cada regra tem duas partes:     QUEM { COMO; }
+       @app.nc-ag .nc-ag-tit {             ← QUEM: o "seletor", diz em que pedaço da tela vale
+         font-size: 20px;                  ← COMO: propriedade: valor;  (tamanho da letra)
+         color: var(--nc-tinta);           ←       a cor: o quase-preto da marca
+       }
+     .nome-com-ponto       uma "classe": uma etiqueta posta num pedaço da tela (pelo APEX ou
+                           pelo JS). .nc-ag-tit é o título "Escolher dia e horário do exame".
+     @app                  atalho que dá prioridade às nossas regras sobre as do tema do APEX.
+                           No arquivo que sobe para o APEX ele aparece por extenso, como
+                           html body:is(.t-PageBody…):not(#nc-a1):not(#nc-a2) — é a mesma coisa.
+     :not(#nc-ag-x)…       peso extra, para vencer uma regra do tema. Pode ignorar ao ler.
+     !important            no arquivo que sobe, toda linha ganha um: é o mesmo "vencer o tema".
+     @media (max-width: 479px) { … }   as regras de dentro só valem em telas até 479px (celular).
+     var(--nc-roxo)        uma cor da marca, pelo nome (muda junto com o tema escolhido).
+     px                    pixels, o tamanho de um pontinho da tela. 16px é o texto normal.
+     Toda linha COMO termina em ;   e todo { é fechado por um }. Não apague esses sinais.
+*/
+
+/* ═══ [C1] ÍCONES E O QUE FICA ESCONDIDO ═════════════════════════════════════════════════════
+   .nc-ag-ic são os ícones desenhados pelo JS (só o contorno, na cor do texto).
+   .nc-ag-fora é tudo o que o JS tirou de vista (título repetido, relógio do plugin, linhas
+   que ficaram vazias). display: none = não aparece.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-ag .nc-ag-ic {
+  flex: none;
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.9;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+@app.nc-ag .nc-ag-fora:not(#nc-ag-x):not(#nc-ag-y) {
+  display: none;
+}
+
+/* ═══ [C2] O CABEÇALHO (TÍTULO E FRASE) ════════════════════════════════════════════════════
+   Montado pelo JS em [J3]. .nc-ag-topo é o bloco; .nc-ag-tit, o título.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-ag .nc-ag-topo {
+  margin: 0 0 14px;
+}
+
+@app.nc-ag .nc-ag-tit {
+  margin: 0 0 4px;
+  font-size: 20px;
+  font-weight: 800;
+  line-height: 1.25;
+  color: var(--nc-tinta);
+}
+
+@app.nc-ag .nc-ag-topo p {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.45;
+  color: var(--nc-grafite);
+}
+
+@app.nc-ag .nc-ag-topo b {
+  color: var(--nc-roxo);
+}
+
+/* ═══ [C3] OS CAMPOS, OS ATALHOS E O BOTÃO ═════════════════════════════════════════════════
+   Montados pelo JS em [J3]. Peças principais:
+     .nc-ag-par          "A partir de" e "Até" lado a lado
+     .nc-ag-atalho       cada atalho (dia ou faixa); .is-on = o atalho que está valendo
+     .nc-ag-dia-ext      o dia por extenso       .nc-ag-aviso   o aviso do médico/empresa
+     .nc-ag-acao         o botão "Ver horários livres"
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+/* ---------- os campos: nome em cima, caixa no padrão ---------- */
+@app.nc-ag .t-Form-fieldContainer:not(.t-Form-fieldContainer--stacked):not(#nc-ag-x):not(#nc-ag-y) {
+  display: block;
+  margin-bottom: 12px;
+}
+
+@app.nc-ag .t-Form-fieldContainer:not(.t-Form-fieldContainer--stacked) > .t-Form-labelContainer:not(#nc-ag-x):not(#nc-ag-y) {
+  width: 100%;
+  max-width: none;
+  padding: 0 8px 6px;   /* os 8 px compensam a margem -8 px do contêiner (a Skin) */
+  text-align: left;
+}
+
+@app.nc-ag .t-Form-fieldContainer:not(.t-Form-fieldContainer--stacked) > .t-Form-inputContainer:not(#nc-ag-x):not(#nc-ag-y) {
+  width: 100%;
+  max-width: none;
+}
+
+@app.nc-ag .t-Form-label {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--nc-tinta);
+}
+
+/* as caixas do plugin de data/hora (x-form-text) com a cara das outras */
+@app.nc-ag input.x-form-text:not(#nc-ag-x):not(#nc-ag-y),
+@app.nc-ag input.nc-ag-hora:not(#nc-ag-x):not(#nc-ag-y) {
+  width: 100%;
+  height: 44px;
+  padding: 0 12px;
+  border: 1px solid var(--nc-nevoa);
+  border-radius: 10px;
+  background: #fff;
+  box-shadow: none;
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--nc-tinta);
+  outline: none;
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+@app.nc-ag input.x-form-text:focus:not(#nc-ag-x):not(#nc-ag-y),
+@app.nc-ag input.nc-ag-hora:focus:not(#nc-ag-x):not(#nc-ag-y) {
+  border-color: var(--nc-roxo);
+  box-shadow: var(--nc-anel);
+}
+
+/* a data: a caixa e o botão do calendário juntos, como o seletor de data das outras telas */
+@app.nc-ag [id$="_DATA_CONTAINER"] .t-Form-itemWrapper:not(#nc-ag-x):not(#nc-ag-y) {
+  display: flex;
+  align-items: stretch;
+  width: 100%;
+}
+
+@app.nc-ag [id$="_DATA_CONTAINER"] input.x-form-text:not(#nc-ag-x):not(#nc-ag-y) {
+  flex: 1 1 auto;
+  border-right: 0;
+  border-radius: 10px 0 0 10px;
+}
+
+@app.nc-ag [id$="_DATA_CONTAINER"] .dyndatepicker-trigger:not(#nc-ag-x):not(#nc-ag-y) {
+  flex: none;
+  width: 46px;
+  height: 44px;
+  margin: 0;
+  border: 1px solid var(--nc-nevoa);
+  border-radius: 0 10px 10px 0;
+  background: #fff;
+  box-shadow: none;
+  color: var(--nc-roxo);
+}
+
+@app.nc-ag [id$="_DATA_CONTAINER"] .dyndatepicker-trigger:hover:not(#nc-ag-x):not(#nc-ag-y) {
+  background: #F4EEFA;
+}
+
+@app.nc-ag input.nc-ag-hora::-webkit-calendar-picker-indicator {
+  width: 22px;
+  height: 22px;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23511C76' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='8.5'/%3E%3Cpath d='M12 7.5V12l3 2'/%3E%3C/svg%3E") center / 20px no-repeat;
+  cursor: pointer;
+  opacity: 1;
+}
+
+@app.nc-ag .nc-ag-par {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0 12px;
+}
+
+@app.nc-ag .nc-ag-col {
+  min-width: 0;
+}
+
+@app.nc-ag .nc-ag-col .t-Form-fieldContainer:not(#nc-ag-x):not(#nc-ag-y) {
+  margin: 0 -8px;   /* a mesma margem que a Skin dá aos campos da linha: alinha com o Dia */
+}
+
+@app.nc-ag .nc-ag-col .t-Form-inputContainer:not(#nc-ag-x):not(#nc-ag-y) {
+  display: block;
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  padding: 0 8px;
+}
+
+@app.nc-ag .nc-ag-col .t-Form-itemWrapper:not(#nc-ag-x):not(#nc-ag-y) {
+  display: block;
+  width: 100%;
+}
+
+/* o médico: a lista na largura toda e o aviso embaixo dela */
+@app.nc-ag [id$="_PRESTADOR_MEDICINA_CONTAINER"] .t-Form-inputContainer:not(#nc-ag-x):not(#nc-ag-y) {
+  display: block;
+}
+
+@app.nc-ag [id$="_PRESTADOR_MEDICINA_CONTAINER"] select:not(#nc-ag-x):not(#nc-ag-y) {
+  width: 100%;
+  height: 44px;
+  font-size: 15px;
+}
+
+/* ---------- atalhos ---------- */
+@app.nc-ag .nc-ag-atalhos {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  margin: 0 0 8px;
+}
+
+@app.nc-ag .nc-ag-faixas {
+  margin: 8px 0 14px;
+}
+
+@app.nc-ag .nc-ag-rot {
+  margin-right: 2px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--nc-grafite);
+}
+
+@app.nc-ag .nc-ag-atalho {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 38px;
+  padding: 0 13px;
+  border: 1.5px solid var(--nc-nevoa);
+  border-radius: 999px;
+  background: #fff;
+  font: inherit;
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--nc-tinta);
+  cursor: pointer;
+}
+
+@app.nc-ag .nc-ag-atalho span {
+  font-weight: 600;
+  color: var(--nc-grafite);
+}
+
+@app.nc-ag .nc-ag-atalho .nc-ag-ic {
+  width: 16px;
+  height: 16px;
+  color: var(--nc-roxo);
+}
+
+@app.nc-ag .nc-ag-atalho:hover {
+  border-color: rgba(var(--nc-t-roxo-rgb, 81, 28, 118), .45);
+  background: var(--nc-quase);
+}
+
+@app.nc-ag .nc-ag-atalho:focus-visible,
+@app.nc-ag .nc-ag-hora-bt:focus-visible {
+  outline: none;
+  box-shadow: var(--nc-anel);
+}
+
+@app.nc-ag .nc-ag-atalho.is-on {
+  border-color: var(--nc-roxo);
+  background: var(--nc-roxo);
+  color: #fff;
+}
+
+@app.nc-ag .nc-ag-atalho.is-on span,
+@app.nc-ag .nc-ag-atalho.is-on .nc-ag-ic {
+  color: rgba(255, 255, 255, .85);
+}
+
+@app.nc-ag .nc-ag-dia-ext {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 8px 0 0;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--nc-roxo);
+}
+
+@app.nc-ag .nc-ag-dia-ext:empty,
+@app.nc-ag .nc-ag-aviso:empty {
+  display: none;
+}
+
+@app.nc-ag .nc-ag-dia-ext::first-letter {
+  text-transform: uppercase;
+}
+
+@app.nc-ag .nc-ag-aviso {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin: 8px 0 0;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: #FFF4D6;
+  font-size: 13.5px;
+  font-weight: 600;
+  line-height: 1.4;
+  color: #6B4A00;
+}
+
+@app.nc-ag .nc-ag-aviso .nc-ag-ic {
+  margin-top: 1px;
+}
+
+/* ---------- Ver horários livres ---------- */
+@app.nc-ag .nc-ag-acao {
+  margin: 0 0 18px;
+}
+
+@app.nc-ag .nc-ag-acao .t-Button:not(#nc-ag-x):not(#nc-ag-y) {
+  width: 100%;
+  height: 48px;
+  margin: 0;
+  border-radius: 12px;
+  font-size: 15px;
+}
+
+/* ═══ [C4] A LISTA DE HORÁRIOS LIVRES ══════════════════════════════════════════════════════
+   Montada pelo JS em [J4]. Peças principais:
+     .nc-ag-ir--lista    o relatório do APEX, escondido quando há horários
+     .nc-ag-dia          cada dia (com o título .nc-ag-dia-tit)
+     .nc-ag-hora-bt      cada horário (botão)    .nc-ag-vazio   a frase de lista vazia
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-ag .nc-ag-ir--lista .a-IRR-tableContainer:not(#nc-ag-x):not(#nc-ag-y),
+@app.nc-ag .nc-ag-ir .a-IRR-toolbar:not(#nc-ag-x):not(#nc-ag-y),
+@app.nc-ag .nc-ag-ir .a-IRR-noDataMsg:not(#nc-ag-x):not(#nc-ag-y),
+@app.nc-ag .nc-ag-ir .a-IRR-controlsContainer:not(#nc-ag-x):not(#nc-ag-y) {
+  display: none;
+}
+
+@app.nc-ag .nc-ag-ir:not(.nc-ag-ir--lista) .a-IRR-content:not(#nc-ag-x):not(#nc-ag-y) {
+  display: none;
+}
+
+@app.nc-ag .nc-ag-ir:not(#nc-ag-x):not(#nc-ag-y) {
+  border: 0;
+  background: none;
+  box-shadow: none;
+}
+
+@app.nc-ag .nc-ag-conta {
+  margin: 0 0 10px;
+  font-size: 14px;
+  color: var(--nc-grafite);
+}
+
+@app.nc-ag .nc-ag-conta b {
+  color: var(--nc-tinta);
+}
+
+@app.nc-ag .nc-ag-dia + .nc-ag-dia {
+  margin-top: 14px;
+}
+
+@app.nc-ag .nc-ag-dia-tit {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 8px;
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--nc-tinta);
+}
+
+@app.nc-ag .nc-ag-dia-tit .nc-ag-ic {
+  color: var(--nc-roxo);
+}
+
+@app.nc-ag .nc-ag-horas {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  gap: 8px;
+}
+
+@app.nc-ag .nc-ag-hora-bt {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  padding: 12px 14px;
+  border: 1.5px solid var(--nc-nevoa);
+  border-radius: 14px;
+  background: #fff;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color .15s, background-color .15s;
+}
+
+@app.nc-ag .nc-ag-hora-bt:hover:not(:disabled) {
+  border-color: var(--nc-roxo);
+  background: #FBF8FE;
+}
+
+@app.nc-ag .nc-ag-hora-bt:disabled {
+  cursor: default;
+  opacity: .6;
+}
+
+@app.nc-ag .nc-ag-hora-h {
+  font-size: 19px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  color: var(--nc-tinta);
+}
+
+@app.nc-ag .nc-ag-hora-h small {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--nc-grafite);
+}
+
+@app.nc-ag .nc-ag-hora-med {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--nc-grafite);
+}
+
+@app.nc-ag .nc-ag-hora-med .nc-ag-ic {
+  width: 15px;
+  height: 15px;
+  color: var(--nc-roxo);
+}
+
+@app.nc-ag .nc-ag-hora-extra {
+  font-size: 12.5px;
+  color: var(--nc-grafite);
+}
+
+@app.nc-ag .nc-ag-hora-esc {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 2px;
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--nc-roxo);
+}
+
+@app.nc-ag .nc-ag-hora-esc .nc-ag-ic {
+  width: 15px;
+  height: 15px;
+}
+
+@app.nc-ag .nc-ag-vazio {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 18px;
+  border: 1.5px dashed #CFC5E2;
+  border-radius: 16px;
+  background: var(--nc-quase);
+}
+
+@app.nc-ag .nc-ag-vazio > .nc-ag-ic {
+  width: 32px;
+  height: 32px;
+  color: var(--nc-roxo);
+}
+
+@app.nc-ag .nc-ag-vazio-tit {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--nc-tinta);
+}
+
+@app.nc-ag .nc-ag-vazio-sub {
+  margin: 2px 0 0;
+  font-size: 13.5px;
+  line-height: 1.4;
+  color: var(--nc-grafite);
+}
+
+/* ═══ [C5] CELULAR ═════════════════════════════════════════════════════════════════════════
+   O que está dentro de  @media (max-width: 479px)  só vale em telas até 479px (celular).
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@media (max-width: 479px) {
+  @app.nc-ag .nc-ag-horas {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

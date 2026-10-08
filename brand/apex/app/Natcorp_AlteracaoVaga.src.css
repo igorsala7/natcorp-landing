@@ -1,0 +1,1267 @@
+/* ╔════════════════════════════════════════════════════════════════════════════════════════╗
+   ║  NATCORP · REQUISIÇÃO DE ALTERAÇÃO DE VAGA  —  a "roupa" da tela (CSS)                    ║
+   ║  App 200 · Página 163                                                                    ║
+   ╚════════════════════════════════════════════════════════════════════════════════════════╝
+
+   Primeira vez num arquivo destes? Leia antes o manual: brand/apex/MANUAL-APEX.md (parte 1).
+
+   ── O QUE ESTE ARQUIVO FAZ ────────────────────────────────────────────────────────────────
+   Dá a aparência da página 163: cores, tamanhos, espaços, bordas, e como a tela se arruma no
+   computador e no celular. Ele NÃO muda nada de lugar: quem muda as coisas de lugar é o
+   arquivo-irmão Natcorp_AlteracaoVaga.js. Os dois trabalham juntos:
+     o JS monta "os grupos Hoje → Passa a ser"  →  este arquivo diz como eles se parecem.
+   Sem o JS, este arquivo não faz nada (todas as regras dependem da marca nc-alt que o JS põe
+   na página): a página continua como era. Uso diário por gestores, sobretudo no computador.
+
+   ── REGRA DA CASA ─────────────────────────────────────────────────────────────────────────
+   Nada aqui pode vencer o "esconder" das ações dinâmicas do APEX: toda regra que mostra um
+   contêiner de campo leva :not([style*="none"]) (quer dizer: "menos quando o APEX escondeu").
+   Ao copiar uma regra dessas, copie esse pedaço junto.
+
+   ── ONDE ELE ENTRA NO APEX ────────────────────────────────────────────────────────────────
+     Página 163 › CSS › File URLs:   #WORKSPACE_IMAGES#Natcorp_AlteracaoVaga.css
+     Este é o arquivo-FONTE (.src.css). O gerador gerar-app.mjs cria dele o
+     Natcorp_AlteracaoVaga.css que sobe para o APEX, pondo o @app por extenso e os !important
+     (manual, parte 2). Edite ESTE arquivo, não o .css gerado: o gerado é reescrito a cada geração.
+
+   ── ÍNDICE: as partes deste arquivo (Ctrl+F pelo código entre colchetes) ──────────────────
+     [C1] Regiões escondidas e colunas              (o que o JS absorveu some da tela)
+     [C2] O alto: a vaga, o motivo e quanto muda    ← montado pelo JS em [J3]
+     [C3] As seções numeradas                       ← montadas pelo JS em [J8]
+     [C4] O que muda: os grupos "Hoje → Passa a ser" ← montados pelo JS em [J4]
+     [C5] O quadro "O que vai mudar"                ← montado pelo JS em [J5]
+     [C6] A barra do rodapé                         ← montada pelo JS em [J7]
+     [C7] A faixa da aprovação                      ← montada pelo JS em [J6]
+     [C8] Telas médias e celular                    (ajustes para telas menores)
+     [C9] Movimento reduzido                        (sem animação para quem pediu)
+
+   ── RECEITAS RÁPIDAS ──────────────────────────────────────────────────────────────────────
+     Quero mudar uma cor
+       → use uma das cores da marca, pelo nome: var(--nc-roxo), var(--nc-grafite)… A lista
+         completa, com amostras, está no manual (parte 3). Assim a cor acompanha o tema que
+         o usuário escolheu em "Cores". Evite escrever cores soltas, como #511C76.
+     Quero aumentar ou diminuir um texto        → procure font-size na parte certa.
+     Quero mais ou menos espaço                  → padding (espaço por DENTRO da caixa) e
+                                                   margin (espaço por FORA, até a vizinha).
+     A linha que muda deveria chamar mais atenção → [C4], .nc-alt-linha.is-muda
+     Algo ficou bom no computador e ruim no celular → [C8]: o que está dentro de
+                                                   @media (max-width: 767px) só vale no celular.
+
+   ── COMO LER UM ARQUIVO CSS EM 30 SEGUNDOS ────────────────────────────────────────────────
+     Cada regra tem duas partes:     QUEM { COMO; }
+       @app.nc-alt .nc-alt-topo {           ← QUEM: o "seletor", diz em que pedaço da tela vale
+         padding: 16px 24px 16px 16px;     ← COMO: propriedade: valor;  (espaço por dentro)
+         margin: 0 0 14px;                 ←       espaço por fora, embaixo
+       }
+     .nome-com-ponto       uma "classe": uma etiqueta posta num pedaço da tela (pelo APEX ou
+                           pelo JS). .nc-alt-topo é o resumo do alto.
+     @app                  atalho que dá prioridade às nossas regras sobre as do tema do APEX.
+                           No arquivo que sobe para o APEX ele aparece por extenso, como
+                           html body:is(.t-PageBody…):not(#nc-a1):not(#nc-a2) — é a mesma coisa.
+     :not(#nc-alt-x)…       peso extra, para vencer uma regra do tema. Pode ignorar ao ler.
+     !important            no arquivo que sobe, toda linha ganha um: é o mesmo "vencer o tema".
+     @media (max-width: 767px) { … }   as regras de dentro só valem em telas até 767px (celular).
+     var(--nc-roxo)        uma cor da marca, pelo nome (muda junto com o tema escolhido).
+     px                    pixels, o tamanho de um pontinho da tela. 16px é o texto normal.
+     Toda linha COMO termina em ;   e todo { é fechado por um }. Não apague esses sinais.
+*/
+
+/* ═══ [C1] REGIÕES ESCONDIDAS E COLUNAS ═════════════════════════════════════════════════
+   As regiões que o JS absorveu (nc-alt-absorvida: "Dados Atuais" e a da solicitação) e a
+   coluna que ficou vazia somem (display: none = não aparece). A coluna da Mudança de Posição
+   passa a ocupar a largura toda.
+   ════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-alt .nc-alt-absorvida:not(#nc-alt-x):not(#nc-alt-y),
+@app.nc-alt .col.nc-alt-col-vazia:not(#nc-alt-x):not(#nc-alt-y) {
+  display: none;
+}
+
+@app.nc-alt .col.nc-alt-col-cheia:not(#nc-alt-x):not(#nc-alt-y) {
+  flex: 0 0 100%;
+  width: 100%;
+  max-width: 100%;
+}
+
+/* ═══ [C2] O ALTO: A VAGA (HOJE), O MOTIVO, QUANDO VALE E QUANTO MUDA ═══════════════════
+   Montado pelo JS em [J3]. .nc-alt-topo é o bloco; .nc-alt-topo-tit, o cargo; à direita,
+   .nc-alt-req (nº), .nc-alt-sit (situação) e .nc-alt-contagem ("N dados mudam").
+   ════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-alt .nc-alt-topo {
+  display: grid;
+  grid-template-columns: 150px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 8px 24px;
+  margin: 0 0 14px;
+  padding: 16px 24px 16px 16px;
+  border: 1px solid var(--nc-nevoa);
+  border-radius: 18px;
+  background: linear-gradient(135deg, #FBF8FE 0%, #FFFFFF 62%);
+  box-shadow: 0 14px 30px -24px rgba(var(--nc-t-azul-rgb, 44, 26, 99), .5);
+}
+
+@app.nc-alt .nc-alt-topo-ilu img {
+  display: block;
+  width: 150px;
+  height: auto;
+}
+
+@app.nc-alt .nc-alt-topo-txt {
+  min-width: 0;
+}
+
+@app.nc-alt .nc-alt-topo-tit {
+  margin: 0;
+  font-family: inherit;
+  font-size: 23px;
+  font-weight: 800;
+  line-height: 1.2;
+  letter-spacing: -.015em;
+  text-wrap: balance;
+  color: var(--nc-tinta);
+}
+
+@app.nc-alt .nc-alt-topo-meta {
+  margin: 4px 0 0;
+  max-width: 72ch;
+  font-size: 14px;
+  line-height: 1.45;
+  color: var(--nc-grafite);
+}
+
+@app.nc-alt .nc-alt-topo-meta span,
+@app.nc-alt .nc-alt-topo-quando span {
+  margin: 0 3px;
+  color: var(--nc-cinza);
+}
+
+@app.nc-alt .nc-alt-topo-quando {
+  margin: 8px 0 0;
+  font-size: 14.5px;
+  color: var(--nc-grafite);
+}
+
+@app.nc-alt .nc-alt-topo-quando b {
+  color: var(--nc-tinta);
+}
+
+@app.nc-alt .nc-alt-topo--vazio .nc-alt-topo-tit {
+  font-size: 20px;
+}
+
+@app.nc-alt .nc-alt-topo-lado {
+  display: grid;
+  justify-items: end;
+  gap: 4px;
+  text-align: right;
+}
+
+@app.nc-alt .nc-alt-topo-lado:empty {
+  display: none;
+}
+
+@app.nc-alt .nc-alt-topo-lado p {
+  margin: 0;
+}
+
+@app.nc-alt .nc-alt-req {
+  font-size: 14px;
+  color: var(--nc-grafite);
+}
+
+@app.nc-alt .nc-alt-req b {
+  font-size: 20px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  color: var(--nc-roxo);
+}
+
+@app.nc-alt .nc-alt-req-data {
+  font-size: 12.5px;
+  color: #6E6882;
+}
+
+@app.nc-alt .nc-alt-sit {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 4px 11px 4px 9px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+@app.nc-alt .nc-alt-sit span {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+@app.nc-alt .nc-alt-sit--andamento { background: #EFE8F7; color: var(--nc-roxo); }
+@app.nc-alt .nc-alt-sit--ok { background: #E4F4EC; color: var(--nc-bom); }
+@app.nc-alt .nc-alt-sit--nao { background: #FBE9E9; color: #A32020; }
+
+@app.nc-alt .nc-alt-contagem {
+  margin-top: 6px !important;
+  padding: 6px 12px;
+  border-radius: 12px;
+  background: var(--nc-nevoa2);
+  font-size: 13.5px;
+  color: var(--nc-grafite);
+}
+
+@app.nc-alt .nc-alt-contagem b {
+  font-size: 18px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  color: var(--nc-tinta);
+}
+
+@app.nc-alt .nc-alt-contagem.is-tem {
+  background: #EFE8F7;
+}
+
+@app.nc-alt .nc-alt-contagem.is-tem b {
+  color: var(--nc-roxo);
+}
+
+/* ═══ [C3] AS SEÇÕES NUMERADAS (Vaga, O que muda, Observações) ══════════════════════════
+   Montadas pelo JS em [J8]. .nc-alt-sec-cab é o cabeçalho; .nc-alt-num, o número.
+   ════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-alt .t-Region.nc-alt-sec:not(#nc-alt-x):not(#nc-alt-y) {
+  border: 1px solid var(--nc-nevoa);
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: 0 10px 24px -22px rgba(var(--nc-t-azul-rgb, 44, 26, 99), .5);
+}
+
+@app.nc-alt .t-Region.nc-alt-sec > .t-Region-header {
+  display: none;
+}
+
+@app.nc-alt .nc-alt-sec-cab {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: start;
+  gap: 14px;
+  padding: 20px 24px 4px;
+}
+
+@app.nc-alt .nc-alt-sec-cab h2 {
+  margin: 4px 0 0;
+  font-family: inherit;
+  font-size: 18px;
+  font-weight: 800;
+  line-height: 1.25;
+  letter-spacing: -.01em;
+  color: var(--nc-tinta);
+}
+
+@app.nc-alt .nc-alt-sec-cab p {
+  margin: 3px 0 0;
+  max-width: 70ch;
+  font-size: 14px;
+  line-height: 1.45;
+  color: var(--nc-grafite);
+}
+
+@app.nc-alt .nc-alt-num {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--nc-nevoa2);
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--nc-roxo);
+}
+
+@app.nc-alt .t-Region.nc-alt-sec > .t-Region-bodyWrap > .t-Region-body {
+  padding: 14px 24px 22px;
+}
+
+/* ═══ [C4] O QUE MUDA: UM CARTÃO POR ASSUNTO, CADA LINHA "HOJE → PASSA A SER" ═══════════
+   Montado pelo JS em [J4]. Peças principais:
+     .nc-alt-grupo     cada assunto (cartão); .is-aberto = aberto; .is-muda = tem mudança
+     .nc-alt-linha     cada dado: .nc-alt-rot (rótulo) · .nc-alt-hoje · .nc-alt-seta · .nc-alt-novo
+     .is-muda na linha = este dado muda;  .is-lido = travado (só leitura)
+   ════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-alt .t-Region.nc-alt-proposta--pronta > .t-Region-bodyWrap > .t-Region-body > .container {
+  display: none;
+}
+
+@app.nc-alt .nc-alt-grupos {
+  display: grid;
+  gap: 10px;
+}
+
+@app.nc-alt .nc-alt-grupo {
+  border: 1px solid var(--nc-nevoa);
+  border-radius: 14px;
+  background: #fff;
+  transition: border-color .2s ease-out, box-shadow .2s ease-out;
+}
+
+@app.nc-alt .nc-alt-grupo[hidden] {
+  display: none;
+}
+
+@app.nc-alt .nc-alt-grupo.is-muda {
+  border-color: #D9CBEA;
+}
+
+@app.nc-alt .nc-alt-grupo.is-aberto {
+  box-shadow: 0 12px 26px -22px rgba(var(--nc-t-roxo-rgb, 81, 28, 118), .55);
+}
+
+@app.nc-alt .nc-alt-grupo-cab {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 12px 14px;
+  padding: 14px 16px;
+}
+
+@app.nc-alt .nc-alt-grupo-ic {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: var(--nc-nevoa2);
+  color: var(--nc-roxo);
+}
+
+@app.nc-alt .nc-alt-grupo.is-muda .nc-alt-grupo-ic {
+  background: var(--nc-roxo);
+  color: #fff;
+}
+
+@app.nc-alt .nc-alt-ic,
+@app.nc-alt .nc-alt-grupo-ic svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.9;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+@app.nc-alt .nc-alt-grupo-tit {
+  min-width: 0;
+}
+
+@app.nc-alt .nc-alt-grupo-tit h3 {
+  margin: 0;
+  font-family: inherit;
+  font-size: 15.5px;
+  font-weight: 800;
+  line-height: 1.3;
+  color: var(--nc-tinta);
+}
+
+@app.nc-alt .nc-alt-grupo-tit p {
+  overflow: hidden;
+  margin: 2px 0 0;
+  font-size: 13px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  color: #6E6882;
+}
+
+@app.nc-alt .nc-alt-grupo-estado {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 13px;
+  font-weight: 700;
+  white-space: nowrap;
+  color: var(--nc-cinza);
+}
+
+@app.nc-alt .nc-alt-grupo-estado:empty {
+  display: none;
+}
+
+@app.nc-alt .nc-alt-grupo-estado.is-muda {
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: #EFE8F7;
+  color: var(--nc-roxo);
+}
+
+@app.nc-alt .nc-alt-grupo-estado .nc-alt-ic {
+  width: 14px;
+  height: 14px;
+}
+
+@app.nc-alt .nc-alt-abrir {
+  min-width: 84px;
+  height: 36px;
+  padding: 0 14px;
+  border: 1px solid #D9CBEA;
+  border-radius: 10px;
+  background: #fff;
+  font: inherit;
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--nc-roxo);
+  cursor: pointer;
+}
+
+@app.nc-alt .nc-alt-abrir:hover {
+  border-color: var(--nc-roxo);
+  background: var(--nc-nevoa2);
+}
+
+@app.nc-alt .nc-alt-abrir[hidden] {
+  display: none;
+}
+
+@app.nc-alt .nc-alt-grupo.is-aberto .nc-alt-abrir {
+  border-color: transparent;
+  background: var(--nc-nevoa2);
+}
+
+@app.nc-alt :is(.nc-alt-abrir, .nc-alt-falta):focus-visible {
+  outline: 2px solid var(--nc-roxo);
+  outline-offset: 2px;
+}
+
+/* as linhas */
+@app.nc-alt .nc-alt-linhas {
+  display: none;
+  padding: 0 16px 14px;
+  border-top: 1px solid var(--nc-nevoa);
+}
+
+@app.nc-alt .nc-alt-grupo.is-aberto .nc-alt-linhas {
+  display: block;
+  animation: nc-alt-abre .22s cubic-bezier(.2, .7, .2, 1);
+}
+
+@keyframes nc-alt-abre {
+  from { transform: translateY(-4px); }
+  to { transform: none; }
+}
+
+@app.nc-alt .nc-alt-cols,
+@app.nc-alt .nc-alt-linha {
+  display: grid;
+  grid-template-columns: minmax(150px, 190px) minmax(0, 1fr) 20px minmax(0, 1.15fr);
+  align-items: center;
+  gap: 8px 14px;
+}
+
+@app.nc-alt .nc-alt-cols {
+  padding: 10px 8px 4px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #6E6882;
+}
+
+@app.nc-alt .nc-alt-grupo.is-leitura .nc-alt-cols span:last-child::after {
+  content: " (pedido)";
+  font-weight: 400;
+}
+
+@app.nc-alt .nc-alt-linha {
+  min-height: 52px;
+  padding: 6px 8px;
+  border-radius: 10px;
+}
+
+@app.nc-alt .nc-alt-linha[hidden] {
+  display: none;
+}
+
+@app.nc-alt .nc-alt-linha + .nc-alt-linha {
+  box-shadow: inset 0 1px 0 #F1EDF6;
+}
+
+@app.nc-alt .nc-alt-linha.is-muda {
+  background: #FBF7FE;
+  box-shadow: none;
+}
+
+@app.nc-alt .nc-alt-rot {
+  font-size: 13.5px;
+  font-weight: 700;
+  line-height: 1.3;
+  color: var(--nc-tinta);
+}
+
+@app.nc-alt .nc-alt-linha.is-muda .nc-alt-rot::after {
+  content: "muda";
+  display: inline-block;
+  margin-left: 6px;
+  padding: 1px 7px;
+  border-radius: 999px;
+  background: var(--nc-roxo);
+  font-size: 11px;
+  font-weight: 700;
+  vertical-align: 1px;
+  color: #fff;
+}
+
+@app.nc-alt .nc-alt-hoje {
+  min-width: 0;
+  font-size: 14px;
+  line-height: 1.35;
+  color: var(--nc-grafite);
+}
+
+@app.nc-alt .nc-alt-v small,
+@app.nc-alt .nc-alt-de small,
+@app.nc-alt .nc-alt-para small {
+  margin-left: 4px;
+  font-size: 11.5px;
+  font-variant-numeric: tabular-nums;
+  color: #8A8499;
+}
+
+@app.nc-alt .nc-alt-vazio {
+  font-style: italic;
+  color: #8A8499;
+}
+
+@app.nc-alt .nc-alt-linha.is-muda .nc-alt-hoje .nc-alt-v {
+  text-decoration: line-through;
+  text-decoration-color: rgba(var(--nc-t-roxo-rgb, 81, 28, 118), .45);
+  color: #6E6882;
+}
+
+@app.nc-alt .nc-alt-seta {
+  display: grid;
+  place-items: center;
+  color: #C9BEDA;
+}
+
+@app.nc-alt .nc-alt-linha.is-muda .nc-alt-seta {
+  color: var(--nc-roxo);
+}
+
+@app.nc-alt .nc-alt-seta svg {
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* o campo do APEX dentro da linha: sem a grade dele; o rótulo fica só para o leitor de tela */
+@app.nc-alt .nc-alt-novo .t-Form-fieldContainer.nc-alt-campo:not([style*="none"]) {
+  display: block;
+  margin: 0;
+  padding: 0;
+}
+
+@app.nc-alt .nc-alt-campo > .t-Form-labelContainer {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+@app.nc-alt .nc-alt-campo > .t-Form-inputContainer {
+  width: 100%;
+  max-width: none;
+  padding: 0;
+  float: none;
+}
+
+@app.nc-alt .nc-alt-campo :is(input.apex-item-text, select, textarea) {
+  min-height: 40px;
+  border-radius: 10px;
+  font-size: 14.5px;
+}
+
+@app.nc-alt .nc-alt-campo :is(.apex-item-group--popup-lov, .t-Form-itemWrapper:has(> .ui-datepicker-trigger)):not([style*="none"]) {
+  display: flex;
+  align-items: stretch;
+  width: 100%;
+}
+
+@app.nc-alt .nc-alt-campo .apex-item-group--popup-lov > input:not(#nc-alt-x):not(#nc-alt-y) {
+  flex: 1;
+  min-width: 0;
+  border-radius: 10px 0 0 10px;
+}
+
+@app.nc-alt .nc-alt-campo .a-Button--popupLOV:not(#nc-alt-x):not(#nc-alt-y) {
+  flex: none;
+  width: 42px;
+  height: auto;
+  min-height: 40px;
+  margin: 0 0 0 -1px;
+  border-radius: 0 10px 10px 0;
+}
+
+@app.nc-alt .nc-alt-linha.is-muda .nc-alt-campo :is(input.apex-item-text, select) {
+  border-color: #BFA8DA /*reserva*/;
+  border-color: oklch(from #BFA8DA l calc(c * var(--nc-t-croma, 1)) calc(h + var(--nc-t-giro, 0)));
+  background: #fff;
+}
+
+@app.nc-alt .nc-alt-linha.is-lido .nc-alt-campo :is(input, select):not(#nc-alt-x):not(#nc-alt-y) {
+  border-color: transparent;
+  background: transparent;
+  -webkit-text-fill-color: var(--nc-tinta);
+  opacity: 1;
+}
+
+@app.nc-alt .nc-alt-linha.is-lido .nc-alt-campo :is(.a-Button--popupLOV, .ui-datepicker-trigger) {
+  display: none;
+}
+
+/* ═══ [C5] O QUADRO "O QUE VAI MUDAR" (uma lista de "de → para") ════════════════════════
+   Montado pelo JS em [J5]. .nc-alt-resumo é o quadro; .nc-alt-de e .nc-alt-para, os valores.
+   ════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-alt .nc-alt-resumo {
+  margin: 16px 0 0;
+  padding: 16px 18px;
+  border-radius: 14px;
+  background: #F7F3FB;
+}
+
+@app.nc-alt .nc-alt-resumo[hidden] {
+  display: none;
+}
+
+@app.nc-alt .nc-alt-resumo h3 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 8px;
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--nc-tinta);
+}
+
+@app.nc-alt .nc-alt-resumo h3 span {
+  display: grid;
+  place-items: center;
+  min-width: 22px;
+  height: 22px;
+  padding: 0 6px;
+  border-radius: 999px;
+  background: var(--nc-roxo);
+  font-size: 12px;
+  color: #fff;
+}
+
+@app.nc-alt .nc-alt-resumo ul {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+@app.nc-alt .nc-alt-resumo li {
+  display: grid;
+  grid-template-columns: minmax(140px, 190px) minmax(0, 1fr) 16px minmax(0, 1.15fr);
+  align-items: center;
+  gap: 4px 12px;
+  font-size: 14px;
+  color: var(--nc-grafite);
+}
+
+@app.nc-alt .nc-alt-resumo-rot {
+  font-weight: 700;
+  color: var(--nc-tinta);
+}
+
+@app.nc-alt .nc-alt-de {
+  text-decoration: line-through;
+  text-decoration-color: rgba(var(--nc-t-roxo-rgb, 81, 28, 118), .4);
+  color: #6E6882;
+}
+
+@app.nc-alt .nc-alt-para {
+  font-weight: 700;
+  color: var(--nc-roxo);
+}
+
+@app.nc-alt .nc-alt-resumo-seta {
+  width: 14px;
+  height: 14px;
+  color: var(--nc-roxo);
+}
+
+/* ═══ [C6] A BARRA DO RODAPÉ: Voltar, o que falta / quanto muda, Criar ══════════════════
+   Montada pelo JS em [J7]. .nc-alt-acoes é a barra; .nc-alt-falta, cada campo que falta.
+   ════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-alt .t-ButtonRegion.nc-alt-acoes:not(.nc-alt-acoes--leitura):not(#nc-alt-x):not(#nc-alt-y) {
+  position: sticky;
+  bottom: 0;
+  z-index: 20;
+  margin: 16px 0 0;
+  padding: 12px 16px;
+  border: 1px solid var(--nc-nevoa);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, .96);
+  box-shadow: 0 -12px 28px -22px rgba(var(--nc-t-azul-rgb, 44, 26, 99), .55);
+}
+
+@app.nc-alt .t-ButtonRegion.nc-alt-acoes .t-ButtonRegion-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 16px;
+}
+
+@app.nc-alt .t-ButtonRegion.nc-alt-acoes .t-ButtonRegion-col--left { order: 1; flex: none; width: auto; }
+@app.nc-alt .t-ButtonRegion.nc-alt-acoes .t-ButtonRegion-col--content { order: 2; flex: 1 1 260px; }
+@app.nc-alt .t-ButtonRegion.nc-alt-acoes .t-ButtonRegion-col--right { order: 3; flex: none; width: auto; }
+
+@app.nc-alt .t-ButtonRegion.nc-alt-acoes .t-ButtonRegion-col--content .t-ButtonRegion-buttons:empty {
+  display: none;
+}
+
+@app.nc-alt .t-ButtonRegion.nc-alt-acoes:not(.nc-alt-acoes--leitura) .t-Button {
+  height: 46px;
+  padding: 0 22px;
+  border-radius: 12px;
+  font-size: 15px;
+}
+
+@app.nc-alt .nc-alt-status {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 8px;
+  font-size: 14px;
+  color: var(--nc-grafite);
+}
+
+@app.nc-alt .nc-alt-status-rot {
+  font-weight: 700;
+  color: #6B4700;
+}
+
+@app.nc-alt .nc-alt-falta {
+  padding: 4px 10px;
+  border: 0;
+  border-radius: 999px;
+  background: #FFF4DE;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  color: #6B4700;
+  cursor: pointer;
+}
+
+@app.nc-alt .nc-alt-status-ok {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 700;
+  color: var(--nc-roxo);
+}
+
+@app.nc-alt .nc-alt-status-ok .nc-alt-ic {
+  width: 16px;
+  height: 16px;
+}
+
+@app.nc-alt .nc-alt-status-nada {
+  font-size: 13.5px;
+  color: #6E6882;
+}
+
+@app.nc-alt :is(.t-Body, .t-Body-main, .t-Body-content),
+@app.nc-alt .t-Body-contentInner > .container {
+  overflow: clip;
+}
+
+/* ═══ [C7] A FAIXA DA APROVAÇÃO (a mesma da Requisição de Pessoal e do Desligamento) ════
+   Montada pelo JS em [J6]. .nc-alt-caminho é a faixa; .nc-alt-ap, cada aprovador:
+   .is-ok aprovou · .is-nao reprovou · .is-vez aguardando · .is-fila na fila.
+   ════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-alt .t-Region.nc-alt-aprovadores .t-Report-report,
+@app.nc-alt .t-Region.nc-alt-aprovadores > .t-Region-header {
+  display: none;
+}
+
+@app.nc-alt .t-Region.nc-alt-aprovadores:not(#nc-alt-x):not(#nc-alt-y) {
+  margin: 0 0 14px;
+  border: 0;
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: inset 0 0 0 1px var(--nc-nevoa), 0 10px 24px -22px rgba(var(--nc-t-azul-rgb, 44, 26, 99), .5);
+}
+
+@app.nc-alt .t-Region.nc-alt-aprovadores[hidden] {
+  display: none;
+}
+
+@app.nc-alt .t-Region.nc-alt-aprovadores > .t-Region-bodyWrap > .t-Region-body {
+  padding: 14px 18px;
+}
+
+@app.nc-alt .nc-alt-caminho {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px 26px;
+}
+
+@app.nc-alt .nc-alt-caminho-cab {
+  display: grid;
+  gap: 2px;
+  min-width: 170px;
+  padding-right: 22px;
+  border-right: 1px solid var(--nc-nevoa);
+}
+
+@app.nc-alt .nc-alt-caminho-cab p {
+  margin: 0;
+}
+
+@app.nc-alt .nc-alt-caminho-rot {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--nc-grafite);
+}
+
+@app.nc-alt .nc-alt-caminho-resumo {
+  font-size: 14.5px;
+  color: var(--nc-grafite);
+}
+
+@app.nc-alt .nc-alt-caminho-resumo b {
+  color: var(--nc-tinta);
+}
+
+@app.nc-alt .nc-alt-caminho--vez .nc-alt-caminho-resumo b:last-child { color: #8A5A00; }
+@app.nc-alt .nc-alt-caminho--ok .nc-alt-caminho-resumo b { color: var(--nc-bom); }
+@app.nc-alt .nc-alt-caminho--nao .nc-alt-caminho-resumo b { color: #A32020; }
+
+@app.nc-alt .nc-alt-caminho-ver {
+  display: none;
+}
+
+/* os passos em linha, ligados por um fio */
+@app.nc-alt .nc-alt-passos-ap {
+  display: flex;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  overflow-x: auto;
+  list-style: none;
+  scrollbar-width: thin;
+}
+
+@app.nc-alt .nc-alt-ap {
+  position: relative;
+  display: flex;
+  flex: 1 1 0;
+  flex-direction: column;
+  align-items: center;
+  min-width: 96px;
+  padding: 0 4px;
+  text-align: center;
+}
+
+/* o fio até o próximo: do centro deste ao centro do próximo */
+@app.nc-alt .nc-alt-ap:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  top: 13px;
+  left: calc(50% + 17px);
+  right: calc(-50% + 17px);
+  height: 2px;
+  border-radius: 2px;
+  background: #E3DDEC;
+}
+
+@app.nc-alt .nc-alt-ap.is-ok:not(:last-child)::after {
+  background: var(--nc-bom);
+}
+
+@app.nc-alt .nc-alt-ap-marca {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  margin: 0 0 6px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: inset 0 0 0 2px #D9D3E3;
+}
+
+@app.nc-alt .nc-alt-ap-marca svg {
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: #fff;
+  stroke-width: 2.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+@app.nc-alt .nc-alt-ap.is-ok .nc-alt-ap-marca { background: var(--nc-bom); box-shadow: none; }
+@app.nc-alt .nc-alt-ap.is-nao .nc-alt-ap-marca { background: #C0392B; box-shadow: none; }
+@app.nc-alt .nc-alt-ap.is-vez .nc-alt-ap-marca { background: #E0A100; box-shadow: 0 0 0 5px rgba(224, 161, 0, .18); }
+
+@app.nc-alt .nc-alt-ap-texto {
+  display: grid;
+  justify-items: center;
+  gap: 1px;
+  min-width: 0;
+  max-width: 100%;
+}
+
+@app.nc-alt .nc-alt-ap-nome {
+  max-width: 100%;
+  overflow: hidden;
+  font-size: 13.5px;
+  font-weight: 800;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--nc-tinta);
+}
+
+@app.nc-alt .nc-alt-ap-estado {
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  color: var(--nc-grafite);
+}
+
+@app.nc-alt .nc-alt-ap.is-ok .nc-alt-ap-estado { color: var(--nc-bom); }
+@app.nc-alt .nc-alt-ap.is-nao .nc-alt-ap-estado { color: #A32020; font-weight: 700; }
+@app.nc-alt .nc-alt-ap.is-vez .nc-alt-ap-estado { color: #8A5A00; font-weight: 700; }
+@app.nc-alt .nc-alt-ap.is-fila :is(.nc-alt-ap-nome, .nc-alt-ap-estado) { color: #8A8497; }
+
+/* o link da pessoa: a lupa pequena ao lado do estado */
+@app.nc-alt .nc-alt-ap a.nc-alt-ap-link:not(#nc-alt-x):not(#nc-alt-y) {
+  position: static;
+  margin-top: 3px !important;
+  display: inline-grid;
+  place-items: center;
+  width: 22px;
+  min-width: 0;
+  height: 22px;
+  margin: 0;
+  padding: 0;
+  border: 1px solid var(--nc-nevoa);
+  border-radius: 7px;
+  background: #fff;
+  box-shadow: none;
+  font-size: 11px;
+  color: var(--nc-roxo);
+}
+
+@app.nc-alt .nc-alt-ap a.nc-alt-ap-link .t-Icon {
+  font-size: 11px;
+}
+
+/* a decisão à direita */
+@app.nc-alt .nc-alt-decisao-botoes {
+  display: flex;
+  gap: 8px;
+}
+
+@app.nc-alt .nc-alt-decisao-botoes .t-Button:not(#nc-alt-x):not(#nc-alt-y) {
+  height: 42px;
+  margin: 0;
+  padding: 0 20px;
+  border-radius: 12px;
+  font-size: 14.5px;
+}
+
+@app.nc-alt .nc-alt-decisao-botoes .t-Button.nc-alt-aprovar:not(#nc-alt-x):not(#nc-alt-y) {
+  border: 0;
+  background: var(--nc-bom);
+  color: #fff;
+}
+
+@app.nc-alt .nc-alt-decisao-botoes .t-Button.nc-alt-reprovar:not(#nc-alt-x):not(#nc-alt-y) {
+  border: 1.5px solid #E7B7B7;
+  background: #fff;
+  box-shadow: none;
+  color: #A32020;
+}
+
+@app.nc-alt .nc-alt-decisao-botoes .t-Button :is(.t-Icon, .t-Button-label) {
+  color: inherit;
+}
+
+/* é a vez de quem vê: a faixa ganha um contorno âmbar */
+@app.nc-alt .t-Region.nc-alt-aprovadores:has(.nc-alt-caminho--vez):not(#nc-alt-x):not(#nc-alt-y) {
+  box-shadow: inset 0 0 0 1.5px #EBC45A, 0 10px 24px -22px rgba(138, 90, 0, .5);
+}
+
+@app.nc-alt .nc-alt-ap-just {
+  grid-column: 1 / -1;
+  margin: 2px 0 0;
+  padding: 8px 12px;
+  border-left: 0;
+  border-radius: 10px;
+  background: #FDF0F0;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--nc-tinta);
+}
+
+@media (max-width: 1100px) {
+  @app.nc-alt .nc-alt-caminho {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+
+  @app.nc-alt .nc-alt-passos-ap {
+    grid-column: 1 / -1;
+    grid-row: 2;
+  }
+
+  @app.nc-alt .nc-alt-caminho-cab {
+    padding-right: 0;
+    border-right: 0;
+  }
+}
+
+/* celular: só o resumo e a decisão; o caminho abre por "Ver o caminho" */
+@media (max-width: 767px) {
+  @app.nc-alt .nc-alt-caminho {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  @app.nc-alt .nc-alt-caminho-cab {
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    min-width: 0;
+  }
+
+  @app.nc-alt .nc-alt-caminho-rot {
+    grid-column: 1;
+  }
+
+  @app.nc-alt .nc-alt-caminho-resumo {
+    grid-column: 1;
+  }
+
+  @app.nc-alt .nc-alt-caminho-ver {
+    display: inline-flex;
+    grid-column: 2;
+    grid-row: 1 / span 2;
+    align-items: center;
+    height: 34px;
+    padding: 0 12px;
+    border: 1px solid var(--nc-nevoa);
+    border-radius: 10px;
+    background: #fff;
+    font: inherit;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--nc-roxo);
+  }
+
+  @app.nc-alt .t-Region.nc-alt-aprovadores:not(.nc-alt-ap-aberto) .nc-alt-passos-ap {
+    display: none;
+  }
+
+  @app.nc-alt .nc-alt-passos-ap {
+    grid-row: auto;
+  }
+
+  @app.nc-alt .nc-alt-decisao-botoes .t-Button:not(#nc-alt-x):not(#nc-alt-y) {
+    flex: 1 1 0;
+  }
+}
+
+
+/* ═══ [C8] TELAS MÉDIAS E CELULAR ═══════════════════════════════════════════════════════
+   O que está dentro de @media (max-width: 1100px) vale em notebooks pequenos e tablets;
+   dentro de @media (max-width: 767px), só no celular. Em geral, o que era lado a lado passa a
+   ficar um embaixo do outro. (A faixa da aprovação tem os ajustes dela no fim de [C7].)
+   ════════════════════════════════════════════════════════════════════════════════════════ */
+/* ---------- telas médias ---------- */
+@media (max-width: 1100px) {
+  @app.nc-alt .nc-alt-topo {
+    grid-template-columns: 110px minmax(0, 1fr);
+  }
+
+  @app.nc-alt .nc-alt-topo-ilu img {
+    width: 110px;
+  }
+
+  @app.nc-alt .nc-alt-topo-lado {
+    grid-column: 1 / -1;
+    grid-auto-flow: column;
+    justify-content: start;
+    justify-items: start;
+    align-items: center;
+    gap: 10px;
+    text-align: left;
+  }
+
+  @app.nc-alt .nc-alt-topo-lado .nc-alt-contagem {
+    margin-top: 0 !important;
+  }
+}
+
+/* ---------- celular ---------- */
+@media (max-width: 767px) {
+  @app.nc-alt .nc-alt-topo {
+    grid-template-columns: minmax(0, 1fr);
+    padding: 14px 16px;
+  }
+
+  @app.nc-alt .nc-alt-topo-ilu {
+    display: none;
+  }
+
+  @app.nc-alt .nc-alt-topo-tit {
+    font-size: 20px;
+  }
+
+  /* número, situação e contagem numa linha que quebra, sem espremer */
+  @app.nc-alt .nc-alt-topo-lado {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px 10px;
+  }
+
+  @app.nc-alt .nc-alt-req-data {
+    flex-basis: 100%;
+    order: 1;
+  }
+
+  @app.nc-alt .nc-alt-req b {
+    font-size: 18px;
+  }
+
+  @app.nc-alt .nc-alt-contagem {
+    padding: 4px 10px;
+  }
+
+  @app.nc-alt .nc-alt-contagem b {
+    font-size: 15px;
+  }
+
+  @app.nc-alt .nc-alt-sec-cab {
+    padding: 16px 16px 2px;
+  }
+
+  @app.nc-alt .t-Region.nc-alt-sec > .t-Region-bodyWrap > .t-Region-body {
+    padding: 12px 12px 16px;
+  }
+
+  @app.nc-alt .nc-alt-grupo-cab {
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    padding: 12px;
+  }
+
+  @app.nc-alt .nc-alt-grupo-estado {
+    grid-column: 2;
+    grid-row: 2;
+    justify-self: start;
+  }
+
+  @app.nc-alt .nc-alt-abrir {
+    grid-column: 3;
+    grid-row: 1 / span 2;
+  }
+
+  @app.nc-alt .nc-alt-cols {
+    display: none;
+  }
+
+  @app.nc-alt .nc-alt-linhas {
+    padding: 0 10px 10px;
+  }
+
+  @app.nc-alt .nc-alt-linha {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 4px;
+    padding: 10px 6px;
+  }
+
+  @app.nc-alt .nc-alt-hoje::before {
+    content: "Hoje: ";
+    font-weight: 700;
+    color: #6E6882;
+  }
+
+  @app.nc-alt .nc-alt-seta {
+    display: none;
+  }
+
+  @app.nc-alt .nc-alt-resumo li {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0;
+    padding: 6px 0;
+  }
+
+  @app.nc-alt .nc-alt-resumo-seta {
+    display: none;
+  }
+
+  @app.nc-alt .t-ButtonRegion.nc-alt-acoes:not(.nc-alt-acoes--leitura):not(#nc-alt-x):not(#nc-alt-y) {
+    margin: 12px -4px 0;
+    border-radius: 14px 14px 0 0;
+  }
+
+  @app.nc-alt .t-ButtonRegion.nc-alt-acoes .t-ButtonRegion-col--content {
+    order: 0;
+    flex-basis: 100%;
+  }
+
+  @app.nc-alt .t-ButtonRegion.nc-alt-acoes .t-ButtonRegion-col--right {
+    flex: 1;
+  }
+
+  @app.nc-alt .t-ButtonRegion.nc-alt-acoes .t-ButtonRegion-col--right .t-Button {
+    width: 100%;
+  }
+}
+
+/* ═══ [C9] MOVIMENTO REDUZIDO ═══════════════════════════════════════════════════════════
+   Para quem pediu "reduzir movimento" nas configurações do computador ou celular: o grupo
+   abre sem animação (acessibilidade).
+   ════════════════════════════════════════════════════════════════════════════════════════ */
+@media (prefers-reduced-motion: reduce) {
+  @app.nc-alt .nc-alt-grupo.is-aberto .nc-alt-linhas {
+    animation: none;
+  }
+}
+
+@app.nc-alt .nc-alt-caminho--fim .nc-alt-caminho-resumo b {
+  color: #A32020;
+}
+
+/* ═══ FAIXA DA REGIÃO (padrão 03/10) ════════════════════════════════════════════════════════
+   Todo painel com título segue o cabeçalho de região da Skin: o título numa faixa que atravessa
+   o cartão de ponta a ponta, com a linha de 2px na cor de destaque do TEMA (var(--nc-rosa) — a
+   mesma da Skin; muda com os 14 temas). As margens negativas são o recuo de dentro do cartão:
+   mudou o recuo do cartão, mude aqui junto. Guia: brand/apex/MANUAL-APEX.md.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-alt .nc-alt-sec-cab:not(#nc-fx1):not(#nc-fx2):not(#nc-fx3) {
+  border-bottom: 2px solid var(--nc-rosa, #C95788);
+  padding-bottom: 14px;
+}
+@app.nc-alt .nc-alt-grupo-cab:not(#nc-fx1):not(#nc-fx2):not(#nc-fx3) {
+  border-bottom: 2px solid var(--nc-rosa, #C95788);
+}
+@app.nc-alt .nc-alt-caminho > .nc-alt-caminho-rot:not(#nc-fx1):not(#nc-fx2):not(#nc-fx3) {
+  box-sizing: border-box;
+  width: calc(100% + 36px);
+  margin: -14px -18px 2px;
+  padding: 12px 18px 10px;
+  border-bottom: 2px solid var(--nc-rosa, #C95788);
+  grid-column: 1 / -1;
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.3;
+}

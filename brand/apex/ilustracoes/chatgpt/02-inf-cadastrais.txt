@@ -1,0 +1,5 @@
+Next image of the same series — module "Informações Cadastrais e Funcionais". Same style as the attached sheet and the style guide, square 1:1, transparent background.
+
+SCENE — the hero object is a giant isometric employee record card standing upright like a panel, with a large round avatar at the top, a small rectangular photo slot, and rows of thin abstract lines. Around it: a woman in a pink top placing a smaller ID document card into the panel; a man in a navy sweater holding a tablet and checking the data; a woman seated on a stack of blue folders typing on a laptop; a man with a beard carrying a big blue folder. Floating cards: a small ID card with an avatar, a card with a check mark in a pink circle, a card with three stacked lines.
+
+STRICT — no text, no letters, no numbers, no words, no logos, no brand marks, no flags, no national symbols, no watermark, no signature, no border or frame. Faceless people. Flat vector only. Pure white background.

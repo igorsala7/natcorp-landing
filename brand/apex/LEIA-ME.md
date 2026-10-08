@@ -1,5 +1,7 @@
 # Modernização da UI das aplicações Oracle APEX 19.2
 
+> **Nunca mexeu em CSS ou JS?** Comece pelo [manual do desenho Natcorp no APEX](MANUAL-APEX.md): ele explica tudo do zero e traz as receitas das mudanças mais comuns.
+
 Máscara global de CSS que aproxima as aplicações Natcorp em APEX 19.2 (Universal Theme 42, estilo
 "Vita (NATCORP)") do layout de referência `brand/app-referencia/natcorp-app.html`, com o mínimo de alterações:
 **nenhum template, página, item ou JavaScript precisa mudar**. É um único arquivo de CSS carregado por cima do
@@ -14,7 +16,7 @@ Máscara global de CSS que aproxima as aplicações Natcorp em APEX 19.2 (Univer
 
 ## O que muda na tela
 
-- **Tipografia**: Manrope em toda a aplicação (era Helvetica/Segoe/Arial). Só existe uma declaração de fonte no tema
+- **Tipografia** (desde 02/10/2026): Inter (livre, embutida), em toda a aplicação — antes Manrope e, por algumas horas, Aptos Narrow/Roboto Condensed.
   inteiro, então uma regra propaga para tudo.
 - **Cabeçalho**: barra branca com borda em Névoa, o símbolo da Natcorp antes do nome da aplicação, botões em pílula.
   Sai a barra escura com o filete rosa.

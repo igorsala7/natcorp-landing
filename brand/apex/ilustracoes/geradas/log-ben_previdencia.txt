@@ -1,0 +1,14 @@
+/Users/igor_sala/instalacoes/Projetos/natcorp-landing/brand/apex/ilustracoes/geradas/ben_previdencia-v1.png 851178 bytes
+{
+ "input_tokens": 1916,
+ "input_tokens_details": {
+  "image_tokens": 1521,
+  "text_tokens": 395
+ },
+ "output_tokens": 7024,
+ "output_tokens_details": {
+  "image_tokens": 7024,
+  "text_tokens": 0
+ },
+ "total_tokens": 8940
+}

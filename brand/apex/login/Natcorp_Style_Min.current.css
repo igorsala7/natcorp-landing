@@ -1,0 +1,718 @@
+/*Borda roxa abaixo do cabeçalho das regiões*/
+  .t-Header { 
+  border-bottom: 3px solid #c95788;
+  }
+
+/* Menu Lateral - Ao expandir não sobrepor informações quando for página com Left Side Column*/
+/*
+.apex-side-nav.js-navExpanded.t-PageBody--showLeft .t-Body-content {
+transform: translate3d(240px, 0, 0) !important;
+}
+*/
+
+/* Menu Superior - Navigation Menu Bar */
+  .t-Header-nav-list{ 
+    background-color: #552179 !important;
+  }
+
+  .a-MenuBar-item{ 
+    background-color: #552179 !important;
+  }
+
+  .a-Menu-content{ 
+    background-color: #2c1a63 !important;
+  }
+
+  .a-Menu-labelContainer{
+    color: #fafafa !important;
+  }
+
+/* Cores Padrões */
+  .colorPurple {
+   color: #511C76 !important;
+  }
+
+  .colorBlue {
+   color: #2C1A63 !important;
+  }
+
+  .colorPink {
+   color: #C95788 !important;
+  }
+
+  .backgroundColorPurple {
+   background-color: #511C76 !important;
+  }
+
+  .backgroundColorBlue {
+   background-color: #2C1A63 !important;
+  }
+
+  .backgroundColorPink {
+   background-color: #C95788 !important;
+  }
+
+/*
+.t-Region-headerItems.t-Region-headerItems--title{
+border-left: 5px solid #511c76;
+}
+*/
+
+/*Borda roxa à esquerda do cabeçalho das regiões*/
+  .t-Region-header{ 
+  border-left: 5px solid #511c76 !important;
+  }
+
+/*Cor do ícone em região em template Hero*/
+  .t-HeroRegion-icon{ 
+    background-color: #c95788 !important;
+    color: #2C1A63 !important;
+  }
+
+/*Formatação da Fonte dos Headers das regiões*/
+  .t-Region-title { 
+      font-weight: 500 !important;
+      font-size: large !important;
+      color: #262626 !important;
+  }
+
+/*Borda roxa abaixo do cabeçalho das regiões*/
+  .a-IRR-toolbar { 
+      border-bottom: 3px solid #511c76;
+  }
+
+/*Borda roxa abaixo do cabeçalho das regiões*/
+  .a-IG-header{ 
+      border-bottom: 3px solid #511c76;
+  }
+
+/*Borda roxa abaixo do cabeçalho das regiões*/
+  .ui-dialog.ui-dialog--inline .ui-dialog-titlebar{ 
+      border-bottom: 3px solid #511c76;
+  }
+
+/*Borda roxa abaixo do cabeçalho das regiões*/
+  .ui-dialog-titlebar.ui-widget-header.ui-corner-all.ui-helper-clearfix{ 
+      border-bottom: 3px solid #511c76;
+  }
+
+/*Cor do ícone no header das regiões*/
+  .t-Region-headerIcon{ 
+  color: #c95788 !important;
+  }
+
+/*Margem do item*/
+  .t-Form-fieldContainer{ 
+  margin-top:6px !important; 
+  }
+
+/*Cor do Radio Button quando selecionado*/
+  .apex-button-group input:checked+label, .t-Form-fieldContainer--radioButtonGroup .apex-item-group--rc input:checked+label{
+  border-color: #c95788 !important; 
+    background-color: #c95788 !important;
+  }
+
+/*Cor do ícone do tipo Alert*/
+  .t-Alert--info .t-Alert-icon .t-Icon{ 
+  color: #fff !important;
+  }
+/* Estrutura certa do ícone do alerta "info": a região do ícone
+   (.t-Alert-icon) ocupa toda a altura do aviso, com um fundo azul
+   claro — e DENTRO dela fica uma bolinha pequena e escura (o
+   próprio <span class="t-Icon">), com o "i" branco centralizado. */
+.t-Alert--defaultIcons.t-Alert--info .t-Alert-icon {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  background: #F3ECF9 !important;
+}
+.t-Alert--info .t-Alert-icon .t-Icon {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 32px !important;
+  height: 32px !important;
+  min-width: 32px !important;
+  border-radius: 50% !important;
+  background-color: var(--nc-primary) !important;
+  background-image: none !important;
+  position: relative !important;
+}
+.t-Alert--info .t-Alert-icon .t-Icon::before {
+  content: "i" !important;
+  display: block !important;
+  color: #fff !important;
+  font-family: Georgia, "Times New Roman", serif !important;
+  font-size: 18px !important;
+  font-weight: 700 !important;
+  font-style: italic !important;
+  line-height: 1 !important;
+}
+
+/* Espaço nas laterais do texto do aviso — estava colado nas bordas. */
+.t-Alert-content {
+  padding: 12px 16px !important;
+}
+
+/*Cor do botão do tipo Link*/
+  .t-Button--link.t-Button, .t-Button--link .t-Icon{ 
+  color: #2C1A63 !important;
+  }
+
+/*Borda do ícone das breadcrumbs das regiões com template Hero*/
+  .t-HeroRegion-icon{ 
+    /*transform: rotate(45deg);*/
+    border-radius: 7px !important;
+  }
+
+/*Cor do marcador da região Wizard, quando ok*/
+  .t-WizardSteps-step.is-complete .t-WizardSteps-marker { 
+      background-color: #2c1b63 !important;
+      color: #FFF;
+  }
+
+/*Cor do marcador da região Wizard, quando ativo*/
+  .t-WizardSteps-step.is-active .t-WizardSteps-marker { 
+      background-color: #c95788; 
+  }
+
+/*Cor do item selecionado, com foco*/
+  .apex-item-multi:focus, .apex-item-select:focus, .apex-item-text:focus, .apex-item-textarea:focus, select.listmanager:focus {
+  border-color: #c95788 !important; 
+  }
+
+/*Cor do item selecionado, com foco*/
+  .t-Form-fieldContainer--floatingLabel .apex-item-has-icon:focus+.apex-item-icon, .t-Form-fieldContainer--floatingLabel .apex-item-multi.is-focused+.apex-item-icon {
+  background-color: #c95788 !important; 
+  }
+
+/*Formatação das cores e formatos dos ícones das regiões do tipo Card*/
+  .t-Card-icon{ 
+    border-radius: 7px !important;
+    /*transform: rotate(45deg);*/
+  }
+
+/*Formatação das cores e formatos dos ícones das regiões do tipo Card*/
+  .t-Card-colorFill, .t-Card-icon { 
+      background:
+          linear-gradient(#511C76, transparent),
+          linear-gradient(to top left, #C95788, transparent),
+          linear-gradient(to bottom right, #2C1A63, transparent) !important;
+      background-blend-mode: screen !important;
+  }
+
+/*Formatação da fonte dos títulos das Páginas Modais*/
+  .ui-dialog-title{ 
+      font-weight: 500 !important;
+      font-size: large !important;
+      color: #262626 !important;
+  }
+
+/*Formatação das fotos, circular e sem borda em formato Pequeno 50px*/
+  .fotoColabSmall{ 
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+      width: 50%;
+      border-radius: 100px;
+      margin-top: 5px;
+      margin-bottom: 5px;
+      min-width: 50px;
+      min-height: 50px;
+      max-width: 50px;
+      max-height: 50px;
+  }
+
+  .fotoColabSmallComments{ 
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1.5px solid #511c76 !important;
+}
+
+/*Formatação das fotos, circular e com borda em formato Médio 100px*/
+  .fotoColabMed{ 
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+      width: 50%;
+      border-radius: 100px;
+      box-shadow: 0 0 0 3px #511c76 !important;
+      margin-top: 5px;
+      margin-bottom: 5px;
+      min-width: 100px;
+      min-height: 100px;
+      max-width: 100px;
+      max-height: 100px;
+  }
+
+/*Formatação das fotos, circular e com borda em formato Grande 120px*/
+  .fotoColab{ 
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+      width: 50%;
+      border-radius: 100px;
+      box-shadow: 0 0 0 3px #511c76 !important;
+      margin-top: 5px;
+      margin-bottom: 5px;
+      min-width: 120px;
+      min-height: 120px;
+      max-width: 120px;
+      max-height: 120px;
+  }
+
+/*Formatação das fotos nos relatórios (Classic Report, Interactive Report, etc...)*/
+  td[headers=FOTO] img { 
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+      width: 50%;
+      border-radius: 50px;
+      margin-top: 5px;
+      margin-bottom: 5px;
+      min-width: 60px;
+      min-height: 60px;
+      max-width: 60px;
+      max-height: 60px;
+  }
+
+  .zoom100{
+    zoom: 100%;
+  }
+
+  .zoom150{
+    zoom: 150%;
+  }
+
+  .zoom140{
+    zoom: 140%;
+  }
+
+  .zoom130{
+    zoom: 130%;
+  }
+
+  .zoom120{
+    zoom: 120%;
+  }
+
+  .zoom110{
+    zoom: 110%;
+  }
+
+  .zoom90{
+    zoom: 90%;
+  }
+
+  .zoom80{
+    zoom: 80%;
+  }
+
+  .zoom70{
+    zoom: 70%;
+  }
+
+  .zoom60{
+    zoom: 60%;
+  }
+
+  .zoom50{
+    zoom: 50%;
+  }
+
+  .zoom40{
+    zoom: 40%;
+  }
+
+  .zoom30{
+    zoom: 30%;
+  }
+
+  .zoom20{
+    zoom: 20%;
+  }
+
+  .zoom10{
+    zoom: 10%;
+  }
+
+/*Comando para Mostrar região ao clicar no + Ver Mais*/
+  .expandRegion { 
+  display: block;
+  }
+
+/*Comando para Esconder região ao clicar no + Ver Mais*/
+  .collapseRegion { 
+  display: none;
+  }
+
+/*A região PARAMETROS que fica na página global*/
+  #GLOBAL_PARAMETROS{ 
+    display: none;
+  }
+
+/*As cores dos ícones do Home, que não estavam ficando brancos*/
+  .t-Cards-item > .t-Card .t-Card-icon{ 
+  color: #fff !important;
+  }
+
+
+/*Dados do Usuário no Menu Lateral - Início*/
+  #t_TreeNav {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+  }
+
+  #t_TreeNav ul {
+      flex: 1 0 auto;
+  }
+
+  div.sideuserdata{
+      flex: 0 0 auto;
+  }
+
+  #t_PageBody.apex-side-nav.js-navCollapsed .sideuserdata {
+     display: none;
+  }
+
+  .ui-dialog > div.sideuserdata {
+      flex: 0 0 auto;
+      display: none !important;
+  }
+/*Dados do Usuário no Menu Lateral - Fim*/
+
+
+/*Nível de transparência de Itens desabilitados*/
+  .apex_disabled { 
+    opacity: 0.8 !important;
+  }
+
+/*Para utilizar na foto do perfil das consultas de colaboradores, identificar Admitidos, Afastados e Desligados*/
+  .admitido {
+  box-shadow: 0 0 0 3px #58e05c !important;
+  }
+
+  .afastado {
+  box-shadow: 0 0 0 3px #fcdc21 !important;
+  }
+
+  .desligado {
+  box-shadow: 0 0 0 3px #d64747 !important;
+  }
+
+  .picSuccess {
+   box-shadow: 0 0 0 3px #47b74a !important;
+  }
+
+  .picAlert {
+   box-shadow: 0 0 0 3px #fcdc21 !important;
+  }
+
+  .picDanger {
+   box-shadow: 0 0 0 3px #d64747 !important;
+  }
+
+  .picInfo {
+   box-shadow: 0 0 0 3px #2c1a63 !important;
+  }
+
+  .picNone {
+   box-shadow: 0 0 0 3px #d1d1d1 !important;
+  }
+
+/*Classe para aplicar cor em ícones*/
+  .colorSuccess {
+   color: #47b74a !important;
+  }
+
+  .colorAlert {
+   color: #fcdc21 !important;
+  }
+
+  .colorDanger {
+   color: #d64747 !important;
+  }
+
+  .colorInfo {
+   color: #2c1a63 !important;
+  }
+
+  .colorNone {
+   color: #d1d1d1 !important;
+  }
+
+/*Corrigir Bug da atualização do Chrome que some o Item ao selecionar*/
+  .apex-item-select:not(.a-GV *):not(.a-GV-columnItemContainer *),
+  .apex-item-text:not(.a-GV *):not(.a-GV-columnItemContainer *),
+  .apex-item-textarea:not(.a-GV *):not(.a-GV-columnItemContainer *),
+  .apex-item-multi:not(.a-GV *):not(.a-GV-columnItemContainer *) {
+  backface-visibility: hidden;
+  }
+
+
+/*Breadcrumb via HTML customizado*/
+    #BREADCRUMB{
+      margin-top: 0px !important;
+      margin-bottom: 0px !important;
+    }
+
+    /* Style the list */
+    #BREADCRUMB ul.breadcrumb {
+      /*padding: 10px 16px;*/
+      list-style: none;
+      /*background-color: #eee;*/
+      background-color: #fff0;
+    }
+
+    /* Display list items side by side */
+    #BREADCRUMB ul.breadcrumb li {
+      display: inline;
+      font-size: 14px;
+    }
+
+    /* Add a slash symbol (/) before/behind each list item */
+    #BREADCRUMB ul.breadcrumb li+li:before {
+      padding: 8px;
+      color: #c95788;
+      content: "/\00a0";
+      font-size: 16px;
+    }
+
+    /* Add a color to all links inside the list */
+    #BREADCRUMB ul.breadcrumb li a {
+      color: #2C1A63;
+      text-decoration: none;
+    }
+
+    /* Add a color on mouse-over */
+    #BREADCRUMB ul.breadcrumb li a:hover {
+      color: #c95788;
+      text-decoration: underline;
+    }
+
+
+
+
+/*Botão do Chamado Interno*/
+
+  .floatChamadoInterno{
+    position: fixed;
+    bottom: 13rem;
+    right: 1rem;
+    width: 58px;
+    height: 58px;
+    border-radius: 50%;
+    background-color: #c95788 !important;
+    color: #2c1a63 !important;
+    box-shadow: rgba(0, 0, 0, 0.2) 0px 4px 8px 0px;
+    cursor: pointer;
+    z-index: 9999 !important;
+    transition: all 0.2s ease-in-out 0s;
+    left: unset;
+    transform: scale(1);
+    border: 2px solid #2c1a63 !important;
+  }
+/*
+  .floatChamadoInterno{
+    z-index: 100 !important;
+    position: fixed;
+    width: 50px;
+    height: 50px;
+    bottom: 80px;
+    right: 10px;
+    background-color: #c95788 !important;
+    color: #2c1a63 !important;
+    border-radius: 25px;
+    text-align: center;
+    box-shadow: 2px 2px 3px #999;
+  }
+*/
+
+  .my-floatChamadoInterno{
+    z-index: 9999 !important;
+    margin-top:22px;
+  }
+
+/* Botão do ChatBot - CHATBASE */
+#chatbase-bubble-button{
+  bottom: 7rem !important;
+  z-index: 500 !important;
+}
+
+/*Botão da NATI - IA da Natcorp - ChatBot*/
+
+  .floatNati{
+    position: fixed;
+    bottom: 20rem;
+    right: 1rem;
+    width: 58px;
+    height: 58px;
+    border-radius: 50%;
+    background-color: #c95788 !important;
+    color: #2c1a63 !important;
+    box-shadow: rgba(0, 0, 0, 0.2) 0px 4px 8px 0px;
+    cursor: pointer;
+    z-index: 9999 !important;
+    transition: all 0.2s ease-in-out 0s;
+    left: unset;
+    transform: scale(1);
+    border: 2px solid #c95788 !important;
+    /*
+    background-image: url("#WORKSPACE_IMAGES#NATI - 128px.png");
+    background-size: cover;
+    background-position: center;
+    */
+  }
+
+  .my-floatNati{
+    z-index: 9999 !important;
+    margin-top:22px;
+  }
+
+.floatNati:hover {
+  transform: scale(1.07);
+}
+
+.nati-avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1.5px solid #c95788 !important;
+}
+
+.btnNATIlive {
+  background-color: #c95788 !important;
+  color: #2C1A63 !important;
+  animation: btnNATIpulse 1500ms infinite;
+}
+
+@keyframes btnNATIpulse {
+  0% {
+    box-shadow: #c95788 0 0 0 0;
+  }
+  75% {
+    box-shadow: #c9578800 0 0 0 16px;
+  }
+}
+
+
+/*CSS Class: floatNati my-floatNati fab-nati */
+/*Custom Attributes: style="background-image: url('#WORKSPACE_IMAGES#NATI - 128px.png'); background-size: cover; background-position: center;" */
+
+/* Botão de IA */
+
+  .btnIA{
+    right: 1rem;
+    width: 42px;
+    height: 42px;
+    /*border-radius: 50%;*/
+    background-color: transparent !important;
+    color: rgb(0 0 0 / 0%) !important;
+    /*box-shadow: rgba(0, 0, 0, 0.2) 0px 4px 8px 0px;*/
+    cursor: pointer;
+    transition: all 0.25s ease-in-out;
+    left: unset;
+    /*transform: scale(1);*/
+
+    /*transform: rotate(45deg) scale(1);*/
+    /*padding:10px 22px;*/
+    color: #fff !important;
+    border: none !important;
+    border-radius: 14px !important;
+    overflow: visible;
+  }
+
+/*
+.btnIA span {
+    display: inline-block;
+    //transform: rotate(-45deg);
+}
+*/
+
+.fab-ia-natcorp:hover {
+  transform: scale(1.10);
+  /*box-shadow: rgba(0, 0, 0, 0.3) 0px 4px 8px 0px;*/
+  border: none !important;
+  border-radius: 14px !important;
+  box-shadow: rgba(201,87,136, 0.60) 0px 0px 12px 6px !important;
+}
+
+.ia-natcorp-avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 14px !important;
+  object-fit: cover;
+  /*border: 1.5px solid #c95788 !important;*/
+}
+
+.btnIAlive {
+  /*background-color: transparent !important;
+  color: rgb(0 0 0 / 0%) !important;*/
+  border-radius: 14px !important;
+  box-shadow: linear-gradient(#C95788, transparent),
+          linear-gradient(to top left, #C95788, transparent),
+          linear-gradient(to bottom right, #C95788, transparent) 20px 20px 20px 20px !important;
+  animation: btnIApulse 1500ms infinite;
+    content: "";
+    position: absolute;
+    inset: -18px; /* controla distância do halo */
+    border-radius: 20px;
+    /* Define o formato do halo IGUAL ao botão */
+    z-index: -1;
+}
+
+@keyframes btnIApulse {
+  0% {
+    box-shadow: #C95788 0 0 0 0;
+  }
+  75% {
+    box-shadow: #C9578800 0 0 0 14px;
+  }
+  100% {
+    box-shadow: #C9578800 0 0 0 20px;
+  }
+}
+
+
+/* Modal: Arredondar pontas da modal */
+.ui-dialog{
+  border-radius: 10px !important;
+}
+
+/* Interactive Report: Arredondar pontas da regiao */
+.a-IRR{
+  border-radius: 10px !important;
+}
+
+
+/* Cabecalho Regiao: Arredondar pontas da regiao
+.t-Region-header{
+  border-top-left-radius: 10px !important;
+  border-top-right-radius: 10px !important;
+}
+*/
+
+
+/* Regiao: Arredondar pontas da regiao 
+.t-Region{
+  border-radius: 10px !important; 
+}
+*/
+
+
+/* CSS para aumentar o texto do custom-alerts.js SweetAlert2 */
+.swal2-popup {
+  font-size: 1.2em; /* Aumenta o tamanho do texto */
+}
+
+.swal2-title {
+  font-size: 2em; /* Aumenta o tamanho do título */
+}
+
+.swal2-html-container {
+  font-size: 1.4em; /* Aumenta o tamanho do texto do corpo do alert */
+}

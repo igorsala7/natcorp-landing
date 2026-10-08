@@ -1,0 +1,564 @@
+/* ╔════════════════════════════════════════════════════════════════════════════════════════╗
+   ║  NATCORP · FEEDBACKS DO COLABORADOR  —  a "roupa" da página (CSS)                        ║
+   ║  App 9118 (Avaliações - Processos) · Página 150 · Feedback: Colaborador                  ║
+   ╚════════════════════════════════════════════════════════════════════════════════════════╝
+
+   Primeira vez num arquivo destes? Leia antes o manual: brand/apex/MANUAL-APEX.md (parte 1).
+
+   ── O QUE ESTE ARQUIVO FAZ ────────────────────────────────────────────────────────────────
+   A aparência do que o Natcorp_Feedback.js monta. Feito PRIMEIRO para o celular (390 px):
+   letra de leitura de 17 px, alvos de 44–48 px, estrelas grandes, nada que role para o lado.
+   Sem o JS, nada daqui vale (marca nc-fb-ativo no body).
+
+   ── ONDE ELE ENTRA NO APEX ────────────────────────────────────────────────────────────────
+     Página 150 › CSS › File URLs:   #WORKSPACE_IMAGES#Natcorp_Feedback.css
+     CUIDADO: este é o arquivo-FONTE (.src.css). O gerador (gerar-app.mjs) cria o .css.
+
+   ── ÍNDICE ────────────────────────────────────────────────────────────────────────────────
+     [C1] As cores                                               PODE MEXER
+     [C2] O que sai da vista e peças comuns
+     [C3] O alto e o resumo
+     [C4] Os anos e os cartões
+     [C5] Estrelas, botões, vazio, paginação
+     [C6] O filtro e o botão Feedback (painel do gestor)
+     [C7] Telas largas
+*/
+
+/* ═══ [C1] AS CORES ═════════════════════════════════════════════════════════════════════════ */
+@app.nc-fb-ativo {
+  --fb-roxo: var(--nc-roxo, #511C76);
+  --fb-rosa: var(--nc-rosa, #C95788);
+  --fb-tinta: var(--nc-tinta, #1B1238);
+  --fb-texto: #2E2742;
+  --fb-fraco: #5A526E;
+  --fb-borda: var(--nc-nevoa, #E7E1F0);
+  --fb-lilas: var(--nc-nevoa2, #F3EEF8);
+  --fb-estrela: #E8A21C;
+  --fb-estrela-vazia: #E4DEEC;
+  --fb-sombra: 0 12px 30px -20px rgba(27, 18, 56, .45);
+}
+
+/* ═══ [C2] O QUE SAI DA VISTA E PEÇAS COMUNS ════════════════════════════════════════════════ */
+@app.nc-fb-ativo .nc-fb-guardado {
+  display: none;
+}
+
+@app.nc-fb-ativo .nc-fb-so-leitor {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+/* página única: o "linha(s) 1 - 8 de 8" não diz nada a quem lê */
+@app.nc-fb-ativo .nc-fb-pagina-unica :is(.t-Report-pagination, .t-Report-paginationText) {
+  display: none;
+}
+
+@app.nc-fb-ativo .nc-fb-ic {
+  flex: none;
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.9;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+@app.nc-fb-ativo .nc-fb ::selection {
+  background: rgba(var(--nc-t-roxo-rgb, 81, 28, 118), .18);
+  color: inherit;
+}
+
+@app.nc-fb-ativo .nc-fb :is(a, button):focus-visible {
+  outline: 3px solid var(--fb-roxo);
+  outline-offset: 2px;
+}
+
+/* a região do relatório perde a caixa: cada feedback é a própria caixa */
+@app.nc-fb-ativo .t-Region:has(> .t-Region-bodyWrap > .t-Region-body > .nc-fb) {
+  margin: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+@app.nc-fb-ativo .t-Region-body:has(> .nc-fb) {
+  padding: 0;
+  overflow: visible;
+}
+
+/* ═══ [C3] O ALTO E O RESUMO ════════════════════════════════════════════════════════════════ */
+@app.nc-fb-ativo .nc-fb-explica {
+  max-width: 56ch;
+  margin: 4px 0 0;
+  font-size: 16px;
+  line-height: 1.45;
+  color: var(--fb-fraco);
+}
+
+@app.nc-fb-ativo .nc-fb {
+  max-width: 820px;
+  margin: 0 auto;
+}
+
+@app.nc-fb-ativo .nc-fb-resumo {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 20px;
+  margin: 0 0 8px;
+  padding: 14px 18px;
+  border: 1px solid var(--fb-borda);
+  border-radius: 18px;
+  background:
+    radial-gradient(110% 90% at 100% 0%, rgba(var(--nc-t-rosa-rgb, 201, 87, 136), .10) 0%, rgba(var(--nc-t-rosa-rgb, 201, 87, 136), 0) 60%),
+    #FFFFFF;
+}
+
+@app.nc-fb-ativo .nc-fb-resumo-n {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 17px;
+  color: var(--fb-tinta);
+}
+
+@app.nc-fb-ativo .nc-fb-resumo-n .nc-fb-ic {
+  color: var(--fb-rosa);
+}
+
+@app.nc-fb-ativo .nc-fb-resumo-n b {
+  font-weight: 800;
+}
+
+@app.nc-fb-ativo .nc-fb-resumo-media {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 8px;
+  font-size: 15px;
+  color: var(--fb-fraco);
+}
+
+@app.nc-fb-ativo .nc-fb-resumo-media b {
+  font-size: 17px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  color: var(--fb-tinta);
+}
+
+/* ═══ [C4] OS ANOS E OS CARTÕES ═════════════════════════════════════════════════════════════ */
+@app.nc-fb-ativo .nc-fb-ano {
+  margin: 0;
+}
+
+@app.nc-fb-ativo .nc-fb-ano-tit {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 22px 4px 10px;
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: .02em;
+  font-variant-numeric: tabular-nums;
+  color: var(--fb-fraco);
+}
+
+@app.nc-fb-ativo .nc-fb-ano-tit::after {
+  content: "";
+  flex: 1 1 auto;
+  height: 1px;
+  background: var(--fb-borda);
+}
+
+@app.nc-fb-ativo .nc-fb-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+@app.nc-fb-ativo .nc-fb-cartao {
+  padding: 18px 18px 14px;
+  border: 1px solid var(--fb-borda);
+  border-radius: 20px;
+  background: #FFFFFF;
+  box-shadow: 0 1px 2px rgba(27, 18, 56, .04);
+}
+
+@app.nc-fb-ativo .nc-fb-cartao--meu {
+  background: #FCFBFE;
+}
+
+@app.nc-fb-ativo .nc-fb-cab {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin: 0 0 14px;
+}
+
+@app.nc-fb-ativo .nc-fb-avatar {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: var(--av-bg, var(--fb-lilas));
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--av-tx, var(--fb-roxo));
+}
+
+@app.nc-fb-ativo .nc-fb-quem {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-size: 15px;
+  line-height: 1.35;
+  color: var(--fb-fraco);
+}
+
+@app.nc-fb-ativo .nc-fb-quem b {
+  font-size: 16px;
+  font-weight: 800;
+  overflow-wrap: anywhere;
+  color: var(--fb-tinta);
+}
+
+@app.nc-fb-ativo :is(.nc-fb-para, .nc-fb-data) {
+  display: block;
+  margin: 2px 0 0;
+  font-size: 14.5px;
+  color: var(--fb-fraco);
+}
+
+@app.nc-fb-ativo .nc-fb-para {
+  font-weight: 700;
+  color: var(--fb-roxo);
+}
+
+@app.nc-fb-ativo .nc-fb-novo {
+  flex: none;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: #FBE7EF;
+  font-size: 13px;
+  font-weight: 800;
+  color: #8E2F5C /*reserva*/;
+  color: oklch(from #8E2F5C l calc(c * var(--nc-t-croma, 1)) calc(h + var(--nc-t-giro, 0)));
+}
+
+@app.nc-fb-ativo .nc-fb-tit {
+  margin: 0 0 6px;
+  font-family: "Inter NC", Inter, ui-sans-serif, system-ui, "Segoe UI", Arial, sans-serif;
+  font-size: 19px;
+  font-weight: 800;
+  line-height: 1.3;
+  letter-spacing: -.01em;
+  text-wrap: balance;
+  overflow-wrap: anywhere;
+  color: var(--fb-tinta);
+}
+
+@app.nc-fb-ativo .nc-fb-texto {
+  max-width: 68ch;
+  margin: 0;
+  font-size: 17px;
+  line-height: 1.6;
+  white-space: pre-line;
+  overflow-wrap: anywhere;
+  color: var(--fb-texto);
+}
+
+@app.nc-fb-ativo .nc-fb-pe {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin: 14px 0 0;
+  padding: 12px 0 0;
+  border-top: 1px solid var(--fb-borda);
+}
+
+@app.nc-fb-ativo .nc-fb-nota {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+@app.nc-fb-ativo .nc-fb-nota b {
+  font-size: 15px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  color: var(--fb-tinta);
+}
+
+@app.nc-fb-ativo .nc-fb-acoes {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-left: auto;
+}
+
+/* ═══ [C5] ESTRELAS, BOTÕES, VAZIO, PAGINAÇÃO ═══════════════════════════════════════════════ */
+@app.nc-fb-ativo .nc-fb-estrelas {
+  display: inline-flex;
+  gap: 2px;
+}
+
+@app.nc-fb-ativo .nc-fb-estrela {
+  width: 24px;
+  height: 24px;
+  fill: var(--fb-estrela-vazia);
+  stroke: none;
+}
+
+@app.nc-fb-ativo .nc-fb-estrela.is-cheia {
+  fill: var(--fb-estrela);
+}
+
+@app.nc-fb-ativo .nc-fb-estrelas--p .nc-fb-estrela {
+  width: 18px;
+  height: 18px;
+}
+
+@app.nc-fb-ativo .nc-fb-bt {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 44px;
+  padding: 0 14px;
+  border: 1px solid var(--nc-borda-botao, rgba(var(--nc-t-roxo-rgb, 81, 28, 118), .34));
+  border-radius: 999px;
+  background: #FFFFFF;
+  font: inherit;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--fb-roxo);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+@app.nc-fb-ativo .nc-fb-bt:hover {
+  background: var(--fb-lilas);
+}
+
+@app.nc-fb-ativo .nc-fb-ouvir[aria-pressed="true"] {
+  border-color: var(--fb-roxo);
+  background: var(--fb-roxo);
+  color: #FFFFFF;
+}
+
+@app.nc-fb-ativo .nc-fb-vazio {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 40px 20px;
+  border: 1.5px dashed #D9D2E4;
+  border-radius: 20px;
+  background: #FFFFFF;
+  text-align: center;
+  font-size: 16px;
+  line-height: 1.45;
+  color: var(--fb-fraco);
+}
+
+@app.nc-fb-ativo .nc-fb-vazio .nc-fb-ic {
+  width: 58px;
+  height: 58px;
+  margin: 0 0 6px;
+  padding: 14px;
+  border-radius: 50%;
+  background: var(--fb-lilas);
+  color: var(--fb-roxo);
+  stroke-width: 1.6;
+}
+
+@app.nc-fb-ativo .nc-fb-vazio b {
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--fb-tinta);
+}
+
+/* paginação original (15 por página): links grandes, para o dedo */
+@app.nc-fb-ativo .t-Region:has(.nc-fb) :is(.t-Report-pagination, .t-Report-paginationText) {
+  margin: 14px 0 0;
+  font-size: 15px;
+  color: var(--fb-fraco);
+}
+
+@app.nc-fb-ativo .t-Region:has(.nc-fb) .t-Report-pagination a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 48px;
+  min-height: 44px;
+  padding: 0 14px;
+  border: 1px solid var(--nc-borda-botao, rgba(var(--nc-t-roxo-rgb, 81, 28, 118), .34));
+  border-radius: 12px;
+  background: #FFFFFF;
+  font-weight: 700;
+  text-decoration: none;
+  color: var(--fb-roxo);
+}
+
+/* ═══ [C6] O FILTRO E O BOTÃO FEEDBACK (painel do gestor) ═══════════════════════════════════ */
+@app.nc-fb-ativo .nc-fb-filtro {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+@app.nc-fb-ativo .nc-fb-filtro button {
+  min-height: 44px;
+  padding: 0 16px;
+  border: 1px solid var(--nc-borda-botao, rgba(var(--nc-t-roxo-rgb, 81, 28, 118), .34));
+  border-radius: 999px;
+  background: #FFFFFF;
+  font: inherit;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--fb-roxo);
+  cursor: pointer;
+}
+
+@app.nc-fb-ativo .nc-fb-filtro button[aria-checked="true"] {
+  border-color: var(--fb-roxo);
+  background: var(--fb-roxo);
+  color: #FFFFFF;
+}
+
+/* o alto (Hero) no celular: ícone e título na mesma linha — sobra tela para os feedbacks */
+@media (max-width: 639px) {
+  @app.nc-fb-ativo .t-HeroRegion .t-HeroRegion-wrap {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: center;
+    gap: 2px 12px;
+    padding: 12px 16px;
+  }
+
+  @app.nc-fb-ativo .t-HeroRegion .t-HeroRegion-col--left {
+    grid-row: span 2;
+    margin: 0;
+    padding: 0;
+  }
+
+  @app.nc-fb-ativo .t-HeroRegion .t-HeroRegion-icon {
+    width: 44px;
+    height: 44px;
+    font-size: 20px;
+    line-height: 44px;
+  }
+
+  @app.nc-fb-ativo .t-HeroRegion .t-HeroRegion-col--content {
+    padding: 0;
+  }
+
+  @app.nc-fb-ativo .t-HeroRegion .t-HeroRegion-title {
+    margin: 0 0 2px;
+    font-size: 22px;
+    line-height: 1.2;
+  }
+
+  @app.nc-fb-ativo .nc-fb-explica {
+    margin: 0;
+    font-size: 14.5px;
+    line-height: 1.35;
+  }
+
+  @app.nc-fb-ativo .t-HeroRegion .t-HeroRegion-col--right {
+    display: none;
+  }
+}
+
+/* ═══ [C7] TELAS LARGAS ═════════════════════════════════════════════════════════════════════ */
+@media (min-width: 760px) {
+  @app.nc-fb-ativo .nc-fb-cartao {
+    padding: 22px 26px 16px;
+  }
+
+  @app.nc-fb-ativo .nc-fb-tit {
+    font-size: 21px;
+  }
+}
+
+/* ═══ [DESK] TELAS DE MESA — gerado por escala-desktop.py (não editar à mão; rode o script) ═══ */
+@media (min-width: 1024px) {
+  @app.nc-fb-ativo .nc-fb-explica {
+    font-size: 15px;
+  }
+
+  @app.nc-fb-ativo .nc-fb-resumo-n {
+    font-size: 16px;
+  }
+
+  @app.nc-fb-ativo .nc-fb-resumo-media {
+    font-size: 14px;
+  }
+
+  @app.nc-fb-ativo .nc-fb-resumo-media b {
+    font-size: 16px;
+  }
+
+  @app.nc-fb-ativo .nc-fb-ano-tit {
+    font-size: 14px;
+  }
+
+  @app.nc-fb-ativo .nc-fb-avatar {
+    font-size: 15px;
+  }
+
+  @app.nc-fb-ativo .nc-fb-quem {
+    font-size: 14px;
+  }
+
+  @app.nc-fb-ativo .nc-fb-quem b {
+    font-size: 15px;
+  }
+
+  @app.nc-fb-ativo .nc-fb-tit {
+    font-size: 18.5px;
+  }
+
+  @app.nc-fb-ativo .nc-fb-texto {
+    font-size: 16px;
+  }
+
+  @app.nc-fb-ativo .nc-fb-nota b {
+    font-size: 14px;
+  }
+
+  @app.nc-fb-ativo .nc-fb-bt {
+    font-size: 14px;
+    min-height: 38px;
+  }
+
+  @app.nc-fb-ativo .nc-fb-vazio {
+    font-size: 15px;
+  }
+
+  @app.nc-fb-ativo .nc-fb-vazio b {
+    font-size: 16px;
+  }
+
+  @app.nc-fb-ativo .t-Region:has(.nc-fb) :is(.t-Report-pagination, .t-Report-paginationText) {
+    font-size: 14px;
+  }
+
+  @app.nc-fb-ativo .t-Region:has(.nc-fb) .t-Report-pagination a {
+    min-height: 38px;
+  }
+
+  @app.nc-fb-ativo .nc-fb-filtro button {
+    font-size: 14px;
+    min-height: 38px;
+  }
+}
+/* ═══ fim do [DESK] ═══ */

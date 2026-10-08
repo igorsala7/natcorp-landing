@@ -1,0 +1,223 @@
+/* ╔════════════════════════════════════════════════════════════════════════════════════════╗
+   ║  NATCORP · TRILHA  —  a faixa do caminho que a pessoa fez (CSS)                          ║
+   ║  Vale para o SISTEMA TODO: entra no Natcorp_Style_Min.css (gerar-app.mjs, lista FOLHAS)  ║
+   ╚════════════════════════════════════════════════════════════════════════════════════════╝
+
+   Primeira vez num arquivo destes? Leia antes o manual: brand/apex/MANUAL-APEX.md (parte 1).
+
+   ── O QUE ESTE ARQUIVO FAZ ────────────────────────────────────────────────────────────────
+   A aparência da faixa que o Natcorp_Trilha.js põe logo abaixo do menu superior: "Voltar" à
+   esquerda e o caminho (as últimas páginas visitadas e a atual). Sem o JS, nada daqui vale.
+
+   ── ÍNDICE ────────────────────────────────────────────────────────────────────────────────
+     [C1] A faixa                                                PODE MEXER (cores, altura)
+     [C2] Voltar
+     [C3] O caminho
+     [C4] Casca: o iframe encolhe a altura da faixa              CUIDADO
+     [C5] Celular
+*/
+
+/* ═══ [C1] A FAIXA ══════════════════════════════════════════════════════════════════════════
+   PODE MEXER: --nc-tr-alt (a altura; o iframe da casca encolhe o mesmo tanto) e as cores.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-tr-ativo {
+  --nc-tr-alt: 40px;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-tr-ativo .nc-tr {
+  box-sizing: border-box !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+  height: var(--nc-tr-alt) !important;
+  margin: 0 !important;
+  padding: 0 16px !important;
+  border-bottom: 1px solid var(--nc-nevoa, #E9E5F1) !important;
+  background: #FBFAFD !important;
+  font-size: 13px !important;
+  line-height: 1 !important;
+  color: var(--nc-grafite, #4A4460) !important;
+  overflow: hidden !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-tr-ativo .nc-tr-ic {
+  flex: 0 0 auto !important;
+  width: 16px !important;
+  height: 16px !important;
+  fill: none !important;
+  stroke: currentColor !important;
+  stroke-width: 1.9 !important;
+  stroke-linecap: round !important;
+  stroke-linejoin: round !important;
+}
+
+/* ═══ [C2] VOLTAR ═══════════════════════════════════════════════════════════════════════════ */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-tr-ativo .nc-tr-voltar {
+  display: inline-flex !important;
+  flex: 0 0 auto !important;
+  align-items: center !important;
+  gap: 4px !important;
+  height: 28px !important;
+  margin: 0 !important;
+  padding: 0 11px 0 7px !important;
+  border: 1px solid #E2DCEB !important;
+  border-radius: 8px !important;
+  background: #fff !important;
+  box-shadow: 0 1px 1px rgba(27, 18, 56, .04) !important;
+  font: inherit !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  color: var(--nc-roxo, #511C76) !important;
+  cursor: pointer !important;
+  transition: border-color .15s, background-color .15s !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-tr-ativo .nc-tr-voltar:hover:not(:disabled) {
+  border-color: color-mix(in srgb, var(--nc-roxo, #511C76) 40%, #fff) !important;
+  background: color-mix(in srgb, var(--nc-roxo, #511C76) 5%, #fff) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-tr-ativo .nc-tr-voltar:disabled {
+  border-color: var(--nc-nevoa, #E9E5F1) !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  color: #A39DB5 !important;
+  cursor: default !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-tr-ativo .nc-tr-voltar:focus-visible,
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-tr-ativo .nc-tr-caminho a:focus-visible {
+  outline: 2px solid var(--nc-roxo, #511C76) !important;
+  outline-offset: 2px !important;
+}
+
+/* ═══ [C3] O CAMINHO ════════════════════════════════════════════════════════════════════════
+   O ícone de "relógio que volta" diz que é o HISTÓRICO (não o menu). Cada item ocupa no máximo
+   uma fatia da largura e corta com "…" (o nome inteiro aparece ao parar o mouse).
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-tr-ativo .nc-tr-caminho {
+  display: flex !important;
+  flex: 1 1 auto !important;
+  align-items: center !important;
+  gap: 6px !important;
+  min-width: 0 !important;
+  margin: 0 !important;
+  padding: 0 0 0 12px !important;
+  border-left: 1px solid var(--nc-nevoa, #E9E5F1) !important;
+  list-style: none !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-tr-ativo .nc-tr-caminho > li {
+  display: flex !important;
+  flex: 0 1 auto !important;
+  align-items: center !important;
+  gap: 6px !important;
+  min-width: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-tr-ativo .nc-tr-caminho > li.nc-tr-passou {
+  flex: 0 0 auto !important;
+  color: color-mix(in srgb, var(--nc-roxo, #511C76) 60%, #fff) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-tr-ativo .nc-tr-caminho > li.nc-tr-mais {
+  flex: 0 0 auto !important;
+  color: #8E88A3 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-tr-ativo .nc-tr-caminho a,
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-tr-ativo .nc-tr-caminho span[aria-current] {
+  display: block !important;
+  max-width: 260px !important;
+  overflow: hidden !important;
+  white-space: nowrap !important;
+  text-overflow: ellipsis !important;
+  line-height: 1.6 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-tr-ativo .nc-tr-caminho a {
+  border-radius: 4px !important;
+  color: var(--nc-grafite, #4A4460) !important;
+  text-decoration: none !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-tr-ativo .nc-tr-caminho a:hover {
+  color: var(--nc-roxo, #511C76) !important;
+  text-decoration: underline !important;
+  text-decoration-color: color-mix(in srgb, var(--nc-roxo, #511C76) 40%, transparent) !important;
+  text-underline-offset: 3px !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-tr-ativo .nc-tr-caminho span[aria-current] {
+  max-width: 440px !important;
+  font-weight: 650 !important;
+  color: var(--nc-tinta, #1B1238) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-tr-ativo .nc-tr-sep {
+  width: 12px !important;
+  height: 12px !important;
+  color: #B7B1C8 !important;
+}
+
+/* ═══ [C4] CASCA: O IFRAME ENCOLHE A ALTURA DA FAIXA ════════════════════════════════════════
+   CUIDADO  Na casca (200:762) toda a cadeia até o iframe tem height:100% fixo (no próprio
+            elemento). A faixa entra logo antes do iframe; o iframe (cujo height:100% não tem
+            !important) fica com 100% menos a faixa. Sem isso, o fim da página ficaria cortado.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-tr-casca .nc-tr + iframe {
+  height: calc(100% - var(--nc-tr-alt)) !important;
+}
+
+/* O rodapé da casca: a página o "esconde" com height:0, mas o conteúdo vazava e somava na
+   altura do corpo (overflow:hidden) — o corpo rolava ~90px e o rodapé aparecia fixo embaixo
+   do iframe, por cima da página. O rodapé que vale é o da página DENTRO do iframe, no fim.
+   CUIDADO  Nada de display:none: o botão fixo da NATI (#BTN_NATI) mora nele. */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-tr-casca .t-Footer {
+  height: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  overflow: hidden !important;
+}
+
+/* página direta: a faixa está dentro da barra de título fixa — encosta nas bordas dela */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-tr-no-titulo .t-Body-title > .nc-tr {
+  margin: 0 0 6px !important;
+}
+
+/* ═══ [C5] CELULAR ══════════════════════════════════════════════════════════════════════════
+   Pouca largura: o "Voltar" vira só a seta, e do caminho ficam a anterior e a atual.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@media (max-width: 640px) {
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-tr-ativo .nc-tr {
+    gap: 8px !important;
+    padding: 0 10px !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-tr-ativo .nc-tr-voltar {
+    padding: 0 7px !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-tr-ativo .nc-tr-voltar span {
+    position: absolute !important;
+    width: 1px !important;
+    height: 1px !important;
+    overflow: hidden !important;
+    clip-path: inset(50%) !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-tr-ativo .nc-tr-caminho {
+    padding-left: 8px !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-tr-ativo .nc-tr-caminho > li:not(.is-atual):not(:nth-last-child(2)):not(.nc-tr-passou) {
+    display: none !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-tr-ativo .nc-tr-caminho a,
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-tr-ativo .nc-tr-caminho span[aria-current] {
+    max-width: 42vw !important;
+  }
+}

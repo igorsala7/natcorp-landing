@@ -1,0 +1,1138 @@
+/* ╔════════════════════════════════════════════════════════════════════════════════════════╗
+   ║  NATCORP · REQUISIÇÃO DE ATESTADOS E AFASTAMENTOS  —  a "roupa" da tela (CSS)             ║
+   ║  App 2937 · Página 91 (janela) · Medicina Ocupacional                                     ║
+   ╚════════════════════════════════════════════════════════════════════════════════════════╝
+
+   Primeira vez num arquivo destes? Leia antes o manual: brand/apex/MANUAL-APEX.md (parte 1).
+
+   ── O QUE ESTE ARQUIVO FAZ ────────────────────────────────────────────────────────────────
+   Dá a aparência da janela de atestados e afastamentos: cores, tamanhos, espaços, bordas, e
+   como ela se arruma no computador e no celular. Ele NÃO muda nada de lugar: quem muda as
+   coisas de lugar é o arquivo-irmão Natcorp_Atestado.js. Os dois trabalham juntos:
+     o JS monta "o cartão da foto do atestado"  →  este arquivo diz como o cartão se parece.
+   Sem o JS, este arquivo não faz nada (todas as regras dependem da marca nc-at que o JS põe
+   na página). NÃO é o abono de marcações do ponto.
+   Públicos: operador do RH/medicina, gestor e o próprio colaborador (muitas vezes no celular).
+
+   ── ONDE ELE ENTRA NO APEX ────────────────────────────────────────────────────────────────
+     Página 91 › CSS › File URLs:   #WORKSPACE_IMAGES#Natcorp_Atestado.css
+     Este é o arquivo-FONTE (.src.css). O gerador gerar-app.mjs cria dele o Natcorp_Atestado.css
+     que sobe para o APEX, pondo o @app por extenso e os !important (manual, parte 2).
+     Edite ESTE arquivo, não o .css gerado: o gerado é reescrito a cada geração.
+
+   ── ÍNDICE: as partes deste arquivo (Ctrl+F pelo código entre colchetes) ──────────────────
+     [C1] O que sai de cena                         (o que o JS esconde some da tela)
+     [C2] A abertura do pedido novo                 ← montada pelo JS em [J5]
+     [C3] As partes do formulário                   ← montadas pelo JS em [J4]
+     [C4] Atalhos, "conta em dias/horas" e a frase  ← montados pelo JS em [J6] e [J2]
+     [C5] O atestado: foto ou arquivo               ← montado pelo JS em [J7]
+     [C6] O rodapé: o que falta + Enviar pedido     ← montado pelo JS em [J8]
+     [C7] O cabeçalho do pedido gravado             ← montado pelo JS em [J9]
+     [C8] O caminho da aprovação                    ← montado pelo JS em [J10]
+     [C9] Celular                                   (ajustes para telas de até 640px)
+
+   ── RECEITAS RÁPIDAS ──────────────────────────────────────────────────────────────────────
+     Quero mudar uma cor
+       → use uma das cores da marca, pelo nome: var(--nc-roxo), var(--nc-grafite)… A lista
+         completa, com amostras, está no manual (parte 3). Assim a cor acompanha o tema que
+         o usuário escolheu em "Cores". Evite escrever cores soltas, como #511C76.
+     Quero aumentar ou diminuir um texto        → procure font-size na parte certa.
+     Quero mais ou menos espaço                  → padding (espaço por DENTRO da caixa) e
+                                                   margin (espaço por FORA, até a vizinha).
+     O cartão da foto do atestado está grande/pequeno → [C5], .nc-at-cartao (min-height).
+     Algo ficou bom no computador e ruim no celular → [C9]: o que está dentro de
+                                                   @media (max-width: 640px) só vale no celular.
+
+   ── COMO LER UM ARQUIVO CSS EM 30 SEGUNDOS ────────────────────────────────────────────────
+     Cada regra tem duas partes:     QUEM { COMO; }
+       @app.nc-at .nc-at-cartao {          ← QUEM: o "seletor", diz em que pedaço da tela vale
+         min-height: 84px;                 ← COMO: propriedade: valor;  (altura mínima do cartão)
+         border-radius: 16px;              ←       cantos arredondados
+       }
+     .nome-com-ponto       uma "classe": uma etiqueta posta num pedaço da tela (pelo APEX ou
+                           pelo JS). .nc-at-cartao é o cartão "Tire uma foto do atestado".
+     @app                  atalho que dá prioridade às nossas regras sobre as do tema do APEX.
+                           No arquivo que sobe para o APEX ele aparece por extenso, como
+                           html body:is(.t-PageBody…):not(#nc-a1):not(#nc-a2) — é a mesma coisa.
+     :not(#nc-at-x)…       peso extra, para vencer uma regra do tema. Pode ignorar ao ler.
+     !important            no arquivo que sobe, toda linha ganha um: é o mesmo "vencer o tema".
+     @media (max-width: 640px) { … }   as regras de dentro só valem em telas até 640px (celular).
+     var(--nc-roxo)        uma cor da marca, pelo nome (muda junto com o tema escolhido).
+     px                    pixels, o tamanho de um pontinho da tela. 16px é o texto normal.
+     Toda linha COMO termina em ;   e todo { é fechado por um }. Não apague esses sinais.
+*/
+
+/* ═══ [C1] O QUE SAI DE CENA ════════════════════════════════════════════════════════════
+   O que o JS marcou para esconder (nc-at-oculto, nc-at-vazio, partes sem nada) e o
+   cabeçalho da região "Dados do Atestado" no pedido novo. display: none = não aparece.
+   O campo de arquivo do APEX fica na página (é ele que vai no envio), mas fora da vista.
+   ════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-at .nc-at-oculto:not(#nc-at-x):not(#nc-at-y),
+@app.nc-at .nc-at-vazio:not(#nc-at-x):not(#nc-at-y),
+@app.nc-at :is(.nc-at-resumo, .nc-at-atalhos, .nc-at-pilula, .nc-at-parte-corpo)[hidden]:not(#nc-at-x):not(#nc-at-y),
+@app.nc-at.nc-at-novo .nc-at-dados > .t-Region-header:not(#nc-at-x):not(#nc-at-y),
+@app.nc-at .nc-at-dados .js-maximizeButtonContainer:not(#nc-at-x):not(#nc-at-y) {
+  display: none;
+}
+
+/* o arquivo escolhido aparece no cartão; o campo nativo fica, mas não à vista */
+@app.nc-at .nc-at-arq .apex-item-group--file:not(#nc-at-x):not(#nc-at-y) {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  border: 0;
+  padding: 0;
+}
+
+@app.nc-at .nc-at-ic {
+  flex: none;
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.9;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+@app.nc-at .nc-at-req {
+  color: var(--nc-ruim);
+  font-weight: 800;
+}
+
+/* ═══ [C2] A ABERTURA DO PEDIDO NOVO ════════════════════════════════════════════════════
+   Montada pelo JS em [J5]. .nc-at-intro é o bloco "Novo atestado ou afastamento".
+   ════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-at .nc-at-intro {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  margin: 0 0 18px;
+  padding: 18px 20px;
+  border-radius: 18px;
+  background:
+    radial-gradient(110% 130% at 100% 0%, rgba(var(--nc-t-rosa-rgb, 201, 87, 136), .34) 0%, rgba(var(--nc-t-rosa-rgb, 201, 87, 136), 0) 55%),
+    linear-gradient(135deg, var(--nc-azul) 0%, var(--nc-roxo) 72%);
+  color: #fff;
+}
+
+@app.nc-at .nc-at-intro-ic {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  border-radius: 14px;
+  background: #fff;
+  color: var(--nc-roxo);
+}
+
+@app.nc-at .nc-at-intro-ic .nc-at-ic {
+  width: 24px;
+  height: 24px;
+}
+
+@app.nc-at .nc-at-intro-tit {
+  margin: 1px 0 4px;
+  font-size: 19px;
+  font-weight: 800;
+  line-height: 1.25;
+  letter-spacing: -.01em;
+  color: #fff;
+}
+
+@app.nc-at .nc-at-intro p {
+  margin: 0;
+  font-size: 14.5px;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, .9);
+}
+
+@app.nc-at .nc-at-intro b {
+  color: #fff;
+}
+
+@app.nc-at .nc-at-intro .nc-at-req {
+  color: var(--nc-realce);
+}
+
+/* ═══ [C3] AS PARTES DO FORMULÁRIO ══════════════════════════════════════════════════════
+   Montadas pelo JS em [J4]. Peças principais:
+     .nc-at-parte        cada parte (Quem · Que afastamento · Quando…)
+     .nc-at-parte-cab    o cabeçalho da parte (ícone, título, explicação)
+     .nc-at-parte-corpo  onde ficam os campos do APEX
+     .nc-at-parte--mais  a parte "INSS e acidente", que abre e fecha
+   ════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-at .nc-at-parte {
+  margin: 0 0 14px;
+  padding: 16px 16px 6px;
+  border: 1px solid var(--nc-nevoa);
+  border-radius: 16px;
+  background: #fff;
+}
+
+@app.nc-at .nc-at-parte-cab {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0 0 12px;
+  padding: 0;
+}
+
+@app.nc-at .nc-at-parte-cab--botao {
+  width: 100%;
+  border: 0;
+  background: none;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+@app.nc-at .nc-at-parte--mais .nc-at-parte-cab--botao[aria-expanded="false"] {
+  margin-bottom: 10px;
+}
+
+@app.nc-at .nc-at-parte-ic {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  background: var(--nc-nevoa2);
+  color: var(--nc-roxo);
+}
+
+@app.nc-at .nc-at-parte-ic .nc-at-ic {
+  width: 20px;
+  height: 20px;
+}
+
+@app.nc-at .nc-at-parte-txt {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+}
+
+@app.nc-at .nc-at-parte-tit {
+  font-size: 16px;
+  font-weight: 800;
+  line-height: 1.25;
+  color: var(--nc-tinta);
+}
+
+@app.nc-at .nc-at-parte-sub {
+  margin-top: 2px;
+  font-size: 13px;
+  line-height: 1.4;
+  color: var(--nc-grafite);
+}
+
+@app.nc-at .nc-at-parte-sub:empty,
+@app.nc-at.nc-at-leitura .nc-at-parte-sub {
+  display: none;
+}
+
+@app.nc-at .nc-at-parte-seta {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  color: var(--nc-roxo);
+  transition: transform .2s, background-color .2s;
+}
+
+@app.nc-at .nc-at-parte-cab--botao:hover .nc-at-parte-seta {
+  background: var(--nc-off);
+}
+
+@app.nc-at .nc-at-parte-cab--botao[aria-expanded="true"] .nc-at-parte-seta {
+  transform: rotate(180deg);
+}
+
+@app.nc-at .nc-at-parte-cab--botao:focus-visible {
+  outline: none;
+  border-radius: 12px;
+  box-shadow: var(--nc-anel);
+}
+
+@app.nc-at .nc-at-parte--mais {
+  background: var(--nc-quase);
+}
+
+/* os botões de cadastro ficam colados no campo de cima */
+@app.nc-at .nc-at-parte--atend .t-Button--link {
+  margin: -6px 0 10px;
+  padding: 4px 2px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--nc-roxo);
+}
+
+/* ═══ [C4] ATALHOS, "CONTA EM DIAS/HORAS" E A FRASE DO PERÍODO ══════════════════════════
+   Montados pelo JS em [J6] (atalhos) e [J2]/[J11] (pílula e frase). Peças principais:
+     .nc-at-atalho   cada botão (Hoje, Ontem, 1, 2, 3…); [aria-pressed="true"] = o escolhido
+     .nc-at-pilula   "Conta em dias" / "Conta em horas", embaixo do tipo
+     .nc-at-resumo   a frase que confere o período (.is-ruim = vermelha, datas trocadas)
+   ════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-at .nc-at-atalhos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 8px 0 4px;
+}
+
+@app.nc-at .nc-at-atalho {
+  min-width: 44px;
+  min-height: 36px;
+  padding: 0 14px;
+  border: 1px solid var(--nc-borda-botao);
+  border-radius: 999px;
+  background: #fff;
+  font: inherit;
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--nc-roxo);
+  cursor: pointer;
+  transition: border-color .15s, background-color .15s, color .15s;
+}
+
+@app.nc-at .nc-at-atalho:hover {
+  border-color: rgba(var(--nc-t-roxo-rgb, 81, 28, 118), .45);
+  background: var(--nc-nevoa2);
+}
+
+@app.nc-at .nc-at-atalho:focus-visible {
+  outline: none;
+  box-shadow: var(--nc-anel);
+}
+
+@app.nc-at .nc-at-atalho[aria-pressed="true"] {
+  border-color: var(--nc-roxo);
+  background: var(--nc-roxo);
+  color: #fff;
+}
+
+/* coluna sozinha na linha (a vizinha saiu): ocupa a linha inteira */
+@app.nc-at .row > .col.nc-at-cheia {
+  flex: 0 0 100%;
+  width: 100%;
+  max-width: 100%;
+}
+
+/* "conta em dias / horas", embaixo do tipo */
+@app.nc-at .nc-at-pilula {
+  display: inline-flex;
+  align-self: flex-start;
+  width: auto;
+  align-items: center;
+  gap: 6px;
+  margin: 8px 0 2px;
+  padding: 4px 10px 4px 8px;
+  border-radius: 999px;
+  background: var(--nc-nevoa2);
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--nc-roxo);
+}
+
+@app.nc-at .nc-at-pilula .nc-at-ic {
+  width: 15px;
+  height: 15px;
+}
+
+/* a frase que confere o período */
+@app.nc-at .nc-at-resumo {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin: 2px 0 12px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: #EEF7F2;
+  font-size: 14.5px;
+  line-height: 1.45;
+  color: var(--nc-tinta);
+}
+
+@app.nc-at .nc-at-resumo .nc-at-ic {
+  margin-top: 1px;
+  color: var(--nc-bom);
+}
+
+@app.nc-at .nc-at-resumo b {
+  font-weight: 800;
+}
+
+@app.nc-at .nc-at-resumo.is-ruim {
+  background: #FBECEE;
+  color: var(--nc-ruim);
+}
+
+@app.nc-at .nc-at-resumo.is-ruim .nc-at-ic {
+  color: var(--nc-ruim);
+}
+
+@app.nc-at .nc-at-resumo.is-aviso {
+  background: #FFF6D9;
+  color: var(--nc-alerta-texto);
+}
+
+@app.nc-at .nc-at-resumo.is-aviso .nc-at-ic {
+  color: var(--nc-alerta-texto);
+}
+
+/* ═══ [C5] O ATESTADO: FOTO OU ARQUIVO ══════════════════════════════════════════════════
+   Montado pelo JS em [J7]. .nc-at-cartao é o cartão grande; .is-cheio = já tem arquivo;
+   .is-grande = passou do limite (vermelho). Mais abaixo, o atestado já gravado em leitura
+   (.nc-at-arq-salvo, o botão "Baixar o atestado").
+   ════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-at .nc-at-arq .t-Form-labelContainer {
+  display: none;
+}
+
+@app.nc-at .nc-at-cartao {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-height: 84px;
+  padding: 14px 16px;
+  border: 2px dashed rgba(var(--nc-t-roxo-rgb, 81, 28, 118), .32);
+  border-radius: 16px;
+  background: var(--nc-quase);
+  cursor: pointer;
+  transition: border-color .15s, background-color .15s;
+}
+
+@app.nc-at .nc-at-cartao:hover {
+  border-color: var(--nc-roxo);
+  background: var(--nc-nevoa2);
+}
+
+@app.nc-at .nc-at-cartao:focus-visible {
+  outline: none;
+  border-color: var(--nc-roxo);
+  box-shadow: var(--nc-anel);
+}
+
+@app.nc-at .nc-at-cartao-ic {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 54px;
+  height: 54px;
+  overflow: hidden;
+  border-radius: 14px;
+  background: var(--nc-roxo);
+  color: #fff;
+}
+
+@app.nc-at .nc-at-cartao-ic .nc-at-ic {
+  width: 26px;
+  height: 26px;
+}
+
+@app.nc-at .nc-at-cartao-ic img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+@app.nc-at .nc-at-cartao-txt {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+@app.nc-at .nc-at-cartao-txt b {
+  overflow: hidden;
+  font-size: 15px;
+  font-weight: 800;
+  line-height: 1.3;
+  color: var(--nc-tinta);
+  text-overflow: ellipsis;
+}
+
+@app.nc-at .nc-at-cartao-txt span {
+  font-size: 13px;
+  line-height: 1.4;
+  color: var(--nc-grafite);
+}
+
+@app.nc-at .nc-at-cartao-acao {
+  flex: none;
+  padding: 8px 14px;
+  border-radius: 10px;
+  background: #fff;
+  box-shadow: inset 0 0 0 1px var(--nc-nevoa);
+  font-size: 13.5px;
+  font-weight: 800;
+  color: var(--nc-roxo);
+}
+
+@app.nc-at .nc-at-cartao.is-cheio {
+  border-style: solid;
+  border-color: rgba(31, 122, 82, .45);
+  background: #F2FAF6;
+}
+
+@app.nc-at .nc-at-cartao.is-cheio .nc-at-cartao-ic {
+  background: var(--nc-bom);
+}
+
+@app.nc-at .nc-at-cartao.is-grande {
+  border-color: var(--nc-ruim);
+  background: #FBECEE;
+}
+
+@app.nc-at .nc-at-cartao.is-grande .nc-at-cartao-ic {
+  background: var(--nc-ruim);
+}
+
+@app.nc-at .nc-at-cartao.is-grande .nc-at-cartao-txt span {
+  font-weight: 700;
+  color: var(--nc-ruim);
+}
+
+/* o atestado já gravado, em leitura: um botão de baixar, não uma área de enviar */
+@app.nc-at .nc-at-arq-salvo .apex-item-group--file:not(#nc-at-x):not(#nc-at-y) {
+  display: block;
+  min-height: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  box-shadow: none;
+}
+
+@app.nc-at .nc-at-arq-salvo .apex-item-group--file:not(#nc-at-x):not(#nc-at-y)::before,
+@app.nc-at .nc-at-arq-salvo .apex-item-group--file:not(#nc-at-x):not(#nc-at-y)::after {
+  display: none;
+  content: none;
+}
+
+@app.nc-at .nc-at-arq-salvo .t-Form-labelContainer {
+  display: none;
+}
+
+@app.nc-at .nc-at-arq-salvo a[href*="get_blob"] {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 0 16px;
+  border-radius: 12px;
+  background: var(--nc-nevoa2);
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--nc-roxo);
+  text-decoration: none;
+}
+
+@app.nc-at .nc-at-arq-salvo a[href*="get_blob"]:hover {
+  background: var(--nc-nevoa);
+}
+
+@app.nc-at .nc-at-arq-salvo a[href*="get_blob"]:focus-visible {
+  outline: none;
+  box-shadow: var(--nc-anel);
+}
+
+/* a imagem do atestado já gravado */
+@app.nc-at [id$="_ARQ_IMG_CONTAINER"] img {
+  display: block;
+  max-width: 100%;
+  border: 1px solid var(--nc-nevoa);
+  border-radius: 12px;
+}
+
+/* ═══ [C6] O RODAPÉ: O QUE FALTA + "ENVIAR PEDIDO" ══════════════════════════════════════
+   Montado pelo JS em [J8]. .nc-at-falta é a linha "Falta: …"; .nc-at-falta-item, cada
+   campo que falta; .is-pronto no botão Enviar = tudo preenchido.
+   ════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-at .t-Dialog-footer .t-ButtonRegion-col--content {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+}
+
+@app.nc-at .nc-at-falta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  padding: 0 8px;
+}
+
+@app.nc-at .nc-at-falta-rot {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--nc-grafite);
+}
+
+@app.nc-at .nc-at-falta-item {
+  min-height: 30px;
+  padding: 0 10px;
+  border: 1px solid rgba(184, 50, 63, .3);
+  border-radius: 999px;
+  background: #FBECEE;
+  font: inherit;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--nc-ruim);
+  cursor: pointer;
+}
+
+@app.nc-at .nc-at-falta-item:hover {
+  border-color: var(--nc-ruim);
+}
+
+@app.nc-at .nc-at-falta-item:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(184, 50, 63, .2);
+}
+
+@app.nc-at .nc-at-falta-ok {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--nc-bom);
+}
+
+@app.nc-at .t-Dialog-footer .t-ButtonRegion-title {
+  display: none;
+}
+
+/* ═══ [C7] O CABEÇALHO DO PEDIDO GRAVADO ════════════════════════════════════════════════
+   Montado pelo JS em [J9]. .nc-at-hero é o cabeçalho; .nc-at-sit, o selo da situação:
+   .nc-at-sit--espera (amarelo) · --bom (verde) · --ruim (vermelho) · --neutro (cinza).
+   ════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-at .nc-at-hero {
+  margin: 0 0 16px;
+  padding: 18px 20px;
+  border-radius: 18px;
+  background:
+    radial-gradient(110% 130% at 100% 0%, rgba(var(--nc-t-rosa-rgb, 201, 87, 136), .3) 0%, rgba(var(--nc-t-rosa-rgb, 201, 87, 136), 0) 55%),
+    linear-gradient(135deg, var(--nc-azul) 0%, var(--nc-roxo) 72%);
+  color: #fff;
+}
+
+@app.nc-at .nc-at-hero-topo {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+@app.nc-at .nc-at-hero-n {
+  font-size: 13px;
+  font-weight: 700;
+  color: rgba(255, 255, 255, .78);
+}
+
+@app.nc-at .nc-at-sit {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px 5px 9px;
+  border-radius: 999px;
+  background: #fff;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+@app.nc-at .nc-at-sit .nc-at-ic {
+  width: 16px;
+  height: 16px;
+}
+
+@app.nc-at .nc-at-sit--espera {
+  background: var(--nc-alerta);
+  color: #3D2A00;
+}
+
+@app.nc-at .nc-at-sit--bom {
+  color: var(--nc-bom);
+}
+
+@app.nc-at .nc-at-sit--ruim {
+  color: var(--nc-ruim);
+}
+
+@app.nc-at .nc-at-sit--neutro {
+  background: rgba(255, 255, 255, .85);
+  color: var(--nc-grafite);
+}
+
+@app.nc-at .nc-at-hero-tit {
+  margin: 10px 0 0;
+  font-size: 20px;
+  font-weight: 800;
+  line-height: 1.25;
+  letter-spacing: -.01em;
+  color: #fff;
+}
+
+@app.nc-at .nc-at-hero-tit span {
+  font-weight: 600;
+  color: rgba(255, 255, 255, .8);
+}
+
+@app.nc-at .nc-at-hero-per {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin: 10px 0 0;
+  font-size: 15px;
+  line-height: 1.45;
+  color: #fff;
+}
+
+@app.nc-at .nc-at-hero-per .nc-at-ic {
+  margin-top: 2px;
+  color: var(--nc-realce);
+}
+
+@app.nc-at .nc-at-hero-per.is-ruim {
+  color: #FFD9DE;
+}
+
+@app.nc-at .nc-at-hero-dl {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 22px;
+  margin: 14px 0 0;
+  padding: 12px 0 0;
+  border-top: 1px solid rgba(255, 255, 255, .18);
+}
+
+@app.nc-at .nc-at-hero-dl div {
+  min-width: 0;
+}
+
+@app.nc-at .nc-at-hero-dl dt {
+  font-size: 11.5px;
+  font-weight: 700;
+  color: rgba(255, 255, 255, .66);
+}
+
+@app.nc-at .nc-at-hero-dl dd {
+  margin: 1px 0 0;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #fff;
+}
+
+/* ═══ [C8] O CAMINHO DA APROVAÇÃO (o mesmo desenho da Requisição) ═══════════════════════
+   Montado pelo JS em [J10]. .nc-at-caminho é a faixa; .nc-at-ap, cada aprovador:
+   .is-ok aprovou · .is-nao reprovou · .is-vez é a vez · .is-fila na fila.
+   ════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-at .t-Region.nc-at-aprov:not(#nc-at-x):not(#nc-at-y) {
+  margin: 0 0 16px;
+  border: 0;
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: inset 0 0 0 1px var(--nc-nevoa), 0 10px 24px -22px rgba(var(--nc-t-azul-rgb, 44, 26, 99), .5);
+}
+
+/* o cabeçalho da região, a timeline e a sub-região "Justificativa" ficam na página, escondidos:
+   a faixa lê deles e se refaz a cada refresh */
+@app.nc-at .nc-at-aprov > .t-Region-header:not(#nc-at-x):not(#nc-at-y),
+@app.nc-at .nc-at-aprov :is(.t-Timeline, .t-Report, .t-Region):not(#nc-at-x):not(#nc-at-y) {
+  display: none;
+}
+
+@app.nc-at .nc-at-aprov > .t-Region-bodyWrap > .t-Region-body:not(#nc-at-x):not(#nc-at-y) {
+  padding: 14px 18px;
+}
+
+@app.nc-at .nc-at-caminho {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px 20px;
+}
+
+@app.nc-at .nc-at-caminho:empty {
+  display: none;
+}
+
+@app.nc-at .nc-at-caminho-cab {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+@app.nc-at .nc-at-caminho-cab p {
+  margin: 0;
+}
+
+@app.nc-at .nc-at-caminho-rot {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--nc-grafite);
+}
+
+@app.nc-at .nc-at-caminho-resumo {
+  font-size: 14.5px;
+  color: var(--nc-grafite);
+}
+
+@app.nc-at .nc-at-caminho-resumo b {
+  color: var(--nc-tinta);
+}
+
+@app.nc-at .nc-at-caminho--vez .nc-at-caminho-resumo b:last-child { color: #8A5A00; }
+@app.nc-at .nc-at-caminho--ok .nc-at-caminho-resumo b { color: var(--nc-bom); }
+@app.nc-at .nc-at-caminho--nao .nc-at-caminho-resumo b { color: #A32020; }
+
+@app.nc-at .nc-at-caminho-ver {
+  display: none;
+}
+
+/* os aprovadores em linha, ligados por um fio */
+@app.nc-at .nc-at-passos-ap {
+  display: flex;
+  grid-column: 1 / -1;
+  min-width: 0;
+  margin: 0;
+  padding: 4px 0 0;
+  overflow-x: auto;
+  list-style: none;
+  scrollbar-width: thin;
+}
+
+@app.nc-at .nc-at-ap {
+  position: relative;
+  display: flex;
+  flex: 1 1 0;
+  flex-direction: column;
+  align-items: center;
+  min-width: 104px;
+  padding: 0 4px;
+  text-align: center;
+}
+
+@app.nc-at .nc-at-ap:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  top: 13px;
+  left: calc(50% + 17px);
+  right: calc(-50% + 17px);
+  height: 2px;
+  border-radius: 2px;
+  background: #E3DDEC;
+}
+
+@app.nc-at .nc-at-ap.is-ok:not(:last-child)::after {
+  background: var(--nc-bom);
+}
+
+@app.nc-at .nc-at-ap-marca {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  margin: 0 0 6px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: inset 0 0 0 2px #D9D3E3;
+}
+
+@app.nc-at .nc-at-ap-marca svg {
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: #fff;
+  stroke-width: 2.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+@app.nc-at .nc-at-ap.is-ok .nc-at-ap-marca { background: var(--nc-bom); box-shadow: none; }
+@app.nc-at .nc-at-ap.is-nao .nc-at-ap-marca { background: #C0392B; box-shadow: none; }
+@app.nc-at .nc-at-ap.is-vez .nc-at-ap-marca { background: #E0A100; box-shadow: 0 0 0 5px rgba(224, 161, 0, .18); }
+
+@app.nc-at .nc-at-ap-texto {
+  display: grid;
+  justify-items: center;
+  gap: 1px;
+  min-width: 0;
+  max-width: 100%;
+}
+
+@app.nc-at .nc-at-ap-nome {
+  max-width: 100%;
+  overflow: hidden;
+  font-size: 13.5px;
+  font-weight: 800;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--nc-tinta);
+}
+
+@app.nc-at .nc-at-ap-estado {
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  color: var(--nc-grafite);
+}
+
+@app.nc-at .nc-at-ap.is-ok .nc-at-ap-estado { color: var(--nc-bom); }
+@app.nc-at .nc-at-ap.is-nao .nc-at-ap-estado { color: #A32020; font-weight: 700; }
+@app.nc-at .nc-at-ap.is-vez .nc-at-ap-estado { color: #8A5A00; font-weight: 700; }
+@app.nc-at .nc-at-ap.is-fila :is(.nc-at-ap-nome, .nc-at-ap-estado) { color: #8A8497; }
+
+/* a decisão de quem aprova: os botões do APEX, trazidos para a faixa */
+@app.nc-at .nc-at-decisao {
+  display: flex;
+  flex-wrap: wrap;
+  grid-column: 1 / -1;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px 16px;
+  padding: 12px 0 0;
+  border-top: 1px solid var(--nc-nevoa2);
+}
+
+@app.nc-at .nc-at-decisao-txt {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 700;
+  color: #8A5A00;
+}
+
+@app.nc-at .nc-at-decisao-botoes {
+  display: flex;
+  gap: 8px;
+}
+
+@app.nc-at .nc-at-decisao-botoes .t-Button:not(#nc-at-x):not(#nc-at-y) {
+  width: auto;
+  height: 44px;
+  min-height: 0;
+  margin: 0;
+  padding: 0 22px;
+  border-radius: 12px;
+  font-size: 14.5px;
+}
+
+@app.nc-at .nc-at-decisao-botoes .t-Button.nc-at-aprovar:not(#nc-at-x):not(#nc-at-y) {
+  border: 0;
+  background: var(--nc-bom);
+  color: #fff;
+}
+
+@app.nc-at .nc-at-decisao-botoes .t-Button.nc-at-aprovar:hover:not(#nc-at-x):not(#nc-at-y) {
+  background: var(--nc-bom-hover);
+}
+
+@app.nc-at .nc-at-decisao-botoes .t-Button.nc-at-reprovar:not(#nc-at-x):not(#nc-at-y) {
+  border: 1.5px solid #E7B7B7;
+  background: #fff;
+  box-shadow: none;
+  color: #A32020;
+}
+
+@app.nc-at .nc-at-decisao-botoes .t-Button.nc-at-reprovar:hover:not(#nc-at-x):not(#nc-at-y) {
+  background: #FDF0F0;
+}
+
+@app.nc-at .nc-at-decisao-botoes .t-Button :is(.t-Icon, .t-Button-label) {
+  color: inherit;
+}
+
+/* é a vez de quem vê: a faixa ganha um contorno âmbar */
+@app.nc-at .t-Region.nc-at-aprov:has(.nc-at-caminho--vez):not(#nc-at-x):not(#nc-at-y) {
+  box-shadow: inset 0 0 0 1.5px #EBC45A, 0 10px 24px -22px rgba(138, 90, 0, .5);
+}
+
+/* o que cada aprovador escreveu */
+@app.nc-at .nc-at-ap-justs {
+  display: grid;
+  grid-column: 1 / -1;
+  gap: 6px;
+}
+
+@app.nc-at .nc-at-ap-just {
+  margin: 0;
+  padding: 8px 12px;
+  border: 0;
+  border-radius: 10px;
+  background: var(--nc-quase);
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--nc-tinta);
+}
+
+@app.nc-at .nc-at-ap-just.is-nao {
+  background: #FDF0F0;
+}
+
+
+/* ═══ [C9] CELULAR ══════════════════════════════════════════════════════════════════════
+   Ajustes para telas de até 640px: o que está dentro de @media (max-width: 640px) só vale
+   no celular. Em geral, o que era lado a lado passa a ficar um embaixo do outro.
+   ════════════════════════════════════════════════════════════════════════════════════════ */
+@media (max-width: 640px) {
+  @app.nc-at .nc-at-intro,
+  @app.nc-at .nc-at-hero {
+    padding: 16px;
+    border-radius: 16px;
+  }
+
+  @app.nc-at .nc-at-intro-ic {
+    width: 40px;
+    height: 40px;
+  }
+
+  @app.nc-at .nc-at-intro-tit,
+  @app.nc-at .nc-at-hero-tit {
+    font-size: 18px;
+  }
+
+  @app.nc-at .nc-at-parte {
+    padding: 14px 12px 4px;
+  }
+
+  @app.nc-at .nc-at-atalho {
+    min-height: 40px;
+  }
+
+  @app.nc-at .nc-at-cartao {
+    gap: 12px;
+    padding: 12px;
+  }
+
+  @app.nc-at .nc-at-cartao-acao {
+    display: none;
+  }
+
+  /* o "falta" ganha a linha inteira, em cima dos botões (o tema monta a região como tabela) */
+  @app.nc-at .t-Dialog-footer .t-ButtonRegion-wrap {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  @app.nc-at .t-Dialog-footer .t-ButtonRegion-col {
+    display: block;
+    width: auto;
+  }
+
+  @app.nc-at .t-Dialog-footer .t-ButtonRegion-col--content {
+    flex: 1 0 100%;
+    order: -1;
+    padding: 0 0 10px;
+  }
+
+  @app.nc-at .t-Dialog-footer .t-ButtonRegion-col--content:has(.nc-at-falta:empty) {
+    display: none;
+  }
+
+  @app.nc-at .nc-at-atalhos--dias .nc-at-atalho {
+    min-width: 40px;
+    padding: 0 10px;
+  }
+
+  @app.nc-at .nc-at-falta {
+    padding: 0;
+  }
+
+  @app.nc-at .nc-at-aprov > .t-Region-bodyWrap > .t-Region-body:not(#nc-at-x):not(#nc-at-y) {
+    padding: 12px 14px;
+  }
+
+  @app.nc-at .nc-at-caminho-ver {
+    display: inline-flex;
+    align-items: center;
+    height: 34px;
+    padding: 0 12px;
+    border: 1px solid var(--nc-nevoa);
+    border-radius: 10px;
+    background: #fff;
+    font: inherit;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--nc-roxo);
+    cursor: pointer;
+  }
+
+  @app.nc-at .nc-at-caminho-cab {
+    grid-column: 1 / -1;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    column-gap: 12px;
+  }
+
+  @app.nc-at .nc-at-caminho-rot,
+  @app.nc-at .nc-at-caminho-resumo {
+    grid-column: 1;
+  }
+
+  @app.nc-at .nc-at-caminho-ver {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+  }
+
+  @app.nc-at .t-Region.nc-at-aprov:not(.nc-at-ap-aberto) .nc-at-passos-ap {
+    display: none;
+  }
+
+  @app.nc-at .nc-at-decisao-botoes {
+    flex: 1 0 100%;
+  }
+
+  @app.nc-at .nc-at-decisao-botoes .t-Button:not(#nc-at-x):not(#nc-at-y) {
+    flex: 1 1 0;
+    padding: 0 12px;
+  }
+}
+
+/* ═══ FAIXA DA REGIÃO (padrão 03/10) ════════════════════════════════════════════════════════
+   Todo painel com título segue o cabeçalho de região da Skin: o título numa faixa que atravessa
+   o cartão de ponta a ponta, com a linha de 2px na cor de destaque do TEMA (var(--nc-rosa) — a
+   mesma da Skin; muda com os 14 temas). As margens negativas são o recuo de dentro do cartão:
+   mudou o recuo do cartão, mude aqui junto. Guia: brand/apex/MANUAL-APEX.md.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-at .nc-at-parte > .nc-at-parte-cab:not(#nc-fx1):not(#nc-fx2):not(#nc-fx3) {
+  box-sizing: border-box;
+  width: calc(100% + 32px);
+  margin: -16px -16px 12px;
+  padding: 12px 16px 10px;
+  border-bottom: 2px solid var(--nc-rosa, #C95788);
+}
+@app.nc-at .nc-at-caminho > .nc-at-caminho-rot:not(#nc-fx1):not(#nc-fx2):not(#nc-fx3) {
+  box-sizing: border-box;
+  width: calc(100% + 36px);
+  margin: -14px -18px 2px;
+  padding: 12px 18px 10px;
+  border-bottom: 2px solid var(--nc-rosa, #C95788);
+  grid-column: 1 / -1;
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.3;
+}
+@media (max-width: 640px) {
+  @app.nc-at .nc-at-caminho > .nc-at-caminho-rot:not(#nc-fx1):not(#nc-fx2):not(#nc-fx3) {
+    box-sizing: border-box;
+    width: calc(100% + 28px);
+    margin: -12px -14px 2px;
+    padding: 12px 14px 10px;
+    border-bottom: 2px solid var(--nc-rosa, #C95788);
+    grid-column: 1 / -1;
+    font-size: 15px;
+    font-weight: 700;
+    line-height: 1.3;
+  }
+}

@@ -1,0 +1,660 @@
+/* ╔════════════════════════════════════════════════════════════════════════════════════════╗
+   ║  NATCORP · CABEÇALHO E MENU  —  a "roupa" do alto e da lateral de TODAS as páginas (CSS) ║
+   ╚════════════════════════════════════════════════════════════════════════════════════════╝
+   Primeira vez num arquivo destes? Leia antes o manual: brand/apex/MANUAL-APEX.md (parte 1).
+
+   O QUE FAZ   Pinta o cabeçalho do alto e o menu lateral das páginas internas com o mesmo
+               fundo e efeito do painel roxo do login: degradê Azul → Roxo, brilho Rosa,
+               malha, rede de pontos à deriva e losangos com a luz correndo na borda. Só as
+               três cores da marca: Roxo #511C76 · Rosa #C95788 · Azul #2C1A63 (o Rosa
+               clareado #E4A9C4 / #F3C9DA só nos brilhos e ícones sobre o escuro). Também o
+               menu SUPERIOR das aplicações com navegação no topo. O conteúdo das páginas
+               fica no Natcorp_Paginas.src.css.
+   ONDE ENTRA  Não sobe sozinho: o gerar-app.mjs o junta ao Natcorp_Paginas e ao Natcorp_Temas
+               no fim do Natcorp_Style_Min.css (o arquivo que sobe e que toda página carrega).
+               Ele também troca os marcadores @@…@@ pelas imagens do ../painel-natcorp.mjs.
+               Edite ESTE arquivo, não o gerado.
+   CUIDADO     As medidas que o tema calcula — cabeçalho de 48 px, menu de 240 px aberto e
+               48 px recolhido — NÃO podem mudar: o theme42.js e o layout dependem delas.
+
+   ÍNDICE (Ctrl+F pelo código)
+     [C1] As cores deste arquivo ......... os nomes das cores                 PODE MEXER
+     [C2] O cabeçalho do alto ............ fundo, logo, botões (Notificações, usuário)
+     [C3] O menu lateral ................. fundo, itens, item atual, subníveis
+     [C4] Menu SUPERIOR dentro do painel . a barra clara de abas das aplicações no iframe
+     [C5] Menu SUPERIOR em janela própria  a faixa roxa, "Sair" e os botões no celular
+
+   RECEITAS RÁPIDAS
+     Mudar o roxo/azul do cabeçalho e do menu → os valores em [C1] (e os mesmos nomes no
+       Natcorp_Paginas.src.css, parte [C1], para não ficarem diferentes).
+     Mudar a cor do item atual do menu lateral → [C3], procure "item atual / selecionado".
+     Mudar a cor da aba atual do menu superior → [C4], procure "a aba atual".
+
+   COMO LER CSS EM 30 SEGUNDOS (a versão completa está no Natcorp_Paginas.src.css)
+     QUEM { COMO; }   ex.:  @app .t-Header { background-color: var(--nc-azul); }
+     QUEM é o "seletor" (o pedaço da tela); COMO é  propriedade: valor;  (aqui, fundo Azul).
+     @app = prioridade sobre o tema do APEX. var(--nc-azul) = uma cor da marca, pelo nome.
+     @media (max-width: 639px) { … } = só em telas até 639 px. Não apague  ;  {  }.
+*/
+
+/* ═══ [C1] AS CORES DESTE ARQUIVO ════ PODE MEXER: o valor (#…) de cada nome, nunca o nome. */
+:root {
+  --nc-azul: #2C1A63; --nc-roxo: #511C76; --nc-rosa: #C95788;
+  --nc-rosa-claro: #E4A9C4;
+  --nc-tinta: #1B1238;
+}
+
+/* ---------- [C2] 1. Cabeçalho: a continuação do painel -------------------- */
+/* Começa no Azul, onde encosta no topo do menu, e vai ao Roxo, com o
+   brilho Rosa à direita — o mesmo desenho do painel, na horizontal. */
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .t-Header {
+  background-color: var(--nc-azul) !important;
+  background-image:
+    radial-gradient(38% 260% at 88% 0%, rgba(var(--nc-t-rosa-rgb, 201, 87, 136), .38), transparent 70%),
+    radial-gradient(30% 220% at 45% 100%, rgba(var(--nc-t-roxo-rgb, 81, 28, 118), .55), transparent 70%),
+    linear-gradient(90deg, var(--nc-azul, #2C1A63) 0%, var(--nc-roxo, #511C76) 100%) !important;
+  backdrop-filter: none !important;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, .07), 0 10px 28px -18px rgba(var(--nc-t-azul-rgb, 44, 26, 99), .8) !important;
+  border: 0 !important;
+  color: #fff !important;
+}
+
+/* o tema e a Natcorp Skin pintam também os FILHOS do cabeçalho (o degradê antigo está no
+   .t-Header-branding, o roxo no .t-Header-nav): sem isto eles cobrem o fundo novo */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .t-Header-branding,
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .t-Header-nav,
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .t-Header-navBar,
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .t-Header-logo {
+  background: transparent !important;
+  background-image: none !important;
+  box-shadow: none !important;
+}
+
+/* o símbolo Natcorp, branco, antes do nome do app */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .t-Header-logo-link {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  color: #fff !important;
+  text-decoration: none !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .t-Header-logo-link::before {
+  content: "" !important;
+  width: 22px !important;
+  height: 22px !important;
+  flex: none !important;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8' fill='%23fff'%3E%3Cpath d='M4.322 0.322L5.573 1.573A0.456 0.456 0 0 1 5.573 2.218L4.322 3.469A0.456 0.456 0 0 1 3.678 3.469L2.427 2.218A0.456 0.456 0 0 1 2.427 1.573L3.678 0.322A0.456 0.456 0 0 1 4.322 0.322Z'/%3E%3Cpath d='M6.427 2.427L7.678 3.678A0.456 0.456 0 0 1 7.678 4.322L6.427 5.573A0.456 0.456 0 0 1 5.782 5.573L4.531 4.322A0.456 0.456 0 0 1 4.531 3.678L5.782 2.427A0.456 0.456 0 0 1 6.427 2.427Z'/%3E%3Cpath d='M2.218 2.427L3.469 3.678A0.456 0.456 0 0 1 3.469 4.322L2.218 5.573A0.456 0.456 0 0 1 1.573 5.573L0.322 4.322A0.456 0.456 0 0 1 0.322 3.678L1.573 2.427A0.456 0.456 0 0 1 2.218 2.427Z'/%3E%3Cpath d='M4.322 4.531L5.573 5.782A0.456 0.456 0 0 1 5.573 6.427L4.322 7.678A0.456 0.456 0 0 1 3.678 7.678L2.427 6.427A0.456 0.456 0 0 1 2.427 5.782L3.678 4.531A0.456 0.456 0 0 1 4.322 4.531Z'/%3E%3C/svg%3E") center / contain no-repeat !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .t-Header-logo,
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .t-Header-logo-link,
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .t-Header-logo span {
+  font-family: "Inter NC", Inter, ui-sans-serif, system-ui, "Segoe UI", Arial, sans-serif !important;
+  font-size: 16px !important;
+  font-weight: 800 !important;
+  letter-spacing: -.02em !important;
+  color: #fff !important;
+}
+
+/* "Manual" e "Blog" são <a>, "Notificações" e o usuário são <button>: o navegador centraliza
+   o conteúdo do botão mas não o do link. inline-flex centraliza os dois igual. */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .t-Header .t-Button--header {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 6px !important;
+  height: 36px !important;
+  margin: 6px 2px !important;
+  padding: 0 12px !important;
+  border: 0 !important;
+  border-radius: 8px !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  color: rgba(255, 255, 255, .86) !important;
+  font-family: "Inter NC", Inter, ui-sans-serif, system-ui, "Segoe UI", Arial, sans-serif !important;
+  font-size: 13.5px !important;
+  font-weight: 600 !important;
+  transition: background-color .2s, color .2s !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .t-Header .t-Button--header .t-Icon,
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .t-Header .t-Button--header .t-Button-label,
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .t-Header .t-Button--header .a-Icon {
+  color: inherit !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .t-Header .t-Button--header:hover,
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .t-Header .t-Button--header.is-active,
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .t-Header .t-Button--header[aria-expanded="true"] {
+  background: rgba(255, 255, 255, .12) !important;
+  color: #fff !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .t-Header .t-Button--header:focus-visible {
+  outline: 2px solid var(--nc-rosa-claro) !important;
+  outline-offset: 2px !important;
+}
+
+/* ...mas o botão do MENU LATERAL (hambúrguer) só existe quando há menu lateral: o tema o
+   esconde na aplicação de navegação no topo e na página sem navegação. A regra acima
+   (display: inline-flex em todo botão do cabeçalho) o trazia de volta — aparecia um
+   hambúrguer que não abre nada (portal "Conhecendo Você"). */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).apex-top-nav .t-Header .t-Button--headerTree,
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).t-PageBody--noNav .t-Header .t-Button--headerTree {
+  display: none !important;
+}
+
+/* o botão do menu (hambúrguer): quadrado de 36 com o ícone no centro —
+   o tema dava margem ao ícone e ele ficava 10 px à esquerda */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .t-Header .t-Button--headerTree {
+  width: 36px !important;
+  padding: 0 !important;
+  margin-left: 8px !important;
+  color: #fff !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .t-Header .t-Button--headerTree .t-Icon {
+  margin: 0 !important;
+  position: static !important;
+}
+
+/* ---------- [C3] 2. Menu lateral: o painel do login ---------------------- */
+/* O fundo vai no .t-Body-nav, que é quem ROLA: fundo em elemento que rola
+   fica parado enquanto os itens passam por cima. O logo Natcorp é a PRIMEIRA
+   camada desse fundo — assim fica preso ao pé do menu, sem elemento novo no
+   HTML, e a lista (com 96 px de folga no fim) nunca termina em cima dele.
+   08/10: o painel do menu é o PARADO (mesmo desenho, sem movimento). O animado, como imagem de
+   fundo de um elemento de 240×860 px que fica na tela o dia todo, fazia a página redesenhar
+   ~40 vezes por segundo SEM PARAR (medido: 242 pinturas em 3 s → 0 com o parado), pesando em
+   todo computador — e muito nos de 4–8 GB. O login continua animado (tela de passagem).
+   NÃO volte para url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 1000' preserveAspectRatio='xMidYMid slice'%3E%3Cstyle%3E.draw{stroke-dasharray:1 1;stroke-dashoffset:1;opacity:0;animation:draw 2.2s cubic-bezier(.22,1,.36,1) .2s forwards}.d2{animation-duration:2.6s;animation-delay:.7s}.fl{animation-duration:1.8s}@keyframes draw{to{stroke-dashoffset:0;opacity:1}}.run{stroke-dasharray:.07 1;opacity:0;animation:run 14s linear infinite,in 1.2s ease 2.4s forwards}.run.w{stroke-dasharray:.055 1}@keyframes run{from{stroke-dashoffset:0}to{stroke-dashoffset:-2}}.pk{stroke-dasharray:.08 1;stroke-dashoffset:1;opacity:0;animation:pk linear infinite,in 1s ease forwards}@keyframes pk{from{stroke-dashoffset:1}to{stroke-dashoffset:-1}}@keyframes in{to{opacity:var(--o,1)}}.small{opacity:0;transform-box:fill-box;transform-origin:center;animation:in 1.2s cubic-bezier(.22,1,.36,1) 1.2s forwards,breathe 6s ease-in-out 2.4s infinite}@keyframes breathe{50%25{transform:scale(1.05)}}.glow{animation:drift 12s ease-in-out infinite}@keyframes drift{0%25,100%25{transform:translate(0,0);opacity:.5}50%25{transform:translate(60px,90px);opacity:.9}}.net{animation:slide 150s linear infinite}@keyframes slide{to{transform:translateX(-300px)}}%3C/style%3E%3Cdefs%3E%3CradialGradient id='g' cx='.5' cy='.5' r='.5'%3E%3Cstop offset='0' stop-color='%23C95788' stop-opacity='.3'/%3E%3Cstop offset='.45' stop-color='%23C95788' stop-opacity='.1'/%3E%3Cstop offset='1' stop-color='%23C95788' stop-opacity='0'/%3E%3C/radialGradient%3E%3Cpattern id='grid' width='56' height='56' patternUnits='userSpaceOnUse'%3E%3Cpath d='M56 0H0V56' fill='none' stroke='%23fff' stroke-opacity='.06'/%3E%3C/pattern%3E%3CradialGradient id='gm' cx='0.7166666666666667' cy='0.905' r='.62'%3E%3Cstop offset='0' stop-color='%23fff'/%3E%3Cstop offset='.75' stop-color='%23fff' stop-opacity='0'/%3E%3C/radialGradient%3E%3Cmask id='mg'%3E%3Crect width='300' height='1000' fill='url(%23gm)'/%3E%3C/mask%3E%3ClinearGradient id='nm' x1='0' x2='0' y1='0' y2='1'%3E%3Cstop offset='0' stop-color='%23fff' stop-opacity='.5'/%3E%3Cstop offset='1' stop-color='%23fff' stop-opacity='.8'/%3E%3C/linearGradient%3E%3Cmask id='mn'%3E%3Crect width='300' height='1000' fill='url(%23nm)'/%3E%3C/mask%3E%3ClinearGradient id='edge' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%23F3C9DA' stop-opacity='.95'/%3E%3Cstop offset='.5' stop-color='%23E4A9C4' stop-opacity='.75'/%3E%3Cstop offset='1' stop-color='%23C95788' stop-opacity='.4'/%3E%3C/linearGradient%3E%3ClinearGradient id='edge2' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%23E4A9C4' stop-opacity='.9'/%3E%3Cstop offset='.5' stop-color='%23C95788' stop-opacity='.75'/%3E%3Cstop offset='1' stop-color='%23C95788' stop-opacity='.45'/%3E%3C/linearGradient%3E%3ClinearGradient id='glass' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%23F3C9DA' stop-opacity='.3'/%3E%3Cstop offset='.55' stop-color='%23C95788' stop-opacity='.16'/%3E%3Cstop offset='1' stop-color='%23511C76' stop-opacity='.1'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='300' height='1000' fill='url(%23grid)' mask='url(%23mg)'/%3E%3Cg mask='url(%23mn)' opacity='0.55'%3E%3Cg class='net'%3E%3Cg id='t'%3E%3Cg stroke='%23E4A9C4' stroke-width='1'%3E%3Cline x1='0.0' y1='920.8' x2='-126.8' y2='912.0' stroke-opacity='0.043'/%3E%3Cline x1='63.2' y1='729.4' x2='98.8' y2='752.1' stroke-opacity='0.201'/%3E%3Cline x1='63.2' y1='729.4' x2='162.9' y2='684.5' stroke-opacity='0.076'/%3E%3Cline x1='63.2' y1='729.4' x2='-23.0' y2='688.5' stroke-opacity='0.102'/%3E%3Cline x1='63.2' y1='729.4' x2='167.2' y2='729.3' stroke-opacity='0.086'/%3E%3Cline x1='98.8' y1='752.1' x2='162.9' y2='684.5' stroke-opacity='0.106'/%3E%3Cline x1='98.8' y1='752.1' x2='212.4' y2='698.0' stroke-opacity='0.045'/%3E%3Cline x1='98.8' y1='752.1' x2='-23.0' y2='688.5' stroke-opacity='0.023'/%3E%3Cline x1='98.8' y1='752.1' x2='167.2' y2='729.3' stroke-opacity='0.145'/%3E%3Cline x1='162.9' y1='684.5' x2='212.4' y2='698.0' stroke-opacity='0.184'/%3E%3Cline x1='162.9' y1='684.5' x2='277.0' y2='688.5' stroke-opacity='0.067'/%3E%3Cline x1='162.9' y1='684.5' x2='167.2' y2='729.3' stroke-opacity='0.196'/%3E%3Cline x1='245.0' y1='242.0' x2='242.2' y2='122.8' stroke-opacity='0.057'/%3E%3Cline x1='245.0' y1='242.0' x2='128.5' y2='294.9' stroke-opacity='0.041'/%3E%3Cline x1='212.4' y1='698.0' x2='277.0' y2='688.5' stroke-opacity='0.158'/%3E%3Cline x1='212.4' y1='698.0' x2='167.2' y2='729.3' stroke-opacity='0.178'/%3E%3Cline x1='242.2' y1='122.8' x2='99.7' y2='152.6' stroke-opacity='0.008'/%3E%3Cline x1='277.0' y1='688.5' x2='167.2' y2='729.3' stroke-opacity='0.061'/%3E%3Cline x1='111.7' y1='335.4' x2='128.5' y2='294.9' stroke-opacity='0.198'/%3E%3Cline x1='99.7' y1='152.6' x2='128.5' y2='294.9' stroke-opacity='0.009'/%3E%3C/g%3E%3Cg fill='rgba(228,169,196,.75)'%3E%3Ccircle cx='0.0' cy='920.8' r='1.85'/%3E%3Ccircle cx='63.2' cy='729.4' r='2.31'/%3E%3Ccircle cx='98.8' cy='752.1' r='2.73'/%3E%3Ccircle cx='162.9' cy='684.5' r='2.51'/%3E%3Ccircle cx='245.0' cy='242.0' r='2.01'/%3E%3Ccircle cx='212.4' cy='698.0' r='1.40'/%3E%3Ccircle cx='205.2' cy='467.9' r='3.05'/%3E%3Ccircle cx='242.2' cy='122.8' r='2.27'/%3E%3Ccircle cx='277.0' cy='688.5' r='2.52'/%3E%3Ccircle cx='173.2' cy='912.0' r='3.03'/%3E%3Ccircle cx='111.7' cy='335.4' r='2.89'/%3E%3Ccircle cx='99.7' cy='152.6' r='1.87'/%3E%3Ccircle cx='128.5' cy='294.9' r='3.08'/%3E%3Ccircle cx='167.2' cy='729.3' r='2.97'/%3E%3C/g%3E%3C/g%3E%3Cuse href='%23t' x='300'/%3E%3C/g%3E%3C/g%3E%3Cellipse class='glow' cx='60' cy='170' rx='170' ry='380' fill='url(%23g)'/%3E%3Cg transform='translate(215 905) scale(0.21) translate(-1412 -425)' fill='none' stroke-linecap='round'%3E%3Cpath class='draw fl' d='M-128 945 C 412 905, 712 725, 992 645 S 1492 425, 2352 365' pathLength='1' stroke='%23F3C9DA' stroke-width='1.6' stroke-opacity='.3'/%3E%3Cpath class='draw fl' d='M-128 989 C 412 949, 712 751, 992 671 S 1492 455, 2352 395' pathLength='1' stroke='%23F3C9DA' stroke-width='1.6' stroke-opacity='.3'/%3E%3Cpath class='draw fl' d='M-128 1033 C 412 993, 712 777, 992 697 S 1492 485, 2352 425' pathLength='1' stroke='%23F3C9DA' stroke-width='1.6' stroke-opacity='.3'/%3E%3Cpath class='draw fl' d='M-128 1077 C 412 1037, 712 803, 992 723 S 1492 515, 2352 455' pathLength='1' stroke='%23F3C9DA' stroke-width='1.6' stroke-opacity='.3'/%3E%3Cpath class='draw fl' d='M-128 1121 C 412 1081, 712 829, 992 749 S 1492 545, 2352 485' pathLength='1' stroke='%23F3C9DA' stroke-width='1.6' stroke-opacity='.3'/%3E%3Cg transform='translate(1300 500) rotate(12) scale(1.12) translate(-1412 -425)'%3E%3Cpath class='draw d2' d='M1588 -114 L1889 226 C1986 336 1986 514 1889 624 L1588 964 C1491 1074 1333 1074 1236 964 L935 624 C838 514 838 336 935 226 L1236 -114 C1333 -224 1491 -224 1588 -114 Z' pathLength='1' stroke='%23C95788' stroke-width='8' stroke-opacity='.16'/%3E%3Cpath class='draw d2' d='M1588 -114 L1889 226 C1986 336 1986 514 1889 624 L1588 964 C1491 1074 1333 1074 1236 964 L935 624 C838 514 838 336 935 226 L1236 -114 C1333 -224 1491 -224 1588 -114 Z' pathLength='1' stroke='url(%23edge2)' stroke-width='2.4'/%3E%3C/g%3E%3Cpath class='draw' d='M1588 -114 L1889 226 C1986 336 1986 514 1889 624 L1588 964 C1491 1074 1333 1074 1236 964 L935 624 C838 514 838 336 935 226 L1236 -114 C1333 -224 1491 -224 1588 -114 Z' pathLength='1' stroke='%23E4A9C4' stroke-width='30' stroke-opacity='.1'/%3E%3Cpath class='draw' d='M1588 -114 L1889 226 C1986 336 1986 514 1889 624 L1588 964 C1491 1074 1333 1074 1236 964 L935 624 C838 514 838 336 935 226 L1236 -114 C1333 -224 1491 -224 1588 -114 Z' pathLength='1' stroke='%23E4A9C4' stroke-width='12' stroke-opacity='.2'/%3E%3Cpath class='draw' d='M1588 -114 L1889 226 C1986 336 1986 514 1889 624 L1588 964 C1491 1074 1333 1074 1236 964 L935 624 C838 514 838 336 935 226 L1236 -114 C1333 -224 1491 -224 1588 -114 Z' pathLength='1' stroke='url(%23edge)' stroke-width='3.5'/%3E%3Cpath class='pk' d='M-128 945 C 412 905, 712 725, 992 645 S 1492 425, 2352 365' pathLength='1' stroke='%23fff' stroke-width='2.2' stroke-opacity='.9' style='animation-duration:7s,1s;animation-delay:0s,0s'/%3E%3Cpath class='pk' d='M-128 989 C 412 949, 712 751, 992 671 S 1492 455, 2352 395' pathLength='1' stroke='%23fff' stroke-width='2.2' stroke-opacity='.9' style='animation-duration:7.8s,1s;animation-delay:0.6s,0.6s'/%3E%3Cpath class='pk' d='M-128 1033 C 412 993, 712 777, 992 697 S 1492 485, 2352 425' pathLength='1' stroke='%23fff' stroke-width='2.2' stroke-opacity='.9' style='animation-duration:8.6s,1s;animation-delay:1.2s,1.2s'/%3E%3Cpath class='pk' d='M-128 1077 C 412 1037, 712 803, 992 723 S 1492 515, 2352 455' pathLength='1' stroke='%23fff' stroke-width='2.2' stroke-opacity='.9' style='animation-duration:9.4s,1s;animation-delay:1.7999999999999998s,1.7999999999999998s'/%3E%3Cpath class='pk' d='M-128 1121 C 412 1081, 712 829, 992 749 S 1492 545, 2352 485' pathLength='1' stroke='%23fff' stroke-width='2.2' stroke-opacity='.9' style='animation-duration:10.2s,1s;animation-delay:2.4s,2.4s'/%3E%3Cpath class='run' d='M1588 -114 L1889 226 C1986 336 1986 514 1889 624 L1588 964 C1491 1074 1333 1074 1236 964 L935 624 C838 514 838 336 935 226 L1236 -114 C1333 -224 1491 -224 1588 -114 Z' pathLength='1' stroke='%23F3C9DA' stroke-width='14' style='--o:.45'/%3E%3Cpath class='run w' d='M1588 -114 L1889 226 C1986 336 1986 514 1889 624 L1588 964 C1491 1074 1333 1074 1236 964 L935 624 C838 514 838 336 935 226 L1236 -114 C1333 -224 1491 -224 1588 -114 Z' pathLength='1' stroke='%23fff' stroke-width='5'/%3E%3Cg class='small'%3E%3Cg transform='translate(942 855) scale(0.26) translate(-1412 -425)'%3E%3Cpath d='M1588 -114 L1889 226 C1986 336 1986 514 1889 624 L1588 964 C1491 1074 1333 1074 1236 964 L935 624 C838 514 838 336 935 226 L1236 -114 C1333 -224 1491 -224 1588 -114 Z' fill='url(%23glass)' stroke='%23F3C9DA' stroke-width='5' stroke-opacity='.8'/%3E%3Cpath d='M1588 -114 L1889 226 C1986 336 1986 514 1889 624 L1588 964 C1491 1074 1333 1074 1236 964 L935 624 C838 514 838 336 935 226 L1236 -114 C1333 -224 1491 -224 1588 -114 Z' stroke='%23fff' stroke-width='2.5' stroke-opacity='.5' transform='translate(-16 -16)'/%3E%3C/g%3E%3C/g%3E%3C/g%3E%3C/svg%3E") aqui. */
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .t-Body-nav {
+  background-color: var(--nc-azul) !important;
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 31.596 8' fill='%23fff'%3E%3Cpath d='M4.322 0.322L5.573 1.573A0.456 0.456 0 0 1 5.573 2.218L4.322 3.469A0.456 0.456 0 0 1 3.678 3.469L2.427 2.218A0.456 0.456 0 0 1 2.427 1.573L3.678 0.322A0.456 0.456 0 0 1 4.322 0.322Z'/%3E%3Cpath d='M6.427 2.427L7.678 3.678A0.456 0.456 0 0 1 7.678 4.322L6.427 5.573A0.456 0.456 0 0 1 5.782 5.573L4.531 4.322A0.456 0.456 0 0 1 4.531 3.678L5.782 2.427A0.456 0.456 0 0 1 6.427 2.427Z'/%3E%3Cpath d='M2.218 2.427L3.469 3.678A0.456 0.456 0 0 1 3.469 4.322L2.218 5.573A0.456 0.456 0 0 1 1.573 5.573L0.322 4.322A0.456 0.456 0 0 1 0.322 3.678L1.573 2.427A0.456 0.456 0 0 1 2.218 2.427Z'/%3E%3Cpath d='M4.322 4.531L5.573 5.782A0.456 0.456 0 0 1 5.573 6.427L4.322 7.678A0.456 0.456 0 0 1 3.678 7.678L2.427 6.427A0.456 0.456 0 0 1 2.427 5.782L3.678 4.531A0.456 0.456 0 0 1 4.322 4.531Z'/%3E%3Cpath d='M11.61 5.69V4.04Q11.61 3.86 11.58 3.66Q11.55 3.46 11.47 3.28Q11.38 3.10 11.22 2.99Q11.05 2.87 10.78 2.87Q10.62 2.87 10.47 2.93Q10.32 2.98 10.21 3.10Q10.09 3.23 10.02 3.43Q9.95 3.64 9.95 3.94L9.53 3.77Q9.53 3.32 9.70 2.97Q9.87 2.62 10.19 2.42Q10.52 2.22 10.98 2.22Q11.34 2.22 11.58 2.34Q11.82 2.45 11.97 2.64Q12.11 2.83 12.19 3.05Q12.26 3.26 12.29 3.46Q12.31 3.67 12.31 3.81V5.69ZM9.25 5.69V2.31H9.87V3.32H9.95V5.69Z'/%3E%3Cpath d='M13.95 5.78Q13.58 5.78 13.32 5.64Q13.07 5.50 12.94 5.27Q12.81 5.04 12.81 4.77Q12.81 4.52 12.90 4.32Q12.99 4.13 13.16 3.99Q13.33 3.85 13.60 3.76Q13.81 3.70 14.09 3.65Q14.37 3.59 14.69 3.55Q15.00 3.51 15.33 3.46L15.08 3.60Q15.09 3.22 14.92 3.04Q14.75 2.86 14.35 2.86Q14.10 2.86 13.88 2.97Q13.66 3.09 13.57 3.36L12.93 3.17Q13.06 2.73 13.41 2.48Q13.76 2.22 14.35 2.22Q14.80 2.22 15.14 2.37Q15.48 2.52 15.64 2.86Q15.72 3.03 15.74 3.21Q15.76 3.40 15.76 3.61V5.69H15.15V4.93L15.26 5.04Q15.05 5.42 14.73 5.60Q14.41 5.78 13.95 5.78ZM14.08 5.22Q14.35 5.22 14.54 5.13Q14.73 5.03 14.85 4.89Q14.96 4.74 15.00 4.60Q15.06 4.45 15.06 4.26Q15.07 4.07 15.07 3.96L15.29 4.04Q14.97 4.09 14.72 4.12Q14.47 4.16 14.28 4.20Q14.09 4.23 13.94 4.28Q13.80 4.33 13.71 4.39Q13.61 4.46 13.55 4.55Q13.49 4.64 13.49 4.76Q13.49 4.89 13.56 4.99Q13.62 5.10 13.75 5.16Q13.88 5.22 14.08 5.22Z'/%3E%3Cpath d='M18.40 5.69Q18.07 5.75 17.76 5.74Q17.45 5.73 17.20 5.62Q16.96 5.51 16.83 5.28Q16.72 5.06 16.71 4.84Q16.71 4.62 16.71 4.34V1.38H17.40V4.30Q17.40 4.51 17.40 4.66Q17.41 4.81 17.47 4.91Q17.58 5.10 17.83 5.12Q18.07 5.15 18.40 5.10ZM16.07 2.86V2.31H18.40V2.86Z'/%3E%3Cpath d='M20.44 5.78Q19.92 5.78 19.56 5.55Q19.19 5.32 19.00 4.91Q18.80 4.51 18.80 4.00Q18.80 3.48 19.00 3.08Q19.20 2.68 19.57 2.45Q19.94 2.22 20.45 2.22Q21.01 2.22 21.41 2.50Q21.80 2.78 21.93 3.27L21.24 3.46Q21.14 3.18 20.93 3.03Q20.71 2.87 20.44 2.87Q20.13 2.87 19.93 3.02Q19.73 3.16 19.63 3.42Q19.54 3.67 19.54 4.00Q19.54 4.51 19.77 4.82Q19.99 5.13 20.44 5.13Q20.75 5.13 20.94 4.99Q21.12 4.84 21.22 4.58L21.93 4.74Q21.76 5.24 21.38 5.51Q20.99 5.78 20.44 5.78Z'/%3E%3Cpath d='M23.91 5.78Q23.40 5.78 23.03 5.55Q22.66 5.33 22.45 4.92Q22.25 4.52 22.25 4.00Q22.25 3.47 22.46 3.07Q22.67 2.67 23.04 2.44Q23.41 2.22 23.91 2.22Q24.42 2.22 24.79 2.45Q25.17 2.67 25.37 3.08Q25.58 3.48 25.58 4.00Q25.58 4.53 25.37 4.93Q25.17 5.33 24.79 5.56Q24.42 5.78 23.91 5.78ZM23.91 5.13Q24.38 5.13 24.61 4.81Q24.84 4.50 24.84 4.00Q24.84 3.48 24.61 3.18Q24.38 2.87 23.91 2.87Q23.59 2.87 23.39 3.01Q23.18 3.16 23.08 3.41Q22.98 3.66 22.98 4.00Q22.98 4.51 23.22 4.82Q23.45 5.13 23.91 5.13Z'/%3E%3Cpath d='M26.14 5.69V2.31H26.76V3.13L26.68 3.03Q26.74 2.86 26.84 2.72Q26.94 2.59 27.08 2.50Q27.21 2.41 27.36 2.36Q27.52 2.31 27.68 2.30Q27.84 2.29 28.00 2.31V2.96Q27.84 2.92 27.64 2.93Q27.44 2.95 27.27 3.06Q27.12 3.15 27.02 3.29Q26.93 3.43 26.88 3.61Q26.84 3.78 26.84 3.98V5.69Z'/%3E%3Cpath d='M30.06 5.78Q29.58 5.78 29.24 5.55Q28.91 5.31 28.75 4.91Q28.58 4.50 28.58 4.00Q28.58 3.49 28.74 3.09Q28.91 2.69 29.24 2.45Q29.57 2.22 30.04 2.22Q30.52 2.22 30.87 2.45Q31.22 2.68 31.41 3.09Q31.60 3.49 31.60 4.00Q31.60 4.50 31.41 4.91Q31.22 5.31 30.88 5.55Q30.53 5.78 30.06 5.78ZM28.46 7.19V2.31H29.07V4.72H29.16V7.19ZM29.96 5.16Q30.27 5.16 30.47 5.00Q30.67 4.85 30.76 4.59Q30.86 4.32 30.86 4.00Q30.86 3.68 30.76 3.42Q30.66 3.15 30.46 3.00Q30.26 2.84 29.94 2.84Q29.64 2.84 29.45 2.99Q29.26 3.13 29.17 3.40Q29.07 3.66 29.07 4.00Q29.07 4.34 29.17 4.60Q29.26 4.86 29.45 5.01Q29.65 5.16 29.96 5.16Z'/%3E%3C/svg%3E"),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 1000' preserveAspectRatio='xMidYMid slice'%3E%3Cstyle%3E.pk,.run{display:none}.glow{opacity:.6}%3C/style%3E%3Cdefs%3E%3CradialGradient id='g' cx='.5' cy='.5' r='.5'%3E%3Cstop offset='0' stop-color='%23C95788' stop-opacity='.3'/%3E%3Cstop offset='.45' stop-color='%23C95788' stop-opacity='.1'/%3E%3Cstop offset='1' stop-color='%23C95788' stop-opacity='0'/%3E%3C/radialGradient%3E%3Cpattern id='grid' width='56' height='56' patternUnits='userSpaceOnUse'%3E%3Cpath d='M56 0H0V56' fill='none' stroke='%23fff' stroke-opacity='.06'/%3E%3C/pattern%3E%3CradialGradient id='gm' cx='0.7166666666666667' cy='0.905' r='.62'%3E%3Cstop offset='0' stop-color='%23fff'/%3E%3Cstop offset='.75' stop-color='%23fff' stop-opacity='0'/%3E%3C/radialGradient%3E%3Cmask id='mg'%3E%3Crect width='300' height='1000' fill='url(%23gm)'/%3E%3C/mask%3E%3ClinearGradient id='nm' x1='0' x2='0' y1='0' y2='1'%3E%3Cstop offset='0' stop-color='%23fff' stop-opacity='.5'/%3E%3Cstop offset='1' stop-color='%23fff' stop-opacity='.8'/%3E%3C/linearGradient%3E%3Cmask id='mn'%3E%3Crect width='300' height='1000' fill='url(%23nm)'/%3E%3C/mask%3E%3ClinearGradient id='edge' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%23F3C9DA' stop-opacity='.95'/%3E%3Cstop offset='.5' stop-color='%23E4A9C4' stop-opacity='.75'/%3E%3Cstop offset='1' stop-color='%23C95788' stop-opacity='.4'/%3E%3C/linearGradient%3E%3ClinearGradient id='edge2' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%23E4A9C4' stop-opacity='.9'/%3E%3Cstop offset='.5' stop-color='%23C95788' stop-opacity='.75'/%3E%3Cstop offset='1' stop-color='%23C95788' stop-opacity='.45'/%3E%3C/linearGradient%3E%3ClinearGradient id='glass' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%23F3C9DA' stop-opacity='.3'/%3E%3Cstop offset='.55' stop-color='%23C95788' stop-opacity='.16'/%3E%3Cstop offset='1' stop-color='%23511C76' stop-opacity='.1'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='300' height='1000' fill='url(%23grid)' mask='url(%23mg)'/%3E%3Cg mask='url(%23mn)' opacity='0.55'%3E%3Cg class='net'%3E%3Cg id='t'%3E%3Cg stroke='%23E4A9C4' stroke-width='1'%3E%3Cline x1='0.0' y1='920.8' x2='-126.8' y2='912.0' stroke-opacity='0.043'/%3E%3Cline x1='63.2' y1='729.4' x2='98.8' y2='752.1' stroke-opacity='0.201'/%3E%3Cline x1='63.2' y1='729.4' x2='162.9' y2='684.5' stroke-opacity='0.076'/%3E%3Cline x1='63.2' y1='729.4' x2='-23.0' y2='688.5' stroke-opacity='0.102'/%3E%3Cline x1='63.2' y1='729.4' x2='167.2' y2='729.3' stroke-opacity='0.086'/%3E%3Cline x1='98.8' y1='752.1' x2='162.9' y2='684.5' stroke-opacity='0.106'/%3E%3Cline x1='98.8' y1='752.1' x2='212.4' y2='698.0' stroke-opacity='0.045'/%3E%3Cline x1='98.8' y1='752.1' x2='-23.0' y2='688.5' stroke-opacity='0.023'/%3E%3Cline x1='98.8' y1='752.1' x2='167.2' y2='729.3' stroke-opacity='0.145'/%3E%3Cline x1='162.9' y1='684.5' x2='212.4' y2='698.0' stroke-opacity='0.184'/%3E%3Cline x1='162.9' y1='684.5' x2='277.0' y2='688.5' stroke-opacity='0.067'/%3E%3Cline x1='162.9' y1='684.5' x2='167.2' y2='729.3' stroke-opacity='0.196'/%3E%3Cline x1='245.0' y1='242.0' x2='242.2' y2='122.8' stroke-opacity='0.057'/%3E%3Cline x1='245.0' y1='242.0' x2='128.5' y2='294.9' stroke-opacity='0.041'/%3E%3Cline x1='212.4' y1='698.0' x2='277.0' y2='688.5' stroke-opacity='0.158'/%3E%3Cline x1='212.4' y1='698.0' x2='167.2' y2='729.3' stroke-opacity='0.178'/%3E%3Cline x1='242.2' y1='122.8' x2='99.7' y2='152.6' stroke-opacity='0.008'/%3E%3Cline x1='277.0' y1='688.5' x2='167.2' y2='729.3' stroke-opacity='0.061'/%3E%3Cline x1='111.7' y1='335.4' x2='128.5' y2='294.9' stroke-opacity='0.198'/%3E%3Cline x1='99.7' y1='152.6' x2='128.5' y2='294.9' stroke-opacity='0.009'/%3E%3C/g%3E%3Cg fill='rgba(228,169,196,.75)'%3E%3Ccircle cx='0.0' cy='920.8' r='1.85'/%3E%3Ccircle cx='63.2' cy='729.4' r='2.31'/%3E%3Ccircle cx='98.8' cy='752.1' r='2.73'/%3E%3Ccircle cx='162.9' cy='684.5' r='2.51'/%3E%3Ccircle cx='245.0' cy='242.0' r='2.01'/%3E%3Ccircle cx='212.4' cy='698.0' r='1.40'/%3E%3Ccircle cx='205.2' cy='467.9' r='3.05'/%3E%3Ccircle cx='242.2' cy='122.8' r='2.27'/%3E%3Ccircle cx='277.0' cy='688.5' r='2.52'/%3E%3Ccircle cx='173.2' cy='912.0' r='3.03'/%3E%3Ccircle cx='111.7' cy='335.4' r='2.89'/%3E%3Ccircle cx='99.7' cy='152.6' r='1.87'/%3E%3Ccircle cx='128.5' cy='294.9' r='3.08'/%3E%3Ccircle cx='167.2' cy='729.3' r='2.97'/%3E%3C/g%3E%3C/g%3E%3Cuse href='%23t' x='300'/%3E%3C/g%3E%3C/g%3E%3Cellipse class='glow' cx='60' cy='170' rx='170' ry='380' fill='url(%23g)'/%3E%3Cg transform='translate(215 905) scale(0.21) translate(-1412 -425)' fill='none' stroke-linecap='round'%3E%3Cpath  d='M-128 945 C 412 905, 712 725, 992 645 S 1492 425, 2352 365' pathLength='1' stroke='%23F3C9DA' stroke-width='1.6' stroke-opacity='.3'/%3E%3Cpath  d='M-128 989 C 412 949, 712 751, 992 671 S 1492 455, 2352 395' pathLength='1' stroke='%23F3C9DA' stroke-width='1.6' stroke-opacity='.3'/%3E%3Cpath  d='M-128 1033 C 412 993, 712 777, 992 697 S 1492 485, 2352 425' pathLength='1' stroke='%23F3C9DA' stroke-width='1.6' stroke-opacity='.3'/%3E%3Cpath  d='M-128 1077 C 412 1037, 712 803, 992 723 S 1492 515, 2352 455' pathLength='1' stroke='%23F3C9DA' stroke-width='1.6' stroke-opacity='.3'/%3E%3Cpath  d='M-128 1121 C 412 1081, 712 829, 992 749 S 1492 545, 2352 485' pathLength='1' stroke='%23F3C9DA' stroke-width='1.6' stroke-opacity='.3'/%3E%3Cg transform='translate(1300 500) rotate(12) scale(1.12) translate(-1412 -425)'%3E%3Cpath  d='M1588 -114 L1889 226 C1986 336 1986 514 1889 624 L1588 964 C1491 1074 1333 1074 1236 964 L935 624 C838 514 838 336 935 226 L1236 -114 C1333 -224 1491 -224 1588 -114 Z' pathLength='1' stroke='%23C95788' stroke-width='8' stroke-opacity='.16'/%3E%3Cpath  d='M1588 -114 L1889 226 C1986 336 1986 514 1889 624 L1588 964 C1491 1074 1333 1074 1236 964 L935 624 C838 514 838 336 935 226 L1236 -114 C1333 -224 1491 -224 1588 -114 Z' pathLength='1' stroke='url(%23edge2)' stroke-width='2.4'/%3E%3C/g%3E%3Cpath  d='M1588 -114 L1889 226 C1986 336 1986 514 1889 624 L1588 964 C1491 1074 1333 1074 1236 964 L935 624 C838 514 838 336 935 226 L1236 -114 C1333 -224 1491 -224 1588 -114 Z' pathLength='1' stroke='%23E4A9C4' stroke-width='30' stroke-opacity='.1'/%3E%3Cpath  d='M1588 -114 L1889 226 C1986 336 1986 514 1889 624 L1588 964 C1491 1074 1333 1074 1236 964 L935 624 C838 514 838 336 935 226 L1236 -114 C1333 -224 1491 -224 1588 -114 Z' pathLength='1' stroke='%23E4A9C4' stroke-width='12' stroke-opacity='.2'/%3E%3Cpath  d='M1588 -114 L1889 226 C1986 336 1986 514 1889 624 L1588 964 C1491 1074 1333 1074 1236 964 L935 624 C838 514 838 336 935 226 L1236 -114 C1333 -224 1491 -224 1588 -114 Z' pathLength='1' stroke='url(%23edge)' stroke-width='3.5'/%3E%3Cpath class='pk' d='M-128 945 C 412 905, 712 725, 992 645 S 1492 425, 2352 365' pathLength='1' stroke='%23fff' stroke-width='2.2' stroke-opacity='.9' style='animation-duration:7s,1s;animation-delay:0s,0s'/%3E%3Cpath class='pk' d='M-128 989 C 412 949, 712 751, 992 671 S 1492 455, 2352 395' pathLength='1' stroke='%23fff' stroke-width='2.2' stroke-opacity='.9' style='animation-duration:7.8s,1s;animation-delay:0.6s,0.6s'/%3E%3Cpath class='pk' d='M-128 1033 C 412 993, 712 777, 992 697 S 1492 485, 2352 425' pathLength='1' stroke='%23fff' stroke-width='2.2' stroke-opacity='.9' style='animation-duration:8.6s,1s;animation-delay:1.2s,1.2s'/%3E%3Cpath class='pk' d='M-128 1077 C 412 1037, 712 803, 992 723 S 1492 515, 2352 455' pathLength='1' stroke='%23fff' stroke-width='2.2' stroke-opacity='.9' style='animation-duration:9.4s,1s;animation-delay:1.7999999999999998s,1.7999999999999998s'/%3E%3Cpath class='pk' d='M-128 1121 C 412 1081, 712 829, 992 749 S 1492 545, 2352 485' pathLength='1' stroke='%23fff' stroke-width='2.2' stroke-opacity='.9' style='animation-duration:10.2s,1s;animation-delay:2.4s,2.4s'/%3E%3Cpath class='run' d='M1588 -114 L1889 226 C1986 336 1986 514 1889 624 L1588 964 C1491 1074 1333 1074 1236 964 L935 624 C838 514 838 336 935 226 L1236 -114 C1333 -224 1491 -224 1588 -114 Z' pathLength='1' stroke='%23F3C9DA' stroke-width='14' style='--o:.45'/%3E%3Cpath class='run w' d='M1588 -114 L1889 226 C1986 336 1986 514 1889 624 L1588 964 C1491 1074 1333 1074 1236 964 L935 624 C838 514 838 336 935 226 L1236 -114 C1333 -224 1491 -224 1588 -114 Z' pathLength='1' stroke='%23fff' stroke-width='5'/%3E%3Cg %3E%3Cg transform='translate(942 855) scale(0.26) translate(-1412 -425)'%3E%3Cpath d='M1588 -114 L1889 226 C1986 336 1986 514 1889 624 L1588 964 C1491 1074 1333 1074 1236 964 L935 624 C838 514 838 336 935 226 L1236 -114 C1333 -224 1491 -224 1588 -114 Z' fill='url(%23glass)' stroke='%23F3C9DA' stroke-width='5' stroke-opacity='.8'/%3E%3Cpath d='M1588 -114 L1889 226 C1986 336 1986 514 1889 624 L1588 964 C1491 1074 1333 1074 1236 964 L935 624 C838 514 838 336 935 226 L1236 -114 C1333 -224 1491 -224 1588 -114 Z' stroke='%23fff' stroke-width='2.5' stroke-opacity='.5' transform='translate(-16 -16)'/%3E%3C/g%3E%3C/g%3E%3C/g%3E%3C/svg%3E"),
+    radial-gradient(90% 40% at 0% 0%, rgba(var(--nc-t-rosa-rgb, 201, 87, 136), .28), transparent 70%),
+    radial-gradient(120% 45% at 100% 100%, rgba(var(--nc-t-rosa-rgb, 201, 87, 136), .22), transparent 70%),
+    linear-gradient(180deg, var(--nc-azul, #2C1A63) 0%, var(--nc-roxo, #511C76) 100%) !important;
+  background-size: 104px auto, cover, auto, auto, auto !important;
+  background-position: left 24px bottom 24px, center bottom, 0 0, 0 0, 0 0 !important;
+  background-repeat: no-repeat !important;
+  box-shadow: inset -1px 0 0 rgba(255, 255, 255, .06) !important;
+  scrollbar-color: rgba(255, 255, 255, .25) transparent !important;
+  scrollbar-width: thin !important;
+}
+
+/* recolhido (48 px): o logo não cabe, e o símbolo sozinho pediria mais uma cópia do
+   painel animado nesta folha (+30 KB) — a camada do logo só some */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).js-navCollapsed .t-Body-nav {
+  background-size: 0 0, cover, auto, auto, auto !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) #t_TreeNav,
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) #t_TreeNav ul {
+  background: transparent !important;
+  background-image: none !important;
+}
+
+/* O pé do menu é do logo: com um submenu aberto (Requisições tem 20 itens) a lista
+   rolava POR CIMA dele. Aberto, quem rola passa a ser a lista, que termina 80 px antes
+   do fim e some em degradê; o .t-Body-nav não rola mais. Recolhido (sem logo), volta
+   tudo ao tema: lá os submenus abrem para fora e não podem ser cortados. */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) #t_TreeNav {
+  padding: 12px 0 16px !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2):not(.js-navCollapsed) .t-Body-nav {
+  overflow: hidden !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2):not(.js-navCollapsed) #t_TreeNav {
+  height: calc(100% - 80px) !important;
+  min-height: 0 !important;                       /* o tema dá min-height: 99% à árvore, e ele vencia a altura */
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+  scrollbar-color: rgba(255, 255, 255, .25) transparent !important;
+  scrollbar-width: thin !important;
+  -webkit-mask-image: linear-gradient(to bottom, #000 calc(100% - 28px), transparent) !important;
+  mask-image: linear-gradient(to bottom, #000 calc(100% - 28px), transparent) !important;
+}
+
+/* a linha é a camada de fundo do item (o tema a usa para o destaque): vira um
+   bloco arredondado recuado, como a lista lateral do site */
+/* Medido: destaque de x=10 a 230, ícone na caixa de 0 a 40 — o glifo ficava a ~2 px da
+   borda do destaque. A linha recua 8 px e o conteúdo anda 10 px: o ícone fica com 14 px
+   de respiro dentro do destaque, o mesmo que sobra à direita da seta. */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) #t_TreeNav .a-TreeView-row {
+  left: 8px !important;
+  right: 8px !important;
+  width: auto !important;
+  border-radius: 10px !important;
+  background: transparent !important;
+  transition: background-color .2s !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) #t_TreeNav .a-TreeView-content {
+  padding-left: 10px !important;
+  color: rgba(255, 255, 255, .84) !important;
+  background: transparent !important;
+}
+
+/* a seta de abrir/fechar anda junto, para não ficar colada à borda direita do destaque */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) #t_TreeNav .a-TreeView-toggle {
+  margin-right: 8px !important;
+}
+
+/* menu recolhido (48 px, só ícones): sem o recuo — senão o ícone sai da coluna */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).js-navCollapsed #t_TreeNav .a-TreeView-content {
+  padding-left: 0 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).js-navCollapsed #t_TreeNav .a-TreeView-row {
+  left: 4px !important;
+  right: 4px !important;
+}
+
+/* propriedades separadas, nunca o atalho "font:" — ele zera o line-height que o
+   tema usa para centralizar o texto com o ícone */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) #t_TreeNav .a-TreeView-label {
+  font-family: "Inter NC", Inter, ui-sans-serif, system-ui, "Segoe UI", Arial, sans-serif !important;
+  font-size: 13.5px !important;
+  font-weight: 600 !important;
+  letter-spacing: normal !important;
+  color: rgba(255, 255, 255, .84) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) #t_TreeNav .a-TreeView-content .fa,
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) #t_TreeNav .a-TreeView-content .t-Icon {
+  color: var(--nc-rosa-claro) !important;
+  opacity: 1 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) #t_TreeNav .a-TreeView-toggle {
+  color: rgba(255, 255, 255, .55) !important;
+}
+
+/* hover */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) #t_TreeNav .a-TreeView-node:hover > .a-TreeView-row {
+  background: rgba(255, 255, 255, .07) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) #t_TreeNav .a-TreeView-node:hover > .a-TreeView-content .a-TreeView-label {
+  color: #fff !important;
+}
+
+/* item atual / selecionado: vidro claro com um fio de luz, texto branco em negrito.
+   Sem filete colorido na borda: o destaque inteiro já diz onde você está. */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) #t_TreeNav .a-TreeView-row.is-selected,
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) #t_TreeNav .a-TreeView-row.is-current,
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) #t_TreeNav .a-TreeView-row.is-current--top {
+  background: rgba(255, 255, 255, .14) !important;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .08), 0 6px 16px -10px rgba(20, 8, 50, .6) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) #t_TreeNav .a-TreeView-content.is-selected .fa,
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) #t_TreeNav .a-TreeView-content.is-current--top .fa {
+  color: #fff !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) #t_TreeNav .a-TreeView-content.is-selected .a-TreeView-label,
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) #t_TreeNav .a-TreeView-content.is-current .a-TreeView-label,
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) #t_TreeNav .a-TreeView-content.is-current--top .a-TreeView-label {
+  color: #fff !important;
+  font-weight: 700 !important;
+}
+
+/* subníveis: o tema pinta a lista de cinza-escuro (rgb 30,36,40) — sai (regra acima);
+   o texto fica um tom abaixo */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) #t_TreeNav .a-TreeView-node .a-TreeView-node .a-TreeView-label {
+  font-size: 13px !important;
+  font-weight: 500 !important;
+  color: rgba(255, 255, 255, .7) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) #t_TreeNav .a-TreeView-node .a-TreeView-node:hover > .a-TreeView-content .a-TreeView-label,
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) #t_TreeNav .a-TreeView-node .a-TreeView-node .a-TreeView-content.is-selected .a-TreeView-label,
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) #t_TreeNav .a-TreeView-node .a-TreeView-node .a-TreeView-content.is-current .a-TreeView-label {
+  color: #fff !important;
+}
+
+/* ---------- [C4] 3. Menu SUPERIOR (aplicações com navegação no topo — as de dentro do iframe) ----------
+   As aplicações abertas dentro do painel (eSocial, …) usam o menu no topo ("eSocial ·
+   Cadastros ▾"). Lá o cabeçalho escuro deste arquivo virava uma SEGUNDA faixa roxa logo
+   abaixo do cabeçalho do painel, com a aba atual num lilás chapado — dois cabeçalhos
+   empilhados. Dentro do painel ele é uma sub-navegação da página, não um cabeçalho: barra
+   clara com o fio Névoa embaixo, abas em texto, a atual em Roxo com o fio Rosa de 2 px (o
+   mesmo das abas de região) e o Lavanda suave no hover. A área clicável de cada aba é um
+   bloco de 32 px com cantos de 8 — a barra fica nos 40 px do tema (ele posiciona o título
+   da página por essa altura), com o texto e a seta do submenu juntos. */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).apex-top-nav .t-Header {
+  background: #fff !important;
+  background-image: none !important;
+  border: 0 !important;
+  box-shadow: inset 0 -1px 0 var(--nc-nevoa), 0 6px 18px -16px rgba(27, 18, 56, .35) !important;
+  color: var(--nc-tinta) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).apex-top-nav .t-Header-nav {
+  padding: 0 16px !important;
+  background: transparent !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).apex-top-nav .t-Header-nav-list,
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).apex-top-nav .t-Header-nav-list.a-MenuBar {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).apex-top-nav .t-Header-nav-list > ul {
+  display: flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+  height: 40px !important;
+  min-height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  background: transparent !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).apex-top-nav .a-MenuBar-item {
+  position: relative !important;
+  display: flex !important;
+  align-items: center !important;
+  height: 32px !important;
+  margin: 4px 0 !important;
+  border: 0 !important;
+  border-radius: 8px !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  transition: background-color .2s !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).apex-top-nav .a-MenuBar-item .a-MenuBar-label {
+  display: flex !important;
+  align-items: center !important;
+  height: 32px !important;
+  padding: 0 12px !important;
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  font-family: "Inter NC", Inter, ui-sans-serif, system-ui, "Segoe UI", Arial, sans-serif !important;
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  letter-spacing: normal !important;
+  line-height: 1 !important;
+  color: var(--nc-grafite) !important;
+  text-decoration: none !important;
+  white-space: nowrap !important;
+}
+
+/* aba com submenu: o texto e a seta formam UM alvo — sem vão entre eles */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).apex-top-nav .a-MenuBar-item.a-Menu--split .a-MenuBar-label {
+  padding-right: 2px !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).apex-top-nav .a-MenuBar-item > .a-Menu-subMenuCol {
+  display: flex !important;
+  align-items: center !important;
+  height: 32px !important;
+  padding: 0 10px 0 4px !important;
+  background: transparent !important;
+  color: var(--nc-cinza) !important;
+  cursor: pointer !important;
+}
+
+/* a seta: o ícone do APEX é uma IMAGEM de fundo, e a Skin pinta um fundo Roxo por cima
+   quando o menu abre — virava um quadrado cheio. Vira o glifo da Font APEX, na cor do texto
+   em todos os estados. */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).apex-top-nav .a-MenuBar-item > .a-Menu-subMenuCol .a-Icon {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 14px !important;
+  height: 14px !important;
+  background: none !important;
+  color: inherit !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).apex-top-nav .a-MenuBar-item > .a-Menu-subMenuCol .a-Icon::before {
+  content: "\f107" !important;                     /* fa-angle-down */
+  font-family: "Font APEX Small", "Font APEX" !important;
+  font-size: 14px !important;
+  line-height: 1 !important;
+  color: inherit !important;
+  transition: transform .2s cubic-bezier(.22, 1, .36, 1) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).apex-top-nav .a-MenuBar-item.is-expanded > .a-Menu-subMenuCol .a-Icon::before {
+  transform: rotate(180deg) !important;
+}
+
+/* o submenu desce da barra: a Skin corta tudo o que passa dos 40 px dela (overflow
+   hidden na barra e na lista) e o menu abria invisível */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).apex-top-nav .t-Header-nav,
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).apex-top-nav .t-Header-nav-list {
+  overflow: visible !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).apex-top-nav .a-MenuBar-item:hover,
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).apex-top-nav .a-MenuBar-item.is-focused,
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).apex-top-nav .a-MenuBar-item.is-expanded {
+  background: var(--nc-nevoa2) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).apex-top-nav .a-MenuBar-item:hover .a-MenuBar-label,
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).apex-top-nav .a-MenuBar-item.is-focused .a-MenuBar-label,
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).apex-top-nav .a-MenuBar-item.is-expanded .a-MenuBar-label,
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).apex-top-nav .a-MenuBar-item:hover > .a-Menu-subMenuCol,
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).apex-top-nav .a-MenuBar-item.is-expanded > .a-Menu-subMenuCol {
+  background: transparent !important;
+  color: var(--nc-roxo) !important;
+}
+
+/* a aba atual: texto Roxo e o fio Rosa encostado na base da barra */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).apex-top-nav .a-MenuBar-item.a-Menu--current {
+  background: transparent !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).apex-top-nav .a-MenuBar-item.a-Menu--current:hover,
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).apex-top-nav .a-MenuBar-item.a-Menu--current.is-expanded {
+  background: var(--nc-nevoa2) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).apex-top-nav .a-MenuBar-item.a-Menu--current .a-MenuBar-label,
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).apex-top-nav .a-MenuBar-item.a-Menu--current > .a-Menu-subMenuCol {
+  background: transparent !important;
+  color: var(--nc-roxo) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).apex-top-nav .a-MenuBar-item.a-Menu--current .a-MenuBar-label {
+  font-weight: 800 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).apex-top-nav .a-MenuBar-item.a-Menu--current::after {
+  content: "" !important;
+  position: absolute !important;
+  left: 10px !important;
+  right: 10px !important;
+  bottom: -4px !important;
+  height: 2px !important;
+  border-radius: 2px 2px 0 0 !important;
+  background: var(--nc-rosa) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).apex-top-nav .a-MenuBar-item .a-MenuBar-label:focus-visible {
+  outline: 2px solid var(--nc-roxo) !important;
+  outline-offset: -2px !important;
+  border-radius: 8px !important;
+}
+
+/* o submenu abre colado à barra, não 4 px sobre o fio da aba */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).apex-top-nav .a-MenuBar .a-Menu--top {
+  margin-top: 4px !important;
+}
+
+/* a faixa da MARCA no cabeçalho claro (o portal "Conhecendo Você", com as etapas no lugar
+   do menu): o nome do app, o símbolo e os botões ("Sair", o menu) são brancos — foram
+   desenhados para o cabeçalho escuro — e sumiam no branco. Com eles sumia o ÚNICO jeito de
+   sair do sistema. Nome em Tinta, símbolo no degradê real do logo (Ameixa → Roxo → Azul),
+   botões em Grafite com o Lavanda suave no hover, como as abas daqui. */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).apex-top-nav .t-Header-logo,
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).apex-top-nav .t-Header-logo-link,
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).apex-top-nav .t-Header-logo span {
+  color: var(--nc-tinta) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).apex-top-nav .t-Header-logo-link::before {
+  background: linear-gradient(135deg, var(--nc-ameixa, #9A408A) 0%, var(--nc-roxo, #511C76) 50%, var(--nc-azul, #2C1A63) 100%) !important;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8' fill='%23fff'%3E%3Cpath d='M4.322 0.322L5.573 1.573A0.456 0.456 0 0 1 5.573 2.218L4.322 3.469A0.456 0.456 0 0 1 3.678 3.469L2.427 2.218A0.456 0.456 0 0 1 2.427 1.573L3.678 0.322A0.456 0.456 0 0 1 4.322 0.322Z'/%3E%3Cpath d='M6.427 2.427L7.678 3.678A0.456 0.456 0 0 1 7.678 4.322L6.427 5.573A0.456 0.456 0 0 1 5.782 5.573L4.531 4.322A0.456 0.456 0 0 1 4.531 3.678L5.782 2.427A0.456 0.456 0 0 1 6.427 2.427Z'/%3E%3Cpath d='M2.218 2.427L3.469 3.678A0.456 0.456 0 0 1 3.469 4.322L2.218 5.573A0.456 0.456 0 0 1 1.573 5.573L0.322 4.322A0.456 0.456 0 0 1 0.322 3.678L1.573 2.427A0.456 0.456 0 0 1 2.218 2.427Z'/%3E%3Cpath d='M4.322 4.531L5.573 5.782A0.456 0.456 0 0 1 5.573 6.427L4.322 7.678A0.456 0.456 0 0 1 3.678 7.678L2.427 6.427A0.456 0.456 0 0 1 2.427 5.782L3.678 4.531A0.456 0.456 0 0 1 4.322 4.531Z'/%3E%3C/svg%3E") center / contain no-repeat !important;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8' fill='%23fff'%3E%3Cpath d='M4.322 0.322L5.573 1.573A0.456 0.456 0 0 1 5.573 2.218L4.322 3.469A0.456 0.456 0 0 1 3.678 3.469L2.427 2.218A0.456 0.456 0 0 1 2.427 1.573L3.678 0.322A0.456 0.456 0 0 1 4.322 0.322Z'/%3E%3Cpath d='M6.427 2.427L7.678 3.678A0.456 0.456 0 0 1 7.678 4.322L6.427 5.573A0.456 0.456 0 0 1 5.782 5.573L4.531 4.322A0.456 0.456 0 0 1 4.531 3.678L5.782 2.427A0.456 0.456 0 0 1 6.427 2.427Z'/%3E%3Cpath d='M2.218 2.427L3.469 3.678A0.456 0.456 0 0 1 3.469 4.322L2.218 5.573A0.456 0.456 0 0 1 1.573 5.573L0.322 4.322A0.456 0.456 0 0 1 0.322 3.678L1.573 2.427A0.456 0.456 0 0 1 2.218 2.427Z'/%3E%3Cpath d='M4.322 4.531L5.573 5.782A0.456 0.456 0 0 1 5.573 6.427L4.322 7.678A0.456 0.456 0 0 1 3.678 7.678L2.427 6.427A0.456 0.456 0 0 1 2.427 5.782L3.678 4.531A0.456 0.456 0 0 1 4.322 4.531Z'/%3E%3C/svg%3E") center / contain no-repeat !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).apex-top-nav .t-Header .t-Button--header,
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).apex-top-nav .t-Header .t-Button--headerTree {
+  color: var(--nc-grafite) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).apex-top-nav .t-Header .t-Button--header:hover,
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).apex-top-nav .t-Header .t-Button--header.is-active,
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).apex-top-nav .t-Header .t-Button--header[aria-expanded="true"] {
+  background: var(--nc-nevoa2) !important;
+  color: var(--nc-roxo) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).apex-top-nav .t-Header .t-Button--header:focus-visible {
+  outline-color: var(--nc-roxo) !important;
+}
+
+/* ---------- [C5] 3b. Menu SUPERIOR em JANELA PRÓPRIA (Chamados) ----------
+   A barra clara acima é para quando a aplicação abre DENTRO do Painel. Aberta na janela
+   dela, a barra é o cabeçalho da aplicação — e volta a ser a faixa roxa do Painel do
+   Operador (a mesma da seção 1). Quem diz "janela própria" é o Natcorp_Barra.js (classe
+   nc-janela-propria no body); sem ele — o portal "Conhecendo Você", que não o carrega —
+   continua a barra clara. */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).apex-top-nav.nc-janela-propria .t-Header {
+  background-color: var(--nc-azul) !important;
+  background-image:
+    radial-gradient(38% 260% at 88% 0%, rgba(var(--nc-t-rosa-rgb, 201, 87, 136), .38), transparent 70%),
+    radial-gradient(30% 220% at 45% 100%, rgba(var(--nc-t-roxo-rgb, 81, 28, 118), .55), transparent 70%),
+    linear-gradient(90deg, var(--nc-azul, #2C1A63) 0%, var(--nc-roxo, #511C76) 100%) !important;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, .07), 0 10px 28px -18px rgba(var(--nc-t-azul-rgb, 44, 26, 99), .8) !important;
+  color: #fff !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).apex-top-nav.nc-janela-propria .t-Header-logo,
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).apex-top-nav.nc-janela-propria .t-Header-logo-link,
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).apex-top-nav.nc-janela-propria .t-Header-logo span {
+  color: #fff !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).apex-top-nav.nc-janela-propria .t-Header-logo-link::before {
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8' fill='%23fff'%3E%3Cpath d='M4.322 0.322L5.573 1.573A0.456 0.456 0 0 1 5.573 2.218L4.322 3.469A0.456 0.456 0 0 1 3.678 3.469L2.427 2.218A0.456 0.456 0 0 1 2.427 1.573L3.678 0.322A0.456 0.456 0 0 1 4.322 0.322Z'/%3E%3Cpath d='M6.427 2.427L7.678 3.678A0.456 0.456 0 0 1 7.678 4.322L6.427 5.573A0.456 0.456 0 0 1 5.782 5.573L4.531 4.322A0.456 0.456 0 0 1 4.531 3.678L5.782 2.427A0.456 0.456 0 0 1 6.427 2.427Z'/%3E%3Cpath d='M2.218 2.427L3.469 3.678A0.456 0.456 0 0 1 3.469 4.322L2.218 5.573A0.456 0.456 0 0 1 1.573 5.573L0.322 4.322A0.456 0.456 0 0 1 0.322 3.678L1.573 2.427A0.456 0.456 0 0 1 2.218 2.427Z'/%3E%3Cpath d='M4.322 4.531L5.573 5.782A0.456 0.456 0 0 1 5.573 6.427L4.322 7.678A0.456 0.456 0 0 1 3.678 7.678L2.427 6.427A0.456 0.456 0 0 1 2.427 5.782L3.678 4.531A0.456 0.456 0 0 1 4.322 4.531Z'/%3E%3C/svg%3E") center / contain no-repeat !important;
+  -webkit-mask: none !important;
+  mask: none !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).apex-top-nav.nc-janela-propria .t-Header .t-Button--header {
+  color: rgba(255, 255, 255, .86) !important;
+}
+
+/* celular: o nome da aplicação não cabe ao lado dos botões e era cortado no meio
+   ("Acompanh"); fica o símbolo — que continua sendo o link para o início — e o nome vai
+   para o leitor de tela. O título da página, logo abaixo, diz onde se está. */
+@media (max-width: 639px) {
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).apex-top-nav.nc-janela-propria .t-Header-logo .apex-logo-text {
+    position: absolute !important;
+    width: 1px !important;
+    height: 1px !important;
+    margin: -1px !important;
+    overflow: hidden !important;
+    clip: rect(0 0 0 0) !important;
+    white-space: nowrap !important;
+  }
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).apex-top-nav.nc-janela-propria .t-Header .t-Button--header:hover,
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).apex-top-nav.nc-janela-propria .t-Header .t-Button--header.is-active,
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).apex-top-nav.nc-janela-propria .t-Header .t-Button--header[aria-expanded="true"] {
+  background: rgba(255, 255, 255, .12) !important;
+  color: #fff !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).apex-top-nav.nc-janela-propria .t-Header .t-Button--header:focus-visible {
+  outline-color: var(--nc-rosa-claro) !important;
+}
+
+/* abas do menu (quando a aplicação tem): texto branco, o hover no branco translúcido do
+   painel, a atual em branco cheio com o fio Rosa-claro */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).apex-top-nav.nc-janela-propria .a-MenuBar-item .a-MenuBar-label,
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).apex-top-nav.nc-janela-propria .a-MenuBar-item > .a-Menu-subMenuCol {
+  color: rgba(255, 255, 255, .86) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).apex-top-nav.nc-janela-propria .a-MenuBar-item:hover,
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).apex-top-nav.nc-janela-propria .a-MenuBar-item.is-focused,
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).apex-top-nav.nc-janela-propria .a-MenuBar-item.is-expanded,
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).apex-top-nav.nc-janela-propria .a-MenuBar-item.a-Menu--current:hover,
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).apex-top-nav.nc-janela-propria .a-MenuBar-item.a-Menu--current.is-expanded {
+  background: rgba(255, 255, 255, .12) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).apex-top-nav.nc-janela-propria .a-MenuBar-item:hover .a-MenuBar-label,
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).apex-top-nav.nc-janela-propria .a-MenuBar-item.is-focused .a-MenuBar-label,
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).apex-top-nav.nc-janela-propria .a-MenuBar-item.is-expanded .a-MenuBar-label,
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).apex-top-nav.nc-janela-propria .a-MenuBar-item:hover > .a-Menu-subMenuCol,
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).apex-top-nav.nc-janela-propria .a-MenuBar-item.is-expanded > .a-Menu-subMenuCol,
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).apex-top-nav.nc-janela-propria .a-MenuBar-item.a-Menu--current .a-MenuBar-label,
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).apex-top-nav.nc-janela-propria .a-MenuBar-item.a-Menu--current > .a-Menu-subMenuCol {
+  color: #fff !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).apex-top-nav.nc-janela-propria .a-MenuBar-item.a-Menu--current::after {
+  background: var(--nc-rosa-claro) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).apex-top-nav.nc-janela-propria .a-MenuBar-item .a-MenuBar-label:focus-visible {
+  outline-color: var(--nc-rosa-claro) !important;
+}
+
+/* "Sair": o ícone do tema é uma corrente partida (fa-chain-broken) e, no celular, o tema
+   esconde a palavra — sobrava um desenho que pouca gente reconhece como "sair". Fica o
+   ícone de saída (porta com a seta) e a palavra "Sair" sempre visível. */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).apex-top-nav .t-Button--navBar .fa-chain-broken::before {
+  content: "\f08b" !important;
+}
+
+/* só no "Sair" (e no item com contador, que perderia o número): os outros ficam só com o
+   ícone no celular, como o tema faz — com os rótulos de todos, o "Sair" saía da tela */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).apex-top-nav .t-Button--navBar:is(:has(.fa-chain-broken), :has(.nc-contador)) .t-Button-label {
+  display: inline !important;
+  position: static !important;
+  width: auto !important;
+  height: auto !important;
+  margin: 0 !important;
+  clip: auto !important;
+}
+
+/* celular: os outros itens da barra (Usuários, Manual, Alertas sem contador) viram botões
+   quadrados só com o ícone — o nome continua para o leitor de tela (visually hidden). Com
+   todos os rótulos, a barra passava de 440 px e o "Sair" ficava fora da tela. */
+@media (max-width: 639px) {
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).apex-top-nav .t-Button--navBar:not(:has(.fa-chain-broken)):not(:has(.nc-contador)) {
+    width: 36px !important;
+    padding: 0 !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).apex-top-nav .t-Button--navBar:not(:has(.fa-chain-broken)):not(:has(.nc-contador)) .t-Button-label {
+    position: absolute !important;
+    width: 1px !important;
+    height: 1px !important;
+    margin: -1px !important;
+    overflow: hidden !important;
+    clip: rect(0 0 0 0) !important;
+    white-space: nowrap !important;
+  }
+}

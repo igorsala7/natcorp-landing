@@ -1,0 +1,558 @@
+/* ╔════════════════════════════════════════════════════════════════════════════════════════╗
+   ║  NATCORP · PRÉ-ATENDIMENTO (TRIAGEM)  —  a "roupa" da janela (CSS)                       ║
+   ║  App 2937 (Medicina Ocupacional) · Página 74 · Registro do Pré-Atendimento (modal)       ║
+   ╚════════════════════════════════════════════════════════════════════════════════════════╝
+
+   Primeira vez num arquivo destes? Leia antes o manual: brand/apex/MANUAL-APEX.md (parte 1).
+
+   ── O QUE ESTE ARQUIVO FAZ ────────────────────────────────────────────────────────────────
+   A aparência do que o Natcorp_PreAtendimento.js monta: o cartão do paciente (ou os campos do
+   registro novo), os sinais vitais em cartões com a unidade dentro do campo, as anotações com
+   a orientação à vista e o rodapé com o estado. As cores vêm do tema (--nc-*), com reserva.
+   Sem o JS, nada daqui vale (tudo depende da marca nc-pa-ativo no body).
+
+   ── ONDE ELE ENTRA NO APEX ────────────────────────────────────────────────────────────────
+     Página 74 › CSS › File URLs:   #WORKSPACE_IMAGES#Natcorp_PreAtendimento.css
+     CUIDADO: este é o arquivo-FONTE (.src.css). O gerador (gerar-app.mjs) cria o .css.
+
+   ── ÍNDICE ────────────────────────────────────────────────────────────────────────────────
+     [C1] As cores                                               PODE MEXER
+     [C2] O que sai da vista
+     [C3] As seções e os campos
+     [C4] Quem é o paciente / registro novo
+     [C5] Sinais vitais
+     [C6] Anotações
+     [C7] O rodapé
+     [C8] Janela estreita
+*/
+
+/* ═══ [C1] AS CORES ═════════════════════════════════════════════════════════════════════════ */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pa-ativo {
+  --pa-roxo: var(--nc-roxo, #511C76);
+  --pa-rosa: var(--nc-rosa, #C95788);
+  --pa-tinta: var(--nc-tinta, #1B1238);
+  --pa-fraco: #5F5774;
+  --pa-borda: var(--nc-nevoa, #E7E1F0);
+  --pa-fundo: var(--nc-off, #F7F5FA);
+  --pa-bom: #1F7A52;
+  --pa-atencao: #9A5B00;
+  --pa-atencao-bg: #FFF4E0;
+  --pa-aviso: #6B5E86;
+}
+
+/* ═══ [C2] O QUE SAI DA VISTA ═══════════════════════════════════════════════════════════════
+   As regiões e grades antigas ficam na página (são delas os campos e as ações), só sem lugar.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pa-ativo .nc-pa-guardado,
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pa-ativo .nc-pa-oculto,
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pa-ativo .nc-pa-campo.t-Form-fieldContainer.nc-pa-oculto,
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pa-ativo .nc-pa-vazio,
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pa-ativo .t-BreadcrumbRegion {
+  display: none !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pa-ativo .nc-pa-so-leitor {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  overflow: hidden !important;
+  clip: rect(0 0 0 0) !important;
+  white-space: nowrap !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pa-ativo .nc-pa-ic {
+  flex: none !important;
+  width: 18px !important;
+  height: 18px !important;
+  fill: none !important;
+  stroke: currentColor !important;
+  stroke-width: 1.9 !important;
+  stroke-linecap: round !important;
+  stroke-linejoin: round !important;
+}
+
+/* ═══ [C3] AS SEÇÕES E OS CAMPOS ════════════════════════════════════════════════════════════ */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pa-ativo .nc-pa-sec {
+  margin: 0 0 16px !important;
+  border: 1px solid var(--pa-borda) !important;
+  border-radius: 14px !important;
+  background: #fff !important;
+  box-shadow: none !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pa-ativo .nc-pa-sec > .t-Region-bodyWrap > .t-Region-body {
+  padding: 4px 20px 20px !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pa-ativo .nc-pa-sec-cab {
+  display: flex !important;
+  align-items: center !important;
+  flex-wrap: wrap !important;
+  gap: 4px 10px !important;
+  padding: 16px 20px 12px !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pa-ativo .nc-pa-sec-cab .nc-pa-ic {
+  color: var(--pa-rosa) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pa-ativo .nc-pa-sec-cab h2 {
+  margin: 0 !important;
+  font-size: 16px !important;
+  font-weight: 700 !important;
+  color: var(--pa-tinta) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pa-ativo .nc-pa-sec-cab p {
+  flex-basis: 100% !important;
+  margin: 0 0 0 28px !important;
+  font-size: 13px !important;
+  color: var(--pa-fraco) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pa-ativo .nc-pa-grade {
+  display: grid !important;
+  gap: 14px 16px !important;
+  align-items: start !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pa-ativo .nc-pa-grade + .nc-pa-grade {
+  margin-top: 14px !important;
+}
+
+/* a 1ª linha se ajusta aos campos à vista (no registro novo o "Realizado às" sai) */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pa-ativo .nc-pa-grade--4 {
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pa-ativo .nc-pa-grade--novo2 {
+  grid-template-columns: minmax(200px, 1.4fr) auto minmax(240px, 2fr) !important;
+}
+
+/* o campo do APEX: rótulo em cima, campo inteiro, sem as colunas do modelo */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pa-ativo .nc-pa-campo.t-Form-fieldContainer {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 6px !important;
+  min-width: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pa-ativo .nc-pa-campo .t-Form-labelContainer,
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pa-ativo .nc-pa-campo .t-Form-inputContainer {
+  width: auto !important;
+  max-width: none !important;
+  flex: none !important;
+  padding: 0 !important;
+  text-align: left !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pa-ativo .nc-pa-campo .t-Form-label {
+  margin: 0 !important;
+  padding: 0 !important;
+  font-size: 13px !important;
+  font-weight: 650 !important;
+  color: var(--pa-tinta) !important;
+  white-space: normal !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pa-ativo .nc-pa-campo input.apex-item-text,
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pa-ativo .nc-pa-campo select,
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pa-ativo .nc-pa-campo textarea {
+  width: 100% !important;
+  min-height: 42px !important;
+  font-size: 15px !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pa-ativo .nc-pa-campo .t-Form-itemWrapper {
+  display: flex !important;
+  align-items: stretch !important;
+}
+
+/* ═══ [C4] QUEM É O PACIENTE / REGISTRO NOVO ═══════════════════════════════════════════════ */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pa-ativo .nc-pa-quem {
+  display: grid !important;
+  grid-template-columns: auto minmax(0, 1fr) auto !important;
+  align-items: center !important;
+  gap: 14px 20px !important;
+  margin: 0 0 16px !important;
+  padding: 16px 20px !important;
+  border: 1px solid var(--pa-borda) !important;
+  border-radius: 14px !important;
+  background: #fff !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pa-ativo .nc-pa-avatar {
+  display: grid !important;
+  place-items: center !important;
+  width: 48px !important;
+  height: 48px !important;
+  border-radius: 50% !important;
+  background: var(--pa-fundo) !important;
+  color: var(--pa-roxo) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pa-ativo .nc-pa-avatar .nc-pa-ic {
+  width: 24px !important;
+  height: 24px !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pa-ativo .nc-pa-nome {
+  margin: 0 !important;
+  font-size: 19px !important;
+  font-weight: 750 !important;
+  line-height: 1.25 !important;
+  color: var(--pa-tinta) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pa-ativo .nc-pa-cod {
+  font-size: 13px !important;
+  font-weight: 500 !important;
+  font-variant-numeric: tabular-nums !important;
+  color: var(--pa-fraco) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pa-ativo .nc-pa-meta {
+  margin: 2px 0 0 !important;
+  font-size: 14px !important;
+  color: var(--pa-fraco) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pa-ativo .nc-pa-alergia {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  margin: 8px 0 0 !important;
+  padding: 4px 10px !important;
+  border-radius: 8px !important;
+  background: #FDECEC !important;
+  font-size: 13px !important;
+  color: #9B1C1C !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pa-ativo .nc-pa-alergia .nc-pa-ic {
+  width: 15px !important;
+  height: 15px !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pa-ativo .nc-pa-fatos {
+  display: flex !important;
+  gap: 8px 24px !important;
+  margin: 0 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pa-ativo .nc-pa-fatos dt {
+  font-size: 12px !important;
+  color: var(--pa-fraco) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pa-ativo .nc-pa-fatos dd {
+  margin: 0 !important;
+  font-size: 14px !important;
+  font-weight: 650 !important;
+  color: var(--pa-tinta) !important;
+  white-space: nowrap !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pa-ativo .nc-pa-fraco {
+  font-weight: 500 !important;
+  color: var(--pa-fraco) !important;
+}
+
+/* Funcionário / Candidato: dois botões lado a lado */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pa-ativo .nc-pa-seg {
+  display: inline-flex !important;
+  padding: 3px !important;
+  border: 1px solid var(--pa-borda) !important;
+  border-radius: 10px !important;
+  background: var(--pa-fundo) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pa-ativo .nc-pa-seg button {
+  min-height: 34px !important;
+  padding: 0 14px !important;
+  border: 0 !important;
+  border-radius: 8px !important;
+  background: none !important;
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  white-space: nowrap !important;
+  color: var(--pa-fraco) !important;
+  cursor: pointer !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pa-ativo .nc-pa-seg button[aria-checked="true"] {
+  background: #fff !important;
+  color: var(--pa-roxo) !important;
+  box-shadow: 0 1px 3px rgba(27, 18, 56, .12) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pa-ativo .nc-pa-seg button:focus-visible,
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pa-ativo .nc-pa-chip:focus-visible {
+  outline: 2px solid var(--pa-roxo) !important;
+  outline-offset: 2px !important;
+}
+
+/* ═══ [C5] SINAIS VITAIS ════════════════════════════════════════════════════════════════════
+   Cada sinal é um cartão: o nome, o campo grande com a unidade dentro, e o aviso embaixo
+   quando sai da referência (âmbar = atenção; verde = IMC adequado).
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+/* 4 colunas: pressão (2) + saturação + frequência | temperatura + altura + peso + IMC */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pa-ativo .nc-pa-grade--vitais {
+  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  gap: 12px !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pa-ativo .nc-pa-vital {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 6px !important;
+  min-width: 0 !important;
+  padding: 12px 14px !important;
+  border: 1px solid var(--pa-borda) !important;
+  border-radius: 12px !important;
+  background: var(--pa-fundo) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pa-ativo .nc-pa-vital[data-vital="pa"] {
+  grid-column: span 2 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pa-ativo .nc-pa-vital-tit,
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pa-ativo .nc-pa-vital .t-Form-label {
+  margin: 0 !important;
+  font-size: 13px !important;
+  font-weight: 650 !important;
+  color: var(--pa-tinta) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pa-ativo .nc-pa-vital input.apex-item-text {
+  height: 44px !important;
+  font-size: 20px !important;
+  font-weight: 650 !important;
+  font-variant-numeric: tabular-nums !important;
+  text-align: left !important;
+  background: #fff !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pa-ativo .nc-pa-com-un {
+  position: relative !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pa-ativo .nc-pa-com-un input.apex-item-text {
+  padding-right: 64px !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pa-ativo .nc-pa-un {
+  position: absolute !important;
+  top: 50% !important;
+  right: 12px !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  color: var(--pa-fraco) !important;
+  transform: translateY(-50%) !important;
+  pointer-events: none !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pa-ativo .nc-pa-un--solta {
+  position: static !important;
+  transform: none !important;
+  align-self: center !important;
+}
+
+/* a pressão: máxima / mínima mmHg numa linha */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pa-ativo .nc-pa-pa {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pa-ativo .nc-pa-pa .nc-pa-campo {
+  flex: 1 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pa-ativo .nc-pa-barra {
+  font-size: 22px !important;
+  font-weight: 300 !important;
+  color: var(--pa-fraco) !important;
+}
+
+/* o IMC é calculado: aparência de resultado, não de campo */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pa-ativo .nc-pa-vital--imc input.apex-item-text {
+  border-style: dashed !important;
+  background: transparent !important;
+  color: var(--pa-roxo) !important;
+  cursor: default !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pa-ativo .nc-pa-nota {
+  display: flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  margin: 2px 0 0 !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  line-height: 1.3 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pa-ativo .nc-pa-nota .nc-pa-ic {
+  width: 15px !important;
+  height: 15px !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pa-ativo .nc-pa-vital[data-tom="atencao"] {
+  border-color: #F0C77E !important;
+  background: var(--pa-atencao-bg) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pa-ativo .nc-pa-vital[data-tom="atencao"] .nc-pa-nota {
+  color: var(--pa-atencao) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pa-ativo .nc-pa-vital[data-tom="aviso"] .nc-pa-nota {
+  color: var(--pa-aviso) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pa-ativo .nc-pa-vital[data-tom="bom"] .nc-pa-nota {
+  color: var(--pa-bom) !important;
+}
+
+/* ═══ [C6] ANOTAÇÕES ════════════════════════════════════════════════════════════════════════ */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pa-ativo .nc-pa-textos {
+  display: grid !important;
+  gap: 16px !important;
+  margin-top: 8px !important;
+  padding-top: 4px !important;
+  border-top: 1px solid var(--pa-borda) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pa-ativo .nc-pa-sec-cab--meio {
+  padding: 12px 0 0 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pa-ativo .nc-pa-campo--texto .t-Form-labelContainer {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  align-items: center !important;
+  gap: 2px 10px !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pa-ativo .nc-pa-dica {
+  flex-basis: 100% !important;
+  font-size: 13px !important;
+  color: var(--pa-fraco) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pa-ativo .nc-pa-campo--texto textarea {
+  min-height: 84px !important;
+  line-height: 1.45 !important;
+  resize: vertical !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pa-ativo .nc-pa-campo--texto .t-Form-inputContainer {
+  position: relative !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pa-ativo .nc-pa-limite {
+  display: block !important;
+  margin-top: 4px !important;
+  font-size: 12px !important;
+  font-variant-numeric: tabular-nums !important;
+  text-align: right !important;
+  color: var(--pa-fraco) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pa-ativo .nc-pa-limite[data-perto="sim"] {
+  color: var(--pa-atencao) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pa-ativo .nc-pa-chip {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+  order: 2 !important;
+  min-height: 28px !important;
+  padding: 0 10px !important;
+  border: 1px solid var(--nc-borda-botao, #C9B6DE) /*reserva*/ !important;
+  border: 1px solid var(--nc-borda-botao, oklch(from #C9B6DE l calc(c * var(--nc-t-croma, 1)) calc(h + var(--nc-t-giro, 0)))) !important;
+  border-radius: 999px !important;
+  background: #fff !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  color: var(--pa-roxo) !important;
+  cursor: pointer !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pa-ativo .nc-pa-chip[hidden] {
+  display: none !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pa-ativo .nc-pa-chip .nc-pa-ic {
+  width: 14px !important;
+  height: 14px !important;
+}
+
+/* ═══ [C7] O RODAPÉ ═════════════════════════════════════════════════════════════════════════ */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pa-ativo .nc-pa-estado {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  margin: 0 !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  color: var(--pa-fraco) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pa-ativo .nc-pa-estado:empty {
+  display: none !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pa-ativo .nc-pa-estado[data-tom="falta"] {
+  color: var(--pa-atencao) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pa-ativo .nc-pa-ponto {
+  width: 8px !important;
+  height: 8px !important;
+  border-radius: 50% !important;
+  background: var(--pa-rosa) !important;
+}
+
+/* ═══ [C8] JANELA ESTREITA ══════════════════════════════════════════════════════════════════ */
+@media (max-width: 860px) {
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pa-ativo .nc-pa-grade--4,
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pa-ativo .nc-pa-grade--novo2 {
+    grid-template-columns: 1fr 1fr !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pa-ativo .nc-pa-grade--novo2 > :last-child {
+    grid-column: 1 / -1 !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pa-ativo .nc-pa-quem {
+    grid-template-columns: auto minmax(0, 1fr) !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pa-ativo .nc-pa-fatos {
+    grid-column: 1 / -1 !important;
+    flex-wrap: wrap !important;
+  }
+}
+
+@media (max-width: 700px) {
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pa-ativo .nc-pa-grade--vitais {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}
+
+@media (max-width: 520px) {
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pa-ativo .nc-pa-grade--4,
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pa-ativo .nc-pa-grade--novo2 {
+    grid-template-columns: 1fr !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pa-ativo .nc-pa-vital[data-vital="pa"] {
+    grid-column: 1 / -1 !important;
+  }
+}

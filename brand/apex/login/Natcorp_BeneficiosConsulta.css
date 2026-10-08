@@ -1,0 +1,419 @@
+/* ╔════════════════════════════════════════════════════════════════════════════════════════╗
+   ║  NATCORP · CONSULTA DE BENEFÍCIOS  —  a "roupa" da página (CSS)                          ║
+   ║  App 300 (Portal do Colaborador) · Página 89 · Cadastro de Benefícios (a consulta)       ║
+   ╚════════════════════════════════════════════════════════════════════════════════════════╝
+
+   Primeira vez num arquivo destes? Leia antes o manual: brand/apex/MANUAL-APEX.md (parte 1).
+
+   ── O QUE ESTE ARQUIVO FAZ ────────────────────────────────────────────────────────────────
+   A aparência do que o Natcorp_BeneficiosConsulta.js monta, no mesmo jeito da janela
+   "Benefícios" da Ficha (os mesmos tons de ícone por tipo). Feito PRIMEIRO para o celular
+   (390 px): o valor grande, a conta em palavras, nada que role para o lado. Sem o JS, nada
+   daqui vale (marca nc-bc-ativo no body).
+
+   ── ONDE ELE ENTRA NO APEX ────────────────────────────────────────────────────────────────
+     Página 89 › CSS › File URLs:   #WORKSPACE_IMAGES#Natcorp_BeneficiosConsulta.css
+     CUIDADO: este é o arquivo-FONTE (.src.css). O gerador (gerar-app.mjs) cria o .css.
+
+   ── ÍNDICE ────────────────────────────────────────────────────────────────────────────────
+     [C1] As cores                                                PODE MEXER
+     [C2] Os originais por trás, o modo tabela
+     [C3] As seções
+     [C4] Os cartões
+     [C5] Os tons dos desenhos (os mesmos da Ficha)               PODE MEXER
+     [C6] Telas largas
+*/
+
+/* ═══ [C1] AS CORES ═════════════════════════════════════════════════════════════════════════ */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-bc-ativo {
+  --bc-roxo: var(--nc-roxo, #742B7F);
+  --bc-tinta: var(--nc-tinta, #1B1238);
+  --bc-texto: #2E2742;
+  --bc-fraco: #5A526E;
+  --bc-borda: var(--nc-nevoa, #E7E1F0);
+  --bc-lilas: var(--nc-nevoa2, #F3EEF8);
+  --bc-fundo: #F7F5FA;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-bc-ativo .nc-bc-ic {
+  flex: none !important;
+  width: 22px !important;
+  height: 22px !important;
+  fill: none !important;
+  stroke: currentColor !important;
+  stroke-width: 1.8 !important;
+  stroke-linecap: round !important;
+  stroke-linejoin: round !important;
+}
+
+/* ═══ [C2] OS ORIGINAIS POR TRÁS, O MODO TABELA ═════════════════════════════════════════════ */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-bc-ativo:not(.nc-bc-tabela) .nc-bc-original:not(#nc-bc-x):not(#nc-bc-y),
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-bc-ativo:not(.nc-bc-tabela) .nc-sticky-header-clone:not(#nc-bc-x):not(#nc-bc-y),
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-bc-ativo.nc-bc-tabela .nc-bc-conteudo,
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-bc-ativo.nc-bc-tabela .nc-bc > .nc-bc-modo,
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-bc-ativo .nc-bc-modo[hidden],
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-bc-ativo .nc-bc-lista[hidden] {
+  display: none !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-bc-ativo .nc-bc {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 18px !important;
+  max-width: 900px !important;
+  margin: 0 0 16px !important;
+  color: var(--bc-texto) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-bc-ativo .nc-bc-conteudo {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 26px !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-bc-ativo .nc-bc-modo {
+  display: inline-flex !important;
+  align-items: center !important;
+  align-self: flex-start !important;
+  gap: 8px !important;
+  min-height: 44px !important;
+  margin: 0 !important;
+  padding: 0 14px !important;
+  border: 1px solid var(--nc-borda-botao, rgba(116, 43, 127, .34)) !important;
+  border-radius: 12px !important;
+  background: #FFFFFF !important;
+  font-size: 15px !important;
+  font-weight: 700 !important;
+  color: var(--bc-roxo) !important;
+  cursor: pointer !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-bc-ativo .nc-bc-modo .nc-bc-ic {
+  width: 20px !important;
+  height: 20px !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-bc-ativo .nc-bc-modo--volta {
+  margin: 0 0 12px !important;
+}
+
+/* ═══ [C3] AS SEÇÕES ════════════════════════════════════════════════════════════════════════ */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-bc-ativo .nc-bc-cab {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  align-items: center !important;
+  gap: 4px 16px !important;
+  margin: 0 4px 12px !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-bc-ativo .nc-bc-cab h2 {
+  flex: 1 1 100% !important;
+  margin: 0 !important;
+  font-size: 24px !important;
+  font-weight: 800 !important;
+  line-height: 1.2 !important;
+  letter-spacing: -.01em !important;
+  color: var(--bc-tinta) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-bc-ativo .nc-bc-cab p {
+  flex: 1 1 auto !important;
+  margin: 0 !important;
+  font-size: 16px !important;
+  color: var(--bc-fraco) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-bc-ativo .nc-bc-soma {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-end !important;
+  padding: 8px 14px !important;
+  border-radius: 12px !important;
+  background: var(--bc-lilas) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-bc-ativo .nc-bc-soma span {
+  font-size: 13.5px !important;
+  font-weight: 700 !important;
+  color: var(--bc-fraco) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-bc-ativo .nc-bc-soma b {
+  font-size: 22px !important;
+  font-weight: 800 !important;
+  font-variant-numeric: tabular-nums !important;
+  color: var(--bc-roxo) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-bc-ativo .nc-bc-lista {
+  display: grid !important;
+  gap: 12px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  list-style: none !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-bc-ativo .nc-bc-lista--fim {
+  margin-top: 12px !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-bc-ativo .nc-bc-vazio {
+  margin: 0 !important;
+  padding: 22px 18px !important;
+  border: 1px dashed var(--bc-borda) !important;
+  border-radius: 16px !important;
+  background: #FFFFFF !important;
+  font-size: 16px !important;
+  text-align: center !important;
+  color: var(--bc-fraco) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-bc-ativo .nc-bc-mais {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  min-height: 44px !important;
+  margin: 14px 0 0 !important;
+  padding: 0 14px !important;
+  border: 0 !important;
+  border-radius: 12px !important;
+  background: var(--bc-lilas) !important;
+  font-size: 15px !important;
+  font-weight: 700 !important;
+  color: var(--bc-roxo) !important;
+  cursor: pointer !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-bc-ativo .nc-bc-mais .nc-bc-ic {
+  width: 18px !important;
+  height: 18px !important;
+  transition: transform .18s ease-out !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-bc-ativo .nc-bc-mais[aria-expanded="true"] .nc-bc-ic {
+  transform: rotate(90deg) !important;
+}
+
+/* ═══ [C4] OS CARTÕES ═══════════════════════════════════════════════════════════════════════ */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-bc-ativo .nc-bc-card {
+  display: flex !important;
+  align-items: flex-start !important;
+  gap: 14px !important;
+  margin: 0 !important;
+  padding: 16px !important;
+  border: 1px solid var(--bc-borda) !important;
+  border-radius: 18px !important;
+  background: #FFFFFF !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-bc-ativo .nc-bc-card--fim {
+  background: #FBFAFC !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-bc-ativo .nc-bc-card--fim :is(h3, .nc-bc-valor) {
+  color: var(--bc-fraco) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-bc-ativo .nc-bc-card--fim .nc-bc-desenho {
+  filter: grayscale(1) !important;
+  opacity: .7 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-bc-ativo .nc-bc-desenho {
+  flex: none !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 50px !important;
+  height: 50px !important;
+  border-radius: 14px !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-bc-ativo .nc-bc-desenho .nc-bc-ic {
+  width: 26px !important;
+  height: 26px !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-bc-ativo .nc-bc-txt {
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-bc-ativo .nc-bc-txt h3 {
+  margin: 2px 0 0 !important;
+  font-size: 18px !important;
+  font-weight: 800 !important;
+  line-height: 1.25 !important;
+  overflow-wrap: anywhere !important;
+  color: var(--bc-tinta) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-bc-ativo .nc-bc-sub {
+  margin: 2px 0 0 !important;
+  font-size: 14.5px !important;
+  line-height: 1.35 !important;
+  color: var(--bc-fraco) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-bc-ativo .nc-bc-valor {
+  display: block !important;
+  margin: 6px 0 0 !important;
+  font-size: 24px !important;
+  font-weight: 800 !important;
+  line-height: 1.15 !important;
+  font-variant-numeric: tabular-nums !important;
+  color: var(--bc-roxo) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-bc-ativo .nc-bc-semvalor {
+  display: inline-block !important;
+  margin: 8px 0 0 !important;
+  padding: 3px 10px !important;
+  border-radius: 999px !important;
+  background: var(--bc-fundo) !important;
+  font-size: 13.5px !important;
+  font-weight: 700 !important;
+  color: var(--bc-fraco) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-bc-ativo .nc-bc-contas {
+  margin: 8px 0 0 !important;
+  padding: 0 !important;
+  list-style: none !important;
+  border-top: 1px solid var(--bc-borda) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-bc-ativo .nc-bc-contas li {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  justify-content: space-between !important;
+  gap: 2px 12px !important;
+  margin: 0 !important;
+  padding: 7px 0 !important;
+  border-bottom: 1px solid var(--bc-borda) !important;
+  font-size: 14.5px !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-bc-ativo .nc-bc-contas li span {
+  color: var(--bc-fraco) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-bc-ativo .nc-bc-contas li b {
+  font-weight: 700 !important;
+  font-variant-numeric: tabular-nums !important;
+  color: var(--bc-tinta) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-bc-ativo .nc-bc-conta {
+  margin: 4px 0 0 !important;
+  font-size: 15px !important;
+  line-height: 1.4 !important;
+  color: var(--bc-texto) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-bc-ativo .nc-bc-datas {
+  display: flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  margin: 10px 0 0 !important;
+  font-size: 14.5px !important;
+  color: var(--bc-fraco) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-bc-ativo .nc-bc-datas .nc-bc-ic {
+  width: 17px !important;
+  height: 17px !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-bc-ativo .nc-bc-etiquetas {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 6px !important;
+  margin: 8px 0 0 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-bc-ativo .nc-bc-etiquetas span {
+  padding: 3px 10px !important;
+  border-radius: 999px !important;
+  background: var(--bc-lilas) !important;
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  color: var(--bc-roxo) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-bc-ativo .nc-bc-obs {
+  margin: 8px 0 0 !important;
+  padding: 8px 10px !important;
+  border-radius: 10px !important;
+  background: var(--bc-fundo) !important;
+  font-size: 14px !important;
+  color: var(--bc-texto) !important;
+}
+
+/* ═══ [C5] OS TONS DOS DESENHOS (OS MESMOS DA FICHA) ════════════════════════════════════════ */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-bc-ativo .nc-bc-tom--saude { background: #FBEAF2 !important; color: #A63F6E !important; }
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-bc-ativo .nc-bc-tom--dente { background: #E9F3FB !important; color: #2C6A9A !important; }
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-bc-ativo .nc-bc-tom--talher,
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-bc-ativo .nc-bc-tom--cesta { background: #FFF3DC !important; color: #8A5A00 !important; }
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-bc-ativo .nc-bc-tom--onibus,
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-bc-ativo .nc-bc-tom--carro { background: #E8EEFB !important; color: var(--nc-azul, #2C1A63) !important; }
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-bc-ativo .nc-bc-tom--halter { background: #E8F4EE !important; color: #1F7A52 !important; }
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-bc-ativo .nc-bc-tom--cofrinho,
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-bc-ativo .nc-bc-tom--escudo { background: #EFE8F7 !important; color: var(--nc-roxo, #742B7F) !important; }
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-bc-ativo .nc-bc-tom--capelo { background: #F3EDFA !important; color: #6B3FA0 !important; }
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-bc-ativo .nc-bc-tom--megafone,
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-bc-ativo .nc-bc-tom--presente { background: #F4F1F7 !important; color: #5A526E !important; }
+
+/* ═══ [C6] TELAS LARGAS ═════════════════════════════════════════════════════════════════════ */
+@media (min-width: 900px) {
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-bc-ativo .nc-bc-lista {
+    grid-template-columns: 1fr 1fr !important;
+    align-items: start !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-bc-ativo .nc-bc-cab h2 {
+    font-size: 28px !important;
+  }
+}
+
+/* ═══ [DESK] TELAS DE MESA — gerado por escala-desktop.py (não editar à mão; rode o script) ═══ */
+@media (min-width: 1024px) {
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-bc-ativo .nc-bc-modo {
+    font-size: 14px !important;
+    min-height: 38px !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-bc-ativo .nc-bc-cab h2 {
+    font-size: 23.5px !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-bc-ativo .nc-bc-cab p {
+    font-size: 15px !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-bc-ativo .nc-bc-soma b {
+    font-size: 19.5px !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-bc-ativo .nc-bc-vazio {
+    font-size: 15px !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-bc-ativo .nc-bc-mais {
+    font-size: 14px !important;
+    min-height: 38px !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-bc-ativo .nc-bc-txt h3 {
+    font-size: 16px !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-bc-ativo .nc-bc-valor {
+    font-size: 20px !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-bc-ativo .nc-bc-conta {
+    font-size: 14px !important;
+  }
+}
+/* ═══ fim do [DESK] ═══ */

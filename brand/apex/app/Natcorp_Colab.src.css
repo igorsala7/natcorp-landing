@@ -1,0 +1,245 @@
+/* ╔════════════════════════════════════════════════════════════════════════════════════════╗
+   ║  NATCORP · COLABORADOR E FILTROS  —  peça GLOBAL (CSS)                                   ║
+   ║  Entra no Natcorp_Style_Min.css (gerar-app.mjs, lista FOLHAS)                            ║
+   ╚════════════════════════════════════════════════════════════════════════════════════════╝
+
+   A aparência do que o Natcorp_Colab.js monta: o cartão curto do colaborador (e a região
+   escondida quando os campos vêm vazios) e os filtros de escolha múltipla (Select2).
+   Sem o JS, nada daqui vale (as classes nc-colab-* e nc-filtro* são postas por ele).
+
+   ── ÍNDICE ────────────────────────────────────────────────────────────────────────────────
+     [C1] A região Colaborador
+     [C2] Os filtros de escolha múltipla
+*/
+
+/* ═══ [C1] A REGIÃO COLABORADOR ═════════════════════════════════════════════════════════════ */
+@app .t-Region.nc-colab-reg.nc-colab-vazio:not(#nc-cb-x):not(#nc-cb-y) {
+  display: none;
+}
+
+@app .t-Region.nc-colab-reg:not(#nc-cb-x) > .t-Region-header,
+@app .t-Region.nc-colab-reg:not(#nc-cb-x) .t-Region-body > :not(.nc-colab) {
+  display: none;
+}
+
+@app .t-Region.nc-colab-reg:not(#nc-cb-x) .t-Region-body {
+  padding: 14px 16px;
+}
+
+@app .nc-colab {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+@app .nc-colab[hidden] {
+  display: none;
+}
+
+@app .nc-colab-foto {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: var(--nc-nevoa2, #F3EEF8);
+  box-shadow: 0 0 0 2px #FFFFFF, 0 0 0 3.5px var(--nc-nevoa, #E7E1F0);
+}
+
+@app .nc-colab-foto--ini svg {
+  width: 26px;
+  height: 26px;
+  fill: none;
+  stroke: var(--nc-roxo, #511C76);
+  stroke-width: 1.8;
+  stroke-linecap: round;
+}
+
+@app .nc-colab-txt {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-size: 14.5px;
+  line-height: 1.35;
+  color: #5A526E;
+}
+
+@app .nc-colab-txt b {
+  display: block;
+  font-size: 17px;
+  font-weight: 800;
+  overflow-wrap: anywhere;
+  color: var(--nc-tinta, #1B1238);
+}
+
+@app .nc-colab-txt span {
+  display: block;
+}
+
+@app .nc-colab .t-Button.nc-colab-bt:not([style*="none"]) {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  margin: 0;
+  padding: 0;
+  border-radius: 12px;
+}
+
+/* ═══ [C2] OS FILTROS DE ESCOLHA MÚLTIPLA ═══════════════════════════════════════════════════
+   Rótulo em cima; o campo e o botão Filtrar na mesma linha; a dica embaixo.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@app .t-Form-fieldContainer.nc-filtro:not(#nc-cb-x):not([style*="none"]) {
+  display: block;
+  width: 100%;
+  max-width: 760px;
+  margin: 0 0 12px;
+  padding: 0;
+}
+
+@app .t-Form-fieldContainer.nc-filtro:not(#nc-cb-x) > .t-Form-labelContainer,
+@app .t-Form-fieldContainer.nc-filtro:not(#nc-cb-x) > .t-Form-inputContainer {
+  display: block;
+  width: 100%;
+  max-width: none;
+  flex: none;
+  padding: 0;
+  text-align: left;
+}
+
+@app .t-Form-fieldContainer.nc-filtro:not(#nc-cb-x) .t-Form-label {
+  display: block;
+  margin: 0 0 6px;
+  padding: 0;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--nc-tinta, #1B1238);
+}
+
+@app .nc-filtro .t-Form-itemWrapper {
+  display: flex;
+  align-items: stretch;
+  gap: 8px;
+}
+
+@app .nc-filtro .select2-container {
+  flex: 1 1 auto;
+  width: auto;
+  min-width: 0;
+}
+
+@app .nc-filtro .select2-container-multi .select2-choices {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  min-height: 46px;
+  padding: 5px 8px;
+  border: 1px solid #D9D2E4;
+  border-radius: 12px;
+  background: #FFFFFF;
+  background-image: none;
+  box-shadow: none;
+}
+
+@app .nc-filtro .select2-container-multi.select2-container-active .select2-choices {
+  border-color: var(--nc-roxo, #511C76);
+  box-shadow: 0 0 0 3px rgba(var(--nc-t-roxo-rgb, 81, 28, 118), .15);
+}
+
+@app .nc-filtro .select2-container-multi .select2-choices .select2-search-choice {
+  display: inline-flex;
+  align-items: center;
+  margin: 0;
+  padding: 5px 26px 5px 10px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--nc-nevoa2, #F3EEF8);
+  background-image: none;
+  box-shadow: none;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--nc-roxo, #511C76);
+}
+
+@app .nc-filtro .select2-container-multi .select2-search-choice-close {
+  top: 50%;
+  left: auto;
+  right: 8px;
+  transform: translateY(-50%);
+}
+
+@app .nc-filtro .select2-container-multi .select2-choices .select2-search-field input {
+  min-height: 32px;
+  padding: 0 6px;
+  font-size: 15px;
+}
+
+@app .nc-filtro .t-Button.nc-filtro-bt:not(#nc-cb-x):not(#nc-cb-y) {
+  width: auto;
+  min-width: 0;
+  max-width: none;
+  height: auto;
+}
+
+@app .nc-filtro .t-Button.nc-filtro-bt .t-Icon {
+  margin: 0;
+}
+
+@app .nc-filtro .t-Button.nc-filtro-bt:not([style*="none"]) {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 46px;
+  margin: 0;
+  padding: 0 16px;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+@app .nc-filtro .nc-filtro-ic {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.9;
+  stroke-linejoin: round;
+}
+
+@app .nc-filtro-dica {
+  margin: 6px 2px 0;
+  font-size: 13.5px;
+  color: #6E6882;
+}
+
+/* ═══ [DESK] TELAS DE MESA — gerado por escala-desktop.py (não editar à mão; rode o script) ═══ */
+@media (min-width: 1024px) {
+  @app .nc-colab-txt b {
+    font-size: 16px;
+  }
+
+  @app .t-Form-fieldContainer.nc-filtro:not(#nc-cb-x) .t-Form-label {
+    font-size: 14px;
+  }
+
+  @app .nc-filtro .select2-container-multi .select2-choices {
+    min-height: 40px;
+  }
+
+  @app .nc-filtro .select2-container-multi .select2-choices .select2-search-field input {
+    font-size: 14px;
+  }
+
+  @app .nc-filtro .t-Button.nc-filtro-bt:not([style*="none"]) {
+    font-size: 14px;
+    min-height: 40px;
+  }
+}
+/* ═══ fim do [DESK] ═══ */

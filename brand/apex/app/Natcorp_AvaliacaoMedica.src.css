@@ -1,0 +1,774 @@
+/* ╔════════════════════════════════════════════════════════════════════════════════════════╗
+   ║  NATCORP · AVALIAÇÃO MÉDICA  —  a "roupa" das telas (CSS)                                ║
+   ║  App 2937 (Medicina Ocupacional) · Página 105 (Avaliação Médica) e 102 (Respostas)       ║
+   ╚════════════════════════════════════════════════════════════════════════════════════════╝
+
+   Primeira vez num arquivo destes? Leia antes o manual: brand/apex/MANUAL-APEX.md (parte 1).
+
+   ── O QUE ESTE ARQUIVO FAZ ────────────────────────────────────────────────────────────────
+   A aparência do que o Natcorp_AvaliacaoMedica.js monta: na 105, quem é avaliado, o progresso
+   e as perguntas com a resposta na própria linha; na 102 (a janela de uma pergunta), a
+   pergunta grande e as alternativas em botões. Sem o JS, nada daqui vale (marca nc-am-ativo).
+
+   ── ONDE ELE ENTRA NO APEX ────────────────────────────────────────────────────────────────
+     Páginas 105 e 102 › CSS › File URLs:   #WORKSPACE_IMAGES#Natcorp_AvaliacaoMedica.css
+     CUIDADO: este é o arquivo-FONTE (.src.css). O gerador (gerar-app.mjs) cria o
+     Natcorp_AvaliacaoMedica.css que sobe para o APEX. Edite ESTE arquivo.
+
+   ── ÍNDICE ────────────────────────────────────────────────────────────────────────────────
+     [C1] As cores                                              PODE MEXER
+     [C2] O que sai da vista
+     [C3] Página 105: quem é avaliado
+     [C4] Página 105: o progresso
+     [C5] Página 105: as perguntas e as respostas
+     [C6] Página 105: a lista original (quando o processo ainda não foi importado)
+     [C7] Página 102: a janela de uma pergunta
+     [C8] Botões
+     [C9] Celular
+*/
+
+/* ═══ [C1] AS CORES ═════════════════════════════════════════════════════════════════════════ */
+@app.nc-am-ativo {
+  --nc-am-borda: var(--nc-nevoa, #E9E5F1);
+  --nc-am-fundo: var(--nc-off, #F7F5FA);
+  --nc-am-texto: var(--nc-tinta, #1B1238);
+  --nc-am-fraco: var(--nc-grafite, #4A4460);
+  --nc-am-bom: var(--nc-bom, #1F7A52);
+  --nc-am-ruim: var(--nc-ruim, #B8323F);
+}
+
+/* ═══ [C2] O QUE SAI DA VISTA ═══════════════════════════════════════════════════════════════ */
+@app.nc-am-ativo .nc-am-guardada:not(#nc-am-x),
+@app.nc-am-ativo [hidden]:not(#nc-am-x) {
+  display: none;
+}
+
+@app.nc-am-ativo .nc-am ::selection,
+@app.nc-am-ativo .nc-am-janela ::selection {
+  background: color-mix(in srgb, var(--nc-roxo, #511C76) 18%, #fff);
+}
+
+@app.nc-am-ativo .nc-am-ic {
+  flex: 0 0 auto;
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* ═══ [C3] PÁGINA 105: QUEM É AVALIADO ══════════════════════════════════════════════════════ */
+@app.nc-am-ativo .nc-am {
+  max-width: 980px;
+  margin: 0 auto 32px;
+  color: var(--nc-am-texto);
+}
+
+@app.nc-am-ativo .nc-am-cab {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 12px 16px;
+  margin: 0 0 16px;
+  padding: 18px 20px;
+  border: 1px solid var(--nc-am-borda);
+  border-radius: 16px;
+  background: #fff;
+}
+
+@app.nc-am-ativo .nc-am-avatar {
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--nc-roxo, #511C76) 10%, #fff);
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--nc-roxo, #511C76);
+}
+
+@app.nc-am-ativo .nc-am-cab-txt {
+  flex: 1 1 380px;
+  min-width: 0;
+}
+
+@app.nc-am-ativo .nc-am-cab h1 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1.25;
+  letter-spacing: -.01em;
+  color: var(--nc-am-texto);
+}
+
+@app.nc-am-ativo .nc-am-cod {
+  font-weight: 500;
+  color: var(--nc-am-fraco);
+}
+
+@app.nc-am-ativo .nc-am-cab dl {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 20px;
+  margin: 8px 0 0;
+}
+
+@app.nc-am-ativo .nc-am-cab dl > div {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
+@app.nc-am-ativo .nc-am-cab dt {
+  margin: 0;
+  font-size: 12px;
+  color: var(--nc-am-fraco);
+}
+
+@app.nc-am-ativo .nc-am-cab dd {
+  margin: 0;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--nc-am-texto);
+}
+
+@app.nc-am-ativo .nc-am-cab-acoes {
+  display: flex;
+  gap: 8px;
+}
+
+/* ═══ [C4] PÁGINA 105: O PROGRESSO ══════════════════════════════════════════════════════════ */
+@app.nc-am-ativo .nc-am-progresso {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  display: grid;
+  grid-template-columns: auto minmax(120px, 1fr) auto;
+  align-items: center;
+  gap: 10px 18px;
+  margin: 0 0 14px;
+  padding: 12px 16px;
+  border: 1px solid var(--nc-am-borda);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, .96);
+  box-shadow: 0 6px 18px -14px rgba(27, 18, 56, .4);
+}
+
+@app.nc-am-ativo .nc-am-prog-txt {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+@app.nc-am-ativo .nc-am-feitas {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--nc-am-texto);
+  font-variant-numeric: tabular-nums;
+}
+
+@app.nc-am-ativo .nc-am-falta {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--nc-am-fraco);
+}
+
+@app.nc-am-ativo .nc-am-falta[data-ok="sim"] {
+  color: var(--nc-am-bom);
+}
+
+@app.nc-am-ativo .nc-am-barra {
+  height: 8px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: var(--nc-am-fundo);
+}
+
+@app.nc-am-ativo .nc-am-barra span {
+  display: block;
+  width: var(--nc-am-p, 0%);
+  height: 100%;
+  border-radius: 999px;
+  background: var(--nc-roxo, #511C76);
+  transition: width .35s cubic-bezier(.2, .8, .2, 1);
+}
+
+@app.nc-am-ativo .nc-am-prog-acoes {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+@app.nc-am-ativo .nc-am-filtro {
+  display: inline-flex;
+  gap: 3px;
+  padding: 3px;
+  border-radius: 10px;
+  background: var(--nc-am-fundo);
+}
+
+@app.nc-am-ativo .nc-am-filtro button {
+  height: 32px;
+  margin: 0;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--nc-am-fraco);
+  cursor: pointer;
+}
+
+@app.nc-am-ativo .nc-am-filtro button[aria-pressed="true"] {
+  background: #fff;
+  color: var(--nc-roxo, #511C76);
+  box-shadow: 0 1px 2px rgba(27, 18, 56, .1);
+}
+
+/* ═══ [C5] PÁGINA 105: AS PERGUNTAS E AS RESPOSTAS ══════════════════════════════════════════
+   Uma pergunta por bloco; a ativa (a que o teclado responde) ganha a borda roxa; a respondida,
+   o número verde. Subperguntas (03.01) recuadas sob a pergunta-mãe.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-am-ativo .nc-am-carregando,
+@app.nc-am-ativo .nc-am-sem {
+  margin: 0;
+  padding: 18px;
+  font-size: 14px;
+  color: var(--nc-am-fraco);
+}
+
+@app.nc-am-ativo .nc-am-perguntas {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+@app.nc-am-ativo .nc-am-perg {
+  margin: 0;
+  padding: 16px 18px;
+  border: 1px solid var(--nc-am-borda);
+  border-radius: 14px;
+  background: #fff;
+  position: relative;
+  outline: 0;
+  scroll-margin: 90px 0 24px;
+  transition: border-color .15s, box-shadow .15s, background-color .15s;
+}
+
+/* ─── SUBPERGUNTAS (03.01, 03.02 dependem da 03) ─────────────────────────────────────────────
+   Ficam DENTRO do cartão da mãe, na coluna do conteúdo dela, ligadas por um FIO que sai do número
+   da mãe e faz uma curva até cada filha (como respostas de um comentário). O comprimento do fio é
+   medido pelo JS (fios: --nc-am-fio-x/-ini/-h; --nc-am-cot = distância do fio à filha); a curva
+   é só CSS. PODE MEXER: cores (--nc-am-fio) e o recuo
+   (--nc-am-recuo); o resto acompanha.
+   ─────────────────────────────────────────────────────────────────────────────────────────── */
+@app.nc-am-ativo .nc-am {
+  --nc-am-fio: color-mix(in srgb, var(--nc-roxo, #511C76) 26%, #fff);
+  --nc-am-recuo: 46px;
+}
+
+@app.nc-am-ativo .nc-am-filhos {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 16px 0 0 var(--nc-am-recuo);
+  padding: 0;
+  list-style: none;
+}
+
+@app.nc-am-ativo .nc-am-perg.is-filha {
+  padding: 12px 14px;
+  border-color: transparent;
+  border-radius: 12px;
+  background: var(--nc-am-fundo);
+  scroll-margin: 110px 0 24px;
+}
+
+@app.nc-am-ativo .nc-am-perg.is-filha:hover:not(.is-ativa) {
+  background: color-mix(in srgb, var(--nc-roxo, #511C76) 5%, #fff);
+}
+
+@app.nc-am-ativo .nc-am-perg.is-filha.is-ativa {
+  background: #fff;
+}
+
+@app.nc-am-ativo .nc-am-perg.is-filha > .nc-am-perg-cab {
+  margin-bottom: 10px;
+}
+
+@app.nc-am-ativo .nc-am-perg.is-filha .nc-am-texto {
+  font-size: 15px;
+}
+
+/* as respostas da filha alinham com o texto dela (o número "03.01" é mais largo) */
+@app.nc-am-ativo .nc-am-perg.is-filha > .nc-am-perg-cab .nc-am-num {
+  min-width: 50px;
+}
+
+@app.nc-am-ativo .nc-am-perg.is-filha > :is(.nc-am-opcoes, .nc-am-livre, .nc-am-ctx) {
+  padding-left: 62px;
+}
+
+/* "03." apagado, "01" em destaque */
+@app.nc-am-ativo .nc-am-num i {
+  font-style: normal;
+  font-weight: 500;
+  opacity: .55;
+}
+
+/* o fio: do número da mãe até a última filha */
+@app.nc-am-ativo .nc-am-perg.tem-filhos::before {
+  content: "";
+  position: absolute;
+  left: calc(var(--nc-am-fio-x, 35px) - .75px);
+  top: var(--nc-am-fio-ini, 44px);
+  width: 1.5px;
+  height: var(--nc-am-fio-h, 0px);
+  border-radius: 1px;
+  background: var(--nc-am-fio);
+  pointer-events: none;
+}
+
+/* a curva até cada filha (desce do fio e entra na filha na altura do número dela) */
+@app.nc-am-ativo .nc-am-filhos > .nc-am-perg::after {
+  content: "";
+  position: absolute;
+  left: calc(-1 * var(--nc-am-cot, 29px) - .75px);
+  top: 0;
+  width: calc(var(--nc-am-cot, 29px) - 2px);
+  height: 25px;
+  border-left: 1.5px solid var(--nc-am-fio);
+  border-bottom: 1.5px solid var(--nc-am-fio);
+  border-bottom-left-radius: 12px;
+  pointer-events: none;
+}
+
+/* a mãe só como contexto (filtro Faltam, já respondida, com filha pendente): recolhida */
+@app.nc-am-ativo .nc-am-ctx {
+  display: none;
+}
+
+@app.nc-am-ativo .nc-am-perg.is-contexto > .nc-am-ctx {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: -4px 0 0;
+  padding-left: 46px;
+  font-size: 13.5px;
+  color: var(--nc-am-bom);
+}
+
+@app.nc-am-ativo .nc-am-perg.is-contexto > .nc-am-ctx b {
+  font-weight: 600;
+  color: var(--nc-am-texto);
+}
+
+@app.nc-am-ativo .nc-am-perg.is-contexto > :is(.nc-am-opcoes, .nc-am-livre, .nc-am-sem) {
+  display: none;
+}
+
+@app.nc-am-ativo .nc-am-perg.is-contexto > .nc-am-perg-cab .nc-am-texto {
+  font-weight: 500;
+  color: var(--nc-am-fraco);
+}
+
+@app.nc-am-ativo .nc-am-perg.is-ativa {
+  border-color: color-mix(in srgb, var(--nc-roxo, #511C76) 45%, #fff);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--nc-roxo, #511C76) 10%, transparent);
+}
+
+@app.nc-am-ativo .nc-am-perg-cab {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin: 0 0 12px;
+}
+
+@app.nc-am-ativo .nc-am-num {
+  flex: 0 0 auto;
+  min-width: 34px;
+  padding: 3px 8px;
+  border-radius: 8px;
+  background: var(--nc-am-fundo);
+  font-size: 13px;
+  font-weight: 700;
+  text-align: center;
+  color: var(--nc-am-fraco);
+  font-variant-numeric: tabular-nums;
+}
+
+@app.nc-am-ativo .nc-am-perg.is-respondida > .nc-am-perg-cab .nc-am-num {
+  background: color-mix(in srgb, var(--nc-am-bom) 12%, #fff);
+  color: var(--nc-am-bom);
+}
+
+@app.nc-am-ativo .nc-am-texto {
+  flex: 1 1 auto;
+  margin: 2px 0 0;
+  font-size: 15.5px;
+  font-weight: 600;
+  line-height: 1.45;
+  color: var(--nc-am-texto);
+}
+
+@app.nc-am-ativo .nc-am-estado {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 5px;
+  margin-top: 3px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--nc-am-fraco);
+  white-space: nowrap;
+}
+
+@app.nc-am-ativo .nc-am-estado .nc-am-ic {
+  width: 15px;
+  height: 15px;
+}
+
+@app.nc-am-ativo .nc-am-estado[data-s="salvo"] {
+  color: var(--nc-am-bom);
+}
+
+@app.nc-am-ativo .nc-am-estado[data-s="erro"] {
+  color: var(--nc-am-ruim);
+}
+
+@app.nc-am-ativo .nc-am-link {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  font: inherit;
+  text-decoration: underline;
+  color: inherit;
+  cursor: pointer;
+}
+
+/* as alternativas: botões grandes, o número do teclado à esquerda */
+@app.nc-am-ativo .nc-am-opcoes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding-left: 46px;
+}
+
+@app.nc-am-ativo .nc-am-op {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+  margin: 0;
+  padding: 8px 16px 8px 10px;
+  border: 1.5px solid #D9D3E5;
+  border-radius: 11px;
+  background: #fff;
+  font-size: 14.5px;
+  font-weight: 600;
+  line-height: 1.3;
+  text-align: left;
+  color: var(--nc-am-texto);
+  cursor: pointer;
+  transition: border-color .12s, background .12s, color .12s;
+}
+
+@app.nc-am-ativo .nc-am-op kbd {
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  background: var(--nc-am-fundo);
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--nc-am-fraco);
+}
+
+@app.nc-am-ativo .nc-am-op:hover {
+  border-color: color-mix(in srgb, var(--nc-roxo, #511C76) 45%, #fff);
+}
+
+@app.nc-am-ativo .nc-am-op:focus-visible {
+  outline: 2px solid var(--nc-roxo, #511C76);
+  outline-offset: 2px;
+}
+
+@app.nc-am-ativo .nc-am-op[aria-checked="true"] {
+  border-color: var(--nc-roxo, #511C76);
+  background: var(--nc-roxo, #511C76);
+  color: #fff;
+}
+
+@app.nc-am-ativo .nc-am-op[aria-checked="true"] kbd {
+  background: rgba(255, 255, 255, .2);
+  color: #fff;
+}
+
+@app.nc-am-ativo .nc-am-op:active {
+  transform: translateY(1px);
+}
+
+/* a resposta dissertativa (cresce com o texto) */
+@app.nc-am-ativo .nc-am-livre {
+  padding-left: 46px;
+}
+
+@app.nc-am-ativo .nc-am-livre textarea {
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
+  height: var(--nc-am-alt, 64px);
+  min-height: 64px;
+  margin: 0;
+  padding: 10px 12px;
+  border: 1px solid #D9D3E5;
+  border-radius: 10px;
+  background-color: #fff;
+  font: inherit;
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--nc-am-texto);
+  resize: vertical;
+}
+
+@app.nc-am-ativo .nc-am-livre textarea:focus {
+  border-color: var(--nc-roxo, #511C76);
+  outline: 0;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--nc-roxo, #511C76) 16%, transparent);
+}
+
+/* a caixa do "Descreva": aparece sob as alternativas quando ela é a escolhida */
+@app.nc-am-ativo .nc-am-descreva {
+  margin-top: 10px;
+}
+
+@app.nc-am-ativo .nc-am-pe {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin: 20px 0 0;
+}
+
+/* ═══ [C6] PÁGINA 105: A LISTA ORIGINAL (SEM O PROCESSO) ════════════════════════════════════ */
+@app.nc-am-ativo .nc-am-lista-original .a-ListView-item a {
+  padding: 14px 16px;
+  font-size: 15px;
+}
+
+/* ═══ [C7] PÁGINA 102: A JANELA DE UMA PERGUNTA ═════════════════════════════════════════════ */
+@app.nc-am-ativo.nc-am-102 .t-Dialog-body {
+  padding: 22px 26px 26px;
+}
+
+@app.nc-am-ativo .nc-am-janela {
+  color: var(--nc-am-texto);
+}
+
+@app.nc-am-ativo .nc-am-j-num {
+  margin: 0 0 6px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--nc-roxo, #511C76);
+  font-variant-numeric: tabular-nums;
+}
+
+@app.nc-am-ativo .nc-am-j-texto {
+  margin: 0 0 20px;
+  font-size: 21px;
+  font-weight: 700;
+  line-height: 1.35;
+  letter-spacing: -.01em;
+  color: var(--nc-am-texto);
+  text-wrap: balance;
+}
+
+@app.nc-am-ativo .nc-am-opcoes--janela {
+  flex-direction: column;
+  align-items: stretch;
+  padding: 0;
+}
+
+/* o anel de foco por dentro: a região do APEX corta o que passa da borda */
+@app.nc-am-ativo .nc-am-opcoes--janela .nc-am-op:focus-visible {
+  outline-offset: -3px;
+}
+
+@app.nc-am-ativo .nc-am-opcoes--janela .nc-am-op {
+  min-height: 52px;
+  font-size: 16px;
+}
+
+/* o rótulo ("Resposta" / "Descreva") em cima da caixa, não ao lado */
+@app.nc-am-ativo .nc-am-campo-texto:not(#nc-am-x) {
+  display: block;
+  margin: 14px 0 0;
+  padding: 0;
+}
+
+@app.nc-am-ativo .nc-am-campo-texto:not(#nc-am-x) .t-Form-labelContainer {
+  width: auto;
+  padding: 0 0 6px;
+  text-align: left;
+}
+
+@app.nc-am-ativo .nc-am-campo-texto:not(#nc-am-x) .t-Form-label {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--nc-am-texto);
+}
+
+@app.nc-am-ativo .nc-am-campo-texto:not(#nc-am-x) .t-Form-inputContainer {
+  width: 100%;
+  padding: 0;
+}
+
+@app.nc-am-ativo .nc-am-campo-texto textarea {
+  min-height: 140px;
+  border-radius: 10px;
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+@app.nc-am-ativo .nc-am-j-estado {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 20px;
+  margin: 12px 0 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--nc-am-bom);
+}
+
+@app.nc-am-ativo.nc-am-102 .t-Dialog-footer .t-ButtonRegion-wrap {
+  align-items: center;
+}
+
+@app.nc-am-ativo.nc-am-102 .t-Dialog-footer .t-ButtonRegion-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+/* ═══ [C8] BOTÕES ═══════════════════════════════════════════════════════════════════════════ */
+@app.nc-am-ativo .nc-am-bt {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 40px;
+  margin: 0;
+  padding: 0 14px;
+  border: 1px solid var(--nc-borda-botao);
+  border-radius: 10px;
+  background: #fff;
+  box-shadow: none;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--nc-am-texto);
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+@app.nc-am-ativo .nc-am-bt .t-Button-label {
+  padding: 0;
+  font: inherit;
+  color: inherit;
+}
+
+@app.nc-am-ativo .nc-am-bt:hover {
+  border-color: color-mix(in srgb, var(--nc-roxo, #511C76) 35%, #fff);
+  background: color-mix(in srgb, var(--nc-roxo, #511C76) 4%, #fff);
+}
+
+@app.nc-am-ativo .nc-am-bt:focus-visible,
+@app.nc-am-ativo .nc-am-filtro button:focus-visible {
+  outline: 2px solid var(--nc-roxo, #511C76);
+  outline-offset: 2px;
+}
+
+@app.nc-am-ativo .nc-am-bt--primario {
+  border-color: var(--nc-roxo, #511C76);
+  background: var(--nc-roxo, #511C76);
+  color: #fff;
+}
+
+@app.nc-am-ativo .nc-am-bt--primario:hover {
+  border-color: var(--nc-azul, #2C1A63);
+  background: var(--nc-azul, #2C1A63);
+}
+
+@app.nc-am-ativo .nc-am-bt--leve {
+  border-color: transparent;
+  background: transparent;
+}
+
+@app.nc-am-ativo .nc-am-bt--perigo {
+  color: var(--nc-am-ruim);
+}
+
+/* ═══ [C9] CELULAR ══════════════════════════════════════════════════════════════════════════ */
+@media (max-width: 720px) {
+  @app.nc-am-ativo .nc-am-progresso {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 8px;
+  }
+
+  @app.nc-am-ativo .nc-am-prog-acoes {
+    flex-wrap: wrap;
+  }
+
+  @app.nc-am-ativo .nc-am-perg {
+    padding: 14px;
+  }
+
+  @app.nc-am-ativo .nc-am {
+    --nc-am-recuo: 22px;
+  }
+
+  @app.nc-am-ativo .nc-am-perg.is-filha {
+    padding: 12px;
+  }
+
+  @app.nc-am-ativo .nc-am-perg.is-filha > :is(.nc-am-opcoes, .nc-am-livre, .nc-am-ctx),
+  @app.nc-am-ativo .nc-am-perg.is-contexto > .nc-am-ctx {
+    padding-left: 0;
+  }
+
+  @app.nc-am-ativo .nc-am-opcoes,
+  @app.nc-am-ativo .nc-am-livre {
+    padding-left: 0;
+  }
+
+  @app.nc-am-ativo .nc-am-op {
+    flex: 1 1 100%;
+  }
+
+  @app.nc-am-ativo .nc-am-perg-cab {
+    flex-wrap: wrap;
+  }
+
+  @app.nc-am-ativo .nc-am-estado {
+    flex-basis: 100%;
+    padding-left: 46px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  @app.nc-am-ativo .nc-am *,
+  @app.nc-am-ativo .nc-am-janela * {
+    transition: none;
+  }
+}

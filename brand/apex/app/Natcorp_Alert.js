@@ -1,0 +1,63 @@
+/* Natcorp — troca o alert() do navegador pela caixa do APEX (apex.message.alert), que o
+   Natcorp_Login.css desenha com a identidade da marca.
+
+   Vale para a página E PARA TUDO O QUE ELA ABRE EM IFRAME no mesmo domínio (as outras
+   aplicações do painel, as modais): basta carregar este arquivo na aplicação principal.
+   A caixa abre sempre na janela DE CIMA — centrada na tela inteira e com o CSS da marca,
+   mesmo quando a aplicação de dentro não tem o APEX ou a folha Natcorp.
+
+   Duas camadas:
+   1. Na janela onde o arquivo carrega, a troca é imediata — vale inclusive para o alert()
+      chamado ao abrir a página.
+   2. Nos iframes que NÃO carregam o arquivo, uma varredura a cada 25 ms troca o alert de
+      cada página nova. Pega todo alert disparado por clique/ação; um alert disparado no
+      instante em que a página do iframe abre pode escapar (a página às vezes termina de
+      carregar antes da varredura passar). Para esse caso, o arquivo precisa carregar
+      também dentro do iframe — por isso ele pode ir colado no fim do iframe_handling.js,
+      que as aplicações de dentro já carregam.
+
+   Diferença para o nativo: a página NÃO para esperando o OK. */
+(function () {
+  'use strict';
+
+  var MARCA = '__ncAlert';
+
+  /* A janela mais alta que a gente consegue tocar e que tem o apex.message.
+     Iframe de outro domínio lança erro ao ser tocado: aí fica a própria janela. */
+  function janelaDaCaixa(w) {
+    var melhor = null;
+    try {
+      for (var atual = w; atual; atual = atual === atual.parent ? null : atual.parent) {
+        if (atual.apex && atual.apex.message && atual.apex.message.alert) melhor = atual;
+      }
+    } catch (e) { /* subiu até um pai de outro domínio */ }
+    return melhor;
+  }
+
+  /* a marca vai no DOCUMENTO: a janela de um iframe pode ser reaproveitada na navegação,
+     o documento nunca */
+  function trocar(w) {
+    try {
+      if (!w || w.document[MARCA]) return;
+      var nativo = w.alert;
+      w.alert = function (mensagem) {
+        var alvo = janelaDaCaixa(w);
+        if (!alvo) return nativo.call(w, mensagem); // nenhum APEX à vista: o de sempre
+        alvo.apex.message.alert(String(mensagem == null ? '' : mensagem), function () {});
+      };
+      w.document[MARCA] = true;
+    } catch (e) { /* iframe de outro domínio: não é nosso */ }
+  }
+
+  /* Percorre os iframes (e os iframes dos iframes). Cada navegação traz um documento novo,
+     sem a marca, e a varredura seguinte o troca (camada 2, acima). */
+  function varrer(w) {
+    trocar(w);
+    var quadros;
+    try { quadros = w.frames; } catch (e) { return; }
+    for (var i = 0; i < quadros.length; i++) varrer(quadros[i]);
+  }
+
+  varrer(window);
+  setInterval(function () { if (window.frames.length) varrer(window); }, 25);
+})();

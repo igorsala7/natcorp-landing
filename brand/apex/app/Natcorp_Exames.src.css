@@ -1,0 +1,1498 @@
+/* ╔════════════════════════════════════════════════════════════════════════════════════════╗
+   ║  NATCORP · REQUISIÇÃO DE EXAMES  —  a "roupa" da tela (CSS)                               ║
+   ║  App 2937 · Página 61 · Medicina Ocupacional                                              ║
+   ╚════════════════════════════════════════════════════════════════════════════════════════╝
+
+   Primeira vez num arquivo destes? Leia antes o manual: brand/apex/MANUAL-APEX.md (parte 1).
+
+   ── O QUE ESTE ARQUIVO FAZ ────────────────────────────────────────────────────────────────
+   Dá a aparência da página de Requisição de Exames (aberta pela aba "Requisição de Exames"):
+   cores, tamanhos, espaços, bordas, e como ela se arruma no computador e no celular. Ele NÃO
+   muda nada de lugar: quem muda as coisas de lugar é o arquivo-irmão Natcorp_Exames.js. Os
+   dois trabalham juntos:
+     o JS monta "os cartões dos tipos de exame"  →  este arquivo diz como os cartões se parecem.
+   Sem o JS, este arquivo não faz nada (todas as regras dependem da marca nc-ex que o JS põe
+   na página).
+   Cores (pedido de 30/09): o roxo cheio fica SÓ no registro da agenda (o "bilhete" com dia,
+   horário e médico); a abertura e o cabeçalho do pedido são cartões claros — veja [C15].
+
+   ── ONDE ELE ENTRA NO APEX ────────────────────────────────────────────────────────────────
+     Página 61 › CSS › File URLs:   #WORKSPACE_IMAGES#Natcorp_Exames.css
+     Este é o arquivo-FONTE (.src.css). O gerador gerar-app.mjs cria dele o Natcorp_Exames.css
+     que sobe para o APEX, pondo o @app por extenso e os !important (manual, parte 2).
+     Edite ESTE arquivo, não o .css gerado: o gerado é reescrito a cada geração.
+
+   ── ÍNDICE: as partes deste arquivo (Ctrl+F pelo código entre colchetes) ──────────────────
+     [C1]  O que sai de cena e as abas              (o que o JS esconde some da tela)
+     [C2]  A abertura do pedido novo                ← montada pelo JS em [J3]
+     [C3]  Os passos (1 2 3 4)                      ← montados pelo JS em [J3]
+     [C4]  Os cartões: a base comum                 ← usados pelo JS em [J4] e [J5]
+     [C5]  O cabeçalho do pedido gravado            ← montado pelo JS em [J8]
+     [C6]  O caminho da aprovação                   ← montado pelo JS em [J9]
+     [C7]  Os campos: nome em cima da caixa
+     [C8]  Passo 1: candidato ou colaborador         ← montado pelo JS em [J4]
+     [C9]  Passo 2: os tipos de exame               ← montado pelo JS em [J5]
+     [C10] Passo 3: o cartão da consulta            ← montado pelo JS em [J6]
+     [C11] Cabeçalho (o que é desta página) e linha de ações   ← JS em [J8]
+     [C12] Botões
+     [C13] A barra do pé                            ← montada pelo JS em [J7]
+     [C14] Telas médias e celular
+     [C15] Tom claro (30/09): o roxo cheio só no registro da agenda
+           CUIDADO: [C15] vem no fim de propósito e VENCE as partes de cima para as mesmas
+           peças. Mudou a cor da abertura ou do cabeçalho e nada aconteceu? Mude em [C15].
+
+   ── RECEITAS RÁPIDAS ──────────────────────────────────────────────────────────────────────
+     Quero mudar uma cor
+       → use uma das cores da marca, pelo nome: var(--nc-roxo), var(--nc-grafite)… A lista
+         completa, com amostras, está no manual (parte 3). Assim a cor acompanha o tema que
+         o usuário escolheu em "Cores". Evite escrever cores soltas, como #511C76.
+     Quero aumentar ou diminuir um texto        → procure font-size na parte certa.
+     Quero mais ou menos espaço                  → padding (espaço por DENTRO da caixa) e
+                                                   margin (espaço por FORA, até a vizinha).
+     Os cartões dos tipos de exame estão altos/baixos → [C9], .nc-ex-cartao (min-height).
+     Algo ficou bom no computador e ruim no celular → [C14]: o que está dentro de
+                                                   @media (max-width: 639px) só vale no celular.
+
+   ── COMO LER UM ARQUIVO CSS EM 30 SEGUNDOS ────────────────────────────────────────────────
+     Cada regra tem duas partes:     QUEM { COMO; }
+       @app.nc-ex .nc-ex-cartao {          ← QUEM: o "seletor", diz em que pedaço da tela vale
+         border-radius: 14px;              ← COMO: propriedade: valor;  (cantos arredondados)
+         gap: 12px;                        ←       espaço entre o ícone e o texto
+       }
+     .nome-com-ponto       uma "classe": uma etiqueta posta num pedaço da tela (pelo APEX ou
+                           pelo JS). .nc-ex-cartao é cada cartão de tipo de exame.
+     @app                  atalho que dá prioridade às nossas regras sobre as do tema do APEX.
+                           No arquivo que sobe para o APEX ele aparece por extenso, como
+                           html body:is(.t-PageBody…):not(#nc-a1):not(#nc-a2) — é a mesma coisa.
+     :not(#nc-ex-x)…       peso extra, para vencer uma regra do tema. Pode ignorar ao ler.
+     !important            no arquivo que sobe, toda linha ganha um: é o mesmo "vencer o tema".
+     @media (max-width: 639px) { … }   as regras de dentro só valem em telas até 639px (celular).
+     var(--nc-roxo)        uma cor da marca, pelo nome (muda junto com o tema escolhido).
+     px                    pixels, o tamanho de um pontinho da tela. 16px é o texto normal.
+     Toda linha COMO termina em ;   e todo { é fechado por um }. Não apague esses sinais.
+*/
+
+/* ═══ [C1] O QUE SAI DE CENA E AS ABAS ══════════════════════════════════════════════════
+   O que o JS marcou para esconder (nc-ex-fora, a coluna vazia, a aprovação vazia), a lista
+   original do tipo de exame (no lugar dela ficam os cartões) e os cabeçalhos das regiões que
+   ganharam um passo numerado. display: none = não aparece.
+   As abas do APEX (Informações · Aprovadores) viram uma página só.
+   04/10: no pedido gravado (nc-ex-leitura), a região que ainda tem campo editável pela página
+   (.nc-ex-edita, marcada pelo JS [J10]: observação/horário sem agenda, data do desligamento)
+   continua à vista.
+   ════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-ex .nc-ex-fora:not(#nc-ex-x):not(#nc-ex-y),
+@app.nc-ex .nc-ex-col-vazia:not(#nc-ex-x):not(#nc-ex-y),
+@app.nc-ex .nc-ex-aprov--vazio:not(#nc-ex-x):not(#nc-ex-y),
+@app.nc-ex .nc-ex-tipo-exame select:not(#nc-ex-x):not(#nc-ex-y),
+@app.nc-ex .nc-ex-tipo-exame .t-Form-itemWrapper:not(#nc-ex-x):not(#nc-ex-y),
+@app.nc-ex .nc-ex-passo-reg > .t-Region-header:not(#nc-ex-x):not(#nc-ex-y),
+@app.nc-ex .nc-ex-aprov > .t-Region-header:not(#nc-ex-x):not(#nc-ex-y),
+@app.nc-ex .nc-ex-aprov .t-Report:not(#nc-ex-x):not(#nc-ex-y),
+@app.nc-ex .apex-rds > li:not(#nc-ex-x):not(#nc-ex-y),
+@app.nc-ex.nc-ex-leitura .nc-ex-reg:not(.nc-ex-edita):not(#nc-ex-x):not(#nc-ex-y),
+@app.nc-ex.nc-ex-leitura .nc-ex-lateral:not(#nc-ex-x):not(#nc-ex-y) {
+  display: none;
+}
+
+/* as abas (Informações · Aprovadores) viram uma página só; a lista das abas some como caixa */
+@app.nc-ex :is(.apex-rds-container, .apex-rds):not(#nc-ex-x):not(#nc-ex-y) {
+  display: contents;
+}
+
+@app.nc-ex .apex-rds-container:not(:has(.t-Region)):not(#nc-ex-x):not(#nc-ex-y) {
+  display: none;
+}
+
+@app.nc-ex .nc-ex-aprov:not(.nc-ex-aprov--vazio):not(#nc-ex-x):not(#nc-ex-y) {
+  display: block;
+  margin: 0 0 16px;
+}
+
+@app.nc-ex .col.nc-ex-col-cheia:not(#nc-ex-x):not(#nc-ex-y) {
+  flex: 0 0 100%;
+  max-width: 100%;
+  width: 100%;
+}
+
+
+@app.nc-ex .nc-ex-ic {
+  flex: none;
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.9;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* ═══ [C2] A ABERTURA DO PEDIDO NOVO ════════════════════════════════════════════════════
+   Montada pelo JS em [J3]. .nc-ex-abertura é o bloco; .nc-ex-caminho, as 3 etapas.
+   A cor final do bloco está em [C15].
+   ════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-ex .nc-ex-abertura {
+  margin: 0 0 18px;
+  padding: 20px 22px;
+  border-radius: 18px;
+  background:
+    radial-gradient(110% 130% at 100% 0%, rgba(var(--nc-t-rosa-rgb, 201, 87, 136), .32) 0%, rgba(var(--nc-t-rosa-rgb, 201, 87, 136), 0) 55%),
+    linear-gradient(135deg, var(--nc-azul) 0%, var(--nc-roxo) 72%);
+  color: #fff;
+}
+
+@app.nc-ex .nc-ex-abertura-tit {
+  margin: 0 0 4px;
+  font-size: 20px;
+  font-weight: 800;
+  line-height: 1.25;
+  color: #fff;
+}
+
+@app.nc-ex .nc-ex-abertura > p {
+  margin: 0 0 14px;
+  font-size: 14.5px;
+  color: rgba(255, 255, 255, .88);
+}
+
+@app.nc-ex .nc-ex-caminho {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+@app.nc-ex .nc-ex-caminho li {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, .12);
+  font-size: 13px;
+  line-height: 1.35;
+  color: rgba(255, 255, 255, .88);
+}
+
+@app.nc-ex .nc-ex-caminho li span:last-child {
+  display: flex;
+  flex-direction: column;
+}
+
+@app.nc-ex .nc-ex-caminho b {
+  font-size: 14px;
+  color: #fff;
+}
+
+@app.nc-ex .nc-ex-cp-ic {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  background: #fff;
+  color: var(--nc-roxo);
+}
+
+
+/* ═══ [C3] OS PASSOS (1 2 3 4) ══════════════════════════════════════════════════════════
+   Montados pelo JS em [J3]. .nc-ex-passo é a linha do passo; .nc-ex-passo-n, o número.
+   ════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-ex .nc-ex-passo {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin: 6px 0 12px;
+}
+
+@app.nc-ex .nc-ex-passo-n {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: var(--nc-roxo);
+  font-size: 14px;
+  font-weight: 800;
+  color: #fff;
+}
+
+@app.nc-ex .nc-ex-passo-txt {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+@app.nc-ex .nc-ex-passo-t {
+  font-size: 16.5px;
+  font-weight: 800;
+  line-height: 1.3;
+  color: var(--nc-tinta);
+}
+
+@app.nc-ex .nc-ex-passo-sub {
+  font-size: 13.5px;
+  line-height: 1.4;
+  color: var(--nc-grafite);
+}
+
+/* ═══ [C4] OS CARTÕES: A BASE COMUM ═════════════════════════════════════════════════════
+   O desenho comum dos cartões de escolha (.nc-ex-cartao): borda, cantos, a marca de
+   escolhido (.is-on). O tamanho próprio dos cartões dos tipos de exame está em [C9].
+   ════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-ex .nc-ex-objeto .t-Form-labelContainer {
+  display: none;
+}
+
+@app.nc-ex .nc-ex-cartoes {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  width: 100%;
+}
+
+@app.nc-ex .nc-ex-cartao {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  min-height: 108px;
+  padding: 14px 40px 14px 14px;
+  border: 1.5px solid var(--nc-nevoa);
+  border-radius: 14px;
+  background: #fff;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color .15s, background-color .15s, box-shadow .15s;
+}
+
+@app.nc-ex .nc-ex-cartao:hover {
+  border-color: rgba(var(--nc-t-roxo-rgb, 81, 28, 118), .45);
+  background: var(--nc-quase);
+}
+
+@app.nc-ex .nc-ex-cartao:focus-visible {
+  outline: none;
+  box-shadow: var(--nc-anel);
+}
+
+@app.nc-ex .nc-ex-cartao.is-on {
+  border-color: var(--nc-roxo);
+  background: #F6F1FB;
+  box-shadow: 0 0 0 3px rgba(var(--nc-t-roxo-rgb, 81, 28, 118), .12);
+}
+
+@app.nc-ex .nc-ex-cartao-ic {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  background: var(--nc-nevoa2);
+  color: var(--nc-roxo);
+}
+
+@app.nc-ex .nc-ex-cartao-ic .nc-ex-ic {
+  width: 22px;
+  height: 22px;
+}
+
+@app.nc-ex .nc-ex-cartao.is-on .nc-ex-cartao-ic {
+  background: var(--nc-roxo);
+  color: #fff;
+}
+
+@app.nc-ex .nc-ex-cartao-txt {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+@app.nc-ex .nc-ex-cartao-nome {
+  font-size: 17px;
+  font-weight: 800;
+  color: var(--nc-tinta);
+}
+
+@app.nc-ex .nc-ex-cartao-longo {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--nc-roxo);
+}
+
+@app.nc-ex .nc-ex-cartao-para {
+  margin-top: 4px;
+  font-size: 13px;
+  line-height: 1.4;
+  color: var(--nc-grafite);
+}
+
+@app.nc-ex .nc-ex-cartao-marca {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 2px var(--nc-nevoa);
+  color: transparent;
+}
+
+@app.nc-ex .nc-ex-cartao-marca .nc-ex-ic {
+  width: 14px;
+  height: 14px;
+  stroke-width: 2.8;
+}
+
+@app.nc-ex .nc-ex-cartao.is-on .nc-ex-cartao-marca {
+  background: var(--nc-roxo);
+  box-shadow: none;
+  color: #fff;
+}
+
+
+/* ═══ [C5] O CABEÇALHO DO PEDIDO GRAVADO ════════════════════════════════════════════════
+   Montado pelo JS em [J8]. .nc-ex-hero é o cabeçalho; .nc-ex-sit, a etiqueta da situação:
+   --bom (verde) · --ruim (vermelho) · --neutro (cinza) · --espera (amarelo).
+   O que é só desta página está em [C11]; a cor final do bloco, em [C15].
+   ════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-ex .nc-ex-hero {
+  margin: 0 0 16px;
+  padding: 18px 20px;
+  border-radius: 18px;
+  background:
+    radial-gradient(110% 130% at 100% 0%, rgba(var(--nc-t-rosa-rgb, 201, 87, 136), .28) 0%, rgba(var(--nc-t-rosa-rgb, 201, 87, 136), 0) 55%),
+    linear-gradient(135deg, var(--nc-azul) 0%, var(--nc-roxo) 72%);
+  color: #fff;
+}
+
+@app.nc-ex .nc-ex-hero-topo {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+@app.nc-ex .nc-ex-hero-n {
+  margin: 0;
+  font-size: 13.5px;
+  color: rgba(255, 255, 255, .8);
+}
+
+@app.nc-ex .nc-ex-hero-n b {
+  color: #fff;
+}
+
+@app.nc-ex .nc-ex-hero-tit {
+  margin: 8px 0 0;
+  font-size: 20px;
+  font-weight: 800;
+  line-height: 1.25;
+  color: #fff;
+}
+
+@app.nc-ex .nc-ex-hero-tit span {
+  font-size: 15px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, .8);
+}
+
+@app.nc-ex .nc-ex-hero-para {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 10px 0 0;
+  font-size: 15px;
+  color: #fff;
+}
+
+@app.nc-ex .nc-ex-hero-para .nc-ex-ic {
+  color: var(--nc-realce);
+}
+
+@app.nc-ex .nc-ex-hero-quem {
+  margin: 10px 0 0;
+  padding-top: 10px;
+  border-top: 1px solid rgba(255, 255, 255, .18);
+  font-size: 13.5px;
+  color: rgba(255, 255, 255, .8);
+}
+
+@app.nc-ex .nc-ex-hero-quem b {
+  color: #fff;
+}
+
+@app.nc-ex .nc-ex-sit {
+  display: inline-flex;
+  align-items: center;
+  height: 26px;
+  padding: 0 12px;
+  border-radius: 999px;
+  background: #fff;
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--nc-grafite);
+}
+
+@app.nc-ex .nc-ex-sit--espera { background: var(--nc-alerta); color: #3D2A00; }
+@app.nc-ex .nc-ex-sit--bom { color: var(--nc-bom); }
+@app.nc-ex .nc-ex-sit--ruim { color: var(--nc-ruim); }
+@app.nc-ex .nc-ex-sit--neutro { background: rgba(255, 255, 255, .85); }
+
+
+/* ═══ [C6] O CAMINHO DA APROVAÇÃO ═══════════════════════════════════════════════════════
+   Montado pelo JS em [J9]. .nc-ex-ap é a faixa; .nc-ex-ap-p, cada aprovador:
+   .is-ok aprovou · .is-nao reprovou · .is-vez é a vez · .is-fila na fila.
+   ════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-ex .t-Region.nc-ex-aprov {
+  border: 0;
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: inset 0 0 0 1px var(--nc-nevoa), 0 10px 24px -22px rgba(var(--nc-t-azul-rgb, 44, 26, 99), .5);
+}
+
+@app.nc-ex .t-Region.nc-ex-aprov > .t-Region-bodyWrap > .t-Region-body {
+  padding: 14px 18px;
+}
+
+@app.nc-ex .nc-ex-ap {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px 20px;
+}
+
+@app.nc-ex .nc-ex-ap:empty,
+@app.nc-ex .nc-ex-ap-ver {
+  display: none;
+}
+
+@app.nc-ex .nc-ex-ap-cab {
+  display: grid;
+  gap: 2px;
+}
+
+@app.nc-ex .nc-ex-ap-cab p {
+  margin: 0;
+}
+
+@app.nc-ex .nc-ex-ap-rot {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--nc-grafite);
+}
+
+@app.nc-ex .nc-ex-ap-resumo {
+  font-size: 14.5px;
+  color: var(--nc-grafite);
+}
+
+@app.nc-ex .nc-ex-ap-resumo b { color: var(--nc-tinta); }
+@app.nc-ex .nc-ex-ap--vez .nc-ex-ap-resumo b:last-child { color: #8A5A00; }
+@app.nc-ex .nc-ex-ap--ok .nc-ex-ap-resumo b { color: var(--nc-bom); }
+@app.nc-ex .nc-ex-ap--nao .nc-ex-ap-resumo b { color: #A32020; }
+
+@app.nc-ex .nc-ex-ap-passos {
+  display: flex;
+  grid-column: 1 / -1;
+  margin: 0;
+  padding: 4px 0 0;
+  overflow-x: auto;
+  list-style: none;
+}
+
+@app.nc-ex .nc-ex-ap-p {
+  position: relative;
+  display: flex;
+  flex: 1 1 0;
+  flex-direction: column;
+  align-items: center;
+  min-width: 104px;
+  padding: 0 4px;
+  text-align: center;
+}
+
+@app.nc-ex .nc-ex-ap-p:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  top: 13px;
+  left: calc(50% + 17px);
+  right: calc(-50% + 17px);
+  height: 2px;
+  border-radius: 2px;
+  background: #E3DDEC;
+}
+
+@app.nc-ex .nc-ex-ap-p.is-ok:not(:last-child)::after { background: var(--nc-bom); }
+
+@app.nc-ex .nc-ex-ap-marca {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  margin: 0 0 6px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: inset 0 0 0 2px #D9D3E3;
+}
+
+@app.nc-ex .nc-ex-ap-marca svg {
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: #fff;
+  stroke-width: 2.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+@app.nc-ex .nc-ex-ap-p.is-ok .nc-ex-ap-marca { background: var(--nc-bom); box-shadow: none; }
+@app.nc-ex .nc-ex-ap-p.is-nao .nc-ex-ap-marca { background: #C0392B; box-shadow: none; }
+@app.nc-ex .nc-ex-ap-p.is-vez .nc-ex-ap-marca { background: #E0A100; box-shadow: 0 0 0 5px rgba(224, 161, 0, .18); }
+
+@app.nc-ex .nc-ex-ap-texto {
+  display: grid;
+  justify-items: center;
+  gap: 1px;
+  max-width: 100%;
+}
+
+@app.nc-ex .nc-ex-ap-nome {
+  max-width: 100%;
+  overflow: hidden;
+  font-size: 13.5px;
+  font-weight: 800;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--nc-tinta);
+}
+
+@app.nc-ex .nc-ex-ap-estado {
+  font-size: 12px;
+  color: var(--nc-grafite);
+}
+
+@app.nc-ex .nc-ex-ap-p.is-ok .nc-ex-ap-estado { color: var(--nc-bom); }
+@app.nc-ex .nc-ex-ap-p.is-nao .nc-ex-ap-estado { color: #A32020; font-weight: 700; }
+@app.nc-ex .nc-ex-ap-p.is-vez .nc-ex-ap-estado { color: #8A5A00; font-weight: 700; }
+@app.nc-ex .nc-ex-ap-p.is-fila :is(.nc-ex-ap-nome, .nc-ex-ap-estado) { color: #8A8497; }
+
+@app.nc-ex .nc-ex-decisao {
+  display: flex;
+  flex-wrap: wrap;
+  grid-column: 1 / -1;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px 16px;
+  padding: 12px 0 0;
+  border-top: 1px solid var(--nc-nevoa2);
+}
+
+@app.nc-ex .nc-ex-decisao-txt {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 700;
+  color: #8A5A00;
+}
+
+@app.nc-ex .nc-ex-decisao-botoes {
+  display: flex;
+  gap: 8px;
+}
+
+@app.nc-ex .nc-ex-decisao-botoes .t-Button.nc-ex-aprovar:not(#nc-ex-x):not(#nc-ex-y) { border: 0; background: var(--nc-bom); color: #fff; }
+@app.nc-ex .nc-ex-decisao-botoes .t-Button.nc-ex-reprovar:not(#nc-ex-x):not(#nc-ex-y) { border: 1.5px solid #E7B7B7; background: #fff; box-shadow: none; color: #A32020; }
+
+@app.nc-ex .nc-ex-ap-justs {
+  display: grid;
+  grid-column: 1 / -1;
+  gap: 6px;
+}
+
+@app.nc-ex .nc-ex-ap-just {
+  margin: 0;
+  padding: 8px 12px;
+  border: 0;
+  border-radius: 10px;
+  background: var(--nc-quase);
+  font-size: 14px;
+}
+
+@app.nc-ex .nc-ex-ap-just.is-nao { background: #FDF0F0; }
+
+
+/* ═══ [C7] OS CAMPOS: NOME EM CIMA DA CAIXA ═════════════════════════════════════════════
+   Nas regiões dos passos, o nome do campo fica em cima da caixa (lê-se de cima para baixo,
+   também no celular). A região do APEX tinha os nomes à esquerda.
+   CUIDADO: os campos têm uma margem de -8px que o tema compensa com 8px nas colunas do nome e
+   da caixa. Ao mexer aqui, mantenha esses 8px — senão a primeira letra some.
+   ════════════════════════════════════════════════════════════════════════════════════════ */
+/* ---------- os campos: nome em cima da caixa (lê-se de cima para baixo, também no celular) ---------- */
+@app.nc-ex .nc-ex-reg .t-Form-fieldContainer:not(.t-Form-fieldContainer--stacked):not(#nc-ex-x):not(#nc-ex-y) {
+  display: block;
+}
+
+/* 04/10: o campo que a ação dinâmica esconde (style inline) continua escondido: com !important, o
+   display: block acima trazia de volta data do desligamento, cargo/função/local propostos e o
+   grupo de exames fora das situações em que a página os mostra */
+@app.nc-ex .nc-ex-reg .t-Form-fieldContainer[style*="none"]:not(#nc-ex-x):not(#nc-ex-y):not(#nc-ex-z) {
+  display: none;
+}
+
+@app.nc-ex .nc-ex-reg .t-Form-fieldContainer:not(.t-Form-fieldContainer--stacked) > .t-Form-labelContainer:not(#nc-ex-x):not(#nc-ex-y) {
+  width: 100%;
+  max-width: none;
+  padding: 0 8px 6px;   /* os 8 px de lado compensam a margem -8 px do contêiner (a Skin) */
+  text-align: left;
+}
+
+@app.nc-ex .nc-ex-reg .t-Form-fieldContainer:not(.t-Form-fieldContainer--stacked) > .t-Form-inputContainer:not(#nc-ex-x):not(#nc-ex-y) {
+  width: 100%;
+  max-width: none;
+}
+
+@app.nc-ex .nc-ex-reg .t-Form-label {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--nc-tinta);
+}
+
+/* ═══ [C8] PASSO 1: CANDIDATO OU COLABORADOR ════════════════════════════════════════════
+   Montado pelo JS em [J4]. Os dois rádios do APEX viram dois cartões (.nc-ex-op).
+   ════════════════════════════════════════════════════════════════════════════════════════ */
+/* ---------- 1. candidato ou colaborador: dois cartões ----------
+   a Skin prende o grupo de rádios (pílula) em 38 px: aqui ele cresce com os cartões */
+@app.nc-ex .nc-ex-tipo-pessoa .t-Form-inputContainer:not(#nc-ex-x):not(#nc-ex-y):not(#nc-ex-z) {
+  padding: 0 8px;   /* compensa a margem -8 px do contêiner (a Skin) */
+}
+
+@app.nc-ex .nc-ex-tipo-pessoa .t-Form-itemWrapper:not(#nc-ex-x):not(#nc-ex-y):not(#nc-ex-z),
+@app.nc-ex .nc-ex-tipo-pessoa .t-Form-inputContainer:not(#nc-ex-x):not(#nc-ex-y):not(#nc-ex-z) {
+  display: block;
+  height: auto;
+  min-height: 0;
+  max-height: none;
+  border: 0;
+  background: none;
+  box-shadow: none;
+  overflow: visible;
+}
+
+@app.nc-ex .nc-ex-tipo-pessoa :is(.apex-item-group, .apex-item-grid):not(#nc-ex-x):not(#nc-ex-y):not(#nc-ex-z) {
+  display: block;
+  height: auto;
+  max-height: none;
+  min-height: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  box-shadow: none;
+  overflow: visible;
+}
+
+/* nesta versão os rádios vêm dentro de .apex-item-grid-row (38 px, conteúdo cortado): a grade de
+   dois cartões vai nela */
+@app.nc-ex .nc-ex-tipo-pessoa .apex-item-grid-row:not(#nc-ex-x):not(#nc-ex-y):not(#nc-ex-z),
+@app.nc-ex .nc-ex-tipo-pessoa .apex-item-group:not(:has(.apex-item-grid-row)):not(#nc-ex-x):not(#nc-ex-y):not(#nc-ex-z) {
+  max-height: none;
+  min-height: 0;
+  overflow: visible;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  height: auto;
+  padding: 0;
+  border: 0;
+  background: none;
+  box-shadow: none;
+}
+
+@app.nc-ex .nc-ex-tipo-pessoa .apex-item-option:not(#nc-ex-x):not(#nc-ex-y):not(#nc-ex-z) {
+  float: none;
+  display: block;
+  position: relative;
+  width: auto;
+  min-width: 0;
+  height: auto;
+  margin: 0;
+  padding: 0;
+}
+
+@app.nc-ex .nc-ex-tipo-pessoa .apex-item-option input:not(#nc-ex-x):not(#nc-ex-y) {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+@app.nc-ex .nc-ex-tipo-pessoa .apex-item-option label:not(#nc-ex-x):not(#nc-ex-y):not(#nc-ex-z) {
+  display: block;
+  width: 100%;
+  height: auto;
+  min-height: 0;
+  margin: 0;
+  padding: 12px 14px;
+  border: 1.5px solid var(--nc-nevoa);
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: none;
+  color: var(--nc-tinta);
+  text-align: left;
+  cursor: pointer;
+  transition: border-color .15s, background-color .15s;
+}
+
+@app.nc-ex .nc-ex-tipo-pessoa .apex-item-option input:checked + label:not(#nc-ex-x):not(#nc-ex-y):not(#nc-ex-z) {
+  border-color: var(--nc-roxo);
+  background: #F6F1FB;
+  box-shadow: 0 0 0 3px rgba(var(--nc-t-roxo-rgb, 81, 28, 118), .12);
+}
+
+@app.nc-ex .nc-ex-tipo-pessoa .apex-item-option input:focus-visible + label:not(#nc-ex-x):not(#nc-ex-y) {
+  box-shadow: var(--nc-anel);
+}
+
+@app.nc-ex .nc-ex-tipo-pessoa .apex-item-option input:disabled + label:not(#nc-ex-x):not(#nc-ex-y) {
+  cursor: default;
+}
+
+@app.nc-ex .nc-ex-op {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+@app.nc-ex .nc-ex-op > .nc-ex-ic {
+  width: 38px;
+  height: 38px;
+  padding: 8px;
+  border-radius: 12px;
+  background: var(--nc-nevoa2);
+  color: var(--nc-roxo);
+}
+
+@app.nc-ex input:checked + label .nc-ex-op > .nc-ex-ic {
+  background: var(--nc-roxo);
+  color: #fff;
+}
+
+@app.nc-ex .nc-ex-op-txt {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  white-space: normal;
+}
+
+@app.nc-ex .nc-ex-op-txt b {
+  font-size: 15.5px;
+  font-weight: 800;
+}
+
+@app.nc-ex .nc-ex-op-txt span {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--nc-grafite);
+}
+
+/* ═══ [C9] PASSO 2: OS TIPOS DE EXAME ═══════════════════════════════════════════════════
+   Montado pelo JS em [J5]. O tamanho dos cartões de tipo de exame (.nc-ex-cartao) e dos
+   textos dentro deles.
+   ════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-ex .nc-ex-tipo-exame .t-Form-labelContainer:not(#nc-ex-x):not(#nc-ex-y) {
+  display: none;
+}
+
+@app.nc-ex .nc-ex-cartoes {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+@app.nc-ex .nc-ex-cartao {
+  min-height: 96px;
+}
+
+@app.nc-ex .nc-ex-cartao-nome {
+  font-size: 15.5px;
+}
+
+@app.nc-ex .nc-ex-vazio {
+  grid-column: 1 / -1;
+  margin: 0;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: #FFF4D6;
+  font-size: 14px;
+  font-weight: 600;
+  color: #6B4A00;
+}
+
+@app.nc-ex .nc-ex-aso {
+  display: block;
+  margin-top: 4px;
+  font-size: 12.5px;
+  color: var(--nc-grafite);
+}
+
+/* ═══ [C10] PASSO 3: O CARTÃO DA CONSULTA ═══════════════════════════════════════════════
+   Montado pelo JS em [J6]. .nc-ex-consulta-vazia = "Ainda sem dia e horário";
+   .nc-ex-bilhete = o registro da agenda (dia em destaque, hora, médico). A cor final dos
+   dois está em [C15].
+   ════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-ex .nc-ex-consulta {
+  margin: 0 0 16px;
+}
+
+@app.nc-ex .nc-ex-consulta-vazia {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 16px;
+  padding: 16px 18px;
+  border: 1.5px dashed #CFC5E2;
+  border-radius: 16px;
+  background: var(--nc-quase);
+}
+
+@app.nc-ex .nc-ex-consulta-vazia > .nc-ex-ic {
+  width: 34px;
+  height: 34px;
+  color: var(--nc-roxo);
+}
+
+@app.nc-ex .nc-ex-consulta-vazia > div {
+  flex: 1 1 200px;
+}
+
+@app.nc-ex .nc-ex-consulta-tit {
+  margin: 0;
+  font-size: 15.5px;
+  font-weight: 800;
+  color: var(--nc-tinta);
+}
+
+@app.nc-ex .nc-ex-consulta-sub {
+  margin: 2px 0 0;
+  font-size: 13.5px;
+  color: var(--nc-grafite);
+}
+
+@app.nc-ex .nc-ex-bilhete {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 14px 18px;
+  padding: 14px 16px;
+  border: 1.5px solid var(--nc-roxo);
+  border-radius: 16px;
+  background: #FBF8FE;
+}
+
+@app.nc-ex .nc-ex-bilhete-dia {
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  align-items: center;
+  width: 76px;
+  padding: 6px 0 8px;
+  overflow: hidden;
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: 0 8px 18px -12px rgba(var(--nc-t-roxo-rgb, 81, 28, 118), .55), inset 0 0 0 1px var(--nc-nevoa);
+}
+
+@app.nc-ex .nc-ex-bilhete-mes {
+  align-self: stretch;
+  margin: -6px 0 4px;
+  padding: 4px 0;
+  background: var(--nc-roxo);
+  font-size: 12px;
+  font-weight: 800;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color: #fff;
+}
+
+@app.nc-ex .nc-ex-bilhete-n {
+  font-size: 30px;
+  font-weight: 800;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  color: var(--nc-tinta);
+}
+
+@app.nc-ex .nc-ex-bilhete-ano {
+  margin-top: 2px;
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--nc-grafite);
+}
+
+@app.nc-ex .nc-ex-bilhete-txt {
+  flex: 1 1 200px;
+  min-width: 0;
+}
+
+@app.nc-ex .nc-ex-bilhete-txt p {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 4px;
+  font-size: 14px;
+  color: var(--nc-grafite);
+}
+
+@app.nc-ex .nc-ex-bilhete-sem:not(#nc-ex-x) {
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--nc-tinta);
+}
+
+@app.nc-ex .nc-ex-bilhete-hora b {
+  font-size: 16px;
+  font-variant-numeric: tabular-nums;
+  color: var(--nc-roxo);
+}
+
+@app.nc-ex .nc-ex-bilhete-txt .nc-ex-ic {
+  width: 16px;
+  height: 16px;
+  color: var(--nc-roxo);
+}
+
+/* o bilhete no cabeçalho escuro */
+@app.nc-ex .nc-ex-hero-consulta {
+  margin: 14px 0 0;
+}
+
+@app.nc-ex .nc-ex-bilhete--hero {
+  border-color: rgba(255, 255, 255, .22);
+  background: rgba(255, 255, 255, .1);
+}
+
+@app.nc-ex .nc-ex-bilhete--hero .nc-ex-bilhete-txt p,
+@app.nc-ex .nc-ex-bilhete--hero .nc-ex-bilhete-sem:not(#nc-ex-x) {
+  color: #fff;
+}
+
+@app.nc-ex .nc-ex-bilhete--hero .nc-ex-bilhete-hora b {
+  color: #fff;
+}
+
+@app.nc-ex .nc-ex-bilhete--hero .nc-ex-ic {
+  color: var(--nc-realce);
+}
+
+@app.nc-ex .nc-ex-hero-consulta .nc-ex-consulta-vazia {
+  border-color: rgba(255, 255, 255, .3);
+  background: rgba(255, 255, 255, .08);
+}
+
+@app.nc-ex .nc-ex-hero-consulta .nc-ex-consulta-tit {
+  color: #fff;
+}
+
+@app.nc-ex .nc-ex-hero-consulta .nc-ex-consulta-sub {
+  color: rgba(255, 255, 255, .8);
+}
+
+@app.nc-ex .nc-ex-hero-consulta .nc-ex-consulta-vazia > .nc-ex-ic {
+  color: var(--nc-realce);
+}
+
+/* ═══ [C11] CABEÇALHO (O QUE É DESTA PÁGINA), COLUNA LATERAL E LINHA DE AÇÕES ═══════════
+   Montados pelo JS em [J8]. O título do exame, a coluna lateral que sai (o conteúdo ocupa
+   a largura toda) e .nc-ex-acoes, a linha com Situação, Salvar, Cancelar e Voltar.
+   ════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-ex .nc-ex-hero-tit {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+@app.nc-ex .nc-ex-hero-tit > .nc-ex-ic {
+  width: 24px;
+  height: 24px;
+  color: var(--nc-realce);
+}
+
+/* o título do exame: o span leva o texto (a regra herdada do PPP deixaria pequeno e apagado) */
+@app.nc-ex .nc-ex-hero-tit > span:not(#nc-ex-x) {
+  font-size: inherit;
+  font-weight: 800;
+  color: #fff;
+}
+
+@app.nc-ex .nc-ex-hero-tit small {
+  font-size: 14px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, .8);
+}
+
+@app.nc-ex .nc-ex-hero-emp {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 8px 0 0;
+  font-size: 14px;
+  color: rgba(255, 255, 255, .85);
+}
+
+@app.nc-ex .nc-ex-hero-emp b,
+@app.nc-ex .nc-ex-hero-extra b {
+  color: #fff;
+}
+
+@app.nc-ex .nc-ex-hero-emp .nc-ex-ic {
+  width: 16px;
+  height: 16px;
+  color: var(--nc-realce);
+}
+
+@app.nc-ex .nc-ex-hero-extra {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 18px;
+  margin: 10px 0 0;
+  padding: 0;
+  list-style: none;
+  font-size: 13.5px;
+}
+
+@app.nc-ex .nc-ex-hero-extra li {
+  display: flex;
+  gap: 6px;
+  color: rgba(255, 255, 255, .8);
+}
+
+@app.nc-ex .nc-ex-hero-motivo {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin: 12px 0 0;
+  padding: 0;
+  border: 0;
+  font-size: 14.5px;
+  line-height: 1.45;
+  color: #fff;
+}
+
+@app.nc-ex .nc-ex-hero-motivo .nc-ex-ic {
+  margin-top: 1px;
+  color: var(--nc-realce);
+}
+
+/* ---------- a coluna lateral vazia sai; o conteúdo ocupa a largura toda ---------- */
+@app.nc-ex.nc-ex-sem-lateral .t-Body-side:not(#nc-ex-x):not(#nc-ex-y) {
+  display: none;
+}
+
+@app.nc-ex.nc-ex-sem-lateral :is(.t-Body-main, .t-Body-content, .t-Body-contentInner):not(#nc-ex-x):not(#nc-ex-y) {
+  margin-left: 0;
+}
+
+/* ---------- a linha de ações do pedido gravado ---------- */
+@app.nc-ex .nc-ex-acoes {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 8px;
+  margin: 0 0 16px;
+}
+
+/* a Situação na linha de ações: nome em cima, a lista do tamanho dos botões */
+@app.nc-ex .nc-ex-acoes .nc-ex-acao-sit:not(#nc-ex-x):not(#nc-ex-y) {
+  display: block;
+  width: 220px;
+  margin: 0 8px 0 0;
+  padding: 0;
+}
+
+@app.nc-ex .nc-ex-acoes .nc-ex-acao-sit > .t-Form-labelContainer:not(#nc-ex-x):not(#nc-ex-y) {
+  width: 100%;
+  max-width: none;
+  padding: 0 0 4px;
+  text-align: left;
+}
+
+@app.nc-ex .nc-ex-acoes .nc-ex-acao-sit > .t-Form-inputContainer:not(#nc-ex-x):not(#nc-ex-y) {
+  width: 100%;
+  max-width: none;
+  padding: 0;
+}
+
+@app.nc-ex .nc-ex-acoes:empty {
+  display: none;
+}
+
+@app.nc-ex .nc-ex-acoes .t-Button:not(#nc-ex-x):not(#nc-ex-y) {
+  width: auto;
+  margin: 0;
+}
+
+@app.nc-ex .nc-ex-acoes .t-Button.nc-ex-cancelar:not(#nc-ex-x):not(#nc-ex-y) {
+  border: 1.5px solid #E7B7B7;
+  background: #fff;
+  box-shadow: none;
+  color: #A32020;
+}
+
+@app.nc-ex .nc-ex-acoes .t-Button.nc-ex-cancelar .t-Button-label:not(#nc-ex-x):not(#nc-ex-y),
+@app.nc-ex .nc-ex-acoes .t-Button.nc-ex-cancelar .t-Icon:not(#nc-ex-x):not(#nc-ex-y) {
+  color: #A32020;
+}
+
+/* ═══ [C12] BOTÕES ══════════════════════════════════════════════════════════════════════
+   .nc-ex-bt são os botões criados pelo JS ("Escolher dia e horário", "Enviar pedido"…):
+   --forte = cheio (a ação principal) · --claro = contornado.
+   ════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-ex .nc-ex-bt {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 42px;
+  padding: 0 16px;
+  border: 0;
+  border-radius: 10px;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+@app.nc-ex .nc-ex-bt:focus-visible {
+  outline: none;
+  box-shadow: var(--nc-anel);
+}
+
+@app.nc-ex .nc-ex-bt--forte {
+  background: var(--nc-roxo);
+  color: #fff;
+  box-shadow: 0 8px 18px -10px rgba(var(--nc-t-roxo-rgb, 81, 28, 118), .8);
+}
+
+@app.nc-ex .nc-ex-bt--forte:hover {
+  background: #45176A /*reserva*/;
+  background: oklch(from #45176A l calc(c * var(--nc-t-croma, 1)) calc(h + var(--nc-t-giro, 0)));
+}
+
+@app.nc-ex .nc-ex-bt--claro {
+  background: #fff;
+  color: var(--nc-roxo);
+  box-shadow: inset 0 0 0 1.5px var(--nc-nevoa);
+}
+
+@app.nc-ex .nc-ex-bt--claro:hover {
+  background: #F4EEFA;
+}
+
+/* ═══ [C13] A BARRA DO PÉ ═══════════════════════════════════════════════════════════════
+   Montada pelo JS em [J7]. .nc-ex-barra é a barra fixa no pé; .nc-ex-falta, cada campo
+   que falta.
+   ════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-ex.nc-ex-com-barra {
+  padding-bottom: 96px;
+}
+
+@app.nc-ex .nc-ex-barra {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 800;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 20px calc(12px + env(safe-area-inset-bottom, 0px));
+  border-top: 1px solid var(--nc-nevoa);
+  background: rgba(255, 255, 255, .96);
+  box-shadow: 0 -10px 28px -20px rgba(var(--nc-t-azul-rgb, 44, 26, 99), .45);
+  backdrop-filter: saturate(1.4) blur(8px);
+}
+
+@app.nc-ex .nc-ex-barra-txt {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+@app.nc-ex .nc-ex-frase {
+  margin: 0;
+  font-size: 14.5px;
+  color: var(--nc-grafite);
+}
+
+@app.nc-ex .nc-ex-frase b {
+  color: var(--nc-roxo);
+}
+
+@app.nc-ex .nc-ex-falta-lista {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+
+@app.nc-ex .nc-ex-barra-rot {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--nc-grafite);
+}
+
+@app.nc-ex .nc-ex-falta {
+  min-height: 30px;
+  padding: 0 10px;
+  border: 1px solid rgba(184, 50, 63, .3);
+  border-radius: 999px;
+  background: #FBECEE;
+  font: inherit;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--nc-ruim);
+  cursor: pointer;
+}
+
+@app.nc-ex .nc-ex-barra-ok {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--nc-bom);
+}
+
+/* ═══ [C14] TELAS MÉDIAS E CELULAR ══════════════════════════════════════════════════════
+   O que está dentro de @media (max-width: 899px) vale em tablets e telas pequenas; dentro de
+   @media (max-width: 639px), só no celular. Em geral, o que era lado a lado passa a ficar um
+   embaixo do outro.
+   ════════════════════════════════════════════════════════════════════════════════════════ */
+@media (max-width: 899px) {
+  @app.nc-ex .nc-ex-cartoes {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 639px) {
+  @app.nc-ex .nc-ex-abertura {
+    padding: 16px;
+  }
+
+  @app.nc-ex .nc-ex-caminho,
+  @app.nc-ex .nc-ex-cartoes {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  @app.nc-ex .nc-ex-cartao {
+    min-height: 0;
+  }
+
+  @app.nc-ex .nc-ex-tipo-pessoa :is(.apex-item-grid-row, .apex-item-group:not(:has(.apex-item-grid-row))):not(#nc-ex-x):not(#nc-ex-y):not(#nc-ex-z) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  @app.nc-ex .nc-ex-consulta-vazia .nc-ex-bt,
+  @app.nc-ex .nc-ex-bilhete .nc-ex-bt {
+    flex: 1 1 100%;
+    justify-content: center;
+  }
+
+  @app.nc-ex .nc-ex-barra {
+    gap: 10px;
+    padding: 10px 12px calc(10px + env(safe-area-inset-bottom, 0px));
+  }
+
+  @app.nc-ex .nc-ex-frase {
+    font-size: 13px;
+  }
+
+  @app.nc-ex .nc-ex-falta-lista .nc-ex-barra-rot {
+    display: none;
+  }
+
+  @app.nc-ex .nc-ex-barra .nc-ex-bt--forte {
+    flex: none;
+    min-height: 44px;
+    padding: 0 14px;
+  }
+
+  @app.nc-ex .nc-ex-barra .nc-ex-bt--forte .nc-ex-ic {
+    display: none;
+  }
+
+  @app.nc-ex .nc-ex-ap-cab {
+    grid-template-columns: minmax(0, 1fr) auto;
+    column-gap: 12px;
+  }
+
+  @app.nc-ex .nc-ex-ap-ver {
+    display: inline-flex;
+    grid-column: 2;
+    grid-row: 1 / span 2;
+    align-self: center;
+    align-items: center;
+    height: 34px;
+    padding: 0 12px;
+    border: 1px solid var(--nc-nevoa);
+    border-radius: 10px;
+    background: #fff;
+    font: inherit;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--nc-roxo);
+  }
+
+  @app.nc-ex .t-Region.nc-ex-aprov:not(.nc-ex-ap-aberto) .nc-ex-ap-passos {
+    display: none;
+  }
+}
+
+/* ═══ [C15] TOM CLARO (30/09): O ROXO CHEIO SÓ NO REGISTRO DA AGENDA ════════════════════
+   Pedido do usuário: a abertura e o cabeçalho do pedido viram cartões claros (borda leve,
+   texto escuro, ícones em roxo, a situação em etiqueta colorida). Só o bilhete da consulta
+   (dia, horário e médico) tem fundo roxo. Sem horário, o aviso também é claro.
+   CUIDADO: esta parte vem no FIM de propósito — vence as regras de cima para as mesmas peças.
+   ════════════════════════════════════════════════════════════════════════════════════════ */
+/* ---------- tom claro (30/09): o roxo cheio fica só no registro da agenda ----------
+   a abertura e o cabeçalho do pedido passam a cartão claro; o bilhete da consulta (dia, horário e
+   médico) é que leva o fundo roxo, nos dois modos */
+@app.nc-ex .nc-ex-abertura,
+@app.nc-ex .nc-ex-hero {
+  border: 1px solid var(--nc-nevoa);
+  background: #fff;
+  box-shadow: 0 10px 24px -22px rgba(var(--nc-t-azul-rgb, 44, 26, 99), .5);
+  color: var(--nc-tinta);
+}
+
+@app.nc-ex .nc-ex-abertura-tit,
+@app.nc-ex .nc-ex-hero-tit,
+@app.nc-ex .nc-ex-hero-tit > span:not(#nc-ex-x) {
+  color: var(--nc-tinta);
+}
+
+@app.nc-ex .nc-ex-abertura > p,
+@app.nc-ex .nc-ex-hero-n,
+@app.nc-ex .nc-ex-hero-para,
+@app.nc-ex .nc-ex-hero-emp,
+@app.nc-ex .nc-ex-hero-extra li,
+@app.nc-ex .nc-ex-hero-quem,
+@app.nc-ex .nc-ex-hero-tit small {
+  color: var(--nc-grafite);
+}
+
+@app.nc-ex .nc-ex-hero-n b,
+@app.nc-ex .nc-ex-hero-para b,
+@app.nc-ex .nc-ex-hero-emp b,
+@app.nc-ex .nc-ex-hero-extra b,
+@app.nc-ex .nc-ex-hero-quem b,
+@app.nc-ex .nc-ex-hero-motivo {
+  color: var(--nc-tinta);
+}
+
+@app.nc-ex .nc-ex-hero-tit > .nc-ex-ic,
+@app.nc-ex .nc-ex-hero-para .nc-ex-ic,
+@app.nc-ex .nc-ex-hero-emp .nc-ex-ic,
+@app.nc-ex .nc-ex-hero-motivo .nc-ex-ic {
+  color: var(--nc-roxo);
+}
+
+@app.nc-ex .nc-ex-hero-quem {
+  border-top-color: var(--nc-nevoa2);
+}
+
+/* o caminho da abertura em tom claro */
+@app.nc-ex .nc-ex-caminho li {
+  background: var(--nc-quase);
+  color: var(--nc-grafite);
+}
+
+@app.nc-ex .nc-ex-caminho b {
+  color: var(--nc-tinta);
+}
+
+@app.nc-ex .nc-ex-cp-ic {
+  background: var(--nc-nevoa2);
+  color: var(--nc-roxo);
+}
+
+/* a situação no cartão claro: fundo com a cor, como nas etiquetas */
+@app.nc-ex .nc-ex-sit {
+  background: #EFEBF4;
+}
+
+@app.nc-ex .nc-ex-sit--bom { background: #E4F4EA; }
+@app.nc-ex .nc-ex-sit--ruim { background: #FBECEE; }
+
+/* o registro da agenda: o único bloco em roxo */
+@app.nc-ex .nc-ex-bilhete,
+@app.nc-ex .nc-ex-bilhete--hero {
+  border: 0;
+  background:
+    radial-gradient(110% 130% at 100% 0%, rgba(var(--nc-t-rosa-rgb, 201, 87, 136), .3) 0%, rgba(var(--nc-t-rosa-rgb, 201, 87, 136), 0) 55%),
+    linear-gradient(135deg, var(--nc-azul) 0%, var(--nc-roxo) 72%);
+  box-shadow: 0 14px 28px -20px rgba(var(--nc-t-azul-rgb, 44, 26, 99), .8);
+}
+
+@app.nc-ex .nc-ex-bilhete .nc-ex-bilhete-txt p,
+@app.nc-ex .nc-ex-bilhete .nc-ex-bilhete-sem:not(#nc-ex-x),
+@app.nc-ex .nc-ex-bilhete .nc-ex-bilhete-hora b {
+  color: #fff;
+}
+
+@app.nc-ex .nc-ex-bilhete .nc-ex-bilhete-txt p {
+  color: rgba(255, 255, 255, .85);
+}
+
+@app.nc-ex .nc-ex-bilhete .nc-ex-bilhete-txt .nc-ex-ic {
+  color: var(--nc-realce);
+}
+
+@app.nc-ex .nc-ex-bilhete .nc-ex-bt--claro {
+  background: #fff;
+  box-shadow: none;
+}
+
+/* sem horário ainda: o aviso claro, também dentro do cabeçalho */
+@app.nc-ex .nc-ex-hero-consulta .nc-ex-consulta-vazia {
+  border-color: #CFC5E2;
+  background: var(--nc-quase);
+}
+
+@app.nc-ex .nc-ex-hero-consulta .nc-ex-consulta-tit {
+  color: var(--nc-tinta);
+}
+
+@app.nc-ex .nc-ex-hero-consulta .nc-ex-consulta-sub {
+  color: var(--nc-grafite);
+}
+
+@app.nc-ex .nc-ex-hero-consulta .nc-ex-consulta-vazia > .nc-ex-ic {
+  color: var(--nc-roxo);
+}
+
+/* ═══ FAIXA DA REGIÃO (padrão 03/10) ════════════════════════════════════════════════════════
+   Todo painel com título segue o cabeçalho de região da Skin: o título numa faixa que atravessa
+   o cartão de ponta a ponta, com a linha de 2px na cor de destaque do TEMA (var(--nc-rosa) — a
+   mesma da Skin; muda com os 14 temas). As margens negativas são o recuo de dentro do cartão:
+   mudou o recuo do cartão, mude aqui junto. Guia: brand/apex/MANUAL-APEX.md.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-ex .nc-ex-ap > .nc-ex-ap-rot:not(#nc-fx1):not(#nc-fx2):not(#nc-fx3) {
+  box-sizing: border-box;
+  width: calc(100% + 36px);
+  margin: -14px -18px 2px;
+  padding: 12px 18px 10px;
+  border-bottom: 2px solid var(--nc-rosa, #C95788);
+  grid-column: 1 / -1;
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.3;
+}

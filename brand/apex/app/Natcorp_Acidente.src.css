@@ -1,0 +1,3781 @@
+/* ╔════════════════════════════════════════════════════════════════════════════════════════╗
+   ║  NATCORP · COMUNICAÇÃO DE ACIDENTE/INCIDENTE  —  a "roupa" das telas (CSS)                ║
+   ║  App 2943 (SEG_CTRL_NATCORP) · páginas 91, 92 e 31                                        ║
+   ╚════════════════════════════════════════════════════════════════════════════════════════╝
+
+   Primeira vez num arquivo destes? Leia antes o manual: brand/apex/MANUAL-APEX.md (parte 1).
+
+   ── O QUE ESTE ARQUIVO FAZ ────────────────────────────────────────────────────────────────
+   Dá a aparência das três telas do acidente: a comunicação (p91), a janela da parte do corpo
+   (p92) e a análise (p31) — cores, tamanhos, espaços, bordas, e como a tela se arruma no
+   computador e no celular. Ele NÃO muda nada de lugar: quem muda as coisas de lugar é o
+   arquivo-irmão Natcorp_Acidente.js. Os dois trabalham juntos:
+     o JS monta "os 6 passos"  →  este arquivo diz como os passos se parecem.
+   Sem o JS, este arquivo não faz nada: todas as regras dependem das marcas que o JS põe na
+   página (nc-aci; nc-aci-analise na p31; nc-aci-janela na p92; nc-aci-leitura na
+   comunicação gravada). Dois públicos: quem comunica (passos numerados, escolhas grandes,
+   o rodapé dizendo o que falta) e quem analisa (a ficha do acidente, com a figura do corpo).
+
+   ── ONDE ELE ENTRA NO APEX ────────────────────────────────────────────────────────────────
+     Páginas 91, 92 e 31 › CSS › File URLs:   #WORKSPACE_IMAGES#Natcorp_Acidente.css
+     CUIDADO: edite ESTE arquivo (Natcorp_Acidente.src.css, a fonte) e gere o arquivo que sobe com
+     node brand/apex/app/gerar-app.mjs  — o gerador troca @app pelo prefixo longo e põe
+     !important em toda linha. O Natcorp_Acidente.css da pasta login/ é refeito a cada geração:
+     o que for mudado só nele se perde. (Manual, parte 2.)
+
+   ── REGRA IMPORTANTE (CUIDADO) ────────────────────────────────────────────────────────────
+   Nada aqui põe "display" (mostrar/esconder) no que as ações dinâmicas mostram e escondem
+   (o botão Criar, os contêineres dos itens): o gerador põe !important em tudo, e isso
+   venceria o "esconder" do APEX — o campo apareceria quando não deveria. As únicas exceções
+   são as classes que o próprio JS liga e desliga (nc-aci-oculto, nc-aci-fora).
+
+   ── ÍNDICE: as partes deste arquivo (Ctrl+F pelo código entre colchetes) ──────────────────
+     [C1]  O que some, ícones, regiões vazias      (as bases de tudo)
+     [C2]  A abertura                              ← montada pelo JS em [J4]
+     [C3]  O cabeçalho da comunicação gravada      ← montado pelo JS em [J5]
+     [C4]  A ficha do acidente                     ← montada pelo JS em [J7]
+     [C5]  A figura do corpo                       ← montada pelo JS em [J6] e [J19]
+     [C6]  Os passos e os campos                   ← montados pelo JS em [J4]
+     [C7]  O cartão da pessoa                      ← montado pelo JS em [J4]
+     [C8]  O endereço e o resumo do "quando"       ← montados pelo JS em [J4] e [J11]
+     [C9]  A parte do corpo: figura, lista, Adicionar  ← montada pelo JS em [J6]
+     [C10] As escolhas grandes e o Sim/Não         ← montadas pelo JS em [J4]
+     [C11] Só leitura (comunicação gravada)
+     [C12] A aprovação                             ← montada pelo JS em [J8]
+     [C13] O rodapé                                ← montado pelo JS em [J9]
+     [C14] Na criação: atalhos, roteiro, dicas     ← montados pelo JS em [J10]
+     [C15] A janela "Parte do Corpo Atingida" (p92) ← montada pelo JS em [J19]
+     [C16] A análise (p31): mesa, caso, frentes    ← montada pelo JS em [J13] a [J15]
+     [C17] A análise: regiões inteiras e grades    ← montadas pelo JS em [J16] e [J17]
+     [C18] Computador médio e celular              (ajustes para telas menores)
+     [C19] Menos movimento                         (acessibilidade)
+     [C20] As listas em cartões e a gaveta         (partes, EPIs, custos, testemunhas)
+
+   ── RECEITAS RÁPIDAS ──────────────────────────────────────────────────────────────────────
+     Quero mudar uma cor
+       → use uma das cores da marca, pelo nome: var(--nc-roxo), var(--nc-grafite)… A lista
+         completa, com amostras, está no manual (parte 3). Assim a cor acompanha o tema que
+         o usuário escolheu em "Cores". Evite escrever cores soltas, como #511C76.
+     Quero aumentar ou diminuir um texto        → procure font-size na parte certa.
+     Quero mais ou menos espaço                  → padding (espaço por DENTRO da caixa) e
+                                                   margin (espaço por FORA, até a vizinha).
+     Na análise, um campo ficou estreito ou largo demais
+       → a largura vem da lista FRENTES do JS ([J12]): 1, 2 ou 4. As classes nc-aci-larg-1/2/4
+         estão em [C16].
+     Algo ficou bom no computador e ruim no celular → [C18]: o que está dentro de
+                                                   @media (max-width: 640px) só vale no celular.
+
+   ── COMO LER UM ARQUIVO CSS EM 30 SEGUNDOS ────────────────────────────────────────────────
+     Cada regra tem duas partes:     QUEM { COMO; }
+       @app.nc-aci .nc-aci-passo {         ← QUEM: o "seletor", diz em que pedaço da tela vale
+         padding: 18px 20px 20px;          ← COMO: propriedade: valor;  (espaço por dentro)
+         border-radius: 16px;              ←       cantos arredondados
+       }
+     .nome-com-ponto       uma "classe": uma etiqueta posta num pedaço da tela (pelo APEX ou
+                           pelo JS). .nc-aci-passo é cada um dos 6 passos.
+     @app                  atalho que dá prioridade às nossas regras sobre as do tema do APEX.
+                           No arquivo que sobe para o APEX ele aparece por extenso, como
+                           html body:is(.t-PageBody…):not(#nc-a1):not(#nc-a2) — é a mesma coisa.
+     :not(#nc-aci-x)…      peso extra, para vencer uma regra do tema. Pode ignorar ao ler.
+     !important            no arquivo que sobe, toda linha ganha um: é o mesmo "vencer o tema".
+     @media (max-width: 640px) { … }   as regras de dentro só valem em telas até 640px (celular).
+     var(--nc-roxo)        uma cor da marca, pelo nome (muda junto com o tema escolhido).
+     px                    pixels, o tamanho de um pontinho da tela. 16px é o texto normal.
+     Toda linha COMO termina em ;   e todo { é fechado por um }. Não apague esses sinais.
+*/
+
+/* ═══ [C1] O QUE SOME, ÍCONES E REGIÕES VAZIAS ═══════════════════════════════════════════════
+   nc-aci-fora (regiões que o JS esvaziou ou trocou, como as abas) e nc-aci-oculto (campos
+   que o JS esconde) não aparecem. Também: o tamanho dos ícones e a cor da seleção de texto.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-aci .nc-aci-fora:not(#nc-aci-x):not(#nc-aci-y),
+@app.nc-aci .nc-aci-oculto:not(#nc-aci-x):not(#nc-aci-y) {
+  display: none;
+}
+
+@app.nc-aci .nc-aci-svg {
+  flex: none;
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.9;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+@app.nc-aci ::selection {
+  background: rgba(var(--nc-t-rosa-rgb, 201, 87, 136), .24);
+}
+
+/* as regiões que ficaram vazias (os campos foram para os passos) perdem a moldura */
+@app.nc-aci .t-Region.nc-aci-casca:not(#nc-aci-x):not(#nc-aci-y) {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+@app.nc-aci .t-Region.nc-aci-casca > .t-Region-header:not(#nc-aci-x):not(#nc-aci-y) {
+  display: none;
+}
+
+@app.nc-aci .t-Region.nc-aci-casca > .t-Region-bodyWrap > .t-Region-body:not(#nc-aci-x):not(#nc-aci-y) {
+  padding: 0;
+}
+
+/* ═══ [C2] A ABERTURA ════════════════════════════════════════════════════════════════════════════
+   A caixa dos passos e a frase de abertura ("São 6 passos…", o aviso do socorro). JS: [J4].
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+/* =====================================================================
+   A ABERTURA
+   ===================================================================== */
+@app.nc-aci .nc-aci-passos {
+  display: grid;
+  gap: 14px;
+  margin: 0 0 16px;
+}
+
+@app.nc-aci .nc-aci-intro {
+  display: grid;
+  gap: 10px;
+}
+
+@app.nc-aci .nc-aci-intro-txt {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--nc-grafite);
+}
+
+@app.nc-aci .nc-aci-ast {
+  font-weight: 800;
+  color: var(--nc-ruim);
+}
+
+@app.nc-aci .nc-aci-intro-aviso {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin: 0;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: #FBEEF4;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.45;
+  color: #6A2349 /*reserva*/;
+  color: oklch(from #6A2349 l calc(c * var(--nc-t-croma, 1)) calc(h + var(--nc-t-giro, 0)));
+}
+
+@app.nc-aci .nc-aci-intro-aviso .nc-aci-svg {
+  margin-top: 1px;
+  color: var(--nc-rosa, #C95788);
+}
+
+/* ═══ [C3] O CABEÇALHO DA COMUNICAÇÃO GRAVADA ════════════════════════════════════════════════════
+   nº, aberta em/por, a situação colorida e o botão "Caracterização CAT". JS: [J5].
+   .nc-aci-sit--bom verde · --ruim vermelho · --atencao amarelo · --meio neutro.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+/* =====================================================================
+   A COMUNICAÇÃO GRAVADA — número, datas, situação e o "Caracterização CAT"
+   ===================================================================== */
+@app.nc-aci .nc-aci-pedido {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px 16px;
+  padding: 18px 20px;
+  border: 1px solid var(--nc-nevoa);
+  border-radius: 18px;
+  background: linear-gradient(135deg, #FBF8FE 0%, #F4EEFA 60%, #FBEEF4 100%);
+}
+
+@app.nc-aci .nc-aci-pedido-ic {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, var(--nc-roxo, #511C76) 0%, var(--nc-ameixa, #9A408A) 100%);
+  color: #fff;
+  box-shadow: 0 10px 20px -14px rgba(var(--nc-t-roxo-rgb, 81, 28, 118), .9);
+}
+
+@app.nc-aci .nc-aci-pedido-ic .nc-aci-svg {
+  width: 24px;
+  height: 24px;
+}
+
+@app.nc-aci .nc-aci-pedido-txt h2:not(#nc-aci-x):not(#nc-aci-y) {
+  margin: 0;
+  padding: 0;
+  font-size: 20px;
+  font-weight: 800;
+  line-height: 1.2;
+  letter-spacing: -.015em;
+  font-variant-numeric: tabular-nums;
+  color: var(--nc-tinta);
+}
+
+@app.nc-aci .nc-aci-pedido-txt p {
+  margin: 4px 0 0;
+  font-size: 14px;
+  line-height: 1.45;
+  color: var(--nc-grafite);
+}
+
+@app.nc-aci .nc-aci-pedido-txt b {
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  color: var(--nc-tinta);
+}
+
+@app.nc-aci .nc-aci-pedido-lado {
+  display: grid;
+  justify-items: end;
+  gap: 3px;
+}
+
+@app.nc-aci .nc-aci-sit {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 5px 12px 5px 10px;
+  border-radius: 999px;
+  background: #F1EDF7;
+  font-size: 13.5px;
+  font-weight: 800;
+  color: var(--nc-roxo);
+}
+
+@app.nc-aci .nc-aci-sit i {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+@app.nc-aci .nc-aci-sit--bom { background: #E6F4EC; color: #14553A; }
+@app.nc-aci .nc-aci-sit--ruim { background: #FDECEE; color: #9B2432; }
+@app.nc-aci .nc-aci-sit--atencao { background: #FFF4DA; color: #6E4400; }
+
+@app.nc-aci .nc-aci-sit-desde {
+  font-size: 12.5px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--nc-grafite);
+}
+
+@app.nc-aci .nc-aci-pedido-acao {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  padding-top: 14px;
+  border-top: 1px dashed #DCD3E8;
+}
+
+/* 04/10: :not([style*="none"]) — a ação "Hide Botão Caracterização" esconde o CAT (style inline);
+   com o !important do gerador, o display daqui o mostraria de volta */
+@app.nc-aci .nc-aci-cat.t-Button:not([style*="none"]):not(#nc-aci-x):not(#nc-aci-y) {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  margin: 0;
+  padding: 0 20px;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 800;
+}
+
+@app.nc-aci .nc-aci-cat .nc-aci-svg {
+  width: 19px;
+  height: 19px;
+}
+
+/* ═══ [C4] A FICHA DO ACIDENTE ═══════════════════════════════════════════════════════════════════
+   O resumo para quem analisa (e a prévia "Confira antes de enviar"). JS: [J7].
+     .nc-aci-ficha        a ficha inteira        .nc-aci-fato     cada bloco (quem, quando, onde)
+     .nc-aci-sinais       os sinais de gravidade (atendimento, B.O., óbito)
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+/* =====================================================================
+   A FICHA — o resumo para o Médico do Trabalho e o Técnico de Segurança
+   ===================================================================== */
+@app.nc-aci .nc-aci-ficha {
+  display: grid;
+  gap: 18px;
+  padding: 22px 22px 20px;
+  border: 1px solid var(--nc-nevoa);
+  border-radius: 18px;
+  background: #fff;
+  box-shadow: 0 16px 34px -28px rgba(var(--nc-t-azul-rgb, 44, 26, 99), .55);
+}
+
+@app.nc-aci .nc-aci-ficha-cab h3:not(#nc-aci-x):not(#nc-aci-y) {
+  margin: 0;
+  padding: 0;
+  font-size: 18px;
+  font-weight: 800;
+  line-height: 1.25;
+  letter-spacing: -.01em;
+  color: var(--nc-tinta);
+}
+
+@app.nc-aci .nc-aci-ficha-cab p {
+  margin: 3px 0 0;
+  font-size: 13.5px;
+  color: var(--nc-grafite);
+}
+
+@app.nc-aci .nc-aci-ficha-grade {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr) minmax(0, 1fr);
+  gap: 0;
+  border: 1px solid var(--nc-nevoa);
+  border-radius: 14px;
+}
+
+@app.nc-aci .nc-aci-fato {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  min-width: 0;
+  margin: 0;
+  padding: 14px 16px;
+}
+
+@app.nc-aci .nc-aci-fato + .nc-aci-fato {
+  border-left: 1px solid var(--nc-nevoa);
+}
+
+@app.nc-aci dl.nc-aci-fato {
+  flex-direction: column;
+  gap: 6px;
+}
+
+@app.nc-aci .nc-aci-fato dt {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--nc-grafite);
+}
+
+@app.nc-aci .nc-aci-fato dt .nc-aci-svg {
+  width: 16px;
+  height: 16px;
+  color: var(--nc-ameixa, #9A408A);
+}
+
+@app.nc-aci .nc-aci-fato dd {
+  display: grid;
+  gap: 3px;
+  margin: 0;
+  font-size: 13.5px;
+  line-height: 1.45;
+  color: var(--nc-grafite);
+}
+
+@app.nc-aci .nc-aci-fato dd b,
+@app.nc-aci .nc-aci-fato-nome {
+  font-size: 15.5px;
+  font-weight: 800;
+  line-height: 1.3;
+  font-variant-numeric: tabular-nums;
+  color: var(--nc-tinta);
+}
+
+@app.nc-aci .nc-aci-fato--quem > div {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+  font-size: 13.5px;
+  line-height: 1.45;
+  color: var(--nc-grafite);
+}
+
+@app.nc-aci .nc-aci-fato-ponto {
+  font-style: italic;
+}
+
+@app.nc-aci .nc-aci-av {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--nc-azul, #2C1A63);
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: .02em;
+  color: #fff;
+}
+
+@app.nc-aci .nc-aci-ficha-meio {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.35fr);
+  gap: 18px;
+}
+
+@app.nc-aci .nc-aci-ficha h4:not(#nc-aci-x):not(#nc-aci-y) {
+  margin: 0 0 8px;
+  padding: 0;
+  font-size: 14px;
+  font-weight: 800;
+  line-height: 1.3;
+  color: var(--nc-tinta);
+}
+
+@app.nc-aci .nc-aci-ficha-corpo {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: start;
+  gap: 16px;
+  padding: 14px 16px;
+  border-radius: 14px;
+  background: #FBF9FE;
+}
+
+@app.nc-aci .nc-aci-ficha-fig .nc-aci-boneco {
+  width: 92px;
+}
+
+@app.nc-aci .nc-aci-partes:not(#nc-aci-x):not(#nc-aci-y) {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+@app.nc-aci .nc-aci-partes li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 8px;
+  margin: 0;
+  font-size: 15px;
+  color: var(--nc-tinta);
+}
+
+@app.nc-aci .nc-aci-partes b {
+  font-weight: 800;
+}
+
+@app.nc-aci .nc-aci-partes small {
+  flex-basis: 100%;
+  font-size: 13px;
+  line-height: 1.4;
+  color: var(--nc-grafite);
+}
+
+@app.nc-aci .nc-aci-lado {
+  padding: 2px 9px;
+  border-radius: 999px;
+  background: #FBE7F0;
+  font-size: 12.5px;
+  font-weight: 800;
+  color: #8A2F5D /*reserva*/;
+  color: oklch(from #8A2F5D l calc(c * var(--nc-t-croma, 1)) calc(h + var(--nc-t-giro, 0)));
+}
+
+@app.nc-aci .nc-aci-ficha-relato blockquote {
+  margin: 0;
+  padding: 14px 16px;
+  border-radius: 14px;
+  background: #FBF9FE;
+  font-size: 16px;
+  line-height: 1.6;
+  white-space: pre-line;
+  color: var(--nc-tinta);
+}
+
+@app.nc-aci .nc-aci-ficha-relato h4 + blockquote + h4:not(#nc-aci-x):not(#nc-aci-y) {
+  margin-top: 14px;
+}
+
+@app.nc-aci .nc-aci-ficha-outras {
+  margin: 0;
+  font-size: 14.5px;
+  line-height: 1.55;
+  white-space: pre-line;
+  color: var(--nc-tinta);
+}
+
+@app.nc-aci .nc-aci-ficha-vazio {
+  margin: 0;
+  font-size: 14px;
+  color: var(--nc-grafite);
+}
+
+@app.nc-aci .nc-aci-sinais:not(#nc-aci-x):not(#nc-aci-y) {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+@app.nc-aci .nc-aci-sinal {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 8px;
+  margin: 0;
+  padding: 8px 14px;
+  border: 1px solid transparent;
+  border-radius: 12px;
+  background: #F4F2F8;
+  font-size: 13px;
+  color: var(--nc-grafite);
+}
+
+@app.nc-aci .nc-aci-sinal b {
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--nc-tinta);
+}
+
+@app.nc-aci .nc-aci-sinal--vazio {
+  border-color: #D9D2E6;
+  border-style: dashed;
+  background: #fff;
+}
+
+@app.nc-aci .nc-aci-sinal--vazio b {
+  font-weight: 700;
+  color: var(--nc-grafite);
+}
+
+@app.nc-aci .nc-aci-sinal--info { background: #ECE9F6; }
+@app.nc-aci .nc-aci-sinal--info b { color: var(--nc-azul, #2C1A63); }
+@app.nc-aci .nc-aci-sinal--atencao { background: #FFF4DA; color: #6E4400; }
+@app.nc-aci .nc-aci-sinal--atencao b { color: #6E4400; }
+@app.nc-aci .nc-aci-sinal--grave { background: #FDECEE; color: #7E1F29; }
+@app.nc-aci .nc-aci-sinal--grave b { color: #9B2432; }
+
+@app.nc-aci .nc-aci-passos-tit:not(#nc-aci-x):not(#nc-aci-y) {
+  margin: 10px 0 -2px;
+  padding: 0 2px;
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--nc-tinta);
+}
+
+/* ═══ [C5] A FIGURA DO CORPO ═════════════════════════════════════════════════════════════════════
+   O desenho do corpo e os pontos (cor rosa da marca) da parte atingida. JS: [J6] e [J19].
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+/* =====================================================================
+   A FIGURA DO CORPO
+   ===================================================================== */
+@app.nc-aci .nc-aci-boneco {
+  display: block;
+  width: 108px;
+  height: auto;
+  overflow: visible;
+}
+
+@app.nc-aci .nc-aci-bon-corpo {
+  fill: none;
+  stroke: #D9D0E7;
+  stroke-width: 7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+@app.nc-aci .nc-aci-bon-corpo circle,
+@app.nc-aci .nc-aci-bon-corpo path:nth-of-type(2) {
+  fill: #F1ECF8;
+  stroke-width: 5;
+}
+
+@app.nc-aci .nc-aci-bon-halo {
+  fill: rgba(var(--nc-t-rosa-rgb, 201, 87, 136), .22);
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: nc-aci-marca .9s cubic-bezier(.16, 1, .3, 1) both;
+}
+
+@app.nc-aci .nc-aci-bon-ponto {
+  fill: var(--nc-rosa, #C95788);
+  stroke: #fff;
+  stroke-width: 2;
+}
+
+@app.nc-aci .nc-aci-bon-lado {
+  font: 800 11px "Inter NC", Inter, ui-sans-serif, system-ui, "Segoe UI", Arial, sans-serif;
+  fill: #4A4460;
+}
+
+@keyframes nc-aci-marca {
+  from { transform: scale(.4); }
+  to { transform: scale(1); }
+}
+
+/* ═══ [C6] OS PASSOS E OS CAMPOS ═════════════════════════════════════════════════════════════════
+   Cada passo (cartão numerado, com "Pronto"/"Falta") e os campos dentro dele. JS: [J4].
+     .nc-aci-passo        cada passo             .nc-aci-num      o número na bolinha
+     .nc-aci-passo-estado "Pronto" / "Falta 2"   .nc-aci-campo    cada campo do APEX
+     .nc-aci-ajuda        a frase de ajuda embaixo do rótulo
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+/* =====================================================================
+   OS PASSOS
+   ===================================================================== */
+@app.nc-aci .nc-aci-passo {
+  padding: 18px 20px 20px;
+  border: 1px solid var(--nc-nevoa);
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: 0 10px 24px -22px rgba(var(--nc-t-azul-rgb, 44, 26, 99), .5);
+}
+
+@app.nc-aci .nc-aci-passo-cab {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: start;
+  gap: 12px;
+  margin: 0 0 16px;
+}
+
+@app.nc-aci .nc-aci-num {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #EFEAF6;
+  font-size: 14px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  color: var(--nc-roxo);
+}
+
+@app.nc-aci .nc-aci-passo.is-ok .nc-aci-num {
+  background: #E4F4EC;
+  color: var(--nc-bom);
+}
+
+@app.nc-aci .nc-aci-passo-tit h3:not(#nc-aci-x):not(#nc-aci-y) {
+  margin: 4px 0 0;
+  padding: 0;
+  font-size: 17px;
+  font-weight: 800;
+  line-height: 1.25;
+  letter-spacing: -.01em;
+  color: var(--nc-tinta);
+}
+
+@app.nc-aci .nc-aci-passo-tit p {
+  margin: 3px 0 0;
+  font-size: 13.5px;
+  line-height: 1.45;
+  color: var(--nc-grafite);
+}
+
+@app.nc-aci .nc-aci-passo-estado {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 5px;
+  font-size: 12.5px;
+  font-weight: 800;
+  white-space: nowrap;
+  color: var(--nc-grafite);
+}
+
+@app.nc-aci .nc-aci-passo-estado:empty {
+  display: none;
+}
+
+@app.nc-aci .nc-aci-passo-estado.is-ok {
+  color: var(--nc-bom);
+}
+
+@app.nc-aci .nc-aci-passo-estado.is-ok .nc-aci-svg {
+  width: 15px;
+  height: 15px;
+  stroke-width: 2.6;
+}
+
+@app.nc-aci .nc-aci-passo-estado.is-falta {
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: #FFF4DE;
+  color: #6B4700;
+}
+
+/* os campos: duas colunas no computador, uma no celular */
+@app.nc-aci .nc-aci-campos {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px 20px;
+}
+
+@app.nc-aci .nc-aci-campos > :is(.nc-aci-escolha, .nc-aci-simnao, .nc-aci-campo--matricula, .nc-aci-campo--espec_local_acidente, .nc-aci-campo--descricao_texto,
+  .nc-aci-campo--descricao_observacao, .nc-aci-campo--arq, .nc-aci-campo--arq_bo, .nc-aci-pessoa, .nc-aci-endereco, .nc-aci-quando, .nc-aci-sub, .nc-aci-corpo, .nc-aci-corpo-leg) {
+  grid-column: 1 / -1;
+}
+
+/* rótulo em cima (com a ajuda logo abaixo dele), campo inteiro — só em quem o APEX não escondeu */
+@app.nc-aci .nc-aci-passos .t-Form-fieldContainer.nc-aci-campo:not([style*="none"]):not(.nc-aci-oculto):not(#nc-aci-x):not(#nc-aci-y) {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 8px;
+  float: none;
+  width: auto;
+  max-width: none;
+  margin: 0;
+  padding: 0;
+}
+
+@app.nc-aci .nc-aci-passos .nc-aci-campo :is(.t-Form-labelContainer, .t-Form-inputContainer):not(#nc-aci-x):not(#nc-aci-y) {
+  flex: none;
+  float: none;
+  width: 100%;
+  max-width: none;
+  min-height: 0;
+  padding: 0;
+  text-align: left;
+}
+
+/* a Skin, no celular, centraliza o campo e o deixa do tamanho do "size" do APEX: aqui ele ocupa a linha */
+@app.nc-aci .nc-aci-passos .nc-aci-campo .t-Form-inputContainer:not(#nc-aci-x):not(#nc-aci-y) {
+  display: block;
+  text-align: left;
+}
+
+@app.nc-aci .nc-aci-passos .nc-aci-campo .t-Form-itemWrapper:not(#nc-aci-x):not(#nc-aci-y) {
+  width: 100%;
+  max-width: none;
+  justify-content: flex-start;
+}
+
+@app.nc-aci .nc-aci-passos .nc-aci-campo :is(input.apex-item-text, textarea, select):not([type=hidden]):not(#nc-aci-x):not(#nc-aci-y) {
+  width: 100%;
+  max-width: none;
+}
+
+@app.nc-aci .nc-aci-passos .nc-aci-campo .t-Form-labelContainer:not(#nc-aci-x):not(#nc-aci-y) {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 3px;
+}
+
+@app.nc-aci .nc-aci-passos .nc-aci-campo .t-Form-label:not(#nc-aci-x):not(#nc-aci-y) {
+  padding: 0;
+  font-size: 14.5px;
+  font-weight: 800;
+  line-height: 1.35;
+  text-align: left;
+  color: var(--nc-tinta);
+}
+
+@app.nc-aci .nc-aci-ajuda:not(#nc-aci-x):not(#nc-aci-y) {
+  display: block;
+  width: 100%;
+  margin: 0;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.4;
+  text-align: left;
+  color: var(--nc-grafite);
+}
+
+@app.nc-aci .nc-aci-passos :is(input.apex-item-text, input.apex-item-popup-lov, input.popup_lov, input.apex-item-datepicker):not([type=hidden]):not(#nc-aci-x):not(#nc-aci-y) {
+  height: 48px;
+  font-size: 16px;
+}
+
+@app.nc-aci .nc-aci-passos select.apex-item-select:not(#nc-aci-x):not(#nc-aci-y) {
+  height: 48px;
+  font-size: 16px;
+}
+
+@app.nc-aci .nc-aci-passos textarea:not(#nc-aci-x):not(#nc-aci-y) {
+  min-height: 120px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  font-size: 16px;
+  line-height: 1.55;
+}
+
+@app.nc-aci .nc-aci-campo--descricao_texto textarea:not(#nc-aci-x):not(#nc-aci-y) {
+  min-height: 150px;
+}
+
+@app.nc-aci .nc-aci-passos textarea::placeholder,
+@app.nc-aci .nc-aci-passos input::placeholder {
+  color: #7D7693;
+}
+
+/* o que o sistema preenche (endereço, CEP): cinza claro, sem cara de campo a preencher */
+@app.nc-aci .nc-aci-passos :is(input, select, textarea):disabled:not(#nc-aci-x):not(#nc-aci-y) {
+  border-color: #ECE8F3;
+  background: #F8F6FB;
+  color: var(--nc-tinta);
+  -webkit-text-fill-color: var(--nc-tinta);
+  opacity: 1;
+}
+
+/* valor só para ler (o que o APEX mostra como exibição): texto, não caixa */
+@app.nc-aci .nc-aci-passos .nc-aci-campo .apex-item-display-only:not(#nc-aci-x):not(#nc-aci-y) {
+  display: block;
+  min-height: 0;
+  height: auto;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  font-size: 15.5px;
+  font-weight: 600;
+  line-height: 1.45;
+  white-space: pre-line;
+  color: var(--nc-tinta);
+}
+
+/* ═══ [C7] O CARTÃO DA PESSOA ════════════════════════════════════════════════════════════════════
+   Aparece no passo 1 quando o colaborador é escolhido (iniciais, nome, cargo…). JS: [J4].
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+/* =====================================================================
+   A PESSOA — o cartão que aparece quando o colaborador é escolhido
+   ===================================================================== */
+@app.nc-aci .nc-aci-pessoa {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 14px;
+  padding: 16px;
+  border-radius: 14px;
+  background: #FBF9FE;
+  border: 1px solid #EFEAF6;
+}
+
+@app.nc-aci .nc-aci-pessoa-av {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--nc-azul, #2C1A63);
+  font-size: 16px;
+  font-weight: 800;
+  color: #fff;
+}
+
+@app.nc-aci .nc-aci-pessoa-dados {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px 18px;
+}
+
+@app.nc-aci .nc-aci-pessoa-dados .nc-aci-campo--nome {
+  grid-column: 1 / -1;
+}
+
+@app.nc-aci .nc-aci-pessoa .t-Form-fieldContainer.nc-aci-campo:not([style*="none"]):not(.nc-aci-oculto):not(#nc-aci-x):not(#nc-aci-y) {
+  gap: 2px;
+}
+
+@app.nc-aci .nc-aci-pessoa .nc-aci-campo .t-Form-label:not(#nc-aci-x):not(#nc-aci-y) {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--nc-grafite);
+}
+
+@app.nc-aci .nc-aci-pessoa .nc-aci-campo--nome .apex-item-display-only:not(#nc-aci-x):not(#nc-aci-y) {
+  font-size: 17px;
+  font-weight: 800;
+}
+
+/* ═══ [C8] O ENDEREÇO E O RESUMO DO "QUANDO" ═════════════════════════════════════════════════════
+   O endereço que vem do cadastro (passo 3) e a frase do dia da semana (passo 2). JS: [J4], [J11].
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+/* =====================================================================
+   O ENDEREÇO (vem do cadastro) e o resumo do "quando"
+   ===================================================================== */
+@app.nc-aci .nc-aci-endereco {
+  padding: 14px 16px 16px;
+  border: 1px dashed #DCD3E8;
+  border-radius: 14px;
+}
+
+@app.nc-aci .nc-aci-endereco-tit {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin: 0 0 12px;
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--nc-tinta);
+}
+
+@app.nc-aci .nc-aci-endereco-tit .nc-aci-svg {
+  color: var(--nc-ameixa, #9A408A);
+}
+
+@app.nc-aci .nc-aci-endereco-tit small {
+  display: block;
+  margin-top: 1px;
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--nc-grafite);
+}
+
+@app.nc-aci .nc-aci-endereco-campos {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px 14px;
+}
+
+@app.nc-aci .nc-aci-endereco-campos .nc-aci-campo--endereco_acidente {
+  grid-column: span 2;
+}
+
+@app.nc-aci .nc-aci-endereco .nc-aci-campo .t-Form-label:not(#nc-aci-x):not(#nc-aci-y) {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--nc-grafite);
+}
+
+@app.nc-aci .nc-aci-endereco :is(input.apex-item-text, select.apex-item-select):not([type=hidden]):not(#nc-aci-x):not(#nc-aci-y) {
+  height: 42px;
+  font-size: 15px;
+}
+
+@app.nc-aci .nc-aci-quando {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin: 0;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: #F6F0FB;
+  font-size: 14.5px;
+  line-height: 1.45;
+  color: var(--nc-tinta);
+}
+
+@app.nc-aci .nc-aci-quando[hidden] {
+  display: none;
+}
+
+@app.nc-aci .nc-aci-quando .nc-aci-svg {
+  margin-top: 1px;
+  color: var(--nc-roxo);
+}
+
+@app.nc-aci .nc-aci-quando b {
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+
+@app.nc-aci .nc-aci-quando.is-erro {
+  background: #FDECEE;
+  color: #7E1F29;
+}
+
+@app.nc-aci .nc-aci-quando.is-erro .nc-aci-svg {
+  color: var(--nc-ruim);
+}
+
+/* regiões do APEX que entram num passo (a frequência do dia, as partes do corpo) */
+@app.nc-aci .nc-aci-passos .t-Region.nc-aci-sub:not(#nc-aci-x):not(#nc-aci-y) {
+  margin: 0;
+  border: 1px solid #EFEAF6;
+  border-radius: 14px;
+  background: #FBF9FE;
+  box-shadow: none;
+}
+
+@app.nc-aci .nc-aci-passos .t-Region.nc-aci-sub .t-Region-header:not(#nc-aci-x):not(#nc-aci-y) {
+  min-height: 0;
+  padding: 10px 14px 0;
+  border: 0;
+  background: transparent;
+}
+
+@app.nc-aci .nc-aci-passos .t-Region.nc-aci-sub .t-Region-title:not(#nc-aci-x):not(#nc-aci-y) {
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--nc-tinta);
+}
+
+@app.nc-aci .nc-aci-passos .t-Region.nc-aci-sub :is(.t-Region-headerIcon, .js-maximizeButtonContainer):not(#nc-aci-x):not(#nc-aci-y) {
+  display: none;
+}
+
+/* ═══ [C9] A PARTE DO CORPO: FIGURA, LISTA E ADICIONAR ═══════════════════════════════════════════
+   O passo 4: o relatório vira lista de cartões, ao lado da figura. JS: [J6].
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+/* =====================================================================
+   A PARTE DO CORPO — figura + lista + Adicionar
+   ===================================================================== */
+@app.nc-aci .nc-aci-corpo {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: start;
+  gap: 18px 24px;
+}
+
+@app.nc-aci .nc-aci-corpo-fig {
+  padding: 12px 16px 8px;
+  border-radius: 14px;
+  background: #FBF9FE;
+}
+
+@app.nc-aci .nc-aci-corpo-lista {
+  display: grid;
+  align-content: start;
+  gap: 12px;
+  min-width: 0;
+}
+
+@app.nc-aci .nc-aci-corpo-leg {
+  margin: -6px 0 0;
+  font-size: 12.5px;
+  line-height: 1.4;
+  color: var(--nc-grafite);
+}
+
+@app.nc-aci .nc-aci-passos .t-Region.nc-aci-corpo-reg:not(#nc-aci-x):not(#nc-aci-y) {
+  border: 0;
+  background: transparent;
+}
+
+@app.nc-aci .nc-aci-passos .t-Region.nc-aci-corpo-reg > .t-Region-header:not(#nc-aci-x):not(#nc-aci-y) {
+  display: none;
+}
+
+@app.nc-aci .nc-aci-corpo-reg .t-Region-body:not(#nc-aci-x):not(#nc-aci-y) {
+  padding: 0;
+}
+
+/* o relatório vira lista de cartões (cada linha, uma parte) */
+@app.nc-aci .nc-aci-corpo-reg :is(table.t-Report-report, table.t-Report-report tbody):not(#nc-aci-x):not(#nc-aci-y) {
+  display: grid;
+  gap: 8px;
+  width: 100%;
+  border: 0;
+  background: transparent;
+}
+
+@app.nc-aci .nc-aci-corpo-reg table.t-Report-report thead:not(#nc-aci-x):not(#nc-aci-y) {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+}
+
+@app.nc-aci .nc-aci-corpo-reg table.t-Report-report tbody tr:not(#nc-aci-x):not(#nc-aci-y) {
+  display: flex;
+  height: auto;
+  min-height: 0;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 10px;
+  padding: 12px 14px;
+  border: 1px solid var(--nc-nevoa);
+  border-radius: 12px;
+  background: #fff;
+}
+
+@app.nc-aci .nc-aci-corpo-reg table.t-Report-report td:not(#nc-aci-x):not(#nc-aci-y) {
+  display: block;
+  height: auto;
+  min-height: 0;             /* a Skin dá 44 px a toda célula: o selo "Direita" esticava */
+  padding: 0;
+  border: 0;
+  background: transparent;
+  font-size: 14px;
+  line-height: 1.4;
+  color: var(--nc-grafite);
+}
+
+@app.nc-aci .nc-aci-corpo-reg table.t-Report-report td[headers="PARTE_LESADA"]:not(#nc-aci-x):not(#nc-aci-y) {
+  font-size: 15.5px;
+  font-weight: 800;
+  color: var(--nc-tinta);
+}
+
+@app.nc-aci .nc-aci-corpo-reg table.t-Report-report td[headers="LATERALIDADE"]:not(#nc-aci-x):not(#nc-aci-y) {
+  padding: 2px 9px;
+  border-radius: 999px;
+  background: #FBE7F0;
+  font-size: 12.5px;
+  font-weight: 800;
+  color: #8A2F5D /*reserva*/;
+  color: oklch(from #8A2F5D l calc(c * var(--nc-t-croma, 1)) calc(h + var(--nc-t-giro, 0)));
+}
+
+@app.nc-aci .nc-aci-corpo-reg table.t-Report-report td[headers="DESCRICAO_PARTE_LESADA"]:not(#nc-aci-x):not(#nc-aci-y) {
+  flex-basis: 100%;
+}
+
+/* 04/10: a paginação do relatório das partes NÃO some mais (eram 15 por página: da 16ª em diante
+   a parte ficava escondida, sem caminho para vê-la) */
+
+/* sem parte ainda: a mensagem do APEX, sem moldura de relatório */
+@app.nc-aci .nc-aci-corpo-reg :is(.t-Report-noDataMsg, .nodatafound, .a-IRR-noDataMsg):not(#nc-aci-x):not(#nc-aci-y) {
+  padding: 14px 16px;
+  border: 1px dashed #DCD3E8;
+  border-radius: 12px;
+  background: #fff;
+  font-size: 14px;
+  color: var(--nc-grafite);
+}
+
+@app.nc-aci .nc-aci-corpo-add.t-Button:not(#nc-aci-x):not(#nc-aci-y) {
+  justify-self: start;
+  min-height: 46px;
+  margin: 0;
+  padding: 0 18px;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 800;
+}
+
+/* ═══ [C10] AS ESCOLHAS GRANDES E O SIM/NÃO ══════════════════════════════════════════════════════
+   "No trabalho / No caminho do trabalho" em cartões e as perguntas Sim/Não em dois botões. JS: [J4].
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+/* =====================================================================
+   AS ESCOLHAS: "No trabalho / No caminho" em cartões; sim ou não em botões
+   ===================================================================== */
+@app.nc-aci :is(.nc-aci-escolha, .nc-aci-simnao) :is(.t-Form-inputContainer, .t-Form-itemWrapper):not(#nc-aci-x):not(#nc-aci-y) {
+  height: auto;
+  max-height: none;
+  overflow: visible;
+}
+
+/* o rádio vem em duas formas: opções direto no grupo, ou na grade de colunas do APEX
+   (.apex-item-grid › .apex-item-grid-row, que a Skin trava em 38 px com overflow escondido) */
+@app.nc-aci :is(.nc-aci-escolha, .nc-aci-simnao) :is(.apex-item-group, .apex-item-grid):not(#nc-aci-x):not(#nc-aci-y) {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: none;
+  overflow: visible;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+@app.nc-aci :is(.nc-aci-escolha, .nc-aci-simnao) :is(.apex-item-group:not(:has(.apex-item-grid-row)), .apex-item-grid-row):not(#nc-aci-x):not(#nc-aci-y) {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  width: 100%;
+  height: auto;
+  max-height: none;
+  overflow: visible;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+@app.nc-aci :is(.nc-aci-escolha, .nc-aci-simnao) .apex-item-option:not(#nc-aci-x):not(#nc-aci-y) {
+  position: relative;
+  flex: none;
+  width: auto;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+}
+
+@app.nc-aci :is(.nc-aci-escolha, .nc-aci-simnao) .apex-item-option input[type=radio]:not(#nc-aci-x):not(#nc-aci-y) {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 22px;
+  height: 22px;
+  margin: 0;
+  opacity: 0;
+}
+
+@app.nc-aci :is(.nc-aci-escolha, .nc-aci-simnao) .apex-item-option label::before,
+@app.nc-aci :is(.nc-aci-escolha, .nc-aci-simnao) .apex-item-option label::after {
+  display: none;
+}
+
+/* os cartões */
+@app.nc-aci .nc-aci-escolha .apex-item-option label:not(#nc-aci-x):not(#nc-aci-y) {
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr) 24px;
+  align-items: start;
+  gap: 0 12px;
+  width: 100%;
+  height: 100%;
+  min-height: 84px;
+  margin: 0;
+  padding: 14px;
+  border: 1.5px solid var(--nc-nevoa);
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: none;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.35;
+  text-align: left;
+  white-space: normal;
+  color: var(--nc-tinta);
+  cursor: pointer;
+  transition: border-color .15s, background-color .15s, box-shadow .15s;
+}
+
+@app.nc-aci .nc-aci-escolha .apex-item-option label:hover:not(#nc-aci-x):not(#nc-aci-y) {
+  border-color: #CDB4E3 /*reserva*/;
+  border-color: oklch(from #CDB4E3 l calc(c * var(--nc-t-croma, 1)) calc(h + var(--nc-t-giro, 0)));
+  background: #FBF9FE;
+}
+
+@app.nc-aci .nc-aci-escolha input:checked + label:not(#nc-aci-x):not(#nc-aci-y) {
+  border-color: var(--nc-roxo);
+  background: #F6F0FB;
+  box-shadow: 0 10px 22px -18px rgba(var(--nc-t-roxo-rgb, 81, 28, 118), .8);
+}
+
+@app.nc-aci :is(.nc-aci-escolha, .nc-aci-simnao) input:focus-visible + label:not(#nc-aci-x):not(#nc-aci-y) {
+  outline: 2px solid var(--nc-roxo);
+  outline-offset: 2px;
+}
+
+@app.nc-aci :is(.nc-aci-escolha, .nc-aci-simnao) input:disabled + label:not(#nc-aci-x):not(#nc-aci-y) {
+  opacity: 1;
+  cursor: default;
+}
+
+@app.nc-aci .nc-aci-op-ic {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 13px;
+  background: #F1EDF7;
+  color: var(--nc-grafite);
+  transition: background-color .15s, color .15s;
+}
+
+@app.nc-aci .nc-aci-op-ic .nc-aci-svg {
+  width: 22px;
+  height: 22px;
+}
+
+@app.nc-aci .nc-aci-escolha input:checked + label .nc-aci-op-ic {
+  background: var(--nc-roxo);
+  color: #fff;
+}
+
+@app.nc-aci .nc-aci-op-txt {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+}
+
+@app.nc-aci .nc-aci-op-tit {
+  font-size: 16px;
+  font-weight: 800;
+  line-height: 1.25;
+  color: var(--nc-tinta);
+}
+
+@app.nc-aci .nc-aci-op-txt small {
+  font-size: 13.5px;
+  font-weight: 500;
+  line-height: 1.4;
+  color: var(--nc-grafite);
+}
+
+@app.nc-aci .nc-aci-op-marca {
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border: 2px solid #CFC6DD;
+  border-radius: 50%;
+  color: transparent;
+}
+
+@app.nc-aci .nc-aci-op-marca .nc-aci-svg {
+  width: 14px;
+  height: 14px;
+  stroke-width: 3;
+}
+
+@app.nc-aci .nc-aci-escolha input:checked + label .nc-aci-op-marca {
+  border-color: var(--nc-roxo);
+  background: var(--nc-roxo);
+  color: #fff;
+}
+
+/* sim ou não: sempre "Sim" primeiro, dois botões largos */
+@app.nc-aci .nc-aci-simnao :is(.apex-item-group:not(:has(.apex-item-grid-row)), .apex-item-grid-row):not(#nc-aci-x):not(#nc-aci-y) {
+  max-width: 420px;
+}
+
+@app.nc-aci .nc-aci-simnao .nc-aci-op-sim { order: 1; }
+@app.nc-aci .nc-aci-simnao .nc-aci-op-nao { order: 2; }
+
+@app.nc-aci .nc-aci-simnao .apex-item-option label:not(#nc-aci-x):not(#nc-aci-y) {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  height: 50px;
+  min-height: 0;
+  margin: 0;
+  padding: 0 14px;
+  border: 1.5px solid var(--nc-nevoa);
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: none;
+  font-size: 16px;
+  font-weight: 800;
+  line-height: 1;
+  color: var(--nc-tinta);
+  cursor: pointer;
+  transition: border-color .15s, background-color .15s;
+}
+
+@app.nc-aci .nc-aci-simnao .apex-item-option label:hover:not(#nc-aci-x):not(#nc-aci-y) {
+  border-color: #CDB4E3 /*reserva*/;
+  border-color: oklch(from #CDB4E3 l calc(c * var(--nc-t-croma, 1)) calc(h + var(--nc-t-giro, 0)));
+  background: #FBF9FE;
+}
+
+@app.nc-aci .nc-aci-simnao input:checked + label:not(#nc-aci-x):not(#nc-aci-y) {
+  border-color: var(--nc-roxo);
+  background: var(--nc-roxo);
+  color: #fff;
+}
+
+@app.nc-aci .nc-aci-sn-marca {
+  display: none;
+}
+
+@app.nc-aci .nc-aci-simnao input:checked + label .nc-aci-sn-marca {
+  display: inline-grid;
+}
+
+@app.nc-aci .nc-aci-sn-marca .nc-aci-svg {
+  width: 17px;
+  height: 17px;
+  stroke-width: 2.8;
+}
+
+@app.nc-aci .nc-aci-sem-resposta {
+  display: inline-block;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--nc-grafite);
+}
+
+/* ═══ [C11] SÓ LEITURA (COMUNICAÇÃO GRAVADA) ═════════════════════════════════════════════════════
+   Na comunicação gravada, mostra a resposta, não as opções; campos mais juntos.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+/* =====================================================================
+   SÓ LEITURA (a comunicação gravada): a resposta, não as opções
+   ===================================================================== */
+@app.nc-aci.nc-aci-leitura :is(.nc-aci-escolha, .nc-aci-simnao) .apex-item-option:has(input:not(:checked)):not(#nc-aci-x):not(#nc-aci-y) {
+  display: none;
+}
+
+@app.nc-aci.nc-aci-leitura :is(.nc-aci-escolha, .nc-aci-simnao) :is(.apex-item-group:not(:has(.apex-item-grid-row)), .apex-item-grid-row):not(#nc-aci-x):not(#nc-aci-y) {
+  grid-template-columns: minmax(0, 1fr);
+  max-width: none;
+}
+
+@app.nc-aci.nc-aci-leitura .nc-aci-escolha .apex-item-option label:not(#nc-aci-x):not(#nc-aci-y) {
+  min-height: 0;
+  max-width: 520px;
+  padding: 10px 12px;
+  grid-template-columns: 36px minmax(0, 1fr);
+  border-color: #EFEAF6;
+  background: #FBF9FE;
+  box-shadow: none;
+}
+
+@app.nc-aci.nc-aci-leitura .nc-aci-escolha .nc-aci-op-ic {
+  width: 36px;
+  height: 36px;
+  border-radius: 11px;
+}
+
+@app.nc-aci.nc-aci-leitura .nc-aci-escolha .nc-aci-op-marca {
+  display: none;
+}
+
+@app.nc-aci.nc-aci-leitura .nc-aci-simnao .apex-item-option label:not(#nc-aci-x):not(#nc-aci-y) {
+  justify-content: flex-start;
+  width: auto;
+  height: auto;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  font-size: 15.5px;
+  font-weight: 700;
+  color: var(--nc-tinta);
+}
+
+@app.nc-aci.nc-aci-leitura .nc-aci-simnao input:checked + label .nc-aci-sn-marca {
+  display: none;
+}
+
+/* sem resposta gravada: só o "Não informado", sem a faixa vazia das opções */
+@app.nc-aci.nc-aci-leitura .nc-aci-simnao .apex-item-group:not(:has(input:checked)):not(#nc-aci-x):not(#nc-aci-y) {
+  display: none;
+}
+
+/* o que o sistema preencheu (CEP): na leitura é texto, como os outros valores */
+@app.nc-aci.nc-aci-leitura .nc-aci-passos :is(input.apex-item-text, select.apex-item-select):disabled:not(#nc-aci-x):not(#nc-aci-y) {
+  height: auto;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  font-size: 15.5px;
+  font-weight: 600;
+}
+
+/* na leitura os campos ficam mais juntos: três por linha */
+@app.nc-aci.nc-aci-leitura .nc-aci-passo .nc-aci-campos {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px 22px;
+}
+
+@app.nc-aci.nc-aci-leitura .nc-aci-passo {
+  padding: 16px 20px 18px;
+  box-shadow: none;
+}
+
+@app.nc-aci.nc-aci-leitura .nc-aci-passo-cab {
+  margin-bottom: 12px;
+}
+
+@app.nc-aci.nc-aci-leitura .nc-aci-passo-tit p,
+@app.nc-aci.nc-aci-leitura .nc-aci-ajuda:not(#nc-aci-x):not(#nc-aci-y),
+@app.nc-aci.nc-aci-leitura .nc-aci-corpo-leg,
+@app.nc-aci.nc-aci-leitura .nc-aci-endereco-tit small {
+  display: none;
+}
+
+@app.nc-aci.nc-aci-leitura .nc-aci-passos .nc-aci-campo .t-Form-label:not(#nc-aci-x):not(#nc-aci-y) {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--nc-grafite);
+}
+
+@app.nc-aci.nc-aci-leitura .nc-aci-num {
+  width: 28px;
+  height: 28px;
+  font-size: 13px;
+}
+
+/* ═══ [C12] A APROVAÇÃO ══════════════════════════════════════════════════════════════════════════
+   A lista de quem aprovou, no fim da página. JS: [J8].
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+/* =====================================================================
+   A APROVAÇÃO — no fim da página, no lugar da aba
+   ===================================================================== */
+@app.nc-aci .nc-aci-aprov {
+  padding: 18px 20px 20px;
+  border: 1px solid var(--nc-nevoa);
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: 0 10px 24px -22px rgba(var(--nc-t-azul-rgb, 44, 26, 99), .5);
+}
+
+@app.nc-aci .nc-aci-aprov-cab {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: start;
+  gap: 12px;
+  margin: 0 0 14px;
+}
+
+@app.nc-aci .nc-aci-aprov-ic {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #EFEAF6;
+  color: var(--nc-roxo);
+}
+
+@app.nc-aci .nc-aci-aprov-cab h3:not(#nc-aci-x):not(#nc-aci-y) {
+  margin: 4px 0 0;
+  padding: 0;
+  font-size: 17px;
+  font-weight: 800;
+  line-height: 1.25;
+  color: var(--nc-tinta);
+}
+
+@app.nc-aci .nc-aci-aprov-cab p {
+  margin: 3px 0 0;
+  font-size: 13.5px;
+  color: var(--nc-grafite);
+}
+
+@app.nc-aci .nc-aci-aprov-lista:not(#nc-aci-x):not(#nc-aci-y) {
+  display: grid;
+  gap: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+@app.nc-aci .nc-aci-aprov-item {
+  position: relative;
+  display: grid;
+  grid-template-columns: 32px minmax(0, 1fr);
+  gap: 12px;
+  margin: 0;
+  padding: 0 0 14px;
+}
+
+@app.nc-aci .nc-aci-aprov-item + .nc-aci-aprov-item::before {
+  content: "";
+  position: absolute;
+  top: -14px;
+  left: 15px;
+  width: 2px;
+  height: 14px;
+  background: #E4DDEE;
+}
+
+@app.nc-aci .nc-aci-aprov-marca {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #FFF4DA;
+  color: #9A6200;
+}
+
+@app.nc-aci .nc-aci-aprov-marca .nc-aci-svg {
+  width: 16px;
+  height: 16px;
+  stroke-width: 2.4;
+}
+
+@app.nc-aci .nc-aci-aprov-item--bom .nc-aci-aprov-marca { background: #1F7A52; color: #fff; }
+@app.nc-aci .nc-aci-aprov-item--ruim .nc-aci-aprov-marca { background: #B8323F; color: #fff; }
+
+@app.nc-aci .nc-aci-aprov-txt {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+  padding-top: 5px;
+}
+
+@app.nc-aci .nc-aci-aprov-txt b {
+  font-size: 14.5px;
+  font-weight: 800;
+  color: var(--nc-tinta);
+}
+
+@app.nc-aci .nc-aci-aprov-txt > span {
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+  color: var(--nc-grafite);
+}
+
+@app.nc-aci .nc-aci-aprov-status {
+  font-weight: 800;
+}
+
+@app.nc-aci .nc-aci-aprov-item--bom .nc-aci-aprov-status { color: #14553A; }
+@app.nc-aci .nc-aci-aprov-item--ruim .nc-aci-aprov-status { color: #9B2432; }
+@app.nc-aci .nc-aci-aprov-item--atencao .nc-aci-aprov-status { color: #6E4400; }
+
+@app.nc-aci .nc-aci-aprov-txt q {
+  margin-top: 4px;
+  padding: 8px 12px;
+  border-radius: 10px;
+  background: #FBF9FE;
+  font-size: 13.5px;
+  font-style: normal;
+  line-height: 1.45;
+  color: var(--nc-tinta);
+  quotes: none;
+}
+
+@app.nc-aci .nc-aci-aprov-vazio {
+  margin: 0;
+  font-size: 14px;
+  color: var(--nc-grafite);
+}
+
+/* o tema põe overflow: hidden no corpo da página, e isso desliga o position: sticky (ver a Ficha,
+   p17). "clip" corta igual, mas não vira área de rolagem: o rodapé volta a grudar */
+@app.nc-aci :is(.t-Body, .t-Body-main, .t-Body-content, .container:has(> .row .nc-aci-passos)):not(#nc-aci-x):not(#nc-aci-y) {
+  overflow: clip;
+}
+
+/* ═══ [C13] O RODAPÉ ═════════════════════════════════════════════════════════════════════════════
+   O que falta + "Enviar comunicação", grudado no pé da tela. JS: [J9].
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+/* =====================================================================
+   O RODAPÉ — o que falta + Enviar comunicação, grudado no fim da tela
+   ===================================================================== */
+@app.nc-aci .t-Region.nc-aci-rodape:not(#nc-aci-x):not(#nc-aci-y) {
+  position: sticky;
+  bottom: 0;
+  z-index: 20;
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  border: 1px solid var(--nc-nevoa);
+  border-radius: 16px 16px 0 0;
+  background: rgba(255, 255, 255, .97);
+  box-shadow: 0 -12px 26px -20px rgba(var(--nc-t-azul-rgb, 44, 26, 99), .45);
+}
+
+@app.nc-aci .t-Region.nc-aci-rodape > .t-Region-header:not(#nc-aci-x):not(#nc-aci-y) {
+  display: none;
+}
+
+@app.nc-aci .t-Region.nc-aci-rodape .t-Region-body:not(#nc-aci-x):not(#nc-aci-y) {
+  padding: 12px 16px;
+}
+
+@app.nc-aci .nc-aci-rodape :has(> .nc-aci-falta):not(#nc-aci-x):not(#nc-aci-y) {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px 16px;
+  width: 100%;
+  text-align: left;
+}
+
+@app.nc-aci .nc-aci-falta {
+  display: flex;
+  flex: 1 1 260px;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+
+@app.nc-aci .nc-aci-falta-rot {
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--nc-grafite);
+}
+
+@app.nc-aci .nc-aci-falta-item:not(#nc-aci-x):not(#nc-aci-y) {
+  min-height: 32px;
+  margin: 0;
+  padding: 3px 11px;
+  border: 0;
+  border-radius: 999px;
+  background: #FFF4DE;
+  box-shadow: none;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  color: #6B4700;
+  cursor: pointer;
+}
+
+@app.nc-aci .nc-aci-falta-item:hover:not(#nc-aci-x):not(#nc-aci-y) {
+  background: #FDE9C2;
+}
+
+@app.nc-aci .nc-aci-falta-item:focus-visible {
+  outline: 2px solid var(--nc-roxo);
+  outline-offset: 2px;
+}
+
+@app.nc-aci .nc-aci-falta-mais {
+  display: none;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: #FFF4DE;
+  font-size: 13px;
+  font-weight: 800;
+  color: #6B4700;
+}
+
+@app.nc-aci .nc-aci-pronto {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13.5px;
+  font-weight: 800;
+  color: var(--nc-bom);
+}
+
+@app.nc-aci .nc-aci-pronto .nc-aci-svg {
+  width: 16px;
+  height: 16px;
+  stroke-width: 2.6;
+}
+
+@app.nc-aci .nc-aci-enviar.t-Button:not(#nc-aci-x):not(#nc-aci-y) {
+  flex: none;
+  width: auto;
+  min-height: 48px;
+  margin: 0;
+  padding: 0 24px;
+  border-radius: 13px;
+  font-size: 15.5px;
+  font-weight: 800;
+}
+
+/* o que o .js esconde com o atributo hidden (avisos, dicas, a prévia) — os meus blocos têm display
+   próprio, que venceria o hidden do navegador */
+@app.nc-aci [hidden][hidden]:not(#nc-aci-x):not(#nc-aci-y):not(#nc-aci-z) {
+  display: none;
+}
+
+/* ═══ [C14] NA CRIAÇÃO: ATALHOS, ROTEIRO, DICAS ══════════════════════════════════════════════════
+   "Hoje"/"Ontem", "Me ajude a contar", as dicas e o aviso do Adicionar; a prévia. JS: [J10].
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+/* =====================================================================
+   NA CRIAÇÃO: atalhos de data, o roteiro do relato, as dicas e o aviso do Adicionar
+   ===================================================================== */
+@app.nc-aci .nc-aci-atalhos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+@app.nc-aci .nc-aci-atalho:not(#nc-aci-x):not(#nc-aci-y) {
+  min-height: 36px;
+  margin: 0;
+  padding: 0 14px;
+  border: 1.5px solid var(--nc-nevoa);
+  border-radius: 999px;
+  background: #fff;
+  box-shadow: none;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--nc-roxo);
+  cursor: pointer;
+  transition: border-color .15s, background-color .15s;
+}
+
+@app.nc-aci .nc-aci-atalho:hover:not(#nc-aci-x):not(#nc-aci-y) {
+  border-color: #CDB4E3 /*reserva*/;
+  border-color: oklch(from #CDB4E3 l calc(c * var(--nc-t-croma, 1)) calc(h + var(--nc-t-giro, 0)));
+  background: #FBF9FE;
+}
+
+@app.nc-aci .nc-aci-atalho[aria-pressed="true"]:not(#nc-aci-x):not(#nc-aci-y) {
+  border-color: var(--nc-roxo);
+  background: #F6F0FB;
+}
+
+@app.nc-aci :is(.nc-aci-atalho, .nc-aci-roteiro, .nc-aci-link, .nc-aci-lado-bt):focus-visible {
+  outline: 2px solid var(--nc-roxo);
+  outline-offset: 2px;
+}
+
+@app.nc-aci .nc-aci-roteiro:not(#nc-aci-x):not(#nc-aci-y) {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 38px;
+  margin: 0 0 8px;
+  padding: 0 14px;
+  border: 1.5px dashed #CDB4E3 /*reserva*/;
+  border: 1.5px dashed oklch(from #CDB4E3 l calc(c * var(--nc-t-croma, 1)) calc(h + var(--nc-t-giro, 0)));
+  border-radius: 12px;
+  background: #FBF9FE;
+  box-shadow: none;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--nc-roxo);
+  cursor: pointer;
+}
+
+@app.nc-aci .nc-aci-roteiro:hover:not(#nc-aci-x):not(#nc-aci-y) {
+  border-style: solid;
+  background: #F6F0FB;
+}
+
+@app.nc-aci :is(.nc-aci-dica, .nc-aci-corpo-aviso) {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin: 8px 0 0;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: #FFF4DA;
+  font-size: 13.5px;
+  font-weight: 600;
+  line-height: 1.45;
+  color: #6E4400;
+}
+
+@app.nc-aci :is(.nc-aci-dica, .nc-aci-corpo-aviso) .nc-aci-svg {
+  margin-top: 1px;
+  color: #9A6200;
+}
+
+@app.nc-aci .nc-aci-corpo-aviso {
+  margin: 0;
+}
+
+@app.nc-aci .nc-aci-link:not(#nc-aci-x):not(#nc-aci-y) {
+  display: inline;
+  min-height: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  box-shadow: none;
+  font: inherit;
+  font-weight: 800;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  color: #6E4400;
+  cursor: pointer;
+}
+
+/* sem o colaborador e a data, a janela ainda não pode abrir: o botão fica apagado (e explica) */
+@app.nc-aci .nc-aci-corpo-add.is-espera.t-Button:not(#nc-aci-x):not(#nc-aci-y) {
+  opacity: .55;
+  box-shadow: none;
+}
+
+/* a prévia (criação): a mesma ficha, com o cabeçalho "Confira antes de enviar" */
+@app.nc-aci .nc-aci-ficha--previa {
+  border-color: #E4D7F0;
+  background: linear-gradient(180deg, #FBF8FE 0, #fff 140px);
+}
+
+@app.nc-aci .nc-aci-ficha--previa .nc-aci-ficha-cab {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: start;
+  gap: 12px;
+}
+
+@app.nc-aci .nc-aci-ficha-ic {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, var(--nc-roxo, #511C76) 0%, var(--nc-ameixa, #9A408A) 100%);
+  color: #fff;
+}
+
+@app.nc-aci .nc-aci-ficha-ic .nc-aci-svg {
+  width: 21px;
+  height: 21px;
+}
+
+@app.nc-aci .nc-aci-ficha--previa .nc-aci-ficha-cab p {
+  max-width: 68ch;
+  line-height: 1.45;
+}
+
+/* ═══ [C15] A JANELA "PARTE DO CORPO ATINGIDA" (p92) ═════════════════════════════════════════════
+   Figura no alto, o lado em quatro botões. JS: [J19].
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+/* =====================================================================
+   A JANELA "PARTE DO CORPO ATINGIDA" (p92)
+   ===================================================================== */
+@app.nc-aci.nc-aci-janela .nc-aci-parte {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: start;
+  gap: 18px 24px;
+  margin: 4px 0 8px;
+}
+
+@app.nc-aci.nc-aci-janela .nc-aci-parte-fig {
+  display: grid;
+  justify-items: center;
+  gap: 8px;
+  width: 150px;
+  padding: 14px 12px 12px;
+  border-radius: 16px;
+  background: #FBF9FE;
+}
+
+@app.nc-aci.nc-aci-janela .nc-aci-parte-leg {
+  margin: 0;
+  font-size: 13.5px;
+  line-height: 1.4;
+  text-align: center;
+  color: var(--nc-grafite);
+}
+
+@app.nc-aci.nc-aci-janela .nc-aci-parte-leg b {
+  font-weight: 800;
+  color: var(--nc-tinta);
+}
+
+@app.nc-aci.nc-aci-janela .nc-aci-parte-leg small {
+  display: block;
+  margin-top: 3px;
+  font-size: 12.5px;
+}
+
+@app.nc-aci.nc-aci-janela .nc-aci-campos {
+  grid-template-columns: minmax(0, 1fr);
+  gap: 18px;
+}
+
+@app.nc-aci .nc-aci-sel-escondido:not(#nc-aci-x):not(#nc-aci-y) {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  opacity: 0;
+  pointer-events: none;
+}
+
+@app.nc-aci .nc-aci-lados {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  width: 100%;
+}
+
+@app.nc-aci .nc-aci-lado-bt:not(#nc-aci-x):not(#nc-aci-y) {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 56px;
+  margin: 0;
+  padding: 8px 14px;
+  border: 1.5px solid var(--nc-nevoa);
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: none;
+  font: inherit;
+  text-align: left;
+  color: var(--nc-tinta);
+  cursor: pointer;
+  transition: border-color .15s, background-color .15s;
+}
+
+/* 04/10: lista do lado travada pela página = botões travados */
+@app.nc-aci .nc-aci-lado-bt:disabled:not(#nc-aci-x):not(#nc-aci-y) {
+  opacity: .55;
+  cursor: not-allowed;
+}
+
+@app.nc-aci .nc-aci-lado-bt > span:last-child {
+  display: grid;
+  gap: 1px;
+}
+
+@app.nc-aci .nc-aci-lado-bt b {
+  font-size: 15.5px;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+@app.nc-aci .nc-aci-lado-bt small {
+  font-size: 12.5px;
+  font-weight: 500;
+  line-height: 1.3;
+  color: var(--nc-grafite);
+}
+
+@app.nc-aci .nc-aci-lado-bt .nc-aci-sn-marca {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border: 2px solid #CFC6DD;
+  border-radius: 50%;
+  color: transparent;
+}
+
+@app.nc-aci .nc-aci-lado-bt .nc-aci-sn-marca .nc-aci-svg {
+  width: 13px;
+  height: 13px;
+  stroke-width: 3;
+}
+
+@app.nc-aci .nc-aci-lado-bt:hover:not(#nc-aci-x):not(#nc-aci-y) {
+  border-color: #CDB4E3 /*reserva*/;
+  border-color: oklch(from #CDB4E3 l calc(c * var(--nc-t-croma, 1)) calc(h + var(--nc-t-giro, 0)));
+  background: #FBF9FE;
+}
+
+@app.nc-aci .nc-aci-lado-bt[aria-checked="true"]:not(#nc-aci-x):not(#nc-aci-y) {
+  border-color: var(--nc-roxo);
+  background: #F6F0FB;
+}
+
+@app.nc-aci .nc-aci-lado-bt[aria-checked="true"] .nc-aci-sn-marca {
+  border-color: var(--nc-roxo);
+  background: var(--nc-roxo);
+  color: #fff;
+}
+
+@media (max-width: 560px) {
+  @app.nc-aci.nc-aci-janela .nc-aci-parte {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  @app.nc-aci.nc-aci-janela .nc-aci-parte-fig {
+    justify-self: center;
+  }
+
+  @app.nc-aci.nc-aci-janela .nc-aci-parte-fig .nc-aci-boneco {
+    width: 80px;
+  }
+}
+
+/* ═══ [C16] A ANÁLISE (p31): MESA, CASO E FRENTES ════════════════════════════════════════════════
+   Montada pelo JS em [J13] a [J15]. Peças principais:
+     .nc-aci-caso-cab   o cabeçalho do caso      .nc-aci-caso       o caso fixo à esquerda
+     .nc-aci-frente-bt  os botões das frentes    .nc-aci-bloco      cada bloco de uma frente
+     .nc-aci-grade      a grade de 4 colunas dos campos (nc-aci-larg-1, -2 e -4 = largura)
+     .nc-aci-seg        as listas curtas em botões    .nc-aci-barra  a barra do pé
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+/* =====================================================================
+   A ANÁLISE (Médico do Trabalho / Técnico de Segurança) — a página de CAT e investigação
+   ===================================================================== */
+@app.nc-aci-analise .nc-aci-analise-raiz {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);   /* sem isto a coluna cresce até a largura da grade (IG) */
+  gap: 14px;
+  margin: 0 0 16px;
+}
+
+/* o cabeçalho do caso: nº, pessoa, dia e hora, status e os relatórios */
+@app.nc-aci-analise .nc-aci-caso-cab {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 12px 16px;
+  padding: 16px 20px;
+  border: 1px solid var(--nc-nevoa);
+  border-radius: 18px;
+  background: linear-gradient(135deg, #FBF8FE 0%, #F4EEFA 60%, #FBEEF4 100%);
+}
+
+@app.nc-aci-analise .nc-aci-caso-acoes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+@app.nc-aci .nc-aci-botao-leve.t-Button:not(#nc-aci-x):not(#nc-aci-y) {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 40px;
+  margin: 0;
+  padding: 0 14px;
+  border: 1.5px solid #D9CCE8;
+  border-radius: 11px;
+  background: #fff;
+  box-shadow: none;
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--nc-roxo);
+}
+
+@app.nc-aci .nc-aci-botao-leve.t-Button:hover:not(#nc-aci-x):not(#nc-aci-y) {
+  border-color: var(--nc-roxo);
+  background: #F6F0FB;
+}
+
+/* são botões "hot" do APEX: a Skin pinta o rótulo de branco */
+@app.nc-aci .nc-aci-botao-leve.t-Button .t-Button-label:not(#nc-aci-x):not(#nc-aci-y) {
+  color: inherit;
+}
+
+@app.nc-aci-analise .nc-aci-campo--cod_med_emit_cat_1 .nc-aci-botao-leve.t-Button:not(#nc-aci-x):not(#nc-aci-y) {
+  align-self: flex-start;
+  width: auto;
+  min-height: 34px;
+  margin-top: 8px;
+  padding: 0 12px;
+  font-size: 13.5px;
+}
+
+@app.nc-aci .nc-aci-botao-leve .nc-aci-svg {
+  width: 17px;
+  height: 17px;
+}
+
+/* a mesa: o caso fixo à esquerda, o trabalho à direita */
+@app.nc-aci-analise .nc-aci-mesa {
+  display: grid;
+  grid-template-columns: minmax(290px, 340px) minmax(0, 1fr);
+  align-items: start;
+  gap: 16px;
+}
+
+@app.nc-aci-analise .nc-aci-caso {
+  position: sticky;
+  top: var(--nc-aci-topo, 16px);
+  display: grid;
+  gap: 14px;
+  max-height: calc(100vh - var(--nc-aci-topo, 16px) - 16px);
+  overflow: auto;
+  padding: 16px;
+  border: 1px solid var(--nc-nevoa);
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: 0 10px 24px -22px rgba(var(--nc-t-azul-rgb, 44, 26, 99), .5);
+  scrollbar-width: thin;
+  scrollbar-color: #D9D0E7 transparent;
+}
+
+@app.nc-aci-analise .nc-aci-caso-pessoa {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+@app.nc-aci-analise .nc-aci-caso-pessoa > div {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+  font-size: 13px;
+  color: var(--nc-grafite);
+}
+
+@app.nc-aci-analise .nc-aci-caso-pessoa b {
+  font-size: 16px;
+  font-weight: 800;
+  line-height: 1.25;
+  color: var(--nc-tinta);
+}
+
+@app.nc-aci-analise .nc-aci-caso-dados {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+  padding: 12px 0;
+  border-top: 1px solid var(--nc-nevoa);
+  border-bottom: 1px solid var(--nc-nevoa);
+}
+
+@app.nc-aci-analise .nc-aci-caso-dados dt {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0 0 3px;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--nc-grafite);
+}
+
+@app.nc-aci-analise .nc-aci-caso-dados dt .nc-aci-svg {
+  width: 15px;
+  height: 15px;
+  color: var(--nc-ameixa, #9A408A);
+}
+
+@app.nc-aci-analise .nc-aci-caso-dados dd {
+  display: grid;
+  gap: 2px;
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--nc-grafite);
+}
+
+@app.nc-aci-analise .nc-aci-caso-dados dd b {
+  font-size: 14.5px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  color: var(--nc-tinta);
+}
+
+@app.nc-aci-analise .nc-aci-caso-mais {
+  display: grid;
+  gap: 14px;
+}
+
+/* cada linha do caso leva ao campo dela (toque = vai para a frente e o campo certos) */
+@app.nc-aci-analise button.nc-aci-caso-pessoa {
+  width: 100%;
+  margin: 0;
+  padding: 6px;
+  border: 0;
+  background: transparent;
+  font: inherit;
+  text-align: left;
+  color: inherit;
+}
+
+@app.nc-aci-analise .nc-aci-caso-ir {
+  margin: -6px;
+  padding: 6px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background .15s;
+}
+
+@app.nc-aci-analise .nc-aci-caso-ir:hover {
+  background: var(--nc-roxo-nevoa, color-mix(in srgb, var(--nc-roxo, #511C76) 6%, #fff));
+}
+
+@app.nc-aci-analise .nc-aci-caso-ir:focus-visible {
+  outline: 2px solid var(--nc-roxo, #511C76);
+  outline-offset: 1px;
+}
+
+/* acidente novo: o que falta no caso é um convite, na cor de ação */
+@app.nc-aci-analise .nc-aci-caso-falta:not(#nc-aci-x) {
+  font-weight: 700;
+  color: var(--nc-roxo, #511C76);
+}
+
+@app.nc-aci-analise .nc-aci-caso-pessoa .nc-aci-av .nc-aci-svg {
+  width: 22px;
+  height: 22px;
+}
+
+@app.nc-aci-analise.nc-aci-novo .nc-aci-caso-pessoa .nc-aci-av {
+  background: var(--nc-roxo-nevoa, color-mix(in srgb, var(--nc-roxo, #511C76) 10%, #fff));
+  color: var(--nc-roxo, #511C76);
+}
+
+@app.nc-aci-analise .nc-aci-caso-mais > summary {
+  display: none;
+}
+
+@app.nc-aci-analise .nc-aci-caso-mais:not([open]) > :not(summary) {
+  display: none;
+}
+
+@app.nc-aci-analise .nc-aci-caso-corpo {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: start;
+  gap: 12px;
+  padding: 12px;
+  border-radius: 14px;
+  background: #FBF9FE;
+}
+
+@app.nc-aci-analise .nc-aci-caso-corpo .nc-aci-boneco {
+  width: 72px;
+}
+
+@app.nc-aci-analise .nc-aci-caso h4:not(#nc-aci-x):not(#nc-aci-y) {
+  margin: 0 0 6px;
+  padding: 0;
+  font-size: 13.5px;
+  font-weight: 800;
+  color: var(--nc-tinta);
+}
+
+@app.nc-aci-analise .nc-aci-caso .nc-aci-partes li {
+  font-size: 14px;
+}
+
+@app.nc-aci-analise .nc-aci-caso-relato blockquote {
+  margin: 0;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: #FBF9FE;
+  font-size: 14.5px;
+  line-height: 1.55;
+  white-space: pre-line;
+  color: var(--nc-tinta);
+}
+
+@app.nc-aci-analise .nc-aci-caso-relato .nc-aci-ficha-outras {
+  margin-top: 8px;
+  font-size: 13.5px;
+}
+
+@app.nc-aci-analise .nc-aci-caso .nc-aci-sinais {
+  gap: 6px;
+}
+
+@app.nc-aci-analise .nc-aci-caso .nc-aci-sinal {
+  padding: 6px 10px;
+  font-size: 12.5px;
+}
+
+@app.nc-aci-analise .nc-aci-caso .nc-aci-sinal b {
+  font-size: 13px;
+}
+
+/* as frentes: quatro botões grandes, com o que falta em cada uma */
+@app.nc-aci-analise :is(.nc-aci-mesa > *, .nc-aci-frente, .nc-aci-bloco, .nc-aci-regioes > *) {
+  min-width: 0;
+}
+
+@app.nc-aci-analise .nc-aci-trabalho {
+  gap: 14px;
+  margin: 0;
+  min-width: 0;
+}
+
+@app.nc-aci-analise .nc-aci-frentes {
+  position: sticky;
+  top: var(--nc-aci-topo, 16px);
+  z-index: 15;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 6px;
+  padding: 6px;
+  border: 1px solid var(--nc-nevoa);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, .97);
+  box-shadow: 0 10px 24px -22px rgba(var(--nc-t-azul-rgb, 44, 26, 99), .5);
+}
+
+@app.nc-aci .nc-aci-frente-bt:not(#nc-aci-x):not(#nc-aci-y) {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 54px;
+  margin: 0;
+  padding: 8px 12px;
+  border: 0;
+  border-radius: 12px;
+  background: transparent;
+  box-shadow: none;
+  font: inherit;
+  text-align: left;
+  color: var(--nc-tinta);
+  cursor: pointer;
+  transition: background-color .15s;
+}
+
+@app.nc-aci .nc-aci-frente-bt:hover:not(#nc-aci-x):not(#nc-aci-y) {
+  background: #F6F2FA;
+}
+
+@app.nc-aci .nc-aci-frente-bt[aria-selected="true"]:not(#nc-aci-x):not(#nc-aci-y) {
+  background: var(--nc-roxo);
+  color: #fff;
+}
+
+@app.nc-aci .nc-aci-frente-bt:focus-visible {
+  outline: 2px solid var(--nc-roxo);
+  outline-offset: 2px;
+}
+
+@app.nc-aci .nc-aci-frente-ic {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  background: #F1EDF7;
+  color: var(--nc-roxo);
+}
+
+@app.nc-aci .nc-aci-frente-bt[aria-selected="true"] .nc-aci-frente-ic {
+  background: rgba(255, 255, 255, .16);
+  color: #fff;
+}
+
+@app.nc-aci .nc-aci-frente-txt {
+  display: grid;
+  gap: 1px;
+  min-width: 0;
+}
+
+@app.nc-aci .nc-aci-frente-txt b {
+  font-size: 14.5px;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+@app.nc-aci .nc-aci-frente-txt small {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--nc-grafite);
+}
+
+@app.nc-aci .nc-aci-frente-txt small .nc-aci-svg {
+  width: 13px;
+  height: 13px;
+  stroke-width: 2.6;
+}
+
+@app.nc-aci .nc-aci-frente-bt.is-falta small { color: #8A5A00; }
+@app.nc-aci .nc-aci-frente-bt.is-ok small { color: var(--nc-bom); }
+@app.nc-aci .nc-aci-frente-bt[aria-selected="true"] small { color: rgba(255, 255, 255, .86); }
+
+/* os blocos de cada frente */
+@app.nc-aci-analise .nc-aci-frente {
+  display: grid;
+  gap: 12px;
+}
+
+@app.nc-aci-analise .nc-aci-bloco {
+  padding: 16px 18px 18px;
+  border: 1px solid var(--nc-nevoa);
+  border-radius: 16px;
+  background: #fff;
+}
+
+@app.nc-aci-analise .nc-aci-bloco--regioes {
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+
+@app.nc-aci-analise .nc-aci-bloco-tit:not(#nc-aci-x):not(#nc-aci-y) {
+  margin: 0 0 14px;
+  padding: 0;
+  font-size: 15.5px;
+  font-weight: 800;
+  line-height: 1.3;
+  color: var(--nc-tinta);
+}
+
+@app.nc-aci-analise .nc-aci-grade {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px 16px;
+}
+
+@app.nc-aci-analise .nc-aci-larg-1 { grid-column: span 1; }
+@app.nc-aci-analise .nc-aci-larg-2 { grid-column: span 2; }
+@app.nc-aci-analise .nc-aci-larg-4,
+@app.nc-aci-analise .nc-aci-grade > .nc-aci-afast { grid-column: 1 / -1; }
+
+@app.nc-aci-analise .nc-aci-regioes {
+  display: grid;
+  gap: 12px;
+}
+
+/* na análise o rótulo é menor: quem preenche é profissional, a tela precisa caber */
+@app.nc-aci-analise .nc-aci-passos .nc-aci-campo .t-Form-label:not(#nc-aci-x):not(#nc-aci-y) {
+  font-size: 13px;
+  font-weight: 800;
+}
+
+@app.nc-aci-analise .nc-aci-passos :is(input.apex-item-text, input.apex-item-popup-lov, input.popup_lov, input.apex-item-datepicker, select.apex-item-select):not([type=hidden]):not(#nc-aci-x):not(#nc-aci-y) {
+  height: 42px;
+  font-size: 15px;
+}
+
+@app.nc-aci-analise .nc-aci-passos input:not([type=hidden]):not(#nc-aci-x):not(#nc-aci-y) {
+  text-align: left;
+}
+
+@app.nc-aci-analise .nc-aci-passos textarea:not(#nc-aci-x):not(#nc-aci-y) {
+  min-height: 92px;
+  font-size: 15px;
+}
+
+@app.nc-aci-analise .nc-aci-campo--diagno_provavel textarea:not(#nc-aci-x):not(#nc-aci-y) {
+  min-height: 110px;
+}
+
+/* as regiões inteiras que entram numa frente (investigação, relato, partes)
+   CUIDADO: elas eram ABAS. O seletor de abas do APEX pode iniciar DEPOIS do desenho e esconder de
+   novo (style="display:none") as abas que não estão ativas — sumiam o relato, as partes, a
+   investigação inteira (pego na 2ª base, 04/10). O display daqui vence o estilo do elemento;
+   quem esconde uma frente inteira é o [hidden] da frente, não a região. */
+/* nas grades (partes, EPIs, custos) a barra, os títulos e o rodapé "grudentos" do IG se perdem
+   (calculados com a aba escondida): o rodapé ficava por cima da linha. Aqui ficam no lugar. */
+@app.nc-aci-analise .nc-aci-inv .a-IG .js-stickyWidget-toggle:not(#nc-aci-x):not(#nc-aci-y) {
+  position: static;
+  top: auto;
+  width: auto;
+}
+
+@app.nc-aci-analise .nc-aci-inv .a-IG .js-stickyWidget-placeholder:not(#nc-aci-x):not(#nc-aci-y) {
+  display: none;
+}
+
+/* fora do perfil (aba que a página escondeu; Avaliadores escondido): some, vencendo o display acima */
+@app.nc-aci-analise .nc-aci-passos .t-Region.nc-aci-inv.nc-aci-perfil-fora:not(#nc-aci-x):not(#nc-aci-y):not(#nc-aci-z),
+@app.nc-aci-analise .nc-aci-passos .t-Region.nc-aci-inv.nc-aci-oculto:not(#nc-aci-x):not(#nc-aci-y):not(#nc-aci-z) {
+  display: none;
+}
+
+@app.nc-aci-analise .nc-aci-passos .t-Region.nc-aci-inv:not(#nc-aci-x):not(#nc-aci-y) {
+  display: block;
+  border: 1px solid var(--nc-nevoa);
+  background: #fff;
+}
+
+@app.nc-aci-analise .nc-aci-passos .t-Region.nc-aci-inv > .t-Region-header:not(#nc-aci-x):not(#nc-aci-y) {
+  padding: 14px 18px 4px;
+}
+
+@app.nc-aci-analise .nc-aci-passos .t-Region.nc-aci-inv > .t-Region-header .t-Region-title:not(#nc-aci-x):not(#nc-aci-y) {
+  font-size: 15.5px;
+}
+
+@app.nc-aci-analise .nc-aci-afast {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin: 0;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: #F6F0FB;
+  font-size: 14px;
+  line-height: 1.45;
+  color: var(--nc-tinta);
+}
+
+@app.nc-aci-analise .nc-aci-afast .nc-aci-svg {
+  margin-top: 1px;
+  color: var(--nc-roxo);
+}
+
+/* listas curtas em botões (Sim/Não, Inicial/Reabertura…) */
+@app.nc-aci .nc-aci-seg {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  width: 100%;
+}
+
+@app.nc-aci .nc-aci-seg-bt:not(#nc-aci-x):not(#nc-aci-y) {
+  display: inline-flex;
+  flex: 1 1 0;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-width: 64px;
+  min-height: 42px;
+  margin: 0;
+  padding: 0 12px;
+  border: 1.5px solid var(--nc-nevoa);
+  border-radius: 11px;
+  background: #fff;
+  box-shadow: none;
+  font: inherit;
+  font-size: 14.5px;
+  font-weight: 800;
+  line-height: 1.1;
+  white-space: nowrap;
+  color: var(--nc-tinta);
+  cursor: pointer;
+  transition: border-color .15s, background-color .15s;
+}
+
+@app.nc-aci .nc-aci-seg-bt:hover:not(:disabled):not(#nc-aci-x):not(#nc-aci-y) {
+  border-color: #CDB4E3 /*reserva*/;
+  border-color: oklch(from #CDB4E3 l calc(c * var(--nc-t-croma, 1)) calc(h + var(--nc-t-giro, 0)));
+  background: #FBF9FE;
+}
+
+@app.nc-aci .nc-aci-seg-bt[aria-checked="true"]:not(#nc-aci-x):not(#nc-aci-y) {
+  border-color: var(--nc-roxo);
+  background: var(--nc-roxo);
+  color: #fff;
+}
+
+@app.nc-aci .nc-aci-seg-bt .nc-aci-sn-marca {
+  display: none;
+}
+
+@app.nc-aci .nc-aci-seg-bt[aria-checked="true"] .nc-aci-sn-marca {
+  display: inline-grid;
+}
+
+@app.nc-aci .nc-aci-seg-bt .nc-aci-sn-marca .nc-aci-svg {
+  width: 15px;
+  height: 15px;
+  stroke-width: 2.8;
+}
+
+@app.nc-aci .nc-aci-seg-bt:focus-visible {
+  outline: 2px solid var(--nc-roxo);
+  outline-offset: 2px;
+}
+
+@app.nc-aci .nc-aci-seg.is-travado .nc-aci-seg-bt:not(#nc-aci-x):not(#nc-aci-y) {
+  cursor: default;
+  opacity: .6;
+}
+
+/* a barra do pé: o que falta e o Salvar */
+@app.nc-aci-analise .nc-aci-barra {
+  position: sticky;
+  bottom: 0;
+  z-index: 20;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px 16px;
+  padding: 12px 16px;
+  border: 1px solid var(--nc-nevoa);
+  border-radius: 16px 16px 0 0;
+  background: rgba(255, 255, 255, .97);
+  box-shadow: 0 -12px 26px -20px rgba(var(--nc-t-azul-rgb, 44, 26, 99), .45);
+}
+
+@app.nc-aci-analise .nc-aci-falta-mais.is-sempre:not(#nc-aci-x) {
+  display: inline-block;
+}
+
+@app.nc-aci .nc-aci-salvar.t-Button:not(#nc-aci-x):not(#nc-aci-y) {
+  flex: none;
+  min-height: 46px;
+  margin: 0;
+  padding: 0 26px;
+  border-radius: 13px;
+  font-size: 15.5px;
+  font-weight: 800;
+}
+
+@media (max-width: 1180px) {
+  @app.nc-aci-analise .nc-aci-mesa {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  @app.nc-aci-analise .nc-aci-caso {
+    position: static;
+    max-height: none;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: start;
+  }
+
+  @app.nc-aci-analise .nc-aci-caso > .nc-aci-caso-mais {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 760px) {
+  @app.nc-aci-analise .nc-aci-caso-cab {
+    grid-template-columns: auto minmax(0, 1fr);
+    padding: 14px;
+  }
+
+  @app.nc-aci-analise .nc-aci-caso-cab .nc-aci-pedido-lado,
+  @app.nc-aci-analise .nc-aci-caso-acoes {
+    grid-column: 1 / -1;
+    justify-items: start;
+  }
+
+  @app.nc-aci-analise .nc-aci-caso {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  @app.nc-aci-analise .nc-aci-frentes {
+    position: static;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  /* o resto do caso fica atrás de "Ver mais do caso" */
+  @app.nc-aci-analise .nc-aci-caso-mais > summary {
+    display: flex;
+    align-items: center;
+    min-height: 40px;
+    padding: 0 12px;
+    border-radius: 11px;
+    background: #F6F2FA;
+    font-size: 14px;
+    font-weight: 800;
+    color: var(--nc-roxo);
+    cursor: pointer;
+    list-style: none;
+  }
+
+  @app.nc-aci-analise .nc-aci-caso-mais > summary::-webkit-details-marker {
+    display: none;
+  }
+
+  @app.nc-aci .nc-aci-frente-bt:not(#nc-aci-x):not(#nc-aci-y) {
+    min-height: 48px;
+    padding: 6px 8px;
+  }
+
+  @app.nc-aci .nc-aci-frente-ic {
+    width: 28px;
+    height: 28px;
+  }
+
+  @app.nc-aci .nc-aci-frente-txt b {
+    font-size: 13.5px;
+  }
+
+  @app.nc-aci-analise .nc-aci-grade {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  @app.nc-aci-analise .nc-aci-larg-2 { grid-column: 1 / -1; }
+
+  @app.nc-aci-analise .nc-aci-bloco {
+    padding: 14px;
+  }
+
+  @app.nc-aci .nc-aci-salvar.t-Button:not(#nc-aci-x):not(#nc-aci-y) {
+    width: 100%;
+  }
+
+  /* no celular a barra mostra o total e o primeiro que falta: não come a tela */
+  @app.nc-aci-analise .nc-aci-falta-item:nth-of-type(n+2):not(#nc-aci-x):not(#nc-aci-y),
+  @app.nc-aci-analise .nc-aci-falta-mais.is-sempre:not(#nc-aci-x):not(#nc-aci-y) {
+    display: none;
+  }
+
+  @app.nc-aci-analise .nc-aci-barra {
+    padding: 10px 12px;
+  }
+}
+
+/* ═══ [C17] A ANÁLISE: REGIÕES INTEIRAS E GRADES ═════════════════════════════════════════════════
+   Investigação, relato, partes do corpo, índice, grades interativas, testemunhas. JS: [J16], [J17].
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+/* =====================================================================
+   A ANÁLISE — as regiões inteiras (investigação, relato, partes do corpo)
+   ===================================================================== */
+@app.nc-aci-analise .nc-aci-bloco--regioes > .nc-aci-bloco-tit:not(#nc-aci-x):not(#nc-aci-y) {
+  margin: 10px 2px 10px;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: .01em;
+  color: var(--nc-grafite);
+}
+
+@app.nc-aci-analise .nc-aci-passos .t-Region.nc-aci-inv > .t-Region-bodyWrap > .t-Region-body:not(#nc-aci-x):not(#nc-aci-y) {
+  padding: 8px 18px 18px;
+}
+
+/* o texto de apoio da região (ex.: "Informar os EPIs…") com a mesma margem do resto */
+@app.nc-aci-analise .nc-aci-inv .t-Region-body {
+  font-size: 13.5px;
+  line-height: 1.45;
+  color: var(--nc-grafite);
+}
+
+/* o "?" de ajuda do APEX encostado no campo, e não empurrando a caixa para o lado */
+@app.nc-aci-analise .nc-aci-passos .nc-aci-campo .t-Form-itemWrapper:has(> .t-Form-helpButton):not(#nc-aci-x):not(#nc-aci-y) {
+  position: relative;
+}
+
+@app.nc-aci-analise .nc-aci-passos .nc-aci-campo .t-Form-helpButton:not(#nc-aci-x):not(#nc-aci-y) {
+  position: absolute;
+  top: -27px;
+  right: 0;
+  width: 24px;
+  height: 24px;
+  margin: 0;
+  padding: 0;
+  opacity: .7;
+}
+
+@app.nc-aci-analise .nc-aci-passos .nc-aci-campo .apex-item-group--textarea:not(#nc-aci-x):not(#nc-aci-y) {
+  display: block;
+  width: 100%;
+}
+
+/* caixas de texto: começam baixas e crescem com o texto (o .js mede e põe a altura) */
+@app.nc-aci-analise .nc-aci-trabalho textarea:not(#nc-aci-x):not(#nc-aci-y) {
+  width: 100%;
+  max-width: none;
+  height: var(--nc-aci-h, 76px);
+  min-height: 0;
+  overflow-y: auto;
+  resize: vertical;
+}
+
+/* o anexo do APEX antigo (apex-item-filedrop): faixa baixa, não uma caixa enorme.
+   CUIDADO: NÃO zerar a altura do .apex-item-group--file — é o anexo da Skin (Natcorp_Paginas:
+   nuvem + "Arraste o arquivo…" desenhados em 132 px, com o campo transparente por cima). Zerado,
+   sobrava só a linha tracejada e o "Documento" parecia não ter onde anexar (pego em 04/10). */
+@app.nc-aci-analise .nc-aci-trabalho .apex-item-filedrop:not(#nc-aci-x):not(#nc-aci-y) {
+  min-height: 0;
+}
+
+@app.nc-aci-analise .nc-aci-trabalho :is(.apex-item-filedrop, .a-FileDrop):not(#nc-aci-x):not(#nc-aci-y) {
+  padding: 12px 16px;
+}
+
+/* o índice da Investigação */
+@app.nc-aci-analise .nc-aci-indice {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  padding: 12px 14px;
+  border: 1px solid var(--nc-nevoa);
+  border-radius: 14px;
+  background: #fff;
+}
+
+@app.nc-aci-analise .nc-aci-indice-rot {
+  margin-right: 4px;
+  font-size: 12.5px;
+  font-weight: 800;
+  color: var(--nc-grafite);
+}
+
+@app.nc-aci .nc-aci-indice-bt:not(#nc-aci-x):not(#nc-aci-y) {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 32px;
+  margin: 0;
+  padding: 0 11px;
+  border: 1px solid var(--nc-borda-botao);
+  border-radius: 999px;
+  background: #fff;
+  box-shadow: none;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--nc-tinta);
+  cursor: pointer;
+}
+
+@app.nc-aci .nc-aci-indice-bt:hover:not(#nc-aci-x):not(#nc-aci-y) {
+  border-color: #CDB4E3 /*reserva*/;
+  border-color: oklch(from #CDB4E3 l calc(c * var(--nc-t-croma, 1)) calc(h + var(--nc-t-giro, 0)));
+  background: #FBF9FE;
+}
+
+@app.nc-aci .nc-aci-indice-bt i {
+  width: 8px;
+  height: 8px;
+  border: 2px solid #CFC6DD;
+  border-radius: 50%;
+}
+
+@app.nc-aci .nc-aci-indice-bt .nc-aci-svg {
+  width: 14px;
+  height: 14px;
+  stroke-width: 2.8;
+  color: var(--nc-bom);
+}
+
+@app.nc-aci .nc-aci-indice-bt.is-ok:not(#nc-aci-x):not(#nc-aci-y) {
+  border-color: #CDE9DA;
+  background: #F2FAF6;
+}
+
+@app.nc-aci .nc-aci-indice-bt:focus-visible {
+  outline: 2px solid var(--nc-roxo);
+  outline-offset: 2px;
+}
+
+/* a grade interativa: só "Adicionar …" e "Salvar lista" na barra dela */
+@app.nc-aci-analise .nc-aci-grade-ig .a-Toolbar :is(.a-Toolbar-group--together, .a-Toolbar-selectList, .a-Toolbar-radioGroup, .a-Toolbar-toggleButton):not(#nc-aci-x):not(#nc-aci-y),
+@app.nc-aci-analise .nc-aci-grade-ig .a-Toolbar [id$="_ig_toolbar_actions_button"]:not(#nc-aci-x):not(#nc-aci-y),
+@app.nc-aci-analise .nc-aci-grade-ig .a-Toolbar-group:has(> [id$="_ig_toolbar_actions_button"]):not(#nc-aci-x):not(#nc-aci-y),
+@app.nc-aci-analise .nc-aci-grade-ig .a-Toolbar [data-action="reset-report"]:not(#nc-aci-x):not(#nc-aci-y) {
+  display: none;
+}
+
+@app.nc-aci-analise .nc-aci-grade-ig .a-Toolbar:not(#nc-aci-x):not(#nc-aci-y) {
+  padding: 8px 0 10px;
+  border: 0;
+  background: transparent;
+}
+
+@app.nc-aci-analise .nc-aci-grade-ig .a-Toolbar [data-action="selection-add-row"]:not(#nc-aci-x):not(#nc-aci-y) {
+  min-height: 38px;
+  padding: 0 14px;
+  border: 1.5px solid var(--nc-roxo);
+  border-radius: 11px;
+  background: #fff;
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--nc-roxo);
+}
+
+@app.nc-aci-analise .nc-aci-grade-ig .a-Toolbar [data-action="save"]:not(#nc-aci-x):not(#nc-aci-y) {
+  min-height: 38px;
+  padding: 0 14px;
+  border-radius: 11px;
+  font-size: 14px;
+  font-weight: 800;
+}
+
+@app.nc-aci-analise .nc-aci-grade-ig {
+  border: 1px solid var(--nc-nevoa);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+@app.nc-aci-analise .nc-aci-grade-como {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin: 0 0 10px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: #F6F2FA;
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--nc-tinta);
+}
+
+@app.nc-aci-analise .nc-aci-grade-como .nc-aci-svg {
+  margin-top: 1px;
+  color: var(--nc-roxo);
+}
+
+/* as listas de testemunhas: sem a busca e o "Ações" do relatório (são poucas linhas). O botão
+   Adicionar mora DENTRO da barra do relatório (.a-IRR-buttons): ele fica */
+@app.nc-aci-analise .nc-aci-lista .a-IRR-toolbar > :not(.a-IRR-buttons):not(#nc-aci-x):not(#nc-aci-y) {
+  display: none;
+}
+
+@app.nc-aci-analise .nc-aci-lista .a-IRR-toolbar:not(#nc-aci-x):not(#nc-aci-y) {
+  display: flex;
+  justify-content: flex-start;
+  padding: 0 0 10px;
+  border: 0;
+  background: transparent;
+}
+
+@app.nc-aci-analise .nc-aci-lista .a-IRR-buttons .t-Button:not(#nc-aci-x):not(#nc-aci-y) {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 38px;
+  padding: 0 14px;
+  border: 1.5px solid var(--nc-roxo);
+  border-radius: 11px;
+  background: #fff;
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--nc-roxo);
+}
+
+@app.nc-aci-analise .nc-aci-lista .a-IRR-buttons .t-Button .t-Button-label:not(#nc-aci-x):not(#nc-aci-y) {
+  color: inherit;
+}
+
+@app.nc-aci-analise .nc-aci-lista .a-IRR:not(#nc-aci-x):not(#nc-aci-y) {
+  border: 1px solid var(--nc-nevoa);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+@app.nc-aci-analise .nc-aci-lista :is(.a-IRR-noDataMsg, .a-IRR-noDataMsg-text):not(#nc-aci-x):not(#nc-aci-y) {
+  padding: 18px 16px;
+  font-size: 13.5px;
+  color: var(--nc-grafite);
+}
+
+@app.nc-aci-analise .nc-aci-lista .a-IRR-noDataMsg-icon:not(#nc-aci-x):not(#nc-aci-y) {
+  display: none;
+}
+
+/* o aviso de lista não salva, na barra do pé */
+@app.nc-aci-analise .nc-aci-pendente {
+  display: flex;
+  flex-basis: 100%;
+  flex-wrap: wrap;
+  gap: 6px 14px;
+}
+
+@app.nc-aci-analise .nc-aci-pendente-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 10px;
+  background: #FFF4DA;
+  font-size: 13px;
+  font-weight: 700;
+  color: #6E4400;
+}
+
+@app.nc-aci-analise .nc-aci-pendente-item .nc-aci-svg {
+  width: 15px;
+  height: 15px;
+  color: #9A6200;
+}
+
+/* ═══ [C18] COMPUTADOR MÉDIO E CELULAR ═══════════════════════════════════════════════════════════
+   O que está dentro de  @media (max-width: 980px)  vale em telas médias; dentro de
+   @media (max-width: 640px), no celular. Em geral: o que era lado a lado fica um embaixo do outro.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+/* =====================================================================
+   COMPUTADOR MÉDIO e CELULAR
+   ===================================================================== */
+@media (max-width: 980px) {
+  @app.nc-aci .nc-aci-ficha-grade {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  @app.nc-aci .nc-aci-fato + .nc-aci-fato {
+    border-top: 1px solid var(--nc-nevoa);
+    border-left: 0;
+  }
+
+  @app.nc-aci .nc-aci-ficha-meio {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  @app.nc-aci.nc-aci-leitura .nc-aci-passo .nc-aci-campos {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  @app.nc-aci :is(.nc-aci-passo, .nc-aci-aprov, .nc-aci-ficha) {
+    padding: 16px 14px 18px;
+    border-radius: 14px;
+  }
+
+  @app.nc-aci .nc-aci-pedido {
+    grid-template-columns: auto minmax(0, 1fr);
+    padding: 14px;
+  }
+
+  @app.nc-aci .nc-aci-pedido-txt h2:not(#nc-aci-x):not(#nc-aci-y) {
+    font-size: 18px;
+  }
+
+  @app.nc-aci .nc-aci-pedido-lado {
+    grid-column: 1 / -1;
+    grid-auto-flow: column;
+    justify-content: start;
+    align-items: center;
+    gap: 8px;
+  }
+
+  @app.nc-aci .nc-aci-pedido-acao {
+    justify-content: stretch;
+  }
+
+  @app.nc-aci .nc-aci-cat.t-Button:not(#nc-aci-x):not(#nc-aci-y) {
+    justify-content: center;
+    width: 100%;
+  }
+
+  @app.nc-aci .nc-aci-passo-cab {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+
+  @app.nc-aci .nc-aci-passo-estado {
+    grid-column: 2;
+    justify-self: start;
+    margin-top: 0;
+  }
+
+  @app.nc-aci :is(.nc-aci-campos, .nc-aci-pessoa-dados),
+  @app.nc-aci.nc-aci-leitura .nc-aci-passo .nc-aci-campos {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 16px;
+  }
+
+  @app.nc-aci .nc-aci-pessoa-dados {
+    gap: 10px;
+  }
+
+  @app.nc-aci .nc-aci-endereco-campos {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  @app.nc-aci .nc-aci-endereco-campos .nc-aci-campo--endereco_acidente {
+    grid-column: 1 / -1;
+  }
+
+  @app.nc-aci .nc-aci-escolha :is(.apex-item-group:not(:has(.apex-item-grid-row)), .apex-item-grid-row):not(#nc-aci-x):not(#nc-aci-y) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  @app.nc-aci .nc-aci-escolha .apex-item-option label:not(#nc-aci-x):not(#nc-aci-y) {
+    min-height: 0;
+  }
+
+  @app.nc-aci .nc-aci-corpo {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+  }
+
+  @app.nc-aci .nc-aci-corpo-fig {
+    justify-self: center;
+  }
+
+  @app.nc-aci .nc-aci-corpo-add.t-Button:not(#nc-aci-x):not(#nc-aci-y) {
+    justify-self: stretch;
+    width: 100%;
+  }
+
+  @app.nc-aci .nc-aci-ficha-corpo {
+    grid-template-columns: auto minmax(0, 1fr);
+    padding: 12px;
+  }
+
+  @app.nc-aci .nc-aci-ficha-fig .nc-aci-boneco {
+    width: 76px;
+  }
+
+  @app.nc-aci .nc-aci-enviar.t-Button:not(#nc-aci-x):not(#nc-aci-y) {
+    width: 100%;
+  }
+
+  @app.nc-aci .t-Region.nc-aci-rodape .t-Region-body:not(#nc-aci-x):not(#nc-aci-y) {
+    padding: 10px 12px;
+  }
+
+  /* no celular, os três primeiros e "+N": o rodapé não come a tela */
+  @app.nc-aci .nc-aci-falta-item:nth-of-type(n+4):not(#nc-aci-x):not(#nc-aci-y) {
+    display: none;
+  }
+
+  @app.nc-aci .nc-aci-falta-mais:not(#nc-aci-x) {
+    display: inline-block;
+  }
+}
+
+/* ═══ [C19] MENOS MOVIMENTO ═══════════════════════════════════════════════════════════════════
+   Para quem pediu "reduzir movimento" nas configurações do computador ou celular
+   (acessibilidade): nenhuma transição ou animação.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@media (prefers-reduced-motion: reduce) {
+  @app.nc-aci *,
+  @app.nc-aci *::before {
+    transition: none;
+    animation: none;
+  }
+}
+
+/* ═══ FAIXA DA REGIÃO (padrão 03/10) ════════════════════════════════════════════════════════
+   Todo painel com título segue o cabeçalho de região da Skin: o título numa faixa que atravessa
+   o cartão de ponta a ponta, com a linha de 2px na cor de destaque do TEMA (var(--nc-rosa) — a
+   mesma da Skin; muda com os 14 temas). As margens negativas são o recuo de dentro do cartão:
+   mudou o recuo do cartão, mude aqui junto. Guia: brand/apex/MANUAL-APEX.md.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-aci .nc-aci-passo > .nc-aci-passo-cab:not(#nc-fx1):not(#nc-fx2):not(#nc-fx3) {
+  box-sizing: border-box;
+  width: calc(100% + 40px);
+  margin: -18px -20px 16px;
+  padding: 12px 20px 10px;
+  border-bottom: 2px solid var(--nc-rosa, #C95788);
+}
+@app.nc-aci.nc-aci-leitura .nc-aci-passo > .nc-aci-passo-cab:not(#nc-fx1):not(#nc-fx2):not(#nc-fx3) {
+  box-sizing: border-box;
+  width: calc(100% + 40px);
+  margin: -16px -20px 14px;
+  padding: 12px 20px 10px;
+  border-bottom: 2px solid var(--nc-rosa, #C95788);
+}
+@app.nc-aci .nc-aci-aprov > .nc-aci-aprov-cab:not(#nc-fx1):not(#nc-fx2):not(#nc-fx3) {
+  box-sizing: border-box;
+  width: calc(100% + 40px);
+  margin: -18px -20px 14px;
+  padding: 12px 20px 10px;
+  border-bottom: 2px solid var(--nc-rosa, #C95788);
+}
+@app.nc-aci .nc-aci-bloco > .nc-aci-bloco-tit:not(#nc-fx1):not(#nc-fx2):not(#nc-fx3) {
+  box-sizing: border-box;
+  width: calc(100% + 36px);
+  margin: -16px -18px 14px;
+  padding: 12px 18px 10px;
+  border-bottom: 2px solid var(--nc-rosa, #C95788);
+}
+@app.nc-aci .nc-aci-ficha > .nc-aci-ficha-cab:not(#nc-fx1):not(#nc-fx2):not(#nc-fx3) {
+  box-sizing: border-box;
+  width: calc(100% + 44px);
+  margin: -22px -22px -4px;
+  padding: 12px 22px 10px;
+  border-bottom: 2px solid var(--nc-rosa, #C95788);
+  grid-column: 1 / -1;
+}
+
+/* ═══ [C20] AS LISTAS EM CARTÕES E A GAVETA (partes, EPIs, custos, testemunhas, terceiros) ═══════
+   O .js ([J20]) põe os cartões no alto da região e esconde a grade / o relatório originais (que
+   continuam na página: é deles que vem tudo). A gaveta é a "vista de um registro" da grade.
+   CUIDADO: a ficha da grade escreve largura em px e tem medidores de 1000+ px dentro do IG:
+   width:auto e overflow:clip aqui. Ordem e quais campos aparecem: folha #nc-aci-ficha-… do .js.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-aci .nc-aci-com-cartoes .nc-aci-grade-como:not(#nc-aci-x):not(#nc-aci-y),
+@app.nc-aci .nc-aci-motor .nc-aci-grade-como:not(#nc-aci-x):not(#nc-aci-y),
+@app.nc-aci .nc-aci-com-cartoes .nc-aci-grade-orig:not(.nc-aci-motor):not(#nc-aci-x):not(#nc-aci-y),
+@app.nc-aci .nc-aci-com-cartoes .t-IRR-region:not(#nc-aci-x):not(#nc-aci-y) {
+  display: none;
+}
+
+@app.nc-aci .nc-aci-cartoes {
+  display: grid;
+  gap: 10px;
+}
+
+@app.nc-aci .nc-aci-cartoes-lista {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+@app.nc-aci .nc-aci-cartoes-lista > li {
+  margin: 0;
+  padding: 0;
+}
+
+@app.nc-aci .nc-aci-cartao-l {
+  display: grid;
+  grid-template-columns: 40px minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  margin: 0;
+  padding: 12px 14px;
+  border: 1px solid var(--nc-nevoa);
+  border-radius: 12px;
+  background: #fff;
+  font: inherit;
+  text-align: left;
+  color: var(--nc-tinta);
+  cursor: pointer;
+  transition: border-color .15s, box-shadow .15s;
+}
+
+@app.nc-aci .nc-aci-cartao-l:hover:not(:disabled) {
+  border-color: color-mix(in srgb, var(--nc-roxo, #511C76) 32%, #fff);
+  box-shadow: 0 6px 16px -10px rgba(var(--nc-t-azul-rgb, 44, 26, 99), .35);
+}
+
+@app.nc-aci .nc-aci-cartao-l:focus-visible {
+  outline: 2px solid var(--nc-roxo, #511C76);
+  outline-offset: 2px;
+}
+
+@app.nc-aci .nc-aci-cartao-l:disabled {
+  cursor: default;
+}
+
+@app.nc-aci .nc-aci-cartao-l.is-pendente {
+  border-style: dashed;
+  border-color: #E2B866;
+  background: #FFFBF2;
+}
+
+@app.nc-aci .nc-aci-cartao-l.is-erro {
+  border-color: var(--nc-ruim, #B8323F);
+}
+
+@app.nc-aci .nc-aci-cartao-ic {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--nc-ameixa, #9A408A) 10%, #fff);
+  color: var(--nc-ameixa, #9A408A);
+}
+
+@app.nc-aci .nc-aci-cartao-ic .nc-aci-svg {
+  width: 20px;
+  height: 20px;
+}
+
+@app.nc-aci .nc-aci-cartao-txt {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 2px 8px;
+  min-width: 0;
+}
+
+@app.nc-aci .nc-aci-cartao-txt b {
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.3;
+  color: var(--nc-tinta);
+}
+
+@app.nc-aci .nc-aci-cartao-txt small,
+@app.nc-aci .nc-aci-cartao-meta {
+  flex-basis: 100%;
+  font-size: 13.5px;
+  line-height: 1.45;
+  color: var(--nc-grafite);
+}
+
+@app.nc-aci .nc-aci-cartao-citacao {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  font-style: italic;
+}
+
+@app.nc-aci .nc-aci-cartao-marca {
+  display: inline-flex;
+  align-items: center;
+  height: 22px;
+  padding: 0 9px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--nc-rosa, #C95788) 12%, #fff);
+  font-size: 12px;
+  font-weight: 700;
+  color: color-mix(in srgb, var(--nc-rosa, #C95788) 70%, #000);
+}
+
+@app.nc-aci .nc-aci-cartao-estado {
+  flex-basis: 100%;
+  font-size: 12.5px;
+  font-style: normal;
+  font-weight: 700;
+  color: #8A5300;
+}
+
+@app.nc-aci .nc-aci-cartao-estado.is-erro {
+  color: var(--nc-ruim, #B8323F);
+}
+
+@app.nc-aci .nc-aci-cartao-valor {
+  font-size: 15px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  color: var(--nc-tinta);
+}
+
+@app.nc-aci .nc-aci-cartao-ir {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 34px;
+  padding: 0 10px;
+  border-radius: 9px;
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--nc-roxo, #511C76);
+}
+
+@app.nc-aci .nc-aci-cartao-ir .nc-aci-svg {
+  width: 16px;
+  height: 16px;
+}
+
+@app.nc-aci .nc-aci-cartao-l:hover .nc-aci-cartao-ir {
+  background: color-mix(in srgb, var(--nc-roxo, #511C76) 7%, #fff);
+}
+
+@app.nc-aci .nc-aci-cartoes-vazio {
+  margin: 0;
+  padding: 14px 16px;
+  border-radius: 12px;
+  background: var(--nc-quase, #FAF8FC);
+  font-size: 14px;
+  color: var(--nc-grafite);
+}
+
+@app.nc-aci .nc-aci-cartoes-total {
+  margin: 0;
+  padding: 0 14px;
+  font-size: 14px;
+  text-align: right;
+  color: var(--nc-grafite);
+}
+
+@app.nc-aci .nc-aci-cartoes-total b {
+  margin-left: 6px;
+  font-size: 16px;
+  font-variant-numeric: tabular-nums;
+  color: var(--nc-tinta);
+}
+
+@app.nc-aci .nc-aci-cartoes-novo:not(#nc-aci-x) {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  height: 48px;
+  margin: 0;
+  border: 1.5px dashed color-mix(in srgb, var(--nc-roxo, #511C76) 40%, #fff);
+  border-radius: 12px;
+  background: #fff;
+  font: inherit;
+  font-size: 14.5px;
+  font-weight: 700;
+  color: var(--nc-roxo, #511C76);
+  cursor: pointer;
+}
+
+@app.nc-aci .nc-aci-cartoes-novo:hover {
+  background: color-mix(in srgb, var(--nc-roxo, #511C76) 5%, #fff);
+}
+
+@app.nc-aci .nc-aci-cartoes-novo .nc-aci-svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* a gaveta */
+@app.nc-aci .nc-aci-gfundo,
+@app.nc-aci .nc-aci-gaveta {
+  display: none;
+}
+
+@app.nc-aci.nc-aci-gaveta-aberta .nc-aci-gfundo {
+  position: fixed;
+  inset: 0;
+  z-index: 900;
+  display: block;
+  background: rgba(27, 18, 56, .4);
+}
+
+@app.nc-aci.nc-aci-gaveta-aberta .nc-aci-gaveta {
+  position: fixed;
+  inset: 0 0 0 auto;
+  z-index: 901;
+  display: flex;
+  flex-direction: column;
+  width: min(560px, 100vw);
+  background: #fff;
+  box-shadow: -24px 0 60px -30px rgba(27, 18, 56, .5);
+}
+
+@app.nc-aci .nc-aci-gcab {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 18px 14px 14px 22px;
+  border-bottom: 1px solid var(--nc-nevoa);
+}
+
+@app.nc-aci .nc-aci-gcab > div {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+@app.nc-aci .nc-aci-gcab h2 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 800;
+  line-height: 1.25;
+  color: var(--nc-tinta);
+}
+
+@app.nc-aci .nc-aci-gcab p {
+  margin: 3px 0 0;
+  font-size: 13.5px;
+  color: var(--nc-grafite);
+}
+
+@app.nc-aci .nc-aci-gcab-ic {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--nc-ameixa, #9A408A) 10%, #fff);
+  color: var(--nc-ameixa, #9A408A);
+}
+
+@app.nc-aci .nc-aci-gx:not(#nc-aci-x) {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--nc-grafite);
+  cursor: pointer;
+}
+
+@app.nc-aci .nc-aci-gx:hover {
+  background: var(--nc-quase, #FAF8FC);
+}
+
+@app.nc-aci .nc-aci-gcorpo {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+@app.nc-aci .nc-aci-gpe {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 84px calc(14px + env(safe-area-inset-bottom, 0px)) 22px;   /* 84: o balão de ajuda do portal */
+  border-top: 1px solid var(--nc-nevoa);
+}
+
+@app.nc-aci .nc-aci-gpe-espaco {
+  flex: 1 1 auto;
+}
+
+@app.nc-aci .nc-aci-gbt:not(#nc-aci-x) {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  height: 44px;
+  margin: 0;
+  padding: 0 18px;
+  border: 1px solid var(--nc-borda-botao);
+  border-radius: 10px;
+  background: #fff;
+  font: inherit;
+  font-size: 14.5px;
+  font-weight: 700;
+  color: var(--nc-tinta);
+  cursor: pointer;
+}
+
+@app.nc-aci .nc-aci-gbt.is-primario:not(#nc-aci-x) {
+  min-width: 130px;
+  border-color: var(--nc-roxo, #511C76);
+  background: var(--nc-roxo, #511C76);
+  color: #fff;
+}
+
+@app.nc-aci .nc-aci-gbt.is-perigo:not(#nc-aci-x) {
+  border-color: color-mix(in srgb, var(--nc-ruim, #B8323F) 35%, #fff);
+  color: var(--nc-ruim, #B8323F);
+}
+
+@app.nc-aci .nc-aci-gbt:disabled {
+  opacity: .55;
+  cursor: progress;
+}
+
+@app.nc-aci .nc-aci-gbt .nc-aci-svg {
+  width: 18px;
+  height: 18px;
+}
+
+@app.nc-aci .nc-aci-gaveta.is-ocupada .nc-aci-gcorpo {
+  opacity: .6;
+  pointer-events: none;
+}
+
+/* a região da grade, dentro da gaveta: só a ficha */
+@app.nc-aci .nc-aci-motor:not(#nc-aci-x):not(#nc-aci-y) {
+  display: block;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+@app.nc-aci .nc-aci-motor :is(.t-Region-header, .a-IG-header, .js-stickyWidget-placeholder, .a-RV-toolbar, .a-RV-header, .a-RV-footer, .a-GV, .a-IG-footer):not(#nc-aci-x):not(#nc-aci-y) {
+  display: none;
+}
+
+@app.nc-aci .nc-aci-motor:not(#nc-aci-x) :is(.t-Region-bodyWrap, .t-Region-body, .a-IG, .a-IG-body, .a-IG-contentContainer, .a-RV, .a-RV-w-scroll, .a-RV-body):not(#nc-aci-y):not(#nc-aci-z) {
+  width: auto;
+  height: auto;
+  min-height: 0;
+  margin: 0;
+  padding: 0;
+  overflow: visible;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+@app.nc-aci .nc-aci-motor:not(#nc-aci-x) .a-IG:not(#nc-aci-y):not(#nc-aci-z):not(#nc-aci-w) {
+  overflow: hidden;
+  overflow: clip;
+}
+
+@app.nc-aci .nc-aci-motor .a-RV .u-Form:not(#nc-aci-x):not(#nc-aci-y) {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding: 22px 22px 28px;
+}
+
+@app.nc-aci .nc-aci-motor .a-RV .u-Form > *:not(#nc-aci-x):not(#nc-aci-y) {
+  display: none;
+}
+
+@app.nc-aci .nc-aci-motor .a-RV .u-Form > .u-Form-fieldContainer {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 6px;
+  width: auto;
+  margin: 0;
+  padding: 0;
+}
+
+@app.nc-aci .nc-aci-motor .a-RV .u-Form > .u-Form-fieldContainer .u-Form-labelContainer {
+  width: auto;
+  padding: 0;
+  text-align: left;
+}
+
+@app.nc-aci .nc-aci-motor .a-RV .u-Form > .u-Form-fieldContainer .u-Form-label {
+  font-size: 14.5px;
+  font-weight: 700;
+  color: var(--nc-tinta);
+}
+
+@app.nc-aci .nc-aci-motor .a-RV .u-Form > .u-Form-fieldContainer.is-required .u-Form-label::after {
+  content: " *";
+  color: var(--nc-ruim, #B8323F);
+}
+
+@app.nc-aci .nc-aci-motor .a-RV .u-Form > .u-Form-fieldContainer .u-Form-inputContainer {
+  width: 100%;
+  min-height: 46px;
+  padding: 0;
+  border: 1px solid #D9D3E5;
+  border-radius: 10px;
+  background: #fff;
+}
+
+@app.nc-aci .nc-aci-motor .a-RV .u-Form > .u-Form-fieldContainer .u-Form-inputContainer:focus-within {
+  border-color: var(--nc-roxo, #511C76);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--nc-roxo, #511C76) 16%, transparent);
+}
+
+@app.nc-aci .nc-aci-motor .a-RV .u-Form > .is-error .u-Form-inputContainer {
+  border-color: var(--nc-ruim, #B8323F);
+}
+
+@app.nc-aci .nc-aci-motor .a-RV .u-Form > .u-Form-fieldContainer .a-GV-columnItem:not(#nc-aci-x) {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  min-width: 0;
+}
+
+@app.nc-aci .nc-aci-motor .a-RV .u-Form > .u-Form-fieldContainer :is(select, input[type="text"]):not(#nc-aci-x):not(#nc-aci-y) {
+  flex: 1 1 auto;
+  width: 100%;
+  min-width: 0;
+  height: 44px;
+  min-height: 44px;
+  margin: 0;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 10px;
+  outline: 0;
+  box-shadow: none;
+  background-color: transparent;
+  font-size: 15px;
+  color: var(--nc-tinta);
+}
+
+/* o embrulho da caixa de texto do APEX não estica: a caixa ficava com 208 px numa moldura de 514
+   e o clique na metade direita não caía nela (parecia que não dava para digitar) */
+@app.nc-aci .nc-aci-motor .a-RV .u-Form > .u-Form-fieldContainer .apex-item-group--textarea:not(#nc-aci-x):not(#nc-aci-y) {
+  flex: 1 1 auto;
+  width: 100%;
+  min-width: 0;
+}
+
+@app.nc-aci .nc-aci-motor .a-RV .u-Form > .u-Form-fieldContainer textarea:not(#nc-aci-x):not(#nc-aci-y) {
+  width: 100%;
+  min-height: 96px;
+  height: auto;
+  margin: 0;
+  padding: 10px 12px;
+  border: 0;
+  border-radius: 10px;
+  outline: 0;
+  box-shadow: none;
+  background-color: transparent;
+  font-size: 15px;
+  line-height: 1.5;
+  resize: vertical;
+}
+
+@app.nc-aci .nc-aci-motor .a-RV .u-Form > .u-Form-fieldContainer select:not(#nc-aci-x):not(#nc-aci-y) {
+  appearance: none;
+  padding-right: 38px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2377707f' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m7 15 5 5 5-5'/%3E%3Cpath d='m7 9 5-5 5 5'/%3E%3C/svg%3E");
+  background-position: calc(100% - 12px) 50%;
+  background-size: 16px 16px;
+  background-repeat: no-repeat;
+  cursor: pointer;
+}
+
+@app.nc-aci .nc-aci-avisox {
+  position: fixed;
+  left: 50%;
+  bottom: 32px;
+  z-index: 950;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  max-width: calc(100vw - 32px);
+  padding: 12px 18px;
+  border-radius: 12px;
+  background: var(--nc-tinta);
+  box-shadow: 0 10px 30px -12px rgba(27, 18, 56, .5);
+  font-size: 14.5px;
+  font-weight: 600;
+  color: #fff;
+  transform: translate(-50%, 16px);
+  visibility: hidden;
+  opacity: .01;
+  transition: transform .2s, opacity .2s, visibility 0s .2s;
+}
+
+@app.nc-aci .nc-aci-avisox.is-visivel {
+  transform: translate(-50%, 0);
+  visibility: visible;
+  opacity: 1;
+  transition: transform .2s, opacity .2s;
+}
+
+@app.nc-aci .nc-aci-avisox.is-erro {
+  background: var(--nc-ruim, #B8323F);
+}
+
+@app.nc-aci .nc-aci-avisox .nc-aci-svg {
+  width: 18px;
+  height: 18px;
+}
+
+@media (max-width: 760px) {
+  @app.nc-aci .nc-aci-cartao-l {
+    grid-template-columns: 36px minmax(0, 1fr) auto;
+  }
+
+  @app.nc-aci .nc-aci-cartao-ir {
+    display: none;
+  }
+
+  @app.nc-aci .nc-aci-gpe {
+    padding: 12px 76px calc(12px + env(safe-area-inset-bottom, 0px)) 16px;
+  }
+}
+
+/* enquanto a gaveta põe a ficha no registro certo (meio segundo): sem mostrar o anterior */
+@app.nc-aci .nc-aci-gaveta.is-abrindo .nc-aci-gcorpo {
+  visibility: hidden;
+}
+
+/* parte marcada para excluir: fica na lista, riscada, até o Salvar da página */
+@app.nc-aci .nc-aci-cartao-l.is-excluido b {
+  text-decoration: line-through;
+  color: var(--nc-grafite);
+}

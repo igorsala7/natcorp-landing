@@ -1,0 +1,2876 @@
+/* ╔════════════════════════════════════════════════════════════════════════════════════════╗
+   ║  NATCORP · TRATATIVA DE ABONO (PONTO)  —  a "roupa" da tela (CSS)                         ║
+   ║  App 9503 · Página 203 · o ponto do colaborador, dia a dia                               ║
+   ╚════════════════════════════════════════════════════════════════════════════════════════╝
+
+   Primeira vez num arquivo destes? Leia antes o manual: brand/apex/MANUAL-APEX.md (parte 1).
+   Guia desta página: PONTO-MANUTENCAO.md.
+
+   ── O QUE ESTE ARQUIVO FAZ ────────────────────────────────────────────────────────────────
+   Dá a aparência da página 203: cores, tamanhos, espaços, bordas, e como a tela se arruma no
+   computador e no celular. Ele NÃO muda nada de lugar: quem muda as coisas de lugar é o
+   arquivo-irmão Natcorp_Ponto.js. Os dois trabalham juntos:
+     o JS monta "a linha de cada dia"  →  este arquivo diz como a linha se parece.
+   Sem o JS, este arquivo não faz nada: as regras dependem das marcas que o JS põe na página —
+     nc-po-ativo   a barra e a lista dos dias (posta primeiro)
+     nc-po-painel  o painel inteiro: faixa, passos, coluna da direita, pedidos
+     nc-po-tabela-on  quando a pessoa escolheu "Ver como tabela"
+   As cores são as da própria grade (roxo ok, vermelho problema, amarelo conferir), agora com
+   PALAVRA ao lado — cor sozinha não diz nada a quem não conhece a tela.
+
+   ── ONDE ELE ENTRA NO APEX ────────────────────────────────────────────────────────────────
+     Página 203 › CSS › File URLs:   #WORKSPACE_IMAGES#Natcorp_Ponto.css
+     CUIDADO: edite ESTE arquivo (Natcorp_Ponto.src.css, a fonte) e gere o arquivo que sobe com
+     node brand/apex/app/gerar-app.mjs  — o gerador troca @app pelo prefixo longo e põe
+     !important em toda linha. O Natcorp_Ponto.css da pasta login/ é refeito a cada geração:
+     o que for mudado só nele se perde. (Manual, parte 2.)
+
+   ── ÍNDICE: as partes deste arquivo (Ctrl+F pelo código entre colchetes) ──────────────────
+   Algumas partes aparecem em dois trechos do arquivo: o Ctrl+F acha os dois.
+     [C1]  A grade original e o cabeçalho fixo        (o que some quando a lista está à vista)
+     [C2]  A barra da lista: filtros e menus           ← montada pelo JS em [J3]
+     [C3]  A linha de cada dia                         ← montada pelo JS em [J4]
+     [C4]  Consultas e relatórios, discretos           ← JS em [J3] e [J6]
+     [C5]  Celular e menos movimento (a lista)         (ajustes para telas até 640px)
+     [C6]  O painel: peças escondidas e botões por procuração ← JS em [J5]
+     [C7]  A faixa do colaborador e o período          ← montada pelo JS em [J6]
+     [C8]  Fechar o mês em 4 passos                    ← montado pelo JS em [J7]
+     [C9]  A coluna da direita e as horas do dia       ← montada pelo JS em [J8]
+     [C10] Os pedidos do período                       ← montados pelo JS em [J9]
+     [C11] Telas médias e celular (o painel)           (ajustes para telas menores)
+
+   ── RECEITAS RÁPIDAS ──────────────────────────────────────────────────────────────────────
+     Quero mudar uma cor
+       → use uma das cores da marca, pelo nome: var(--nc-roxo), var(--nc-grafite)… A lista
+         completa, com amostras, está no manual (parte 3). Assim a cor acompanha o tema que
+         o usuário escolheu em "Cores". Evite escrever cores soltas, como #511C76.
+         Exceção: o vermelho/amarelo/verde das situações são cores de AVISO e ficam fixas.
+     Quero a linha do dia mais alta ou mais baixa → [C3], .nc-po-dia, padding.
+     Quero o horário da marcação maior            → [C3], .nc-po-marca b, font-size.
+     Quero mais ou menos espaço                    → padding (espaço por DENTRO da caixa) e
+                                                     margin (espaço por FORA, até a vizinha).
+     Algo ficou bom no computador e ruim no celular → [C5] e [C11]: o que está dentro de
+                                                   @media (max-width: 640px) só vale no celular.
+
+   ── COMO LER UM ARQUIVO CSS EM 30 SEGUNDOS ────────────────────────────────────────────────
+     Cada regra tem duas partes:     QUEM { COMO; }
+       @app.nc-po-ativo .nc-po-dia {       ← QUEM: o "seletor", diz em que pedaço da tela vale
+         display: grid;                    ← COMO: propriedade: valor;  (arruma em colunas)
+         border-radius: 14px;              ←       cantos arredondados
+       }
+     .nome-com-ponto       uma "classe": uma etiqueta posta num pedaço da tela (pelo APEX ou
+                           pelo JS). .nc-po-dia é a linha de cada dia.
+     #marcacao             um "id": o Static ID de uma região do APEX (aqui, a grade).
+     @app                  atalho que dá prioridade às nossas regras sobre as do tema do APEX.
+                           No arquivo que sobe para o APEX ele aparece por extenso, como
+                           html body:is(.t-PageBody…):not(#nc-a1):not(#nc-a2) — é a mesma coisa.
+     :not(#nc-po-x)…       peso extra, para vencer uma regra do tema. Pode ignorar ao ler.
+     !important            no arquivo que sobe, toda linha ganha um: é o mesmo "vencer o tema".
+     @media (max-width: 640px) { … }   as regras de dentro só valem em telas até 640px (celular).
+     var(--nc-roxo)        uma cor da marca, pelo nome (muda junto com o tema escolhido).
+     px                    pixels, o tamanho de um pontinho da tela. 16px é o texto normal.
+     Toda linha COMO termina em ;   e todo { é fechado por um }. Não apague esses sinais.
+     Linhas em DUPLA (a primeira termina com a palavra reserva entre barra-asterisco): a
+     primeira é a cor para navegador antigo; a segunda, com oklch(…), é a mesma cor
+     acompanhando o tema. Se mudar uma, mude as duas. Não apague a marca reserva.
+*/
+
+/* ═══ [C1] A GRADE ORIGINAL E O CABEÇALHO FIXO ══════════════════════════════════════════════
+   A grade de 13 colunas do APEX some enquanto a lista de dias está à vista, e volta quando a
+   pessoa escolhe "Ver como tabela". display: none = não aparece.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+/* a grade original some quando os cartões estão à vista (e volta com "Ver como tabela") */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo #marcacao.nc-po-reg:not(.nc-po-tabela) :is(.a-IRR-tableContainer, .a-IRR-reportView, .a-IRR-paginationWrap--bottom):not(#nc-po-x):not(#nc-po-y),
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo #marcacao.nc-po-reg.nc-po-tabela .nc-po-dias:not(#nc-po-x):not(#nc-po-y),
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo #marcacao.nc-po-reg.nc-po-tabela :is(.nc-po-filtros, .nc-po-prox, .nc-po-legenda):not(#nc-po-x):not(#nc-po-y),
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po-prox[hidden]:not(#nc-po-x):not(#nc-po-y) {
+  display: none !important;
+}
+
+/* o cabeçalho fixo da grade (Tipo · Data · Dia · 1 · 2 …) só serve à tabela — também quando
+   o widget o tira da região para "grudar" no alto */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo:not(.nc-po-tabela-on) .nc-po-thead:not(#nc-po-x):not(#nc-po-y),
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo #marcacao.nc-po-reg:not(.nc-po-tabela) .js-stickyWidget-placeholder:not(#nc-po-x):not(#nc-po-y) {
+  display: none !important;
+}
+
+/* o conteúdo da grade corta (overflow hidden) e prendia os filtros: "clip" corta sem virar
+   caixa de rolagem, e os filtros grudam no alto da região */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo #marcacao.nc-po-reg:not(.nc-po-tabela) :is(.a-IRR, .a-IRR-content, .a-IRR-fullView, .a-IRR-reportView):not(#nc-po-x):not(#nc-po-y) {
+  overflow: clip !important;
+}
+
+/* a grade rola COM a página (a caixa de 650px com rolagem própria sai); os filtros grudam no
+   alto da tela e a coluna da apuração, ao lado, acompanha. O tema põe overflow hidden no corpo,
+   o que impede o "grudar": clip corta igual e deixa o sticky funcionar. */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo #marcacao.nc-po-reg:not(.nc-po-tabela):not(#nc-po-x):not(#nc-po-y) {
+  height: auto !important;
+  overflow: visible !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel :is(.t-Body, .t-Body-main, .t-Body-content, .t-Body-contentInner, .t-Body-content .container):not(#nc-po-x):not(#nc-po-y) {
+  overflow: clip !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po-cab {
+  position: sticky !important;
+  top: var(--nc-po-topo, 0px) !important;
+  z-index: 3 !important;
+  margin: 0 -2px 10px !important;
+  padding: 8px 2px 10px !important;
+  background: #fff !important;
+  box-shadow: 0 10px 12px -12px rgba(var(--nc-t-azul-rgb, 44, 26, 99), .25) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po-ic {
+  fill: none !important;
+  stroke: currentColor !important;
+  stroke-width: 2 !important;
+  stroke-linecap: round !important;
+  stroke-linejoin: round !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po {
+  padding: 4px 0 8px !important;
+}
+
+/* ═══ [C2] A BARRA DA LISTA: FILTROS E MENUS ════════════════════════════════════════════════
+   Montada pelo JS em [J3]. .nc-po-f é cada filtro ("3 Com problema"); .nc-po-prox, o
+   "Próximo problema". A barra em duas linhas e os menus "Lançar"/"Mais opções" estão mais
+   adiante: procure de novo [C2].
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+/* ---------- filtros ---------- */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po-cab {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 10px !important;
+  margin: 0 0 10px !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po-filtros {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 6px !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po-f {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  min-height: 40px !important;
+  padding: 0 14px !important;
+  border: 1.5px solid var(--nc-nevoa) !important;
+  border-radius: 999px !important;
+  background: #fff !important;
+  font: inherit !important;
+  font-size: 14px !important;
+  font-weight: 700 !important;
+  color: var(--nc-grafite) !important;
+  cursor: pointer !important;
+  transition: border-color .15s, background-color .15s !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po-f b {
+  font-size: 15px !important;
+  font-weight: 800 !important;
+  font-variant-numeric: tabular-nums !important;
+  color: var(--nc-tinta) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po-f:hover {
+  border-color: #BBA9D6 /*reserva*/ !important;
+  border-color: oklch(from #BBA9D6 l calc(c * var(--nc-t-croma, 1)) calc(h + var(--nc-t-giro, 0))) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po-f--problema {
+  border-color: #F2C2C8 /*reserva*/ !important;
+  border-color: oklch(from #F2C2C8 l calc(c * var(--nc-t-croma, 1)) calc(h + var(--nc-t-giro, 0))) !important;
+  color: #9B2230 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po-f--problema b {
+  color: #9B2230 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po-f--conferir {
+  border-color: #F1DDB0 !important;
+  color: #6B4700 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po-f.is-on {
+  border-color: var(--nc-roxo) !important;
+  background: var(--nc-roxo) !important;
+  color: #fff !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po-f.is-on b {
+  color: #fff !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po-f--problema.is-on {
+  border-color: #B8323F !important;
+  background: #B8323F !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo :is(.nc-po-f, .nc-po-prox, .nc-po-vista, .nc-po-marca, .nc-po-horas):focus-visible {
+  outline: 3px solid var(--nc-rosa) !important;
+  outline-offset: 2px !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po-cab-acoes {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 6px !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo :is(.nc-po-prox, .nc-po-vista) {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  min-height: 40px !important;
+  padding: 0 14px 0 11px !important;
+  border: 0 !important;
+  border-radius: 12px !important;
+  font: inherit !important;
+  font-size: 14px !important;
+  font-weight: 800 !important;
+  cursor: pointer !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po-prox {
+  background: #B8323F !important;
+  color: #fff !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po-prox:hover {
+  background: #9B2230 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po-vista {
+  background: var(--nc-nevoa2) !important;
+  color: var(--nc-roxo) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo :is(.nc-po-prox, .nc-po-vista) .nc-po-ic {
+  width: 17px !important;
+  height: 17px !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po-legenda {
+  display: flex !important;
+  align-items: flex-start !important;
+  gap: 8px !important;
+  margin: 0 0 12px !important;
+  font-size: 14px !important;
+  line-height: 1.45 !important;
+  color: var(--nc-grafite) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po-legenda b {
+  font-weight: 800 !important;
+  color: var(--nc-tinta) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po-legenda .nc-po-ic {
+  flex: none !important;
+  width: 18px !important;
+  height: 18px !important;
+  margin-top: 1px !important;
+  color: var(--nc-roxo) !important;
+}
+
+/* ═══ [C3] A LINHA DE CADA DIA ══════════════════════════════════════════════════════════════
+   Montada pelo JS em [J4]. Peças principais:
+     .nc-po-dia       a linha do dia; .is-problema / .is-conferir / .is-certo / .is-folga dão o tom
+     .nc-po-data      a data grande        .nc-po-sit     a situação em palavra
+     .nc-po-marca     cada marcação (Entrada/Saída); --problema, --conferir, --ok, --vazia
+     .nc-po-semana    o título "Semana de …"
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+/* ---------- a linha do dia ----------
+   Uma linha baixa por dia (era um cartão de 110 px): data · situação · marcações · "Ver horas".
+   A situação vem no fundo da linha e na palavra — sem faixa colorida na lateral. */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po-dias {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 6px !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po-semana {
+  margin: 14px 2px 2px !important;
+  font-size: 12.5px !important;
+  font-weight: 800 !important;
+  color: #5E586E !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po-semana:first-child {
+  margin-top: 0 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po-dia {
+  position: relative !important;
+  display: grid !important;
+  grid-template-columns: 46px 132px minmax(0, 1fr) auto !important;
+  align-items: center !important;
+  gap: 8px 14px !important;
+  min-height: 62px !important;
+  padding: 7px 10px 7px 8px !important;
+  border: 1px solid var(--nc-nevoa) !important;
+  border-radius: 14px !important;
+  background: #fff !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po-dia.is-problema {
+  border-color: #F2C2C8 /*reserva*/ !important;
+  border-color: oklch(from #F2C2C8 l calc(c * var(--nc-t-croma, 1)) calc(h + var(--nc-t-giro, 0))) !important;
+  background: #FFF8F8 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po-dia.is-conferir {
+  border-color: #F1DDB0 !important;
+  background: #FFFCF3 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo :is(.nc-po-dia.is-folga, .nc-po-dia.is-vazio) {
+  min-height: 52px !important;
+  background: #FAF9FC !important;
+}
+
+/* o dia que está aberto nas "Horas do dia", ao lado */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po-dia.is-atual {
+  border-color: var(--nc-roxo) !important;
+  box-shadow: 0 0 0 1px var(--nc-roxo), 0 10px 22px -18px rgba(var(--nc-t-roxo-rgb, 81, 28, 118), .8) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po-dia.nc-po-pisca {
+  animation: nc-po-pisca 1.8s cubic-bezier(.16, 1, .3, 1) !important;
+}
+
+@keyframes nc-po-pisca {
+  0%, 30% { box-shadow: 0 0 0 4px rgba(var(--nc-t-rosa-rgb, 201, 87, 136), .45); }
+  100% { box-shadow: 0 0 0 4px rgba(var(--nc-t-rosa-rgb, 201, 87, 136), 0); }
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po-data {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  line-height: 1.05 !important;
+  color: var(--nc-tinta) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po-data b {
+  font-size: 21px !important;
+  font-weight: 800 !important;
+  font-variant-numeric: tabular-nums !important;
+  letter-spacing: -.02em !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po-data span {
+  margin-top: 2px !important;
+  font-size: 12.5px !important;
+  font-weight: 700 !important;
+  color: #5E586E !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .is-folga .nc-po-data span {
+  color: #8A3E7C /*reserva*/ !important;
+  color: oklch(from #8A3E7C l calc(c * var(--nc-t-croma, 1)) calc(h + var(--nc-t-giro, 0))) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po-sit-col {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-start !important;
+  gap: 3px !important;
+  min-width: 0 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po-sit {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 5px !important;
+  font-size: 14px !important;
+  font-weight: 800 !important;
+  color: #1E6B45 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po-sit .nc-po-ic {
+  flex: none !important;
+  width: 16px !important;
+  height: 16px !important;
+  stroke-width: 2.4 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .is-problema .nc-po-sit { color: #9B2230 !important; }
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .is-conferir .nc-po-sit { color: #6B4700 !important; }
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo :is(.is-folga, .is-vazio) .nc-po-sit { color: #5E586E !important; }
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo :is(.nc-po-extra, .nc-po-tipo) {
+  padding: 1px 8px !important;
+  border-radius: 999px !important;
+  background: var(--nc-nevoa2) !important;
+  font-size: 12px !important;
+  font-weight: 700 !important;
+  color: var(--nc-grafite) !important;
+}
+
+/* as marcações: rótulo (Entrada/Saída) + hora; a vaga vazia é um "+" tracejado */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po-marcas {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 6px !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po-marca {
+  position: relative !important;
+  display: inline-flex !important;
+  flex-direction: column !important;
+  align-items: flex-start !important;
+  justify-content: center !important;
+  min-width: 72px !important;
+  min-height: 44px !important;
+  padding: 4px 11px 5px !important;
+  border: 1.5px solid transparent !important;
+  border-radius: 12px !important;
+  background: var(--nc-roxo) !important;
+  font: inherit !important;
+  text-align: left !important;
+  color: #fff !important;
+  cursor: pointer !important;
+  transition: transform .12s, box-shadow .15s !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po-marca:hover {
+  box-shadow: 0 8px 16px -10px rgba(var(--nc-t-azul-rgb, 44, 26, 99), .7) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po-marca:active {
+  transform: scale(.97) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po-marca small {
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  line-height: 1.2 !important;
+  opacity: .85 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po-marca b {
+  font-size: 17px !important;
+  font-weight: 800 !important;
+  line-height: 1.2 !important;
+  font-variant-numeric: tabular-nums !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po-marca b .nc-po-ic {
+  width: 18px !important;
+  height: 18px !important;
+  margin-top: 2px !important;
+  stroke-width: 2.6 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po-marca i {
+  font-size: 10.5px !important;
+  font-style: normal !important;
+  font-weight: 800 !important;
+  line-height: 1.2 !important;
+  color: #F2B8D0 /*reserva*/ !important;
+  color: oklch(from #F2B8D0 l calc(c * var(--nc-t-croma, 1)) calc(h + var(--nc-t-giro, 0))) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po-marca--problema {
+  border-color: #B8323F !important;
+  background: #FBEAEC !important;
+  color: #9B2230 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po-marca--problema.nc-po-marca--vazia,
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po-marca--problema:has(b .nc-po-ic) {
+  border-style: dashed !important;
+  background: #fff !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po-marca--conferir {
+  border-color: #D99A18 !important;
+  background: #FFF4DE !important;
+  color: #6B4700 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po-marca--vazia {
+  border: 1.5px dashed #CDBFE0 !important;
+  background: #fff !important;
+  color: var(--nc-roxo) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po-marca--mais {
+  flex-direction: row !important;
+  align-items: center !important;
+  gap: 4px !important;
+  min-width: 0 !important;
+  padding: 0 12px !important;
+  border: 1.5px dashed #DCD3EA !important;
+  background: transparent !important;
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  color: #8E88A3 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po-marca--mais .nc-po-ic {
+  width: 15px !important;
+  height: 15px !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po-horas {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  min-height: 38px !important;
+  padding: 0 12px !important;
+  border: 1.5px solid var(--nc-nevoa) !important;
+  border-radius: 12px !important;
+  background: #fff !important;
+  font: inherit !important;
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  white-space: nowrap !important;
+  color: var(--nc-roxo) !important;
+  cursor: pointer !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po-horas:hover {
+  border-color: var(--nc-roxo) !important;
+  background: var(--nc-nevoa2) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po-horas .nc-po-ic {
+  width: 16px !important;
+  height: 16px !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po-aberto {
+  display: inline-flex !important;
+  border: 0 !important;
+  font: inherit !important;
+  cursor: pointer !important;
+  align-items: center !important;
+  gap: 6px !important;
+  min-height: 38px !important;
+  padding: 0 12px !important;
+  border-radius: 12px !important;
+  background: var(--nc-roxo) !important;
+  font-size: 13px !important;
+  font-weight: 800 !important;
+  white-space: nowrap !important;
+  color: #fff !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po-aberto .nc-po-ic {
+  width: 16px !important;
+  height: 16px !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po-nada {
+  margin: 8px 0 !important;
+  padding: 16px !important;
+  border-radius: 14px !important;
+  background: var(--nc-nevoa2) !important;
+  font-size: 15px !important;
+  color: var(--nc-grafite) !important;
+}
+
+/* ═══ [C4] CONSULTAS E RELATÓRIOS, DISCRETOS ════════════════════════════════════════════════
+   As regiões "Consultas" e "Relatórios" com botões menores, para não competir com o trabalho.
+   (Com o painel montado, os botões delas vão para o menu "Consultas e relatórios" — [C7].)
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+/* ---------- consultas e relatórios: discretos ---------- */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .t-Region.nc-po-consultas .t-Button:not(#nc-po-x):not(#nc-po-y) {
+  min-height: 38px !important;
+  border: 1.5px solid var(--nc-nevoa) !important;
+  background: #fff !important;
+  box-shadow: none !important;
+  font-size: 13.5px !important;
+  font-weight: 700 !important;
+  color: var(--nc-roxo) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .t-Region.nc-po-consultas .t-Button :is(.t-Button-label, .t-Icon):not(#nc-po-x):not(#nc-po-y) {
+  color: inherit !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .t-Region.nc-po-consultas .t-Button:hover:not(#nc-po-x):not(#nc-po-y) {
+  border-color: var(--nc-roxo) !important;
+  background: var(--nc-nevoa2) !important;
+}
+
+/* ═══ [C5] CELULAR E MENOS MOVIMENTO (A LISTA) ══════════════════════════════════════════════
+   Até 640px: a página inteira rola (a caixa da grade solta a altura) e a linha do dia se
+   reorganiza. Depois, para quem pediu "reduzir movimento" (acessibilidade), sem transições.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+/* ---------- celular ---------- */
+@media (max-width: 640px) {
+  /* no celular a página inteira rola: a caixa da grade solta a altura */
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo #marcacao.nc-po-reg:not(#nc-po-x):not(#nc-po-y) {
+    height: auto !important;
+    overflow: visible !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po-cab {
+    position: static !important;
+    box-shadow: none !important;
+  }
+
+  /* no celular: data à esquerda; em cima a situação, embaixo as marcações; "Horas" no canto */
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po-dia {
+    grid-template-columns: 42px minmax(0, 1fr) !important;
+    grid-template-areas: "data sit" "data marcas" !important;
+    gap: 6px 10px !important;
+    padding: 9px 10px 10px 6px !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po-data { grid-area: data !important; align-self: start !important; padding-top: 2px !important; }
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po-sit-col { grid-area: sit !important; flex-direction: row !important; flex-wrap: wrap !important; align-items: center !important; gap: 4px 8px !important; padding-right: 96px !important; min-height: 30px !important; }
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po-marcas { grid-area: marcas !important; }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po-data b {
+    font-size: 20px !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo :is(.nc-po-horas, .nc-po-aberto) {
+    position: absolute !important;
+    top: 7px !important;
+    right: 8px !important;
+    min-height: 32px !important;
+    padding: 0 10px !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po-horas span {
+    font-size: 12.5px !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po-aberto span {
+    font-size: 0 !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po-aberto span::after {
+    content: "Ver horas" !important;
+    font-size: 12px !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po-marca {
+    min-width: 62px !important;
+    min-height: 46px !important;
+    padding: 4px 9px 5px !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po-marca b {
+    font-size: 16px !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po-marca--mais {
+    padding: 0 9px !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po-cab-acoes {
+    width: 100% !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo :is(.nc-po-prox, .nc-po-vista) {
+    flex: 1 1 auto !important;
+    justify-content: center !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo :is(.nc-po-marca, .nc-po-f) {
+    transition: none !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po-dia.nc-po-pisca {
+    animation: none !important;
+  }
+}
+
+
+/* ═══ [C6] O PAINEL: PEÇAS ESCONDIDAS E BOTÕES POR PROCURAÇÃO ═══════════════════════════════
+   Montado pelo JS em [J5]. .nc-po-recolhida = peça do APEX que o desenho substituiu (some).
+   .nc-po-px = botão do desenho que clica no botão original; --forte é o de destaque.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+/* =====================================================================
+   A PÁGINA INTEIRA — o painel do fechamento do mês (nc-po-painel)
+   ===================================================================== */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel :is(.nc-po-recolhida, .row.nc-po-recolhida):not(#nc-po-x):not(#nc-po-y),
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel :is(.nc-po-px, .nc-po-datas, .nc-po-menu-painel, .nc-po-passo-acao)[hidden]:not(#nc-po-x):not(#nc-po-y) {
+  display: none !important;
+}
+
+/* botão por procuração: um estilo só, três pesos */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-px {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 7px !important;
+  min-height: 42px !important;
+  padding: 0 15px 0 12px !important;
+  border: 1.5px solid var(--nc-nevoa) !important;
+  border-radius: 12px !important;
+  background: #fff !important;
+  font: inherit !important;
+  font-size: 14px !important;
+  font-weight: 700 !important;
+  line-height: 1.2 !important;
+  white-space: nowrap !important;
+  color: var(--nc-roxo) !important;
+  cursor: pointer !important;
+  transition: border-color .15s, background-color .15s !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-px:hover:not(:disabled) {
+  border-color: var(--nc-roxo) !important;
+  background: var(--nc-nevoa2) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-px:disabled {
+  cursor: not-allowed !important;
+  opacity: .45 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-px .nc-po-ic {
+  flex: none !important;
+  width: 18px !important;
+  height: 18px !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-px--forte {
+  border-color: var(--nc-roxo) !important;
+  background: var(--nc-roxo) !important;
+  color: #fff !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-px--forte:hover:not(:disabled) {
+  border-color: var(--nc-azul) !important;
+  background: var(--nc-azul) !important;
+  color: #fff !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-px--linha {
+  min-height: 36px !important;
+  padding: 0 4px !important;
+  border: 0 !important;
+  background: none !important;
+  text-decoration: underline !important;
+  text-underline-offset: 4px !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-px--linha:hover:not(:disabled) {
+  background: none !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel :is(.nc-po-px, .nc-po-seta, .nc-po-periodo-v, .nc-po-menu-bt, .nc-po-ev, .nc-po-ev-mais, .nc-po-aba):focus-visible {
+  outline: 3px solid var(--nc-rosa) !important;
+  outline-offset: 2px !important;
+}
+
+/* ═══ [C7] A FAIXA DO COLABORADOR E O PERÍODO ═══════════════════════════════════════════════
+   Montada pelo JS em [J6]. .nc-po-topo é a faixa; .nc-po-periodo, o mês com as setas;
+   .nc-po-menu, o menu "Consultas e relatórios".
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+/* ---------- faixa do colaborador ---------- */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-topo {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) auto !important;
+  grid-template-areas: "pessoa periodo" "acoes menu" !important;
+  align-items: center !important;
+  gap: 14px 20px !important;
+  margin: 0 0 12px !important;
+  padding: 18px 20px !important;
+  border-radius: 20px !important;
+  background:
+    radial-gradient(110% 140% at 100% 0%, rgba(var(--nc-t-rosa-rgb, 201, 87, 136), .34) 0%, rgba(var(--nc-t-rosa-rgb, 201, 87, 136), 0) 55%),
+    linear-gradient(135deg, var(--nc-azul) 0%, var(--nc-roxo) 72%) !important;
+  color: #fff !important;
+  box-shadow: 0 18px 36px -26px rgba(var(--nc-t-azul-rgb, 44, 26, 99), .8) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-pessoa {
+  grid-area: pessoa !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 14px !important;
+  min-width: 0 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-foto {
+  display: grid !important;
+  flex: none !important;
+  place-items: center !important;
+  width: 56px !important;
+  height: 56px !important;
+  overflow: hidden !important;
+  border-radius: 50% !important;
+  background: rgba(255, 255, 255, .16) !important;
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, .35) !important;
+  color: #fff !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-foto img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-foto .nc-po-ic {
+  width: 28px !important;
+  height: 28px !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-pessoa-txt {
+  min-width: 0 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-nome {
+  margin: 0 !important;
+  font-family: inherit !important;
+  font-size: 22px !important;
+  font-weight: 800 !important;
+  line-height: 1.2 !important;
+  color: #fff !important;
+  overflow-wrap: anywhere !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-sub {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  align-items: center !important;
+  gap: 4px 10px !important;
+  margin: 5px 0 0 !important;
+  font-size: 14px !important;
+  color: rgba(255, 255, 255, .85) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-sep {
+  width: 4px !important;
+  height: 4px !important;
+  border-radius: 50% !important;
+  background: rgba(255, 255, 255, .45) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-chip {
+  padding: 2px 10px !important;
+  border-radius: 999px !important;
+  font-size: 13px !important;
+  font-weight: 800 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-chip--ok {
+  background: rgba(125, 220, 165, .22) !important;
+  color: #CFF5DE !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-chip--aviso {
+  background: rgba(255, 214, 140, .22) !important;
+  color: #FFE7B5 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-pessoa-acoes {
+  grid-area: acoes !important;
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 8px !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-topo .nc-po-px {
+  border-color: rgba(255, 255, 255, .28) !important;
+  background: rgba(255, 255, 255, .1) !important;
+  color: #fff !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-topo .nc-po-px:hover:not(:disabled) {
+  border-color: #fff !important;
+  background: rgba(255, 255, 255, .2) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-topo .nc-po-px--forte {
+  border-color: #fff !important;
+  background: #fff !important;
+  color: var(--nc-roxo) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-topo .nc-po-px--forte:hover:not(:disabled) {
+  background: var(--nc-nevoa2) !important;
+  color: var(--nc-roxo) !important;
+}
+
+/* o período */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-periodo {
+  grid-area: periodo !important;
+  position: relative !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-end !important;
+  gap: 4px !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-rot {
+  font-size: 12.5px !important;
+  font-weight: 700 !important;
+  color: rgba(255, 255, 255, .75) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-nav {
+  display: flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-seta {
+  display: grid !important;
+  place-items: center !important;
+  width: 40px !important;
+  height: 40px !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 12px !important;
+  background: rgba(255, 255, 255, .12) !important;
+  color: #fff !important;
+  cursor: pointer !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-seta:hover {
+  background: rgba(255, 255, 255, .24) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-seta .nc-po-ic {
+  width: 20px !important;
+  height: 20px !important;
+  stroke-width: 2.4 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-periodo-v {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  min-height: 40px !important;
+  padding: 0 14px !important;
+  border: 0 !important;
+  border-radius: 12px !important;
+  background: #fff !important;
+  font: inherit !important;
+  font-size: 15px !important;
+  font-weight: 800 !important;
+  font-variant-numeric: tabular-nums !important;
+  color: var(--nc-roxo) !important;
+  cursor: pointer !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-periodo-v .nc-po-ic {
+  width: 18px !important;
+  height: 18px !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-datas {
+  position: absolute !important;
+  top: calc(100% + 8px) !important;
+  right: 0 !important;
+  z-index: 20 !important;
+  display: flex !important;
+  gap: 10px !important;
+  width: 360px !important;
+  max-width: 80vw !important;
+  padding: 14px !important;
+  border-radius: 16px !important;
+  background: #fff !important;
+  box-shadow: 0 20px 40px -18px rgba(27, 18, 56, .5) !important;
+  color: var(--nc-tinta) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-datas > .t-Form-fieldContainer:not(#nc-po-x):not(#nc-po-y) {
+  flex: 1 1 0 !important;
+  width: auto !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* o menu de consultas e relatórios */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-menu {
+  grid-area: menu !important;
+  position: relative !important;
+  justify-self: end !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-menu-bt {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  min-height: 42px !important;
+  padding: 0 12px 0 14px !important;
+  border: 1.5px solid rgba(255, 255, 255, .28) !important;
+  border-radius: 12px !important;
+  background: rgba(255, 255, 255, .1) !important;
+  font: inherit !important;
+  font-size: 14px !important;
+  font-weight: 700 !important;
+  color: #fff !important;
+  cursor: pointer !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-menu-bt .nc-po-ic {
+  width: 18px !important;
+  height: 18px !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-menu-bt[aria-expanded="true"] .nc-po-ic:last-child {
+  transform: rotate(180deg) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-menu-painel {
+  position: absolute !important;
+  top: calc(100% + 8px) !important;
+  right: 0 !important;
+  z-index: 30 !important;
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 14px !important;
+  width: 460px !important;
+  max-width: 88vw !important;
+  padding: 16px !important;
+  border-radius: 16px !important;
+  background: #fff !important;
+  box-shadow: 0 24px 48px -18px rgba(27, 18, 56, .55) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-menu-grupo {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 4px !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-menu-grupo p {
+  margin: 0 0 4px !important;
+  font-size: 12.5px !important;
+  font-weight: 800 !important;
+  color: #6E6882 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-menu .nc-po-px.nc-po-menu-item {
+  justify-content: flex-start !important;
+  min-height: 38px !important;
+  padding: 0 10px !important;
+  border: 0 !important;
+  background: none !important;
+  color: var(--nc-tinta) !important;
+  white-space: normal !important;
+  text-align: left !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-menu .nc-po-px.nc-po-menu-item:hover:not(:disabled) {
+  background: var(--nc-nevoa2) !important;
+  color: var(--nc-roxo) !important;
+}
+
+/* ═══ [C8] FECHAR O MÊS EM 4 PASSOS ═════════════════════════════════════════════════════════
+   Montado pelo JS em [J7]. .nc-po-passo é cada passo; .is-agora o da vez; .is-feito o pronto.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+/* ---------- fechar o mês em 4 passos ---------- */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-passos {
+  margin: 0 0 16px !important;
+  padding: 16px 18px 18px !important;
+  border: 1px solid var(--nc-nevoa) !important;
+  border-radius: 20px !important;
+  background: #fff !important;
+  box-shadow: 0 12px 26px -24px rgba(var(--nc-t-azul-rgb, 44, 26, 99), .6) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-passos-tit {
+  margin: 0 0 12px !important;
+  font-family: inherit !important;
+  font-size: 17px !important;
+  font-weight: 800 !important;
+  color: var(--nc-tinta) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-passos-lista {
+  display: grid !important;
+  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  gap: 10px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  list-style: none !important;
+  counter-reset: none !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-passo {
+  position: relative !important;
+  display: flex !important;
+  align-items: flex-start !important;
+  gap: 12px !important;
+  padding: 12px !important;
+  border-radius: 14px !important;
+  background: #FAF8FC !important;
+}
+
+/* a linha que liga um passo ao próximo */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-passo:not(:last-child)::after {
+  content: "" !important;
+  position: absolute !important;
+  top: 27px !important;
+  right: -10px !important;
+  width: 10px !important;
+  height: 2px !important;
+  background: #DCD3EA !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-passo-n {
+  display: grid !important;
+  flex: none !important;
+  place-items: center !important;
+  width: 32px !important;
+  height: 32px !important;
+  border-radius: 50% !important;
+  background: #fff !important;
+  box-shadow: inset 0 0 0 2px #DCD3EA !important;
+  font-size: 15px !important;
+  font-weight: 800 !important;
+  color: var(--nc-roxo) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-passo-n .nc-po-ic {
+  width: 18px !important;
+  height: 18px !important;
+  stroke-width: 2.8 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-passo b {
+  display: block !important;
+  font-size: 15px !important;
+  font-weight: 800 !important;
+  line-height: 1.3 !important;
+  color: var(--nc-tinta) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-passo p {
+  margin: 3px 0 0 !important;
+  font-size: 13.5px !important;
+  line-height: 1.4 !important;
+  color: var(--nc-grafite) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-passo-acao {
+  margin-top: 8px !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-passo .nc-po-px--forte {
+  min-height: 40px !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-passo.is-agora {
+  background: #FFF6F7 !important;
+  box-shadow: inset 0 0 0 1.5px #F2C2C8 /*reserva*/ !important;
+  box-shadow: inset 0 0 0 1.5px oklch(from #F2C2C8 l calc(c * var(--nc-t-croma, 1)) calc(h + var(--nc-t-giro, 0))) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-passo.is-agora .nc-po-passo-n {
+  background: #B8323F !important;
+  box-shadow: none !important;
+  color: #fff !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-passo.is-agora .nc-po-conta {
+  display: inline !important;
+  font-size: 15px !important;
+  color: #9B2230 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-passo.is-agora .nc-po-px--linha {
+  color: #9B2230 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-passo.is-feito .nc-po-passo-n {
+  background: #E4F4EA !important;
+  box-shadow: none !important;
+  color: #1E6B45 !important;
+}
+
+/* ═══ [C9] A COLUNA DA DIREITA E AS HORAS DO DIA ════════════════════════════════════════════
+   Montada pelo JS em [J8]. .nc-po-lado é a coluna; .nc-po-resumo, o resumo do período;
+   .nc-po-ev, cada evento. As "Horas do dia" estão mais adiante: procure de novo [C9].
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+/* ---------- a coluna da direita acompanha a rolagem ---------- */
+/* a coluna tem só a altura do conteúdo: estica até a linha para ter onde "grudar" */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .row:has(> .col > #rgnSticky):not(#nc-po-x):not(#nc-po-y) {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  align-items: stretch !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .row > .col:has(> #rgnSticky):not(#nc-po-x):not(#nc-po-y) {
+  align-self: stretch !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel #rgnSticky.nc-po-lado:not(#nc-po-x):not(#nc-po-y) {
+  position: sticky !important;
+  top: calc(var(--nc-po-topo, 0px) + 12px) !important;
+  max-height: calc(100vh - var(--nc-po-topo, 0px) - 24px) !important;
+  overflow-y: auto !important;
+  overscroll-behavior: contain !important;
+  scrollbar-width: thin !important;
+}
+
+/* resumo do período em palavras (a tabela da página sai; a lupa de cada linha é o toque) */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-per .t-Report:not(.nc-po-x):not(#nc-po-y),
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-per :is(.t-Report-wrap, .t-Report-tableWrap):not(#nc-po-x):not(#nc-po-y) {
+  display: none !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-resumo {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 12px !important;
+  margin: 0 0 12px !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-resumo-tit {
+  margin: 0 0 6px !important;
+  font-size: 12.5px !important;
+  font-weight: 800 !important;
+  color: #6E6882 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-resumo-bloco {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 4px !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-ev {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 12px !important;
+  min-height: 44px !important;
+  padding: 0 14px !important;
+  border: 0 !important;
+  border-radius: 12px !important;
+  background: #FAF8FC !important;
+  font: inherit !important;
+  font-size: 15px !important;
+  text-align: left !important;
+  color: var(--nc-tinta) !important;
+  cursor: pointer !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-ev:hover:not(:disabled) {
+  background: var(--nc-nevoa2) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-ev b {
+  font-size: 17px !important;
+  font-weight: 800 !important;
+  font-variant-numeric: tabular-nums !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-ev--bom b {
+  color: #1E6B45 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-ev--ruim {
+  background: #FFF6F7 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-ev--ruim b {
+  color: #9B2230 !important;
+}
+
+/* 04/10: evento com outras janelas da página (pedidos 215/183) além de "ver os dias" */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-evl {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 4px !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-evl .nc-po-ev {
+  flex: 1 1 220px !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-ev-mais {
+  min-height: 44px !important;
+  padding: 0 14px !important;
+  border: 1px solid var(--nc-borda-botao) !important;
+  border-radius: 12px !important;
+  background: #FFFFFF !important;
+  font: inherit !important;
+  font-size: 14px !important;
+  font-weight: 700 !important;
+  color: var(--nc-roxo) !important;
+  cursor: pointer !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-ev-mais:hover {
+  background: var(--nc-nevoa2) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-resumo-dica,
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-resumo-vazio {
+  margin: 0 !important;
+  font-size: 13px !important;
+  line-height: 1.4 !important;
+  color: #6E6882 !important;
+}
+
+/* horas do dia: a data entre "dia anterior" e "próximo dia" */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-dianav {
+  display: flex !important;
+  align-items: flex-end !important;
+  gap: 6px !important;
+  margin: 0 0 10px !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-dianav-meio {
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-dianav-meio > .t-Form-fieldContainer:not(#nc-po-x):not(#nc-po-y) {
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-dianav .nc-po-seta {
+  flex: none !important;
+  height: 44px !important;
+  background: var(--nc-nevoa2) !important;
+  color: var(--nc-roxo) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-dianav .nc-po-seta:hover {
+  background: #E2DAF0 !important;
+}
+
+/* ═══ [C10] OS PEDIDOS DO PERÍODO ═══════════════════════════════════════════════════════════
+   Montados pelo JS em [J9]. .nc-po-aba é cada aba. O cartão de cada pedido está mais
+   adiante: procure de novo [C10].
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+/* ---------- pedidos do período em abas ---------- */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-pedidos {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 10px !important;
+  margin: 18px 0 10px !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-pedidos-tit {
+  margin: 0 !important;
+  font-family: inherit !important;
+  font-size: 18px !important;
+  font-weight: 800 !important;
+  color: var(--nc-tinta) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-pedidos-abas {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 6px !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-aba {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  min-height: 40px !important;
+  padding: 0 14px !important;
+  border: 1.5px solid var(--nc-nevoa) !important;
+  border-radius: 999px !important;
+  background: #fff !important;
+  font: inherit !important;
+  font-size: 14px !important;
+  font-weight: 700 !important;
+  color: var(--nc-grafite) !important;
+  cursor: pointer !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-aba b {
+  min-width: 22px !important;
+  padding: 1px 7px !important;
+  border-radius: 999px !important;
+  background: var(--nc-nevoa2) !important;
+  font-size: 12.5px !important;
+  font-weight: 800 !important;
+  text-align: center !important;
+  color: var(--nc-roxo) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-aba.is-on {
+  border-color: var(--nc-roxo) !important;
+  background: var(--nc-roxo) !important;
+  color: #fff !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-aba.is-on b {
+  background: rgba(255, 255, 255, .2) !important;
+  color: #fff !important;
+}
+
+/* a região do pedido: o título vira a aba */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .t-Region.nc-po-pedido > .t-Region-header:not(#nc-po-x):not(#nc-po-y) {
+  display: none !important;
+}
+
+/* ═══ [C11] TELAS MÉDIAS E CELULAR (O PAINEL) ═══════════════════════════════════════════════
+   Até 1100px (notebooks pequenos e tablets) e até 640px (celular): o que era lado a lado passa
+   a ficar um embaixo do outro. Há mais um trecho no fim do arquivo: procure de novo [C11].
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+/* ---------- telas médias e celular ---------- */
+@media (max-width: 1100px) {
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-passos-lista {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-passo:not(:last-child)::after {
+    display: none !important;
+  }
+}
+
+@media (max-width: 640px) {
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-topo {
+    grid-template-columns: minmax(0, 1fr) !important;
+    grid-template-areas: "pessoa" "periodo" "acoes" "menu" !important;
+    padding: 16px !important;
+    border-radius: 18px !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-nome {
+    font-size: 19px !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-foto {
+    width: 48px !important;
+    height: 48px !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-periodo {
+    align-items: stretch !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-nav {
+    justify-content: space-between !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-periodo-v {
+    flex: 1 1 auto !important;
+    justify-content: center !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-datas {
+    position: static !important;
+    width: auto !important;
+    max-width: none !important;
+    margin-top: 6px !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-menu {
+    justify-self: stretch !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-menu-bt {
+    width: 100% !important;
+    justify-content: center !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-menu-painel {
+    position: static !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+    width: auto !important;
+    max-width: none !important;
+    margin-top: 8px !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-passos-lista {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel #rgnSticky.nc-po-lado:not(#nc-po-x):not(#nc-po-y) {
+    position: static !important;
+    max-height: none !important;
+    overflow: visible !important;
+  }
+}
+
+
+/* a barra da grade (Inversão, Calendário, Incluir data…): ferramentas, não o trabalho principal */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel #marcacao .a-IRR-toolbar .t-Button:not(.t-Button--noLabel):not(#nc-po-x):not(#nc-po-y),
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel #marcacao .a-IRR-buttons .t-Button:not(.t-Button--noLabel):not(#nc-po-x):not(#nc-po-y) {
+  min-height: 38px !important;
+  border: 1.5px solid var(--nc-nevoa) !important;
+  background: #fff !important;
+  box-shadow: none !important;
+  font-size: 13.5px !important;
+  font-weight: 700 !important;
+  color: var(--nc-roxo) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel #marcacao :is(.a-IRR-toolbar, .a-IRR-buttons) .t-Button:not(.t-Button--noLabel) :is(.t-Button-label, .t-Icon):not(#nc-po-x):not(#nc-po-y) {
+  color: inherit !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel #marcacao :is(.a-IRR-toolbar, .a-IRR-buttons) .t-Button:not(.t-Button--noLabel):hover:not(#nc-po-x):not(#nc-po-y) {
+  border-color: var(--nc-roxo) !important;
+  background: var(--nc-nevoa2) !important;
+}
+
+/* "Travar este dia": secundário (o travamento do mês é o passo 4) */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .t-Button.nc-po-travadia:not(#nc-po-x):not(#nc-po-y) {
+  min-height: 40px !important;
+  border: 1.5px solid var(--nc-nevoa) !important;
+  background: #fff !important;
+  box-shadow: none !important;
+  color: var(--nc-roxo) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .t-Button.nc-po-travadia :is(.t-Button-label, .t-Icon):not(#nc-po-x):not(#nc-po-y) {
+  color: inherit !important;
+}
+
+@media (max-width: 640px) {
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-sub {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 4px !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-sep {
+    display: none !important;
+  }
+}
+
+
+/* =====================================================================
+   3ª RODADA (01/10) — a barra da lista, o painel do dia e os pedidos
+   ===================================================================== */
+
+/* ═══ [C2] (continuação) A BARRA DA LISTA EM DUAS LINHAS E OS MENUS ═════════════════════════ */
+/* ---------- a barra da lista em duas linhas ---------- */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po-cab {
+  flex-direction: column !important;
+  align-items: stretch !important;
+  gap: 8px !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo :is(.nc-po-cab-l1, .nc-po-cab-l2) {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 8px 10px !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po-cab-l2 {
+  padding-top: 8px !important;
+  border-top: 1px solid var(--nc-nevoa) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po-cab-menus {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 8px !important;
+}
+
+/* "Marcações" e "Dias": rótulo ao lado da lista, numa altura só.
+   04/10: "Dias" (…_DIVERGENTE) voltou à vista, ao lado; e o display respeita o esconder da página */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po-ver {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  align-items: center !important;
+  gap: 8px 16px !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po-ver > .t-Form-fieldContainer:not([style*="none"]):not(#nc-po-x):not(#nc-po-y) {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  width: auto !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po-ver > .t-Form-fieldContainer > :is(.t-Form-labelContainer, .t-Form-inputContainer):not(#nc-po-x):not(#nc-po-y) {
+  width: auto !important;
+  max-width: none !important;
+  flex: none !important;
+  padding: 0 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po-ver .t-Form-label:not(#nc-po-x):not(#nc-po-y) {
+  margin: 0 !important;
+  padding: 0 !important;
+  font-size: 14px !important;
+  font-weight: 700 !important;
+  color: var(--nc-grafite) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po-ver select:not(#nc-po-x):not(#nc-po-y) {
+  min-width: 150px !important;
+  height: 40px !important;
+  min-height: 40px !important;
+  font-size: 14px !important;
+  font-weight: 700 !important;
+}
+
+/* o que a barra substitui: os botões da grade e a sua caixa de pesquisa (04/10: a lista "Dias" não sai mais)
+   (voltam na vista de tabela, para quem usa a grade) */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo #marcacao.nc-po-reg:not(.nc-po-tabela) :is(.a-IRR-toolbar, .a-IRR-controlsContainer):not(#nc-po-x):not(#nc-po-y),
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po-mn-painel[hidden]:not(#nc-po-x):not(#nc-po-y),
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po-diverg[hidden]:not(#nc-po-x):not(#nc-po-y),
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo #marcacao > .t-Region-header .t-Region-headerItems--buttons:not(#nc-po-x):not(#nc-po-y) {
+  display: none !important;
+}
+
+/* os menus "Lançar" e "Mais opções" */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po-mn {
+  position: relative !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po-mn-bt {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 7px !important;
+  min-height: 40px !important;
+  padding: 0 10px 0 12px !important;
+  border: 1.5px solid var(--nc-nevoa) !important;
+  border-radius: 12px !important;
+  background: #fff !important;
+  font: inherit !important;
+  font-size: 14px !important;
+  font-weight: 700 !important;
+  color: var(--nc-roxo) !important;
+  cursor: pointer !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po-mn-bt:hover {
+  border-color: var(--nc-roxo) !important;
+  background: var(--nc-nevoa2) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po-mn--forte .nc-po-mn-bt {
+  border-color: var(--nc-roxo) !important;
+  background: var(--nc-nevoa2) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po-mn-bt .nc-po-ic {
+  width: 17px !important;
+  height: 17px !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po-mn-bt[aria-expanded="true"] .nc-po-ic:last-child {
+  transform: rotate(180deg) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po-mn-painel {
+  position: absolute !important;
+  top: calc(100% + 6px) !important;
+  right: 0 !important;
+  z-index: 40 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 2px !important;
+  width: 280px !important;
+  max-width: 86vw !important;
+  padding: 6px !important;
+  border: 1px solid var(--nc-nevoa) !important;
+  border-radius: 14px !important;
+  background: #fff !important;
+  box-shadow: 0 22px 44px -20px rgba(27, 18, 56, .55) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po-px.nc-po-mn-item:not(#nc-po-x) {
+  justify-content: flex-start !important;
+  gap: 10px !important;
+  width: 100% !important;
+  min-height: 48px !important;
+  padding: 6px 10px !important;
+  border: 0 !important;
+  border-radius: 10px !important;
+  background: none !important;
+  white-space: normal !important;
+  text-align: left !important;
+  color: var(--nc-tinta) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po-px.nc-po-mn-item:hover:not(:disabled):not(#nc-po-x) {
+  background: var(--nc-nevoa2) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po-mn-item .nc-po-ic {
+  color: var(--nc-roxo) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po-mn-item span {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 1px !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po-mn-item span b {
+  font-size: 14px !important;
+  font-weight: 800 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po-mn-item span small {
+  font-size: 12.5px !important;
+  font-weight: 500 !important;
+  color: #5E586E !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po-diverg {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  align-items: center !important;
+  gap: 6px 10px !important;
+  margin: 0 !important;
+  padding: 8px 12px !important;
+  border-radius: 12px !important;
+  background: #FFF4DE !important;
+  font-size: 14px !important;
+  color: #6B4700 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po-diverg .nc-po-ic {
+  width: 17px !important;
+  height: 17px !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po-link {
+  padding: 0 !important;
+  border: 0 !important;
+  background: none !important;
+  font: inherit !important;
+  font-weight: 800 !important;
+  text-decoration: underline !important;
+  text-underline-offset: 3px !important;
+  color: var(--nc-roxo) !important;
+  cursor: pointer !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po-diverg .nc-po-link {
+  color: #6B4700 !important;
+}
+
+/* botão pequeno de contorno (Detalhes, Pedir ajuste, Abrir, Atualizar) */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po-mini,
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po-px.nc-po-mini:not(#nc-po-x) {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  min-height: 36px !important;
+  padding: 0 11px !important;
+  border: 1.5px solid var(--nc-nevoa) !important;
+  border-radius: 10px !important;
+  background: #fff !important;
+  font: inherit !important;
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  white-space: nowrap !important;
+  color: var(--nc-roxo) !important;
+  cursor: pointer !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po-mini:hover {
+  border-color: var(--nc-roxo) !important;
+  background: var(--nc-nevoa2) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po-mini .nc-po-ic {
+  width: 15px !important;
+  height: 15px !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo :is(.nc-po-mn-bt, .nc-po-mini, .nc-po-link, .nc-po-aberto, .nc-po-pf):focus-visible {
+  outline: 3px solid var(--nc-rosa) !important;
+  outline-offset: 2px !important;
+}
+
+/* ═══ [C9] (continuação) AS HORAS DO DIA ════════════════════════════════════════════════════ */
+/* ---------- horas do dia ---------- */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-dianav-sem {
+  margin: 4px 0 0 !important;
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  text-align: center !important;
+  color: #5E586E !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-dianav {
+  align-items: flex-start !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-dianav .nc-po-seta {
+  margin-top: 22px !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-jornada {
+  display: flex !important;
+  align-items: flex-start !important;
+  gap: 8px !important;
+  margin: 0 0 12px !important;
+  padding: 10px 12px !important;
+  border-radius: 12px !important;
+  background: #FAF8FC !important;
+  font-size: 14px !important;
+  line-height: 1.45 !important;
+  color: var(--nc-grafite) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-jornada b {
+  font-weight: 800 !important;
+  color: var(--nc-tinta) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-jornada .nc-po-ic {
+  flex: none !important;
+  width: 17px !important;
+  height: 17px !important;
+  margin-top: 2px !important;
+  color: var(--nc-roxo) !important;
+}
+
+/* a tabela do Diário sai; o "Travar este dia" e a atualização ficam embaixo */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-diario-lista .t-Report:not(#nc-po-x):not(#nc-po-y),
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-diario-lista > .t-Region-header .t-Region-headerItems--buttons:not(#nc-po-x):not(#nc-po-y) {
+  display: none !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-eventos {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 6px !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-eventos-tit {
+  margin: 0 0 2px !important;
+  font-size: 12.5px !important;
+  font-weight: 800 !important;
+  color: #5E586E !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-eventos-vazio {
+  margin: 0 !important;
+  padding: 12px !important;
+  border-radius: 12px !important;
+  background: #FAF8FC !important;
+  font-size: 14px !important;
+  color: var(--nc-grafite) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-evd {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) auto !important;
+  align-items: center !important;
+  gap: 6px 12px !important;
+  padding: 10px 12px !important;
+  border-radius: 12px !important;
+  background: #FAF8FC !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-evd--ruim {
+  background: #FFF6F7 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-evd--bom {
+  background: #F2FAF5 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-evd-txt {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 2px !important;
+  min-width: 0 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-evd-txt b {
+  font-size: 15px !important;
+  font-weight: 800 !important;
+  color: var(--nc-tinta) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-evd-txt span {
+  font-size: 13px !important;
+  color: #5E586E !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-evd-h {
+  font-size: 19px !important;
+  font-weight: 800 !important;
+  font-variant-numeric: tabular-nums !important;
+  color: var(--nc-tinta) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-evd--ruim .nc-po-evd-h { color: #9B2230 !important; }
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-evd--bom .nc-po-evd-h { color: #1E6B45 !important; }
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-evd-acoes {
+  grid-column: 1 / -1 !important;
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 6px !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-diario-pe {
+  display: flex !important;
+  justify-content: flex-end !important;
+  margin-top: 12px !important;
+}
+
+/* ═══ [C10] (continuação) UM CARTÃO POR PEDIDO ══════════════════════════════════════════════ */
+/* ---------- pedidos do período: um cartão por pedido ---------- */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .t-Region.nc-po-pedido:not(.nc-po-ped-tabela) :is(.a-IRR-toolbar, .a-IRR-controlsContainer, .a-IRR-tableContainer, .a-IRR-noDataMsg, .js-stickyWidget-placeholder):not(#nc-po-x):not(#nc-po-y),
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .t-Region.nc-po-pedido.nc-po-ped-tabela :is(.nc-po-peds-lista, .nc-po-peds-filtros):not(#nc-po-x):not(#nc-po-y),
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-peds-datas[hidden]:not(#nc-po-x):not(#nc-po-y) {
+  display: none !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-peds {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 10px !important;
+  padding: 4px 0 6px !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-peds-cab {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  align-items: center !important;
+  gap: 8px 14px !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-peds-per {
+  margin: 0 !important;
+  font-size: 14px !important;
+  color: var(--nc-grafite) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-peds-per b {
+  font-weight: 800 !important;
+  font-variant-numeric: tabular-nums !important;
+  color: var(--nc-tinta) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-peds-per .nc-po-link {
+  margin-left: 6px !important;
+  font-size: 13.5px !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-peds-filtros {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 6px !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-peds-acoes {
+  display: flex !important;
+  gap: 6px !important;
+  margin-left: auto !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-pf {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 5px !important;
+  min-height: 34px !important;
+  padding: 0 12px !important;
+  border: 1.5px solid var(--nc-nevoa) !important;
+  border-radius: 999px !important;
+  background: #fff !important;
+  font: inherit !important;
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  color: var(--nc-grafite) !important;
+  cursor: pointer !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-pf b {
+  font-weight: 800 !important;
+  font-variant-numeric: tabular-nums !important;
+  color: var(--nc-tinta) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-pf.is-on {
+  border-color: var(--nc-roxo) !important;
+  background: var(--nc-roxo) !important;
+  color: #fff !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-pf.is-on b {
+  color: #fff !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-peds-datas {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 10px !important;
+  padding: 12px !important;
+  border-radius: 14px !important;
+  background: #FAF8FC !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-peds-datas > .t-Form-fieldContainer:not(#nc-po-x):not(#nc-po-y) {
+  flex: 1 1 180px !important;
+  width: auto !important;
+  max-width: 260px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-peds-lista {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 6px !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-ped {
+  display: grid !important;
+  grid-template-columns: 52px minmax(0, 1fr) auto auto !important;
+  align-items: center !important;
+  gap: 6px 14px !important;
+  margin: 0 !important;
+  padding: 10px 12px !important;
+  border: 1px solid var(--nc-nevoa) !important;
+  border-radius: 14px !important;
+  background: #fff !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-ped.is-nao {
+  background: #FAF9FC !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-ped-dia {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  line-height: 1.1 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-ped-dia b {
+  font-size: 15px !important;
+  font-weight: 800 !important;
+  font-variant-numeric: tabular-nums !important;
+  color: var(--nc-tinta) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-ped-dia span {
+  margin-top: 2px !important;
+  font-size: 12px !important;
+  font-weight: 700 !important;
+  color: #5E586E !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-ped-meio {
+  min-width: 0 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-ped-o {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  align-items: center !important;
+  gap: 4px 8px !important;
+  margin: 0 !important;
+  font-size: 15px !important;
+  font-weight: 600 !important;
+  line-height: 1.35 !important;
+  color: var(--nc-tinta) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-ped-o b {
+  font-weight: 800 !important;
+  font-variant-numeric: tabular-nums !important;
+  color: var(--nc-roxo) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-ped-o s {
+  text-decoration-thickness: 1.5px !important;
+  color: #6E6882 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-ped.is-nao .nc-po-ped-o,
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-ped.is-nao .nc-po-ped-o b {
+  color: #5E586E !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-ped-meta {
+  margin: 3px 0 0 !important;
+  font-size: 13px !important;
+  line-height: 1.4 !important;
+  color: #5E586E !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-ped-com {
+  margin: 4px 0 0 !important;
+  font-size: 13.5px !important;
+  font-style: italic !important;
+  color: var(--nc-grafite) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-ped-sit {
+  padding: 3px 10px !important;
+  border-radius: 999px !important;
+  font-size: 12.5px !important;
+  font-weight: 800 !important;
+  white-space: nowrap !important;
+  background: #FFF4DE !important;
+  color: #6B4700 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .is-ok .nc-po-ped-sit { background: #E4F4EA !important; color: #1E6B45 !important; }
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .is-nao .nc-po-ped-sit { background: #FBEAEC !important; color: #9B2230 !important; }
+
+/* ═══ [C11] (continuação) TELAS MÉDIAS E CELULAR DA 3ª RODADA ═══════════════════════════════
+   O trecho de 641 a 900px vale SÓ nessa faixa: antes ele valia também no celular e quebrava
+   a linha do dia.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@media (min-width: 641px) and (max-width: 900px) {
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po-dia {
+    grid-template-columns: 44px 118px minmax(0, 1fr) !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po-dia > :is(.nc-po-horas, .nc-po-aberto) {
+    grid-column: 3 !important;
+    justify-self: start !important;
+  }
+}
+
+@media (max-width: 640px) {
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po-cab-l1 > .nc-po-prox,
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po-cab-menus,
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po-cab-menus > .nc-po-mn {
+    flex: 1 1 auto !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po-mn-bt {
+    width: 100% !important;
+    justify-content: center !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po-ver,
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po-ver > .t-Form-fieldContainer:not(#nc-po-x):not(#nc-po-y) {
+    width: 100% !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po-ver > .t-Form-fieldContainer > .t-Form-inputContainer:not(#nc-po-x):not(#nc-po-y) {
+    flex: 1 1 auto !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po-ver select:not(#nc-po-x):not(#nc-po-y) {
+    width: 100% !important;
+    font-size: 16px !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po-mn-painel {
+    left: 0 !important;
+    right: auto !important;
+    width: min(320px, calc(100vw - 32px)) !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po-cab-menus > .nc-po-mn:last-child .nc-po-mn-painel {
+    left: auto !important;
+    right: 0 !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-ped {
+    grid-template-columns: 46px minmax(0, 1fr) !important;
+    grid-template-areas: "dia meio" "dia pe" !important;
+    padding: 10px !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-ped-dia { grid-area: dia !important; align-self: start !important; }
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-ped-meio { grid-area: meio !important; }
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-ped-sit { grid-area: pe !important; justify-self: start !important; }
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-ped-abrir { grid-area: pe !important; justify-self: end !important; }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-peds-acoes {
+    margin-left: 0 !important;
+  }
+}
+
+/* ═══ [C12] A MESA DE TRABALHO: A LISTA E O DIA LADO A LADO ═════════════════════════════════
+   Montada pelo JS em [J12]. No computador (mais de 1100 px de largura e 600 de altura), a lista
+   (#marcacao) e o painel do dia (#rgnSticky) viram duas janelas da altura da tela, cada uma com
+   rolagem própria. Em telas menores nada disto liga e a página rola inteira, como antes.
+   PODE MEXER os tamanhos de tela do @media logo abaixo (1101px e 600px).
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+/* ---------- a barra do título, sólida: o vidro deixava o conteúdo borrado por trás dela ---------- */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .t-Body-title:not(#nc-po-x):not(#nc-po-y) {
+  background: var(--nc-tela) !important;
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+}
+
+/* ---------- respiro: a lista e a barra dos pedidos encostavam na borda do cartão ---------- */
+@media (min-width: 641px) {
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po:not(#nc-po-x):not(#nc-po-y) {
+    padding: 0 16px 16px !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po-cab:not(#nc-po-x):not(#nc-po-y) {
+    margin: 0 -16px 12px !important;
+    padding: 12px 16px !important;
+  }
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-peds:not(#nc-po-x):not(#nc-po-y) {
+  padding: 14px 16px 16px !important;
+}
+
+/* ---------- as duas janelas ---------- */
+@media (min-width: 1101px) and (min-height: 600px) {
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel:not(.nc-po-tabela-on) .row.nc-po-mesa:not(#nc-po-x):not(#nc-po-y) {
+    flex-wrap: nowrap !important;
+    align-items: stretch !important;
+    margin-bottom: 24px !important;
+    scroll-margin-top: calc(var(--nc-po-topo, 0px) + 12px) !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel:not(.nc-po-tabela-on) .nc-po-mesa :is(#marcacao, #rgnSticky):not(#nc-po-x):not(#nc-po-y) {
+    position: relative !important;
+    top: auto !important;
+    height: calc(100vh - var(--nc-po-topo, 0px) - 24px) !important;
+    max-height: none !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    overscroll-behavior-y: auto !important;   /* no fim de uma coluna, a página continua */
+    scrollbar-width: thin !important;
+    scrollbar-color: var(--nc-nevoa) transparent !important;
+    scrollbar-gutter: stable !important;
+  }
+
+  /* a barra de filtros gruda no alto da PRÓPRIA coluna (antes, no alto da página) */
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel:not(.nc-po-tabela-on) .nc-po-mesa .nc-po-cab:not(#nc-po-x):not(#nc-po-y) {
+    top: 0 !important;
+  }
+}
+
+/* ---------- a direita: abas no lugar das molduras "Apuração" › "Horas do dia" ---------- */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel #rgnSticky.nc-po-com-abas > .t-Region-header:not(#nc-po-x):not(#nc-po-y) {
+  display: none !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel #rgnSticky.nc-po-com-abas > .t-Region-bodyWrap > .t-Region-body:not(#nc-po-x):not(#nc-po-y) {
+  overflow: visible !important;   /* para as abas grudarem no alto da janela, não do corpo */
+  padding: 0 18px 18px !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-lado-abas {
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 4 !important;
+  display: flex !important;
+  gap: 4px !important;
+  margin: 0 -18px 16px !important;
+  padding: 14px 18px 12px !important;
+  background: #fff !important;
+  border-bottom: 1px solid var(--nc-nevoa) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-lado-aba {
+  flex: 1 1 0 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  min-height: 44px !important;
+  padding: 0 14px !important;
+  border: 1px solid var(--nc-nevoa) !important;
+  border-radius: 12px !important;
+  background: #fff !important;
+  font: inherit !important;
+  font-size: 15px !important;
+  font-weight: 700 !important;
+  color: var(--nc-grafite) !important;
+  cursor: pointer !important;
+  transition: background-color .2s cubic-bezier(.16, 1, .3, 1), color .2s cubic-bezier(.16, 1, .3, 1) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-lado-aba:hover {
+  background: var(--nc-off) !important;
+  color: var(--nc-tinta) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-lado-aba.is-on {
+  border-color: var(--nc-roxo) !important;
+  background: var(--nc-roxo) !important;
+  color: #fff !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-lado-aba:focus-visible {
+  outline: 3px solid rgba(var(--nc-t-roxo-rgb, 81, 28, 118), .35) !important;
+  outline-offset: 2px !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-lado-aba .nc-po-ic {
+  width: 18px !important;
+  height: 18px !important;
+}
+
+/* a aba que não está aberta some */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel #rgnSticky [data-lado-p].nc-po-lado-fora:not(#nc-po-x):not(#nc-po-y) {
+  display: none !important;
+}
+
+/* "Horas do dia", "Resumo do período" e o saldo deixam de ser cartões dentro do cartão */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel #rgnSticky.nc-po-com-abas [data-lado-p]:not(#nc-po-x):not(#nc-po-y) {
+  margin: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel #rgnSticky.nc-po-com-abas [data-lado-p]:not(.nc-po-saldo) > .t-Region-header:not(#nc-po-x):not(#nc-po-y) {
+  display: none !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel #rgnSticky.nc-po-com-abas [data-lado-p] > .t-Region-bodyWrap > .t-Region-body:not(#nc-po-x):not(#nc-po-y) {
+  padding: 0 !important;
+  overflow: visible !important;
+}
+
+/* ---------- os pedidos de cada dia ---------- */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po-dped-n {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+  margin-top: 2px !important;
+  font-size: 12.5px !important;
+  font-weight: 700 !important;
+  color: var(--nc-roxo) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po-dped-n .nc-po-ic {
+  width: 14px !important;
+  height: 14px !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-dped {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 8px !important;
+  margin: 18px 0 0 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-dped:empty {
+  display: none !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-dped-i {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) auto auto !important;
+  align-items: center !important;
+  gap: 8px 12px !important;
+  padding: 10px 12px !important;
+  border: 1px solid var(--nc-nevoa) !important;
+  border-radius: 12px !important;
+  background: #fff !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-dped-txt {
+  min-width: 0 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-dped-txt small {
+  font-size: 12.5px !important;
+  font-weight: 700 !important;
+  color: var(--nc-grafite) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-dped-txt p {
+  margin: 2px 0 0 !important;
+  font-size: 14.5px !important;
+  line-height: 1.4 !important;
+  color: var(--nc-tinta) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-dped-txt b {
+  font-weight: 800 !important;
+  color: var(--nc-roxo) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-dped-txt s {
+  color: var(--nc-cinza) !important;
+}
+
+/* ---------- o saldo do banco de horas, como uma conta ---------- */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel #rgnSticky .nc-po-saldo:not(#nc-po-x):not(#nc-po-y) {
+  margin-top: 22px !important;
+  padding-top: 18px !important;
+  border-top: 1px solid var(--nc-nevoa) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel #rgnSticky .nc-po-saldo > .t-Region-header:not(#nc-po-x):not(#nc-po-y) {
+  min-height: 0 !important;
+  margin: 0 0 10px !important;
+  padding: 0 !important;
+  border: 0 !important;
+  background: none !important;
+  box-shadow: none !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-sd-box {
+  margin-top: 12px !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-sd-conta {
+  display: flex !important;
+  align-items: stretch !important;
+  gap: 8px !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-sd {
+  flex: 1 1 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 2px !important;
+  min-width: 0 !important;
+  padding: 10px 12px !important;
+  border-radius: 12px !important;
+  background: var(--nc-off) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-sd span {
+  font-size: 12.5px !important;
+  font-weight: 700 !important;
+  color: var(--nc-grafite) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-sd b {
+  font-size: 20px !important;
+  font-weight: 800 !important;
+  font-variant-numeric: tabular-nums !important;
+  color: var(--nc-tinta) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-sd.is-total {
+  background: rgba(var(--nc-t-roxo-rgb, 81, 28, 118), .08) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-sd.is-total b {
+  color: var(--nc-roxo) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-sd.is-neg b {
+  color: var(--nc-ruim) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-sd-conta > i {
+  align-self: center !important;
+  font-style: normal !important;
+  font-size: 18px !important;
+  font-weight: 800 !important;
+  color: var(--nc-cinza) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-sd-rem {
+  margin: 10px 0 0 !important;
+  font-size: 13.5px !important;
+  color: var(--nc-grafite) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-sd-rem b {
+  font-variant-numeric: tabular-nums !important;
+  color: var(--nc-tinta) !important;
+}
+
+/* o dia já está escrito na aba ("Sáb, 01/03"): no seletor do dia saem o rótulo "Data" e a linha
+   do dia da semana, e as setas ficam na mesma linha da lista */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel #rgnSticky.nc-po-com-abas .nc-po-dianav:not(#nc-po-x):not(#nc-po-y) {
+  align-items: center !important;
+  margin: 0 0 14px !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel #rgnSticky.nc-po-com-abas .nc-po-dianav :is(.t-Form-labelContainer, .nc-po-dianav-sem):not(#nc-po-x):not(#nc-po-y) {
+  display: none !important;
+}
+
+/* telas médias (tablet, notebook pequeno): sem a mesa, as duas colunas lado a lado ficavam
+   estreitas demais (as marcações empilhavam, as datas cortavam). Uma embaixo da outra: a lista
+   e, logo depois, o painel do dia com as abas. */
+@media (min-width: 641px) and (max-width: 1100px) {
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .row.nc-po-mesa:not(#nc-po-x):not(#nc-po-y) {
+    flex-wrap: wrap !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .row.nc-po-mesa > .col:not(#nc-po-x):not(#nc-po-y) {
+    flex: 0 0 100% !important;
+    max-width: 100% !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-mesa #rgnSticky.nc-po-lado:not(#nc-po-x):not(#nc-po-y) {
+    position: relative !important;
+    top: auto !important;
+    max-height: none !important;
+    overflow: visible !important;
+    margin-top: 16px !important;
+  }
+}
+
+/* sem a mesa (telas até 1100 px), as abas grudam logo abaixo do cabeçalho fixo da página */
+@media (max-width: 1100px) {
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-lado-abas:not(#nc-po-x):not(#nc-po-y) {
+    top: var(--nc-po-topo, 0px) !important;
+  }
+}
+
+/* celular: no cartão do pedido do dia, o texto ocupa a linha toda; situação e "Abrir" embaixo */
+@media (max-width: 640px) {
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-dped-i:not(#nc-po-x):not(#nc-po-y) {
+    grid-template-columns: minmax(0, 1fr) auto !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-dped-txt:not(#nc-po-x):not(#nc-po-y) {
+    grid-column: 1 / -1 !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-dped-i .nc-po-ped-sit:not(#nc-po-x):not(#nc-po-y) {
+    justify-self: start !important;
+  }
+}
+
+/* ═══ [C13] A LINHA COMPACTA DO GESTOR (COMPUTADOR) ════════════════════════════════════════════
+   O gestor faz centenas de ajustes seguidos: no computador (a partir de 901 px), cada dia cabe
+   numa linha de ~58 px, com as 4 posições + "Incluir" lado a lado (antes quebravam em 2 ou 3
+   linhas e cada dia tinha 111 a 212 px — cabiam 2 ou 3 dias na tela; agora, 7 ou 8).
+     · data e situação estreitas; "1 pedido" vira um selo pequeno embaixo da situação;
+     · as marcações numa linha só, mais enxutas;
+     · "Ver horas" só com o ícone do relógio (a dica aparece ao passar o mouse);
+     · na mesa, a lista fica mais larga que o painel da direita (55% × 45%).
+   No celular e no tablet nada disto vale.
+   PODE MEXER: as larguras das colunas da linha (grid-template-columns) e o tamanho das marcações.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@media (min-width: 901px) {
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo:not(.nc-po-tabela-on) .nc-po-dia:not(#nc-po-x):not(#nc-po-y) {
+    grid-template-columns: 44px 96px minmax(0, 1fr) auto !important;
+    align-items: center !important;
+    gap: 8px 10px !important;
+    min-height: 0 !important;
+    padding: 7px 10px 7px 12px !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po-data b:not(#nc-po-x):not(#nc-po-y) {
+    font-size: 19px !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po-sit-col:not(#nc-po-x):not(#nc-po-y) {
+    gap: 2px !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po-sit:not(#nc-po-x):not(#nc-po-y) {
+    font-size: 12.5px !important;
+    line-height: 1.2 !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po-sit .nc-po-ic:not(#nc-po-x):not(#nc-po-y) {
+    width: 13px !important;
+    height: 13px !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo :is(.nc-po-extra, .nc-po-tipo):not(#nc-po-x):not(#nc-po-y) {
+    font-size: 11.5px !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po-dped-n:not(#nc-po-x):not(#nc-po-y) {
+    margin-top: 0 !important;
+    font-size: 11.5px !important;
+  }
+
+  /* as marcações numa linha só */
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po-marcas:not(#nc-po-x):not(#nc-po-y) {
+    flex-wrap: nowrap !important;
+    gap: 5px !important;
+    min-width: 0 !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po-marca:not(#nc-po-x):not(#nc-po-y) {
+    flex: 0 0 auto !important;
+    min-width: 62px !important;
+    min-height: 40px !important;
+    padding: 3px 8px 4px !important;
+    border-radius: 10px !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po-marca small:not(#nc-po-x):not(#nc-po-y) {
+    font-size: 10.5px !important;
+    line-height: 1.15 !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po-marca b:not(#nc-po-x):not(#nc-po-y) {
+    font-size: 15px !important;
+    line-height: 1.15 !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po-marca i:not(#nc-po-x):not(#nc-po-y) {
+    font-size: 9.5px !important;
+    line-height: 1.1 !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po-marca--mais:not(#nc-po-x):not(#nc-po-y) {
+    flex-direction: row !important;
+    align-items: center !important;
+    gap: 3px !important;
+    min-width: 0 !important;
+    padding: 0 9px !important;
+    font-size: 12.5px !important;
+  }
+
+  /* "Ver horas" só com o ícone */
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo :is(.nc-po-horas, .nc-po-aberto):not(#nc-po-x):not(#nc-po-y) {
+    justify-content: center !important;
+    width: 38px !important;
+    min-height: 38px !important;
+    padding: 0 !important;
+    border-radius: 50% !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo :is(.nc-po-horas, .nc-po-aberto) span:not(#nc-po-x):not(#nc-po-y) {
+    position: absolute !important;
+    width: 1px !important;
+    height: 1px !important;
+    overflow: hidden !important;
+    clip-path: inset(50%) !important;
+    white-space: nowrap !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo :is(.nc-po-horas, .nc-po-aberto) .nc-po-ic:not(#nc-po-x):not(#nc-po-y) {
+    width: 19px !important;
+    height: 19px !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po-semana:not(#nc-po-x):not(#nc-po-y) {
+    margin: 10px 2px 2px !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po-dias:not(#nc-po-x):not(#nc-po-y) {
+    gap: 5px !important;
+  }
+}
+
+/* na mesa, a lista mais larga que o painel da direita */
+@media (min-width: 1101px) and (min-height: 600px) {
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel:not(.nc-po-tabela-on) .row.nc-po-mesa > .col:has(> #marcacao):not(#nc-po-x):not(#nc-po-y) {
+    flex: 1.22 1 0 !important;
+    width: auto !important;
+    max-width: none !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel:not(.nc-po-tabela-on) .row.nc-po-mesa > .col:has(> #rgnSticky):not(#nc-po-x):not(#nc-po-y) {
+    flex: 1 1 0 !important;
+    width: auto !important;
+    max-width: none !important;
+  }
+}
+
+/* [C13] mais dias por tela no computador: sem a legenda (o gestor já sabe), barra e linhas mais
+   baixas — o clique é com o mouse, não com o dedo */
+@media (min-width: 901px) {
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po-legenda:not(#nc-po-x):not(#nc-po-y) {
+    display: none !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po-cab :is(.nc-po-f, .nc-po-prox, .nc-po-mn-bt):not(#nc-po-x):not(#nc-po-y) {
+    min-height: 34px !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po-cab :is(select, .t-Form-itemWrapper):not(#nc-po-x):not(#nc-po-y) {
+    min-height: 34px !important;
+    height: 34px !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po-cab:not(#nc-po-x):not(#nc-po-y) {
+    gap: 6px !important;
+    padding-top: 10px !important;
+    padding-bottom: 10px !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po-cab-l2:not(#nc-po-x):not(#nc-po-y) {
+    padding-top: 6px !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo:not(.nc-po-tabela-on) .nc-po-dia:not(#nc-po-x):not(#nc-po-y) {
+    padding-top: 5px !important;
+    padding-bottom: 5px !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po-marca:not(.nc-po-marca--mais):not(#nc-po-x):not(#nc-po-y) {
+    min-height: 36px !important;
+    padding-top: 2px !important;
+    padding-bottom: 3px !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po-marca--mais:not(#nc-po-x):not(#nc-po-y) {
+    min-height: 36px !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo :is(.nc-po-horas, .nc-po-aberto):not(#nc-po-x):not(#nc-po-y) {
+    width: 34px !important;
+    min-height: 34px !important;
+    height: 34px !important;
+  }
+}
+
+/* dia raro com mais de 5 marcações (ex.: 8 posições): esse sim quebra em duas linhas, para não
+   passar por cima do botão das horas. Os outros continuam numa linha só. */
+@media (min-width: 901px) {
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po-marcas:has(> .nc-po-marca:nth-child(6)):not(#nc-po-x):not(#nc-po-y) {
+    flex-wrap: wrap !important;
+  }
+}
+
+/* ═══ [C14] AJUSTAR EM SEQUÊNCIA ══════════════════════════════════════════════════════════════
+   Montado pelo JS em [J14]. .nc-po-seq é o botão que começa a fila; .nc-po-fila, a barra do
+   estado (ajustando · pausada .is-pausada · concluída .is-fim).
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po-cab-l1:has(.nc-po-seq:not([hidden])) .nc-po-prox:not(#nc-po-x):not(#nc-po-y) {
+  margin-left: auto !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po-seq {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  min-height: 40px !important;
+  padding: 0 14px 0 11px !important;
+  border: 0 !important;
+  border-radius: 12px !important;
+  background: var(--nc-roxo) !important;
+  font: inherit !important;
+  font-size: 14px !important;
+  font-weight: 800 !important;
+  color: #fff !important;
+  cursor: pointer !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po-seq:hover {
+  background: var(--nc-azul) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po-seq[hidden] {
+  display: none !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po-seq b {
+  padding: 0 7px !important;
+  border-radius: 999px !important;
+  background: rgba(255, 255, 255, .2) !important;
+  font-weight: 800 !important;
+  font-variant-numeric: tabular-nums !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo :is(.nc-po-seq, .nc-po-fila) .nc-po-ic {
+  width: 16px !important;
+  height: 16px !important;
+  fill: currentColor !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po-seq:focus-visible {
+  outline: 3px solid rgba(var(--nc-t-roxo-rgb, 81, 28, 118), .35) !important;
+  outline-offset: 2px !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po-fila {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  align-items: center !important;
+  gap: 6px 12px !important;
+  padding: 8px 12px !important;
+  border-radius: 12px !important;
+  background: #F2ECF8 !important;
+  font-size: 14px !important;
+  color: var(--nc-tinta) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po-fila[hidden] {
+  display: none !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po-fila > span {
+  flex: 1 1 auto !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po-fila > .nc-po-ic {
+  color: var(--nc-roxo) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po-fila.is-pausada {
+  background: #FFF4DE !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po-fila.is-pausada > .nc-po-ic {
+  color: #6B4700 !important;
+  fill: none !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po-fila.is-fim {
+  background: #E4F4EA !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po-fila.is-fim > .nc-po-ic {
+  color: #1E6B45 !important;
+  fill: none !important;
+}
+
+@media (min-width: 901px) {
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po-cab .nc-po-seq:not(#nc-po-x):not(#nc-po-y) {
+    min-height: 34px !important;
+  }
+}
+
+/* ═══ FAIXA DA REGIÃO (padrão 03/10) ════════════════════════════════════════════════════════
+   Todo painel com título segue o cabeçalho de região da Skin: o título numa faixa que atravessa
+   o cartão de ponta a ponta, com a linha de 2px na cor de destaque do TEMA (var(--nc-rosa) — a
+   mesma da Skin; muda com os 14 temas). As margens negativas são o recuo de dentro do cartão:
+   mudou o recuo do cartão, mude aqui junto. Guia: brand/apex/MANUAL-APEX.md.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-painel .nc-po-passos > .nc-po-passos-tit:not(#nc-fx1):not(#nc-fx2):not(#nc-fx3) {
+  box-sizing: border-box !important;
+  width: calc(100% + 36px) !important;
+  margin: -16px -18px 12px !important;
+  padding: 12px 18px 10px !important;
+  border-bottom: 2px solid var(--nc-rosa, #C95788) !important;
+}
+
+/* ═══ [C15] AJUSTAR VÁRIOS DIAS (08/10) ══════════════════════════════════════════════════════
+   Montado pelo JS em [J3]: .nc-po-lote é o botão (por procuração) que abre a janela 715.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po-lote {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  min-height: 40px !important;
+  padding: 0 14px 0 11px !important;
+  border: 1px solid var(--nc-borda-botao, rgba(81, 28, 118, .34)) !important;
+  border-radius: 12px !important;
+  background: #fff !important;
+  font: inherit !important;
+  font-size: 14px !important;
+  font-weight: 800 !important;
+  color: var(--nc-roxo) !important;
+  cursor: pointer !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po-lote:hover {
+  background: #F2ECF8 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po-lote[hidden] {
+  display: none !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po-lote .nc-po-ic {
+  width: 16px !important;
+  height: 16px !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-po-ativo .nc-po-lote:focus-visible {
+  outline: 3px solid rgba(var(--nc-t-roxo-rgb, 81, 28, 118), .35) !important;
+  outline-offset: 2px !important;
+}

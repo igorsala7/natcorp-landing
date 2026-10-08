@@ -1,0 +1,1270 @@
+/* ╔════════════════════════════════════════════════════════════════════════════════════════╗
+   ║  NATCORP · ONBOARDING  —  a "roupa" da página (CSS)                                      ║
+   ║  App 300 (Portal do Colaborador) · Página 2500 · OnBoarding                              ║
+   ╚════════════════════════════════════════════════════════════════════════════════════════╝
+
+   Primeira vez num arquivo destes? Leia antes o manual: brand/apex/MANUAL-APEX.md (parte 1).
+
+   ── O QUE ESTE ARQUIVO FAZ ────────────────────────────────────────────────────────────────
+   A aparência do que o Natcorp_Onboarding.js monta. Feito PRIMEIRO para o celular (390 px):
+   letra de leitura de 17 px, alvos de toque de 48 px, nada que role para o lado. No
+   computador, a lista das partes fica numa coluna à esquerda da leitura.
+   O conteúdo é da empresa (editor de texto): as regras de [C6] arrumam o que vier sem mudar
+   cores ou alinhamentos que ela escolheu. Sem o JS, nada daqui vale (marca nc-ob-ativo).
+
+   ── ONDE ELE ENTRA NO APEX ────────────────────────────────────────────────────────────────
+     Página 2500 › CSS › File URLs:   #WORKSPACE_IMAGES#Natcorp_Onboarding.css
+     CUIDADO: este é o arquivo-FONTE (.src.css). O gerador (gerar-app.mjs) cria o .css.
+
+   ── ÍNDICE ────────────────────────────────────────────────────────────────────────────────
+     [C1] As cores                                               PODE MEXER
+     [C2] O que sai da vista e peças comuns
+     [C3] O alto (barra de título) e a moldura
+     [C4] O cabeçalho da parte e a barra
+     [C5] A lista das partes
+     [C6] A publicação e o texto da empresa
+     [C7] Mídia: vídeo, imagem, PDF, arquivos
+     [C8] A equipe
+     [C9] Próxima parte / fim
+     [C10] Computador
+*/
+
+/* ═══ [C1] AS CORES ═════════════════════════════════════════════════════════════════════════ */
+@app.nc-ob-ativo {
+  --ob-roxo: var(--nc-roxo, #511C76);
+  --ob-rosa: var(--nc-rosa, #C95788);
+  --ob-tinta: var(--nc-tinta, #1B1238);
+  --ob-texto: #2E2742;
+  --ob-fraco: #5A526E;
+  --ob-borda: var(--nc-nevoa, #E7E1F0);
+  --ob-fundo: var(--nc-off, #F7F5FA);
+  --ob-lilas: var(--nc-nevoa2, #F3EEF8);
+  --ob-bom: #1F7A52;
+  --ob-bom-bg: #E7F4ED;
+  --ob-sombra: 0 12px 30px -20px rgba(27, 18, 56, .45);
+}
+
+/* ═══ [C2] O QUE SAI DA VISTA E PEÇAS COMUNS ════════════════════════════════════════════════ */
+@app.nc-ob-ativo :is(.nc-ob-guardado, .nc-ob-vazio),
+@app.nc-ob-ativo .t-Body-side,
+@app.nc-ob-ativo #PUBLICACOES > .t-Region-header {
+  display: none;
+}
+
+@app.nc-ob-ativo .nc-ob-so-leitor {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+@app.nc-ob-ativo .nc-ob-ic {
+  flex: none;
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.9;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+@app.nc-ob-ativo .nc-ob ::selection {
+  background: rgba(var(--nc-t-roxo-rgb, 81, 28, 118), .18);
+  color: inherit;
+}
+
+@app.nc-ob-ativo .nc-ob :is(a, button):focus-visible {
+  outline: 3px solid var(--ob-roxo);
+  outline-offset: 2px;
+}
+
+/* ═══ [C3] O ALTO E A MOLDURA ═══════════════════════════════════════════════════════════════
+   Sem a coluna da esquerda, o conteúdo usa a largura toda; a leitura tem medida própria.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-ob-ativo .nc-ob {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 16px;
+  width: 100%;
+  max-width: 1120px;
+  margin: 0 auto 24px;
+}
+
+@app.nc-ob-ativo .nc-ob-leitura {
+  min-width: 0;
+}
+
+/* celular: a leitura "se abre" na grade para a lista das partes entrar logo abaixo do
+   cabeçalho (ordem: cabeçalho, lista, o resto) — no computador [C10] ela volta a ser coluna */
+@media (max-width: 899px) {
+  @app.nc-ob-ativo .nc-ob-leitura {
+    display: contents;
+  }
+
+  @app.nc-ob-ativo .nc-ob-cab {
+    order: -2;
+    margin: 0;
+  }
+
+  @app.nc-ob-ativo .nc-ob-partes {
+    order: -1;
+  }
+}
+
+/* a lista das partes gruda no alto (computador): os blocos do tema têm overflow hidden, que
+   faz deles "rolagem" e o sticky não gruda — clip corta igual e deixa grudar */
+@app.nc-ob-ativo :is(.t-Body, .t-Body-main, .t-Body-content, .container:has(.nc-ob)) {
+  overflow: clip;
+}
+
+/* a região das publicações perde a caixa: cada publicação é a própria caixa */
+@app.nc-ob-ativo #PUBLICACOES.t-Region {
+  margin: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+@app.nc-ob-ativo #PUBLICACOES > .t-Region-bodyWrap > .t-Region-body {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 0;
+  overflow: visible;
+}
+
+/* o alto (Hero na barra de título): no celular, ícone e título na mesma linha — sobra tela */
+@media (max-width: 639px) {
+  @app.nc-ob-ativo .t-HeroRegion .t-HeroRegion-wrap {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: center;
+    gap: 2px 12px;
+    padding: 12px 16px;
+  }
+
+  @app.nc-ob-ativo .t-HeroRegion .t-HeroRegion-col--left {
+    grid-row: span 2;
+    margin: 0;
+    padding: 0;
+  }
+
+  @app.nc-ob-ativo .t-HeroRegion .t-HeroRegion-icon {
+    width: 44px;
+    height: 44px;
+    font-size: 20px;
+    line-height: 44px;
+  }
+
+  @app.nc-ob-ativo .t-HeroRegion .t-HeroRegion-col--content {
+    padding: 0;
+    font-size: 14.5px;
+    line-height: 1.35;
+  }
+
+  @app.nc-ob-ativo .t-HeroRegion .t-HeroRegion-title {
+    margin: 0 0 2px;
+    font-size: 20px;
+    line-height: 1.2;
+  }
+
+  @app.nc-ob-ativo .t-HeroRegion .t-HeroRegion-col--right {
+    display: none;
+  }
+}
+
+/* ═══ [C4] O CABEÇALHO DA PARTE E A BARRA ═══════════════════════════════════════════════════ */
+@app.nc-ob-ativo .nc-ob-cab {
+  margin: 0 0 16px;
+  padding: 20px 18px 16px;
+  border: 1px solid var(--ob-borda);
+  border-radius: 20px;
+  background:
+    radial-gradient(110% 80% at 100% 0%, rgba(var(--nc-t-rosa-rgb, 201, 87, 136), .10) 0%, rgba(var(--nc-t-rosa-rgb, 201, 87, 136), 0) 62%),
+    linear-gradient(180deg, #FFFFFF 0%, #FBF9FD 100%);
+  box-shadow: var(--ob-sombra);
+}
+
+@app.nc-ob-ativo .nc-ob-pilula {
+  display: inline-flex;
+  align-items: center;
+  min-height: 28px;
+  padding: 0 12px;
+  border-radius: 999px;
+  background: var(--ob-lilas);
+  font-size: 14px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  color: var(--ob-roxo);
+}
+
+@app.nc-ob-ativo .nc-ob-parte-tit {
+  margin: 10px 0 0;
+  font-family: "Inter NC", Inter, ui-sans-serif, system-ui, "Segoe UI", Arial, sans-serif;
+  font-size: 26px;
+  font-weight: 800;
+  line-height: 1.2;
+  letter-spacing: -.02em;
+  text-wrap: balance;
+  color: var(--ob-tinta);
+}
+
+/* uma fatia por parte: cheia nas vistas, roxa na atual */
+@app.nc-ob-ativo .nc-ob-barra {
+  display: flex;
+  gap: 5px;
+  margin: 16px 0 0;
+}
+
+@app.nc-ob-ativo .nc-ob-barra span {
+  flex: 1 1 0;
+  height: 8px;
+  border-radius: 999px;
+  background: #E3DCEC;
+  transition: background-color .3s;
+}
+
+@app.nc-ob-ativo .nc-ob-barra span.is-vista {
+  background: rgba(var(--nc-t-roxo-rgb, 81, 28, 118), .45);
+}
+
+@app.nc-ob-ativo .nc-ob-barra span.is-atual {
+  background: var(--ob-roxo);
+  box-shadow: 0 0 0 3px rgba(var(--nc-t-roxo-rgb, 81, 28, 118), .15);
+}
+
+/* "Ver todas as partes" (só no celular; no computador a lista está sempre à vista) */
+@app.nc-ob-ativo .nc-ob-bt-todas {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  min-height: 50px;
+  margin: 14px 0 0;
+  padding: 0 14px;
+  border: 1px solid var(--nc-borda-botao, rgba(var(--nc-t-roxo-rgb, 81, 28, 118), .34));
+  border-radius: 14px;
+  background: #FFFFFF;
+  font: inherit;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--ob-roxo);
+  cursor: pointer;
+}
+
+@app.nc-ob-ativo .nc-ob-bt-todas span {
+  flex: 1 1 auto;
+  text-align: left;
+}
+
+@app.nc-ob-ativo .nc-ob-conta {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--ob-fraco);
+}
+
+@app.nc-ob-ativo .nc-ob-ic-gira {
+  transition: transform .25s cubic-bezier(.22, 1, .36, 1);
+}
+
+@app.nc-ob-ativo .nc-ob-bt-todas[aria-expanded="true"] .nc-ob-ic-gira {
+  transform: rotate(180deg);
+}
+
+/* ═══ [C5] A LISTA DAS PARTES ═══════════════════════════════════════════════════════════════
+   Celular: escondida, abre embaixo do cabeçalho com "Ver todas as partes" (order). Computador:
+   coluna fixa à esquerda [C10].
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-ob-ativo .nc-ob-partes {
+  display: none;
+  order: 0;
+}
+
+@app.nc-ob-ativo .nc-ob--lista-aberta .nc-ob-partes {
+  display: block;
+  margin-top: -4px;
+  padding: 10px;
+  border: 1px solid var(--ob-borda);
+  border-radius: 18px;
+  background: #FFFFFF;
+  animation: nc-ob-abre .3s cubic-bezier(.22, 1, .36, 1);
+}
+
+@keyframes nc-ob-abre {
+  from { transform: translateY(-6px); }
+  to { transform: none; }
+}
+
+@app.nc-ob-ativo .nc-ob-partes-tit {
+  display: none;
+}
+
+@app.nc-ob-ativo .nc-ob-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+@app.nc-ob-ativo .nc-ob-lista li {
+  margin: 0;
+}
+
+@app.nc-ob-ativo .nc-ob-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 52px;
+  padding: 8px 12px;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.3;
+  text-decoration: none;
+  color: var(--ob-texto);
+  transition: background-color .2s;
+}
+
+@app.nc-ob-ativo .nc-ob-item:hover {
+  background: var(--ob-lilas);
+  text-decoration: none;
+}
+
+@app.nc-ob-ativo .nc-ob-n {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #FFFFFF;
+  font-size: 15px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  color: var(--ob-roxo);
+  box-shadow: inset 0 0 0 2px #DCD3E8;
+}
+
+@app.nc-ob-ativo .nc-ob-n .nc-ob-ic {
+  width: 18px;
+  height: 18px;
+  stroke-width: 2.6;
+}
+
+@app.nc-ob-ativo .nc-ob-item.is-vista .nc-ob-n {
+  background: var(--ob-bom-bg);
+  color: var(--ob-bom);
+  box-shadow: none;
+}
+
+@app.nc-ob-ativo .nc-ob-item.is-atual {
+  background: var(--ob-lilas);
+  font-weight: 800;
+  color: var(--ob-roxo);
+}
+
+@app.nc-ob-ativo .nc-ob-item.is-atual .nc-ob-n {
+  background: var(--ob-roxo);
+  color: #FFFFFF;
+  box-shadow: 0 0 0 4px rgba(var(--nc-t-roxo-rgb, 81, 28, 118), .14);
+}
+
+@app.nc-ob-ativo .nc-ob-item-nome {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+/* ═══ [C6] A PUBLICAÇÃO E O TEXTO DA EMPRESA ════════════════════════════════════════════════
+   O texto vem de um editor: respeita alinhamento e cores dela; aqui só a medida, o tamanho,
+   o espaço e o que não pode estourar a tela. (A página tem "p { margin: 0 !important }" no
+   CSS embutido — o espaço entre parágrafos volta aqui.)
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-ob-ativo .publicacao.nc-ob-pub {
+  padding: 22px 18px 24px;
+  border: 1px solid var(--ob-borda);
+  border-radius: 20px;
+  background: #FFFFFF;
+  box-shadow: 0 1px 2px rgba(27, 18, 56, .04);
+}
+
+@app.nc-ob-ativo .nc-ob-pub-cab {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas:
+    "tit ouvir"
+    "sub sub";
+  align-items: start;
+  gap: 6px 12px;
+  margin: 0 0 18px;
+  padding: 0 0 16px;
+  border-bottom: 2px solid var(--ob-rosa);
+}
+
+@app.nc-ob-ativo .nc-ob-pub-tit {
+  grid-area: tit;
+  align-self: center;
+  margin: 0;
+  font-family: "Inter NC", Inter, ui-sans-serif, system-ui, "Segoe UI", Arial, sans-serif;
+  font-size: 22px;
+  font-weight: 800;
+  line-height: 1.25;
+  letter-spacing: -.015em;
+  text-wrap: balance;
+  color: var(--ob-tinta);
+}
+
+@app.nc-ob-ativo .nc-ob-pub-sub {
+  grid-area: sub;
+  max-width: 60ch;
+  margin: 0;
+  font-size: 18px;
+  font-weight: 500;
+  line-height: 1.45;
+  color: var(--ob-fraco);
+}
+
+/* Ouvir */
+@app.nc-ob-ativo .nc-ob-ouvir {
+  grid-area: ouvir;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 44px;
+  padding: 0 14px;
+  border: 1px solid var(--nc-borda-botao, rgba(var(--nc-t-roxo-rgb, 81, 28, 118), .34));
+  border-radius: 999px;
+  background: #FFFFFF;
+  font: inherit;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--ob-roxo);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+@app.nc-ob-ativo .nc-ob-ouvir:hover {
+  background: var(--ob-lilas);
+}
+
+@app.nc-ob-ativo .nc-ob-ouvir[aria-pressed="true"] {
+  border-color: var(--ob-roxo);
+  background: var(--ob-roxo);
+  color: #FFFFFF;
+}
+
+/* o texto */
+@app.nc-ob-ativo .nc-ob-texto {
+  max-width: 68ch;
+  padding: 0;
+  font-size: 17px;
+  line-height: 1.65;
+  color: var(--ob-texto);
+  overflow-wrap: break-word;
+}
+
+@app.nc-ob-ativo .nc-ob-texto + .nc-ob-texto {
+  margin-top: 16px;
+}
+
+@app.nc-ob-ativo .nc-ob-texto :is(p, ul, ol, blockquote, figure) {
+  margin: 0 0 1em;
+}
+
+@app.nc-ob-ativo .nc-ob-texto :is(h1, h2, h3, h4, h5, h6) {
+  margin: 1.4em 0 .5em;
+  font-family: "Inter NC", Inter, ui-sans-serif, system-ui, "Segoe UI", Arial, sans-serif;
+  font-weight: 800;
+  line-height: 1.3;
+  letter-spacing: -.01em;
+  text-wrap: balance;
+  color: var(--ob-tinta);
+}
+
+@app.nc-ob-ativo .nc-ob-texto > :first-child,
+@app.nc-ob-ativo .nc-ob-texto > .nc-ob-vazio:first-child + * {
+  margin-top: 0;
+}
+
+@app.nc-ob-ativo .nc-ob-texto :is(h1, h2) {
+  font-size: 22px;
+}
+
+@app.nc-ob-ativo .nc-ob-texto h3 {
+  font-size: 20px;
+}
+
+@app.nc-ob-ativo .nc-ob-texto :is(h4, h5, h6) {
+  font-size: 18px;
+}
+
+@app.nc-ob-ativo .nc-ob-texto :is(ul, ol) {
+  padding-left: 1.4em;
+}
+
+@app.nc-ob-ativo .nc-ob-texto :is(ul, ol, li, p, td) {
+  font-size: 17px;
+  line-height: 1.6;
+}
+
+@app.nc-ob-ativo .nc-ob-texto li {
+  margin: 0 0 .4em;
+  padding-left: .2em;
+}
+
+@app.nc-ob-ativo .nc-ob-texto li::marker {
+  color: var(--ob-rosa);
+  font-weight: 800;
+}
+
+@app.nc-ob-ativo .nc-ob-texto :is(strong, b) {
+  font-weight: 800;
+  color: var(--ob-tinta);
+}
+
+@app.nc-ob-ativo .nc-ob-texto a {
+  font-weight: 700;
+  color: var(--ob-roxo);
+  text-decoration: underline;
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 3px;
+}
+
+@app.nc-ob-ativo .nc-ob-texto img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 12px;
+}
+
+@app.nc-ob-ativo .nc-ob-texto hr {
+  margin: 1.5em 0;
+  border: 0;
+  border-top: 1px solid var(--ob-borda);
+}
+
+@app.nc-ob-ativo .nc-ob-texto blockquote {
+  padding: 12px 16px;
+  border-radius: 12px;
+  background: var(--ob-lilas);
+}
+
+/* vídeo de fora (YouTube, Vimeo…) e mapas: a largura toda, na proporção 16:9 */
+@app.nc-ob-ativo .nc-ob-texto iframe.nc-ob-embed {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 9;
+  margin: 0 0 1em;
+  border: 0;
+  border-radius: 14px;
+  background: #1B1238;
+}
+
+/* tabela: rola dentro dela, nunca a página */
+@app.nc-ob-ativo .nc-ob-tabela {
+  max-width: 100%;
+  margin: 0 0 1em;
+  overflow-x: auto;
+  border: 1px solid var(--ob-borda);
+  border-radius: 12px;
+  -webkit-overflow-scrolling: touch;
+}
+
+@app.nc-ob-ativo .nc-ob-tabela table {
+  min-width: 100%;
+  border-collapse: collapse;
+  font-size: 15px;
+}
+
+@app.nc-ob-ativo .nc-ob-tabela :is(td, th) {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--ob-borda);
+  text-align: left;
+  vertical-align: top;
+}
+
+/* ═══ [C7] MÍDIA: VÍDEO, IMAGEM, PDF, ARQUIVOS ══════════════════════════════════════════════ */
+@app.nc-ob-ativo .nc-ob-pub :is(.video, .imagem) {
+  margin: 0 0 18px;
+  text-align: center;
+}
+
+@app.nc-ob-ativo .nc-ob-pub .video video {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 72vh;
+  border-radius: 14px;
+  background: #1B1238;
+}
+
+@app.nc-ob-ativo .nc-ob-pub .imagem img {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  height: auto;
+  margin: 0;
+  border-radius: 14px;
+}
+
+/* PDF: o botão grande sempre; o PDF dentro da página só no computador [C10] */
+@app.nc-ob-ativo .nc-ob-pub .imagem.nc-ob-pdf,
+@app.nc-ob-ativo .nc-ob-pdf-bt {
+  text-align: left;
+}
+
+@app.nc-ob-ativo .nc-ob-pdf iframe {
+  display: none;
+}
+
+@app.nc-ob-ativo .nc-ob-pdf-bt {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-height: 72px;
+  padding: 14px 16px;
+  border: 1px solid #F0C9D8;
+  border-radius: 16px;
+  background: #FDF4F8;
+  text-decoration: none;
+  color: var(--ob-tinta);
+}
+
+@app.nc-ob-ativo .nc-ob-pdf-bt:hover {
+  border-color: var(--ob-rosa);
+  text-decoration: none;
+}
+
+@app.nc-ob-ativo .nc-ob-pdf-ic {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 46px;
+  height: 46px;
+  border-radius: 12px;
+  background: #FFFFFF;
+  color: #B4325F /*reserva*/;
+  color: oklch(from #B4325F l calc(c * var(--nc-t-croma, 1)) calc(h + var(--nc-t-giro, 0)));
+}
+
+@app.nc-ob-ativo .nc-ob-pdf-ic .nc-ob-ic {
+  width: 26px;
+  height: 26px;
+}
+
+@app.nc-ob-ativo .nc-ob-pdf-txt {
+  flex: 1 1 auto;
+  font-size: 15px;
+  font-weight: 700;
+  color: #9A2A52 /*reserva*/;
+  color: oklch(from #9A2A52 l calc(c * var(--nc-t-croma, 1)) calc(h + var(--nc-t-giro, 0)));
+}
+
+@app.nc-ob-ativo .nc-ob-pdf-txt b {
+  display: block;
+  font-size: 16.5px;
+  font-weight: 800;
+  color: var(--ob-tinta);
+}
+
+@app.nc-ob-ativo .nc-ob-pdf-seta {
+  color: #B4325F /*reserva*/;
+  color: oklch(from #B4325F l calc(c * var(--nc-t-croma, 1)) calc(h + var(--nc-t-giro, 0)));
+}
+
+/* arquivos para baixar */
+@app.nc-ob-ativo .nc-ob-arquivos-tit {
+  margin: 4px 0 10px;
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--ob-tinta);
+}
+
+@app.nc-ob-ativo .nc-ob-arquivo {
+  margin: 0 0 10px;
+}
+
+@app.nc-ob-ativo .nc-ob-arquivo a {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 64px;
+  padding: 10px 12px;
+  border: 1px solid var(--ob-borda);
+  border-radius: 14px;
+  background: #FFFFFF;
+  font-size: 16px;
+  text-decoration: none;
+  color: var(--ob-tinta);
+}
+
+/* a folha global desenha um ícone de tipo de arquivo nos links de download: aqui já há o nosso */
+@app.nc-ob-ativo .nc-ob-arquivo a::before,
+@app.nc-ob-ativo .nc-ob-arquivo a::after {
+  content: none;
+  display: none;
+}
+
+@app.nc-ob-ativo .nc-ob-arquivo a:hover {
+  border-color: rgba(var(--nc-t-roxo-rgb, 81, 28, 118), .35);
+  background: #FCFBFE;
+  text-decoration: none;
+}
+
+@app.nc-ob-ativo .nc-ob-arquivo-ic {
+  position: relative;
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: var(--ob-lilas);
+  color: var(--ob-roxo);
+}
+
+@app.nc-ob-ativo .nc-ob-arquivo-ic .nc-ob-ic {
+  width: 26px;
+  height: 26px;
+  stroke-width: 1.6;
+}
+
+@app.nc-ob-ativo .nc-ob-arquivo-ic b {
+  position: absolute;
+  bottom: 5px;
+  font-size: 8.5px;
+  font-weight: 800;
+  letter-spacing: .02em;
+  color: var(--ob-roxo);
+}
+
+@app.nc-ob-ativo .nc-ob-arquivo-nome {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-weight: 700;
+  overflow-wrap: break-word;
+}
+
+@app.nc-ob-ativo .nc-ob-arquivo-acao {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--ob-roxo);
+}
+
+/* ═══ [C8] A EQUIPE ═════════════════════════════════════════════════════════════════════════ */
+@app.nc-ob-ativo .nc-ob-equipe {
+  margin: 16px 0 0;
+  padding: 22px 18px;
+  border: 1px solid var(--ob-borda);
+  border-radius: 20px;
+  background: #FFFFFF;
+}
+
+@app.nc-ob-ativo .nc-ob-equipe-tit {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--ob-tinta);
+}
+
+@app.nc-ob-ativo .nc-ob-equipe-txt {
+  margin: 4px 0 16px;
+  font-size: 16px;
+  line-height: 1.45;
+  color: var(--ob-fraco);
+}
+
+@app.nc-ob-ativo .nc-ob-pessoas {
+  display: grid;
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+@app.nc-ob-ativo .nc-ob-pessoa {
+  margin: 0;
+  padding: 16px;
+  border: 1px solid var(--ob-borda);
+  border-radius: 16px;
+  background: #FFFFFF;
+}
+
+@app.nc-ob-ativo .nc-ob-pessoa--lider {
+  border-color: rgba(var(--nc-t-rosa-rgb, 201, 87, 136), .4);
+  background: #FFFBFD;
+}
+
+@app.nc-ob-ativo .nc-ob-pessoa-cab {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+@app.nc-ob-ativo .nc-ob-foto {
+  flex: none;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: var(--ob-lilas);
+}
+
+@app.nc-ob-ativo .nc-ob-foto--ini {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--ob-roxo);
+}
+
+@app.nc-ob-ativo .nc-ob-pessoa-nome {
+  display: block;
+  font-size: 17.5px;
+  font-weight: 800;
+  line-height: 1.3;
+  color: var(--ob-tinta);
+}
+
+@app.nc-ob-ativo .nc-ob-papel {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin: 4px 0 0;
+  padding: 2px 10px 2px 8px;
+  border-radius: 999px;
+  background: #FBE7EF;
+  font-size: 13px;
+  font-weight: 800;
+  color: #8E2F5C /*reserva*/;
+  color: oklch(from #8E2F5C l calc(c * var(--nc-t-croma, 1)) calc(h + var(--nc-t-giro, 0)));
+}
+
+@app.nc-ob-ativo .nc-ob-papel .nc-ob-ic {
+  width: 14px;
+  height: 14px;
+  fill: currentColor;
+  stroke-width: 1.4;
+}
+
+@app.nc-ob-ativo .nc-ob-pessoa-cargo {
+  display: block;
+  margin: 4px 0 0;
+  font-size: 15px;
+  line-height: 1.35;
+  color: var(--ob-fraco);
+}
+
+@app.nc-ob-ativo .nc-ob-contatos {
+  display: grid;
+  gap: 8px;
+  margin: 14px 0 0;
+}
+
+@app.nc-ob-ativo .nc-ob-contato {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 52px;
+  padding: 8px 12px;
+  border-radius: 12px;
+  background: var(--ob-fundo);
+  font-size: 13.5px;
+  text-decoration: none;
+  color: var(--ob-fraco);
+}
+
+@app.nc-ob-ativo .nc-ob-contato:hover {
+  background: var(--ob-lilas);
+  text-decoration: none;
+}
+
+@app.nc-ob-ativo .nc-ob-contato .nc-ob-ic {
+  color: var(--ob-roxo);
+}
+
+@app.nc-ob-ativo .nc-ob-contato b {
+  display: block;
+  font-size: 16px;
+  font-weight: 800;
+  overflow-wrap: anywhere;
+  color: var(--ob-tinta);
+}
+
+/* ═══ [C9] PRÓXIMA PARTE / FIM / VAZIO ══════════════════════════════════════════════════════ */
+@app.nc-ob-ativo .nc-ob-seguir {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 18px 0 0;
+}
+
+@app.nc-ob-ativo .nc-ob-bt {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 64px;
+  padding: 10px 18px;
+  border-radius: 16px;
+  font-size: 17px;
+  font-weight: 800;
+  line-height: 1.25;
+  text-decoration: none;
+  transition: background-color .2s, transform .2s cubic-bezier(.22, 1, .36, 1);
+}
+
+@app.nc-ob-ativo .nc-ob-bt:hover {
+  text-decoration: none;
+}
+
+@app.nc-ob-ativo .nc-ob-bt:active {
+  transform: scale(.99);
+}
+
+@app.nc-ob-ativo .nc-ob-bt span {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+@app.nc-ob-ativo .nc-ob-bt small {
+  display: block;
+  margin: 0 0 2px;
+  font-size: 13.5px;
+  font-weight: 700;
+}
+
+@app.nc-ob-ativo .nc-ob-bt .nc-ob-ic {
+  width: 24px;
+  height: 24px;
+}
+
+@app.nc-ob-ativo .nc-ob-bt--prox {
+  background: var(--ob-roxo);
+  color: #FFFFFF;
+}
+
+@app.nc-ob-ativo .nc-ob-bt--prox small {
+  color: rgba(255, 255, 255, .8);
+}
+
+@app.nc-ob-ativo .nc-ob-bt--prox:hover {
+  background: var(--nc-roxo-hover, #3F1460) /*reserva*/;
+  background: var(--nc-roxo-hover, oklch(from #3F1460 l calc(c * var(--nc-t-croma, 1)) calc(h + var(--nc-t-giro, 0))));
+  color: #FFFFFF;
+}
+
+@app.nc-ob-ativo .nc-ob-bt--ant {
+  border: 1px solid var(--nc-borda-botao, rgba(var(--nc-t-roxo-rgb, 81, 28, 118), .34));
+  background: #FFFFFF;
+  color: var(--ob-roxo);
+}
+
+@app.nc-ob-ativo .nc-ob-bt--ant small {
+  color: var(--ob-fraco);
+}
+
+@app.nc-ob-ativo .nc-ob-bt--ant:hover {
+  background: var(--ob-lilas);
+}
+
+@app.nc-ob-ativo .nc-ob-fim {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 16px;
+  border-radius: 16px;
+  background: var(--ob-bom-bg);
+  font-size: 16px;
+  line-height: 1.45;
+  color: #1B5C3E;
+}
+
+@app.nc-ob-ativo .nc-ob-fim .nc-ob-ic {
+  width: 28px;
+  height: 28px;
+  color: var(--ob-bom);
+}
+
+@app.nc-ob-ativo .nc-ob-fim b {
+  display: block;
+  font-size: 17px;
+  font-weight: 800;
+  color: #164A32;
+}
+
+@app.nc-ob-ativo .nc-ob-fim--falta {
+  flex-direction: column;
+  align-items: stretch;
+  background: var(--ob-lilas);
+  color: var(--ob-texto);
+}
+
+@app.nc-ob-ativo .nc-ob-fim--falta b {
+  color: var(--ob-tinta);
+}
+
+@app.nc-ob-ativo .nc-ob-vazio-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 36px 20px;
+  border: 1.5px dashed #D9D2E4;
+  border-radius: 20px;
+  background: #FFFFFF;
+  text-align: center;
+  font-size: 16px;
+  line-height: 1.45;
+  color: var(--ob-fraco);
+}
+
+@app.nc-ob-ativo .nc-ob-vazio-box .nc-ob-ic {
+  width: 56px;
+  height: 56px;
+  margin: 0 0 6px;
+  padding: 14px;
+  border-radius: 50%;
+  background: var(--ob-lilas);
+  color: var(--ob-roxo);
+}
+
+@app.nc-ob-ativo .nc-ob-vazio-box b {
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--ob-tinta);
+}
+
+/* ═══ [C10] COMPUTADOR ══════════════════════════════════════════════════════════════════════ */
+@media (min-width: 900px) {
+  @app.nc-ob-ativo .nc-ob:not(.nc-ob--sem-partes) {
+    grid-template-columns: 280px minmax(0, 1fr);
+    align-items: start;
+    gap: 24px;
+  }
+
+  @app.nc-ob-ativo .nc-ob-partes,
+  @app.nc-ob-ativo .nc-ob--lista-aberta .nc-ob-partes {
+    position: sticky;
+    top: calc(var(--nc-ob-topo, 140px) + 12px);
+    display: block;
+    margin: 0;
+    padding: 14px 10px 10px;
+    border: 1px solid var(--ob-borda);
+    border-radius: 20px;
+    background: #FFFFFF;
+    animation: none;
+  }
+
+  @app.nc-ob-ativo .nc-ob-partes-tit {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0 0 8px;
+    padding: 0 8px 10px;
+    border-bottom: 2px solid var(--ob-rosa);
+    font-size: 16px;
+    font-weight: 800;
+    color: var(--ob-tinta);
+  }
+
+  @app.nc-ob-ativo .nc-ob-partes-tit .nc-ob-ic {
+    color: var(--ob-rosa);
+  }
+
+  @app.nc-ob-ativo .nc-ob-bt-todas {
+    display: none;
+  }
+
+  @app.nc-ob-ativo .nc-ob-cab {
+    padding: 24px 28px 20px;
+  }
+
+  @app.nc-ob-ativo .nc-ob-parte-tit {
+    font-size: 30px;
+  }
+
+  @app.nc-ob-ativo .publicacao.nc-ob-pub {
+    padding: 28px 32px 32px;
+  }
+
+  @app.nc-ob-ativo .nc-ob-pub-tit {
+    font-size: 24px;
+  }
+
+  @app.nc-ob-ativo .nc-ob-pdf iframe {
+    display: block;
+    width: 100%;
+    height: 72vh;
+    margin: 12px 0 0;
+    border: 1px solid var(--ob-borda);
+    border-radius: 14px;
+  }
+
+  @app.nc-ob-ativo .nc-ob-pessoas {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  @app.nc-ob-ativo .nc-ob-seguir {
+    flex-direction: row-reverse;
+  }
+
+  @app.nc-ob-ativo .nc-ob-seguir > * {
+    flex: 1 1 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  @app.nc-ob-ativo :is(.nc-ob-partes, .nc-ob-ic-gira, .nc-ob-bt, .nc-ob-barra span) {
+    transition: none;
+    animation: none;
+  }
+}
+
+/* ═══ [DESK] TELAS DE MESA — gerado por escala-desktop.py (não editar à mão; rode o script) ═══ */
+@media (min-width: 1024px) {
+  @app.nc-ob-ativo .nc-ob-parte-tit {
+    font-size: 25px;
+  }
+
+  @app.nc-ob-ativo .nc-ob-bt-todas {
+    font-size: 15px;
+    min-height: 43px;
+  }
+
+  @app.nc-ob-ativo .nc-ob-item {
+    font-size: 15px;
+    min-height: 45px;
+  }
+
+  @app.nc-ob-ativo .nc-ob-n {
+    font-size: 14px;
+  }
+
+  @app.nc-ob-ativo .nc-ob-pub-tit {
+    font-size: 20px;
+  }
+
+  @app.nc-ob-ativo .nc-ob-pub-sub {
+    font-size: 16px;
+  }
+
+  @app.nc-ob-ativo .nc-ob-ouvir {
+    font-size: 14px;
+    min-height: 38px;
+  }
+
+  @app.nc-ob-ativo .nc-ob-texto {
+    font-size: 16px;
+  }
+
+  @app.nc-ob-ativo .nc-ob-texto :is(h1, h2) {
+    font-size: 19.5px;
+  }
+
+  @app.nc-ob-ativo .nc-ob-texto h3 {
+    font-size: 17.5px;
+  }
+
+  @app.nc-ob-ativo .nc-ob-texto :is(h4, h5, h6) {
+    font-size: 16px;
+  }
+
+  @app.nc-ob-ativo .nc-ob-texto :is(ul, ol, li, p, td) {
+    font-size: 16px;
+  }
+
+  @app.nc-ob-ativo .nc-ob-tabela table {
+    font-size: 14px;
+  }
+
+  @app.nc-ob-ativo .nc-ob-pdf-bt {
+    min-height: 62px;
+  }
+
+  @app.nc-ob-ativo .nc-ob-pdf-txt {
+    font-size: 14px;
+  }
+
+  @app.nc-ob-ativo .nc-ob-pdf-txt b {
+    font-size: 15.5px;
+  }
+
+  @app.nc-ob-ativo .nc-ob-arquivos-tit {
+    font-size: 15px;
+  }
+
+  @app.nc-ob-ativo .nc-ob-arquivo a {
+    font-size: 15px;
+    min-height: 55px;
+  }
+
+  @app.nc-ob-ativo .nc-ob-arquivo-acao {
+    font-size: 14px;
+  }
+
+  @app.nc-ob-ativo .nc-ob-equipe-tit {
+    font-size: 19.5px;
+  }
+
+  @app.nc-ob-ativo .nc-ob-equipe-txt {
+    font-size: 15px;
+  }
+
+  @app.nc-ob-ativo .nc-ob-foto--ini {
+    font-size: 17.5px;
+  }
+
+  @app.nc-ob-ativo .nc-ob-pessoa-nome {
+    font-size: 16.5px;
+  }
+
+  @app.nc-ob-ativo .nc-ob-pessoa-cargo {
+    font-size: 14px;
+  }
+
+  @app.nc-ob-ativo .nc-ob-contato {
+    min-height: 45px;
+  }
+
+  @app.nc-ob-ativo .nc-ob-contato b {
+    font-size: 15px;
+  }
+
+  @app.nc-ob-ativo .nc-ob-bt {
+    font-size: 16px;
+    min-height: 55px;
+  }
+
+  @app.nc-ob-ativo .nc-ob-fim {
+    font-size: 15px;
+  }
+
+  @app.nc-ob-ativo .nc-ob-fim b {
+    font-size: 16px;
+  }
+
+  @app.nc-ob-ativo .nc-ob-vazio-box {
+    font-size: 15px;
+  }
+
+  @app.nc-ob-ativo .nc-ob-vazio-box b {
+    font-size: 16px;
+  }
+
+  @app.nc-ob-ativo .nc-ob-partes-tit {
+    font-size: 15px;
+  }
+}
+/* ═══ fim do [DESK] ═══ */

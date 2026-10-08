@@ -1,0 +1,744 @@
+/* ╔════════════════════════════════════════════════════════════════════════════════════════╗
+   ║  NATCORP · CURSOS DO CARGO  —  o desenho da página (CSS)                                 ║
+   ║  App 300 (Portal do Colaborador) · Página 90 · Cursos Realizados                         ║
+   ╚════════════════════════════════════════════════════════════════════════════════════════╝
+
+   Feito PRIMEIRO para o celular (~70% de quem abre). Na mesa (≥1024 px) o bloco [DESK], no fim,
+   é gerado pelo escala-desktop.py: não edite à mão. Depois de mexer: node gerar-app.mjs.
+   Guia: CURSOS-MANUTENCAO.md. O que cada parte é: Natcorp_Cursos.src.js.
+
+   CORES  feito = --nc-bom (verde), falta fazer = --nc-alerta (âmbar, texto em --nc-alerta-texto),
+          o resto = o roxo do tema. A situação vai SEMPRE escrita ("Feito", "Falta fazer"):
+          a cor só reforça.
+
+   ── ÍNDICE ────────────────────────────────────────────────────────────────────────────────
+     [C1] O que sai da vista (as três listas originais)
+     [C2] A resposta: o veredito, a trilha e "o que fazer"
+     [C3] Os blocos: a lista do cargo e o estudo
+     [C4] Os cursos (linhas)
+     [C5] Outros cursos (recolhidos)
+     [C6] Estados e o pé
+     [C7] Celular e movimento reduzido
+*/
+
+/* ═══ [C1] O QUE SAI DA VISTA ══════════════════════════════════════════════════════════════ */
+@app.nc-cu:not(.nc-cu-tabela) .nc-cu-orig {
+  display: none;
+}
+
+@app.nc-cu .nc-cu-raiz {
+  margin: 0 0 16px;
+  font-variant-numeric: tabular-nums;
+}
+
+@app.nc-cu .nc-cu-ic {
+  width: 20px;
+  height: 20px;
+  flex: none;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* ═══ [C2] A RESPOSTA ══════════════════════════════════════════════════════════════════════
+   A pergunta da página, respondida no alto. A cor do veredito acompanha a situação. */
+@app.nc-cu .nc-cu-resposta {
+  --cu-tom: var(--nc-roxo);
+  --cu-tom-fundo: color-mix(in srgb, var(--nc-roxo) 10%, #fff);
+  --cu-tom-texto: var(--nc-roxo);
+  margin: 0 0 16px;
+  padding: 20px 22px;
+  border: 1px solid var(--nc-nevoa);
+  border-radius: 20px;
+  background: #fff;
+  box-shadow: 0 10px 28px -18px rgba(var(--nc-t-roxo-rgb, 81, 28, 118), .45);
+}
+
+@app.nc-cu .nc-cu-resposta--ok {
+  --cu-tom: var(--nc-bom);
+  --cu-tom-fundo: color-mix(in srgb, var(--nc-bom) 12%, #fff);
+  --cu-tom-texto: var(--nc-bom);
+}
+
+@app.nc-cu .nc-cu-resposta--falta {
+  --cu-tom: var(--nc-alerta);
+  --cu-tom-fundo: color-mix(in srgb, var(--nc-alerta) 20%, #fff);
+  --cu-tom-texto: var(--nc-alerta-texto);
+}
+
+@app.nc-cu .nc-cu-resposta-cab {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 0 0 16px;
+}
+
+@app.nc-cu .nc-cu-resposta-tit {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.3;
+  color: var(--nc-grafite);
+}
+
+@app.nc-cu .nc-cu-cargo {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 6px 0 0;
+  font-size: 15px;
+  line-height: 1.35;
+  color: var(--nc-grafite);
+}
+
+@app.nc-cu .nc-cu-cargo .nc-cu-ic {
+  width: 18px;
+  height: 18px;
+  color: var(--nc-roxo);
+}
+
+@app.nc-cu .nc-cu-cargo b {
+  font-weight: 700;
+  color: var(--nc-tinta);
+}
+
+@app.nc-cu .nc-cu-ouvir {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex: none;
+  min-height: 40px;
+  padding: 0 14px;
+  border: 1px solid var(--nc-borda-botao);
+  border-radius: 999px;
+  background: #fff;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--nc-roxo);
+  cursor: pointer;
+}
+
+@app.nc-cu .nc-cu-ouvir:hover {
+  border-color: var(--nc-roxo);
+  background: var(--nc-nevoa2);
+}
+
+@app.nc-cu .nc-cu-ouvir[aria-pressed="true"] {
+  border-color: var(--nc-roxo);
+  background: var(--nc-roxo);
+  color: #fff;
+}
+
+@app.nc-cu .nc-cu-ouvir:focus-visible {
+  outline: 2px solid var(--nc-roxo);
+  outline-offset: 2px;
+}
+
+@app.nc-cu .nc-cu-veredito {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+@app.nc-cu .nc-cu-veredito-sinal {
+  display: grid;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+  flex: none;
+  border-radius: 50%;
+  background: var(--cu-tom-fundo);
+  color: var(--cu-tom-texto);
+}
+
+@app.nc-cu .nc-cu-veredito-sinal b {
+  font-size: 30px;
+  font-weight: 800;
+  line-height: 1;
+}
+
+@app.nc-cu .nc-cu-veredito-sinal .nc-cu-ic {
+  width: 32px;
+  height: 32px;
+  stroke-width: 2.6;
+}
+
+@app.nc-cu .nc-cu-veredito-tit {
+  margin: 0;
+  font-size: 23px;
+  font-weight: 800;
+  line-height: 1.2;
+  letter-spacing: -.012em;
+  color: var(--nc-tinta);
+  text-wrap: balance;
+}
+
+@app.nc-cu .nc-cu-veredito-sub {
+  margin: 4px 0 0;
+  font-size: 16px;
+  line-height: 1.45;
+  color: var(--nc-grafite);
+}
+
+@app.nc-cu .nc-cu-veredito-sub b {
+  font-weight: 800;
+  color: var(--nc-tinta);
+}
+
+/* a trilha: um passo por curso do cargo; cheio = feito */
+@app.nc-cu .nc-cu-trilha {
+  display: flex;
+  gap: 6px;
+  margin: 18px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+@app.nc-cu .nc-cu-trilha li {
+  flex: 1 1 0;
+  height: 10px;
+  margin: 0;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--nc-alerta) 28%, #fff);
+}
+
+@app.nc-cu .nc-cu-trilha li.is-feito {
+  background: var(--nc-bom);
+}
+
+@app.nc-cu .nc-cu-trilha--barra {
+  height: 10px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--nc-alerta) 28%, #fff);
+}
+
+@app.nc-cu .nc-cu-trilha--barra span {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+  background: var(--nc-bom);
+}
+
+@app.nc-cu .nc-cu-fazer {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin: 16px 0 0;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: var(--nc-nevoa2);
+  font-size: 15px;
+  line-height: 1.45;
+  color: var(--nc-tinta);
+}
+
+@app.nc-cu .nc-cu-fazer .nc-cu-ic {
+  margin-top: 1px;
+  color: var(--nc-roxo);
+}
+
+/* ═══ [C3] OS BLOCOS ═══════════════════════════════════════════════════════════════════════
+   A lista do cargo à esquerda (é o que importa); o estudo e os outros cursos à direita. */
+@app.nc-cu .nc-cu-grade {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
+  align-items: start;
+  gap: 16px;
+}
+
+@app.nc-cu .nc-cu-grade--igual {
+  grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
+}
+
+@app.nc-cu .nc-cu-col {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 0;
+}
+
+@app.nc-cu .nc-cu-bloco,
+@app.nc-cu .nc-cu-outros {
+  overflow: hidden;
+  border: 1px solid var(--nc-nevoa);
+  border-radius: 18px;
+  background: #fff;
+}
+
+@app.nc-cu .nc-cu-bloco-cab {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 16px;
+  border-bottom: 2px solid var(--nc-rosa);
+}
+
+@app.nc-cu .nc-cu-bloco-ic {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  flex: none;
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--nc-roxo) 10%, #fff);
+  color: var(--nc-roxo);
+}
+
+@app.nc-cu .nc-cu-bloco-tit {
+  flex: 1 1 auto;
+  min-width: 0;
+  margin: 0;
+  font-size: 17px;
+  font-weight: 800;
+  line-height: 1.25;
+  color: var(--nc-tinta);
+}
+
+@app.nc-cu .nc-cu-bloco-n {
+  flex: none;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--nc-cinza);
+}
+
+@app.nc-cu .nc-cu-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  flex: none;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+@app.nc-cu .nc-cu-chip .nc-cu-ic {
+  width: 15px;
+  height: 15px;
+  stroke-width: 3;
+}
+
+@app.nc-cu .nc-cu-chip--ok {
+  background: color-mix(in srgb, var(--nc-bom) 12%, #fff);
+  color: var(--nc-bom);
+}
+
+@app.nc-cu .nc-cu-chip--falta {
+  background: color-mix(in srgb, var(--nc-alerta) 22%, #fff);
+  color: var(--nc-alerta-texto);
+}
+
+@app.nc-cu .nc-cu-estudo {
+  margin: 0;
+}
+
+@app.nc-cu .nc-cu-estudo > div {
+  padding: 12px 16px;
+}
+
+@app.nc-cu .nc-cu-estudo > div + div {
+  border-top: 1px solid var(--nc-nevoa);
+}
+
+@app.nc-cu .nc-cu-estudo dt {
+  margin: 0 0 2px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--nc-grafite);
+}
+
+@app.nc-cu .nc-cu-estudo dd {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.35;
+  color: var(--nc-tinta);
+}
+
+@app.nc-cu .nc-cu-fraco {
+  font-weight: 500;
+  color: var(--nc-grafite);
+}
+
+@app.nc-cu .nc-cu-vazio {
+  margin: 0;
+  padding: 16px;
+  font-size: 15px;
+  line-height: 1.45;
+  color: var(--nc-grafite);
+}
+
+/* ═══ [C4] OS CURSOS ═══════════════════════════════════════════════════════════════════════ */
+@app.nc-cu .nc-cu-cursos {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+@app.nc-cu .nc-cu-curso {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 60px;
+  margin: 0;
+  padding: 10px 16px;
+}
+
+@app.nc-cu .nc-cu-curso + .nc-cu-curso {
+  border-top: 1px solid var(--nc-nevoa);
+}
+
+@app.nc-cu .nc-cu-curso-sinal {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  flex: none;
+  border-radius: 50%;
+}
+
+@app.nc-cu .nc-cu-curso-sinal .nc-cu-ic {
+  width: 18px;
+  height: 18px;
+  stroke-width: 2.6;
+}
+
+@app.nc-cu .nc-cu-curso.is-feito .nc-cu-curso-sinal {
+  background: color-mix(in srgb, var(--nc-bom) 13%, #fff);
+  color: var(--nc-bom);
+}
+
+@app.nc-cu .nc-cu-curso.is-falta .nc-cu-curso-sinal {
+  background: color-mix(in srgb, var(--nc-alerta) 24%, #fff);
+  color: var(--nc-alerta-texto);
+}
+
+@app.nc-cu .nc-cu-curso-txt {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+@app.nc-cu .nc-cu-curso-nome {
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.3;
+  overflow-wrap: anywhere;
+  color: var(--nc-tinta);
+}
+
+@app.nc-cu .nc-cu-curso-cod {
+  margin-top: 2px;
+  font-size: 13px;
+  color: var(--nc-cinza);
+}
+
+@app.nc-cu .nc-cu-curso-sit {
+  flex: none;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+@app.nc-cu .nc-cu-curso.is-feito .nc-cu-curso-sit {
+  background: color-mix(in srgb, var(--nc-bom) 12%, #fff);
+  color: var(--nc-bom);
+}
+
+@app.nc-cu .nc-cu-curso.is-falta .nc-cu-curso-sit {
+  background: color-mix(in srgb, var(--nc-alerta) 22%, #fff);
+  color: var(--nc-alerta-texto);
+}
+
+/* os outros cursos já estão feitos: sem a etiqueta repetida em cada linha */
+@app.nc-cu .nc-cu-cursos--outros .nc-cu-curso-sit {
+  display: none;
+}
+
+@app.nc-cu .nc-cu-cursos--outros .nc-cu-curso-nome {
+  font-weight: 600;
+}
+
+/* ═══ [C5] OUTROS CURSOS (recolhidos) ══════════════════════════════════════════════════════ */
+@app.nc-cu .nc-cu-outros > summary {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 60px;
+  padding: 10px 16px;
+  cursor: pointer;
+  list-style: none;
+}
+
+@app.nc-cu .nc-cu-outros > summary::-webkit-details-marker {
+  display: none;
+}
+
+@app.nc-cu .nc-cu-outros > summary:focus-visible {
+  outline: 2px solid var(--nc-roxo);
+  outline-offset: -2px;
+}
+
+@app.nc-cu .nc-cu-outros > summary .nc-cu-bloco-ic {
+  background: color-mix(in srgb, var(--nc-bom) 12%, #fff);
+  color: var(--nc-bom);
+}
+
+@app.nc-cu .nc-cu-outros-tit {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.3;
+  color: var(--nc-tinta);
+}
+
+@app.nc-cu .nc-cu-outros-seta {
+  color: var(--nc-roxo);
+  transition: transform .2s;
+}
+
+@app.nc-cu .nc-cu-outros[open] .nc-cu-outros-seta {
+  transform: rotate(180deg);
+}
+
+@app.nc-cu .nc-cu-outros-dica {
+  margin: 0 16px 10px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--nc-grafite);
+}
+
+@app.nc-cu .nc-cu-outros .nc-cu-cursos,
+@app.nc-cu .nc-cu-outros .nc-cu-vazio {
+  border-top: 1px solid var(--nc-nevoa);
+}
+
+/* ═══ [C6] ESTADOS E O PÉ ══════════════════════════════════════════════════════════════════ */
+@app.nc-cu .nc-cu-estado {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  min-height: 120px;
+  margin: 0 0 16px;
+  padding: 20px;
+  border: 1px solid var(--nc-nevoa);
+  border-radius: 18px;
+  background: #fff;
+  font-size: 16px;
+  line-height: 1.45;
+  color: var(--nc-grafite);
+}
+
+@app.nc-cu .nc-cu-estado p {
+  margin: 0;
+}
+
+@app.nc-cu .nc-cu-estado--aviso {
+  justify-content: flex-start;
+}
+
+@app.nc-cu .nc-cu-estado-ic {
+  width: 28px;
+  height: 28px;
+  color: var(--nc-roxo);
+}
+
+@app.nc-cu .nc-cu-estado-tit {
+  font-weight: 800;
+  color: var(--nc-tinta);
+}
+
+@app.nc-cu .nc-cu-giro {
+  width: 22px;
+  height: 22px;
+  flex: none;
+  border: 3px solid var(--nc-nevoa);
+  border-top-color: var(--nc-roxo);
+  border-radius: 50%;
+  animation: nc-cu-giro .8s linear infinite;
+}
+
+@keyframes nc-cu-giro {
+  to { transform: rotate(360deg); }
+}
+
+@app.nc-cu .nc-cu-parcial {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin: 16px 0 0;
+  font-size: 14px;
+  line-height: 1.45;
+  color: var(--nc-grafite);
+}
+
+@app.nc-cu .nc-cu-pe {
+  display: flex;
+  justify-content: center;
+  margin: 16px 0 8px;
+}
+
+@app.nc-cu .nc-cu-tabela-bt {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 0 18px;
+  border: 1px solid var(--nc-borda-botao);
+  border-radius: 999px;
+  background: #fff;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--nc-roxo);
+  cursor: pointer;
+}
+
+@app.nc-cu .nc-cu-tabela-bt:hover {
+  border-color: var(--nc-roxo);
+  background: var(--nc-nevoa2);
+}
+
+@app.nc-cu .nc-cu-tabela-bt:focus-visible {
+  outline: 2px solid var(--nc-roxo);
+  outline-offset: 2px;
+}
+
+/* ═══ [C7] CELULAR E MOVIMENTO REDUZIDO ════════════════════════════════════════════════════ */
+@media (max-width: 860px) {
+  @app.nc-cu .nc-cu-grade {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  @app.nc-cu .nc-cu-resposta {
+    padding: 16px;
+    border-radius: 18px;
+  }
+
+  @app.nc-cu .nc-cu-resposta-cab {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  @app.nc-cu .nc-cu-veredito {
+    align-items: flex-start;
+    gap: 14px;
+  }
+
+  @app.nc-cu .nc-cu-veredito-sinal {
+    width: 56px;
+    height: 56px;
+  }
+
+  @app.nc-cu .nc-cu-veredito-sinal b {
+    font-size: 26px;
+  }
+
+  @app.nc-cu .nc-cu-veredito-tit {
+    font-size: 21px;
+  }
+
+  @app.nc-cu .nc-cu-curso {
+    padding: 10px 14px;
+  }
+
+  /* a etiqueta desce para baixo do nome: lado a lado, o nome partia em muitas linhas */
+  @app.nc-cu .nc-cu-curso {
+    flex-wrap: wrap;
+    row-gap: 6px;
+  }
+
+  @app.nc-cu .nc-cu-curso-txt {
+    flex: 1 1 calc(100% - 44px);
+  }
+
+  @app.nc-cu .nc-cu-curso-sit {
+    margin-left: 44px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  @app.nc-cu .nc-cu-outros-seta {
+    transition: none;
+  }
+
+  @app.nc-cu .nc-cu-giro {
+    animation-duration: 2.4s;
+  }
+}
+
+/* ═══ [DESK] TELAS DE MESA — gerado por escala-desktop.py (não editar à mão; rode o script) ═══ */
+@media (min-width: 1024px) {
+  @app.nc-cu .nc-cu-resposta-tit {
+    font-size: 15px;
+  }
+
+  @app.nc-cu .nc-cu-cargo {
+    font-size: 14px;
+  }
+
+  @app.nc-cu .nc-cu-veredito-sinal b {
+    font-size: 25px;
+  }
+
+  @app.nc-cu .nc-cu-veredito-tit {
+    font-size: 20px;
+  }
+
+  @app.nc-cu .nc-cu-veredito-sub {
+    font-size: 15px;
+  }
+
+  @app.nc-cu .nc-cu-fazer {
+    font-size: 14px;
+  }
+
+  @app.nc-cu .nc-cu-bloco-tit {
+    font-size: 16px;
+  }
+
+  @app.nc-cu .nc-cu-estudo dd {
+    font-size: 15px;
+  }
+
+  @app.nc-cu .nc-cu-vazio {
+    font-size: 14px;
+  }
+
+  @app.nc-cu .nc-cu-curso {
+    min-height: 52px;
+  }
+
+  @app.nc-cu .nc-cu-curso-nome {
+    font-size: 15px;
+  }
+
+  @app.nc-cu .nc-cu-outros > summary {
+    min-height: 52px;
+  }
+
+  @app.nc-cu .nc-cu-outros-tit {
+    font-size: 15px;
+  }
+
+  @app.nc-cu .nc-cu-estado {
+    font-size: 15px;
+    min-height: 103px;
+  }
+
+  @app.nc-cu .nc-cu-tabela-bt {
+    font-size: 14px;
+    min-height: 38px;
+  }
+}
+/* ═══ fim do [DESK] ═══ */

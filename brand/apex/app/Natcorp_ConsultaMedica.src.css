@@ -1,0 +1,1106 @@
+/* ╔════════════════════════════════════════════════════════════════════════════════════════╗
+   ║  NATCORP · CONSULTA MÉDICA  —  a "roupa" da tela (CSS)                                   ║
+   ║  App 2937 (Medicina Ocupacional) · Página 40 · Consulta Médica (modal)                   ║
+   ╚════════════════════════════════════════════════════════════════════════════════════════╝
+
+   Primeira vez num arquivo destes? Leia antes o manual: brand/apex/MANUAL-APEX.md (parte 1).
+
+   ── O QUE ESTE ARQUIVO FAZ ────────────────────────────────────────────────────────────────
+   A aparência da ficha que o Natcorp_ConsultaMedica.js monta: o paciente no alto, o trilho
+   das partes à esquerda, a ficha (as regiões das antigas abas, uma embaixo da outra) e o
+   rodapé com o Finalizar. Sem o JS, nada daqui vale (tudo depende da marca nc-cm-ativo).
+   Mesma linguagem do Exame Médico Ocupacional (2937:19) e do Lançamento de Exames (2937:11).
+
+   ── ONDE ELE ENTRA NO APEX ────────────────────────────────────────────────────────────────
+     Página 40 › CSS › File URLs:   #WORKSPACE_IMAGES#Natcorp_ConsultaMedica.css
+     CUIDADO: este é o arquivo-FONTE (.src.css). O gerador (gerar-app.mjs) cria a partir dele o
+     Natcorp_ConsultaMedica.css que sobe para o APEX. Edite ESTE arquivo, não o gerado.
+
+   ── ÍNDICE ────────────────────────────────────────────────────────────────────────────────
+     [C1] As cores                                                PODE MEXER
+     [C2] O que sai da vista (as abas vazias, o formulário do paciente)
+     [C3] A janela: o paciente no alto
+     [C4] O trilho
+     [C5] A ficha e as partes
+     [C6] Os campos (textos que crescem, horários, antecedentes em botões)
+     [C7] O rodapé, a confirmação de sair, o aviso
+     [C8] Pré-atendimento (a ficha travada)
+     [C9] Celular e tablet
+*/
+
+/* ═══ [C1] AS CORES ═════════════════════════════════════════════════════════════════════════ */
+@app.nc-cm-ativo {
+  --nc-cm-borda: var(--nc-nevoa, #E9E5F1);
+  --nc-cm-fundo: var(--nc-off, #F7F5FA);
+  --nc-cm-texto: var(--nc-tinta, #1B1238);
+  --nc-cm-fraco: var(--nc-grafite, #4A4460);
+  --nc-cm-bom: var(--nc-bom, #1F7A52);
+  --nc-cm-ruim: var(--nc-ruim, #B8323F);
+  --nc-cm-atencao: #8A5300;
+}
+
+/* ═══ [C2] O QUE SAI DA VISTA ═══════════════════════════════════════════════════════════════
+   Tudo continua na página (vai no Finalizar): as abas (vazias), a região de empresa/matrícula
+   quando o paciente já veio da Agenda, o "TIPO EXAME" (técnico) e o campo de descrever outras
+   doenças / medicamentos enquanto a caixinha não está marcada.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-cm-ativo .nc-cm-guardada:not(#nc-cm-x),
+@app.nc-cm-ativo .nc-cm-recolhida:not(#nc-cm-x),
+@app.nc-cm-ativo [hidden]:not(#nc-cm-x) {
+  display: none;
+}
+
+@app.nc-cm-ativo .nc-cm-so-leitor:not(#nc-cm-x) {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+/* ═══ [C3] A JANELA: O PACIENTE NO ALTO ═════════════════════════════════════════════════════ */
+@app.nc-cm-ativo .nc-cm ::selection,
+@app.nc-cm-ativo .nc-cm-paciente ::selection {
+  background: color-mix(in srgb, var(--nc-roxo, #511C76) 18%, #fff);
+}
+
+@app.nc-cm-ativo.nc-cm-cab-fixo .t-Dialog-header {
+  display: block;
+  height: auto;
+  padding: 14px 24px 12px;
+  border-bottom: 1px solid var(--nc-cm-borda);
+  background: #fff;
+}
+
+@app.nc-cm-ativo .nc-cm-paciente {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 10px 20px;
+  color: var(--nc-cm-texto);
+}
+
+@app.nc-cm-ativo .nc-cm > .nc-cm-paciente {
+  margin: 0 0 14px;
+  padding: 14px 16px;
+  border: 1px solid var(--nc-cm-borda);
+  border-radius: 14px;
+  background: #fff;
+}
+
+@app.nc-cm-ativo .nc-cm-pac-id {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 8px 14px;
+  flex: 1 1 560px;
+  min-width: 0;
+}
+
+@app.nc-cm-ativo .nc-cm-avatar {
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--nc-roxo, #511C76) 10%, #fff);
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--nc-roxo, #511C76);
+}
+
+@app.nc-cm-ativo .nc-cm-avatar .nc-cm-ic {
+  width: 22px;
+  height: 22px;
+}
+
+@app.nc-cm-ativo .nc-cm-pac-nome {
+  flex: 1 1 320px;
+  min-width: 0;
+}
+
+@app.nc-cm-ativo .nc-cm-pac-nome h1 {
+  margin: 0;
+  font-size: 19px;
+  font-weight: 700;
+  line-height: 1.25;
+  letter-spacing: -.01em;
+  color: var(--nc-cm-texto);
+}
+
+@app.nc-cm-ativo .nc-cm-cod {
+  font-weight: 500;
+  color: var(--nc-cm-fraco);
+  font-variant-numeric: tabular-nums;
+}
+
+@app.nc-cm-ativo .nc-cm-pac-dados {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 20px;
+  margin: 6px 0 0;
+  padding: 0;
+}
+
+@app.nc-cm-ativo .nc-cm-pac-dados > div {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
+@app.nc-cm-ativo .nc-cm-pac-dados dt {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--nc-cm-fraco);
+}
+
+@app.nc-cm-ativo .nc-cm-pac-dados dd {
+  margin: 0;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--nc-cm-texto);
+}
+
+@app.nc-cm-ativo .nc-cm-fraco {
+  margin: 4px 0 0;
+  font-size: 13.5px;
+  color: var(--nc-cm-fraco);
+}
+
+@app.nc-cm-ativo .nc-cm-pac-consulta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+}
+
+@app.nc-cm-ativo .nc-cm-tipo {
+  padding: 5px 12px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--nc-roxo, #511C76) 10%, #fff);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--nc-roxo, #511C76);
+}
+
+@app.nc-cm-ativo .nc-cm-quando {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--nc-cm-fraco);
+  font-variant-numeric: tabular-nums;
+}
+
+@app.nc-cm-ativo .nc-cm-quando .nc-cm-ic {
+  width: 16px;
+  height: 16px;
+}
+
+@app.nc-cm-ativo .nc-cm-pac-acoes {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+}
+
+@app.nc-cm-ativo .nc-cm-pac-acoes:empty {
+  display: none;
+}
+
+/* ═══ [C4] O TRILHO ═════════════════════════════════════════════════════════════════════════
+   No computador, uma coluna à esquerda, fora da rolagem da ficha (sempre à vista).
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+/* a área da ficha (que rola) começa depois do trilho; o trilho não rola com ela */
+@app.nc-cm-ativo.nc-cm-trilho-lado .t-Dialog-bodyWrapperIn {
+  left: 236px;
+}
+
+@app.nc-cm-ativo.nc-cm-trilho-lado .nc-cm-trilho {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+}
+
+@app.nc-cm-ativo .nc-cm-trilho {
+  width: 236px;
+  margin: 0;
+  padding: 14px 10px 20px 16px;
+  overflow-y: auto;
+  border-right: 1px solid var(--nc-cm-borda);
+  background: var(--nc-cm-fundo);
+}
+
+@app.nc-cm-ativo .nc-cm-trilho ol {
+  margin: 0 0 6px;
+  padding: 0;
+  list-style: none;
+}
+
+@app.nc-cm-ativo .nc-cm-trilho li {
+  margin: 0;
+}
+
+@app.nc-cm-ativo .nc-cm-tr-grupo {
+  margin: 14px 8px 4px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--nc-cm-fraco);
+}
+
+@app.nc-cm-ativo .nc-cm-trilho a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 10px;
+  border-radius: 9px;
+  font-size: 13.5px;
+  font-weight: 500;
+  line-height: 1.3;
+  color: var(--nc-cm-texto);
+  text-decoration: none;
+  transition: background .12s;
+}
+
+@app.nc-cm-ativo .nc-cm-trilho a:hover {
+  background: rgba(255, 255, 255, .8);
+}
+
+@app.nc-cm-ativo .nc-cm-trilho a[aria-current="true"] {
+  background: #fff;
+  font-weight: 700;
+  color: var(--nc-roxo, #511C76);
+  box-shadow: 0 1px 2px rgba(27, 18, 56, .08);
+}
+
+@app.nc-cm-ativo .nc-cm-trilho a:focus-visible {
+  outline: 2px solid var(--nc-roxo, #511C76);
+  outline-offset: 1px;
+}
+
+/* a marca: vazia (anel), com registro (✓ verde), com erro (vermelha) */
+@app.nc-cm-ativo .nc-cm-tr-marca {
+  position: relative;
+  flex: 0 0 auto;
+  width: 16px;
+  height: 16px;
+  border: 1.5px solid #C9C1D8;
+  border-radius: 50%;
+  background: #fff;
+}
+
+@app.nc-cm-ativo .nc-cm-trilho a[data-estado="cheia"] .nc-cm-tr-marca {
+  border-color: var(--nc-cm-bom);
+  background: var(--nc-cm-bom);
+}
+
+@app.nc-cm-ativo .nc-cm-trilho a[data-estado="cheia"] .nc-cm-tr-marca::after {
+  content: "";
+  position: absolute;
+  top: 2px;
+  left: 5px;
+  width: 4px;
+  height: 7px;
+  border: solid #fff;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+@app.nc-cm-ativo .nc-cm-trilho a[data-estado="erro"] .nc-cm-tr-marca {
+  border-color: var(--nc-cm-ruim);
+  background: var(--nc-cm-ruim);
+}
+
+@app.nc-cm-ativo .nc-cm-trilho a[data-estado="erro"] {
+  color: var(--nc-cm-ruim);
+}
+
+/* ═══ [C5] A FICHA E AS PARTES ══════════════════════════════════════════════════════════════ */
+@app.nc-cm-ativo .t-Dialog-body:has(.nc-cm) {
+  padding: 18px 24px 28px;
+}
+
+@app.nc-cm-ativo .nc-cm {
+  max-width: 1080px;
+  color: var(--nc-cm-texto);
+}
+
+@app.nc-cm-ativo .nc-cm-ficha {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+@app.nc-cm-ativo .nc-cm-sec {
+  scroll-margin-top: 12px;
+  padding: 16px 18px 18px;
+  border: 1px solid var(--nc-cm-borda);
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: 0 1px 2px rgba(27, 18, 56, .04);
+}
+
+@app.nc-cm-ativo .nc-cm-sec-cab {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin: -16px -18px 14px;
+  padding: 12px 18px 10px;
+  border-bottom: 2px solid var(--nc-rosa, #C95788);   /* a faixa da região (padrão da Skin, cor do tema) */
+}
+
+@app.nc-cm-ativo .nc-cm-sec-cab h2 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.3;
+  color: var(--nc-cm-texto);
+}
+
+@app.nc-cm-ativo .nc-cm-sec-estado {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--nc-cm-fraco);
+}
+
+@app.nc-cm-ativo .nc-cm-sec-estado[data-estado="cheia"] {
+  color: var(--nc-cm-bom);
+}
+
+@app.nc-cm-ativo .nc-cm-sec-estado[data-estado="erro"] {
+  color: var(--nc-cm-ruim);
+}
+
+/* a região do APEX dentro da parte: sem moldura e sem o cabeçalho (o da parte já diz) */
+@app.nc-cm-ativo .nc-cm .nc-cm-regiao:not(#nc-cm-x),
+@app.nc-cm-ativo .nc-cm .nc-cm-regiao .t-Region:not(#nc-cm-x) {
+  margin: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+@app.nc-cm-ativo .nc-cm .nc-cm-regiao > .t-Region-header:not(#nc-cm-x) {
+  display: none;
+}
+
+@app.nc-cm-ativo .nc-cm .nc-cm-regiao .t-Region-bodyWrap:not(#nc-cm-x),
+@app.nc-cm-ativo .nc-cm .nc-cm-regiao .t-Region-body:not(#nc-cm-x) {
+  margin: 0;
+  padding: 0;
+  overflow: visible;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+/* as sub-partes (Questionário, Pessoais, Familiares…): sem a moldura da Skin; o título vira um
+   h3 do desenho (o JS o põe no corpo da região) */
+@app.nc-cm-ativo .nc-cm .nc-cm-sub:not(#nc-cm-x) {
+  margin: 0 0 14px;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+@app.nc-cm-ativo .nc-cm .nc-cm-sub > .t-Region-header:not(#nc-cm-x) {
+  display: none;
+}
+
+@app.nc-cm-ativo .nc-cm .nc-cm-sub > .t-Region-bodyWrap:not(#nc-cm-x),
+@app.nc-cm-ativo .nc-cm .nc-cm-sub .t-Region-body:not(#nc-cm-x) {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+@app.nc-cm-ativo .nc-cm .nc-cm-subtit {
+  margin: 4px 0 8px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--nc-cm-texto);
+}
+
+/* (o que vem abaixo vale para alguma sub-região que não ganhou a marca nc-cm-sub) */
+@app.nc-cm-ativo .nc-cm .nc-cm-regiao .t-Region .t-Region-header {
+  display: block;
+  margin: 14px 0 6px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+
+@app.nc-cm-ativo .nc-cm .nc-cm-regiao .t-Region .t-Region-header::before,
+@app.nc-cm-ativo .nc-cm .nc-cm-regiao .t-Region .t-Region-header::after,
+@app.nc-cm-ativo .nc-cm .nc-cm-regiao .t-Region .t-Region-headerItems--icon {
+  display: none;
+}
+
+@app.nc-cm-ativo .nc-cm .nc-cm-regiao .t-Region .t-Region-title {
+  margin: 0;
+  padding: 0;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--nc-cm-texto);
+}
+
+@app.nc-cm-ativo .nc-cm .nc-cm-regiao .t-Region--removeHeader > .t-Region-header {
+  display: none;
+}
+
+@app.nc-cm-ativo .nc-cm .nc-cm-regiao .container,
+@app.nc-cm-ativo .nc-cm .nc-cm-regiao .row {
+  margin-left: 0;
+  margin-right: 0;
+}
+
+/* ═══ [C6] OS CAMPOS ════════════════════════════════════════════════════════════════════════ */
+@app.nc-cm-ativo .nc-cm .t-Form-fieldContainer {
+  margin: 0 0 12px;
+  padding: 0;
+}
+
+@app.nc-cm-ativo .nc-cm .t-Form-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--nc-cm-fraco);
+}
+
+@app.nc-cm-ativo .nc-cm :is(input.apex-item-text, select.apex-item-select, textarea) {
+  min-height: 42px;
+  border: 1px solid #D9D3E5;
+  border-radius: 10px;
+  background-color: #fff;
+  font-size: 15px;
+  color: var(--nc-cm-texto);
+  box-shadow: none;
+  transition: border-color .15s, box-shadow .15s;
+}
+
+@app.nc-cm-ativo .nc-cm :is(input.apex-item-text, select.apex-item-select, textarea):focus {
+  border-color: var(--nc-roxo, #511C76);
+  outline: 0;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--nc-roxo, #511C76) 16%, transparent);
+  caret-color: var(--nc-roxo, #511C76);
+}
+
+/* os textos crescem com o que se escreve (a altura vem do JS, pela variável) */
+@app.nc-cm-ativo .nc-cm textarea.nc-cm-texto {
+  width: 100%;
+  height: var(--nc-cm-alt, 120px);
+  min-height: 96px;
+  padding: 11px 13px;
+  font-size: 15px;
+  line-height: 1.55;
+  resize: vertical;
+}
+
+@app.nc-cm-ativo .nc-cm .apex-item-group--textarea {
+  display: block;
+  width: 100%;
+}
+
+@app.nc-cm-ativo .nc-cm .nc-cm-limite {
+  display: block;
+  margin: 4px 2px 0 0;
+  font-size: 12px;
+  color: var(--nc-cm-fraco);
+  text-align: right;
+}
+
+@app.nc-cm-ativo .nc-cm .nc-cm-limite[data-perto="sim"] {
+  font-weight: 600;
+  color: var(--nc-cm-atencao);
+}
+
+/* dados da consulta: duas colunas; os horários numa linha embaixo */
+@app.nc-cm-ativo .nc-cm .nc-cm-grade {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0 16px;
+}
+
+@app.nc-cm-ativo .nc-cm .nc-cm-grade > .t-Form-fieldContainer {
+  width: auto;
+}
+
+@app.nc-cm-ativo .nc-cm .nc-cm-horas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 28px;
+}
+
+/* horários: "hh : mm" num grupo só, com "Agora" */
+@app.nc-cm-ativo .nc-cm .nc-cm-hora {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 6px 6px;
+  margin: 0 18px 12px 0;
+  vertical-align: top;
+}
+
+@app.nc-cm-ativo .nc-cm .nc-cm-hora .t-Form-fieldContainer {
+  width: auto;
+  margin: 0;
+}
+
+@app.nc-cm-ativo .nc-cm .nc-cm-hora .t-Form-fieldContainer + .nc-cm-dois + .t-Form-fieldContainer .t-Form-labelContainer {
+  visibility: hidden;
+}
+
+@app.nc-cm-ativo .nc-cm .nc-cm-hora input.apex-item-text {
+  width: 58px;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+
+@app.nc-cm-ativo .nc-cm .nc-cm-hora .t-Form-itemText {
+  display: none;
+}
+
+@app.nc-cm-ativo .nc-cm .nc-cm-dois {
+  padding-bottom: 10px;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--nc-cm-fraco);
+}
+
+/* antecedentes: cada pergunta é um botão de marcar (a caixinha é desenhada; a de verdade fica
+   por baixo, para o teclado e o leitor de tela) */
+@app.nc-cm-ativo .nc-cm .nc-cm-perguntas {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 8px;
+}
+
+@app.nc-cm-ativo .nc-cm .nc-cm-perguntas .t-Form-fieldContainer,
+@app.nc-cm-ativo .nc-cm .nc-cm-perguntas .t-Form-inputContainer,
+@app.nc-cm-ativo .nc-cm .nc-cm-perguntas .t-Form-itemWrapper,
+@app.nc-cm-ativo .nc-cm .nc-cm-perguntas .apex-item-checkbox,
+@app.nc-cm-ativo .nc-cm .nc-cm-perguntas .apex-item-option {
+  display: block;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+@app.nc-cm-ativo .nc-cm .nc-cm-perguntas .t-Form-labelContainer {
+  display: none;
+}
+
+@app.nc-cm-ativo .nc-cm .nc-cm-perguntas .apex-item-option {
+  position: relative;
+  margin: 0;
+}
+
+@app.nc-cm-ativo .nc-cm .nc-cm-perguntas .apex-item-option input {
+  position: absolute;
+  top: 50%;
+  left: 12px;
+  width: 18px;
+  height: 18px;
+  margin: -9px 0 0;
+  opacity: 0;
+}
+
+@app.nc-cm-ativo .nc-cm .nc-cm-perguntas .apex-item-option label {
+  position: relative;
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+  min-height: 44px;
+  margin: 0;
+  padding: 8px 12px 8px 42px;
+  border: 1px solid #D9D3E5;
+  border-radius: 10px;
+  background: #fff;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.3;
+  color: var(--nc-cm-texto);
+  cursor: pointer;
+  transition: background .12s, border-color .12s;
+}
+
+@app.nc-cm-ativo .nc-cm .nc-cm-perguntas .apex-item-option label::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 13px;
+  display: block;
+  width: 18px;
+  height: 18px;
+  margin-top: -9px;
+  border: 1.5px solid #BDB4CF;
+  border-radius: 5px;
+  background: #fff;
+  box-shadow: none;
+  transform: none;
+}
+
+@app.nc-cm-ativo .nc-cm .nc-cm-perguntas .apex-item-option label::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 19px;
+  display: none;
+  width: 5px;
+  height: 10px;
+  margin-top: -7px;
+  border: solid #fff;
+  border-width: 0 2px 2px 0;
+  background: transparent;
+  transform: rotate(45deg);
+}
+
+@app.nc-cm-ativo .nc-cm .nc-cm-perguntas .apex-item-option:hover label {
+  border-color: #BDB4CF;
+}
+
+@app.nc-cm-ativo .nc-cm .nc-cm-perguntas .apex-item-option:has(input:checked) label {
+  border-color: var(--nc-roxo, #511C76);
+  background: color-mix(in srgb, var(--nc-roxo, #511C76) 7%, #fff);
+  font-weight: 700;
+  color: var(--nc-roxo, #511C76);
+}
+
+@app.nc-cm-ativo .nc-cm .nc-cm-perguntas .apex-item-option:has(input:checked) label::before {
+  border-color: var(--nc-roxo, #511C76);
+  background: var(--nc-roxo, #511C76);
+}
+
+@app.nc-cm-ativo .nc-cm .nc-cm-perguntas .apex-item-option:has(input:checked) label::after {
+  display: block;
+}
+
+@app.nc-cm-ativo .nc-cm .nc-cm-perguntas .apex-item-option:has(input:focus-visible) label {
+  outline: 2px solid var(--nc-roxo, #511C76);
+  outline-offset: 2px;
+}
+
+/* as opções Sim/Não (gestação, hígido…): botões lado a lado */
+@app.nc-cm-ativo .nc-cm .apex-item-radio {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+@app.nc-cm-ativo .nc-cm .apex-item-radio .apex-item-option {
+  position: relative;
+  margin: 0;
+}
+
+@app.nc-cm-ativo .nc-cm .apex-item-radio .apex-item-option input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+@app.nc-cm-ativo .nc-cm .apex-item-radio .apex-item-option label {
+  display: inline-flex;
+  align-items: center;
+  min-height: 40px;
+  margin: 0;
+  padding: 0 16px;
+  border: 1px solid #D9D3E5;
+  border-radius: 10px;
+  background: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--nc-cm-fraco);
+  cursor: pointer;
+}
+
+@app.nc-cm-ativo .nc-cm .apex-item-radio .apex-item-option label::before,
+@app.nc-cm-ativo .nc-cm .apex-item-radio .apex-item-option label::after {
+  display: none;
+}
+
+@app.nc-cm-ativo .nc-cm .apex-item-radio .apex-item-option:has(input:checked) label {
+  border-color: var(--nc-roxo, #511C76);
+  background: var(--nc-roxo, #511C76);
+  color: #fff;
+}
+
+@app.nc-cm-ativo .nc-cm .apex-item-radio .apex-item-option:has(input:focus-visible) label {
+  outline: 2px solid var(--nc-roxo, #511C76);
+  outline-offset: 2px;
+}
+
+/* os relatórios dentro da ficha (receituário, doenças, atividades): sem moldura própria */
+@app.nc-cm-ativo .nc-cm .t-IRR-region {
+  margin: 0;
+  border: 0;
+  box-shadow: none;
+}
+
+@app.nc-cm-ativo .nc-cm-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 42px;
+  margin: 0;
+  padding: 0 12px;
+  border: 1px solid color-mix(in srgb, var(--nc-roxo, #511C76) 30%, #fff);
+  border-radius: 10px;
+  background: #fff;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--nc-roxo, #511C76);
+  cursor: pointer;
+}
+
+@app.nc-cm-ativo .nc-cm-chip:hover {
+  background: color-mix(in srgb, var(--nc-roxo, #511C76) 7%, #fff);
+}
+
+@app.nc-cm-ativo .nc-cm-ic {
+  flex: 0 0 auto;
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* ═══ [C7] O RODAPÉ, A CONFIRMAÇÃO DE SAIR, O AVISO ═════════════════════════════════════════ */
+@app.nc-cm-ativo .t-Dialog-footer.nc-cm-rodape {
+  padding: 10px 24px;
+  border-top: 1px solid var(--nc-cm-borda);
+  background: #fff;
+}
+
+@app.nc-cm-ativo .nc-cm-pe {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+@app.nc-cm-ativo .nc-cm-pe-esq,
+@app.nc-cm-ativo .nc-cm-pe-dir {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+@app.nc-cm-ativo .nc-cm-rodape-meio {
+  flex: 1 1 auto;
+  min-width: 0;
+  text-align: right;
+}
+
+@app.nc-cm-ativo .nc-cm-falta {
+  margin: 0;
+  font-size: 12.5px;
+  color: var(--nc-cm-fraco);
+}
+
+@app.nc-cm-ativo .nc-cm-falta:empty,
+@app.nc-cm-ativo .nc-cm-estado:empty {
+  display: none;
+}
+
+@app.nc-cm-ativo .nc-cm-estado {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--nc-cm-atencao);
+}
+
+@app.nc-cm-ativo .nc-cm-estado .nc-cm-dica {
+  font-weight: 400;
+  color: var(--nc-cm-fraco);
+}
+
+@app.nc-cm-ativo .nc-cm-ponto {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #D68A00;
+}
+
+/* 04/10: as ações "Exibe/Oculta ATES_SAUD_OCUP" e "Create: ATES_SAUD_OCUP" escondem o botão ASO
+   (style inline); com !important, o display: inline-flex abaixo o trazia de volta */
+@app.nc-cm-ativo .nc-cm-bt[style*="none"] {
+  display: none;
+}
+
+@app.nc-cm-ativo .nc-cm-bt {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 42px;
+  margin: 0;
+  padding: 0 16px;
+  border: 1px solid var(--nc-borda-botao);
+  border-radius: 10px;
+  background: #fff;
+  box-shadow: none;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--nc-cm-texto);
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background .15s, border-color .15s;
+}
+
+@app.nc-cm-ativo .nc-cm-bt .t-Button-label {
+  padding: 0;
+  font: inherit;
+  color: inherit;
+}
+
+@app.nc-cm-ativo .nc-cm-bt:hover:not(:disabled) {
+  border-color: color-mix(in srgb, var(--nc-roxo, #511C76) 35%, #fff);
+  background: color-mix(in srgb, var(--nc-roxo, #511C76) 4%, #fff);
+}
+
+@app.nc-cm-ativo .nc-cm-bt:focus-visible {
+  outline: 2px solid var(--nc-roxo, #511C76);
+  outline-offset: 2px;
+}
+
+@app.nc-cm-ativo .nc-cm-bt--leve {
+  height: 38px;
+  padding: 0 12px;
+  border-color: transparent;
+  background: transparent;
+  font-size: 13.5px;
+  color: var(--nc-cm-fraco);
+}
+
+@app.nc-cm-ativo .nc-cm-bt--primario {
+  min-width: 190px;
+  border-color: var(--nc-roxo, #511C76);
+  background: var(--nc-roxo, #511C76);
+  color: #fff;
+}
+
+@app.nc-cm-ativo .nc-cm-bt--primario:hover:not(:disabled) {
+  border-color: var(--nc-azul, #2C1A63);
+  background: var(--nc-azul, #2C1A63);
+}
+
+@app.nc-cm-ativo .nc-cm-bt--perigo {
+  border-color: var(--nc-cm-ruim);
+  background: var(--nc-cm-ruim);
+  color: #fff;
+}
+
+@app.nc-cm-ativo .nc-cm-bt:disabled,
+@app.nc-cm-ativo .nc-cm-bt.apex_disabled {
+  opacity: .5;
+  cursor: not-allowed;
+}
+
+@app.nc-cm-ativo .nc-cm-conf {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+  margin: 0 0 10px;
+  padding: 12px 14px;
+  border: 1px solid color-mix(in srgb, var(--nc-cm-ruim) 30%, #fff);
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--nc-cm-ruim) 5%, #fff);
+}
+
+@app.nc-cm-ativo .nc-cm-conf[hidden] {
+  display: none;
+}
+
+@app.nc-cm-ativo .nc-cm-conf p {
+  flex: 1 1 280px;
+  margin: 0;
+  font-size: 14px;
+  color: var(--nc-cm-texto);
+}
+
+@app.nc-cm-ativo .nc-cm-aviso {
+  position: fixed;
+  left: 50%;
+  bottom: calc(76px + env(safe-area-inset-bottom, 0px));
+  z-index: 1100;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 11px 16px;
+  border-radius: 12px;
+  background: var(--nc-cm-texto);
+  box-shadow: 0 12px 30px -12px rgba(27, 18, 56, .55);
+  font-size: 14px;
+  font-weight: 600;
+  color: #fff;
+  opacity: 0;
+  transform: translate(-50%, 12px);
+  pointer-events: none;
+  transition: opacity .2s, transform .25s cubic-bezier(.2, .8, .2, 1);
+}
+
+@app.nc-cm-ativo .nc-cm-aviso.is-visivel {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+/* ═══ [C8] PRÉ-ATENDIMENTO (A FICHA TRAVADA) ════════════════════════════════════════════════ */
+@app.nc-cm-ativo .nc-cm-trava {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 14px;
+  margin: 0 0 16px;
+  padding: 14px 16px;
+  border: 1px solid color-mix(in srgb, var(--nc-roxo, #511C76) 22%, #fff);
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--nc-roxo, #511C76) 5%, #fff);
+}
+
+@app.nc-cm-ativo .nc-cm-trava[hidden] {
+  display: none;
+}
+
+@app.nc-cm-ativo .nc-cm-trava > .nc-cm-ic {
+  width: 22px;
+  height: 22px;
+  color: var(--nc-roxo, #511C76);
+}
+
+@app.nc-cm-ativo .nc-cm-trava-txt {
+  flex: 1 1 260px;
+}
+
+@app.nc-cm-ativo .nc-cm-trava-txt p {
+  margin: 0;
+  font-size: 14px;
+}
+
+@app.nc-cm-ativo .nc-cm-trava-txt p + p {
+  margin-top: 2px;
+  color: var(--nc-cm-fraco);
+}
+
+@app.nc-cm-ativo .nc-cm-trava .nc-cm-bt--primario .nc-cm-ic {
+  fill: currentColor;
+  stroke-width: 1.4;
+}
+
+@app.nc-cm-ativo .nc-cm .apex_disabled :is(input.apex-item-text, select.apex-item-select, textarea) {
+  border-color: transparent;
+  background-color: var(--nc-cm-fundo);
+}
+
+/* ═══ [C9] CELULAR E TABLET ═════════════════════════════════════════════════════════════════
+   O trilho vira uma faixa de partes no alto (rola para o lado); o paciente rola com a ficha.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@media (max-width: 760px) {
+  @app.nc-cm-ativo .t-Dialog-header:has(.nc-cm-trilho) {
+    display: block;
+    height: auto;
+    padding: 6px 0;
+    border-bottom: 1px solid var(--nc-cm-borda);
+    background: #fff;
+  }
+
+  @app.nc-cm-ativo .nc-cm-trilho {
+    display: flex;
+    gap: 6px;
+    width: auto;
+    padding: 2px 12px;
+    overflow-x: auto;
+    border: 0;
+    background: transparent;
+    scrollbar-width: none;
+  }
+
+  @app.nc-cm-ativo .nc-cm-trilho ol {
+    display: contents;
+  }
+
+  @app.nc-cm-ativo .nc-cm-tr-grupo {
+    display: none;
+  }
+
+  @app.nc-cm-ativo .nc-cm-trilho a {
+    white-space: nowrap;
+    border: 1px solid var(--nc-cm-borda);
+    background: #fff;
+  }
+
+  @app.nc-cm-ativo .t-Dialog-body:has(.nc-cm) {
+    padding: 12px 12px 24px;
+  }
+
+  @app.nc-cm-ativo .nc-cm-pac-dados > div:is([data-k="médico"], [data-k="especialidade"], [data-k="empresa"]) {
+    display: none;
+  }
+
+  @app.nc-cm-ativo .nc-cm-pac-consulta {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  @app.nc-cm-ativo .nc-cm-sec {
+    padding: 14px 14px 16px;
+  }
+
+  @app.nc-cm-ativo .t-Dialog-footer.nc-cm-rodape {
+    padding: 8px 12px calc(8px + env(safe-area-inset-bottom, 0px));
+  }
+
+  @app.nc-cm-ativo .nc-cm-pe {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  @app.nc-cm-ativo .nc-cm-pe-dir {
+    flex: 1 1 auto;
+  }
+
+  @app.nc-cm-ativo .nc-cm .nc-cm-grade {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  @app.nc-cm-ativo .nc-cm-rodape-meio {
+    order: -1;
+    flex: 1 1 100%;
+    text-align: left;
+  }
+
+  @app.nc-cm-ativo .nc-cm-estado .nc-cm-dica {
+    display: none;
+  }
+
+  @app.nc-cm-ativo .nc-cm-bt--primario {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  @app.nc-cm-ativo .nc-cm *,
+  @app.nc-cm-ativo .nc-cm-aviso,
+  @app.nc-cm-ativo .nc-cm-trilho a {
+    transition: none;
+  }
+}

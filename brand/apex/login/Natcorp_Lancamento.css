@@ -1,0 +1,674 @@
+/* ╔════════════════════════════════════════════════════════════════════════════════════════╗
+   ║  NATCORP · PEDIDO DE LANÇAMENTO DIVERSO (REEMBOLSO)  —  a "roupa" (CSS)                  ║
+   ║  App 2060 (REQ_REEMBOLSO_NATCORP) · Página 11 · Criar/Editar: Lançamentos Diversos       ║
+   ╚════════════════════════════════════════════════════════════════════════════════════════╝
+
+   Primeira vez num arquivo destes? Leia antes o manual: brand/apex/MANUAL-APEX.md (parte 1).
+
+   ── O QUE ESTE ARQUIVO FAZ ────────────────────────────────────────────────────────────────
+   A aparência do que o Natcorp_Lancamento.js monta: o alto, as 3 partes numeradas, o valor
+   que será lançado em destaque, a foto da nota em área grande, "Enviar pedido" na largura
+   toda e quem aprova. Feito PRIMEIRO para o celular (390 px). Sem o JS, nada daqui vale
+   (marca nc-ln-ativo no body).
+
+   ── ONDE ELE ENTRA NO APEX ────────────────────────────────────────────────────────────────
+     Página 11 › CSS › File URLs:   #WORKSPACE_IMAGES#Natcorp_Lancamento.css
+     CUIDADO: este é o arquivo-FONTE (.src.css). O gerador (gerar-app.mjs) cria o .css.
+
+   ── ÍNDICE ────────────────────────────────────────────────────────────────────────────────
+     [C1] As cores                                                PODE MEXER
+     [C2] O alto, sem abas, a região do colaborador
+     [C3] As partes e os campos
+     [C4] O valor que será lançado
+     [C5] A foto da nota
+     [C6] Os botões
+     [C7] Quem aprova
+*/
+
+/* ═══ [C1] AS CORES ═════════════════════════════════════════════════════════════════════════ */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ln-ativo {
+  --ln-roxo: var(--nc-roxo, #742B7F);
+  --ln-rgb: var(--nc-t-roxo-rgb, 116, 43, 127);
+  --ln-tinta: var(--nc-tinta, #1B1238);
+  --ln-texto: #2E2742;
+  --ln-fraco: #5A526E;
+  --ln-borda: var(--nc-nevoa, #E7E1F0);
+  --ln-lilas: var(--nc-nevoa2, #F3EEF8);
+  --ln-fundo: #F7F5FA;
+  --ln-bom: #1F7A52;
+  --ln-bom-bg: #E7F4ED;
+  --ln-atencao: #8A5300;
+  --ln-atencao-bg: #FFF2DC;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ln-ativo .nc-ln-ic {
+  flex: none !important;
+  width: 20px !important;
+  height: 20px !important;
+  fill: none !important;
+  stroke: currentColor !important;
+  stroke-width: 1.9 !important;
+  stroke-linecap: round !important;
+  stroke-linejoin: round !important;
+}
+
+/* ═══ [C2] O ALTO, SEM ABAS, A REGIÃO DO COLABORADOR ════════════════════════════════════════ */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ln-ativo .nc-ln-topo {
+  margin: 0 0 16px !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ln-ativo .nc-ln-topo h2 {
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  margin: 0 !important;
+  font-size: 19px !important;
+  font-weight: 800 !important;
+  line-height: 1.2 !important;
+  color: var(--ln-tinta) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ln-ativo .nc-ln-topo-ic {
+  width: 22px !important;
+  height: 22px !important;
+  color: var(--ln-roxo) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ln-ativo .nc-ln-topo > p {
+  margin: 6px 0 0 !important;
+  font-size: 14px !important;
+  line-height: 1.4 !important;
+  color: var(--ln-fraco) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ln-ativo .nc-ln-topo-linha {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  align-items: center !important;
+  gap: 6px 12px !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ln-ativo .nc-ln-para {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  padding: 10px 12px !important;
+  border-radius: 12px !important;
+  background: var(--ln-fundo) !important;
+  color: var(--ln-texto) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ln-ativo .nc-ln-para .nc-ln-ic {
+  width: 18px !important;
+  height: 18px !important;
+  color: var(--ln-roxo) !important;
+}
+
+/* a região Empresa/Colaborador: o alto já diz "Para: …"; os campos ficam na página */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ln-ativo .nc-ln-quem :is(#P11_COD_EMPRESA_DSP_CONTAINER, #P11_MATRICULA_DSP_CONTAINER):not(#nc-ln-x) {
+  display: none !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ln-ativo .nc-ln-sem-abas .apex-rds,
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ln-ativo .nc-ln-sem-abas > .apex-rds-slider {
+  display: none !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ln-ativo .nc-ln-sit {
+  display: inline-flex !important;
+  align-items: center !important;
+  height: 26px !important;
+  padding: 0 12px !important;
+  border-radius: 999px !important;
+  font-size: 13px !important;
+  font-style: normal !important;
+  font-weight: 800 !important;
+  line-height: 1 !important;
+  white-space: nowrap !important;
+  background: #E7EFFB !important;
+  color: #1E4F9A !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ln-ativo .nc-ln-sit--andamento { background: #DFF3F8 !important; color: #0B6178 !important; }
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ln-ativo .nc-ln-sit--aprovado { background: #E3F4EA !important; color: #1B6E48 !important; }
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ln-ativo .nc-ln-sit--concluido { background: #1F7A52 !important; color: #FFFFFF !important; }
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ln-ativo .nc-ln-sit--suspenso { background: #FFF1D6 !important; color: #7E4C00 !important; }
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ln-ativo .nc-ln-sit--reprovado { background: #FCE8EB !important; color: #A1283A !important; }
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ln-ativo .nc-ln-sit--cancelado { background: #EEECF2 !important; color: #5F5A6E !important; }
+
+/* as regiões que só embrulham (Requisição, MENU) não roubam largura no celular */
+@media (max-width: 640px) {
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ln-ativo .t-Region:has(.nc-ln-lanc):not(.nc-ln-lanc):not(#nc-ln-x) > .t-Region-bodyWrap > .t-Region-body {
+    padding-left: 2px !important;
+    padding-right: 2px !important;
+  }
+}
+
+/* "Dados da Requisição" (nº, data, situação): o alto já diz; os campos ficam na página */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ln-ativo .t-Region.nc-ln-dados:not(#nc-ln-x) {
+  display: none !important;
+}
+
+/* Aprovadores: o título da lista já diz o que é */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ln-ativo .t-Region.nc-ln-aprov > .t-Region-header {
+  display: none !important;
+}
+
+/* ═══ [C3] AS PARTES E OS CAMPOS ════════════════════════════════════════════════════════════
+   A grade do APEX vira "display: contents" e os campos ganham a ordem do JS (style order).
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ln-ativo .t-Region:is(.nc-ln-lanc, .nc-ln-anexos):not(#nc-ln-x) {
+  border-radius: 18px !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ln-ativo .t-Region:is(.nc-ln-lanc, .nc-ln-anexos) > .t-Region-header {
+  display: none !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ln-ativo .t-Region:is(.nc-ln-lanc, .nc-ln-anexos) .t-Region-body {
+  padding: 18px !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ln-ativo .nc-ln-grade:not(#nc-ln-x) {
+  display: grid !important;
+  grid-template-columns: 1fr 1fr !important;
+  gap: 2px 12px !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ln-ativo .nc-ln-grade :is(.row, .col):not(#nc-ln-x) {
+  display: contents !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ln-ativo .nc-ln-grade .apex-grid-nbsp {
+  display: none !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ln-ativo .nc-ln-grade > .nc-ln-parte,
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ln-ativo .nc-ln-grade .t-Form-fieldContainer:not(#nc-ln-x) {
+  grid-column: 1 / -1 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ln-ativo .nc-ln-grade .t-Form-fieldContainer.nc-ln-meio:not(#nc-ln-x) {
+  grid-column: auto !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ln-ativo .nc-ln-parte {
+  display: flex !important;
+  align-items: flex-start !important;
+  gap: 12px !important;
+  margin: 0 0 10px !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ln-ativo .nc-ln-parte--mais {
+  margin-top: 18px !important;
+  padding-top: 18px !important;
+  border-top: 1px solid var(--ln-borda) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ln-ativo .nc-ln-parte-n {
+  flex: none !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 28px !important;
+  height: 28px !important;
+  border-radius: 50% !important;
+  background: var(--ln-roxo) !important;
+  font-size: 14px !important;
+  font-weight: 800 !important;
+  color: #FFFFFF !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ln-ativo .nc-ln-parte h3 {
+  margin: 3px 0 0 !important;
+  font-size: 16px !important;
+  font-weight: 800 !important;
+  line-height: 1.25 !important;
+  color: var(--ln-tinta) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ln-ativo .nc-ln-parte p {
+  margin: 4px 0 0 !important;
+  font-size: 13.5px !important;
+  line-height: 1.4 !important;
+  color: var(--ln-fraco) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ln-ativo :is(.nc-ln-lanc, .nc-ln-anexos) .t-Form-fieldContainer:not(#nc-ln-x):not([style*="none"]) {
+  display: block !important;
+  width: auto !important;
+  margin: 0 !important;
+  padding: 6px 0 10px !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ln-ativo :is(.nc-ln-lanc, .nc-ln-anexos) .t-Form-fieldContainer:not(#nc-ln-x) > :is(.t-Form-labelContainer, .t-Form-inputContainer) {
+  display: block !important;
+  width: 100% !important;
+  max-width: none !important;
+  flex: none !important;
+  padding: 0 !important;
+  text-align: left !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ln-ativo :is(.nc-ln-lanc, .nc-ln-anexos) .t-Form-label {
+  display: block !important;
+  margin: 0 0 6px !important;
+  padding: 0 !important;
+  font-size: 14px !important;
+  font-weight: 700 !important;
+  color: var(--ln-tinta) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ln-ativo .nc-ln-lanc :is(input.text_field, input.datepicker, input.popup_lov, input.apex-item-popup-lov, select, textarea):not([type="hidden"]) {
+  min-height: 40px !important;
+}
+
+/* no celular, 16 px nos campos: abaixo disso o iPhone aumenta a tela ao tocar no campo */
+@media (max-width: 640px) {
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ln-ativo .nc-ln-lanc :is(input.text_field, input.datepicker, input.popup_lov, input.apex-item-popup-lov, select, textarea):not([type="hidden"]) {
+    font-size: 16px !important;
+  }
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ln-ativo .nc-ln-dica {
+  margin: 5px 2px 0 !important;
+  font-size: 12.5px !important;
+  line-height: 1.35 !important;
+  color: var(--ln-fraco) !important;
+}
+
+/* o "R$" na frente do valor da nota */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ln-ativo .t-Form-itemWrapper:has(> .nc-ln-rs) {
+  display: flex !important;
+  align-items: stretch !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ln-ativo .nc-ln-rs {
+  flex: none !important;
+  display: flex !important;
+  align-items: center !important;
+  margin-right: 6px !important;
+  padding: 0 12px !important;
+  border-radius: 12px !important;
+  background: var(--ln-lilas) !important;
+  font-size: 14px !important;
+  font-weight: 800 !important;
+  color: var(--ln-roxo) !important;
+}
+
+/* pedido já feito: os campos só de leitura viram texto */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ln-ativo:not(.nc-ln-novo) .nc-ln-lanc :is(.display_only, .apex-item-display-only) {
+  font-size: 14.5px !important;
+  font-weight: 700 !important;
+  color: var(--ln-tinta) !important;
+}
+
+/* ═══ [C4] O VALOR QUE SERÁ LANÇADO ═════════════════════════════════════════════════════════ */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ln-ativo .t-Form-fieldContainer.nc-ln-lancado:not(#nc-ln-x) {
+  margin: 6px 0 4px !important;
+  padding: 14px 16px !important;
+  border-radius: 14px !important;
+  background: var(--ln-bom-bg) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ln-ativo .nc-ln-lancado .t-Form-label {
+  color: var(--ln-bom) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ln-ativo .nc-ln-lancado :is(.display_only, .apex-item-display-only, span) {
+  font-size: 20px !important;
+  font-weight: 800 !important;
+  font-variant-numeric: tabular-nums !important;
+  color: var(--ln-bom) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ln-ativo .nc-ln-ajuste {
+  display: flex !important;
+  align-items: flex-start !important;
+  gap: 6px !important;
+  margin: 8px 0 0 !important;
+  font-size: 13px !important;
+  line-height: 1.35 !important;
+  color: var(--ln-atencao) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ln-ativo .nc-ln-ajuste[hidden] {
+  display: none !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ln-ativo .nc-ln-ajuste .nc-ln-ic {
+  width: 18px !important;
+  height: 18px !important;
+}
+
+/* ═══ [C5] A FOTO DA NOTA ═══════════════════════════════════════════════════════════════════ */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ln-ativo .nc-ln-anexos .t-Form-fieldContainer {
+  padding-top: 4px !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ln-ativo .nc-ln-anexos input[type="file"] {
+  width: 100% !important;
+  min-height: 56px !important;
+  font-size: 15px !important;
+}
+
+/* ═══ [C6] OS BOTÕES ════════════════════════════════════════════════════════════════════════ */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ln-ativo .t-Button.nc-ln-enviar:not([style*="none"]) {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  min-width: 160px !important;
+}
+
+@media (max-width: 640px) {
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ln-ativo .t-Region-buttons:has(.nc-ln-enviar) :is(.t-Region-buttons-left, .t-Region-buttons-right) {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 10px !important;
+    width: 100% !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ln-ativo .t-Region-buttons:has(.nc-ln-enviar) {
+    display: flex !important;
+    flex-direction: column-reverse !important;
+    gap: 10px !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ln-ativo .t-Button:is(.nc-ln-enviar, .nc-ln-voltar):not([style*="none"]) {
+    width: 100% !important;
+  }
+}
+
+/* ═══ [C7] O CAMINHO DA APROVAÇÃO (o mesmo das outras requisições: Natcorp_Beneficios [C12]) ═══
+   .nc-ln-caminho é a faixa; .nc-ln-ap, cada aprovador: .is-ok aprovou · .is-nao reprovou ·
+   .is-vez aguardando · .is-fila na fila.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ln-ativo .t-Region.nc-ln-aprov:not(#nc-ln-x) {
+  margin: 0 0 16px !important;
+  border: 0 !important;
+  border-radius: 16px !important;
+  background: #FFFFFF !important;
+  box-shadow: inset 0 0 0 1px var(--nc-nevoa, #E7E1F0), 0 10px 24px -22px rgba(var(--nc-t-azul-rgb, 44, 26, 99), .5) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ln-ativo .t-Region.nc-ln-aprov > .t-Region-header,
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ln-ativo .t-Region.nc-ln-aprov .t-Report,
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ln-ativo .t-Region.nc-ln-aprov > .t-Region-bodyWrap > .t-Region-buttons,
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ln-ativo .t-Region.nc-ln-aprov.nc-ln-aprov--vazio,
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ln-ativo .nc-ln-caminho:empty,
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ln-ativo .nc-ln-caminho-ver {
+  display: none !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ln-ativo .t-Region.nc-ln-aprov > .t-Region-bodyWrap > .t-Region-body {
+  padding: 14px 18px !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ln-ativo .nc-ln-caminho {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) auto !important;
+  align-items: center !important;
+  gap: 12px 20px !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ln-ativo .nc-ln-caminho-cab {
+  display: grid !important;
+  gap: 2px !important;
+  min-width: 0 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ln-ativo .nc-ln-caminho-cab p {
+  margin: 0 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ln-ativo .nc-ln-caminho-rot {
+  font-size: 12.5px !important;
+  font-weight: 700 !important;
+  color: var(--nc-grafite, #4A4560) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ln-ativo .nc-ln-caminho-resumo {
+  font-size: 14.5px !important;
+  color: var(--nc-grafite, #4A4560) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ln-ativo .nc-ln-caminho-resumo b { color: var(--nc-tinta, #1B1238) !important; }
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ln-ativo .nc-ln-caminho--vez .nc-ln-caminho-resumo b:last-child { color: #8A5A00 !important; }
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ln-ativo .nc-ln-caminho--ok .nc-ln-caminho-resumo b { color: var(--nc-bom, #1F7A52) !important; }
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ln-ativo .nc-ln-caminho--nao .nc-ln-caminho-resumo b { color: #A32020 !important; }
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ln-ativo .nc-ln-passos-ap {
+  display: flex !important;
+  grid-column: 1 / -1 !important;
+  min-width: 0 !important;
+  margin: 0 !important;
+  padding: 4px 0 0 !important;
+  overflow-x: auto !important;
+  list-style: none !important;
+  scrollbar-width: thin !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ln-ativo .nc-ln-ap {
+  position: relative !important;
+  display: flex !important;
+  flex: 1 1 0 !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  min-width: 104px !important;
+  margin: 0 !important;
+  padding: 0 4px !important;
+  text-align: center !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ln-ativo .nc-ln-ap:not(:last-child)::after {
+  content: "" !important;
+  position: absolute !important;
+  top: 13px !important;
+  left: calc(50% + 17px) !important;
+  right: calc(-50% + 17px) !important;
+  height: 2px !important;
+  border-radius: 2px !important;
+  background: #E3DDEC !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ln-ativo .nc-ln-ap.is-ok:not(:last-child)::after {
+  background: var(--nc-bom, #1F7A52) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ln-ativo .nc-ln-ap-marca {
+  display: grid !important;
+  place-items: center !important;
+  width: 28px !important;
+  height: 28px !important;
+  margin: 0 0 6px !important;
+  border-radius: 50% !important;
+  background: #FFFFFF !important;
+  box-shadow: inset 0 0 0 2px #D9D3E3 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ln-ativo .nc-ln-ap-marca svg {
+  width: 16px !important;
+  height: 16px !important;
+  fill: none !important;
+  stroke: #FFFFFF !important;
+  stroke-width: 2.6 !important;
+  stroke-linecap: round !important;
+  stroke-linejoin: round !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ln-ativo .nc-ln-ap.is-ok .nc-ln-ap-marca { background: var(--nc-bom, #1F7A52) !important; box-shadow: none !important; }
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ln-ativo .nc-ln-ap.is-nao .nc-ln-ap-marca { background: #C0392B !important; box-shadow: none !important; }
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ln-ativo .nc-ln-ap.is-vez .nc-ln-ap-marca { background: #E0A100 !important; box-shadow: 0 0 0 5px rgba(224, 161, 0, .18) !important; }
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ln-ativo .nc-ln-ap-texto {
+  display: grid !important;
+  justify-items: center !important;
+  gap: 1px !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ln-ativo .nc-ln-ap-nome {
+  max-width: 100% !important;
+  overflow: hidden !important;
+  font-size: 13.5px !important;
+  font-weight: 800 !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+  color: var(--nc-tinta, #1B1238) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ln-ativo .nc-ln-ap-estado {
+  font-size: 12px !important;
+  font-variant-numeric: tabular-nums !important;
+  color: var(--nc-grafite, #4A4560) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ln-ativo .nc-ln-ap.is-ok .nc-ln-ap-estado { color: var(--nc-bom, #1F7A52) !important; }
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ln-ativo .nc-ln-ap.is-nao .nc-ln-ap-estado { color: #A32020 !important; font-weight: 700 !important; }
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ln-ativo .nc-ln-ap.is-vez .nc-ln-ap-estado { color: #8A5A00 !important; font-weight: 700 !important; }
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ln-ativo .nc-ln-ap.is-fila :is(.nc-ln-ap-nome, .nc-ln-ap-estado) { color: #8A8497 !important; }
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ln-ativo .nc-ln-decisao {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  grid-column: 1 / -1 !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 10px 16px !important;
+  padding: 12px 0 0 !important;
+  border-top: 1px solid var(--nc-nevoa2, #F3EEF8) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ln-ativo .nc-ln-decisao-txt {
+  margin: 0 !important;
+  font-size: 14px !important;
+  font-weight: 700 !important;
+  color: #8A5A00 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ln-ativo .nc-ln-decisao-botoes {
+  display: flex !important;
+  gap: 8px !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ln-ativo .nc-ln-decisao-botoes .t-Button:not(#nc-ln-x):not([style*="none"]) {
+  width: auto !important;
+  height: 44px !important;
+  min-height: 0 !important;
+  margin: 0 !important;
+  padding: 0 22px !important;
+  border-radius: 12px !important;
+  font-size: 14.5px !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ln-ativo .nc-ln-decisao-botoes .t-Button.nc-ln-aprovar:not(#nc-ln-x) {
+  border: 0 !important;
+  background: var(--nc-bom, #1F7A52) !important;
+  color: #FFFFFF !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ln-ativo .nc-ln-decisao-botoes .t-Button.nc-ln-reprovar:not(#nc-ln-x) {
+  border: 1.5px solid #E7B7B7 !important;
+  background: #FFFFFF !important;
+  box-shadow: none !important;
+  color: #A32020 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ln-ativo .nc-ln-decisao-botoes .t-Button :is(.t-Icon, .t-Button-label) {
+  color: inherit !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ln-ativo .t-Region.nc-ln-aprov:has(.nc-ln-caminho--vez) {
+  box-shadow: inset 0 0 0 1.5px #EBC45A, 0 10px 24px -22px rgba(138, 90, 0, .5) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ln-ativo .nc-ln-ap-justs {
+  display: grid !important;
+  grid-column: 1 / -1 !important;
+  gap: 6px !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ln-ativo .nc-ln-ap-just {
+  margin: 0 !important;
+  padding: 8px 12px !important;
+  border: 0 !important;
+  border-radius: 10px !important;
+  background: var(--nc-quase, #FAF8FC) !important;
+  font-size: 14px !important;
+  line-height: 1.5 !important;
+  color: var(--nc-tinta, #1B1238) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ln-ativo .nc-ln-ap-just.is-nao {
+  background: #FDF0F0 !important;
+}
+
+@media (max-width: 639px) {
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ln-ativo .t-Region.nc-ln-aprov > .t-Region-bodyWrap > .t-Region-body {
+    padding: 12px 14px !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ln-ativo .nc-ln-caminho-cab {
+    grid-column: 1 / -1 !important;
+    grid-template-columns: minmax(0, 1fr) auto !important;
+    align-items: center !important;
+    column-gap: 12px !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ln-ativo :is(.nc-ln-caminho-rot, .nc-ln-caminho-resumo) {
+    grid-column: 1 !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ln-ativo .nc-ln-caminho-ver {
+    display: inline-flex !important;
+    grid-column: 2 !important;
+    grid-row: 1 / span 2 !important;
+    align-items: center !important;
+    height: 34px !important;
+    padding: 0 12px !important;
+    border: 1px solid var(--nc-nevoa, #E7E1F0) !important;
+    border-radius: 10px !important;
+    background: #FFFFFF !important;
+    font: inherit !important;
+    font-size: 13px !important;
+    font-weight: 700 !important;
+    color: var(--nc-roxo, #742B7F) !important;
+    cursor: pointer !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ln-ativo .t-Region.nc-ln-aprov:not(.nc-ln-ap-aberto) .nc-ln-passos-ap {
+    display: none !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ln-ativo .nc-ln-decisao-botoes {
+    flex: 1 0 100% !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ln-ativo .nc-ln-decisao-botoes .t-Button:not(#nc-ln-x):not([style*="none"]) {
+    flex: 1 1 0 !important;
+    padding: 0 12px !important;
+  }
+}
+
+/* ═══ [DESK] TELAS DE MESA — gerado por escala-desktop.py (não editar à mão; rode o script) ═══ */
+@media (min-width: 1024px) {
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ln-ativo .nc-ln-topo h2 {
+    font-size: 16.5px !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ln-ativo .nc-ln-parte h3 {
+    font-size: 15px !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ln-ativo .nc-ln-lancado :is(.display_only, .apex-item-display-only, span) {
+    font-size: 17.5px !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ln-ativo .nc-ln-anexos input[type="file"] {
+    font-size: 14px !important;
+    min-height: 48px !important;
+  }
+}
+/* ═══ fim do [DESK] ═══ */

@@ -1,0 +1,419 @@
+/* ╔════════════════════════════════════════════════════════════════════════════════════════╗
+   ║  NATCORP · CONSULTA DE BENEFÍCIOS  —  a "roupa" da página (CSS)                          ║
+   ║  App 300 (Portal do Colaborador) · Página 89 · Cadastro de Benefícios (a consulta)       ║
+   ╚════════════════════════════════════════════════════════════════════════════════════════╝
+
+   Primeira vez num arquivo destes? Leia antes o manual: brand/apex/MANUAL-APEX.md (parte 1).
+
+   ── O QUE ESTE ARQUIVO FAZ ────────────────────────────────────────────────────────────────
+   A aparência do que o Natcorp_BeneficiosConsulta.js monta, no mesmo jeito da janela
+   "Benefícios" da Ficha (os mesmos tons de ícone por tipo). Feito PRIMEIRO para o celular
+   (390 px): o valor grande, a conta em palavras, nada que role para o lado. Sem o JS, nada
+   daqui vale (marca nc-bc-ativo no body).
+
+   ── ONDE ELE ENTRA NO APEX ────────────────────────────────────────────────────────────────
+     Página 89 › CSS › File URLs:   #WORKSPACE_IMAGES#Natcorp_BeneficiosConsulta.css
+     CUIDADO: este é o arquivo-FONTE (.src.css). O gerador (gerar-app.mjs) cria o .css.
+
+   ── ÍNDICE ────────────────────────────────────────────────────────────────────────────────
+     [C1] As cores                                                PODE MEXER
+     [C2] Os originais por trás, o modo tabela
+     [C3] As seções
+     [C4] Os cartões
+     [C5] Os tons dos desenhos (os mesmos da Ficha)               PODE MEXER
+     [C6] Telas largas
+*/
+
+/* ═══ [C1] AS CORES ═════════════════════════════════════════════════════════════════════════ */
+@app.nc-bc-ativo {
+  --bc-roxo: var(--nc-roxo, #742B7F);
+  --bc-tinta: var(--nc-tinta, #1B1238);
+  --bc-texto: #2E2742;
+  --bc-fraco: #5A526E;
+  --bc-borda: var(--nc-nevoa, #E7E1F0);
+  --bc-lilas: var(--nc-nevoa2, #F3EEF8);
+  --bc-fundo: #F7F5FA;
+}
+
+@app.nc-bc-ativo .nc-bc-ic {
+  flex: none;
+  width: 22px;
+  height: 22px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* ═══ [C2] OS ORIGINAIS POR TRÁS, O MODO TABELA ═════════════════════════════════════════════ */
+@app.nc-bc-ativo:not(.nc-bc-tabela) .nc-bc-original:not(#nc-bc-x):not(#nc-bc-y),
+@app.nc-bc-ativo:not(.nc-bc-tabela) .nc-sticky-header-clone:not(#nc-bc-x):not(#nc-bc-y),
+@app.nc-bc-ativo.nc-bc-tabela .nc-bc-conteudo,
+@app.nc-bc-ativo.nc-bc-tabela .nc-bc > .nc-bc-modo,
+@app.nc-bc-ativo .nc-bc-modo[hidden],
+@app.nc-bc-ativo .nc-bc-lista[hidden] {
+  display: none;
+}
+
+@app.nc-bc-ativo .nc-bc {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  max-width: 900px;
+  margin: 0 0 16px;
+  color: var(--bc-texto);
+}
+
+@app.nc-bc-ativo .nc-bc-conteudo {
+  display: flex;
+  flex-direction: column;
+  gap: 26px;
+}
+
+@app.nc-bc-ativo .nc-bc-modo {
+  display: inline-flex;
+  align-items: center;
+  align-self: flex-start;
+  gap: 8px;
+  min-height: 44px;
+  margin: 0;
+  padding: 0 14px;
+  border: 1px solid var(--nc-borda-botao, rgba(116, 43, 127, .34));
+  border-radius: 12px;
+  background: #FFFFFF;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--bc-roxo);
+  cursor: pointer;
+}
+
+@app.nc-bc-ativo .nc-bc-modo .nc-bc-ic {
+  width: 20px;
+  height: 20px;
+}
+
+@app.nc-bc-ativo .nc-bc-modo--volta {
+  margin: 0 0 12px;
+}
+
+/* ═══ [C3] AS SEÇÕES ════════════════════════════════════════════════════════════════════════ */
+@app.nc-bc-ativo .nc-bc-cab {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 16px;
+  margin: 0 4px 12px;
+}
+
+@app.nc-bc-ativo .nc-bc-cab h2 {
+  flex: 1 1 100%;
+  margin: 0;
+  font-size: 24px;
+  font-weight: 800;
+  line-height: 1.2;
+  letter-spacing: -.01em;
+  color: var(--bc-tinta);
+}
+
+@app.nc-bc-ativo .nc-bc-cab p {
+  flex: 1 1 auto;
+  margin: 0;
+  font-size: 16px;
+  color: var(--bc-fraco);
+}
+
+@app.nc-bc-ativo .nc-bc-soma {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  padding: 8px 14px;
+  border-radius: 12px;
+  background: var(--bc-lilas);
+}
+
+@app.nc-bc-ativo .nc-bc-soma span {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--bc-fraco);
+}
+
+@app.nc-bc-ativo .nc-bc-soma b {
+  font-size: 22px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  color: var(--bc-roxo);
+}
+
+@app.nc-bc-ativo .nc-bc-lista {
+  display: grid;
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+@app.nc-bc-ativo .nc-bc-lista--fim {
+  margin-top: 12px;
+}
+
+@app.nc-bc-ativo .nc-bc-vazio {
+  margin: 0;
+  padding: 22px 18px;
+  border: 1px dashed var(--bc-borda);
+  border-radius: 16px;
+  background: #FFFFFF;
+  font-size: 16px;
+  text-align: center;
+  color: var(--bc-fraco);
+}
+
+@app.nc-bc-ativo .nc-bc-mais {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  margin: 14px 0 0;
+  padding: 0 14px;
+  border: 0;
+  border-radius: 12px;
+  background: var(--bc-lilas);
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--bc-roxo);
+  cursor: pointer;
+}
+
+@app.nc-bc-ativo .nc-bc-mais .nc-bc-ic {
+  width: 18px;
+  height: 18px;
+  transition: transform .18s ease-out;
+}
+
+@app.nc-bc-ativo .nc-bc-mais[aria-expanded="true"] .nc-bc-ic {
+  transform: rotate(90deg);
+}
+
+/* ═══ [C4] OS CARTÕES ═══════════════════════════════════════════════════════════════════════ */
+@app.nc-bc-ativo .nc-bc-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  margin: 0;
+  padding: 16px;
+  border: 1px solid var(--bc-borda);
+  border-radius: 18px;
+  background: #FFFFFF;
+}
+
+@app.nc-bc-ativo .nc-bc-card--fim {
+  background: #FBFAFC;
+}
+
+@app.nc-bc-ativo .nc-bc-card--fim :is(h3, .nc-bc-valor) {
+  color: var(--bc-fraco);
+}
+
+@app.nc-bc-ativo .nc-bc-card--fim .nc-bc-desenho {
+  filter: grayscale(1);
+  opacity: .7;
+}
+
+@app.nc-bc-ativo .nc-bc-desenho {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 50px;
+  height: 50px;
+  border-radius: 14px;
+}
+
+@app.nc-bc-ativo .nc-bc-desenho .nc-bc-ic {
+  width: 26px;
+  height: 26px;
+}
+
+@app.nc-bc-ativo .nc-bc-txt {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+@app.nc-bc-ativo .nc-bc-txt h3 {
+  margin: 2px 0 0;
+  font-size: 18px;
+  font-weight: 800;
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+  color: var(--bc-tinta);
+}
+
+@app.nc-bc-ativo .nc-bc-sub {
+  margin: 2px 0 0;
+  font-size: 14.5px;
+  line-height: 1.35;
+  color: var(--bc-fraco);
+}
+
+@app.nc-bc-ativo .nc-bc-valor {
+  display: block;
+  margin: 6px 0 0;
+  font-size: 24px;
+  font-weight: 800;
+  line-height: 1.15;
+  font-variant-numeric: tabular-nums;
+  color: var(--bc-roxo);
+}
+
+@app.nc-bc-ativo .nc-bc-semvalor {
+  display: inline-block;
+  margin: 8px 0 0;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: var(--bc-fundo);
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--bc-fraco);
+}
+
+@app.nc-bc-ativo .nc-bc-contas {
+  margin: 8px 0 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--bc-borda);
+}
+
+@app.nc-bc-ativo .nc-bc-contas li {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 2px 12px;
+  margin: 0;
+  padding: 7px 0;
+  border-bottom: 1px solid var(--bc-borda);
+  font-size: 14.5px;
+}
+
+@app.nc-bc-ativo .nc-bc-contas li span {
+  color: var(--bc-fraco);
+}
+
+@app.nc-bc-ativo .nc-bc-contas li b {
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--bc-tinta);
+}
+
+@app.nc-bc-ativo .nc-bc-conta {
+  margin: 4px 0 0;
+  font-size: 15px;
+  line-height: 1.4;
+  color: var(--bc-texto);
+}
+
+@app.nc-bc-ativo .nc-bc-datas {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 10px 0 0;
+  font-size: 14.5px;
+  color: var(--bc-fraco);
+}
+
+@app.nc-bc-ativo .nc-bc-datas .nc-bc-ic {
+  width: 17px;
+  height: 17px;
+}
+
+@app.nc-bc-ativo .nc-bc-etiquetas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 8px 0 0;
+}
+
+@app.nc-bc-ativo .nc-bc-etiquetas span {
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: var(--bc-lilas);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--bc-roxo);
+}
+
+@app.nc-bc-ativo .nc-bc-obs {
+  margin: 8px 0 0;
+  padding: 8px 10px;
+  border-radius: 10px;
+  background: var(--bc-fundo);
+  font-size: 14px;
+  color: var(--bc-texto);
+}
+
+/* ═══ [C5] OS TONS DOS DESENHOS (OS MESMOS DA FICHA) ════════════════════════════════════════ */
+@app.nc-bc-ativo .nc-bc-tom--saude { background: #FBEAF2; color: #A63F6E; }
+@app.nc-bc-ativo .nc-bc-tom--dente { background: #E9F3FB; color: #2C6A9A; }
+@app.nc-bc-ativo .nc-bc-tom--talher,
+@app.nc-bc-ativo .nc-bc-tom--cesta { background: #FFF3DC; color: #8A5A00; }
+@app.nc-bc-ativo .nc-bc-tom--onibus,
+@app.nc-bc-ativo .nc-bc-tom--carro { background: #E8EEFB; color: var(--nc-azul, #2C1A63); }
+@app.nc-bc-ativo .nc-bc-tom--halter { background: #E8F4EE; color: #1F7A52; }
+@app.nc-bc-ativo .nc-bc-tom--cofrinho,
+@app.nc-bc-ativo .nc-bc-tom--escudo { background: #EFE8F7; color: var(--nc-roxo, #742B7F); }
+@app.nc-bc-ativo .nc-bc-tom--capelo { background: #F3EDFA; color: #6B3FA0; }
+@app.nc-bc-ativo .nc-bc-tom--megafone,
+@app.nc-bc-ativo .nc-bc-tom--presente { background: #F4F1F7; color: #5A526E; }
+
+/* ═══ [C6] TELAS LARGAS ═════════════════════════════════════════════════════════════════════ */
+@media (min-width: 900px) {
+  @app.nc-bc-ativo .nc-bc-lista {
+    grid-template-columns: 1fr 1fr;
+    align-items: start;
+  }
+
+  @app.nc-bc-ativo .nc-bc-cab h2 {
+    font-size: 28px;
+  }
+}
+
+/* ═══ [DESK] TELAS DE MESA — gerado por escala-desktop.py (não editar à mão; rode o script) ═══ */
+@media (min-width: 1024px) {
+  @app.nc-bc-ativo .nc-bc-modo {
+    font-size: 14px;
+    min-height: 38px;
+  }
+
+  @app.nc-bc-ativo .nc-bc-cab h2 {
+    font-size: 23.5px;
+  }
+
+  @app.nc-bc-ativo .nc-bc-cab p {
+    font-size: 15px;
+  }
+
+  @app.nc-bc-ativo .nc-bc-soma b {
+    font-size: 19.5px;
+  }
+
+  @app.nc-bc-ativo .nc-bc-vazio {
+    font-size: 15px;
+  }
+
+  @app.nc-bc-ativo .nc-bc-mais {
+    font-size: 14px;
+    min-height: 38px;
+  }
+
+  @app.nc-bc-ativo .nc-bc-txt h3 {
+    font-size: 16px;
+  }
+
+  @app.nc-bc-ativo .nc-bc-valor {
+    font-size: 20px;
+  }
+
+  @app.nc-bc-ativo .nc-bc-conta {
+    font-size: 14px;
+  }
+}
+/* ═══ fim do [DESK] ═══ */

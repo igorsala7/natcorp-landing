@@ -1,0 +1,484 @@
+/* ╔════════════════════════════════════════════════════════════════════════════════════════╗
+   ║  NATCORP · EMPREGOS ANTERIORES  —  a "roupa" da tela (CSS)                                ║
+   ║  App 600 (portal Conhecendo Você) · Página 17                                            ║
+   ╚════════════════════════════════════════════════════════════════════════════════════════╝
+
+   Primeira vez num arquivo destes? Leia antes o manual: brand/apex/MANUAL-APEX.md (parte 1).
+
+   ── O QUE ESTE ARQUIVO FAZ ────────────────────────────────────────────────────────────────
+   Dá a aparência da página 17: cores, tamanhos, espaços, bordas, a linha do tempo e como a
+   tela se arruma no celular. Ele NÃO muda nada de lugar: quem muda as coisas de lugar é o
+   arquivo-irmão Natcorp_Empregos.js. Os dois trabalham juntos:
+     o JS monta "o cartão de cada emprego"  →  este arquivo diz como o cartão se parece.
+   Sem o JS, este arquivo não faz nada (todas as regras dependem da marca nc-em que o JS põe
+   na página). Público: colaborador e candidato, 9 em cada 10 no celular, muitos com pouca
+   leitura — por isso letras grandes e alvos de toque altos.
+   Regra desta página: nada aqui esconde o botão "Adicionar" do APEX. Quando a página o
+   esconde (quem só consulta), quem some é o espaço dele ([C5]), nunca o botão por nossa conta.
+
+   ── ONDE ELE ENTRA NO APEX ────────────────────────────────────────────────────────────────
+     Página 17 › CSS › File URLs:   #WORKSPACE_IMAGES#Natcorp_Empregos.css
+     CUIDADO: edite ESTE arquivo (Natcorp_Empregos.src.css, a fonte) e gere o arquivo que sobe com
+     node brand/apex/app/gerar-app.mjs  — o gerador troca @app pelo prefixo longo e põe
+     !important em toda linha. O Natcorp_Empregos.css da pasta login/ é refeito a cada geração:
+     o que for mudado só nele se perde. (Manual, parte 2.)
+
+   ── ÍNDICE: as partes deste arquivo (Ctrl+F pelo código entre colchetes) ──────────────────
+     [C1] O que fica escondido e os ícones          (peças do APEX trocadas pelas nossas)
+     [C2] O alto: título, explicação e "Ao todo"    ← montado pelo JS em [J2] e [J5]
+     [C3] A linha do tempo e o cartão de emprego    ← montado pelo JS em [J4] e [J5]
+     [C4] Lista vazia                               ← montada pelo JS em [J5]
+     [C5] O botão "Adicionar emprego"               ← montado pelo JS em [J2]
+     [C6] Celular                                   (ajustes para telas até 640px)
+     [C7] Menos movimento                           (para quem pediu "reduzir movimento")
+
+   ── RECEITAS RÁPIDAS ──────────────────────────────────────────────────────────────────────
+     Quero mudar uma cor
+       → use uma das cores da marca, pelo nome: var(--nc-roxo), var(--nc-rosa)… A lista
+         completa, com amostras, está no manual (parte 3). Assim a cor acompanha o tema que
+         o usuário escolheu em "Cores". Evite escrever cores soltas, como #511C76.
+     Quero o nome da empresa maior ou menor     → [C3], .nc-em-empresa, font-size.
+     Quero mudar a cor do ponto "Emprego atual" → [C3], .nc-em-li--atual::before.
+     Quero mais ou menos espaço entre os cartões → [C3], .nc-em-li, margin (espaço por FORA).
+     Algo ficou bom no computador e ruim no celular → [C6]: o que está dentro de
+                                                   @media (max-width: 640px) só vale no celular.
+
+   ── COMO LER UM ARQUIVO CSS EM 30 SEGUNDOS ────────────────────────────────────────────────
+     Cada regra tem duas partes:     QUEM { COMO; }
+       @app.nc-em .nc-em-empresa {         ← QUEM: o "seletor", diz em que pedaço da tela vale
+         font-size: 17.5px;                ← COMO: propriedade: valor;  (tamanho da letra)
+         font-weight: 800;                 ←       letra bem forte (negrito)
+       }
+     .nome-com-ponto       uma "classe": uma etiqueta posta num pedaço da tela (pelo APEX ou
+                           pelo JS). .nc-em-empresa é o nome da empresa no cartão.
+     @app                  atalho que dá prioridade às nossas regras sobre as do tema do APEX.
+                           No arquivo que sobe para o APEX ele aparece por extenso, como
+                           html body:is(.t-PageBody…):not(#nc-a1):not(#nc-a2) — é a mesma coisa.
+     :not(#nc-em-x)…       peso extra, para vencer uma regra do tema. Pode ignorar ao ler.
+     !important            no arquivo que sobe, toda linha ganha um: é o mesmo "vencer o tema".
+     @media (max-width: 640px) { … }   as regras de dentro só valem em telas até 640px (celular).
+     var(--nc-roxo)        uma cor da marca, pelo nome (muda junto com o tema escolhido).
+     ::before              um enfeite desenhado antes do conteúdo (aqui: o trilho e os pontos).
+     px                    pixels, o tamanho de um pontinho da tela. 16px é o texto normal.
+     Toda linha COMO termina em ;   e todo { é fechado por um }. Não apague esses sinais.
+     Linhas em DUPLA (a primeira termina com a palavra reserva entre barra-asterisco): a
+     primeira é a cor para navegador antigo; a segunda, com oklch(…), é a mesma cor
+     acompanhando o tema. Se mudar uma, mude as duas. Não apague a marca reserva.
+*/
+
+/* ═══ [C1] O QUE FICA ESCONDIDO E OS ÍCONES ══════════════════════════════════════════════════
+   .nc-em-oculto      o que o JS mandou esconder (a mensagem de vazio do APEX, a sobra do
+                      lugar antigo do botão Adicionar). display: none = não aparece.
+   .nc-em-ic          os ícones de traço (relógio, dinheiro, local…): traço da cor do texto.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-em .nc-em-oculto:not(#nc-em-x):not(#nc-em-y),
+@app.nc-em :is(.nc-em-vazio, .nc-em-soma)[hidden]:not(#nc-em-x):not(#nc-em-y) {
+  display: none;
+}
+
+@app.nc-em .nc-em-ic {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.9;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* ═══ [C2] O ALTO: TÍTULO, EXPLICAÇÃO E "AO TODO" ═══════════════════════════════════════════
+   Montado pelo JS em [J2]; a soma "Ao todo…" em [J5]. Peças principais:
+     .nc-em-topo      o bloco inteiro (fundo azul-roxo)   .nc-em-topo-ic  o quadrado do ícone
+     .nc-em-tit       "Onde você já trabalhou"           .nc-em-txt      a explicação
+     .nc-em-soma      a pílula "Ao todo: …"
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-em .nc-em-topo {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  margin: 0 0 16px;
+  padding: 20px 22px;
+  border-radius: 20px;
+  background:
+    radial-gradient(110% 130% at 100% 0%, rgba(var(--nc-t-rosa-rgb, 201, 87, 136), .36) 0%, rgba(var(--nc-t-rosa-rgb, 201, 87, 136), 0) 55%),
+    linear-gradient(135deg, var(--nc-azul) 0%, var(--nc-roxo) 72%);
+  color: #fff;
+  box-shadow: 0 18px 36px -24px rgba(var(--nc-t-azul-rgb, 44, 26, 99), .75);
+}
+
+@app.nc-em .nc-em-topo-ic {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  border-radius: 16px;
+  background: #fff;
+  color: var(--nc-roxo);
+}
+
+@app.nc-em .nc-em-topo-ic .nc-em-ic {
+  width: 28px;
+  height: 28px;
+}
+
+@app.nc-em .nc-em-tit {
+  margin: 2px 0 0;
+  font-family: inherit;
+  font-size: 22px;
+  font-weight: 800;
+  line-height: 1.2;
+  color: #fff;
+}
+
+@app.nc-em .nc-em-txt {
+  margin: 8px 0 0;
+  max-width: 62ch;
+  font-size: 16px;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, .88);
+}
+
+@app.nc-em .nc-em-txt b,
+@app.nc-em .nc-em-soma b {
+  font-weight: 800;
+  color: #fff;
+}
+
+@app.nc-em .nc-em-soma {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 12px 0 0;
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, .14);
+  font-size: 15px;
+  line-height: 1.35;
+  color: rgba(255, 255, 255, .92);
+}
+
+@app.nc-em .nc-em-soma .nc-em-ic {
+  flex: none;
+  width: 18px;
+  height: 18px;
+}
+
+/* ═══ [C3] A LINHA DO TEMPO E O CARTÃO DE EMPREGO ═══════════════════════════════════════════
+   Montado pelo JS em [J4] (cada cartão) e [J5] (a ordem). Peças principais:
+     .nc-em-tempo     a lista inteira; o ::before dela é o trilho vertical
+     .nc-em-li        cada emprego; o ::before é o ponto no trilho (rosa no emprego atual)
+     .nc-em-item-a    o cartão branco (é o link do APEX que abre a janela de edição)
+     .nc-em-atual     o selo "Emprego atual"      .nc-em-empresa  o nome da empresa
+     .nc-em-cargo     o cargo                      .nc-em-linha    período, salário, cidade
+     .nc-em-dura      a pílula da duração           .nc-em-editar   o "Editar"
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-em .t-MediaList.nc-em-tempo:not(#nc-em-x):not(#nc-em-y) {
+  position: relative;
+  margin: 4px 0 12px;
+  padding: 0 0 0 30px;
+  border: 0;
+  background: none;
+  box-shadow: none;
+}
+
+/* o trilho: liga os empregos, do mais novo (em cima) ao mais antigo */
+@app.nc-em .t-MediaList.nc-em-tempo::before {
+  content: "";
+  position: absolute;
+  top: 26px;
+  bottom: 26px;
+  left: 10px;
+  width: 2px;
+  border-radius: 2px;
+  background: linear-gradient(180deg, var(--nc-roxo), #DCD3EA);
+}
+
+@app.nc-em .t-MediaList .t-MediaList-item.nc-em-li:not(#nc-em-x):not(#nc-em-y) {
+  position: relative;
+  margin: 0 0 12px;
+  padding: 0;
+  border: 0;
+  background: none;
+  box-shadow: none;
+}
+
+/* o ponto de cada emprego no trilho */
+@app.nc-em .t-MediaList .t-MediaList-item.nc-em-li::before {
+  content: "";
+  position: absolute;
+  top: 20px;
+  left: -26px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 0 0 3px var(--nc-roxo);
+}
+
+@app.nc-em .t-MediaList .t-MediaList-item.nc-em-li--atual::before {
+  background: var(--nc-rosa);
+  box-shadow: 0 0 0 3px var(--nc-rosa), 0 0 0 7px rgba(var(--nc-t-rosa-rgb, 201, 87, 136), .2);
+}
+
+@app.nc-em .nc-em-item-a > :not(.nc-em-item):not(#nc-em-x):not(#nc-em-y) {
+  display: none;
+}
+
+@app.nc-em .t-MediaList .nc-em-item-a:not(#nc-em-x):not(#nc-em-y) {
+  display: block;
+  padding: 0;
+  border: 1px solid var(--nc-nevoa);
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: 0 10px 22px -20px rgba(var(--nc-t-azul-rgb, 44, 26, 99), .6);
+  color: inherit;
+  text-decoration: none;
+  transition: border-color .15s, box-shadow .15s;
+}
+
+@app.nc-em .t-MediaList .nc-em-item-a:hover:not(#nc-em-x):not(#nc-em-y) {
+  border-color: #CDBFE0;
+  box-shadow: 0 14px 26px -20px rgba(var(--nc-t-azul-rgb, 44, 26, 99), .7);
+}
+
+@app.nc-em .t-MediaList .nc-em-item-a:focus-visible:not(#nc-em-x):not(#nc-em-y) {
+  outline: 3px solid var(--nc-rosa);
+  outline-offset: 2px;
+}
+
+@app.nc-em .nc-em-item {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
+  gap: 8px 14px;
+  padding: 16px 18px;
+}
+
+@app.nc-em .nc-em-item-txt {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 5px;
+  min-width: 0;
+}
+
+@app.nc-em .nc-em-atual {
+  margin: 0 0 2px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: #FBE9F1;
+  font-size: 12.5px;
+  font-weight: 800;
+  line-height: 1.3;
+  color: #8E2F5C /*reserva*/;
+  color: oklch(from #8E2F5C l calc(c * var(--nc-t-croma, 1)) calc(h + var(--nc-t-giro, 0)));
+}
+
+@app.nc-em .nc-em-empresa {
+  font-size: 17.5px;
+  font-weight: 800;
+  line-height: 1.3;
+  color: var(--nc-tinta);
+  overflow-wrap: anywhere;
+}
+
+@app.nc-em .nc-em-cargo {
+  margin: -2px 0 4px;
+  font-size: 15.5px;
+  font-weight: 700;
+  line-height: 1.3;
+  color: var(--nc-roxo);
+}
+
+@app.nc-em .nc-em-linha {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 15px;
+  line-height: 1.4;
+  color: var(--nc-tinta);
+}
+
+@app.nc-em .nc-em-linha .nc-em-ic {
+  flex: none;
+  width: 18px;
+  height: 18px;
+  margin-top: 1px;
+  color: #8E84A8 /*reserva*/;
+  color: oklch(from #8E84A8 l calc(c * var(--nc-t-croma, 1)) calc(h + var(--nc-t-giro, 0)));
+}
+
+@app.nc-em .nc-em-dura {
+  display: inline-block;
+  margin-left: 4px;
+  padding: 1px 9px;
+  border-radius: 999px;
+  background: var(--nc-nevoa2);
+  font-size: 13.5px;
+  font-weight: 800;
+  color: var(--nc-roxo);
+  white-space: nowrap;
+}
+
+@app.nc-em .nc-em-outro {
+  color: var(--nc-grafite);
+}
+
+@app.nc-em .nc-em-editar {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--nc-roxo);
+}
+
+@app.nc-em .nc-em-editar .nc-em-ic {
+  width: 17px;
+  height: 17px;
+  stroke-width: 2.1;
+}
+
+/* ═══ [C4] LISTA VAZIA ════════════════════════════════════════════════════════════════════════
+   Montada pelo JS em [J5]: "Nenhum emprego por enquanto…" com um ícone.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-em .nc-em-vazio {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin: 4px 0 12px;
+  padding: 16px 18px;
+  border-radius: 16px;
+  background: var(--nc-nevoa2);
+}
+
+@app.nc-em .nc-em-vazio-ic {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 13px;
+  background: #fff;
+  color: #9A8FB3 /*reserva*/;
+  color: oklch(from #9A8FB3 l calc(c * var(--nc-t-croma, 1)) calc(h + var(--nc-t-giro, 0)));
+}
+
+@app.nc-em .nc-em-vazio-ic .nc-em-ic {
+  width: 22px;
+  height: 22px;
+}
+
+@app.nc-em .nc-em-vazio p {
+  margin: 0;
+  font-size: 15.5px;
+  line-height: 1.45;
+  color: var(--nc-grafite);
+}
+
+@app.nc-em .nc-em-vazio b {
+  font-weight: 800;
+  color: var(--nc-tinta);
+}
+
+/* ═══ [C5] O BOTÃO "ADICIONAR EMPREGO" ════════════════════════════════════════════════════════
+   Montado pelo JS em [J2]. É o botão "Adicionar" do APEX, levado para o fim da lista, largo e
+   com borda tracejada. .nc-em-add é o espaço dele: quando a página esconde o botão, o JS
+   esconde esse espaço — o botão em si nunca é escondido por este arquivo.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-em .nc-em-add {
+  margin: 0 0 8px;
+}
+
+/* 04/10: :not([style*="none"]) — o "Permite Alterar = N" da página esconde o botão (display:none
+   inline); o display daqui (que vira !important) não pode vencer esse esconder */
+@app.nc-em .nc-em-add .t-Button.nc-em-add-bt:not([style*="none"]):not(#nc-em-x):not(#nc-em-y) {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  min-height: 56px;
+  border: 2px dashed #BBA9D6 /*reserva*/;
+  border: 2px dashed oklch(from #BBA9D6 l calc(c * var(--nc-t-croma, 1)) calc(h + var(--nc-t-giro, 0)));
+  border-radius: 16px;
+  background: #FBF9FD;
+  box-shadow: none;
+  font-size: 16.5px;
+  font-weight: 800;
+  color: var(--nc-roxo);
+}
+
+@app.nc-em .nc-em-add .t-Button.nc-em-add-bt > .t-Icon:not(#nc-em-x):not(#nc-em-y) {
+  display: none;
+}
+
+@app.nc-em .nc-em-add .t-Button.nc-em-add-bt :is(.t-Button-label, .nc-em-ic):not(#nc-em-x):not(#nc-em-y) {
+  padding: 0;
+  line-height: 1.2;
+  color: inherit;
+}
+
+@app.nc-em .nc-em-add .nc-em-add-bt .nc-em-ic {
+  width: 22px;
+  height: 22px;
+  stroke-width: 2.4;
+}
+
+@app.nc-em .nc-em-add .t-Button.nc-em-add-bt:hover:not(#nc-em-x):not(#nc-em-y) {
+  border-color: var(--nc-roxo);
+  background: var(--nc-nevoa2);
+}
+
+/* ═══ [C6] CELULAR ════════════════════════════════════════════════════════════════════════════
+   Ajustes para telas até 640px: o alto fica mais compacto, o título menor, o trilho mais
+   perto da borda e o "Editar" desce para baixo do texto do cartão.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@media (max-width: 640px) {
+  @app.nc-em .nc-em-topo {
+    gap: 12px;
+    padding: 16px;
+    border-radius: 18px;
+  }
+
+  @app.nc-em .nc-em-topo-ic {
+    width: 44px;
+    height: 44px;
+    border-radius: 13px;
+  }
+
+  @app.nc-em .nc-em-tit {
+    font-size: 20px;
+  }
+
+  @app.nc-em .t-MediaList.nc-em-tempo:not(#nc-em-x):not(#nc-em-y) {
+    padding-left: 26px;
+  }
+
+  @app.nc-em .t-MediaList.nc-em-tempo::before {
+    left: 8px;
+  }
+
+  @app.nc-em .t-MediaList .t-MediaList-item.nc-em-li::before {
+    left: -24px;
+  }
+
+  /* o "Editar" desce para baixo do texto */
+  @app.nc-em .nc-em-item {
+    grid-template-columns: minmax(0, 1fr);
+    padding: 14px;
+  }
+
+  @app.nc-em .nc-em-editar {
+    justify-self: end;
+  }
+}
+
+/* ═══ [C7] MENOS MOVIMENTO ════════════════════════════════════════════════════════════════════
+   Para quem pediu "reduzir movimento" nas configurações do computador ou celular (por
+   acessibilidade): o cartão muda de cor na hora, sem transição.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@media (prefers-reduced-motion: reduce) {
+  @app.nc-em .nc-em-item-a {
+    transition: none;
+  }
+}

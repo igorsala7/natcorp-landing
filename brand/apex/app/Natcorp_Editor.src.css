@@ -1,0 +1,343 @@
+/* ╔════════════════════════════════════════════════════════════════════════════════════════╗
+   ║  NATCORP · EDITOR DE TEXTO RICO  —  a "roupa" do editor (CSS) — SISTEMA TODO              ║
+   ║  Item "Rich Text Editor" do APEX 19.2 (CKEditor 4.11, pele moono), em qualquer aplicação  ║
+   ╚════════════════════════════════════════════════════════════════════════════════════════╝
+
+   Primeira vez num arquivo destes? Leia antes o manual: brand/apex/MANUAL-APEX.md (parte 1).
+   Guia: EDITOR-MANUTENCAO.md.
+
+   ── O QUE ESTE ARQUIVO FAZ ────────────────────────────────────────────────────────────────
+   Antes: barra de ferramentas cinza em degradê, 44 botões em três linhas FORÇADAS, caixinhas com
+   relevo, e a LARGURA FIXA em pixels que o APEX escreve no editor ao abrir a página (style="width:
+   1140px") — por isso ele não acompanhava a janela nem o celular. Agora:
+     • o editor ocupa 100% do espaço do campo e acompanha a janela;
+     • barra branca, plana, botões de 32 px com cantos suaves, grupos separados por um fio, e os
+       grupos QUEBRAM de linha sozinhos quando falta espaço (as quebras forçadas saem);
+     • ícones monocromáticos (acendem ao passar o mouse e quando ligados — negrito ativo etc.);
+     • borda e cantos como os outros campos; foco com o anel da marca;
+     • a barra de baixo (caminho do texto e o canto de arrastar) fica discreta.
+   O Natcorp_Editor.js (peça trazida pelo Natcorp_Temas.js) completa: letra confortável dentro
+   do texto e "Mais ferramentas" para o que é raro. Sem o JS, este CSS já vale sozinho.
+
+   ── ONDE ELE ENTRA NO APEX ────────────────────────────────────────────────────────────────
+     Dentro do Natcorp_Style_Min.css (folha geral, todas as páginas) — lista FOLHAS do gerar-app.mjs.
+
+   ── ÍNDICE ────────────────────────────────────────────────────────────────────────────────
+     [C1] A moldura e a largura                                 CUIDADO
+     [C2] A barra de ferramentas
+     [C3] Botões e listas (Formatação…)
+     [C4] O pé (caminho e canto de arrastar)
+     [C5] "Mais ferramentas" (o que o JS esconde)              PODE MEXER (a lista está no JS)
+     [C6] As janelinhas do editor (Link, Imagem, Tabela)
+*/
+
+/* ═══ [C1] A MOLDURA E A LARGURA ════════════════════════════════════════════════════════════
+   CUIDADO  O APEX escreve style="width: NNNpx" no .cke ao abrir; o !important daqui vence e o
+            editor passa a ser fluido. A altura continua a do item (o canto de arrastar muda).
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@app .cke.cke_chrome {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
+  border: 1px solid var(--nc-nevoa, #E9E5F1);
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: none;
+  overflow: hidden;
+  transition: border-color .15s, box-shadow .15s;
+}
+
+@app .cke.cke_chrome.cke_focus {
+  border-color: var(--nc-roxo, #511C76);
+  box-shadow: 0 0 0 3px rgba(var(--nc-t-roxo-rgb, 81, 28, 118), .12);
+}
+
+@app .cke .cke_inner {
+  border-radius: 0;
+  background: #fff;
+}
+
+@app .cke .cke_contents {
+  max-width: 100%;
+}
+
+/* ═══ [C2] A BARRA DE FERRAMENTAS ═══════════════════════════════════════════════════════════ */
+@app .cke .cke_top {
+  display: block;
+  padding: 6px 8px;
+  border-bottom: 1px solid var(--nc-nevoa, #E9E5F1);
+  background: #fff;
+  box-shadow: none;
+}
+
+@app .cke .cke_toolbox {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  row-gap: 2px;
+}
+
+/* as quebras FORÇADAS ("/" na configuração) saem: os grupos quebram quando falta espaço */
+@app .cke .cke_toolbar_break {
+  display: none;
+}
+
+/* grupos separados por ESPAÇO (um fio à esquerda sobrava no começo de cada linha que quebra) */
+@app .cke .cke_toolbar {
+  float: none;
+  display: inline-flex;
+  align-items: center;
+  margin: 0 12px 0 0;
+  padding: 0;
+  border: 0;
+}
+
+@app .cke .cke_toolbar_start,
+@app .cke .cke_toolbar_end {
+  display: none;
+}
+
+@app .cke .cke_toolgroup {
+  float: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+@app .cke .cke_toolbar_separator {
+  float: none;
+  display: inline-block;
+  width: 1px;
+  height: 18px;
+  margin: 0 4px;
+  background: var(--nc-nevoa, #E9E5F1);
+  box-shadow: none;
+}
+
+/* ═══ [C3] BOTÕES E LISTAS ══════════════════════════════════════════════════════════════════ */
+@app .cke a.cke_button {
+  float: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  height: 32px;
+  min-width: 32px;
+  margin: 0;
+  padding: 0 7px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  box-shadow: none;
+}
+
+@app .cke a.cke_button .cke_button_icon {
+  float: none;
+  margin: 0;
+  opacity: .7;
+  filter: grayscale(1);
+  transition: opacity .12s, filter .12s;
+}
+
+@app .cke a.cke_button:not(.cke_button_disabled):hover,
+@app .cke a.cke_button:focus-visible {
+  background: var(--nc-off, #F7F5FA);
+  box-shadow: none;
+}
+
+@app .cke a.cke_button:not(.cke_button_disabled):hover .cke_button_icon {
+  opacity: 1;
+  filter: none;
+}
+
+@app .cke a.cke_button.cke_button_on {
+  background: rgba(var(--nc-t-roxo-rgb, 81, 28, 118), .1);
+  box-shadow: none;
+}
+
+@app .cke a.cke_button.cke_button_on .cke_button_icon {
+  opacity: 1;
+  filter: none;
+}
+
+@app .cke a.cke_button.cke_button_disabled .cke_button_icon {
+  opacity: .25;
+}
+
+@app .cke a.cke_button:focus-visible {
+  outline: 2px solid var(--nc-roxo, #511C76);
+  outline-offset: 1px;
+}
+
+/* o botão "Código-Fonte" (e outros com texto) */
+@app .cke a.cke_button .cke_button_label {
+  float: none;
+  margin: 0 0 0 4px;
+  padding: 0;
+  font-family: inherit;
+  font-size: 12.5px;
+  font-weight: 600;
+  line-height: 32px;
+  color: var(--nc-grafite, #4A4460);
+}
+
+/* as listas (Formatação, Fonte, Tamanho, Estilo) */
+@app .cke .cke_combo {
+  float: none;
+  display: inline-flex;
+  margin: 0 2px;
+  padding: 0;
+}
+
+@app .cke .cke_combo::after {
+  display: none;
+}
+
+@app .cke .cke_combo_button {
+  float: none;
+  display: inline-flex;
+  align-items: center;
+  height: 32px;
+  margin: 0;
+  padding: 0 4px 0 2px;
+  border: 1px solid var(--nc-nevoa, #E9E5F1);
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: none;
+}
+
+@app .cke .cke_combo_button:hover,
+@app .cke .cke_combo_on .cke_combo_button {
+  border-color: rgba(var(--nc-t-roxo-rgb, 81, 28, 118), .35);
+  background: var(--nc-off, #F7F5FA);
+  box-shadow: none;
+}
+
+@app .cke .cke_combo_text {
+  float: none;
+  width: auto;
+  min-width: 70px;
+  padding: 0 4px 0 8px;
+  font-family: inherit;
+  font-size: 13px;
+  line-height: 30px;
+  color: var(--nc-tinta, #1B1238);
+}
+
+@app .cke .cke_combo_open {
+  float: none;
+  margin: 0;
+}
+
+@app .cke .cke_combo_label {
+  display: none;
+}
+
+/* ═══ [C4] O PÉ (caminho do texto e o canto de arrastar) ════════════════════════════════════ */
+@app .cke .cke_bottom {
+  padding: 2px 8px;
+  border-top: 1px solid var(--nc-nevoa, #E9E5F1);
+  background: #fff;
+  box-shadow: none;
+}
+
+@app .cke .cke_path_item,
+@app .cke .cke_path_empty {
+  font-family: inherit;
+  font-size: 11.5px;
+  color: #8E88A3;
+  text-shadow: none;
+}
+
+@app .cke .cke_resizer {
+  border-right-color: #C9C3D6;
+}
+
+/* ═══ [C5] "MAIS FERRAMENTAS" ═══════════════════════════════════════════════════════════════
+   O JS marca com nc-ed-extra os botões raros (e os grupos que ficam só com eles) e põe um botão
+   "⋯" no fim da barra. Fechado, os raros somem; aberto (nc-ed-tudo no .cke), aparecem todos.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@app .cke:not(.nc-ed-tudo) .nc-ed-extra {
+  display: none;
+}
+
+@app .cke .cke_toolbar.nc-ed-mais-grupo {
+  margin: 0 0 0 auto;
+}
+
+@app .cke a.cke_button.nc-ed-mais {
+  gap: 4px;
+  padding: 0 9px;
+  font-family: inherit;
+  font-size: 12.5px;
+  font-weight: 600;
+  text-decoration: none;
+  color: var(--nc-grafite, #4A4460);
+  cursor: pointer;
+}
+
+@app .cke a.cke_button.nc-ed-mais svg {
+  width: 16px;
+  height: 16px;
+  fill: currentColor;
+}
+
+@app .cke.nc-ed-tudo a.cke_button.nc-ed-mais {
+  background: rgba(var(--nc-t-roxo-rgb, 81, 28, 118), .1);
+  color: var(--nc-roxo, #511C76);
+}
+
+/* ═══ [C6] AS JANELINHAS DO EDITOR (Link, Imagem, Tabela…) ══════════════════════════════════ */
+@app .cke_dialog .cke_dialog_body {
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+@app .cke_dialog .cke_dialog_title {
+  padding: 12px 16px;
+  border-bottom: 2px solid var(--nc-rosa, #C95788);
+  background: #fff;
+  box-shadow: none;
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--nc-tinta, #1B1238);
+  text-shadow: none;
+}
+
+@app .cke_dialog .cke_dialog_footer {
+  border-top: 1px solid var(--nc-nevoa, #E9E5F1);
+  background: var(--nc-off, #F7F5FA);
+  box-shadow: none;
+}
+
+@app .cke_dialog a.cke_dialog_ui_button {
+  padding: 6px 14px;
+  border: 1px solid var(--nc-nevoa, #E9E5F1);
+  border-radius: 9px;
+  background: #fff;
+  box-shadow: none;
+}
+
+@app .cke_dialog a.cke_dialog_ui_button_ok {
+  border-color: var(--nc-roxo, #511C76);
+  background: var(--nc-roxo, #511C76);
+}
+
+@app .cke_dialog a.cke_dialog_ui_button_ok span {
+  color: #fff;
+  text-shadow: none;
+}
+
+@app .cke_dialog :is(input.cke_dialog_ui_input_text, select.cke_dialog_ui_input_select, textarea.cke_dialog_ui_input_textarea) {
+  min-height: 32px;
+  border: 1px solid var(--nc-nevoa, #E9E5F1);
+  border-radius: 8px;
+  box-shadow: none;
+}

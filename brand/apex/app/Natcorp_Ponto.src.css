@@ -1,0 +1,2876 @@
+/* ╔════════════════════════════════════════════════════════════════════════════════════════╗
+   ║  NATCORP · TRATATIVA DE ABONO (PONTO)  —  a "roupa" da tela (CSS)                         ║
+   ║  App 9503 · Página 203 · o ponto do colaborador, dia a dia                               ║
+   ╚════════════════════════════════════════════════════════════════════════════════════════╝
+
+   Primeira vez num arquivo destes? Leia antes o manual: brand/apex/MANUAL-APEX.md (parte 1).
+   Guia desta página: PONTO-MANUTENCAO.md.
+
+   ── O QUE ESTE ARQUIVO FAZ ────────────────────────────────────────────────────────────────
+   Dá a aparência da página 203: cores, tamanhos, espaços, bordas, e como a tela se arruma no
+   computador e no celular. Ele NÃO muda nada de lugar: quem muda as coisas de lugar é o
+   arquivo-irmão Natcorp_Ponto.js. Os dois trabalham juntos:
+     o JS monta "a linha de cada dia"  →  este arquivo diz como a linha se parece.
+   Sem o JS, este arquivo não faz nada: as regras dependem das marcas que o JS põe na página —
+     nc-po-ativo   a barra e a lista dos dias (posta primeiro)
+     nc-po-painel  o painel inteiro: faixa, passos, coluna da direita, pedidos
+     nc-po-tabela-on  quando a pessoa escolheu "Ver como tabela"
+   As cores são as da própria grade (roxo ok, vermelho problema, amarelo conferir), agora com
+   PALAVRA ao lado — cor sozinha não diz nada a quem não conhece a tela.
+
+   ── ONDE ELE ENTRA NO APEX ────────────────────────────────────────────────────────────────
+     Página 203 › CSS › File URLs:   #WORKSPACE_IMAGES#Natcorp_Ponto.css
+     CUIDADO: edite ESTE arquivo (Natcorp_Ponto.src.css, a fonte) e gere o arquivo que sobe com
+     node brand/apex/app/gerar-app.mjs  — o gerador troca @app pelo prefixo longo e põe
+     !important em toda linha. O Natcorp_Ponto.css da pasta login/ é refeito a cada geração:
+     o que for mudado só nele se perde. (Manual, parte 2.)
+
+   ── ÍNDICE: as partes deste arquivo (Ctrl+F pelo código entre colchetes) ──────────────────
+   Algumas partes aparecem em dois trechos do arquivo: o Ctrl+F acha os dois.
+     [C1]  A grade original e o cabeçalho fixo        (o que some quando a lista está à vista)
+     [C2]  A barra da lista: filtros e menus           ← montada pelo JS em [J3]
+     [C3]  A linha de cada dia                         ← montada pelo JS em [J4]
+     [C4]  Consultas e relatórios, discretos           ← JS em [J3] e [J6]
+     [C5]  Celular e menos movimento (a lista)         (ajustes para telas até 640px)
+     [C6]  O painel: peças escondidas e botões por procuração ← JS em [J5]
+     [C7]  A faixa do colaborador e o período          ← montada pelo JS em [J6]
+     [C8]  Fechar o mês em 4 passos                    ← montado pelo JS em [J7]
+     [C9]  A coluna da direita e as horas do dia       ← montada pelo JS em [J8]
+     [C10] Os pedidos do período                       ← montados pelo JS em [J9]
+     [C11] Telas médias e celular (o painel)           (ajustes para telas menores)
+
+   ── RECEITAS RÁPIDAS ──────────────────────────────────────────────────────────────────────
+     Quero mudar uma cor
+       → use uma das cores da marca, pelo nome: var(--nc-roxo), var(--nc-grafite)… A lista
+         completa, com amostras, está no manual (parte 3). Assim a cor acompanha o tema que
+         o usuário escolheu em "Cores". Evite escrever cores soltas, como #511C76.
+         Exceção: o vermelho/amarelo/verde das situações são cores de AVISO e ficam fixas.
+     Quero a linha do dia mais alta ou mais baixa → [C3], .nc-po-dia, padding.
+     Quero o horário da marcação maior            → [C3], .nc-po-marca b, font-size.
+     Quero mais ou menos espaço                    → padding (espaço por DENTRO da caixa) e
+                                                     margin (espaço por FORA, até a vizinha).
+     Algo ficou bom no computador e ruim no celular → [C5] e [C11]: o que está dentro de
+                                                   @media (max-width: 640px) só vale no celular.
+
+   ── COMO LER UM ARQUIVO CSS EM 30 SEGUNDOS ────────────────────────────────────────────────
+     Cada regra tem duas partes:     QUEM { COMO; }
+       @app.nc-po-ativo .nc-po-dia {       ← QUEM: o "seletor", diz em que pedaço da tela vale
+         display: grid;                    ← COMO: propriedade: valor;  (arruma em colunas)
+         border-radius: 14px;              ←       cantos arredondados
+       }
+     .nome-com-ponto       uma "classe": uma etiqueta posta num pedaço da tela (pelo APEX ou
+                           pelo JS). .nc-po-dia é a linha de cada dia.
+     #marcacao             um "id": o Static ID de uma região do APEX (aqui, a grade).
+     @app                  atalho que dá prioridade às nossas regras sobre as do tema do APEX.
+                           No arquivo que sobe para o APEX ele aparece por extenso, como
+                           html body:is(.t-PageBody…):not(#nc-a1):not(#nc-a2) — é a mesma coisa.
+     :not(#nc-po-x)…       peso extra, para vencer uma regra do tema. Pode ignorar ao ler.
+     !important            no arquivo que sobe, toda linha ganha um: é o mesmo "vencer o tema".
+     @media (max-width: 640px) { … }   as regras de dentro só valem em telas até 640px (celular).
+     var(--nc-roxo)        uma cor da marca, pelo nome (muda junto com o tema escolhido).
+     px                    pixels, o tamanho de um pontinho da tela. 16px é o texto normal.
+     Toda linha COMO termina em ;   e todo { é fechado por um }. Não apague esses sinais.
+     Linhas em DUPLA (a primeira termina com a palavra reserva entre barra-asterisco): a
+     primeira é a cor para navegador antigo; a segunda, com oklch(…), é a mesma cor
+     acompanhando o tema. Se mudar uma, mude as duas. Não apague a marca reserva.
+*/
+
+/* ═══ [C1] A GRADE ORIGINAL E O CABEÇALHO FIXO ══════════════════════════════════════════════
+   A grade de 13 colunas do APEX some enquanto a lista de dias está à vista, e volta quando a
+   pessoa escolhe "Ver como tabela". display: none = não aparece.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+/* a grade original some quando os cartões estão à vista (e volta com "Ver como tabela") */
+@app.nc-po-ativo #marcacao.nc-po-reg:not(.nc-po-tabela) :is(.a-IRR-tableContainer, .a-IRR-reportView, .a-IRR-paginationWrap--bottom):not(#nc-po-x):not(#nc-po-y),
+@app.nc-po-ativo #marcacao.nc-po-reg.nc-po-tabela .nc-po-dias:not(#nc-po-x):not(#nc-po-y),
+@app.nc-po-ativo #marcacao.nc-po-reg.nc-po-tabela :is(.nc-po-filtros, .nc-po-prox, .nc-po-legenda):not(#nc-po-x):not(#nc-po-y),
+@app.nc-po-ativo .nc-po-prox[hidden]:not(#nc-po-x):not(#nc-po-y) {
+  display: none;
+}
+
+/* o cabeçalho fixo da grade (Tipo · Data · Dia · 1 · 2 …) só serve à tabela — também quando
+   o widget o tira da região para "grudar" no alto */
+@app.nc-po-ativo:not(.nc-po-tabela-on) .nc-po-thead:not(#nc-po-x):not(#nc-po-y),
+@app.nc-po-ativo #marcacao.nc-po-reg:not(.nc-po-tabela) .js-stickyWidget-placeholder:not(#nc-po-x):not(#nc-po-y) {
+  display: none;
+}
+
+/* o conteúdo da grade corta (overflow hidden) e prendia os filtros: "clip" corta sem virar
+   caixa de rolagem, e os filtros grudam no alto da região */
+@app.nc-po-ativo #marcacao.nc-po-reg:not(.nc-po-tabela) :is(.a-IRR, .a-IRR-content, .a-IRR-fullView, .a-IRR-reportView):not(#nc-po-x):not(#nc-po-y) {
+  overflow: clip;
+}
+
+/* a grade rola COM a página (a caixa de 650px com rolagem própria sai); os filtros grudam no
+   alto da tela e a coluna da apuração, ao lado, acompanha. O tema põe overflow hidden no corpo,
+   o que impede o "grudar": clip corta igual e deixa o sticky funcionar. */
+@app.nc-po-ativo #marcacao.nc-po-reg:not(.nc-po-tabela):not(#nc-po-x):not(#nc-po-y) {
+  height: auto;
+  overflow: visible;
+}
+
+@app.nc-po-painel :is(.t-Body, .t-Body-main, .t-Body-content, .t-Body-contentInner, .t-Body-content .container):not(#nc-po-x):not(#nc-po-y) {
+  overflow: clip;
+}
+
+@app.nc-po-ativo .nc-po-cab {
+  position: sticky;
+  top: var(--nc-po-topo, 0px);
+  z-index: 3;
+  margin: 0 -2px 10px;
+  padding: 8px 2px 10px;
+  background: #fff;
+  box-shadow: 0 10px 12px -12px rgba(var(--nc-t-azul-rgb, 44, 26, 99), .25);
+}
+
+@app.nc-po-ativo .nc-po-ic {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+@app.nc-po-ativo .nc-po {
+  padding: 4px 0 8px;
+}
+
+/* ═══ [C2] A BARRA DA LISTA: FILTROS E MENUS ════════════════════════════════════════════════
+   Montada pelo JS em [J3]. .nc-po-f é cada filtro ("3 Com problema"); .nc-po-prox, o
+   "Próximo problema". A barra em duas linhas e os menus "Lançar"/"Mais opções" estão mais
+   adiante: procure de novo [C2].
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+/* ---------- filtros ---------- */
+@app.nc-po-ativo .nc-po-cab {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin: 0 0 10px;
+}
+
+@app.nc-po-ativo .nc-po-filtros {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+@app.nc-po-ativo .nc-po-f {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 40px;
+  padding: 0 14px;
+  border: 1.5px solid var(--nc-nevoa);
+  border-radius: 999px;
+  background: #fff;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--nc-grafite);
+  cursor: pointer;
+  transition: border-color .15s, background-color .15s;
+}
+
+@app.nc-po-ativo .nc-po-f b {
+  font-size: 15px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  color: var(--nc-tinta);
+}
+
+@app.nc-po-ativo .nc-po-f:hover {
+  border-color: #BBA9D6 /*reserva*/;
+  border-color: oklch(from #BBA9D6 l calc(c * var(--nc-t-croma, 1)) calc(h + var(--nc-t-giro, 0)));
+}
+
+@app.nc-po-ativo .nc-po-f--problema {
+  border-color: #F2C2C8 /*reserva*/;
+  border-color: oklch(from #F2C2C8 l calc(c * var(--nc-t-croma, 1)) calc(h + var(--nc-t-giro, 0)));
+  color: #9B2230;
+}
+
+@app.nc-po-ativo .nc-po-f--problema b {
+  color: #9B2230;
+}
+
+@app.nc-po-ativo .nc-po-f--conferir {
+  border-color: #F1DDB0;
+  color: #6B4700;
+}
+
+@app.nc-po-ativo .nc-po-f.is-on {
+  border-color: var(--nc-roxo);
+  background: var(--nc-roxo);
+  color: #fff;
+}
+
+@app.nc-po-ativo .nc-po-f.is-on b {
+  color: #fff;
+}
+
+@app.nc-po-ativo .nc-po-f--problema.is-on {
+  border-color: #B8323F;
+  background: #B8323F;
+}
+
+@app.nc-po-ativo :is(.nc-po-f, .nc-po-prox, .nc-po-vista, .nc-po-marca, .nc-po-horas):focus-visible {
+  outline: 3px solid var(--nc-rosa);
+  outline-offset: 2px;
+}
+
+@app.nc-po-ativo .nc-po-cab-acoes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+@app.nc-po-ativo :is(.nc-po-prox, .nc-po-vista) {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 40px;
+  padding: 0 14px 0 11px;
+  border: 0;
+  border-radius: 12px;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+@app.nc-po-ativo .nc-po-prox {
+  background: #B8323F;
+  color: #fff;
+}
+
+@app.nc-po-ativo .nc-po-prox:hover {
+  background: #9B2230;
+}
+
+@app.nc-po-ativo .nc-po-vista {
+  background: var(--nc-nevoa2);
+  color: var(--nc-roxo);
+}
+
+@app.nc-po-ativo :is(.nc-po-prox, .nc-po-vista) .nc-po-ic {
+  width: 17px;
+  height: 17px;
+}
+
+@app.nc-po-ativo .nc-po-legenda {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin: 0 0 12px;
+  font-size: 14px;
+  line-height: 1.45;
+  color: var(--nc-grafite);
+}
+
+@app.nc-po-ativo .nc-po-legenda b {
+  font-weight: 800;
+  color: var(--nc-tinta);
+}
+
+@app.nc-po-ativo .nc-po-legenda .nc-po-ic {
+  flex: none;
+  width: 18px;
+  height: 18px;
+  margin-top: 1px;
+  color: var(--nc-roxo);
+}
+
+/* ═══ [C3] A LINHA DE CADA DIA ══════════════════════════════════════════════════════════════
+   Montada pelo JS em [J4]. Peças principais:
+     .nc-po-dia       a linha do dia; .is-problema / .is-conferir / .is-certo / .is-folga dão o tom
+     .nc-po-data      a data grande        .nc-po-sit     a situação em palavra
+     .nc-po-marca     cada marcação (Entrada/Saída); --problema, --conferir, --ok, --vazia
+     .nc-po-semana    o título "Semana de …"
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+/* ---------- a linha do dia ----------
+   Uma linha baixa por dia (era um cartão de 110 px): data · situação · marcações · "Ver horas".
+   A situação vem no fundo da linha e na palavra — sem faixa colorida na lateral. */
+@app.nc-po-ativo .nc-po-dias {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+@app.nc-po-ativo .nc-po-semana {
+  margin: 14px 2px 2px;
+  font-size: 12.5px;
+  font-weight: 800;
+  color: #5E586E;
+}
+
+@app.nc-po-ativo .nc-po-semana:first-child {
+  margin-top: 0;
+}
+
+@app.nc-po-ativo .nc-po-dia {
+  position: relative;
+  display: grid;
+  grid-template-columns: 46px 132px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 8px 14px;
+  min-height: 62px;
+  padding: 7px 10px 7px 8px;
+  border: 1px solid var(--nc-nevoa);
+  border-radius: 14px;
+  background: #fff;
+}
+
+@app.nc-po-ativo .nc-po-dia.is-problema {
+  border-color: #F2C2C8 /*reserva*/;
+  border-color: oklch(from #F2C2C8 l calc(c * var(--nc-t-croma, 1)) calc(h + var(--nc-t-giro, 0)));
+  background: #FFF8F8;
+}
+
+@app.nc-po-ativo .nc-po-dia.is-conferir {
+  border-color: #F1DDB0;
+  background: #FFFCF3;
+}
+
+@app.nc-po-ativo :is(.nc-po-dia.is-folga, .nc-po-dia.is-vazio) {
+  min-height: 52px;
+  background: #FAF9FC;
+}
+
+/* o dia que está aberto nas "Horas do dia", ao lado */
+@app.nc-po-ativo .nc-po-dia.is-atual {
+  border-color: var(--nc-roxo);
+  box-shadow: 0 0 0 1px var(--nc-roxo), 0 10px 22px -18px rgba(var(--nc-t-roxo-rgb, 81, 28, 118), .8);
+}
+
+@app.nc-po-ativo .nc-po-dia.nc-po-pisca {
+  animation: nc-po-pisca 1.8s cubic-bezier(.16, 1, .3, 1);
+}
+
+@keyframes nc-po-pisca {
+  0%, 30% { box-shadow: 0 0 0 4px rgba(var(--nc-t-rosa-rgb, 201, 87, 136), .45); }
+  100% { box-shadow: 0 0 0 4px rgba(var(--nc-t-rosa-rgb, 201, 87, 136), 0); }
+}
+
+@app.nc-po-ativo .nc-po-data {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  line-height: 1.05;
+  color: var(--nc-tinta);
+}
+
+@app.nc-po-ativo .nc-po-data b {
+  font-size: 21px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -.02em;
+}
+
+@app.nc-po-ativo .nc-po-data span {
+  margin-top: 2px;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: #5E586E;
+}
+
+@app.nc-po-ativo .is-folga .nc-po-data span {
+  color: #8A3E7C /*reserva*/;
+  color: oklch(from #8A3E7C l calc(c * var(--nc-t-croma, 1)) calc(h + var(--nc-t-giro, 0)));
+}
+
+@app.nc-po-ativo .nc-po-sit-col {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 3px;
+  min-width: 0;
+}
+
+@app.nc-po-ativo .nc-po-sit {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 14px;
+  font-weight: 800;
+  color: #1E6B45;
+}
+
+@app.nc-po-ativo .nc-po-sit .nc-po-ic {
+  flex: none;
+  width: 16px;
+  height: 16px;
+  stroke-width: 2.4;
+}
+
+@app.nc-po-ativo .is-problema .nc-po-sit { color: #9B2230; }
+@app.nc-po-ativo .is-conferir .nc-po-sit { color: #6B4700; }
+@app.nc-po-ativo :is(.is-folga, .is-vazio) .nc-po-sit { color: #5E586E; }
+
+@app.nc-po-ativo :is(.nc-po-extra, .nc-po-tipo) {
+  padding: 1px 8px;
+  border-radius: 999px;
+  background: var(--nc-nevoa2);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--nc-grafite);
+}
+
+/* as marcações: rótulo (Entrada/Saída) + hora; a vaga vazia é um "+" tracejado */
+@app.nc-po-ativo .nc-po-marcas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+@app.nc-po-ativo .nc-po-marca {
+  position: relative;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  min-width: 72px;
+  min-height: 44px;
+  padding: 4px 11px 5px;
+  border: 1.5px solid transparent;
+  border-radius: 12px;
+  background: var(--nc-roxo);
+  font: inherit;
+  text-align: left;
+  color: #fff;
+  cursor: pointer;
+  transition: transform .12s, box-shadow .15s;
+}
+
+@app.nc-po-ativo .nc-po-marca:hover {
+  box-shadow: 0 8px 16px -10px rgba(var(--nc-t-azul-rgb, 44, 26, 99), .7);
+}
+
+@app.nc-po-ativo .nc-po-marca:active {
+  transform: scale(.97);
+}
+
+@app.nc-po-ativo .nc-po-marca small {
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1.2;
+  opacity: .85;
+}
+
+@app.nc-po-ativo .nc-po-marca b {
+  font-size: 17px;
+  font-weight: 800;
+  line-height: 1.2;
+  font-variant-numeric: tabular-nums;
+}
+
+@app.nc-po-ativo .nc-po-marca b .nc-po-ic {
+  width: 18px;
+  height: 18px;
+  margin-top: 2px;
+  stroke-width: 2.6;
+}
+
+@app.nc-po-ativo .nc-po-marca i {
+  font-size: 10.5px;
+  font-style: normal;
+  font-weight: 800;
+  line-height: 1.2;
+  color: #F2B8D0 /*reserva*/;
+  color: oklch(from #F2B8D0 l calc(c * var(--nc-t-croma, 1)) calc(h + var(--nc-t-giro, 0)));
+}
+
+@app.nc-po-ativo .nc-po-marca--problema {
+  border-color: #B8323F;
+  background: #FBEAEC;
+  color: #9B2230;
+}
+
+@app.nc-po-ativo .nc-po-marca--problema.nc-po-marca--vazia,
+@app.nc-po-ativo .nc-po-marca--problema:has(b .nc-po-ic) {
+  border-style: dashed;
+  background: #fff;
+}
+
+@app.nc-po-ativo .nc-po-marca--conferir {
+  border-color: #D99A18;
+  background: #FFF4DE;
+  color: #6B4700;
+}
+
+@app.nc-po-ativo .nc-po-marca--vazia {
+  border: 1.5px dashed #CDBFE0;
+  background: #fff;
+  color: var(--nc-roxo);
+}
+
+@app.nc-po-ativo .nc-po-marca--mais {
+  flex-direction: row;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+  padding: 0 12px;
+  border: 1.5px dashed #DCD3EA;
+  background: transparent;
+  font-size: 13px;
+  font-weight: 700;
+  color: #8E88A3;
+}
+
+@app.nc-po-ativo .nc-po-marca--mais .nc-po-ic {
+  width: 15px;
+  height: 15px;
+}
+
+@app.nc-po-ativo .nc-po-horas {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 38px;
+  padding: 0 12px;
+  border: 1.5px solid var(--nc-nevoa);
+  border-radius: 12px;
+  background: #fff;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  white-space: nowrap;
+  color: var(--nc-roxo);
+  cursor: pointer;
+}
+
+@app.nc-po-ativo .nc-po-horas:hover {
+  border-color: var(--nc-roxo);
+  background: var(--nc-nevoa2);
+}
+
+@app.nc-po-ativo .nc-po-horas .nc-po-ic {
+  width: 16px;
+  height: 16px;
+}
+
+@app.nc-po-ativo .nc-po-aberto {
+  display: inline-flex;
+  border: 0;
+  font: inherit;
+  cursor: pointer;
+  align-items: center;
+  gap: 6px;
+  min-height: 38px;
+  padding: 0 12px;
+  border-radius: 12px;
+  background: var(--nc-roxo);
+  font-size: 13px;
+  font-weight: 800;
+  white-space: nowrap;
+  color: #fff;
+}
+
+@app.nc-po-ativo .nc-po-aberto .nc-po-ic {
+  width: 16px;
+  height: 16px;
+}
+
+@app.nc-po-ativo .nc-po-nada {
+  margin: 8px 0;
+  padding: 16px;
+  border-radius: 14px;
+  background: var(--nc-nevoa2);
+  font-size: 15px;
+  color: var(--nc-grafite);
+}
+
+/* ═══ [C4] CONSULTAS E RELATÓRIOS, DISCRETOS ════════════════════════════════════════════════
+   As regiões "Consultas" e "Relatórios" com botões menores, para não competir com o trabalho.
+   (Com o painel montado, os botões delas vão para o menu "Consultas e relatórios" — [C7].)
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+/* ---------- consultas e relatórios: discretos ---------- */
+@app.nc-po-ativo .t-Region.nc-po-consultas .t-Button:not(#nc-po-x):not(#nc-po-y) {
+  min-height: 38px;
+  border: 1.5px solid var(--nc-nevoa);
+  background: #fff;
+  box-shadow: none;
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--nc-roxo);
+}
+
+@app.nc-po-ativo .t-Region.nc-po-consultas .t-Button :is(.t-Button-label, .t-Icon):not(#nc-po-x):not(#nc-po-y) {
+  color: inherit;
+}
+
+@app.nc-po-ativo .t-Region.nc-po-consultas .t-Button:hover:not(#nc-po-x):not(#nc-po-y) {
+  border-color: var(--nc-roxo);
+  background: var(--nc-nevoa2);
+}
+
+/* ═══ [C5] CELULAR E MENOS MOVIMENTO (A LISTA) ══════════════════════════════════════════════
+   Até 640px: a página inteira rola (a caixa da grade solta a altura) e a linha do dia se
+   reorganiza. Depois, para quem pediu "reduzir movimento" (acessibilidade), sem transições.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+/* ---------- celular ---------- */
+@media (max-width: 640px) {
+  /* no celular a página inteira rola: a caixa da grade solta a altura */
+  @app.nc-po-ativo #marcacao.nc-po-reg:not(#nc-po-x):not(#nc-po-y) {
+    height: auto;
+    overflow: visible;
+  }
+
+  @app.nc-po-ativo .nc-po-cab {
+    position: static;
+    box-shadow: none;
+  }
+
+  /* no celular: data à esquerda; em cima a situação, embaixo as marcações; "Horas" no canto */
+  @app.nc-po-ativo .nc-po-dia {
+    grid-template-columns: 42px minmax(0, 1fr);
+    grid-template-areas: "data sit" "data marcas";
+    gap: 6px 10px;
+    padding: 9px 10px 10px 6px;
+  }
+
+  @app.nc-po-ativo .nc-po-data { grid-area: data; align-self: start; padding-top: 2px; }
+  @app.nc-po-ativo .nc-po-sit-col { grid-area: sit; flex-direction: row; flex-wrap: wrap; align-items: center; gap: 4px 8px; padding-right: 96px; min-height: 30px; }
+  @app.nc-po-ativo .nc-po-marcas { grid-area: marcas; }
+
+  @app.nc-po-ativo .nc-po-data b {
+    font-size: 20px;
+  }
+
+  @app.nc-po-ativo :is(.nc-po-horas, .nc-po-aberto) {
+    position: absolute;
+    top: 7px;
+    right: 8px;
+    min-height: 32px;
+    padding: 0 10px;
+  }
+
+  @app.nc-po-ativo .nc-po-horas span {
+    font-size: 12.5px;
+  }
+
+  @app.nc-po-ativo .nc-po-aberto span {
+    font-size: 0;
+  }
+
+  @app.nc-po-ativo .nc-po-aberto span::after {
+    content: "Ver horas";
+    font-size: 12px;
+  }
+
+  @app.nc-po-ativo .nc-po-marca {
+    min-width: 62px;
+    min-height: 46px;
+    padding: 4px 9px 5px;
+  }
+
+  @app.nc-po-ativo .nc-po-marca b {
+    font-size: 16px;
+  }
+
+  @app.nc-po-ativo .nc-po-marca--mais {
+    padding: 0 9px;
+  }
+
+  @app.nc-po-ativo .nc-po-cab-acoes {
+    width: 100%;
+  }
+
+  @app.nc-po-ativo :is(.nc-po-prox, .nc-po-vista) {
+    flex: 1 1 auto;
+    justify-content: center;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  @app.nc-po-ativo :is(.nc-po-marca, .nc-po-f) {
+    transition: none;
+  }
+
+  @app.nc-po-ativo .nc-po-dia.nc-po-pisca {
+    animation: none;
+  }
+}
+
+
+/* ═══ [C6] O PAINEL: PEÇAS ESCONDIDAS E BOTÕES POR PROCURAÇÃO ═══════════════════════════════
+   Montado pelo JS em [J5]. .nc-po-recolhida = peça do APEX que o desenho substituiu (some).
+   .nc-po-px = botão do desenho que clica no botão original; --forte é o de destaque.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+/* =====================================================================
+   A PÁGINA INTEIRA — o painel do fechamento do mês (nc-po-painel)
+   ===================================================================== */
+@app.nc-po-painel :is(.nc-po-recolhida, .row.nc-po-recolhida):not(#nc-po-x):not(#nc-po-y),
+@app.nc-po-painel :is(.nc-po-px, .nc-po-datas, .nc-po-menu-painel, .nc-po-passo-acao)[hidden]:not(#nc-po-x):not(#nc-po-y) {
+  display: none;
+}
+
+/* botão por procuração: um estilo só, três pesos */
+@app.nc-po-painel .nc-po-px {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 42px;
+  padding: 0 15px 0 12px;
+  border: 1.5px solid var(--nc-nevoa);
+  border-radius: 12px;
+  background: #fff;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.2;
+  white-space: nowrap;
+  color: var(--nc-roxo);
+  cursor: pointer;
+  transition: border-color .15s, background-color .15s;
+}
+
+@app.nc-po-painel .nc-po-px:hover:not(:disabled) {
+  border-color: var(--nc-roxo);
+  background: var(--nc-nevoa2);
+}
+
+@app.nc-po-painel .nc-po-px:disabled {
+  cursor: not-allowed;
+  opacity: .45;
+}
+
+@app.nc-po-painel .nc-po-px .nc-po-ic {
+  flex: none;
+  width: 18px;
+  height: 18px;
+}
+
+@app.nc-po-painel .nc-po-px--forte {
+  border-color: var(--nc-roxo);
+  background: var(--nc-roxo);
+  color: #fff;
+}
+
+@app.nc-po-painel .nc-po-px--forte:hover:not(:disabled) {
+  border-color: var(--nc-azul);
+  background: var(--nc-azul);
+  color: #fff;
+}
+
+@app.nc-po-painel .nc-po-px--linha {
+  min-height: 36px;
+  padding: 0 4px;
+  border: 0;
+  background: none;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+@app.nc-po-painel .nc-po-px--linha:hover:not(:disabled) {
+  background: none;
+}
+
+@app.nc-po-painel :is(.nc-po-px, .nc-po-seta, .nc-po-periodo-v, .nc-po-menu-bt, .nc-po-ev, .nc-po-ev-mais, .nc-po-aba):focus-visible {
+  outline: 3px solid var(--nc-rosa);
+  outline-offset: 2px;
+}
+
+/* ═══ [C7] A FAIXA DO COLABORADOR E O PERÍODO ═══════════════════════════════════════════════
+   Montada pelo JS em [J6]. .nc-po-topo é a faixa; .nc-po-periodo, o mês com as setas;
+   .nc-po-menu, o menu "Consultas e relatórios".
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+/* ---------- faixa do colaborador ---------- */
+@app.nc-po-painel .nc-po-topo {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas: "pessoa periodo" "acoes menu";
+  align-items: center;
+  gap: 14px 20px;
+  margin: 0 0 12px;
+  padding: 18px 20px;
+  border-radius: 20px;
+  background:
+    radial-gradient(110% 140% at 100% 0%, rgba(var(--nc-t-rosa-rgb, 201, 87, 136), .34) 0%, rgba(var(--nc-t-rosa-rgb, 201, 87, 136), 0) 55%),
+    linear-gradient(135deg, var(--nc-azul) 0%, var(--nc-roxo) 72%);
+  color: #fff;
+  box-shadow: 0 18px 36px -26px rgba(var(--nc-t-azul-rgb, 44, 26, 99), .8);
+}
+
+@app.nc-po-painel .nc-po-pessoa {
+  grid-area: pessoa;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-width: 0;
+}
+
+@app.nc-po-painel .nc-po-foto {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+  overflow: hidden;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, .16);
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, .35);
+  color: #fff;
+}
+
+@app.nc-po-painel .nc-po-foto img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+@app.nc-po-painel .nc-po-foto .nc-po-ic {
+  width: 28px;
+  height: 28px;
+}
+
+@app.nc-po-painel .nc-po-pessoa-txt {
+  min-width: 0;
+}
+
+@app.nc-po-painel .nc-po-nome {
+  margin: 0;
+  font-family: inherit;
+  font-size: 22px;
+  font-weight: 800;
+  line-height: 1.2;
+  color: #fff;
+  overflow-wrap: anywhere;
+}
+
+@app.nc-po-painel .nc-po-sub {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 10px;
+  margin: 5px 0 0;
+  font-size: 14px;
+  color: rgba(255, 255, 255, .85);
+}
+
+@app.nc-po-painel .nc-po-sep {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, .45);
+}
+
+@app.nc-po-painel .nc-po-chip {
+  padding: 2px 10px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+@app.nc-po-painel .nc-po-chip--ok {
+  background: rgba(125, 220, 165, .22);
+  color: #CFF5DE;
+}
+
+@app.nc-po-painel .nc-po-chip--aviso {
+  background: rgba(255, 214, 140, .22);
+  color: #FFE7B5;
+}
+
+@app.nc-po-painel .nc-po-pessoa-acoes {
+  grid-area: acoes;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+@app.nc-po-painel .nc-po-topo .nc-po-px {
+  border-color: rgba(255, 255, 255, .28);
+  background: rgba(255, 255, 255, .1);
+  color: #fff;
+}
+
+@app.nc-po-painel .nc-po-topo .nc-po-px:hover:not(:disabled) {
+  border-color: #fff;
+  background: rgba(255, 255, 255, .2);
+}
+
+@app.nc-po-painel .nc-po-topo .nc-po-px--forte {
+  border-color: #fff;
+  background: #fff;
+  color: var(--nc-roxo);
+}
+
+@app.nc-po-painel .nc-po-topo .nc-po-px--forte:hover:not(:disabled) {
+  background: var(--nc-nevoa2);
+  color: var(--nc-roxo);
+}
+
+/* o período */
+@app.nc-po-painel .nc-po-periodo {
+  grid-area: periodo;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+}
+
+@app.nc-po-painel .nc-po-rot {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: rgba(255, 255, 255, .75);
+}
+
+@app.nc-po-painel .nc-po-nav {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+@app.nc-po-painel .nc-po-seta {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: 0;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, .12);
+  color: #fff;
+  cursor: pointer;
+}
+
+@app.nc-po-painel .nc-po-seta:hover {
+  background: rgba(255, 255, 255, .24);
+}
+
+@app.nc-po-painel .nc-po-seta .nc-po-ic {
+  width: 20px;
+  height: 20px;
+  stroke-width: 2.4;
+}
+
+@app.nc-po-painel .nc-po-periodo-v {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 40px;
+  padding: 0 14px;
+  border: 0;
+  border-radius: 12px;
+  background: #fff;
+  font: inherit;
+  font-size: 15px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  color: var(--nc-roxo);
+  cursor: pointer;
+}
+
+@app.nc-po-painel .nc-po-periodo-v .nc-po-ic {
+  width: 18px;
+  height: 18px;
+}
+
+@app.nc-po-painel .nc-po-datas {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  z-index: 20;
+  display: flex;
+  gap: 10px;
+  width: 360px;
+  max-width: 80vw;
+  padding: 14px;
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: 0 20px 40px -18px rgba(27, 18, 56, .5);
+  color: var(--nc-tinta);
+}
+
+@app.nc-po-painel .nc-po-datas > .t-Form-fieldContainer:not(#nc-po-x):not(#nc-po-y) {
+  flex: 1 1 0;
+  width: auto;
+  margin: 0;
+  padding: 0;
+}
+
+/* o menu de consultas e relatórios */
+@app.nc-po-painel .nc-po-menu {
+  grid-area: menu;
+  position: relative;
+  justify-self: end;
+}
+
+@app.nc-po-painel .nc-po-menu-bt {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 42px;
+  padding: 0 12px 0 14px;
+  border: 1.5px solid rgba(255, 255, 255, .28);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, .1);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  color: #fff;
+  cursor: pointer;
+}
+
+@app.nc-po-painel .nc-po-menu-bt .nc-po-ic {
+  width: 18px;
+  height: 18px;
+}
+
+@app.nc-po-painel .nc-po-menu-bt[aria-expanded="true"] .nc-po-ic:last-child {
+  transform: rotate(180deg);
+}
+
+@app.nc-po-painel .nc-po-menu-painel {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  z-index: 30;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  width: 460px;
+  max-width: 88vw;
+  padding: 16px;
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: 0 24px 48px -18px rgba(27, 18, 56, .55);
+}
+
+@app.nc-po-painel .nc-po-menu-grupo {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+@app.nc-po-painel .nc-po-menu-grupo p {
+  margin: 0 0 4px;
+  font-size: 12.5px;
+  font-weight: 800;
+  color: #6E6882;
+}
+
+@app.nc-po-painel .nc-po-menu .nc-po-px.nc-po-menu-item {
+  justify-content: flex-start;
+  min-height: 38px;
+  padding: 0 10px;
+  border: 0;
+  background: none;
+  color: var(--nc-tinta);
+  white-space: normal;
+  text-align: left;
+}
+
+@app.nc-po-painel .nc-po-menu .nc-po-px.nc-po-menu-item:hover:not(:disabled) {
+  background: var(--nc-nevoa2);
+  color: var(--nc-roxo);
+}
+
+/* ═══ [C8] FECHAR O MÊS EM 4 PASSOS ═════════════════════════════════════════════════════════
+   Montado pelo JS em [J7]. .nc-po-passo é cada passo; .is-agora o da vez; .is-feito o pronto.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+/* ---------- fechar o mês em 4 passos ---------- */
+@app.nc-po-painel .nc-po-passos {
+  margin: 0 0 16px;
+  padding: 16px 18px 18px;
+  border: 1px solid var(--nc-nevoa);
+  border-radius: 20px;
+  background: #fff;
+  box-shadow: 0 12px 26px -24px rgba(var(--nc-t-azul-rgb, 44, 26, 99), .6);
+}
+
+@app.nc-po-painel .nc-po-passos-tit {
+  margin: 0 0 12px;
+  font-family: inherit;
+  font-size: 17px;
+  font-weight: 800;
+  color: var(--nc-tinta);
+}
+
+@app.nc-po-painel .nc-po-passos-lista {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: none;
+}
+
+@app.nc-po-painel .nc-po-passo {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px;
+  border-radius: 14px;
+  background: #FAF8FC;
+}
+
+/* a linha que liga um passo ao próximo */
+@app.nc-po-painel .nc-po-passo:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  top: 27px;
+  right: -10px;
+  width: 10px;
+  height: 2px;
+  background: #DCD3EA;
+}
+
+@app.nc-po-painel .nc-po-passo-n {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: inset 0 0 0 2px #DCD3EA;
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--nc-roxo);
+}
+
+@app.nc-po-painel .nc-po-passo-n .nc-po-ic {
+  width: 18px;
+  height: 18px;
+  stroke-width: 2.8;
+}
+
+@app.nc-po-painel .nc-po-passo b {
+  display: block;
+  font-size: 15px;
+  font-weight: 800;
+  line-height: 1.3;
+  color: var(--nc-tinta);
+}
+
+@app.nc-po-painel .nc-po-passo p {
+  margin: 3px 0 0;
+  font-size: 13.5px;
+  line-height: 1.4;
+  color: var(--nc-grafite);
+}
+
+@app.nc-po-painel .nc-po-passo-acao {
+  margin-top: 8px;
+}
+
+@app.nc-po-painel .nc-po-passo .nc-po-px--forte {
+  min-height: 40px;
+}
+
+@app.nc-po-painel .nc-po-passo.is-agora {
+  background: #FFF6F7;
+  box-shadow: inset 0 0 0 1.5px #F2C2C8 /*reserva*/;
+  box-shadow: inset 0 0 0 1.5px oklch(from #F2C2C8 l calc(c * var(--nc-t-croma, 1)) calc(h + var(--nc-t-giro, 0)));
+}
+
+@app.nc-po-painel .nc-po-passo.is-agora .nc-po-passo-n {
+  background: #B8323F;
+  box-shadow: none;
+  color: #fff;
+}
+
+@app.nc-po-painel .nc-po-passo.is-agora .nc-po-conta {
+  display: inline;
+  font-size: 15px;
+  color: #9B2230;
+}
+
+@app.nc-po-painel .nc-po-passo.is-agora .nc-po-px--linha {
+  color: #9B2230;
+}
+
+@app.nc-po-painel .nc-po-passo.is-feito .nc-po-passo-n {
+  background: #E4F4EA;
+  box-shadow: none;
+  color: #1E6B45;
+}
+
+/* ═══ [C9] A COLUNA DA DIREITA E AS HORAS DO DIA ════════════════════════════════════════════
+   Montada pelo JS em [J8]. .nc-po-lado é a coluna; .nc-po-resumo, o resumo do período;
+   .nc-po-ev, cada evento. As "Horas do dia" estão mais adiante: procure de novo [C9].
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+/* ---------- a coluna da direita acompanha a rolagem ---------- */
+/* a coluna tem só a altura do conteúdo: estica até a linha para ter onde "grudar" */
+@app.nc-po-painel .row:has(> .col > #rgnSticky):not(#nc-po-x):not(#nc-po-y) {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
+}
+
+@app.nc-po-painel .row > .col:has(> #rgnSticky):not(#nc-po-x):not(#nc-po-y) {
+  align-self: stretch;
+}
+
+@app.nc-po-painel #rgnSticky.nc-po-lado:not(#nc-po-x):not(#nc-po-y) {
+  position: sticky;
+  top: calc(var(--nc-po-topo, 0px) + 12px);
+  max-height: calc(100vh - var(--nc-po-topo, 0px) - 24px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+}
+
+/* resumo do período em palavras (a tabela da página sai; a lupa de cada linha é o toque) */
+@app.nc-po-painel .nc-po-per .t-Report:not(.nc-po-x):not(#nc-po-y),
+@app.nc-po-painel .nc-po-per :is(.t-Report-wrap, .t-Report-tableWrap):not(#nc-po-x):not(#nc-po-y) {
+  display: none;
+}
+
+@app.nc-po-painel .nc-po-resumo {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 0 0 12px;
+}
+
+@app.nc-po-painel .nc-po-resumo-tit {
+  margin: 0 0 6px;
+  font-size: 12.5px;
+  font-weight: 800;
+  color: #6E6882;
+}
+
+@app.nc-po-painel .nc-po-resumo-bloco {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+@app.nc-po-painel .nc-po-ev {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 44px;
+  padding: 0 14px;
+  border: 0;
+  border-radius: 12px;
+  background: #FAF8FC;
+  font: inherit;
+  font-size: 15px;
+  text-align: left;
+  color: var(--nc-tinta);
+  cursor: pointer;
+}
+
+@app.nc-po-painel .nc-po-ev:hover:not(:disabled) {
+  background: var(--nc-nevoa2);
+}
+
+@app.nc-po-painel .nc-po-ev b {
+  font-size: 17px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+
+@app.nc-po-painel .nc-po-ev--bom b {
+  color: #1E6B45;
+}
+
+@app.nc-po-painel .nc-po-ev--ruim {
+  background: #FFF6F7;
+}
+
+@app.nc-po-painel .nc-po-ev--ruim b {
+  color: #9B2230;
+}
+
+/* 04/10: evento com outras janelas da página (pedidos 215/183) além de "ver os dias" */
+@app.nc-po-painel .nc-po-evl {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+@app.nc-po-painel .nc-po-evl .nc-po-ev {
+  flex: 1 1 220px;
+}
+
+@app.nc-po-painel .nc-po-ev-mais {
+  min-height: 44px;
+  padding: 0 14px;
+  border: 1px solid var(--nc-borda-botao);
+  border-radius: 12px;
+  background: #FFFFFF;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--nc-roxo);
+  cursor: pointer;
+}
+
+@app.nc-po-painel .nc-po-ev-mais:hover {
+  background: var(--nc-nevoa2);
+}
+
+@app.nc-po-painel .nc-po-resumo-dica,
+@app.nc-po-painel .nc-po-resumo-vazio {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.4;
+  color: #6E6882;
+}
+
+/* horas do dia: a data entre "dia anterior" e "próximo dia" */
+@app.nc-po-painel .nc-po-dianav {
+  display: flex;
+  align-items: flex-end;
+  gap: 6px;
+  margin: 0 0 10px;
+}
+
+@app.nc-po-painel .nc-po-dianav-meio {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+@app.nc-po-painel .nc-po-dianav-meio > .t-Form-fieldContainer:not(#nc-po-x):not(#nc-po-y) {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+@app.nc-po-painel .nc-po-dianav .nc-po-seta {
+  flex: none;
+  height: 44px;
+  background: var(--nc-nevoa2);
+  color: var(--nc-roxo);
+}
+
+@app.nc-po-painel .nc-po-dianav .nc-po-seta:hover {
+  background: #E2DAF0;
+}
+
+/* ═══ [C10] OS PEDIDOS DO PERÍODO ═══════════════════════════════════════════════════════════
+   Montados pelo JS em [J9]. .nc-po-aba é cada aba. O cartão de cada pedido está mais
+   adiante: procure de novo [C10].
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+/* ---------- pedidos do período em abas ---------- */
+@app.nc-po-painel .nc-po-pedidos {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin: 18px 0 10px;
+}
+
+@app.nc-po-painel .nc-po-pedidos-tit {
+  margin: 0;
+  font-family: inherit;
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--nc-tinta);
+}
+
+@app.nc-po-painel .nc-po-pedidos-abas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+@app.nc-po-painel .nc-po-aba {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 40px;
+  padding: 0 14px;
+  border: 1.5px solid var(--nc-nevoa);
+  border-radius: 999px;
+  background: #fff;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--nc-grafite);
+  cursor: pointer;
+}
+
+@app.nc-po-painel .nc-po-aba b {
+  min-width: 22px;
+  padding: 1px 7px;
+  border-radius: 999px;
+  background: var(--nc-nevoa2);
+  font-size: 12.5px;
+  font-weight: 800;
+  text-align: center;
+  color: var(--nc-roxo);
+}
+
+@app.nc-po-painel .nc-po-aba.is-on {
+  border-color: var(--nc-roxo);
+  background: var(--nc-roxo);
+  color: #fff;
+}
+
+@app.nc-po-painel .nc-po-aba.is-on b {
+  background: rgba(255, 255, 255, .2);
+  color: #fff;
+}
+
+/* a região do pedido: o título vira a aba */
+@app.nc-po-painel .t-Region.nc-po-pedido > .t-Region-header:not(#nc-po-x):not(#nc-po-y) {
+  display: none;
+}
+
+/* ═══ [C11] TELAS MÉDIAS E CELULAR (O PAINEL) ═══════════════════════════════════════════════
+   Até 1100px (notebooks pequenos e tablets) e até 640px (celular): o que era lado a lado passa
+   a ficar um embaixo do outro. Há mais um trecho no fim do arquivo: procure de novo [C11].
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+/* ---------- telas médias e celular ---------- */
+@media (max-width: 1100px) {
+  @app.nc-po-painel .nc-po-passos-lista {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  @app.nc-po-painel .nc-po-passo:not(:last-child)::after {
+    display: none;
+  }
+}
+
+@media (max-width: 640px) {
+  @app.nc-po-painel .nc-po-topo {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas: "pessoa" "periodo" "acoes" "menu";
+    padding: 16px;
+    border-radius: 18px;
+  }
+
+  @app.nc-po-painel .nc-po-nome {
+    font-size: 19px;
+  }
+
+  @app.nc-po-painel .nc-po-foto {
+    width: 48px;
+    height: 48px;
+  }
+
+  @app.nc-po-painel .nc-po-periodo {
+    align-items: stretch;
+  }
+
+  @app.nc-po-painel .nc-po-nav {
+    justify-content: space-between;
+  }
+
+  @app.nc-po-painel .nc-po-periodo-v {
+    flex: 1 1 auto;
+    justify-content: center;
+  }
+
+  @app.nc-po-painel .nc-po-datas {
+    position: static;
+    width: auto;
+    max-width: none;
+    margin-top: 6px;
+  }
+
+  @app.nc-po-painel .nc-po-menu {
+    justify-self: stretch;
+  }
+
+  @app.nc-po-painel .nc-po-menu-bt {
+    width: 100%;
+    justify-content: center;
+  }
+
+  @app.nc-po-painel .nc-po-menu-painel {
+    position: static;
+    grid-template-columns: minmax(0, 1fr);
+    width: auto;
+    max-width: none;
+    margin-top: 8px;
+  }
+
+  @app.nc-po-painel .nc-po-passos-lista {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  @app.nc-po-painel #rgnSticky.nc-po-lado:not(#nc-po-x):not(#nc-po-y) {
+    position: static;
+    max-height: none;
+    overflow: visible;
+  }
+}
+
+
+/* a barra da grade (Inversão, Calendário, Incluir data…): ferramentas, não o trabalho principal */
+@app.nc-po-painel #marcacao .a-IRR-toolbar .t-Button:not(.t-Button--noLabel):not(#nc-po-x):not(#nc-po-y),
+@app.nc-po-painel #marcacao .a-IRR-buttons .t-Button:not(.t-Button--noLabel):not(#nc-po-x):not(#nc-po-y) {
+  min-height: 38px;
+  border: 1.5px solid var(--nc-nevoa);
+  background: #fff;
+  box-shadow: none;
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--nc-roxo);
+}
+
+@app.nc-po-painel #marcacao :is(.a-IRR-toolbar, .a-IRR-buttons) .t-Button:not(.t-Button--noLabel) :is(.t-Button-label, .t-Icon):not(#nc-po-x):not(#nc-po-y) {
+  color: inherit;
+}
+
+@app.nc-po-painel #marcacao :is(.a-IRR-toolbar, .a-IRR-buttons) .t-Button:not(.t-Button--noLabel):hover:not(#nc-po-x):not(#nc-po-y) {
+  border-color: var(--nc-roxo);
+  background: var(--nc-nevoa2);
+}
+
+/* "Travar este dia": secundário (o travamento do mês é o passo 4) */
+@app.nc-po-painel .t-Button.nc-po-travadia:not(#nc-po-x):not(#nc-po-y) {
+  min-height: 40px;
+  border: 1.5px solid var(--nc-nevoa);
+  background: #fff;
+  box-shadow: none;
+  color: var(--nc-roxo);
+}
+
+@app.nc-po-painel .t-Button.nc-po-travadia :is(.t-Button-label, .t-Icon):not(#nc-po-x):not(#nc-po-y) {
+  color: inherit;
+}
+
+@media (max-width: 640px) {
+  @app.nc-po-painel .nc-po-sub {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+
+  @app.nc-po-painel .nc-po-sep {
+    display: none;
+  }
+}
+
+
+/* =====================================================================
+   3ª RODADA (01/10) — a barra da lista, o painel do dia e os pedidos
+   ===================================================================== */
+
+/* ═══ [C2] (continuação) A BARRA DA LISTA EM DUAS LINHAS E OS MENUS ═════════════════════════ */
+/* ---------- a barra da lista em duas linhas ---------- */
+@app.nc-po-ativo .nc-po-cab {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 8px;
+}
+
+@app.nc-po-ativo :is(.nc-po-cab-l1, .nc-po-cab-l2) {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 10px;
+}
+
+@app.nc-po-ativo .nc-po-cab-l2 {
+  padding-top: 8px;
+  border-top: 1px solid var(--nc-nevoa);
+}
+
+@app.nc-po-ativo .nc-po-cab-menus {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+/* "Marcações" e "Dias": rótulo ao lado da lista, numa altura só.
+   04/10: "Dias" (…_DIVERGENTE) voltou à vista, ao lado; e o display respeita o esconder da página */
+@app.nc-po-ativo .nc-po-ver {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 16px;
+}
+
+@app.nc-po-ativo .nc-po-ver > .t-Form-fieldContainer:not([style*="none"]):not(#nc-po-x):not(#nc-po-y) {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: auto;
+  margin: 0;
+  padding: 0;
+}
+
+@app.nc-po-ativo .nc-po-ver > .t-Form-fieldContainer > :is(.t-Form-labelContainer, .t-Form-inputContainer):not(#nc-po-x):not(#nc-po-y) {
+  width: auto;
+  max-width: none;
+  flex: none;
+  padding: 0;
+}
+
+@app.nc-po-ativo .nc-po-ver .t-Form-label:not(#nc-po-x):not(#nc-po-y) {
+  margin: 0;
+  padding: 0;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--nc-grafite);
+}
+
+@app.nc-po-ativo .nc-po-ver select:not(#nc-po-x):not(#nc-po-y) {
+  min-width: 150px;
+  height: 40px;
+  min-height: 40px;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+/* o que a barra substitui: os botões da grade e a sua caixa de pesquisa (04/10: a lista "Dias" não sai mais)
+   (voltam na vista de tabela, para quem usa a grade) */
+@app.nc-po-ativo #marcacao.nc-po-reg:not(.nc-po-tabela) :is(.a-IRR-toolbar, .a-IRR-controlsContainer):not(#nc-po-x):not(#nc-po-y),
+@app.nc-po-ativo .nc-po-mn-painel[hidden]:not(#nc-po-x):not(#nc-po-y),
+@app.nc-po-ativo .nc-po-diverg[hidden]:not(#nc-po-x):not(#nc-po-y),
+@app.nc-po-ativo #marcacao > .t-Region-header .t-Region-headerItems--buttons:not(#nc-po-x):not(#nc-po-y) {
+  display: none;
+}
+
+/* os menus "Lançar" e "Mais opções" */
+@app.nc-po-ativo .nc-po-mn {
+  position: relative;
+}
+
+@app.nc-po-ativo .nc-po-mn-bt {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 40px;
+  padding: 0 10px 0 12px;
+  border: 1.5px solid var(--nc-nevoa);
+  border-radius: 12px;
+  background: #fff;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--nc-roxo);
+  cursor: pointer;
+}
+
+@app.nc-po-ativo .nc-po-mn-bt:hover {
+  border-color: var(--nc-roxo);
+  background: var(--nc-nevoa2);
+}
+
+@app.nc-po-ativo .nc-po-mn--forte .nc-po-mn-bt {
+  border-color: var(--nc-roxo);
+  background: var(--nc-nevoa2);
+}
+
+@app.nc-po-ativo .nc-po-mn-bt .nc-po-ic {
+  width: 17px;
+  height: 17px;
+}
+
+@app.nc-po-ativo .nc-po-mn-bt[aria-expanded="true"] .nc-po-ic:last-child {
+  transform: rotate(180deg);
+}
+
+@app.nc-po-ativo .nc-po-mn-painel {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  z-index: 40;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  width: 280px;
+  max-width: 86vw;
+  padding: 6px;
+  border: 1px solid var(--nc-nevoa);
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: 0 22px 44px -20px rgba(27, 18, 56, .55);
+}
+
+@app.nc-po-ativo .nc-po-px.nc-po-mn-item:not(#nc-po-x) {
+  justify-content: flex-start;
+  gap: 10px;
+  width: 100%;
+  min-height: 48px;
+  padding: 6px 10px;
+  border: 0;
+  border-radius: 10px;
+  background: none;
+  white-space: normal;
+  text-align: left;
+  color: var(--nc-tinta);
+}
+
+@app.nc-po-ativo .nc-po-px.nc-po-mn-item:hover:not(:disabled):not(#nc-po-x) {
+  background: var(--nc-nevoa2);
+}
+
+@app.nc-po-ativo .nc-po-mn-item .nc-po-ic {
+  color: var(--nc-roxo);
+}
+
+@app.nc-po-ativo .nc-po-mn-item span {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+@app.nc-po-ativo .nc-po-mn-item span b {
+  font-size: 14px;
+  font-weight: 800;
+}
+
+@app.nc-po-ativo .nc-po-mn-item span small {
+  font-size: 12.5px;
+  font-weight: 500;
+  color: #5E586E;
+}
+
+@app.nc-po-ativo .nc-po-diverg {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 10px;
+  margin: 0;
+  padding: 8px 12px;
+  border-radius: 12px;
+  background: #FFF4DE;
+  font-size: 14px;
+  color: #6B4700;
+}
+
+@app.nc-po-ativo .nc-po-diverg .nc-po-ic {
+  width: 17px;
+  height: 17px;
+}
+
+@app.nc-po-ativo .nc-po-link {
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  font-weight: 800;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  color: var(--nc-roxo);
+  cursor: pointer;
+}
+
+@app.nc-po-ativo .nc-po-diverg .nc-po-link {
+  color: #6B4700;
+}
+
+/* botão pequeno de contorno (Detalhes, Pedir ajuste, Abrir, Atualizar) */
+@app.nc-po-ativo .nc-po-mini,
+@app.nc-po-ativo .nc-po-px.nc-po-mini:not(#nc-po-x) {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 36px;
+  padding: 0 11px;
+  border: 1.5px solid var(--nc-nevoa);
+  border-radius: 10px;
+  background: #fff;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  white-space: nowrap;
+  color: var(--nc-roxo);
+  cursor: pointer;
+}
+
+@app.nc-po-ativo .nc-po-mini:hover {
+  border-color: var(--nc-roxo);
+  background: var(--nc-nevoa2);
+}
+
+@app.nc-po-ativo .nc-po-mini .nc-po-ic {
+  width: 15px;
+  height: 15px;
+}
+
+@app.nc-po-ativo :is(.nc-po-mn-bt, .nc-po-mini, .nc-po-link, .nc-po-aberto, .nc-po-pf):focus-visible {
+  outline: 3px solid var(--nc-rosa);
+  outline-offset: 2px;
+}
+
+/* ═══ [C9] (continuação) AS HORAS DO DIA ════════════════════════════════════════════════════ */
+/* ---------- horas do dia ---------- */
+@app.nc-po-painel .nc-po-dianav-sem {
+  margin: 4px 0 0;
+  font-size: 13px;
+  font-weight: 700;
+  text-align: center;
+  color: #5E586E;
+}
+
+@app.nc-po-painel .nc-po-dianav {
+  align-items: flex-start;
+}
+
+@app.nc-po-painel .nc-po-dianav .nc-po-seta {
+  margin-top: 22px;
+}
+
+@app.nc-po-painel .nc-po-jornada {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin: 0 0 12px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: #FAF8FC;
+  font-size: 14px;
+  line-height: 1.45;
+  color: var(--nc-grafite);
+}
+
+@app.nc-po-painel .nc-po-jornada b {
+  font-weight: 800;
+  color: var(--nc-tinta);
+}
+
+@app.nc-po-painel .nc-po-jornada .nc-po-ic {
+  flex: none;
+  width: 17px;
+  height: 17px;
+  margin-top: 2px;
+  color: var(--nc-roxo);
+}
+
+/* a tabela do Diário sai; o "Travar este dia" e a atualização ficam embaixo */
+@app.nc-po-painel .nc-po-diario-lista .t-Report:not(#nc-po-x):not(#nc-po-y),
+@app.nc-po-painel .nc-po-diario-lista > .t-Region-header .t-Region-headerItems--buttons:not(#nc-po-x):not(#nc-po-y) {
+  display: none;
+}
+
+@app.nc-po-painel .nc-po-eventos {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+@app.nc-po-painel .nc-po-eventos-tit {
+  margin: 0 0 2px;
+  font-size: 12.5px;
+  font-weight: 800;
+  color: #5E586E;
+}
+
+@app.nc-po-painel .nc-po-eventos-vazio {
+  margin: 0;
+  padding: 12px;
+  border-radius: 12px;
+  background: #FAF8FC;
+  font-size: 14px;
+  color: var(--nc-grafite);
+}
+
+@app.nc-po-painel .nc-po-evd {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 6px 12px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: #FAF8FC;
+}
+
+@app.nc-po-painel .nc-po-evd--ruim {
+  background: #FFF6F7;
+}
+
+@app.nc-po-painel .nc-po-evd--bom {
+  background: #F2FAF5;
+}
+
+@app.nc-po-painel .nc-po-evd-txt {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+@app.nc-po-painel .nc-po-evd-txt b {
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--nc-tinta);
+}
+
+@app.nc-po-painel .nc-po-evd-txt span {
+  font-size: 13px;
+  color: #5E586E;
+}
+
+@app.nc-po-painel .nc-po-evd-h {
+  font-size: 19px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  color: var(--nc-tinta);
+}
+
+@app.nc-po-painel .nc-po-evd--ruim .nc-po-evd-h { color: #9B2230; }
+@app.nc-po-painel .nc-po-evd--bom .nc-po-evd-h { color: #1E6B45; }
+
+@app.nc-po-painel .nc-po-evd-acoes {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+@app.nc-po-painel .nc-po-diario-pe {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 12px;
+}
+
+/* ═══ [C10] (continuação) UM CARTÃO POR PEDIDO ══════════════════════════════════════════════ */
+/* ---------- pedidos do período: um cartão por pedido ---------- */
+@app.nc-po-painel .t-Region.nc-po-pedido:not(.nc-po-ped-tabela) :is(.a-IRR-toolbar, .a-IRR-controlsContainer, .a-IRR-tableContainer, .a-IRR-noDataMsg, .js-stickyWidget-placeholder):not(#nc-po-x):not(#nc-po-y),
+@app.nc-po-painel .t-Region.nc-po-pedido.nc-po-ped-tabela :is(.nc-po-peds-lista, .nc-po-peds-filtros):not(#nc-po-x):not(#nc-po-y),
+@app.nc-po-painel .nc-po-peds-datas[hidden]:not(#nc-po-x):not(#nc-po-y) {
+  display: none;
+}
+
+@app.nc-po-painel .nc-po-peds {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 4px 0 6px;
+}
+
+@app.nc-po-painel .nc-po-peds-cab {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 14px;
+}
+
+@app.nc-po-painel .nc-po-peds-per {
+  margin: 0;
+  font-size: 14px;
+  color: var(--nc-grafite);
+}
+
+@app.nc-po-painel .nc-po-peds-per b {
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  color: var(--nc-tinta);
+}
+
+@app.nc-po-painel .nc-po-peds-per .nc-po-link {
+  margin-left: 6px;
+  font-size: 13.5px;
+}
+
+@app.nc-po-painel .nc-po-peds-filtros {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+@app.nc-po-painel .nc-po-peds-acoes {
+  display: flex;
+  gap: 6px;
+  margin-left: auto;
+}
+
+@app.nc-po-painel .nc-po-pf {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  min-height: 34px;
+  padding: 0 12px;
+  border: 1.5px solid var(--nc-nevoa);
+  border-radius: 999px;
+  background: #fff;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--nc-grafite);
+  cursor: pointer;
+}
+
+@app.nc-po-painel .nc-po-pf b {
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  color: var(--nc-tinta);
+}
+
+@app.nc-po-painel .nc-po-pf.is-on {
+  border-color: var(--nc-roxo);
+  background: var(--nc-roxo);
+  color: #fff;
+}
+
+@app.nc-po-painel .nc-po-pf.is-on b {
+  color: #fff;
+}
+
+@app.nc-po-painel .nc-po-peds-datas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 12px;
+  border-radius: 14px;
+  background: #FAF8FC;
+}
+
+@app.nc-po-painel .nc-po-peds-datas > .t-Form-fieldContainer:not(#nc-po-x):not(#nc-po-y) {
+  flex: 1 1 180px;
+  width: auto;
+  max-width: 260px;
+  margin: 0;
+  padding: 0;
+}
+
+@app.nc-po-painel .nc-po-peds-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+@app.nc-po-painel .nc-po-ped {
+  display: grid;
+  grid-template-columns: 52px minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 6px 14px;
+  margin: 0;
+  padding: 10px 12px;
+  border: 1px solid var(--nc-nevoa);
+  border-radius: 14px;
+  background: #fff;
+}
+
+@app.nc-po-painel .nc-po-ped.is-nao {
+  background: #FAF9FC;
+}
+
+@app.nc-po-painel .nc-po-ped-dia {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  line-height: 1.1;
+}
+
+@app.nc-po-painel .nc-po-ped-dia b {
+  font-size: 15px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  color: var(--nc-tinta);
+}
+
+@app.nc-po-painel .nc-po-ped-dia span {
+  margin-top: 2px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #5E586E;
+}
+
+@app.nc-po-painel .nc-po-ped-meio {
+  min-width: 0;
+}
+
+@app.nc-po-painel .nc-po-ped-o {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 8px;
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.35;
+  color: var(--nc-tinta);
+}
+
+@app.nc-po-painel .nc-po-ped-o b {
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  color: var(--nc-roxo);
+}
+
+@app.nc-po-painel .nc-po-ped-o s {
+  text-decoration-thickness: 1.5px;
+  color: #6E6882;
+}
+
+@app.nc-po-painel .nc-po-ped.is-nao .nc-po-ped-o,
+@app.nc-po-painel .nc-po-ped.is-nao .nc-po-ped-o b {
+  color: #5E586E;
+}
+
+@app.nc-po-painel .nc-po-ped-meta {
+  margin: 3px 0 0;
+  font-size: 13px;
+  line-height: 1.4;
+  color: #5E586E;
+}
+
+@app.nc-po-painel .nc-po-ped-com {
+  margin: 4px 0 0;
+  font-size: 13.5px;
+  font-style: italic;
+  color: var(--nc-grafite);
+}
+
+@app.nc-po-painel .nc-po-ped-sit {
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 12.5px;
+  font-weight: 800;
+  white-space: nowrap;
+  background: #FFF4DE;
+  color: #6B4700;
+}
+
+@app.nc-po-painel .is-ok .nc-po-ped-sit { background: #E4F4EA; color: #1E6B45; }
+@app.nc-po-painel .is-nao .nc-po-ped-sit { background: #FBEAEC; color: #9B2230; }
+
+/* ═══ [C11] (continuação) TELAS MÉDIAS E CELULAR DA 3ª RODADA ═══════════════════════════════
+   O trecho de 641 a 900px vale SÓ nessa faixa: antes ele valia também no celular e quebrava
+   a linha do dia.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@media (min-width: 641px) and (max-width: 900px) {
+  @app.nc-po-ativo .nc-po-dia {
+    grid-template-columns: 44px 118px minmax(0, 1fr);
+  }
+
+  @app.nc-po-ativo .nc-po-dia > :is(.nc-po-horas, .nc-po-aberto) {
+    grid-column: 3;
+    justify-self: start;
+  }
+}
+
+@media (max-width: 640px) {
+  @app.nc-po-ativo .nc-po-cab-l1 > .nc-po-prox,
+  @app.nc-po-ativo .nc-po-cab-menus,
+  @app.nc-po-ativo .nc-po-cab-menus > .nc-po-mn {
+    flex: 1 1 auto;
+  }
+
+  @app.nc-po-ativo .nc-po-mn-bt {
+    width: 100%;
+    justify-content: center;
+  }
+
+  @app.nc-po-ativo .nc-po-ver,
+  @app.nc-po-ativo .nc-po-ver > .t-Form-fieldContainer:not(#nc-po-x):not(#nc-po-y) {
+    width: 100%;
+  }
+
+  @app.nc-po-ativo .nc-po-ver > .t-Form-fieldContainer > .t-Form-inputContainer:not(#nc-po-x):not(#nc-po-y) {
+    flex: 1 1 auto;
+  }
+
+  @app.nc-po-ativo .nc-po-ver select:not(#nc-po-x):not(#nc-po-y) {
+    width: 100%;
+    font-size: 16px;
+  }
+
+  @app.nc-po-ativo .nc-po-mn-painel {
+    left: 0;
+    right: auto;
+    width: min(320px, calc(100vw - 32px));
+  }
+
+  @app.nc-po-ativo .nc-po-cab-menus > .nc-po-mn:last-child .nc-po-mn-painel {
+    left: auto;
+    right: 0;
+  }
+
+  @app.nc-po-painel .nc-po-ped {
+    grid-template-columns: 46px minmax(0, 1fr);
+    grid-template-areas: "dia meio" "dia pe";
+    padding: 10px;
+  }
+
+  @app.nc-po-painel .nc-po-ped-dia { grid-area: dia; align-self: start; }
+  @app.nc-po-painel .nc-po-ped-meio { grid-area: meio; }
+  @app.nc-po-painel .nc-po-ped-sit { grid-area: pe; justify-self: start; }
+  @app.nc-po-painel .nc-po-ped-abrir { grid-area: pe; justify-self: end; }
+
+  @app.nc-po-painel .nc-po-peds-acoes {
+    margin-left: 0;
+  }
+}
+
+/* ═══ [C12] A MESA DE TRABALHO: A LISTA E O DIA LADO A LADO ═════════════════════════════════
+   Montada pelo JS em [J12]. No computador (mais de 1100 px de largura e 600 de altura), a lista
+   (#marcacao) e o painel do dia (#rgnSticky) viram duas janelas da altura da tela, cada uma com
+   rolagem própria. Em telas menores nada disto liga e a página rola inteira, como antes.
+   PODE MEXER os tamanhos de tela do @media logo abaixo (1101px e 600px).
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+/* ---------- a barra do título, sólida: o vidro deixava o conteúdo borrado por trás dela ---------- */
+@app.nc-po-painel .t-Body-title:not(#nc-po-x):not(#nc-po-y) {
+  background: var(--nc-tela);
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+
+/* ---------- respiro: a lista e a barra dos pedidos encostavam na borda do cartão ---------- */
+@media (min-width: 641px) {
+  @app.nc-po-ativo .nc-po:not(#nc-po-x):not(#nc-po-y) {
+    padding: 0 16px 16px;
+  }
+
+  @app.nc-po-ativo .nc-po-cab:not(#nc-po-x):not(#nc-po-y) {
+    margin: 0 -16px 12px;
+    padding: 12px 16px;
+  }
+}
+
+@app.nc-po-painel .nc-po-peds:not(#nc-po-x):not(#nc-po-y) {
+  padding: 14px 16px 16px;
+}
+
+/* ---------- as duas janelas ---------- */
+@media (min-width: 1101px) and (min-height: 600px) {
+  @app.nc-po-painel:not(.nc-po-tabela-on) .row.nc-po-mesa:not(#nc-po-x):not(#nc-po-y) {
+    flex-wrap: nowrap;
+    align-items: stretch;
+    margin-bottom: 24px;
+    scroll-margin-top: calc(var(--nc-po-topo, 0px) + 12px);
+  }
+
+  @app.nc-po-painel:not(.nc-po-tabela-on) .nc-po-mesa :is(#marcacao, #rgnSticky):not(#nc-po-x):not(#nc-po-y) {
+    position: relative;
+    top: auto;
+    height: calc(100vh - var(--nc-po-topo, 0px) - 24px);
+    max-height: none;
+    overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior-y: auto;   /* no fim de uma coluna, a página continua */
+    scrollbar-width: thin;
+    scrollbar-color: var(--nc-nevoa) transparent;
+    scrollbar-gutter: stable;
+  }
+
+  /* a barra de filtros gruda no alto da PRÓPRIA coluna (antes, no alto da página) */
+  @app.nc-po-painel:not(.nc-po-tabela-on) .nc-po-mesa .nc-po-cab:not(#nc-po-x):not(#nc-po-y) {
+    top: 0;
+  }
+}
+
+/* ---------- a direita: abas no lugar das molduras "Apuração" › "Horas do dia" ---------- */
+@app.nc-po-painel #rgnSticky.nc-po-com-abas > .t-Region-header:not(#nc-po-x):not(#nc-po-y) {
+  display: none;
+}
+
+@app.nc-po-painel #rgnSticky.nc-po-com-abas > .t-Region-bodyWrap > .t-Region-body:not(#nc-po-x):not(#nc-po-y) {
+  overflow: visible;   /* para as abas grudarem no alto da janela, não do corpo */
+  padding: 0 18px 18px;
+}
+
+@app.nc-po-painel .nc-po-lado-abas {
+  position: sticky;
+  top: 0;
+  z-index: 4;
+  display: flex;
+  gap: 4px;
+  margin: 0 -18px 16px;
+  padding: 14px 18px 12px;
+  background: #fff;
+  border-bottom: 1px solid var(--nc-nevoa);
+}
+
+@app.nc-po-painel .nc-po-lado-aba {
+  flex: 1 1 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 0 14px;
+  border: 1px solid var(--nc-nevoa);
+  border-radius: 12px;
+  background: #fff;
+  font: inherit;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--nc-grafite);
+  cursor: pointer;
+  transition: background-color .2s cubic-bezier(.16, 1, .3, 1), color .2s cubic-bezier(.16, 1, .3, 1);
+}
+
+@app.nc-po-painel .nc-po-lado-aba:hover {
+  background: var(--nc-off);
+  color: var(--nc-tinta);
+}
+
+@app.nc-po-painel .nc-po-lado-aba.is-on {
+  border-color: var(--nc-roxo);
+  background: var(--nc-roxo);
+  color: #fff;
+}
+
+@app.nc-po-painel .nc-po-lado-aba:focus-visible {
+  outline: 3px solid rgba(var(--nc-t-roxo-rgb, 81, 28, 118), .35);
+  outline-offset: 2px;
+}
+
+@app.nc-po-painel .nc-po-lado-aba .nc-po-ic {
+  width: 18px;
+  height: 18px;
+}
+
+/* a aba que não está aberta some */
+@app.nc-po-painel #rgnSticky [data-lado-p].nc-po-lado-fora:not(#nc-po-x):not(#nc-po-y) {
+  display: none;
+}
+
+/* "Horas do dia", "Resumo do período" e o saldo deixam de ser cartões dentro do cartão */
+@app.nc-po-painel #rgnSticky.nc-po-com-abas [data-lado-p]:not(#nc-po-x):not(#nc-po-y) {
+  margin: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+@app.nc-po-painel #rgnSticky.nc-po-com-abas [data-lado-p]:not(.nc-po-saldo) > .t-Region-header:not(#nc-po-x):not(#nc-po-y) {
+  display: none;
+}
+
+@app.nc-po-painel #rgnSticky.nc-po-com-abas [data-lado-p] > .t-Region-bodyWrap > .t-Region-body:not(#nc-po-x):not(#nc-po-y) {
+  padding: 0;
+  overflow: visible;
+}
+
+/* ---------- os pedidos de cada dia ---------- */
+@app.nc-po-ativo .nc-po-dped-n {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 2px;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--nc-roxo);
+}
+
+@app.nc-po-ativo .nc-po-dped-n .nc-po-ic {
+  width: 14px;
+  height: 14px;
+}
+
+@app.nc-po-painel .nc-po-dped {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 18px 0 0;
+}
+
+@app.nc-po-painel .nc-po-dped:empty {
+  display: none;
+}
+
+@app.nc-po-painel .nc-po-dped-i {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 8px 12px;
+  padding: 10px 12px;
+  border: 1px solid var(--nc-nevoa);
+  border-radius: 12px;
+  background: #fff;
+}
+
+@app.nc-po-painel .nc-po-dped-txt {
+  min-width: 0;
+}
+
+@app.nc-po-painel .nc-po-dped-txt small {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--nc-grafite);
+}
+
+@app.nc-po-painel .nc-po-dped-txt p {
+  margin: 2px 0 0;
+  font-size: 14.5px;
+  line-height: 1.4;
+  color: var(--nc-tinta);
+}
+
+@app.nc-po-painel .nc-po-dped-txt b {
+  font-weight: 800;
+  color: var(--nc-roxo);
+}
+
+@app.nc-po-painel .nc-po-dped-txt s {
+  color: var(--nc-cinza);
+}
+
+/* ---------- o saldo do banco de horas, como uma conta ---------- */
+@app.nc-po-painel #rgnSticky .nc-po-saldo:not(#nc-po-x):not(#nc-po-y) {
+  margin-top: 22px;
+  padding-top: 18px;
+  border-top: 1px solid var(--nc-nevoa);
+}
+
+@app.nc-po-painel #rgnSticky .nc-po-saldo > .t-Region-header:not(#nc-po-x):not(#nc-po-y) {
+  min-height: 0;
+  margin: 0 0 10px;
+  padding: 0;
+  border: 0;
+  background: none;
+  box-shadow: none;
+}
+
+@app.nc-po-painel .nc-po-sd-box {
+  margin-top: 12px;
+}
+
+@app.nc-po-painel .nc-po-sd-conta {
+  display: flex;
+  align-items: stretch;
+  gap: 8px;
+}
+
+@app.nc-po-painel .nc-po-sd {
+  flex: 1 1 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: var(--nc-off);
+}
+
+@app.nc-po-painel .nc-po-sd span {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--nc-grafite);
+}
+
+@app.nc-po-painel .nc-po-sd b {
+  font-size: 20px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  color: var(--nc-tinta);
+}
+
+@app.nc-po-painel .nc-po-sd.is-total {
+  background: rgba(var(--nc-t-roxo-rgb, 81, 28, 118), .08);
+}
+
+@app.nc-po-painel .nc-po-sd.is-total b {
+  color: var(--nc-roxo);
+}
+
+@app.nc-po-painel .nc-po-sd.is-neg b {
+  color: var(--nc-ruim);
+}
+
+@app.nc-po-painel .nc-po-sd-conta > i {
+  align-self: center;
+  font-style: normal;
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--nc-cinza);
+}
+
+@app.nc-po-painel .nc-po-sd-rem {
+  margin: 10px 0 0;
+  font-size: 13.5px;
+  color: var(--nc-grafite);
+}
+
+@app.nc-po-painel .nc-po-sd-rem b {
+  font-variant-numeric: tabular-nums;
+  color: var(--nc-tinta);
+}
+
+/* o dia já está escrito na aba ("Sáb, 01/03"): no seletor do dia saem o rótulo "Data" e a linha
+   do dia da semana, e as setas ficam na mesma linha da lista */
+@app.nc-po-painel #rgnSticky.nc-po-com-abas .nc-po-dianav:not(#nc-po-x):not(#nc-po-y) {
+  align-items: center;
+  margin: 0 0 14px;
+}
+
+@app.nc-po-painel #rgnSticky.nc-po-com-abas .nc-po-dianav :is(.t-Form-labelContainer, .nc-po-dianav-sem):not(#nc-po-x):not(#nc-po-y) {
+  display: none;
+}
+
+/* telas médias (tablet, notebook pequeno): sem a mesa, as duas colunas lado a lado ficavam
+   estreitas demais (as marcações empilhavam, as datas cortavam). Uma embaixo da outra: a lista
+   e, logo depois, o painel do dia com as abas. */
+@media (min-width: 641px) and (max-width: 1100px) {
+  @app.nc-po-painel .row.nc-po-mesa:not(#nc-po-x):not(#nc-po-y) {
+    flex-wrap: wrap;
+  }
+
+  @app.nc-po-painel .row.nc-po-mesa > .col:not(#nc-po-x):not(#nc-po-y) {
+    flex: 0 0 100%;
+    max-width: 100%;
+  }
+
+  @app.nc-po-painel .nc-po-mesa #rgnSticky.nc-po-lado:not(#nc-po-x):not(#nc-po-y) {
+    position: relative;
+    top: auto;
+    max-height: none;
+    overflow: visible;
+    margin-top: 16px;
+  }
+}
+
+/* sem a mesa (telas até 1100 px), as abas grudam logo abaixo do cabeçalho fixo da página */
+@media (max-width: 1100px) {
+  @app.nc-po-painel .nc-po-lado-abas:not(#nc-po-x):not(#nc-po-y) {
+    top: var(--nc-po-topo, 0px);
+  }
+}
+
+/* celular: no cartão do pedido do dia, o texto ocupa a linha toda; situação e "Abrir" embaixo */
+@media (max-width: 640px) {
+  @app.nc-po-painel .nc-po-dped-i:not(#nc-po-x):not(#nc-po-y) {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+
+  @app.nc-po-painel .nc-po-dped-txt:not(#nc-po-x):not(#nc-po-y) {
+    grid-column: 1 / -1;
+  }
+
+  @app.nc-po-painel .nc-po-dped-i .nc-po-ped-sit:not(#nc-po-x):not(#nc-po-y) {
+    justify-self: start;
+  }
+}
+
+/* ═══ [C13] A LINHA COMPACTA DO GESTOR (COMPUTADOR) ════════════════════════════════════════════
+   O gestor faz centenas de ajustes seguidos: no computador (a partir de 901 px), cada dia cabe
+   numa linha de ~58 px, com as 4 posições + "Incluir" lado a lado (antes quebravam em 2 ou 3
+   linhas e cada dia tinha 111 a 212 px — cabiam 2 ou 3 dias na tela; agora, 7 ou 8).
+     · data e situação estreitas; "1 pedido" vira um selo pequeno embaixo da situação;
+     · as marcações numa linha só, mais enxutas;
+     · "Ver horas" só com o ícone do relógio (a dica aparece ao passar o mouse);
+     · na mesa, a lista fica mais larga que o painel da direita (55% × 45%).
+   No celular e no tablet nada disto vale.
+   PODE MEXER: as larguras das colunas da linha (grid-template-columns) e o tamanho das marcações.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@media (min-width: 901px) {
+  @app.nc-po-ativo:not(.nc-po-tabela-on) .nc-po-dia:not(#nc-po-x):not(#nc-po-y) {
+    grid-template-columns: 44px 96px minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 8px 10px;
+    min-height: 0;
+    padding: 7px 10px 7px 12px;
+  }
+
+  @app.nc-po-ativo .nc-po-data b:not(#nc-po-x):not(#nc-po-y) {
+    font-size: 19px;
+  }
+
+  @app.nc-po-ativo .nc-po-sit-col:not(#nc-po-x):not(#nc-po-y) {
+    gap: 2px;
+  }
+
+  @app.nc-po-ativo .nc-po-sit:not(#nc-po-x):not(#nc-po-y) {
+    font-size: 12.5px;
+    line-height: 1.2;
+  }
+
+  @app.nc-po-ativo .nc-po-sit .nc-po-ic:not(#nc-po-x):not(#nc-po-y) {
+    width: 13px;
+    height: 13px;
+  }
+
+  @app.nc-po-ativo :is(.nc-po-extra, .nc-po-tipo):not(#nc-po-x):not(#nc-po-y) {
+    font-size: 11.5px;
+  }
+
+  @app.nc-po-ativo .nc-po-dped-n:not(#nc-po-x):not(#nc-po-y) {
+    margin-top: 0;
+    font-size: 11.5px;
+  }
+
+  /* as marcações numa linha só */
+  @app.nc-po-ativo .nc-po-marcas:not(#nc-po-x):not(#nc-po-y) {
+    flex-wrap: nowrap;
+    gap: 5px;
+    min-width: 0;
+  }
+
+  @app.nc-po-ativo .nc-po-marca:not(#nc-po-x):not(#nc-po-y) {
+    flex: 0 0 auto;
+    min-width: 62px;
+    min-height: 40px;
+    padding: 3px 8px 4px;
+    border-radius: 10px;
+  }
+
+  @app.nc-po-ativo .nc-po-marca small:not(#nc-po-x):not(#nc-po-y) {
+    font-size: 10.5px;
+    line-height: 1.15;
+  }
+
+  @app.nc-po-ativo .nc-po-marca b:not(#nc-po-x):not(#nc-po-y) {
+    font-size: 15px;
+    line-height: 1.15;
+  }
+
+  @app.nc-po-ativo .nc-po-marca i:not(#nc-po-x):not(#nc-po-y) {
+    font-size: 9.5px;
+    line-height: 1.1;
+  }
+
+  @app.nc-po-ativo .nc-po-marca--mais:not(#nc-po-x):not(#nc-po-y) {
+    flex-direction: row;
+    align-items: center;
+    gap: 3px;
+    min-width: 0;
+    padding: 0 9px;
+    font-size: 12.5px;
+  }
+
+  /* "Ver horas" só com o ícone */
+  @app.nc-po-ativo :is(.nc-po-horas, .nc-po-aberto):not(#nc-po-x):not(#nc-po-y) {
+    justify-content: center;
+    width: 38px;
+    min-height: 38px;
+    padding: 0;
+    border-radius: 50%;
+  }
+
+  @app.nc-po-ativo :is(.nc-po-horas, .nc-po-aberto) span:not(#nc-po-x):not(#nc-po-y) {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  @app.nc-po-ativo :is(.nc-po-horas, .nc-po-aberto) .nc-po-ic:not(#nc-po-x):not(#nc-po-y) {
+    width: 19px;
+    height: 19px;
+  }
+
+  @app.nc-po-ativo .nc-po-semana:not(#nc-po-x):not(#nc-po-y) {
+    margin: 10px 2px 2px;
+  }
+
+  @app.nc-po-ativo .nc-po-dias:not(#nc-po-x):not(#nc-po-y) {
+    gap: 5px;
+  }
+}
+
+/* na mesa, a lista mais larga que o painel da direita */
+@media (min-width: 1101px) and (min-height: 600px) {
+  @app.nc-po-painel:not(.nc-po-tabela-on) .row.nc-po-mesa > .col:has(> #marcacao):not(#nc-po-x):not(#nc-po-y) {
+    flex: 1.22 1 0;
+    width: auto;
+    max-width: none;
+  }
+
+  @app.nc-po-painel:not(.nc-po-tabela-on) .row.nc-po-mesa > .col:has(> #rgnSticky):not(#nc-po-x):not(#nc-po-y) {
+    flex: 1 1 0;
+    width: auto;
+    max-width: none;
+  }
+}
+
+/* [C13] mais dias por tela no computador: sem a legenda (o gestor já sabe), barra e linhas mais
+   baixas — o clique é com o mouse, não com o dedo */
+@media (min-width: 901px) {
+  @app.nc-po-ativo .nc-po-legenda:not(#nc-po-x):not(#nc-po-y) {
+    display: none;
+  }
+
+  @app.nc-po-ativo .nc-po-cab :is(.nc-po-f, .nc-po-prox, .nc-po-mn-bt):not(#nc-po-x):not(#nc-po-y) {
+    min-height: 34px;
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+
+  @app.nc-po-ativo .nc-po-cab :is(select, .t-Form-itemWrapper):not(#nc-po-x):not(#nc-po-y) {
+    min-height: 34px;
+    height: 34px;
+  }
+
+  @app.nc-po-ativo .nc-po-cab:not(#nc-po-x):not(#nc-po-y) {
+    gap: 6px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+  }
+
+  @app.nc-po-ativo .nc-po-cab-l2:not(#nc-po-x):not(#nc-po-y) {
+    padding-top: 6px;
+  }
+
+  @app.nc-po-ativo:not(.nc-po-tabela-on) .nc-po-dia:not(#nc-po-x):not(#nc-po-y) {
+    padding-top: 5px;
+    padding-bottom: 5px;
+  }
+
+  @app.nc-po-ativo .nc-po-marca:not(.nc-po-marca--mais):not(#nc-po-x):not(#nc-po-y) {
+    min-height: 36px;
+    padding-top: 2px;
+    padding-bottom: 3px;
+  }
+
+  @app.nc-po-ativo .nc-po-marca--mais:not(#nc-po-x):not(#nc-po-y) {
+    min-height: 36px;
+  }
+
+  @app.nc-po-ativo :is(.nc-po-horas, .nc-po-aberto):not(#nc-po-x):not(#nc-po-y) {
+    width: 34px;
+    min-height: 34px;
+    height: 34px;
+  }
+}
+
+/* dia raro com mais de 5 marcações (ex.: 8 posições): esse sim quebra em duas linhas, para não
+   passar por cima do botão das horas. Os outros continuam numa linha só. */
+@media (min-width: 901px) {
+  @app.nc-po-ativo .nc-po-marcas:has(> .nc-po-marca:nth-child(6)):not(#nc-po-x):not(#nc-po-y) {
+    flex-wrap: wrap;
+  }
+}
+
+/* ═══ [C14] AJUSTAR EM SEQUÊNCIA ══════════════════════════════════════════════════════════════
+   Montado pelo JS em [J14]. .nc-po-seq é o botão que começa a fila; .nc-po-fila, a barra do
+   estado (ajustando · pausada .is-pausada · concluída .is-fim).
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-po-ativo .nc-po-cab-l1:has(.nc-po-seq:not([hidden])) .nc-po-prox:not(#nc-po-x):not(#nc-po-y) {
+  margin-left: auto;
+}
+
+@app.nc-po-ativo .nc-po-seq {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 40px;
+  padding: 0 14px 0 11px;
+  border: 0;
+  border-radius: 12px;
+  background: var(--nc-roxo);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 800;
+  color: #fff;
+  cursor: pointer;
+}
+
+@app.nc-po-ativo .nc-po-seq:hover {
+  background: var(--nc-azul);
+}
+
+@app.nc-po-ativo .nc-po-seq[hidden] {
+  display: none;
+}
+
+@app.nc-po-ativo .nc-po-seq b {
+  padding: 0 7px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, .2);
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+
+@app.nc-po-ativo :is(.nc-po-seq, .nc-po-fila) .nc-po-ic {
+  width: 16px;
+  height: 16px;
+  fill: currentColor;
+}
+
+@app.nc-po-ativo .nc-po-seq:focus-visible {
+  outline: 3px solid rgba(var(--nc-t-roxo-rgb, 81, 28, 118), .35);
+  outline-offset: 2px;
+}
+
+@app.nc-po-ativo .nc-po-fila {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 12px;
+  padding: 8px 12px;
+  border-radius: 12px;
+  background: #F2ECF8;
+  font-size: 14px;
+  color: var(--nc-tinta);
+}
+
+@app.nc-po-ativo .nc-po-fila[hidden] {
+  display: none;
+}
+
+@app.nc-po-ativo .nc-po-fila > span {
+  flex: 1 1 auto;
+}
+
+@app.nc-po-ativo .nc-po-fila > .nc-po-ic {
+  color: var(--nc-roxo);
+}
+
+@app.nc-po-ativo .nc-po-fila.is-pausada {
+  background: #FFF4DE;
+}
+
+@app.nc-po-ativo .nc-po-fila.is-pausada > .nc-po-ic {
+  color: #6B4700;
+  fill: none;
+}
+
+@app.nc-po-ativo .nc-po-fila.is-fim {
+  background: #E4F4EA;
+}
+
+@app.nc-po-ativo .nc-po-fila.is-fim > .nc-po-ic {
+  color: #1E6B45;
+  fill: none;
+}
+
+@media (min-width: 901px) {
+  @app.nc-po-ativo .nc-po-cab .nc-po-seq:not(#nc-po-x):not(#nc-po-y) {
+    min-height: 34px;
+  }
+}
+
+/* ═══ FAIXA DA REGIÃO (padrão 03/10) ════════════════════════════════════════════════════════
+   Todo painel com título segue o cabeçalho de região da Skin: o título numa faixa que atravessa
+   o cartão de ponta a ponta, com a linha de 2px na cor de destaque do TEMA (var(--nc-rosa) — a
+   mesma da Skin; muda com os 14 temas). As margens negativas são o recuo de dentro do cartão:
+   mudou o recuo do cartão, mude aqui junto. Guia: brand/apex/MANUAL-APEX.md.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-po-painel .nc-po-passos > .nc-po-passos-tit:not(#nc-fx1):not(#nc-fx2):not(#nc-fx3) {
+  box-sizing: border-box;
+  width: calc(100% + 36px);
+  margin: -16px -18px 12px;
+  padding: 12px 18px 10px;
+  border-bottom: 2px solid var(--nc-rosa, #C95788);
+}
+
+/* ═══ [C15] AJUSTAR VÁRIOS DIAS (08/10) ══════════════════════════════════════════════════════
+   Montado pelo JS em [J3]: .nc-po-lote é o botão (por procuração) que abre a janela 715.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-po-ativo .nc-po-lote {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 40px;
+  padding: 0 14px 0 11px;
+  border: 1px solid var(--nc-borda-botao, rgba(81, 28, 118, .34));
+  border-radius: 12px;
+  background: #fff;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--nc-roxo);
+  cursor: pointer;
+}
+
+@app.nc-po-ativo .nc-po-lote:hover {
+  background: #F2ECF8;
+}
+
+@app.nc-po-ativo .nc-po-lote[hidden] {
+  display: none;
+}
+
+@app.nc-po-ativo .nc-po-lote .nc-po-ic {
+  width: 16px;
+  height: 16px;
+}
+
+@app.nc-po-ativo .nc-po-lote:focus-visible {
+  outline: 3px solid rgba(var(--nc-t-roxo-rgb, 81, 28, 118), .35);
+  outline-offset: 2px;
+}

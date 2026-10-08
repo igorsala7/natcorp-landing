@@ -1,0 +1,420 @@
+/* ╔════════════════════════════════════════════════════════════════════════════════════════╗
+   ║  NATCORP · REGISTROS EM CARTÕES  —  a "roupa" da tela (CSS)                              ║
+   ║  Vale para o SISTEMA TODO: todo Interactive Report e todo Classic Report de tabela       ║
+   ╚════════════════════════════════════════════════════════════════════════════════════════╝
+
+   Primeira vez num arquivo destes? Leia antes o manual: brand/apex/MANUAL-APEX.md (parte 1).
+
+   ── O QUE ESTE ARQUIVO FAZ ────────────────────────────────────────────────────────────────
+   Dá a aparência do seletor Tabela · Cartões e dos cartões (um por registro). Quem cria tudo
+   é o arquivo-irmão Natcorp_Registros.js; sem ele, este arquivo não faz nada (todas as regras
+   dependem da marca nc-reg que o JS põe na página). Pensado primeiro para o celular: uma
+   coluna de cartões; na tela larga, quantas couberem (mínimo 320px cada).
+
+   ── ONDE ELE ENTRA NO APEX ────────────────────────────────────────────────────────────────
+     DENTRO do Natcorp_Style_Min.css (a folha que todas as páginas de todas as aplicações já
+     carregam): o gerador (gerar-app.mjs, lista FOLHAS) junta este arquivo lá. Não há URL para
+     pôr nas páginas. Edite ESTE arquivo (.src.css) e rode o gerador; suba o Style_Min.
+
+   ── ÍNDICE ────────────────────────────────────────────────────────────────────────────────
+     [C1] O seletor Tabela · Cartões             ← [R6] do JS
+     [C2] A grade e o cartão                     ← [R5]
+     [C3] Os dados do cartão e o "Mais N dados"  ← [R5]
+     [C4] Celular
+
+   ── RECEITAS RÁPIDAS ──────────────────────────────────────────────────────────────────────
+     Quero cartões mais largos na tela grande     → [C2], o 320px de .nc-reg-grade.
+     Quero a foto maior                           → [C2], --nc-reg-foto (hoje 48px).
+*/
+
+/* ═══ [C1] O SELETOR TABELA · CARTÕES ═══════════════════════════════════════════════════════
+   Um controle segmentado, logo abaixo da pesquisa do relatório. O ativo em roxo cheio.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-reg .nc-reg-modos {
+  display: inline-flex;
+  gap: 2px;
+  margin: 10px 0 12px;
+  padding: 3px;
+  border-radius: 12px;
+  background: var(--nc-off);
+  box-shadow: inset 0 0 0 1px var(--nc-nevoa);
+}
+
+@app.nc-reg .nc-reg-modos button {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  height: 34px;
+  margin: 0;
+  padding: 0 14px;
+  border: 0;
+  border-radius: 9px;
+  background: transparent;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--nc-grafite);
+  cursor: pointer;
+}
+
+@app.nc-reg .nc-reg-modos button:hover {
+  background: #fff;
+  color: var(--nc-tinta);
+}
+
+@app.nc-reg .nc-reg-modos button[aria-pressed="true"] {
+  background: var(--nc-roxo);
+  color: #fff;
+}
+
+@app.nc-reg .nc-reg-modos button:focus-visible,
+@app.nc-reg .nc-reg-cartao:has(.nc-reg-tit:focus-visible) {
+  outline: 2px solid var(--nc-roxo);
+  outline-offset: 2px;
+}
+
+@app.nc-reg .nc-reg-ic {
+  width: 17px;
+  height: 17px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* em Cartões: a tabela daquele relatório (marcada pelo JS) e a cópia "grudenta" do cabeçalho
+   saem da vista; a paginação fica. O seletor e os cartões escondidos usam o atributo hidden. */
+@app.nc-reg .nc-reg-oculto:not(#nc-reg-x):not(#nc-reg-y),
+@app.nc-reg.nc-reg-fora-da-tabela .nc-sticky-header-clone:not(#nc-reg-x):not(#nc-reg-y),
+@app.nc-reg :is(.nc-reg-modos, .nc-reg-cartoes)[hidden]:not(#nc-reg-x):not(#nc-reg-y) {
+  display: none;
+}
+
+/* ═══ [C2] A GRADE E O CARTÃO ═══════════════════════════════════════════════════════════════
+   No alto do cartão: a foto, o nome (o link da linha, que cobre o cartão inteiro), o cargo e o
+   selo da situação. Embaixo, os destaques; por último, "Mais N dados".
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-reg .nc-reg-cartoes {
+  padding: 2px 2px 12px;
+}
+
+@app.nc-reg .nc-reg-grade {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 12px;
+}
+
+@app.nc-reg .nc-reg-grupo {
+  margin: 18px 2px 8px;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: normal;
+  color: var(--nc-tinta);
+}
+
+@app.nc-reg .nc-reg-grupo:first-child {
+  margin-top: 4px;
+}
+
+@app.nc-reg .nc-reg-cartao {
+  --nc-reg-foto: 48px;
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-content: start;
+  gap: 12px;
+  margin: 0;
+  padding: 14px 16px 12px;
+  border: 1px solid var(--nc-nevoa);
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: 0 1px 2px rgba(27, 18, 56, .04);
+  transition: border-color .15s, box-shadow .2s;
+}
+
+@app.nc-reg .nc-reg-cartao.tem-foto {
+  grid-template-columns: var(--nc-reg-foto) minmax(0, 1fr);
+  column-gap: 12px;
+}
+
+@app.nc-reg .nc-reg-cartao.tem-link {
+  cursor: pointer;
+}
+
+@app.nc-reg .nc-reg-cartao.tem-link:hover {
+  border-color: color-mix(in srgb, var(--nc-roxo) 35%, #fff);
+  box-shadow: 0 2px 4px rgba(27, 18, 56, .05), 0 12px 28px -14px rgba(var(--nc-t-roxo-rgb, 81, 28, 118), .28);
+}
+
+@app.nc-reg .nc-reg-foto {
+  grid-row: 1;
+  width: var(--nc-reg-foto);
+  height: var(--nc-reg-foto);
+  margin: 0;
+  border-radius: 50%;
+  background: var(--nc-off);
+  object-fit: cover;
+  box-shadow: 0 0 0 1px var(--nc-nevoa);
+}
+
+@app.nc-reg .nc-reg-cab {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 3px;
+  min-width: 0;
+}
+
+@app.nc-reg .nc-reg-tit {
+  display: -webkit-box;
+  overflow: hidden;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--nc-tinta);
+  text-decoration: none;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+/* o link do título cobre o cartão inteiro: tocar em qualquer lugar abre a ficha */
+@app.nc-reg .nc-reg-cartao.tem-link .nc-reg-tit::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border-radius: 14px;
+}
+
+@app.nc-reg .nc-reg-cartao.tem-link:hover .nc-reg-tit {
+  color: var(--nc-roxo);
+}
+
+@app.nc-reg .nc-reg-tit:focus-visible {
+  outline: 0;
+}
+
+@app.nc-reg .nc-reg-sub {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.35;
+  color: var(--nc-grafite);
+}
+
+@app.nc-reg .nc-reg-selo {
+  margin-top: 4px;
+  padding: 3px 9px;
+  border-radius: 999px;
+  background: var(--nc-off);
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.2;
+  color: var(--nc-grafite);
+}
+
+@app.nc-reg .nc-reg-selo[data-tom="bom"] {
+  background: color-mix(in srgb, var(--nc-bom) 12%, #fff);
+  color: var(--nc-bom);
+}
+
+@app.nc-reg .nc-reg-selo[data-tom="atencao"] {
+  background: color-mix(in srgb, var(--nc-alerta) 22%, #fff);
+  color: var(--nc-alerta-texto);
+}
+
+@app.nc-reg .nc-reg-selo[data-tom="fim"] {
+  background: var(--nc-nevoa2);
+  color: var(--nc-cinza);
+}
+
+/* ═══ [C3] OS DADOS DO CARTÃO E O "MAIS N DADOS" ════════════════════════════════════════════
+   Rótulo pequeno em cima, valor embaixo. Os destaques em duas colunas (o primeiro, que
+   costuma ser longo — o centro de custo —, ocupa a linha toda).
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-reg :is(.nc-reg-destaques, .nc-reg-mais) {
+  grid-column: 1 / -1;
+}
+
+@app.nc-reg .nc-reg-dados {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px 14px;
+  margin: 0;
+}
+
+@app.nc-reg .nc-reg-destaques {
+  padding-top: 12px;
+  border-top: 1px solid var(--nc-nevoa2);
+}
+
+/* valor longo (o JS marca com is-longo: mais de 30 letras) ocupa a linha inteira */
+@app.nc-reg .nc-reg-dados > .is-longo {
+  grid-column: 1 / -1;
+}
+
+@app.nc-reg .nc-reg-dados > div {
+  min-width: 0;
+}
+
+@app.nc-reg .nc-reg-dados dt {
+  margin: 0 0 1px;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--nc-cinza);
+}
+
+@app.nc-reg .nc-reg-dados dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+  font-size: 13.5px;
+  font-weight: 500;
+  line-height: 1.35;
+  color: var(--nc-tinta);
+}
+
+@app.nc-reg .nc-reg-dados dd small {
+  display: block;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--nc-grafite);
+}
+
+/* os links de dentro dos dados (ex.: a matrícula que abre os dados do colaborador) ficam por
+   cima do link do cartão: clicar neles faz o deles, não o da linha (04/10: e os botões também) */
+@app.nc-reg .nc-reg-dados :is(a, button) {
+  position: relative;
+  z-index: 2;
+}
+
+@app.nc-reg .nc-reg-dados dd img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* "Mais N dados": acima do link esticado, para abrir sem ir para a ficha */
+@app.nc-reg .nc-reg-mais {
+  position: relative;
+  z-index: 2;
+  margin: -2px -8px -4px;
+}
+
+@app.nc-reg .nc-reg-mais summary {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: max-content;
+  max-width: 100%;
+  min-height: 36px;
+  padding: 0 8px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--nc-roxo);
+  list-style: none;
+  cursor: pointer;
+}
+
+@app.nc-reg .nc-reg-mais summary::-webkit-details-marker {
+  display: none;
+}
+
+@app.nc-reg .nc-reg-mais summary:hover {
+  background: var(--nc-off);
+}
+
+@app.nc-reg .nc-reg-mais summary:focus-visible {
+  outline: 2px solid var(--nc-roxo);
+  outline-offset: 0;
+}
+
+@app.nc-reg .nc-reg-mais summary small {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--nc-cinza);
+}
+
+@app.nc-reg .nc-reg-mais summary .nc-reg-ic {
+  width: 15px;
+  height: 15px;
+  transition: transform .18s cubic-bezier(.2, .8, .2, 1);
+}
+
+@app.nc-reg .nc-reg-mais[open] summary .nc-reg-ic {
+  transform: rotate(180deg);
+}
+
+@app.nc-reg .nc-reg-sobra {
+  margin: 10px 8px 4px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--nc-cinza);
+}
+
+@app.nc-reg .nc-reg-mais .nc-reg-dados {
+  margin: 4px 8px 6px;
+  padding: 12px 0 0;
+  border-top: 1px dashed var(--nc-nevoa);
+  cursor: auto;
+}
+
+/* ═══ [C4] CELULAR ══════════════════════════════════════════════════════════════════════════ */
+@media (max-width: 640px) {
+  @app.nc-reg .nc-reg-modos {
+    display: flex;
+  }
+
+  @app.nc-reg .nc-reg-modos button {
+    flex: 1 1 0;
+    justify-content: center;
+  }
+
+  @app.nc-reg .nc-reg-grade {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 10px;
+  }
+
+  @app.nc-reg .nc-reg-cartao {
+    --nc-reg-foto: 44px;
+    padding: 12px 14px 10px;
+  }
+
+  /* no celular os dois botões ficam com o dedo: 40px de altura */
+  @app.nc-reg .nc-reg-modos button {
+    height: 40px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  @app.nc-reg :is(.nc-reg-cartao, .nc-reg-mais summary .nc-reg-ic) {
+    transition: none;
+  }
+}
+
+/* ═══ [C5] ARRASTAR PARA ROLAR ══════════════════════════════════════════════════════════════
+   A mãozinha onde dá para clicar e arrastar (o JS marca o lugar com nc-arrastavel, [R9]) e a
+   mão fechada enquanto arrasta. Os links e as barras do Gantt continuam com o cursor deles.
+   Enquanto arrasta, nada é selecionado como texto. Vale em todas as páginas (sem o nc-reg).
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@app .nc-arrastavel {
+  cursor: grab;
+}
+
+html.nc-arrastando,
+html.nc-arrastando * {
+  cursor: grabbing !important;
+  user-select: none !important;
+  -webkit-user-select: none !important;
+}
+
+/* "Abrindo os cartões…" enquanto o APEX troca para o relatório "Cartões" ([R6b] do JS) */
+@app.nc-reg .nc-reg-abrindo {
+  margin: 0;
+  padding: 24px 16px;
+  border: 1px dashed var(--nc-nevoa);
+  border-radius: 14px;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--nc-grafite);
+}

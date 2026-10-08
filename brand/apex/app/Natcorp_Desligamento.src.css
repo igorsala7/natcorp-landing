@@ -1,0 +1,1996 @@
+/* ╔════════════════════════════════════════════════════════════════════════════════════════╗
+   ║  NATCORP · REQUISIÇÃO DE DESLIGAMENTO  —  a "roupa" da tela (CSS)                         ║
+   ║  App 200 · Página 59                                                                     ║
+   ╚════════════════════════════════════════════════════════════════════════════════════════╝
+
+   Primeira vez num arquivo destes? Leia antes o manual: brand/apex/MANUAL-APEX.md (parte 1).
+
+   ── O QUE ESTE ARQUIVO FAZ ────────────────────────────────────────────────────────────────
+   Dá a aparência da página 59: cores, tamanhos, espaços, bordas, e como a tela se arruma no
+   computador e no celular. Ele NÃO muda nada de lugar: quem muda as coisas de lugar é o
+   arquivo-irmão Natcorp_Desligamento.js. Os dois trabalham juntos:
+     o JS monta "o cartão do colaborador"  →  este arquivo diz como o cartão se parece.
+   Sem o JS, este arquivo não faz nada (todas as regras dependem da marca nc-desl que o JS
+   põe na página). Tom do desenho: sereno — desligamento é um momento difícil; cor só onde
+   há informação (situação, aprovação, o que falta). Uso: 70% no computador.
+
+   ── ONDE ELE ENTRA NO APEX ────────────────────────────────────────────────────────────────
+     Página 59 › CSS › File URLs:   #WORKSPACE_IMAGES#Natcorp_Desligamento.css
+     CUIDADO: edite ESTE arquivo (Natcorp_Desligamento.src.css, a fonte) e gere o arquivo que
+     sobe com  node brand/apex/app/gerar-app.mjs  — o gerador troca @app pelo prefixo longo e
+     põe !important em toda linha. O Natcorp_Desligamento.css da pasta login/ é refeito a cada
+     geração: o que for mudado só nele se perde. (Manual, parte 2.)
+
+   ── ÍNDICE: as partes deste arquivo (Ctrl+F pelo código entre colchetes) ──────────────────
+     [C1] Regiões escondidas e colunas vazias      (o que o JS absorveu some da tela)
+     [C2] O alto: cartão do colaborador e ficha     ← montado pelo JS em [J3]
+     [C3] O formulário em 5 perguntas e as ajudas   ← montado pelo JS em [J5] e [J6]
+     [C4] A carta de desligamento                   ← montada pelo JS em [J7]
+     [C5] A barra do rodapé                         ← montada pelo JS em [J9]
+     [C6] A faixa da aprovação                      ← montada pelo JS em [J4]
+     [C7] Telas médias e celular                    (ajustes para telas menores)
+     [C8] Animações                                 (só para quem não pediu "menos movimento")
+     [C9] Criação: o alto vira uma faixa baixa      (quando a requisição ainda é nova)
+
+   ── RECEITAS RÁPIDAS ──────────────────────────────────────────────────────────────────────
+     Quero mudar uma cor
+       → use uma das cores da marca, pelo nome: var(--nc-roxo), var(--nc-grafite)… A lista
+         completa, com amostras, está no manual (parte 3). Assim a cor acompanha o tema que
+         o usuário escolheu em "Cores". Evite escrever cores soltas, como #511C76.
+     Quero aumentar ou diminuir um texto        → procure font-size na parte certa.
+     Quero mais ou menos espaço                  → padding (espaço por DENTRO da caixa) e
+                                                   margin (espaço por FORA, até a vizinha).
+     Algo ficou bom no computador e ruim no celular → [C7]: o que está dentro de
+                                                   @media (max-width: 767px) só vale no celular.
+
+   ── COMO LER UM ARQUIVO CSS EM 30 SEGUNDOS ────────────────────────────────────────────────
+     Cada regra tem duas partes:     QUEM { COMO; }
+       @app.nc-desl .nc-desl-topo {        ← QUEM: o "seletor", diz em que pedaço da tela vale
+         border-radius: 18px;              ← COMO: propriedade: valor;  (cantos arredondados)
+         background: #fff;                 ←       fundo branco
+       }
+     .nome-com-ponto       uma "classe": uma etiqueta posta num pedaço da tela (pelo APEX ou
+                           pelo JS). .nc-desl-topo é o cartão do alto.
+     @app                  atalho que dá prioridade às nossas regras sobre as do tema do APEX.
+                           No arquivo que sobe para o APEX ele aparece por extenso, como
+                           html body:is(.t-PageBody…):not(#nc-a1):not(#nc-a2) — é a mesma coisa.
+     :not(#nc-desl-x)…     peso extra, para vencer uma regra do tema. Pode ignorar ao ler.
+     !important            no arquivo que sobe, toda linha ganha um: é o mesmo "vencer o tema".
+     @media (max-width: 767px) { … }   as regras de dentro só valem em telas até 767px (celular).
+     var(--nc-roxo)        uma cor da marca, pelo nome (muda junto com o tema escolhido).
+     px                    pixels, o tamanho de um pontinho da tela. 16px é o texto normal.
+     Toda linha COMO termina em ;   e todo { é fechado por um }. Não apague esses sinais.
+*/
+
+/* ═══ [C1] REGIÕES ESCONDIDAS E COLUNAS VAZIAS ══════════════════════════════════════════════
+   As regiões do APEX cujo conteúdo o JS levou para o cartão do alto (e as linhas/colunas que
+   ficaram vazias) somem da tela. display: none = não aparece.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-desl .nc-desl-absorvida:not(#nc-desl-x):not(#nc-desl-y),
+@app.nc-desl .nc-desl-col-vazia:not(#nc-desl-x):not(#nc-desl-y),
+@app.nc-desl .row.nc-desl-linha-vazia:not(#nc-desl-x):not(#nc-desl-y) {
+  display: none;
+}
+
+/* ═══ [C2] O ALTO: CARTÃO DO COLABORADOR (à esquerda) E FICHA DA REQUISIÇÃO (à direita) ═════
+   Montado pelo JS em [J3]. Peças principais:
+     .nc-desl-topo     o cartão inteiro          .nc-desl-foto    a foto redonda
+     .nc-desl-nome     o nome completo           .nc-desl-social  "Nome social: …"
+     .nc-desl-fatos    a lista de fatos          .nc-desl-ticket  a ficha da requisição (direita)
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-desl .nc-desl-topo {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(220px, 280px);
+  gap: 0;
+  margin: 0 0 12px;
+  border: 1px solid var(--nc-nevoa);
+  border-radius: 18px;
+  background: #fff;
+  box-shadow: 0 14px 30px -24px rgba(var(--nc-t-azul-rgb, 44, 26, 99), .5);
+  overflow: hidden;
+}
+
+@app.nc-desl .nc-desl-quem {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  min-width: 0;
+  padding: 22px 24px;
+}
+
+@app.nc-desl .nc-desl-foto {
+  position: relative;
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 92px;
+  height: 92px;
+  border-radius: 50%;
+  background: var(--nc-nevoa2);
+  box-shadow: 0 0 0 4px #fff, 0 0 0 5px var(--nc-nevoa);
+  overflow: hidden;
+}
+
+@app.nc-desl .nc-desl-foto img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+@app.nc-desl .nc-desl-iniciais {
+  font-size: 30px;
+  font-weight: 800;
+  letter-spacing: .02em;
+  color: var(--nc-roxo);
+}
+
+@app.nc-desl .nc-desl-quem-txt {
+  display: grid;
+  flex: 1;
+  gap: 0;
+  min-width: 0;
+}
+
+@app.nc-desl .nc-desl-quem-txt > div:first-child {
+  min-width: 0;
+}
+
+@app.nc-desl .nc-desl-nome {
+  margin: 2px 0 0;
+  font-family: inherit;
+  font-size: 25px;
+  font-weight: 800;
+  line-height: 1.2;
+  letter-spacing: -.015em;
+  text-wrap: balance;
+  color: var(--nc-tinta);
+}
+
+/* o nome social, logo abaixo do nome (P59_NOME_SOCIAL) */
+@app.nc-desl .nc-desl-social {
+  margin: 2px 0 0;
+  font-size: 14px;
+  color: var(--nc-grafite);
+}
+
+@app.nc-desl .nc-desl-social b {
+  font-weight: 800;
+  color: var(--nc-roxo);
+}
+
+@app.nc-desl .nc-desl-meta {
+  margin: 4px 0 0;
+  font-size: 14px;
+  color: var(--nc-grafite);
+}
+
+@app.nc-desl .nc-desl-meta span {
+  margin: 0 4px;
+  color: var(--nc-cinza);
+}
+
+@app.nc-desl .nc-desl-resumo-linha {
+  margin: 12px 0 0;
+  font-size: 15px;
+  line-height: 1.45;
+  color: var(--nc-grafite);
+}
+
+@app.nc-desl .nc-desl-resumo-linha b {
+  font-weight: 800;
+  color: var(--nc-tinta);
+}
+
+@app.nc-desl .nc-desl-resumo-linha span {
+  margin: 0 3px;
+  color: var(--nc-cinza);
+}
+
+@app.nc-desl .nc-desl-fatos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 14px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+@app.nc-desl .nc-desl-fatos li {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: var(--nc-nevoa2);
+  font-size: 13.5px;
+  line-height: 1.3;
+  color: var(--nc-grafite);
+}
+
+@app.nc-desl .nc-desl-fatos b {
+  font-weight: 800;
+  color: var(--nc-tinta);
+}
+
+@app.nc-desl .nc-desl-fatos small {
+  margin-left: 2px;
+  font-size: 12.5px;
+  color: #6E6882;
+}
+
+@app.nc-desl .nc-desl-fatos .nc-desl-fato--atencao {
+  background: #FFF4DE;
+  color: #6B4700;
+}
+
+@app.nc-desl .nc-desl-fatos .nc-desl-fato--atencao small {
+  color: #6B4700;
+}
+
+@app.nc-desl .nc-desl-fatos .nc-desl-fato--destaque {
+  background: #FBEAF2;
+  color: #7A2A52 /*reserva*/;
+  color: oklch(from #7A2A52 l calc(c * var(--nc-t-croma, 1)) calc(h + var(--nc-t-giro, 0)));
+}
+
+@app.nc-desl .nc-desl-fatos .nc-desl-fato--destaque small {
+  color: #7A2A52 /*reserva*/;
+  color: oklch(from #7A2A52 l calc(c * var(--nc-t-croma, 1)) calc(h + var(--nc-t-giro, 0)));
+}
+
+@app.nc-desl .nc-desl-fatos svg,
+@app.nc-desl .nc-desl-ic {
+  flex: none;
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+@app.nc-desl .nc-desl-quem-acoes {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+}
+
+@app.nc-desl .nc-desl-quem {
+  position: relative;
+  padding-right: 72px;
+}
+
+/* o botão "dados do colaborador" (o do APEX), discreto no canto */
+@app.nc-desl .nc-desl-quem-acoes .t-Button:not(#nc-desl-x):not(#nc-desl-y) {
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: 1px solid var(--nc-borda-botao);
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: none;
+  color: var(--nc-roxo);
+}
+
+@app.nc-desl .nc-desl-quem-acoes .t-Button:not(#nc-desl-x):not(#nc-desl-y):hover {
+  border-color: var(--nc-roxo);
+  background: var(--nc-nevoa2);
+}
+
+@app.nc-desl .nc-desl-quem-acoes .t-Button .t-Icon {
+  color: var(--nc-roxo);
+}
+
+/* ---------- [C2] a ficha da requisição (à direita no alto) ---------- */
+@app.nc-desl .nc-desl-ticket {
+  display: grid;
+  align-content: start;
+  gap: 12px;
+  padding: 22px 22px 20px;
+  border-left: 1px solid var(--nc-nevoa);
+  background: #FBF9FD;
+}
+
+@app.nc-desl .nc-desl-ticket p {
+  margin: 0;
+}
+
+@app.nc-desl .nc-desl-ticket [data-slot="ticket"] {
+  display: grid;
+  gap: 6px;
+  justify-items: start;
+}
+
+@app.nc-desl .nc-desl-ticket-n {
+  font-size: 15px;
+  color: var(--nc-grafite);
+}
+
+@app.nc-desl .nc-desl-ticket-n b {
+  display: block;
+  font-size: 26px;
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: -.01em;
+  font-variant-numeric: tabular-nums;
+  color: var(--nc-roxo);
+}
+
+@app.nc-desl .nc-desl-ticket-n--nova {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--nc-roxo);
+}
+
+@app.nc-desl .nc-desl-ticket-data {
+  font-size: 13.5px;
+  color: var(--nc-grafite);
+}
+
+@app.nc-desl .nc-desl-sit {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 4px !important;
+  padding: 5px 12px 5px 10px;
+  border-radius: 999px;
+  font-size: 13.5px;
+  font-weight: 700;
+}
+
+@app.nc-desl .nc-desl-sit span {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+@app.nc-desl .nc-desl-sit--andamento { background: #EFE8F7; color: var(--nc-roxo); }
+@app.nc-desl .nc-desl-sit--ok { background: #E4F4EC; color: var(--nc-bom); }
+@app.nc-desl .nc-desl-sit--nao { background: #FBE9E9; color: #A32020; }
+@app.nc-desl .nc-desl-sit--pausa { background: #FFF4DE; color: #6B4700; }
+
+@app.nc-desl .nc-desl-mudar {
+  padding: 2px 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--nc-roxo);
+  text-decoration: underline;
+  text-decoration-color: rgba(var(--nc-t-roxo-rgb, 81, 28, 118), .35);
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+
+@app.nc-desl .nc-desl-mudar:hover {
+  text-decoration-color: currentColor;
+}
+
+@app.nc-desl .nc-desl-ticket-por {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding-top: 12px;
+  border-top: 1px solid var(--nc-nevoa);
+}
+
+@app.nc-desl .nc-desl-ticket-por[hidden] {
+  display: none;
+}
+
+@app.nc-desl .nc-desl-por-txt {
+  min-width: 0;
+  font-size: 13.5px;
+  line-height: 1.4;
+  color: var(--nc-grafite);
+}
+
+@app.nc-desl .nc-desl-por-txt b {
+  color: var(--nc-tinta);
+}
+
+@app.nc-desl .nc-desl-por-txt small {
+  font-size: 12.5px;
+  color: #6E6882;
+}
+
+@app.nc-desl .nc-desl-ticket-por .t-Button:not(#nc-desl-x):not(#nc-desl-y) {
+  flex: none;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border: 1px solid var(--nc-borda-botao);
+  border-radius: 10px;
+  background: #fff;
+  box-shadow: none;
+}
+
+@app.nc-desl .nc-desl-ticket-por .t-Button .t-Icon {
+  color: var(--nc-roxo);
+}
+
+/* a lista da situação (o item do APEX), aberta por "Alterar situação" */
+@app.nc-desl .nc-desl-sit-campo[hidden] {
+  display: none;
+}
+
+@app.nc-desl .nc-desl-sit-campo .t-Form-fieldContainer:not([style*="none"]) {
+  display: block;
+  margin: 0;
+  padding: 0;
+}
+
+@app.nc-desl .nc-desl-sit-campo :is(.t-Form-labelContainer, .t-Form-inputContainer) {
+  width: 100%;
+  max-width: none;
+  padding: 0;
+  float: none;
+  text-align: left;
+}
+
+@app.nc-desl .nc-desl-sit-campo .t-Form-label {
+  padding: 0 0 4px;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--nc-grafite);
+}
+
+/* ═══ [C3] O FORMULÁRIO EM 5 PERGUNTAS E AS AJUDAS ═════════════════════════════════════════
+   Montado pelo JS em [J5] (as seções) e [J6] (as ajudas). Peças principais:
+     .nc-desl-secao        cada pergunta (cartão)     .nc-desl-num     o número na bolinha
+     .nc-desl-secao-estado "Pronto" / "Falta 2"       .nc-desl-campo   cada campo do APEX
+     .nc-desl-extra        a coluna das ajudas, à direita dos campos
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-desl .t-Region.nc-desl-form.nc-desl-form--pronto:not(#nc-desl-x):not(#nc-desl-y) {
+  border: 0;
+  background: none;
+  box-shadow: none;
+}
+
+@app.nc-desl .t-Region.nc-desl-form.nc-desl-form--pronto > .t-Region-header {
+  display: none;
+}
+
+@app.nc-desl .t-Region.nc-desl-form.nc-desl-form--pronto > .t-Region-bodyWrap > .t-Region-body {
+  padding: 0;
+}
+
+@app.nc-desl .nc-desl-secoes {
+  display: grid;
+  gap: 14px;
+}
+
+@app.nc-desl .nc-desl-secao {
+  padding: 22px 24px 24px;
+  border: 1px solid var(--nc-nevoa);
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: 0 10px 24px -22px rgba(var(--nc-t-azul-rgb, 44, 26, 99), .5);
+}
+
+@app.nc-desl .nc-desl-secao-cab {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: start;
+  gap: 14px;
+  margin: 0 0 20px;
+}
+
+@app.nc-desl .nc-desl-num {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--nc-nevoa2);
+  font-size: 14px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  color: var(--nc-roxo);
+}
+
+@app.nc-desl .nc-desl-secao-tit h3 {
+  margin: 4px 0 0;
+  font-family: inherit;
+  font-size: 18px;
+  font-weight: 800;
+  line-height: 1.25;
+  letter-spacing: -.01em;
+  color: var(--nc-tinta);
+}
+
+@app.nc-desl .nc-desl-secao-tit p {
+  margin: 3px 0 0;
+  max-width: 70ch;
+  font-size: 14px;
+  line-height: 1.45;
+  color: var(--nc-grafite);
+}
+
+@app.nc-desl .nc-desl-secao-estado {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 4px;
+  font-size: 13px;
+  font-weight: 700;
+  white-space: nowrap;
+  color: var(--nc-cinza);
+}
+
+@app.nc-desl .nc-desl-secao-estado:empty {
+  display: none;
+}
+
+@app.nc-desl .nc-desl-secao-estado.is-ok { color: var(--nc-bom); }
+
+@app.nc-desl .nc-desl-secao-estado.is-falta {
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: #FFF4DE;
+  color: #6B4700;
+}
+
+/* o número vira um visto quando a seção está pronta */
+@app.nc-desl .nc-desl-secao:has(.nc-desl-secao-estado.is-ok) .nc-desl-num {
+  background: #E4F4EC;
+  color: var(--nc-bom);
+}
+
+/* corpo: campos à esquerda, a explicação à direita (computador) */
+@app.nc-desl .nc-desl-secao-corpo {
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+  gap: 20px 32px;
+  align-items: start;
+}
+
+@app.nc-desl .nc-desl-secao--porque .nc-desl-secao-corpo {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+@app.nc-desl .nc-desl-secao--porque .nc-desl-extra:empty,
+@app.nc-desl .nc-desl-extra:empty {
+  display: none;
+}
+
+@app.nc-desl .nc-desl-campos {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+  gap: 18px 20px;
+  align-content: start;
+}
+
+@app.nc-desl .nc-desl-secao--porque .nc-desl-campos {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+/* o contêiner do APEX, sem as colunas da grade dele */
+/* :not([style*="none"]): o campo que a ação dinâmica escondeu (display: none no próprio
+   contêiner) continua escondido — o !important daqui não pode vencer o hide do APEX */
+@app.nc-desl .nc-desl-campos .t-Form-fieldContainer.nc-desl-campo:not([style*="none"]),
+@app.nc-desl .nc-desl-reposicao .t-Form-fieldContainer.nc-desl-campo:not([style*="none"]),
+@app.nc-desl .nc-desl-reservado .t-Form-fieldContainer.nc-desl-campo:not([style*="none"]) {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+}
+
+@app.nc-desl .nc-desl-campo > :is(.t-Form-labelContainer, .t-Form-inputContainer) {
+  flex: none;
+  width: 100%;
+  max-width: none;
+  min-height: 0;
+  padding: 0;
+  float: none;
+  text-align: left;
+}
+
+@app.nc-desl .nc-desl-campo .t-Form-label {
+  display: block;
+  padding: 0 0 6px;
+  font-size: 13.5px;
+  font-weight: 700;
+  line-height: 1.35;
+  color: var(--nc-tinta);
+}
+
+@app.nc-desl .nc-desl-campo .t-Form-inputContainer :is(input:not([type="hidden"]), select, textarea) {
+  min-height: 44px;
+  border-radius: 10px;
+  font-size: 15px;
+}
+
+@app.nc-desl .nc-desl-campo--justificativa,
+@app.nc-desl .nc-desl-campo--obs {
+  grid-column: 1 / -1;
+}
+
+@app.nc-desl .nc-desl-campo--justificativa textarea {
+  min-height: 132px;
+  padding-bottom: 28px;
+  line-height: 1.5;
+}
+
+@app.nc-desl .nc-desl-campo--obs textarea {
+  min-height: 88px;
+  padding-bottom: 28px;
+  line-height: 1.5;
+}
+
+@app.nc-desl .nc-desl-campo .t-Form-inputContainer {
+  position: relative;
+}
+
+@app.nc-desl .nc-desl-contador {
+  position: absolute;
+  right: 12px;
+  bottom: 8px;
+  margin: 0;
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  color: #6E6882;
+  pointer-events: none;
+}
+
+@app.nc-desl .nc-desl-contador--perto {
+  color: #8A5A00;
+  font-weight: 700;
+}
+
+/* travado pelo APEX (situação, derivado pelo sistema): lido, não "desligado" */
+@app.nc-desl .nc-desl-campo.nc-desl-lido :is(input:not([type="hidden"]), select, textarea) {
+  border-color: transparent;
+  background: var(--nc-nevoa2);
+  box-shadow: none;
+  color: var(--nc-tinta);
+  opacity: 1;
+  cursor: default;
+  -webkit-text-fill-color: var(--nc-tinta);
+}
+
+@app.nc-desl .nc-desl-campo.nc-desl-lido select {
+  appearance: none;
+  background-image: none;
+}
+
+@app.nc-desl .nc-desl-campo.nc-desl-lido :is(.a-Button--popupLOV, .ui-datepicker-trigger, .a-Button--calendar, .t-Form-itemButton) {
+  display: none;
+}
+
+@app.nc-desl .t-Form-fieldContainer.nc-desl-campo.nc-desl-sem-valor:not(#nc-desl-x):not(#nc-desl-y) {
+  display: none;
+}
+
+/* ---------- [C3] ajuda 1 · o que a escolha significa (pergunta 2) ---------- */
+@app.nc-desl .nc-desl-traducao {
+  display: grid;
+  gap: 8px;
+  padding: 18px 20px;
+  border-radius: 14px;
+  background: #F7F3FB;
+}
+
+@app.nc-desl .nc-desl-traducao p {
+  margin: 0;
+}
+
+@app.nc-desl .nc-desl-traducao-tit {
+  font-size: 17px;
+  font-weight: 800;
+  line-height: 1.3;
+  color: var(--nc-tinta);
+}
+
+@app.nc-desl .nc-desl-traducao-mot {
+  font-size: 14.5px;
+  color: var(--nc-grafite);
+}
+
+@app.nc-desl .nc-desl-traducao-aviso {
+  padding-top: 10px !important;
+  border-top: 1px solid #E6DEF0;
+  font-size: 14.5px;
+  line-height: 1.5;
+  color: var(--nc-grafite);
+}
+
+@app.nc-desl .nc-desl-traducao-aviso b {
+  color: var(--nc-tinta);
+}
+
+@app.nc-desl .nc-desl-traducao-nota {
+  font-size: 13px;
+  line-height: 1.45;
+  color: #6E6882;
+}
+
+@app.nc-desl .nc-desl-traducao--vazia {
+  padding: 16px 18px;
+  border: 1px dashed #D9D1E6;
+  border-radius: 14px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--nc-grafite);
+}
+
+@app.nc-desl .nc-desl-cod {
+  display: inline-block;
+  margin-left: 4px;
+  padding: 1px 7px;
+  border-radius: 6px;
+  background: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  vertical-align: 2px;
+  color: var(--nc-grafite);
+  box-shadow: inset 0 0 0 1px #E3DDEC;
+}
+
+/* ---------- [C3] ajuda 2 · a linha do tempo do aviso (pergunta 3) ---------- */
+@app.nc-desl .nc-desl-linha {
+  display: flex;
+  align-items: flex-start;
+  margin: 0;
+  padding: 18px 20px;
+  border-radius: 14px;
+  background: #F7F3FB;
+  list-style: none;
+}
+
+@app.nc-desl .nc-desl-marco {
+  display: grid;
+  flex: none;
+  justify-items: start;
+  gap: 2px;
+  max-width: 45%;
+}
+
+@app.nc-desl .nc-desl-marco.is-fim {
+  justify-items: end;
+  text-align: right;
+}
+
+@app.nc-desl .nc-desl-marco-bola {
+  width: 14px;
+  height: 14px;
+  margin: 0 0 8px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: inset 0 0 0 3px var(--nc-roxo);
+}
+
+@app.nc-desl .nc-desl-marco.is-fim .nc-desl-marco-bola,
+@app.nc-desl .nc-desl-marco.is-unico .nc-desl-marco-bola {
+  background: var(--nc-roxo);
+}
+
+@app.nc-desl .nc-desl-marco-rot {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--nc-grafite);
+}
+
+@app.nc-desl .nc-desl-marco-data {
+  font-size: 18px;
+  font-weight: 800;
+  line-height: 1.25;
+  font-variant-numeric: tabular-nums;
+  color: var(--nc-tinta);
+}
+
+@app.nc-desl .nc-desl-marco-data--falta {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--nc-cinza);
+}
+
+@app.nc-desl .nc-desl-marco-dia {
+  font-size: 12.5px;
+  color: #6E6882;
+}
+
+/* o vão entre as datas: o fio, com os dias no meio */
+@app.nc-desl .nc-desl-vao {
+  position: relative;
+  display: flex;
+  flex: 1;
+  justify-content: center;
+  min-width: 60px;
+  height: 14px;
+  margin: 0 10px;
+}
+
+@app.nc-desl .nc-desl-vao::before {
+  content: "";
+  position: absolute;
+  top: 6px;
+  right: 0;
+  left: 0;
+  height: 2px;
+  border-radius: 2px;
+  background: repeating-linear-gradient(90deg, var(--nc-roxo) 0 6px, transparent 6px 10px);
+  opacity: .55;
+}
+
+@app.nc-desl .nc-desl-vao span {
+  position: relative;
+  top: 18px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: #fff;
+  font-size: 12.5px;
+  font-weight: 700;
+  white-space: nowrap;
+  color: var(--nc-roxo);
+  box-shadow: inset 0 0 0 1px #E3DDEC;
+}
+
+@app.nc-desl .nc-desl-vao span:empty {
+  display: none;
+}
+
+@app.nc-desl .nc-desl-vao.is-erro::before {
+  background: #C8342F;
+}
+
+@app.nc-desl .nc-desl-vao.is-erro span {
+  color: #A32020;
+}
+
+@app.nc-desl .nc-desl-linha-vazia {
+  margin: 0;
+  padding: 16px 18px;
+  border: 1px dashed #D9D1E6;
+  border-radius: 14px;
+  font-size: 14px;
+  color: var(--nc-grafite);
+}
+
+@app.nc-desl .nc-desl-linha-nota,
+@app.nc-desl .nc-desl-estimativa {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin: 12px 0 0;
+  font-size: 13.5px;
+  line-height: 1.45;
+  color: var(--nc-grafite);
+}
+
+@app.nc-desl .nc-desl-linha-nota svg,
+@app.nc-desl .nc-desl-estimativa svg {
+  margin-top: 1px;
+}
+
+@app.nc-desl .nc-desl-linha-nota--atencao { color: #6B4700; }
+@app.nc-desl .nc-desl-linha-nota--erro { color: #A32020; }
+
+@app.nc-desl .nc-desl-estimativa b {
+  color: var(--nc-tinta);
+}
+
+/* ---------- [C3] ajuda 3 · e depois: reposição e a pergunta que pesa (pergunta 4) ---------- */
+@app.nc-desl .nc-desl-secao--depois .nc-desl-campos {
+  grid-template-columns: minmax(0, 1fr);
+  gap: 16px;
+}
+
+@app.nc-desl .nc-desl-reposicao {
+  display: grid;
+  grid-template-columns: minmax(180px, 240px) minmax(0, 1fr);
+  align-items: end;
+  gap: 12px 18px;
+}
+
+@app.nc-desl .nc-desl-reposicao-acao {
+  display: grid;
+  gap: 6px;
+  justify-items: start;
+}
+
+@app.nc-desl .nc-desl-reposicao-acao .t-Button:not(#nc-desl-x):not(#nc-desl-y) {
+  height: 44px;
+  padding: 0 16px;
+  border-radius: 10px;
+  box-shadow: none;
+}
+
+@app.nc-desl .nc-desl-reposicao:not(.nc-desl-reposicao--sim) .nc-desl-reposicao-acao .t-Button:not(#nc-desl-x):not(#nc-desl-y) {
+  border: 1px solid var(--nc-borda-botao);
+  background: #fff;
+  color: var(--nc-roxo);
+}
+
+@app.nc-desl .nc-desl-reposicao:not(.nc-desl-reposicao--sim) .nc-desl-reposicao-acao .t-Button :is(.t-Icon, .t-Button-label) {
+  color: var(--nc-roxo);
+}
+
+@app.nc-desl .nc-desl-reposicao-nota {
+  margin: 0;
+  font-size: 12.5px;
+  color: #6E6882;
+}
+
+@app.nc-desl .nc-desl-reservado {
+  display: grid;
+  gap: 12px;
+  padding: 16px 18px;
+  border-radius: 14px;
+  background: #F7F3FB;
+}
+
+@app.nc-desl .nc-desl-reservado--sim {
+  background: #FBEAF2;
+}
+
+@app.nc-desl .nc-desl-reservado-cab {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin: 0;
+  font-size: 13.5px;
+  line-height: 1.45;
+  color: var(--nc-grafite);
+}
+
+@app.nc-desl .nc-desl-reservado-cab svg {
+  margin-top: 1px;
+  color: var(--nc-roxo);
+}
+
+@app.nc-desl .nc-desl-reservado .t-Form-fieldContainer .t-Form-inputContainer {
+  max-width: 240px;
+}
+
+@app.nc-desl .nc-desl-ilu {
+  display: block;
+  width: 100%;
+  max-width: 300px;
+  height: auto;
+  margin: 0 auto;
+  user-select: none;
+  pointer-events: none;
+}
+
+@app.nc-desl .nc-desl-secao--depois .nc-desl-extra {
+  align-self: center;
+}
+
+/* ═══ [C4] A CARTA DE DESLIGAMENTO ══════════════════════════════════════════════════════════
+   Montada pelo JS em [J7]. .nc-desl-carta é o bloco; .nc-desl-trilha, os passos.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+/* =====================================================================
+   A CARTA — no lugar que a hora dela pede
+   antes da aprovação: uma linha no fim, sem botões · aprovada: logo abaixo da
+   aprovação, com a trilha na horizontal · cancelada/reprovada: não aparece
+   ===================================================================== */
+@app.nc-desl .nc-desl-carta[hidden] {
+  display: none;
+}
+
+@app.nc-desl .nc-desl-carta {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: center;
+  gap: 0 28px;
+  padding: 20px 24px;
+  border: 1px solid var(--nc-nevoa);
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: 0 10px 24px -22px rgba(var(--nc-t-azul-rgb, 44, 26, 99), .5);
+}
+
+@app.nc-desl .nc-desl-carta .nc-desl-ilu--carta {
+  display: none;
+}
+
+@app.nc-desl .nc-desl-carta-corpo {
+  min-width: 0;
+}
+
+@app.nc-desl .nc-desl-carta-cab {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: 14px;
+}
+
+@app.nc-desl .nc-desl-carta-cab h3 {
+  margin: 0;
+  font-family: inherit;
+  font-size: 18px;
+  font-weight: 800;
+  line-height: 1.25;
+  letter-spacing: -.01em;
+  color: var(--nc-tinta);
+}
+
+@app.nc-desl .nc-desl-carta-cab p {
+  max-width: 70ch;
+  margin: 3px 0 0;
+  font-size: 14px;
+  line-height: 1.45;
+  color: var(--nc-grafite);
+}
+
+@app.nc-desl .nc-desl-carta-marca {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--nc-nevoa2);
+  color: var(--nc-roxo);
+}
+
+@app.nc-desl .nc-desl-carta-marca svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* antes da aprovação: só o aviso de quando libera */
+@app.nc-desl .nc-desl-carta--depois {
+  padding: 16px 20px;
+  border-style: dashed;
+  border-color: #DCD3E8;
+  background: #FBF9FD;
+  box-shadow: none;
+}
+
+@app.nc-desl .nc-desl-carta--depois .nc-desl-carta-cab h3 {
+  font-size: 16px;
+}
+
+/* sem trilha: só os dois botões do APEX, discretos, numa linha (ao alcance, sem prometer nada) */
+@app.nc-desl .nc-desl-carta--depois .nc-desl-trilha {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 12px 0 0 46px;
+}
+
+@app.nc-desl .nc-desl-carta--depois .nc-desl-passo {
+  display: contents;
+}
+
+@app.nc-desl .nc-desl-carta--depois .nc-desl-passo:not([data-passo="gerar"]):not([data-passo="anexar"]),
+@app.nc-desl .nc-desl-carta--depois .nc-desl-passo > [data-slot="txt"],
+@app.nc-desl .nc-desl-carta--depois .nc-desl-passo::before {
+  display: none;
+}
+
+@app.nc-desl .nc-desl-carta--depois .nc-desl-trilha-bt .t-Button:not(#nc-desl-x):not(#nc-desl-y) {
+  height: 36px;
+  padding: 0 12px;
+  font-size: 13.5px;
+}
+
+/* exigida antes de criar: destaque de pendência, a trilha só com o que vale agora */
+@app.nc-desl .nc-desl-carta--exigida {
+  border-color: #E8C77A;
+  background: #FFFBF1;
+  box-shadow: 0 12px 28px -24px rgba(138, 90, 0, .5);
+}
+
+@app.nc-desl .nc-desl-carta--exigida .nc-desl-carta-marca {
+  background: #FFF0CC;
+  color: #8A5A00;
+}
+
+@app.nc-desl .nc-desl-carta--exigida.nc-desl-carta--anexada {
+  border-color: #BFE3CF;
+  background: #F4FBF7;
+}
+
+@app.nc-desl .nc-desl-carta--exigida.nc-desl-carta--anexada .nc-desl-carta-marca {
+  background: var(--nc-bom);
+  color: #fff;
+}
+
+@app.nc-desl .nc-desl-carta--exigida :is([data-passo="aprovacao"], [data-passo="conferir"]) {
+  display: none;
+}
+
+@app.nc-desl .nc-desl-carta--exigida [data-passo="anexar"] {
+  padding-bottom: 0;
+}
+
+@app.nc-desl .nc-desl-carta--exigida [data-passo="anexar"]::before {
+  display: none;
+}
+
+/* aprovada: a tarefa do momento, logo abaixo da aprovação */
+@app.nc-desl .nc-desl-carta--agora {
+  grid-template-columns: 168px minmax(0, 1fr);
+  margin: 0 0 14px;
+  border-color: #D9CBEA;
+  box-shadow: 0 16px 34px -26px rgba(var(--nc-t-roxo-rgb, 81, 28, 118), .6);
+}
+
+@app.nc-desl .nc-desl-carta--agora .nc-desl-ilu--carta {
+  display: block;
+  max-width: 168px;
+}
+
+@app.nc-desl .nc-desl-carta--agora .nc-desl-carta-marca {
+  background: var(--nc-roxo);
+  color: #fff;
+}
+
+@app.nc-desl .nc-desl-carta--anexada .nc-desl-carta-marca {
+  background: var(--nc-bom);
+  color: #fff;
+}
+
+/* ---------- a trilha: cada botão debaixo do texto do seu passo ---------- */
+@app.nc-desl .nc-desl-trilha {
+  display: grid;
+  margin: 20px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+@app.nc-desl .nc-desl-passo {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  justify-items: start;
+  align-content: start;
+  gap: 10px;
+  padding: 0 0 20px 44px;
+}
+
+@app.nc-desl .nc-desl-passo:last-child {
+  padding-bottom: 0;
+}
+
+@app.nc-desl .nc-desl-passo > [data-slot="txt"] {
+  display: contents;
+}
+
+/* o fio entre os passos (vertical) */
+@app.nc-desl .nc-desl-passo:not(:last-child)::before {
+  content: "";
+  position: absolute;
+  top: 32px;
+  bottom: 4px;
+  left: 14px;
+  width: 2px;
+  border-radius: 2px;
+  background: #E3DDEC;
+}
+
+@app.nc-desl .nc-desl-passo.is-ok:not(:last-child)::before {
+  background: var(--nc-bom);
+}
+
+@app.nc-desl .nc-desl-passo-marca {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: inset 0 0 0 2px #D9D3E3;
+  color: var(--nc-cinza);
+}
+
+@app.nc-desl .nc-desl-passo-marca svg {
+  width: 15px;
+  height: 15px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+@app.nc-desl .nc-desl-passo.is-ok .nc-desl-passo-marca {
+  background: var(--nc-bom);
+  box-shadow: none;
+  color: #fff;
+}
+
+@app.nc-desl .nc-desl-passo.is-vez .nc-desl-passo-marca {
+  background: var(--nc-roxo);
+  box-shadow: 0 0 0 4px #EFE8F7;
+  color: #fff;
+}
+
+@app.nc-desl .nc-desl-passo.is-espera .nc-desl-passo-marca {
+  box-shadow: inset 0 0 0 2px #E0B04A;
+  color: #8A5A00;
+}
+
+@app.nc-desl .nc-desl-passo.is-nao .nc-desl-passo-marca {
+  background: #FBE9E9;
+  box-shadow: none;
+  color: #A32020;
+}
+
+@app.nc-desl .nc-desl-passo-txt {
+  min-width: 0;
+  padding-top: 4px;
+}
+
+@app.nc-desl .nc-desl-passo-txt p {
+  margin: 0;
+}
+
+@app.nc-desl .nc-desl-passo-tit {
+  font-size: 15px;
+  font-weight: 800;
+  line-height: 1.3;
+  color: var(--nc-tinta);
+}
+
+@app.nc-desl .nc-desl-passo.is-fila .nc-desl-passo-tit {
+  color: #5E5872;
+}
+
+@app.nc-desl .nc-desl-passo-sub {
+  max-width: 62ch;
+  margin-top: 2px !important;
+  font-size: 13.5px;
+  line-height: 1.45;
+  color: var(--nc-grafite);
+}
+
+@app.nc-desl .nc-desl-trilha-bt:empty {
+  display: none;
+}
+
+@app.nc-desl .nc-desl-trilha-bt .t-Button:not(#nc-desl-x):not(#nc-desl-y) {
+  height: 42px;
+  padding: 0 16px;
+  border-radius: 10px;
+  white-space: nowrap;
+  box-shadow: none;
+}
+
+/* o segundo botão (ou o que já foi feito) fica em segundo plano: um destaque por vez */
+@app.nc-desl .nc-desl-trilha-bt .t-Button.nc-desl-bt-sec:not(#nc-desl-x):not(#nc-desl-y) {
+  border: 1px solid var(--nc-borda-botao);
+  background: #fff;
+  color: var(--nc-roxo);
+}
+
+@app.nc-desl .nc-desl-trilha-bt .t-Button.nc-desl-bt-sec :is(.t-Icon, .t-Button-label) {
+  color: var(--nc-roxo);
+}
+
+@app.nc-desl .nc-desl-trilha-bt .t-Button.nc-desl-bt-sec:not(#nc-desl-x):not(#nc-desl-y):hover {
+  border-color: var(--nc-roxo);
+  background: var(--nc-nevoa2);
+}
+
+/* no computador, aprovada: os passos lado a lado, ligados por um fio horizontal */
+@media (min-width: 1101px) {
+  @app.nc-desl .nc-desl-carta--agora .nc-desl-trilha {
+    grid-auto-columns: minmax(0, 1fr);
+    grid-auto-flow: column;
+  }
+
+  @app.nc-desl .nc-desl-carta--agora .nc-desl-passo {
+    padding: 42px 20px 0 0;
+  }
+
+  @app.nc-desl .nc-desl-carta--agora .nc-desl-passo:not(:last-child)::before {
+    top: 14px;
+    right: 8px;
+    bottom: auto;
+    left: 40px;
+    width: auto;
+    height: 2px;
+  }
+}
+
+/* sem Salvar (requisição só para leitura): o Voltar fica no alto, onde já estava */
+@app.nc-desl .t-ButtonRegion.nc-desl-acoes.nc-desl-acoes--leitura:not(#nc-desl-x):not(#nc-desl-y) {
+  position: static;
+  margin: 0 0 12px;
+  padding: 0;
+  border: 0;
+  background: none;
+  box-shadow: none;
+}
+
+/* ═══ [C5] A BARRA DO RODAPÉ: Voltar, o que falta e Salvar, sempre à vista ═════════════════
+   Montada pelo JS em [J9]. .nc-desl-acoes é a barra; .nc-desl-falta, cada campo que falta.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-desl .t-ButtonRegion.nc-desl-acoes:not(#nc-desl-x):not(#nc-desl-y) {
+  position: sticky;
+  bottom: 0;
+  z-index: 20;
+  margin: 16px 0 0;
+  padding: 12px 16px;
+  border: 1px solid var(--nc-nevoa);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, .96);
+  box-shadow: 0 -12px 28px -22px rgba(var(--nc-t-azul-rgb, 44, 26, 99), .55);
+}
+
+@app.nc-desl .t-ButtonRegion.nc-desl-acoes .t-ButtonRegion-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 16px;
+}
+
+@app.nc-desl .t-ButtonRegion.nc-desl-acoes .t-ButtonRegion-col--left { order: 1; flex: none; width: auto; }
+@app.nc-desl .t-ButtonRegion.nc-desl-acoes .t-ButtonRegion-col--content { order: 2; flex: 1 1 260px; }
+@app.nc-desl .t-ButtonRegion.nc-desl-acoes .t-ButtonRegion-col--right { order: 3; flex: none; width: auto; }
+
+@app.nc-desl .t-ButtonRegion.nc-desl-acoes .t-ButtonRegion-col--content .t-ButtonRegion-buttons:empty {
+  display: none;
+}
+
+@app.nc-desl .t-ButtonRegion.nc-desl-acoes .t-Button {
+  height: 46px;
+  padding: 0 22px;
+  border-radius: 12px;
+  font-size: 15px;
+}
+
+@app.nc-desl .nc-desl-status {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 8px;
+  font-size: 14px;
+  color: var(--nc-grafite);
+}
+
+@app.nc-desl .nc-desl-status-rot {
+  font-weight: 700;
+  color: #6B4700;
+}
+
+@app.nc-desl .nc-desl-falta {
+  padding: 4px 10px;
+  border: 0;
+  border-radius: 999px;
+  background: #FFF4DE;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  color: #6B4700;
+  cursor: pointer;
+}
+
+@app.nc-desl .nc-desl-falta:hover {
+  background: #FDE9C2;
+}
+
+@app.nc-desl .nc-desl-status-ok {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 700;
+  color: var(--nc-bom);
+}
+
+/* o sticky precisa que ninguém acima dele seja "caixa de rolagem" */
+@app.nc-desl :is(.t-Body, .t-Body-main, .t-Body-content),
+@app.nc-desl .t-Body-contentInner > .container {
+  overflow: clip;
+}
+
+/* foco visível em tudo que é nosso */
+@app.nc-desl :is(.nc-desl-mudar, .nc-desl-falta, .nc-desl-caminho-ver):focus-visible {
+  outline: 2px solid var(--nc-roxo);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+/* ═══ [C6] A FAIXA DA APROVAÇÃO (a mesma da Requisição de Pessoal) ═════════════════════════
+   Montada pelo JS em [J4]. .nc-desl-caminho é a faixa; .nc-desl-ap, cada aprovador:
+   .is-ok aprovou · .is-nao reprovou · .is-vez aguardando · .is-fila na fila.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-desl .t-Region.nc-desl-aprovadores .t-Report-report,
+@app.nc-desl .t-Region.nc-desl-aprovadores > .t-Region-header {
+  display: none;
+}
+
+@app.nc-desl .t-Region.nc-desl-aprovadores:not(#nc-desl-x):not(#nc-desl-y) {
+  margin: 0 0 14px;
+  border: 0;
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: inset 0 0 0 1px var(--nc-nevoa), 0 10px 24px -22px rgba(var(--nc-t-azul-rgb, 44, 26, 99), .5);
+}
+
+@app.nc-desl .t-Region.nc-desl-aprovadores[hidden] {
+  display: none;
+}
+
+@app.nc-desl .t-Region.nc-desl-aprovadores > .t-Region-bodyWrap > .t-Region-body {
+  padding: 14px 18px;
+}
+
+@app.nc-desl .nc-desl-caminho {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px 26px;
+}
+
+@app.nc-desl .nc-desl-caminho-cab {
+  display: grid;
+  gap: 2px;
+  min-width: 170px;
+  padding-right: 22px;
+  border-right: 1px solid var(--nc-nevoa);
+}
+
+@app.nc-desl .nc-desl-caminho-cab p {
+  margin: 0;
+}
+
+@app.nc-desl .nc-desl-caminho-rot {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--nc-grafite);
+}
+
+@app.nc-desl .nc-desl-caminho-resumo {
+  font-size: 14.5px;
+  color: var(--nc-grafite);
+}
+
+@app.nc-desl .nc-desl-caminho-resumo b {
+  color: var(--nc-tinta);
+}
+
+@app.nc-desl .nc-desl-caminho--vez .nc-desl-caminho-resumo b:last-child { color: #8A5A00; }
+@app.nc-desl .nc-desl-caminho--ok .nc-desl-caminho-resumo b { color: var(--nc-bom); }
+@app.nc-desl .nc-desl-caminho--nao .nc-desl-caminho-resumo b { color: #A32020; }
+
+@app.nc-desl .nc-desl-caminho-ver {
+  display: none;
+}
+
+/* os passos em linha, ligados por um fio */
+@app.nc-desl .nc-desl-passos-ap {
+  display: flex;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  overflow-x: auto;
+  list-style: none;
+  scrollbar-width: thin;
+}
+
+@app.nc-desl .nc-desl-ap {
+  position: relative;
+  display: flex;
+  flex: 1 1 0;
+  flex-direction: column;
+  align-items: center;
+  min-width: 96px;
+  padding: 0 4px;
+  text-align: center;
+}
+
+/* o fio até o próximo: do centro deste ao centro do próximo */
+@app.nc-desl .nc-desl-ap:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  top: 13px;
+  left: calc(50% + 17px);
+  right: calc(-50% + 17px);
+  height: 2px;
+  border-radius: 2px;
+  background: #E3DDEC;
+}
+
+@app.nc-desl .nc-desl-ap.is-ok:not(:last-child)::after {
+  background: var(--nc-bom);
+}
+
+@app.nc-desl .nc-desl-ap-marca {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  margin: 0 0 6px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: inset 0 0 0 2px #D9D3E3;
+}
+
+@app.nc-desl .nc-desl-ap-marca svg {
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: #fff;
+  stroke-width: 2.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+@app.nc-desl .nc-desl-ap.is-ok .nc-desl-ap-marca { background: var(--nc-bom); box-shadow: none; }
+@app.nc-desl .nc-desl-ap.is-nao .nc-desl-ap-marca { background: #C0392B; box-shadow: none; }
+@app.nc-desl .nc-desl-ap.is-vez .nc-desl-ap-marca { background: #E0A100; box-shadow: 0 0 0 5px rgba(224, 161, 0, .18); }
+
+@app.nc-desl .nc-desl-ap-texto {
+  display: grid;
+  justify-items: center;
+  gap: 1px;
+  min-width: 0;
+  max-width: 100%;
+}
+
+@app.nc-desl .nc-desl-ap-nome {
+  max-width: 100%;
+  overflow: hidden;
+  font-size: 13.5px;
+  font-weight: 800;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--nc-tinta);
+}
+
+@app.nc-desl .nc-desl-ap-estado {
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  color: var(--nc-grafite);
+}
+
+@app.nc-desl .nc-desl-ap.is-ok .nc-desl-ap-estado { color: var(--nc-bom); }
+@app.nc-desl .nc-desl-ap.is-nao .nc-desl-ap-estado { color: #A32020; font-weight: 700; }
+@app.nc-desl .nc-desl-ap.is-vez .nc-desl-ap-estado { color: #8A5A00; font-weight: 700; }
+@app.nc-desl .nc-desl-ap.is-fila :is(.nc-desl-ap-nome, .nc-desl-ap-estado) { color: #8A8497; }
+
+/* o link da pessoa: a lupa pequena ao lado do estado */
+@app.nc-desl .nc-desl-ap a.nc-desl-ap-link:not(#nc-desl-x):not(#nc-desl-y) {
+  position: static;
+  margin-top: 3px !important;
+  display: inline-grid;
+  place-items: center;
+  width: 22px;
+  min-width: 0;
+  height: 22px;
+  margin: 0;
+  padding: 0;
+  border: 1px solid var(--nc-nevoa);
+  border-radius: 7px;
+  background: #fff;
+  box-shadow: none;
+  font-size: 11px;
+  color: var(--nc-roxo);
+}
+
+@app.nc-desl .nc-desl-ap a.nc-desl-ap-link .t-Icon {
+  font-size: 11px;
+}
+
+/* a decisão à direita */
+@app.nc-desl .nc-desl-decisao-botoes {
+  display: flex;
+  gap: 8px;
+}
+
+@app.nc-desl .nc-desl-decisao-botoes .t-Button:not(#nc-desl-x):not(#nc-desl-y) {
+  height: 42px;
+  margin: 0;
+  padding: 0 20px;
+  border-radius: 12px;
+  font-size: 14.5px;
+}
+
+@app.nc-desl .nc-desl-decisao-botoes .t-Button.nc-desl-aprovar:not(#nc-desl-x):not(#nc-desl-y) {
+  border: 0;
+  background: var(--nc-bom);
+  color: #fff;
+}
+
+@app.nc-desl .nc-desl-decisao-botoes .t-Button.nc-desl-reprovar:not(#nc-desl-x):not(#nc-desl-y) {
+  border: 1.5px solid #E7B7B7;
+  background: #fff;
+  box-shadow: none;
+  color: #A32020;
+}
+
+@app.nc-desl .nc-desl-decisao-botoes .t-Button :is(.t-Icon, .t-Button-label) {
+  color: inherit;
+}
+
+/* é a vez de quem vê: a faixa ganha um contorno âmbar */
+@app.nc-desl .t-Region.nc-desl-aprovadores:has(.nc-desl-caminho--vez):not(#nc-desl-x):not(#nc-desl-y) {
+  box-shadow: inset 0 0 0 1.5px #EBC45A, 0 10px 24px -22px rgba(138, 90, 0, .5);
+}
+
+@app.nc-desl .nc-desl-ap-just {
+  grid-column: 1 / -1;
+  margin: 2px 0 0;
+  padding: 8px 12px;
+  border-left: 0;
+  border-radius: 10px;
+  background: #FDF0F0;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--nc-tinta);
+}
+
+@media (max-width: 1100px) {
+  @app.nc-desl .nc-desl-caminho {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+
+  @app.nc-desl .nc-desl-passos-ap {
+    grid-column: 1 / -1;
+    grid-row: 2;
+  }
+
+  @app.nc-desl .nc-desl-caminho-cab {
+    padding-right: 0;
+    border-right: 0;
+  }
+}
+
+/* celular: só o resumo e a decisão; o caminho abre por "Ver o caminho" */
+@media (max-width: 767px) {
+  @app.nc-desl .nc-desl-caminho {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  @app.nc-desl .nc-desl-caminho-cab {
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    min-width: 0;
+  }
+
+  @app.nc-desl .nc-desl-caminho-rot {
+    grid-column: 1;
+  }
+
+  @app.nc-desl .nc-desl-caminho-resumo {
+    grid-column: 1;
+  }
+
+  @app.nc-desl .nc-desl-caminho-ver {
+    display: inline-flex;
+    grid-column: 2;
+    grid-row: 1 / span 2;
+    align-items: center;
+    height: 34px;
+    padding: 0 12px;
+    border: 1px solid var(--nc-nevoa);
+    border-radius: 10px;
+    background: #fff;
+    font: inherit;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--nc-roxo);
+  }
+
+  @app.nc-desl .t-Region.nc-desl-aprovadores:not(.nc-desl-ap-aberto) .nc-desl-passos-ap {
+    display: none;
+  }
+
+  @app.nc-desl .nc-desl-passos-ap {
+    grid-row: auto;
+  }
+
+  @app.nc-desl .nc-desl-decisao-botoes .t-Button:not(#nc-desl-x):not(#nc-desl-y) {
+    flex: 1 1 0;
+  }
+}
+
+/* ═══ [C7] TELAS MÉDIAS E CELULAR ═══════════════════════════════════════════════════════════
+   Ajustes para telas menores. O que está dentro de  @media (max-width: 1100px)  vale em
+   notebooks pequenos e tablets; dentro de  @media (max-width: 767px), só no celular.
+   Em geral: o que era lado a lado passa a ficar um embaixo do outro.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+/* ---------- telas médias ---------- */
+@media (max-width: 1100px) {
+  @app.nc-desl .nc-desl-secao-corpo,
+  @app.nc-desl .nc-desl-carta--agora {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  @app.nc-desl .nc-desl-secao--depois .nc-desl-extra,
+  @app.nc-desl .nc-desl-carta--agora .nc-desl-ilu--carta {
+    display: none;
+  }
+}
+
+/* ---------- celular (30%) ---------- */
+@media (max-width: 767px) {
+  @app.nc-desl .nc-desl-topo {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  @app.nc-desl .nc-desl-quem {
+    gap: 14px;
+    padding: 18px 64px 16px 16px;
+  }
+
+  @app.nc-desl .nc-desl-foto {
+    width: 64px;
+    height: 64px;
+  }
+
+  @app.nc-desl .nc-desl-iniciais {
+    font-size: 22px;
+  }
+
+  @app.nc-desl .nc-desl-nome {
+    font-size: 21px;
+  }
+
+  @app.nc-desl .nc-desl-quem-acoes {
+    top: 14px;
+    right: 14px;
+  }
+
+  @app.nc-desl .nc-desl-ticket {
+    grid-template-columns: minmax(0, 1fr);
+    padding: 14px 16px 16px;
+    border-top: 1px solid var(--nc-nevoa);
+    border-left: 0;
+  }
+
+  @app.nc-desl .nc-desl-ticket [data-slot="ticket"] {
+    grid-template-columns: auto auto;
+    align-items: center;
+    justify-content: start;
+    gap: 4px 12px;
+  }
+
+  @app.nc-desl .nc-desl-ticket-n b {
+    display: inline;
+    font-size: 20px;
+  }
+
+  @app.nc-desl .nc-desl-secao {
+    padding: 18px 16px 20px;
+  }
+
+  @app.nc-desl .nc-desl-secao-cab {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+
+  @app.nc-desl .nc-desl-secao-estado {
+    grid-column: 2;
+    margin-top: -4px;
+  }
+
+  @app.nc-desl .nc-desl-campos {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  @app.nc-desl .nc-desl-reposicao {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  @app.nc-desl .nc-desl-linha {
+    flex-direction: column;
+    gap: 0;
+  }
+
+  @app.nc-desl .nc-desl-marco,
+  @app.nc-desl .nc-desl-marco.is-fim {
+    max-width: none;
+    justify-items: start;
+    text-align: left;
+  }
+
+  @app.nc-desl .nc-desl-vao {
+    justify-content: flex-start;
+    height: 44px;
+    margin: 4px 0 4px 6px;
+  }
+
+  @app.nc-desl .nc-desl-vao::before {
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: auto;
+    width: 2px;
+    height: auto;
+    background: repeating-linear-gradient(180deg, var(--nc-roxo) 0 6px, transparent 6px 10px);
+  }
+
+  @app.nc-desl .nc-desl-vao span {
+    top: 11px;
+    left: 18px;
+  }
+
+  @app.nc-desl .nc-desl-carta {
+    padding: 16px;
+  }
+
+  @app.nc-desl .nc-desl-trilha-bt {
+    width: 100%;
+  }
+
+  @app.nc-desl .nc-desl-trilha-bt .t-Button:not(#nc-desl-x):not(#nc-desl-y) {
+    width: 100%;
+  }
+
+  @app.nc-desl .t-ButtonRegion.nc-desl-acoes:not(#nc-desl-x):not(#nc-desl-y) {
+    margin: 12px -4px 0;
+    border-radius: 14px 14px 0 0;
+  }
+
+  @app.nc-desl .t-ButtonRegion.nc-desl-acoes .t-ButtonRegion-col--content {
+    order: 0;
+    flex-basis: 100%;
+  }
+
+  @app.nc-desl .t-ButtonRegion.nc-desl-acoes .t-ButtonRegion-col--right {
+    flex: 1;
+  }
+
+  @app.nc-desl .t-ButtonRegion.nc-desl-acoes .t-ButtonRegion-col--right .t-Button {
+    width: 100%;
+  }
+}
+
+/* ═══ [C8] ANIMAÇÕES ════════════════════════════════════════════════════════════════════════
+   Transições suaves (cores que mudam devagar). Só para quem NÃO pediu "reduzir movimento" nas
+   configurações do computador ou celular — por acessibilidade.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@media (prefers-reduced-motion: no-preference) {
+  @app.nc-desl .nc-desl-secao-estado,
+  @app.nc-desl .nc-desl-num {
+    transition: background-color .25s ease-out, color .25s ease-out;
+  }
+}
+
+@app.nc-desl .nc-desl-caminho--fim .nc-desl-caminho-resumo b {
+  color: #A32020;
+}
+
+/* criação: seção inteira escondida pelo APEX, e o ícone no lugar da foto */
+@app.nc-desl .nc-desl-secao[hidden] {
+  display: none;
+}
+
+@app.nc-desl .nc-desl-ic--foto {
+  width: 36px;
+  height: 36px;
+  stroke-width: 1.6;
+}
+
+/* popup de lista e calendário: o campo e o botão como uma peça só (mesma altura, cantos
+   arredondados só nas pontas de fora) */
+@app.nc-desl .nc-desl-campo :is(.apex-item-group--popup-lov, .t-Form-itemWrapper:has(> .ui-datepicker-trigger)):not([style*="none"]) {
+  display: flex;
+  align-items: stretch;
+  width: 100%;
+}
+
+@app.nc-desl .nc-desl-campo:not(.nc-desl-lido) .apex-item-group--popup-lov > input:not(#nc-desl-x):not(#nc-desl-y),
+@app.nc-desl .nc-desl-campo:not(.nc-desl-lido) .t-Form-itemWrapper > input:has(+ .ui-datepicker-trigger):not(#nc-desl-x):not(#nc-desl-y) {
+  flex: 1;
+  min-width: 0;
+  border-radius: 10px 0 0 10px;
+}
+
+@app.nc-desl .nc-desl-campo :is(.a-Button--popupLOV, .ui-datepicker-trigger):not(#nc-desl-x):not(#nc-desl-y) {
+  flex: none;
+  width: 44px;
+  height: auto;
+  min-height: 44px;
+  margin: 0 0 0 -1px;
+  border-radius: 0 10px 10px 0;
+}
+
+/* na criação: o campo travado diz por quê (preenchido pelo sistema / espera as respostas) */
+@app.nc-desl .nc-desl-nota-sis {
+  margin: 6px 0 0;
+  font-size: 12.5px;
+  line-height: 1.4;
+  color: #6E6882;
+}
+
+@app.nc-desl .t-Form-fieldContainer.nc-desl-campo.nc-desl-sem-controle:not(#nc-desl-x):not(#nc-desl-y) {
+  display: none;
+}
+
+/* seção sem painel ao lado (quem, por que): os campos usam a largura toda */
+@app.nc-desl .nc-desl-secao-corpo:has(> .nc-desl-extra:empty) {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+/* ═══ [C9] CRIAÇÃO: O ALTO VIRA UMA FAIXA BAIXA ══════════════════════════════════════════════
+   Numa requisição nova ainda não há foto nem ficha: o cartão do alto fica baixo e simples.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-desl .nc-desl-topo.nc-desl-topo--criacao {
+  grid-template-columns: minmax(0, 1fr);
+  box-shadow: none;
+}
+
+@app.nc-desl .nc-desl-topo--criacao .nc-desl-ticket {
+  display: none;
+}
+
+@app.nc-desl .nc-desl-topo--criacao .nc-desl-quem {
+  gap: 14px;
+  padding: 14px 20px;
+}
+
+@app.nc-desl .nc-desl-topo--criacao .nc-desl-foto {
+  width: 48px;
+  height: 48px;
+  box-shadow: none;
+}
+
+@app.nc-desl .nc-desl-topo--criacao .nc-desl-iniciais {
+  font-size: 17px;
+}
+
+@app.nc-desl .nc-desl-topo--criacao .nc-desl-ic--foto {
+  width: 24px;
+  height: 24px;
+}
+
+@app.nc-desl .nc-desl-topo--criacao .nc-desl-nome {
+  margin: 0;
+  font-size: 19px;
+}
+
+@app.nc-desl .nc-desl-topo--criacao .nc-desl-meta {
+  margin-top: 2px;
+  font-size: 13.5px;
+}
+
+@app.nc-desl .nc-desl-topo--criacao .nc-desl-resumo-linha {
+  margin-top: 4px;
+  font-size: 14px;
+}
+
+@app.nc-desl .nc-desl-topo--criacao .nc-desl-fatos:empty {
+  display: none;
+}
+
+/* Tipo de Contrato abre a linha dos dados do contrato (com Data de Contrato e Prorrogação) */
+@app.nc-desl .nc-desl-campos > .nc-desl-campo--ind-contrato-1 {
+  grid-column-start: 1;
+}
+
+/* passo cujo botão a página não mostra agora: sai da trilha */
+@app.nc-desl .nc-desl-passo.nc-desl-passo--sem:not(#nc-desl-x):not(#nc-desl-y) {
+  display: none;
+}
+
+/* ═══ FAIXA DA REGIÃO (padrão 03/10) ════════════════════════════════════════════════════════
+   Todo painel com título segue o cabeçalho de região da Skin: o título numa faixa que atravessa
+   o cartão de ponta a ponta, com a linha de 2px na cor de destaque do TEMA (var(--nc-rosa) — a
+   mesma da Skin; muda com os 14 temas). As margens negativas são o recuo de dentro do cartão:
+   mudou o recuo do cartão, mude aqui junto. Guia: brand/apex/MANUAL-APEX.md.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-desl .nc-desl-secao > .nc-desl-secao-cab:not(#nc-fx1):not(#nc-fx2):not(#nc-fx3) {
+  box-sizing: border-box;
+  width: calc(100% + 48px);
+  margin: -22px -24px 18px;
+  padding: 12px 24px 10px;
+  border-bottom: 2px solid var(--nc-rosa, #C95788);
+}
+@app.nc-desl .nc-desl-caminho > .nc-desl-caminho-rot:not(#nc-fx1):not(#nc-fx2):not(#nc-fx3) {
+  box-sizing: border-box;
+  width: calc(100% + 36px);
+  margin: -14px -18px 2px;
+  padding: 12px 18px 10px;
+  border-bottom: 2px solid var(--nc-rosa, #C95788);
+  grid-column: 1 / -1;
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.3;
+}

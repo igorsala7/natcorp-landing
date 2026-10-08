@@ -1,0 +1,1044 @@
+/* ╔════════════════════════════════════════════════════════════════════════════════════════╗
+   ║  NATCORP · REQUISIÇÃO DE ESCALA PARA COLABORADOR  —  a "roupa" da tela (CSS)             ║
+   ║  App 9503 · Página 179 · a janela "Criar/Editar: Requisição Escala para Colaborador"     ║
+   ╚════════════════════════════════════════════════════════════════════════════════════════╝
+
+   Primeira vez num arquivo destes? Leia antes o manual: brand/apex/MANUAL-APEX.md (parte 1).
+
+   ── O QUE ESTE ARQUIVO FAZ ────────────────────────────────────────────────────────────────
+   Dá a aparência da janela: cores, tamanhos, espaços, bordas, e como ela se arruma no
+   computador e no celular. Ele NÃO muda nada de lugar: quem muda as coisas de lugar é o
+   arquivo-irmão Natcorp_Escala.js. Os dois trabalham juntos:
+     o JS monta "os 5 passos"  →  este arquivo diz como os passos se parecem.
+   Sem o JS, este arquivo não faz nada (todas as regras dependem da marca nc-esc que o JS põe
+   na página). Público: gestores e colaboradores com pouca prática — passos numerados (o mesmo
+   desenho do Desligamento), escolhas grandes no lugar de "Não/Sim", e o rodapé dizendo o que
+   falta.
+
+   ── ONDE ELE ENTRA NO APEX ────────────────────────────────────────────────────────────────
+     Página 179 › CSS › File URLs:   #WORKSPACE_IMAGES#Natcorp_Escala.css
+     Este é o arquivo-FONTE (Natcorp_Escala.src.css). O arquivo que sobe (Natcorp_Escala.css) é gerado
+     a partir dele pelo gerar-app.mjs, que escreve o @app por extenso e põe os !important:
+     edite ESTE arquivo, não o gerado (o caminho completo está no manual, parte 2).
+
+   ── REGRA DE OURO DESTA PÁGINA ────────────────────────────────────────────────────────────
+   Nada aqui põe "display" (aparecer/sumir) no que as AÇÕES DINÂMICAS mostram e escondem: o
+   botão Criar e os blocos dos campos. Motivo: o arquivo que sobe ganha !important em toda
+   linha, e isso venceria o "esconder" das ações dinâmicas do APEX — o botão apareceria quando
+   não devia.
+
+   ── ÍNDICE: as partes deste arquivo (Ctrl+F pelo código entre colchetes) ──────────────────
+     [C1] Peças gerais                          (o que some, os ícones, a aba única)
+     [C2] A abertura                            ← montada pelo JS em [J3]
+     [C3] O pedido gravado                      ← montado pelo JS em [J5]
+     [C4] A aprovação                           ← montada pelo JS em [J6]
+     [C5] Os passos e os campos                 ← montados pelo JS em [J3], [J4] e [J8]
+     [C6] As escolhas em cartões                ← montadas pelo JS em [J4]
+     [C7] O período e os avisos                 ← montados pelo JS em [J8]
+     [C8] O rodapé                              ← montado pelo JS em [J7]
+     [C9] Celular e "menos movimento"           (ajustes para telas pequenas)
+
+   ── RECEITAS RÁPIDAS ──────────────────────────────────────────────────────────────────────
+     Quero mudar uma cor
+       → use uma das cores da marca, pelo nome: var(--nc-roxo), var(--nc-grafite)… A lista
+         completa, com amostras, está no manual (parte 3). Assim a cor acompanha o tema que
+         o usuário escolheu em "Cores". Evite escrever cores soltas, como #511C76.
+     Quero mudar as cores do selo da situação (aprovado/recusado…)  → [C3], nc-esc-sit--…
+     Quero aumentar ou diminuir um texto        → procure font-size na parte certa.
+     Quero mais ou menos espaço                  → padding (espaço por DENTRO da caixa) e
+                                                   margin (espaço por FORA, até a vizinha).
+     Algo ficou bom no computador e ruim no celular → [C9]: o que está dentro de
+                                                   @media (max-width: 640px) só vale no celular.
+
+   ── COMO LER UM ARQUIVO CSS EM 30 SEGUNDOS ────────────────────────────────────────────────
+     Cada regra tem duas partes:     QUEM { COMO; }
+       @app.nc-esc .nc-esc-topo {
+         display: flex;         ← põe as peças lado a lado
+         align-items: center;   ← alinha as peças pelo meio, na altura
+       }
+       (a primeira linha é o QUEM: o "seletor", diz em que pedaço da tela a regra vale;
+        as de dentro são o COMO:  propriedade: valor;)
+     .nome-com-ponto       uma "classe": uma etiqueta posta num pedaço da tela (pelo APEX ou
+                           pelo JS). .nc-esc-topo é a abertura no alto da janela.
+     @app                  atalho que dá prioridade às nossas regras sobre as do tema do APEX.
+                           No arquivo que sobe para o APEX ele aparece por extenso, como
+                           html body:is(.t-PageBody…):not(#nc-a1):not(#nc-a2) — é a mesma coisa.
+     :not(#nc-…-x)…        peso extra, para vencer uma regra do tema. Pode ignorar ao ler.
+     !important            no arquivo que sobe, toda linha ganha um: é o mesmo "vencer o tema".
+     @media (max-width: 640px) { … }   as regras de dentro só valem em telas até 640px (celular).
+     var(--nc-roxo)        uma cor da marca, pelo nome (muda junto com o tema escolhido).
+     px                    pixels, o tamanho de um pontinho da tela. 16px é o texto normal.
+     Toda linha COMO termina em ;   e todo { é fechado por um }. Não apague esses sinais.
+*/
+
+/* ═══ [C1] PEÇAS GERAIS ═════════════════════════════════════════════════════════════════════
+   • o que o JS mandou esconder (.nc-esc-fora: a grade vazia do APEX, a barra de abas com uma
+     aba só). .nc-esc-oculto não é mais posto pelo JS (04/10: só a página esconde item).
+     display: none = não aparece;
+   • o tamanho e o traço dos ícones (.nc-esc-svg);
+   • a cor do texto selecionado com o mouse (::selection).
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-esc .nc-esc-fora:not(#nc-esc-x):not(#nc-esc-y),
+@app.nc-esc .nc-esc-campo.nc-esc-oculto:not(#nc-esc-x):not(#nc-esc-y) {
+  display: none;
+}
+
+@app.nc-esc .nc-esc-svg {
+  flex: none;
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.9;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+@app.nc-esc ::selection {
+  background: rgba(var(--nc-t-rosa-rgb, 201, 87, 136), .24);
+}
+
+/* a aba única "Escala" some junto com a barra de abas; o painel ganha a largura toda */
+@app.nc-esc .apex-rds-container.nc-esc-fora + * {
+  margin-top: 0;
+}
+
+/* ═══ [C2] A ABERTURA ═══════════════════════════════════════════════════════════════════════
+   Montada pelo JS em [J3]. "Novo pedido de escala · Em 5 passos…": .nc-esc-topo é o bloco,
+   .nc-esc-topo-ic o ícone redondo.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-esc .nc-esc-topo {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin: 0 0 16px;
+}
+
+@app.nc-esc .nc-esc-topo-ic {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, var(--nc-roxo, #511C76) 0%, var(--nc-ameixa, #9A408A) 100%);
+  color: #fff;
+  box-shadow: 0 10px 20px -14px rgba(var(--nc-t-roxo-rgb, 81, 28, 118), .9);
+}
+
+@app.nc-esc .nc-esc-topo-ic .nc-esc-svg {
+  width: 24px;
+  height: 24px;
+}
+
+@app.nc-esc .nc-esc-topo h2:not(#nc-esc-x):not(#nc-esc-y) {
+  margin: 0;
+  padding: 0;
+  font-size: 20px;
+  font-weight: 800;
+  line-height: 1.2;
+  letter-spacing: -.015em;
+  color: var(--nc-tinta);
+}
+
+@app.nc-esc .nc-esc-topo p {
+  margin: 3px 0 0;
+  font-size: 14px;
+  line-height: 1.45;
+  color: var(--nc-grafite);
+}
+
+@app.nc-esc .nc-esc-ast {
+  font-weight: 800;
+  color: var(--nc-ruim);
+}
+
+/* ═══ [C3] O PEDIDO GRAVADO: NÚMERO, DATA E SITUAÇÃO ════════════════════════════════════════
+   Montado pelo JS em [J5], no lugar da região "Requisição". Peças principais:
+     .nc-esc-pedido   o cabeçalho inteiro       .nc-esc-sit   o selo da situação
+     o selo muda de cor:  --bom aprovado (verde) · --ruim recusado/cancelado (vermelho) ·
+                          --atencao suspenso (âmbar) · sem sufixo, em andamento (lilás)
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-esc .nc-esc-pedido {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px 14px;
+  margin: 0 0 14px;
+  padding: 16px 18px;
+  border: 1px solid var(--nc-nevoa);
+  border-radius: 16px;
+  background: linear-gradient(135deg, #FBF8FE 0%, #F4EEFA 60%, #FBEEF4 100%);
+}
+
+@app.nc-esc .nc-esc-pedido-txt h2:not(#nc-esc-x):not(#nc-esc-y) {
+  margin: 0;
+  padding: 0;
+  font-size: 19px;
+  font-weight: 800;
+  line-height: 1.2;
+  letter-spacing: -.015em;
+  font-variant-numeric: tabular-nums;
+  color: var(--nc-tinta);
+}
+
+@app.nc-esc .nc-esc-pedido-txt p {
+  margin: 3px 0 0;
+  font-size: 13.5px;
+  color: var(--nc-grafite);
+}
+
+@app.nc-esc .nc-esc-pedido-txt b {
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  color: var(--nc-tinta);
+}
+
+@app.nc-esc .nc-esc-pedido-sit {
+  display: grid;
+  justify-items: end;
+  gap: 3px;
+}
+
+@app.nc-esc .nc-esc-sit {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 5px 12px 5px 10px;
+  border-radius: 999px;
+  background: #F1EDF7;
+  font-size: 13.5px;
+  font-weight: 800;
+  color: var(--nc-roxo);
+}
+
+@app.nc-esc .nc-esc-sit i {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+@app.nc-esc .nc-esc-sit--bom { background: #E6F4EC; color: #14553A; }
+@app.nc-esc .nc-esc-sit--ruim { background: #FDECEE; color: #9B2432; }
+@app.nc-esc .nc-esc-sit--atencao { background: #FFF4DA; color: #6E4400; }
+
+@app.nc-esc .nc-esc-sit-desde {
+  font-size: 12.5px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--nc-cinza);
+}
+
+/* a Situação continua o item do APEX, pequeno, na linha de baixo do cabeçalho */
+@app.nc-esc .nc-esc-pedido-ctl {
+  grid-column: 1 / -1;
+  padding-top: 12px;
+  border-top: 1px dashed #DCD3E8;
+}
+
+@app.nc-esc .nc-esc-pedido-ctl .t-Form-fieldContainer:not([style*="none"]):not(#nc-esc-x):not(#nc-esc-y) {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 12px;
+  float: none;
+  width: auto;
+  max-width: none;
+  margin: 0;
+  padding: 0;
+}
+
+@app.nc-esc .nc-esc-pedido-ctl :is(.t-Form-labelContainer, .t-Form-inputContainer):not(#nc-esc-x):not(#nc-esc-y) {
+  flex: none;
+  float: none;
+  width: auto;
+  max-width: none;
+  min-height: 0;
+  padding: 0;
+}
+
+@app.nc-esc .nc-esc-pedido-ctl .t-Form-label:not(#nc-esc-x):not(#nc-esc-y) {
+  padding: 0;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--nc-grafite);
+}
+
+@app.nc-esc .nc-esc-pedido-ctl select:not(#nc-esc-x):not(#nc-esc-y) {
+  min-width: 200px;
+  height: 38px;
+  font-size: 14px;
+}
+
+/* ═══ [C4] A APROVAÇÃO: NO FIM DO FORMULÁRIO, NO LUGAR DA ABA ═══════════════════════════════
+   Montada pelo JS em [J6]. .nc-esc-aprov é o bloco; .nc-esc-aprov-item, cada aprovador:
+   --bom aprovou · --ruim reprovou · --atencao aguardando.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-esc .nc-esc-aprov {
+  padding: 18px 20px 20px;
+  border: 1px solid var(--nc-nevoa);
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: 0 10px 24px -22px rgba(var(--nc-t-azul-rgb, 44, 26, 99), .5);
+}
+
+@app.nc-esc .nc-esc-aprov-cab {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: start;
+  gap: 12px;
+  margin: 0 0 14px;
+}
+
+@app.nc-esc .nc-esc-aprov-ic {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #EFEAF6;
+  color: var(--nc-roxo);
+}
+
+@app.nc-esc .nc-esc-aprov-cab h3:not(#nc-esc-x):not(#nc-esc-y) {
+  margin: 4px 0 0;
+  padding: 0;
+  font-size: 17px;
+  font-weight: 800;
+  line-height: 1.25;
+  color: var(--nc-tinta);
+}
+
+@app.nc-esc .nc-esc-aprov-cab p {
+  margin: 3px 0 0;
+  font-size: 13.5px;
+  color: var(--nc-grafite);
+}
+
+@app.nc-esc .nc-esc-aprov-lista:not(#nc-esc-x):not(#nc-esc-y) {
+  display: grid;
+  gap: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+@app.nc-esc .nc-esc-aprov-item {
+  position: relative;
+  display: grid;
+  grid-template-columns: 32px minmax(0, 1fr);
+  gap: 12px;
+  margin: 0;
+  padding: 0 0 14px;
+}
+
+/* a linha que liga um aprovador ao próximo */
+@app.nc-esc .nc-esc-aprov-item + .nc-esc-aprov-item::before {
+  content: "";
+  position: absolute;
+  top: -14px;
+  left: 15px;
+  width: 2px;
+  height: 14px;
+  background: #E4DDEE;
+}
+
+@app.nc-esc .nc-esc-aprov-marca {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #FFF4DA;
+  color: #9A6200;
+}
+
+@app.nc-esc .nc-esc-aprov-marca .nc-esc-svg {
+  width: 16px;
+  height: 16px;
+  stroke-width: 2.4;
+}
+
+@app.nc-esc .nc-esc-aprov-item--bom .nc-esc-aprov-marca { background: #1F7A52; color: #fff; }
+@app.nc-esc .nc-esc-aprov-item--ruim .nc-esc-aprov-marca { background: #B8323F; color: #fff; }
+
+@app.nc-esc .nc-esc-aprov-txt {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+  padding-top: 5px;
+}
+
+@app.nc-esc .nc-esc-aprov-txt b {
+  font-size: 14.5px;
+  font-weight: 800;
+  color: var(--nc-tinta);
+}
+
+@app.nc-esc .nc-esc-aprov-txt > span {
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+  color: var(--nc-grafite);
+}
+
+@app.nc-esc .nc-esc-aprov-status {
+  font-weight: 800;
+}
+
+@app.nc-esc .nc-esc-aprov-item--bom .nc-esc-aprov-status { color: #14553A; }
+@app.nc-esc .nc-esc-aprov-item--ruim .nc-esc-aprov-status { color: #9B2432; }
+@app.nc-esc .nc-esc-aprov-item--atencao .nc-esc-aprov-status { color: #6E4400; }
+
+@app.nc-esc .nc-esc-aprov-txt q {
+  margin-top: 4px;
+  padding: 8px 12px;
+  border-radius: 10px;
+  background: #FBF9FE;
+  font-size: 13.5px;
+  font-style: normal;
+  line-height: 1.45;
+  color: var(--nc-tinta);
+  quotes: none;
+}
+
+@app.nc-esc .nc-esc-aprov-vazio {
+  margin: 0;
+  font-size: 14px;
+  color: var(--nc-grafite);
+}
+
+/* ═══ [C5] OS PASSOS E OS CAMPOS ════════════════════════════════════════════════════════════
+   Montados pelo JS em [J3] (os passos), [J4] (rótulos e ajudas) e [J8] (o estado). Peças:
+     .nc-esc-passo          cada passo (cartão)       .nc-esc-num     o número na bolinha
+     .nc-esc-passo-estado   "Pronto" / "Falta 2"      .nc-esc-campo   cada campo do APEX
+     .nc-esc-ajuda          a frase de ajuda embaixo do campo
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-esc .nc-esc-passos {
+  display: grid;
+  gap: 12px;
+}
+
+@app.nc-esc .nc-esc-passo {
+  padding: 18px 20px 20px;
+  border: 1px solid var(--nc-nevoa);
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: 0 10px 24px -22px rgba(var(--nc-t-azul-rgb, 44, 26, 99), .5);
+}
+
+@app.nc-esc .nc-esc-passo-cab {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: start;
+  gap: 12px;
+  margin: 0 0 16px;
+}
+
+@app.nc-esc .nc-esc-num {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #EFEAF6;
+  font-size: 14px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  color: var(--nc-roxo);
+}
+
+@app.nc-esc .nc-esc-passo:has(.nc-esc-passo-estado.is-ok) .nc-esc-num {
+  background: #E4F4EC;
+  color: var(--nc-bom);
+}
+
+@app.nc-esc .nc-esc-passo-tit h3:not(#nc-esc-x):not(#nc-esc-y) {
+  margin: 4px 0 0;
+  padding: 0;
+  font-size: 17px;
+  font-weight: 800;
+  line-height: 1.25;
+  letter-spacing: -.01em;
+  color: var(--nc-tinta);
+}
+
+@app.nc-esc .nc-esc-passo-tit p {
+  margin: 3px 0 0;
+  font-size: 13.5px;
+  line-height: 1.45;
+  color: var(--nc-grafite);
+}
+
+@app.nc-esc .nc-esc-passo-estado {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 5px;
+  font-size: 12.5px;
+  font-weight: 800;
+  white-space: nowrap;
+  color: var(--nc-cinza);
+}
+
+@app.nc-esc .nc-esc-passo-estado:empty {
+  display: none;
+}
+
+@app.nc-esc .nc-esc-passo-estado.is-ok {
+  color: var(--nc-bom);
+}
+
+@app.nc-esc .nc-esc-passo-estado.is-ok .nc-esc-svg {
+  width: 15px;
+  height: 15px;
+  stroke-width: 2.6;
+}
+
+@app.nc-esc .nc-esc-passo-estado.is-falta {
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: #FFF4DE;
+  color: #6B4700;
+}
+
+/* os campos: duas colunas no computador, uma no celular */
+@app.nc-esc .nc-esc-campos {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px 18px;
+}
+
+@app.nc-esc .nc-esc-campos > :is(.nc-esc-escolha, .nc-esc-campo--justificativa, .nc-esc-campo--cod_local_trab, .nc-esc-campo--ccusto_plantao, .nc-esc-campo--mot_alt, .nc-esc-periodo, .nc-esc-aviso) {
+  grid-column: 1 / -1;
+}
+
+/* rótulo em cima, campo inteiro — só em quem o APEX não escondeu */
+@app.nc-esc .nc-esc-campos > .t-Form-fieldContainer:not([style*="none"]):not(.nc-esc-oculto):not(#nc-esc-x):not(#nc-esc-y) {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 7px;
+  float: none;
+  width: auto;
+  max-width: none;
+  margin: 0;
+  padding: 0;
+}
+
+@app.nc-esc .nc-esc-campos > .t-Form-fieldContainer :is(.t-Form-labelContainer, .t-Form-inputContainer):not(#nc-esc-x):not(#nc-esc-y) {
+  flex: none;
+  float: none;
+  width: 100%;
+  max-width: none;
+  min-height: 0;
+  padding: 0;
+  text-align: left;
+}
+
+@app.nc-esc .nc-esc-campos .t-Form-label:not(#nc-esc-x):not(#nc-esc-y) {
+  padding: 0;
+  font-size: 14px;
+  font-weight: 800;
+  line-height: 1.35;
+  text-align: left;
+  color: var(--nc-tinta);
+}
+
+@app.nc-esc .nc-esc-campos :is(input.apex-item-text, input.apex-item-popup-lov, input.popup_lov):not([type=hidden]):not(#nc-esc-x):not(#nc-esc-y) {
+  height: 46px;
+  font-size: 15.5px;
+}
+
+@app.nc-esc .nc-esc-campos textarea:not(#nc-esc-x):not(#nc-esc-y) {
+  min-height: 110px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  font-size: 15.5px;
+  line-height: 1.5;
+}
+
+@app.nc-esc .nc-esc-campos textarea::placeholder {
+  color: #9A93AE;
+}
+
+@app.nc-esc .nc-esc-ajuda:not(#nc-esc-x):not(#nc-esc-y) {
+  display: block;
+  align-self: stretch;       /* o contêiner do campo centraliza os filhos no celular */
+  width: 100%;
+  margin-top: 6px;
+  text-align: left;
+  font-size: 12.5px;
+  line-height: 1.4;
+  color: var(--nc-grafite);
+}
+
+/* ═══ [C6] AS ESCOLHAS EM CARTÕES (Plantão? e Exceção) ══════════════════════════════════════
+   Montadas pelo JS em [J4]: os "Não/Sim" viram dois cartões grandes. O rádio do APEX continua
+   lá dentro, invisível (opacity: 0); o cartão marcado (input:checked) ganha borda e fundo.
+   CUIDADO: a Skin do cliente aperta o grupo de rádio numa faixa de 38px e dá largura mínima às
+   opções. As regras daqui desfazem isso SÓ dentro dos cartões — não apague.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-esc .nc-esc-escolha .t-Form-labelContainer:not(#nc-esc-x):not(#nc-esc-y) {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+}
+
+/* a Skin desenha o grupo como faixa de 38 px com overflow escondido: aqui ele cresce */
+@app.nc-esc .nc-esc-escolha :is(.t-Form-inputContainer, .t-Form-itemWrapper):not(#nc-esc-x):not(#nc-esc-y) {
+  height: auto;
+  max-height: none;
+  overflow: visible;
+}
+
+/* o rádio vem em duas formas: opções direto no grupo, ou na grade de colunas do APEX
+   (.apex-item-grid › .apex-item-grid-row, que a Skin trava em 38 px com overflow escondido).
+   Os cartões ficam na grade de quem de fato guarda as opções */
+@app.nc-esc .nc-esc-escolha :is(.apex-item-group, .apex-item-grid):not(#nc-esc-x):not(#nc-esc-y) {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: none;
+  overflow: visible;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+@app.nc-esc .nc-esc-escolha :is(.apex-item-group:not(:has(.apex-item-grid-row)), .apex-item-grid-row):not(#nc-esc-x):not(#nc-esc-y) {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  width: 100%;
+  height: auto;
+  max-height: none;
+  overflow: visible;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+@app.nc-esc .nc-esc-escolha .apex-item-option:not(#nc-esc-x):not(#nc-esc-y) {
+  position: relative;
+  flex: none;
+  width: auto;
+  min-width: 0;              /* a Skin põe max-content (feito para a faixa Não/Sim): o cartão estourava */
+  margin: 0;
+  padding: 0;
+}
+
+@app.nc-esc .nc-esc-escolha .apex-item-option input[type=radio]:not(#nc-esc-x):not(#nc-esc-y) {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 22px;
+  height: 22px;
+  margin: 0;
+  opacity: 0;
+}
+
+@app.nc-esc .nc-esc-escolha .apex-item-option label:not(#nc-esc-x):not(#nc-esc-y) {
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr) 24px;
+  align-items: start;
+  gap: 0 12px;
+  width: 100%;
+  height: 100%;
+  min-height: 86px;
+  margin: 0;
+  padding: 14px 14px 14px 14px;
+  border: 1.5px solid var(--nc-nevoa);
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: none;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.35;
+  text-align: left;
+  white-space: normal;
+  color: var(--nc-tinta);
+  cursor: pointer;
+  transition: border-color .15s, background-color .15s, box-shadow .15s;
+}
+
+@app.nc-esc .nc-esc-escolha .apex-item-option label::before,
+@app.nc-esc .nc-esc-escolha .apex-item-option label::after {
+  display: none;
+}
+
+@app.nc-esc .nc-esc-escolha .apex-item-option label:hover:not(#nc-esc-x):not(#nc-esc-y) {
+  border-color: #CDB4E3 /*reserva*/;
+  border-color: oklch(from #CDB4E3 l calc(c * var(--nc-t-croma, 1)) calc(h + var(--nc-t-giro, 0)));
+  background: #FBF9FE;
+}
+
+@app.nc-esc .nc-esc-escolha input:checked + label:not(#nc-esc-x):not(#nc-esc-y) {
+  border-color: var(--nc-roxo);
+  background: #F6F0FB;
+  box-shadow: 0 10px 22px -18px rgba(var(--nc-t-roxo-rgb, 81, 28, 118), .8);
+  color: var(--nc-tinta);
+}
+
+@app.nc-esc .nc-esc-escolha input:focus-visible + label:not(#nc-esc-x):not(#nc-esc-y) {
+  outline: 2px solid var(--nc-roxo);
+  outline-offset: 2px;
+}
+
+@app.nc-esc .nc-esc-escolha input:disabled + label:not(#nc-esc-x):not(#nc-esc-y) {
+  opacity: 1;
+  cursor: default;
+}
+
+@app.nc-esc .nc-esc-op-ic {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 13px;
+  background: #F1EDF7;
+  color: var(--nc-grafite);
+  transition: background-color .15s, color .15s;
+}
+
+@app.nc-esc .nc-esc-op-ic .nc-esc-svg {
+  width: 22px;
+  height: 22px;
+}
+
+@app.nc-esc .nc-esc-escolha input:checked + label .nc-esc-op-ic {
+  background: var(--nc-roxo);
+  color: #fff;
+}
+
+@app.nc-esc .nc-esc-op-txt {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+}
+
+@app.nc-esc .nc-esc-op-tit {
+  font-size: 16px;
+  font-weight: 800;
+  line-height: 1.25;
+  color: var(--nc-tinta);
+}
+
+@app.nc-esc .nc-esc-op-txt small {
+  font-size: 13.5px;
+  font-weight: 500;
+  line-height: 1.4;
+  color: var(--nc-grafite);
+}
+
+@app.nc-esc .nc-esc-op-marca {
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border: 2px solid #CFC6DD;
+  border-radius: 50%;
+  color: transparent;
+}
+
+@app.nc-esc .nc-esc-op-marca .nc-esc-svg {
+  width: 14px;
+  height: 14px;
+  stroke-width: 3;
+}
+
+@app.nc-esc .nc-esc-escolha input:checked + label .nc-esc-op-marca {
+  border-color: var(--nc-roxo);
+  background: var(--nc-roxo);
+  color: #fff;
+}
+
+/* ═══ [C7] O PERÍODO E OS AVISOS ════════════════════════════════════════════════════════════
+   Montados pelo JS em [J8]: o resumo "De … a … · N dias" (.nc-esc-periodo; .is-erro quando as
+   datas estão trocadas) e o aviso da exceção forçada pela empresa (.nc-esc-aviso).
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-esc :is(.nc-esc-periodo, .nc-esc-aviso) {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin: 0;
+  padding: 12px 14px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.45;
+}
+
+@app.nc-esc :is(.nc-esc-periodo, .nc-esc-aviso)[hidden] {
+  display: none;
+}
+
+@app.nc-esc .nc-esc-periodo {
+  background: #F6F0FB;
+  color: var(--nc-tinta);
+}
+
+@app.nc-esc .nc-esc-periodo .nc-esc-svg {
+  margin-top: 1px;
+  color: var(--nc-roxo);
+}
+
+@app.nc-esc .nc-esc-periodo b {
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+
+@app.nc-esc .nc-esc-periodo.is-erro {
+  background: #FDECEE;
+  color: #7E1F29;
+}
+
+@app.nc-esc .nc-esc-periodo.is-erro .nc-esc-svg {
+  color: var(--nc-ruim);
+}
+
+@app.nc-esc .nc-esc-aviso {
+  background: #FFF4DA;
+  color: #6E4400;
+}
+
+@app.nc-esc .nc-esc-aviso .nc-esc-svg {
+  margin-top: 1px;
+  color: #9A6200;
+}
+
+/* ═══ [C8] O RODAPÉ: Voltar, o que falta, Enviar pedido ═════════════════════════════════════
+   Montado pelo JS em [J7]. .nc-esc-falta é a lista do que falta; .nc-esc-enviar, o botão
+   "Enviar pedido" (o Criar do APEX).
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-esc .t-Dialog-footer .t-ButtonRegion-wrap:not(#nc-esc-x):not(#nc-esc-y) {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px 14px;
+  width: 100%;
+}
+
+@app.nc-esc .t-Dialog-footer .t-ButtonRegion-col:not(#nc-esc-x):not(#nc-esc-y) {
+  display: block;
+  width: auto;
+  padding: 0;
+}
+
+@app.nc-esc .t-Dialog-footer .t-ButtonRegion-title:not(#nc-esc-x):not(#nc-esc-y) {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+}
+
+@app.nc-esc .nc-esc-falta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+
+@app.nc-esc .nc-esc-falta-rot {
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--nc-grafite);
+}
+
+@app.nc-esc .nc-esc-falta-item:not(#nc-esc-x):not(#nc-esc-y) {
+  min-height: 30px;
+  margin: 0;
+  padding: 3px 10px;
+  border: 0;
+  border-radius: 999px;
+  background: #FFF4DE;
+  box-shadow: none;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  color: #6B4700;
+  cursor: pointer;
+}
+
+@app.nc-esc .nc-esc-falta-item:hover:not(#nc-esc-x):not(#nc-esc-y) {
+  background: #FDE9C2;
+}
+
+@app.nc-esc .nc-esc-falta-item:focus-visible {
+  outline: 2px solid var(--nc-roxo);
+  outline-offset: 2px;
+}
+
+@app.nc-esc .nc-esc-falta-mais {
+  display: none;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: #FFF4DE;
+  font-size: 13px;
+  font-weight: 800;
+  color: #6B4700;
+}
+
+@app.nc-esc .nc-esc-pronto {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13.5px;
+  font-weight: 800;
+  color: var(--nc-bom);
+}
+
+@app.nc-esc .nc-esc-pronto .nc-esc-svg {
+  width: 16px;
+  height: 16px;
+  stroke-width: 2.6;
+}
+
+@app.nc-esc .nc-esc-enviar.t-Button:not(#nc-esc-x):not(#nc-esc-y) {
+  min-height: 46px;
+  padding: 0 22px;
+  border-radius: 13px;
+  font-size: 15px;
+  font-weight: 800;
+}
+
+/* ═══ [C9] CELULAR E "MENOS MOVIMENTO" ══════════════════════════════════════════════════════
+   O que está dentro de  @media (max-width: 640px)  só vale em telas até 640px (celular). Em
+   geral: o que era lado a lado passa a ficar um embaixo do outro.
+   No fim, @media (prefers-reduced-motion: reduce) desliga as animações para quem pediu
+   "reduzir movimento" nas configurações do computador ou celular (acessibilidade).
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@media (max-width: 640px) {
+  @app.nc-esc .nc-esc-topo h2:not(#nc-esc-x):not(#nc-esc-y) {
+    font-size: 18px;
+  }
+
+  @app.nc-esc :is(.nc-esc-passo, .nc-esc-aprov) {
+    padding: 16px 14px 18px;
+    border-radius: 14px;
+  }
+
+  @app.nc-esc .nc-esc-pedido {
+    grid-template-columns: auto minmax(0, 1fr);
+    padding: 14px;
+  }
+
+  @app.nc-esc .nc-esc-pedido-sit {
+    grid-column: 1 / -1;
+    justify-items: start;
+    grid-auto-flow: column;
+    justify-content: start;
+    align-items: center;
+    gap: 8px;
+  }
+
+  @app.nc-esc .nc-esc-pedido-ctl select:not(#nc-esc-x):not(#nc-esc-y) {
+    min-width: 0;
+    width: 100%;
+  }
+
+  @app.nc-esc .nc-esc-pedido-ctl .t-Form-inputContainer:not(#nc-esc-x):not(#nc-esc-y) {
+    flex: 1 1 100%;
+  }
+
+  @app.nc-esc .nc-esc-passo-cab {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+
+  @app.nc-esc .nc-esc-passo-estado {
+    grid-column: 2;
+    justify-self: start;
+    margin-top: 0;
+  }
+
+  @app.nc-esc .nc-esc-campos {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 14px;
+  }
+
+  @app.nc-esc .nc-esc-escolha :is(.apex-item-group:not(:has(.apex-item-grid-row)), .apex-item-grid-row):not(#nc-esc-x):not(#nc-esc-y) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  @app.nc-esc .nc-esc-escolha .apex-item-option label:not(#nc-esc-x):not(#nc-esc-y) {
+    min-height: 0;
+  }
+
+  @app.nc-esc .t-Dialog-footer .t-ButtonRegion-wrap:not(#nc-esc-x):not(#nc-esc-y) {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+
+  @app.nc-esc .t-Dialog-footer .t-ButtonRegion-col--content:not(#nc-esc-x):not(#nc-esc-y) {
+    grid-column: 1 / -1;
+    grid-row: 1;
+  }
+
+  @app.nc-esc .t-Dialog-footer .t-ButtonRegion-col--right:not(#nc-esc-x):not(#nc-esc-y) {
+    justify-self: stretch;
+  }
+
+  @app.nc-esc .nc-esc-enviar.t-Button:not(#nc-esc-x):not(#nc-esc-y) {
+    width: 100%;
+  }
+
+  /* no celular, os três primeiros e "+N": o rodapé não come a tela */
+  @app.nc-esc .nc-esc-falta-item:nth-of-type(n+4):not(#nc-esc-x):not(#nc-esc-y) {
+    display: none;
+  }
+
+  @app.nc-esc .nc-esc-falta-mais:not(#nc-esc-x) {
+    display: inline-block;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  @app.nc-esc *,
+  @app.nc-esc *::before {
+    transition: none;
+  }
+}
+
+/* ═══ FAIXA DA REGIÃO (padrão 03/10) ════════════════════════════════════════════════════════
+   Todo painel com título segue o cabeçalho de região da Skin: o título numa faixa que atravessa
+   o cartão de ponta a ponta, com a linha de 2px na cor de destaque do TEMA (var(--nc-rosa) — a
+   mesma da Skin; muda com os 14 temas). As margens negativas são o recuo de dentro do cartão:
+   mudou o recuo do cartão, mude aqui junto. Guia: brand/apex/MANUAL-APEX.md.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-esc .nc-esc-passo > .nc-esc-passo-cab:not(#nc-fx1):not(#nc-fx2):not(#nc-fx3) {
+  box-sizing: border-box;
+  width: calc(100% + 40px);
+  margin: -18px -20px 16px;
+  padding: 12px 20px 10px;
+  border-bottom: 2px solid var(--nc-rosa, #C95788);
+}
+@app.nc-esc .nc-esc-aprov > .nc-esc-aprov-cab:not(#nc-fx1):not(#nc-fx2):not(#nc-fx3) {
+  box-sizing: border-box;
+  width: calc(100% + 40px);
+  margin: -18px -20px 14px;
+  padding: 12px 20px 10px;
+  border-bottom: 2px solid var(--nc-rosa, #C95788);
+}
+@media (max-width: 640px) {
+  @app.nc-esc .nc-esc-passo > .nc-esc-passo-cab:not(#nc-fx1):not(#nc-fx2):not(#nc-fx3) {
+    box-sizing: border-box;
+    width: calc(100% + 28px);
+    margin: -16px -14px 14px;
+    padding: 12px 14px 10px;
+    border-bottom: 2px solid var(--nc-rosa, #C95788);
+  }
+  @app.nc-esc .nc-esc-aprov > .nc-esc-aprov-cab:not(#nc-fx1):not(#nc-fx2):not(#nc-fx3) {
+    box-sizing: border-box;
+    width: calc(100% + 28px);
+    margin: -16px -14px 12px;
+    padding: 12px 14px 10px;
+    border-bottom: 2px solid var(--nc-rosa, #C95788);
+  }
+}

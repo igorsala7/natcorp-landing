@@ -1,0 +1,420 @@
+/* ╔════════════════════════════════════════════════════════════════════════════════════════╗
+   ║  NATCORP · REGISTROS EM CARTÕES  —  a "roupa" da tela (CSS)                              ║
+   ║  Vale para o SISTEMA TODO: todo Interactive Report e todo Classic Report de tabela       ║
+   ╚════════════════════════════════════════════════════════════════════════════════════════╝
+
+   Primeira vez num arquivo destes? Leia antes o manual: brand/apex/MANUAL-APEX.md (parte 1).
+
+   ── O QUE ESTE ARQUIVO FAZ ────────────────────────────────────────────────────────────────
+   Dá a aparência do seletor Tabela · Cartões e dos cartões (um por registro). Quem cria tudo
+   é o arquivo-irmão Natcorp_Registros.js; sem ele, este arquivo não faz nada (todas as regras
+   dependem da marca nc-reg que o JS põe na página). Pensado primeiro para o celular: uma
+   coluna de cartões; na tela larga, quantas couberem (mínimo 320px cada).
+
+   ── ONDE ELE ENTRA NO APEX ────────────────────────────────────────────────────────────────
+     DENTRO do Natcorp_Style_Min.css (a folha que todas as páginas de todas as aplicações já
+     carregam): o gerador (gerar-app.mjs, lista FOLHAS) junta este arquivo lá. Não há URL para
+     pôr nas páginas. Edite ESTE arquivo (.src.css) e rode o gerador; suba o Style_Min.
+
+   ── ÍNDICE ────────────────────────────────────────────────────────────────────────────────
+     [C1] O seletor Tabela · Cartões             ← [R6] do JS
+     [C2] A grade e o cartão                     ← [R5]
+     [C3] Os dados do cartão e o "Mais N dados"  ← [R5]
+     [C4] Celular
+
+   ── RECEITAS RÁPIDAS ──────────────────────────────────────────────────────────────────────
+     Quero cartões mais largos na tela grande     → [C2], o 320px de .nc-reg-grade.
+     Quero a foto maior                           → [C2], --nc-reg-foto (hoje 48px).
+*/
+
+/* ═══ [C1] O SELETOR TABELA · CARTÕES ═══════════════════════════════════════════════════════
+   Um controle segmentado, logo abaixo da pesquisa do relatório. O ativo em roxo cheio.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-reg .nc-reg-modos {
+  display: inline-flex !important;
+  gap: 2px !important;
+  margin: 10px 0 12px !important;
+  padding: 3px !important;
+  border-radius: 12px !important;
+  background: var(--nc-off) !important;
+  box-shadow: inset 0 0 0 1px var(--nc-nevoa) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-reg .nc-reg-modos button {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 7px !important;
+  height: 34px !important;
+  margin: 0 !important;
+  padding: 0 14px !important;
+  border: 0 !important;
+  border-radius: 9px !important;
+  background: transparent !important;
+  font-size: 13.5px !important;
+  font-weight: 600 !important;
+  color: var(--nc-grafite) !important;
+  cursor: pointer !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-reg .nc-reg-modos button:hover {
+  background: #fff !important;
+  color: var(--nc-tinta) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-reg .nc-reg-modos button[aria-pressed="true"] {
+  background: var(--nc-roxo) !important;
+  color: #fff !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-reg .nc-reg-modos button:focus-visible,
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-reg .nc-reg-cartao:has(.nc-reg-tit:focus-visible) {
+  outline: 2px solid var(--nc-roxo) !important;
+  outline-offset: 2px !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-reg .nc-reg-ic {
+  width: 17px !important;
+  height: 17px !important;
+  fill: none !important;
+  stroke: currentColor !important;
+  stroke-width: 1.8 !important;
+  stroke-linecap: round !important;
+  stroke-linejoin: round !important;
+}
+
+/* em Cartões: a tabela daquele relatório (marcada pelo JS) e a cópia "grudenta" do cabeçalho
+   saem da vista; a paginação fica. O seletor e os cartões escondidos usam o atributo hidden. */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-reg .nc-reg-oculto:not(#nc-reg-x):not(#nc-reg-y),
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-reg.nc-reg-fora-da-tabela .nc-sticky-header-clone:not(#nc-reg-x):not(#nc-reg-y),
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-reg :is(.nc-reg-modos, .nc-reg-cartoes)[hidden]:not(#nc-reg-x):not(#nc-reg-y) {
+  display: none !important;
+}
+
+/* ═══ [C2] A GRADE E O CARTÃO ═══════════════════════════════════════════════════════════════
+   No alto do cartão: a foto, o nome (o link da linha, que cobre o cartão inteiro), o cargo e o
+   selo da situação. Embaixo, os destaques; por último, "Mais N dados".
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-reg .nc-reg-cartoes {
+  padding: 2px 2px 12px !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-reg .nc-reg-grade {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)) !important;
+  gap: 12px !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-reg .nc-reg-grupo {
+  margin: 18px 2px 8px !important;
+  font-size: 15px !important;
+  font-weight: 700 !important;
+  letter-spacing: normal !important;
+  color: var(--nc-tinta) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-reg .nc-reg-grupo:first-child {
+  margin-top: 4px !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-reg .nc-reg-cartao {
+  --nc-reg-foto: 48px;
+  position: relative !important;
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) !important;
+  align-content: start !important;
+  gap: 12px !important;
+  margin: 0 !important;
+  padding: 14px 16px 12px !important;
+  border: 1px solid var(--nc-nevoa) !important;
+  border-radius: 14px !important;
+  background: #fff !important;
+  box-shadow: 0 1px 2px rgba(27, 18, 56, .04) !important;
+  transition: border-color .15s, box-shadow .2s !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-reg .nc-reg-cartao.tem-foto {
+  grid-template-columns: var(--nc-reg-foto) minmax(0, 1fr) !important;
+  column-gap: 12px !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-reg .nc-reg-cartao.tem-link {
+  cursor: pointer !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-reg .nc-reg-cartao.tem-link:hover {
+  border-color: color-mix(in srgb, var(--nc-roxo) 35%, #fff) !important;
+  box-shadow: 0 2px 4px rgba(27, 18, 56, .05), 0 12px 28px -14px rgba(var(--nc-t-roxo-rgb, 81, 28, 118), .28) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-reg .nc-reg-foto {
+  grid-row: 1 !important;
+  width: var(--nc-reg-foto) !important;
+  height: var(--nc-reg-foto) !important;
+  margin: 0 !important;
+  border-radius: 50% !important;
+  background: var(--nc-off) !important;
+  object-fit: cover !important;
+  box-shadow: 0 0 0 1px var(--nc-nevoa) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-reg .nc-reg-cab {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-start !important;
+  gap: 3px !important;
+  min-width: 0 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-reg .nc-reg-tit {
+  display: -webkit-box !important;
+  overflow: hidden !important;
+  font-size: 15px !important;
+  font-weight: 600 !important;
+  line-height: 1.3 !important;
+  color: var(--nc-tinta) !important;
+  text-decoration: none !important;
+  -webkit-line-clamp: 2 !important;
+  -webkit-box-orient: vertical !important;
+}
+
+/* o link do título cobre o cartão inteiro: tocar em qualquer lugar abre a ficha */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-reg .nc-reg-cartao.tem-link .nc-reg-tit::after {
+  content: "" !important;
+  position: absolute !important;
+  inset: 0 !important;
+  z-index: 1 !important;
+  border-radius: 14px !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-reg .nc-reg-cartao.tem-link:hover .nc-reg-tit {
+  color: var(--nc-roxo) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-reg .nc-reg-tit:focus-visible {
+  outline: 0 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-reg .nc-reg-sub {
+  margin: 0 !important;
+  font-size: 13px !important;
+  font-weight: 500 !important;
+  line-height: 1.35 !important;
+  color: var(--nc-grafite) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-reg .nc-reg-selo {
+  margin-top: 4px !important;
+  padding: 3px 9px !important;
+  border-radius: 999px !important;
+  background: var(--nc-off) !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  line-height: 1.2 !important;
+  color: var(--nc-grafite) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-reg .nc-reg-selo[data-tom="bom"] {
+  background: color-mix(in srgb, var(--nc-bom) 12%, #fff) !important;
+  color: var(--nc-bom) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-reg .nc-reg-selo[data-tom="atencao"] {
+  background: color-mix(in srgb, var(--nc-alerta) 22%, #fff) !important;
+  color: var(--nc-alerta-texto) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-reg .nc-reg-selo[data-tom="fim"] {
+  background: var(--nc-nevoa2) !important;
+  color: var(--nc-cinza) !important;
+}
+
+/* ═══ [C3] OS DADOS DO CARTÃO E O "MAIS N DADOS" ════════════════════════════════════════════
+   Rótulo pequeno em cima, valor embaixo. Os destaques em duas colunas (o primeiro, que
+   costuma ser longo — o centro de custo —, ocupa a linha toda).
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-reg :is(.nc-reg-destaques, .nc-reg-mais) {
+  grid-column: 1 / -1 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-reg .nc-reg-dados {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 10px 14px !important;
+  margin: 0 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-reg .nc-reg-destaques {
+  padding-top: 12px !important;
+  border-top: 1px solid var(--nc-nevoa2) !important;
+}
+
+/* valor longo (o JS marca com is-longo: mais de 30 letras) ocupa a linha inteira */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-reg .nc-reg-dados > .is-longo {
+  grid-column: 1 / -1 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-reg .nc-reg-dados > div {
+  min-width: 0 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-reg .nc-reg-dados dt {
+  margin: 0 0 1px !important;
+  font-size: 11.5px !important;
+  font-weight: 600 !important;
+  color: var(--nc-cinza) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-reg .nc-reg-dados dd {
+  margin: 0 !important;
+  overflow-wrap: anywhere !important;
+  font-size: 13.5px !important;
+  font-weight: 500 !important;
+  line-height: 1.35 !important;
+  color: var(--nc-tinta) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-reg .nc-reg-dados dd small {
+  display: block !important;
+  font-size: 12px !important;
+  font-weight: 500 !important;
+  color: var(--nc-grafite) !important;
+}
+
+/* os links de dentro dos dados (ex.: a matrícula que abre os dados do colaborador) ficam por
+   cima do link do cartão: clicar neles faz o deles, não o da linha (04/10: e os botões também) */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-reg .nc-reg-dados :is(a, button) {
+  position: relative !important;
+  z-index: 2 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-reg .nc-reg-dados dd img {
+  max-width: 100% !important;
+  height: auto !important;
+}
+
+/* "Mais N dados": acima do link esticado, para abrir sem ir para a ficha */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-reg .nc-reg-mais {
+  position: relative !important;
+  z-index: 2 !important;
+  margin: -2px -8px -4px !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-reg .nc-reg-mais summary {
+  display: flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  width: max-content !important;
+  max-width: 100% !important;
+  min-height: 36px !important;
+  padding: 0 8px !important;
+  border-radius: 8px !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  color: var(--nc-roxo) !important;
+  list-style: none !important;
+  cursor: pointer !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-reg .nc-reg-mais summary::-webkit-details-marker {
+  display: none !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-reg .nc-reg-mais summary:hover {
+  background: var(--nc-off) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-reg .nc-reg-mais summary:focus-visible {
+  outline: 2px solid var(--nc-roxo) !important;
+  outline-offset: 0 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-reg .nc-reg-mais summary small {
+  font-size: 12px !important;
+  font-weight: 500 !important;
+  color: var(--nc-cinza) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-reg .nc-reg-mais summary .nc-reg-ic {
+  width: 15px !important;
+  height: 15px !important;
+  transition: transform .18s cubic-bezier(.2, .8, .2, 1) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-reg .nc-reg-mais[open] summary .nc-reg-ic {
+  transform: rotate(180deg) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-reg .nc-reg-sobra {
+  margin: 10px 8px 4px !important;
+  font-size: 12px !important;
+  font-weight: 500 !important;
+  color: var(--nc-cinza) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-reg .nc-reg-mais .nc-reg-dados {
+  margin: 4px 8px 6px !important;
+  padding: 12px 0 0 !important;
+  border-top: 1px dashed var(--nc-nevoa) !important;
+  cursor: auto !important;
+}
+
+/* ═══ [C4] CELULAR ══════════════════════════════════════════════════════════════════════════ */
+@media (max-width: 640px) {
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-reg .nc-reg-modos {
+    display: flex !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-reg .nc-reg-modos button {
+    flex: 1 1 0 !important;
+    justify-content: center !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-reg .nc-reg-grade {
+    grid-template-columns: minmax(0, 1fr) !important;
+    gap: 10px !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-reg .nc-reg-cartao {
+    --nc-reg-foto: 44px;
+    padding: 12px 14px 10px !important;
+  }
+
+  /* no celular os dois botões ficam com o dedo: 40px de altura */
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-reg .nc-reg-modos button {
+    height: 40px !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-reg :is(.nc-reg-cartao, .nc-reg-mais summary .nc-reg-ic) {
+    transition: none !important;
+  }
+}
+
+/* ═══ [C5] ARRASTAR PARA ROLAR ══════════════════════════════════════════════════════════════
+   A mãozinha onde dá para clicar e arrastar (o JS marca o lugar com nc-arrastavel, [R9]) e a
+   mão fechada enquanto arrasta. Os links e as barras do Gantt continuam com o cursor deles.
+   Enquanto arrasta, nada é selecionado como texto. Vale em todas as páginas (sem o nc-reg).
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-arrastavel {
+  cursor: grab !important;
+}
+
+html.nc-arrastando,
+html.nc-arrastando * {
+  cursor: grabbing !important;
+  user-select: none !important;
+  -webkit-user-select: none !important;
+}
+
+/* "Abrindo os cartões…" enquanto o APEX troca para o relatório "Cartões" ([R6b] do JS) */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-reg .nc-reg-abrindo {
+  margin: 0 !important;
+  padding: 24px 16px !important;
+  border: 1px dashed var(--nc-nevoa) !important;
+  border-radius: 14px !important;
+  text-align: center !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  color: var(--nc-grafite) !important;
+}

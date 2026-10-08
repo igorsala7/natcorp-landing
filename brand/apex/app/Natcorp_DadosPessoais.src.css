@@ -1,0 +1,1024 @@
+/* ╔════════════════════════════════════════════════════════════════════════════════════════╗
+   ║  NATCORP · DADOS PESSOAIS  —  a "roupa" da tela (CSS)                                     ║
+   ║  App 600 · Página 1 · portal Conhecendo Você                                              ║
+   ╚════════════════════════════════════════════════════════════════════════════════════════╝
+
+   Primeira vez num arquivo destes? Leia antes o manual: brand/apex/MANUAL-APEX.md (parte 1).
+
+   ── O QUE ESTE ARQUIVO FAZ ────────────────────────────────────────────────────────────────
+   Dá a aparência da página 1: o alto ("Olá, Fulano!", o medidor do % completo), a trilha
+   numerada de capítulos, os blocos e documentos dentro de cada capítulo, o "Continuar" do fim
+   e o aviso "Salvando…/Salvo". Ele NÃO muda nada de lugar e não troca textos: quem faz isso é
+   o arquivo-irmão Natcorp_DadosPessoais.js. Os dois trabalham juntos:
+     o JS marca um capítulo como fechado  →  este arquivo esconde os blocos dele.
+   Sem o JS, este arquivo não faz nada (todas as regras dependem da marca nc-dp que o JS põe
+   na página).
+   Público: colaborador e candidato, 9 em cada 10 no celular, muitos com pouca leitura.
+   Por isso: alvos de toque de 56px nos capítulos, letra de 16px ou mais, uma coisa por vez.
+   CUIDADO: as regras que escondem são só das classes nc-dp-* (nada aqui vence o
+   display:none das ações dinâmicas da página).
+
+   ── ONDE ELE ENTRA NO APEX ────────────────────────────────────────────────────────────────
+     Página 1 › CSS › File URLs:   #WORKSPACE_IMAGES#Natcorp_DadosPessoais.css
+     CUIDADO: edite ESTE arquivo (Natcorp_DadosPessoais.src.css, a fonte) e gere o arquivo que sobe com
+     node brand/apex/app/gerar-app.mjs  — o gerador troca @app pelo prefixo longo e põe
+     !important em toda linha. O Natcorp_DadosPessoais.css da pasta login/ é refeito a cada geração:
+     o que for mudado só nele se perde. (Manual, parte 2.)
+
+   ── ÍNDICE: as partes deste arquivo (Ctrl+F pelo código entre colchetes) ──────────────────
+     [C1] O que fica escondido e ajustes da grade     (capítulos fechados, espaços vazios)
+     [C2] O alto: olá, quanto falta, "salvo na hora"  ← montado pelo JS em [J4] e [J6]
+     [C3] Os capítulos: a trilha numerada             ← montados pelo JS em [J4] e [J6]
+     [C4] Dentro do capítulo: blocos, documentos,     ← montados pelo JS em [J4] e [J6]
+          "Enviar foto" e o "Continuar"
+     [C5] "Salvando…" / "Salvo"                       ← mostrado pelo JS em [J7]
+     [C6] Celular                                     (ajustes para telas pequenas)
+     [C7] Menos movimento                             (para quem pediu "reduzir movimento")
+     [C8] Tela larga                                   (cadastro na coluna da foto, campos 4 por linha)
+
+   ── RECEITAS RÁPIDAS ──────────────────────────────────────────────────────────────────────
+     Quero mudar uma cor
+       → use uma das cores da marca, pelo nome: var(--nc-roxo), var(--nc-tinta)… A lista
+         completa, com amostras, está no manual (parte 3). Assim a cor acompanha o tema que
+         o usuário escolheu em "Cores". Evite escrever cores soltas, como #511C76.
+     Quero o título dos capítulos maior ou menor   → [C3], a regra .nc-dp-cap-tit (font-size).
+     Quero o aviso "Salvo" em outro lugar da tela  → [C5], a regra .nc-dp-aviso.
+     Algo ficou bom no computador e ruim no celular → [C6]: o que está dentro de
+                                                   @media (max-width: 640px) só vale no celular.
+
+   ── COMO LER UM ARQUIVO CSS EM 30 SEGUNDOS ────────────────────────────────────────────────
+     Cada regra tem duas partes:     QUEM { COMO; }
+       @app.nc-dp .nc-dp-cap-tit {         ← QUEM: o "seletor", diz em que pedaço da tela vale
+         font-size: 18.5px;                ← COMO: propriedade: valor;  (tamanho da letra)
+         color: var(--nc-tinta);           ←       a cor: o quase-preto da marca
+       }
+     .nome-com-ponto       uma "classe": uma etiqueta posta num pedaço da tela (pelo APEX ou
+                           pelo JS). .nc-dp-cap-tit é o título de cada capítulo.
+     @app                  atalho que dá prioridade às nossas regras sobre as do tema do APEX.
+                           No arquivo que sobe para o APEX ele aparece por extenso, como
+                           html body:is(.t-PageBody…):not(#nc-a1):not(#nc-a2) — é a mesma coisa.
+     :not(#nc-dp-x)…       peso extra, para vencer uma regra do tema. Pode ignorar ao ler.
+     !important            no arquivo que sobe, toda linha ganha um: é o mesmo "vencer o tema".
+     @media (max-width: 640px) { … }   as regras de dentro só valem em telas até 640px (celular).
+     var(--nc-roxo)        uma cor da marca, pelo nome (muda junto com o tema escolhido).
+     px                    pixels, o tamanho de um pontinho da tela. 16px é o texto normal.
+     Toda linha COMO termina em ;   e todo { é fechado por um }. Não apague esses sinais.
+*/
+
+/* ═══ [C1] O QUE FICA ESCONDIDO E AJUSTES DA GRADE ═══════════════════════════════════════════
+   display: none = não aparece. Somem: os blocos de um capítulo fechado (.nc-dp-fechado) e as
+   peças que o JS deixou de lado ([hidden]). Também acerta os espaços que a grade do APEX
+   deixa sobrando quando um capítulo está fechado.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-dp .t-Region.nc-dp-fechado:not(#nc-dp-x):not(#nc-dp-y),
+@app.nc-dp :is(.nc-dp-cap, .nc-dp-fim, .nc-dp-aviso, .nc-dp-medidor)[hidden]:not(#nc-dp-x):not(#nc-dp-y) {
+  display: none;
+}
+
+/* o "Ir para seção" do Natcorp_Formulario_Celular: aqui os capítulos já são a lista */
+@app.nc-dp .nc-secoes-botao:not(#nc-dp-x):not(#nc-dp-y) {
+  display: none;
+}
+
+/* com o capítulo fechado, a linha da grade do APEX fica só com os espaçadores (&nbsp;) das
+   colunas laterais: 20px de vão entre um capítulo e outro */
+@app.nc-dp .col:has(> .apex-grid-nbsp:only-child):not(#nc-dp-x):not(#nc-dp-y) {
+  min-height: 0;
+  font-size: 0;
+  line-height: 0;
+}
+
+/* o contêiner "Documentos" (sem cara de cartão) empurrava os seus capítulos 8px para dentro */
+@app.nc-dp .t-Region--noUI:has(.nc-dp-cap) > .t-Region-bodyWrap > .t-Region-body:not(#nc-dp-x):not(#nc-dp-y) {
+  padding-right: 0;
+  padding-left: 0;
+}
+
+/* ═══ [C2] O ALTO: OLÁ, QUANTO FALTA, "SALVO NA HORA" ══════════════════════════════════════
+   Montado pelo JS em [J4] e preenchido em [J6]. Peças principais:
+     .nc-dp-resumo    o bloco inteiro          .nc-dp-ola       "Olá, Fulano!"
+     .nc-dp-medidor   a barra do % completo    .nc-dp-salva     a frase do que fazer
+     .nc-dp-acoes     os botões do fluxo do RH .nc-dp-ver       "Ver tudo aberto"
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-dp .nc-dp-resumo {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px 20px;
+  margin: 0 0 14px;
+  padding: 22px 24px;
+  border-radius: 22px;
+  background:
+    radial-gradient(120% 140% at 100% 0%, rgba(var(--nc-t-rosa-rgb, 201, 87, 136), .38) 0%, rgba(var(--nc-t-rosa-rgb, 201, 87, 136), 0) 55%),
+    linear-gradient(135deg, var(--nc-azul) 0%, var(--nc-roxo) 70%);
+  color: #fff;
+  box-shadow: 0 18px 36px -24px rgba(var(--nc-t-azul-rgb, 44, 26, 99), .75);
+}
+
+@app.nc-dp .nc-dp-resumo-txt {
+  flex: 1 1 280px;
+  min-width: 0;
+}
+
+@app.nc-dp .nc-dp-ola {
+  margin: 0;
+  font-family: inherit;
+  font-size: 26px;
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: -.01em;
+  color: #fff;
+}
+
+@app.nc-dp .nc-dp-pronto {
+  margin: 6px 0 0;
+  font-size: 17px;
+  line-height: 1.4;
+  color: rgba(255, 255, 255, .9);
+}
+
+@app.nc-dp .nc-dp-pronto b {
+  font-weight: 800;
+  color: #fff;
+}
+
+@app.nc-dp .nc-dp-medidor {
+  height: 10px;
+  margin: 12px 0 0;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, .2);
+  overflow: hidden;
+}
+
+@app.nc-dp .nc-dp-medidor i {
+  display: block;
+  width: var(--nc-dp-pc, 0%);
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #F2B8D0, #fff) /*reserva*/;
+  background: linear-gradient(90deg, oklch(from #F2B8D0 l calc(c * var(--nc-t-croma, 1)) calc(h + var(--nc-t-giro, 0))), #fff);
+  transition: width .6s cubic-bezier(.16, 1, .3, 1);
+}
+
+/* sem frase (preenchimento normal: a página grava só no Prosseguir), a caixa some */
+@app.nc-dp .nc-dp-salva[hidden]:not(#nc-dp-x):not(#nc-dp-y) {
+  display: none;
+}
+
+@app.nc-dp .nc-dp-salva {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin: 14px 0 0;
+  font-size: 15px;
+  line-height: 1.45;
+  color: rgba(255, 255, 255, .88);
+}
+
+@app.nc-dp .nc-dp-salva b {
+  font-weight: 800;
+  color: #fff;
+}
+
+@app.nc-dp .nc-dp-salva .nc-dp-ic {
+  flex: none;
+  width: 24px;
+  height: 24px;
+  margin-top: -1px;
+}
+
+/* os botões do fluxo de alteração ("Alterar Meus Dados", salvar/cancelar a solicitação) */
+@app.nc-dp .nc-dp-acoes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 14px 0 0;
+}
+
+@app.nc-dp .nc-dp-acoes[hidden]:not(#nc-dp-x):not(#nc-dp-y) {
+  display: none;
+}
+
+@app.nc-dp .nc-dp-acoes .t-Button.nc-dp-acao:not(#nc-dp-x):not(#nc-dp-y) {
+  min-height: 48px;
+  margin: 0;
+  padding: 0 20px;
+  border: 0;
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: 0 10px 22px -14px rgba(0, 0, 0, .45);
+  font-size: 15.5px;
+  font-weight: 800;
+  color: var(--nc-roxo);
+}
+
+@app.nc-dp .nc-dp-acoes .t-Button.nc-dp-acao :is(.t-Button-label, .t-Icon):not(#nc-dp-x):not(#nc-dp-y) {
+  color: inherit;
+}
+
+@app.nc-dp .nc-dp-acoes .t-Button.nc-dp-acao:hover:not(#nc-dp-x):not(#nc-dp-y) {
+  background: var(--nc-nevoa2);
+}
+
+/* cancelar / apagar a solicitação: contorno, sem competir com o salvar */
+@app.nc-dp .nc-dp-acoes .t-Button:is(.nc-dp-acao--canc-alt-cad, .nc-dp-acao--del-alt-cad):not(#nc-dp-x):not(#nc-dp-y) {
+  background: transparent;
+  box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, .6);
+  color: #fff;
+}
+
+@app.nc-dp .nc-dp-ver {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: 8px;
+  min-height: 40px;
+  padding: 0 14px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, .14);
+  font-size: 14px;
+  font-weight: 700;
+  color: #fff;
+  cursor: pointer;
+  user-select: none;
+}
+
+@app.nc-dp .nc-dp-ver:hover {
+  background: rgba(255, 255, 255, .24);
+}
+
+@app.nc-dp .nc-dp-ver .nc-dp-ic {
+  width: 18px;
+  height: 18px;
+}
+
+@app.nc-dp :is(.nc-dp-ic, .nc-dp-num svg, .nc-dp-cap-seta svg) {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* ═══ [C3] OS CAPÍTULOS: A TRILHA NUMERADA ═════════════════════════════════════════════════
+   Montados pelo JS em [J4] e atualizados em [J6]. .nc-dp-cap é o cabeçalho de cada capítulo
+   (é ele que se toca para abrir). Estados com visual próprio: .is-aberto e .is-completo.
+     .nc-dp-num   a bolinha do número    .nc-dp-cap-est   "3 de 8" / "Completo" / "Falta 1"
+     .nc-dp-cap-barra   a barrinha de progresso embaixo
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-dp .nc-dp-cap {
+  position: relative;
+  display: grid;
+  grid-template-columns: 48px minmax(0, 1fr) auto 24px;
+  align-items: center;
+  gap: 4px 14px;
+  min-height: 76px;
+  margin: 0 0 10px;
+  padding: 14px 18px 18px 14px;
+  border: 1px solid var(--nc-nevoa);
+  border-radius: 18px;
+  background: #fff;
+  box-shadow: 0 10px 24px -22px rgba(var(--nc-t-azul-rgb, 44, 26, 99), .6);
+  overflow: hidden;
+  cursor: pointer;
+  user-select: none;
+  transition: border-color .15s, box-shadow .15s;
+}
+
+@app.nc-dp .nc-dp-cap:hover {
+  border-color: #CDBFE0;
+}
+
+@app.nc-dp .nc-dp-cap:focus-visible,
+@app.nc-dp .nc-dp-fim:focus-visible,
+@app.nc-dp .nc-dp-ver:focus-visible {
+  outline: 3px solid var(--nc-rosa);
+  outline-offset: 2px;
+}
+
+@app.nc-dp .nc-dp-num {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--nc-nevoa2);
+  box-shadow: inset 0 0 0 2px #DCD3EA;
+  font-size: 19px;
+  font-weight: 800;
+  color: var(--nc-roxo);
+}
+
+@app.nc-dp .nc-dp-num svg {
+  width: 26px;
+  height: 26px;
+  stroke-width: 2.6;
+}
+
+@app.nc-dp .nc-dp-cap-txt {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+@app.nc-dp .nc-dp-cap-tit {
+  font-size: 18.5px;
+  font-weight: 800;
+  line-height: 1.2;
+  color: var(--nc-tinta);
+}
+
+@app.nc-dp .nc-dp-cap-dica {
+  font-size: 14.5px;
+  line-height: 1.35;
+  color: var(--nc-grafite);
+}
+
+@app.nc-dp .nc-dp-cap-est {
+  font-size: 14px;
+  white-space: nowrap;
+  color: var(--nc-grafite);
+}
+
+@app.nc-dp .nc-dp-est-n b {
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--nc-tinta);
+}
+
+@app.nc-dp .nc-dp-est-ok {
+  font-weight: 800;
+  color: #1E6B45;
+}
+
+@app.nc-dp .nc-dp-est-falta {
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: #FFF4DE;
+  font-weight: 800;
+  color: #6B4700;
+}
+
+@app.nc-dp .nc-dp-cap-seta {
+  display: grid;
+  place-items: center;
+  color: var(--nc-roxo);
+  transition: transform .25s cubic-bezier(.16, 1, .3, 1);
+}
+
+@app.nc-dp .nc-dp-cap-seta svg {
+  width: 22px;
+  height: 22px;
+  stroke-width: 2.4;
+}
+
+/* o quanto do capítulo já tem resposta: a linha do pé do cartão */
+@app.nc-dp .nc-dp-cap-barra {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 4px;
+  background: var(--nc-nevoa2);
+}
+
+@app.nc-dp .nc-dp-cap-barra i {
+  display: block;
+  width: var(--nc-dp-p, 0%);
+  height: 100%;
+  background: linear-gradient(90deg, var(--nc-roxo), var(--nc-rosa));
+  transition: width .5s cubic-bezier(.16, 1, .3, 1);
+}
+
+/* completo: o número vira o visto verde */
+@app.nc-dp .nc-dp-cap.is-completo .nc-dp-num {
+  background: #E4F4EA;
+  box-shadow: inset 0 0 0 2px #B9E0C8;
+  color: #1E6B45;
+}
+
+@app.nc-dp .nc-dp-cap.is-completo .nc-dp-cap-barra i {
+  background: #3E9B67;
+}
+
+/* aberto: o cartão vira a capa do capítulo (e o que vem abaixo é dele) */
+@app.nc-dp .nc-dp-cap.is-aberto {
+  margin-bottom: 12px;
+  border-color: transparent;
+  background: linear-gradient(135deg, var(--nc-azul) 0%, var(--nc-roxo) 80%);
+  box-shadow: 0 16px 30px -22px rgba(var(--nc-t-azul-rgb, 44, 26, 99), .8);
+}
+
+@app.nc-dp .nc-dp-cap.is-aberto :is(.nc-dp-cap-tit, .nc-dp-cap-seta, .nc-dp-est-n b, .nc-dp-est-ok) {
+  color: #fff;
+}
+
+@app.nc-dp .nc-dp-cap.is-aberto :is(.nc-dp-cap-dica, .nc-dp-cap-est) {
+  color: rgba(255, 255, 255, .82);
+}
+
+@app.nc-dp .nc-dp-cap.is-aberto .nc-dp-num {
+  background: #fff;
+  box-shadow: none;
+  color: var(--nc-roxo);
+}
+
+@app.nc-dp .nc-dp-cap.is-aberto.is-completo .nc-dp-num {
+  color: #1E6B45;
+}
+
+@app.nc-dp .nc-dp-cap.is-aberto .nc-dp-cap-seta {
+  transform: rotate(180deg);
+}
+
+@app.nc-dp .nc-dp-cap.is-aberto .nc-dp-cap-barra {
+  background: rgba(255, 255, 255, .18);
+}
+
+@app.nc-dp .nc-dp-cap.is-aberto .nc-dp-cap-barra i {
+  background: #F2B8D0 /*reserva*/;
+  background: oklch(from #F2B8D0 l calc(c * var(--nc-t-croma, 1)) calc(h + var(--nc-t-giro, 0)));
+}
+
+/* "ver tudo aberto": os capítulos viram só títulos de seção */
+@app.nc-dp.nc-dp-tudo .nc-dp-cap .nc-dp-cap-seta {
+  visibility: hidden;
+}
+
+/* ═══ [C4] DENTRO DO CAPÍTULO: BLOCOS, DOCUMENTOS, "ENVIAR FOTO" E O "CONTINUAR" ═══════════
+   Montados pelo JS em [J4] e [J6]. .nc-dp-r é cada bloco do APEX que entrou num capítulo;
+   .nc-dp-doc-ok / -meio / -vazio, o estado do documento ("Preenchido", "1 de 3", "Vazio");
+   .nc-dp-anexo, o clipe "Enviar foto";
+   .nc-dp-fim, o "Continuar" do fim do capítulo.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-dp .t-Region.nc-dp-r:not(.nc-dp-fechado) {
+  animation: nc-dp-entra .32s cubic-bezier(.16, 1, .3, 1);
+}
+
+@keyframes nc-dp-entra {
+  from { transform: translateY(-6px); }
+  to { transform: none; }
+}
+
+/* os blocos dizem o que são e, os documentos, se já estão preenchidos */
+@app.nc-dp .nc-dp-bloco-extra {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 10px;
+  flex-basis: 100%;
+  margin: 2px 0 0;
+  padding-left: 46px;
+}
+
+@app.nc-dp .t-Region-header .t-Region-headerItems--title:has(.nc-dp-bloco-extra) {
+  flex-wrap: wrap;
+}
+
+@app.nc-dp .nc-dp-bloco-dica {
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.4;
+  color: var(--nc-grafite);
+}
+
+@app.nc-dp :is(.nc-dp-doc-ok, .nc-dp-doc-meio, .nc-dp-doc-vazio) {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 12.5px;
+  font-weight: 800;
+  line-height: 1.3;
+}
+
+@app.nc-dp .nc-dp-doc-ok {
+  background: #E4F4EA;
+  color: #1E6B45;
+}
+
+@app.nc-dp .nc-dp-doc-ok .nc-dp-ic {
+  width: 14px;
+  height: 14px;
+  stroke-width: 3;
+}
+
+@app.nc-dp .nc-dp-doc-meio {
+  background: #FFF4DE;
+  color: #6B4700;
+}
+
+@app.nc-dp .nc-dp-doc-vazio {
+  background: var(--nc-nevoa2);
+  color: var(--nc-grafite);
+}
+
+/* o clipe "Anexos": diz o que faz */
+@app.nc-dp .t-Region .t-Region-header .t-Button.nc-dp-anexo:not(#nc-dp-x):not(#nc-dp-y) {
+  min-height: 40px;
+  padding: 0 14px 0 12px;
+  border: 1.5px solid var(--nc-roxo);
+  border-radius: 12px;
+  background: #fff;
+  color: var(--nc-roxo);
+}
+
+@app.nc-dp .t-Region .t-Region-header .t-Button.nc-dp-anexo:not(#nc-dp-x):not(#nc-dp-y)::after {
+  content: "Enviar foto";
+  font-size: 14px;
+  font-weight: 800;
+}
+
+@app.nc-dp .t-Region .t-Region-header .t-Button.nc-dp-anexo:hover:not(#nc-dp-x):not(#nc-dp-y) {
+  background: var(--nc-nevoa2);
+}
+
+@app.nc-dp .t-Region .t-Region-header .t-Button.nc-dp-anexo .t-Icon:not(#nc-dp-x):not(#nc-dp-y) {
+  color: inherit;
+}
+
+/* "Continuar: Sua família" — o próximo passo, grande, no fim de cada capítulo */
+@app.nc-dp .nc-dp-fim {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 60px;
+  margin: 4px 0 26px;
+  padding: 0 22px;
+  border-radius: 16px;
+  background: var(--nc-roxo);
+  font-size: 17px;
+  font-weight: 600;
+  line-height: 1.25;
+  color: #fff;
+  cursor: pointer;
+  user-select: none;
+  box-shadow: 0 14px 26px -18px rgba(var(--nc-t-roxo-rgb, 81, 28, 118), .9);
+  transition: background-color .15s;
+}
+
+@app.nc-dp .nc-dp-fim b {
+  font-weight: 800;
+}
+
+@app.nc-dp .nc-dp-fim:hover {
+  background: var(--nc-azul);
+}
+
+@app.nc-dp .nc-dp-fim .nc-dp-ic {
+  flex: none;
+  width: 24px;
+  height: 24px;
+  stroke-width: 2.4;
+}
+
+/* ═══ [C5] "SALVANDO…" / "SALVO" ═══════════════════════════════════════════════════════════
+   Mostrado pelo JS em [J7]. .nc-dp-aviso é a caixinha no pé da tela ("Salvando…", com a
+   rodinha .nc-dp-gira); .nc-dp-aviso--salvo e .nc-dp-aviso--erro mudam a cor.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-dp .nc-dp-aviso {
+  position: fixed;
+  left: 50%;
+  bottom: calc(18px + env(safe-area-inset-bottom, 0px));
+  z-index: 900;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 11px 18px;
+  border-radius: 999px;
+  background: var(--nc-tinta);
+  font-size: 15px;
+  font-weight: 700;
+  color: #fff;
+  box-shadow: 0 14px 30px -12px rgba(27, 18, 56, .6);
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+
+@app.nc-dp .nc-dp-aviso .nc-dp-ic {
+  width: 18px;
+  height: 18px;
+  stroke-width: 2.6;
+}
+
+@app.nc-dp .nc-dp-aviso--salvo {
+  background: #1E6B45;
+}
+
+@app.nc-dp .nc-dp-aviso--erro {
+  background: var(--nc-ruim);
+  pointer-events: auto;
+}
+
+@app.nc-dp .nc-dp-gira {
+  width: 16px;
+  height: 16px;
+  border: 2.5px solid rgba(255, 255, 255, .35);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: nc-dp-gira .8s linear infinite;
+}
+
+@keyframes nc-dp-gira {
+  to { transform: rotate(360deg); }
+}
+
+/* ═══ [C6] CELULAR ═════════════════════════════════════════════════════════════════════════
+   O que está dentro de  @media (max-width: 640px)  só vale em telas até 640px (celular).
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@media (max-width: 640px) {
+  @app.nc-dp .nc-dp-resumo {
+    padding: 18px 16px;
+    border-radius: 18px;
+  }
+
+  @app.nc-dp .nc-dp-ola {
+    font-size: 23px;
+  }
+
+  @app.nc-dp .nc-dp-ver {
+    width: 100%;
+    justify-content: center;
+  }
+
+  /* número, título e o quanto já tem; a dica desce para a linha de baixo, na largura toda */
+  @app.nc-dp .nc-dp-cap {
+    grid-template-columns: 44px minmax(0, 1fr) auto;
+    gap: 2px 12px;
+    min-height: 72px;
+    padding: 14px 14px 18px 12px;
+  }
+
+  @app.nc-dp .nc-dp-num {
+    width: 44px;
+    height: 44px;
+    font-size: 18px;
+  }
+
+  @app.nc-dp .nc-dp-cap-seta {
+    display: none;
+  }
+
+  @app.nc-dp .nc-dp-cap-tit {
+    font-size: 17.5px;
+  }
+
+  @app.nc-dp .nc-dp-cap-dica {
+    font-size: 14px;
+  }
+
+  @app.nc-dp .nc-dp-bloco-extra {
+    padding-left: 0;
+  }
+
+  @app.nc-dp .nc-dp-fim {
+    min-height: 58px;
+    padding: 0 18px;
+    font-size: 16px;
+  }
+}
+
+/* ═══ [C8] TELA LARGA: COLUNA DA FOTO COM O CADASTRO, CONTEÚDO NA LARGURA TODA ═══════════════
+   A partir de 1180 px (o mesmo número do JS, posicionarLado). O JS põe a marca nc-dp-com-lado
+   quando o cartão "Cadastro" foi para a coluna da foto. Antes: etapas + título + cartão roxo
+   empurravam o primeiro campo para o pé da tela, e o conteúdo ocupava 8/12 da largura, recuado.
+   PODE MEXER: 1180px (nos dois arquivos), os spans da grade (3 = 1/4 da linha, 6 = metade).
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+/* o título grande "Dados Pessoais" repete a etapa ativa do assistente: sai quando há etapas */
+@app.nc-dp:has(.t-WizardSteps) .t-HeroRegion:not(:has(.t-Button)):not(#nc-dp-x):not(#nc-dp-y) {
+  display: none;
+}
+
+@app.nc-dp:has(.t-WizardSteps) .row:has(> .col > .t-HeroRegion:not(:has(.t-Button))):not(#nc-dp-x):not(#nc-dp-y) {
+  display: none;
+}
+
+/* o sumário dos capítulos só existe na coluna da foto */
+@app.nc-dp:not(.nc-dp-com-lado) .nc-dp-indice:not(#nc-dp-x):not(#nc-dp-y),
+@app.nc-dp .nc-dp-ind[hidden]:not(#nc-dp-x):not(#nc-dp-y) {
+  display: none;
+}
+
+/* as colunas espaçadoras da grade, ao lado dos capítulos, sem região à vista: somem em qualquer
+   largura (no celular viravam um vão entre a foto e o cartão) */
+@app.nc-dp .col.nc-dp-col-lado-vazia:not(#nc-dp-x):not(#nc-dp-y),
+@app.nc-dp .row.nc-dp-linha-vazia:not(#nc-dp-x):not(#nc-dp-y) {
+  display: none;
+}
+
+@media (min-width: 1180px) {
+  /* ── o conteúdo: largura toda ── */
+  @app.nc-dp .col.nc-dp-col-principal:not(#nc-dp-x):not(#nc-dp-y) {
+    flex: 1 1 100%;
+    width: 100%;
+    max-width: 100%;
+  }
+
+
+  /* ── os campos: a grade do APEX (linhas de 12) vira UMA grade de 12 por bloco, e cada campo
+        ocupa metade do que ocupava: um campo de linha inteira vira meia linha, um de meia
+        linha vira um quarto. A ordem de leitura é a mesma. ── */
+  @app.nc-dp .nc-dp-r .t-Region-body > .container:not(#nc-dp-x):not(#nc-dp-y) {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: 16px;
+  }
+
+  @app.nc-dp .nc-dp-r .t-Region-body > .container > .row:not(#nc-dp-x):not(#nc-dp-y) {
+    display: contents;
+  }
+
+  /* CUIDADO  o "clearfix" do tema (::before/::after vazios na linha e no contêiner) vira CÉLULA da
+              grade quando a linha se dissolve — empurrava "Empresa" para o meio. Desligado aqui. */
+  @app.nc-dp .nc-dp-r .t-Region-body > .container:not(#nc-dp-x):not(#nc-dp-y)::before,
+  @app.nc-dp .nc-dp-r .t-Region-body > .container:not(#nc-dp-x):not(#nc-dp-y)::after,
+  @app.nc-dp .nc-dp-r .t-Region-body > .container > .row:not(#nc-dp-x):not(#nc-dp-y)::before,
+  @app.nc-dp .nc-dp-r .t-Region-body > .container > .row:not(#nc-dp-x):not(#nc-dp-y)::after {
+    content: none;
+    display: none;
+  }
+
+  @app.nc-dp .nc-dp-r .t-Region-body > .container > .row > .col:not(#nc-dp-x):not(#nc-dp-y) {
+    grid-column: span 6;
+    flex: none;
+    width: auto;
+    max-width: none;
+    padding-right: 0;
+    padding-left: 0;
+  }
+
+  @app.nc-dp .nc-dp-r .t-Region-body > .container > .row > .col:is(.col-1, .col-2, .col-3, .col-4, .col-5, .col-6):not(#nc-dp-x):not(#nc-dp-y) {
+    grid-column: span 3;
+  }
+
+  @app.nc-dp .nc-dp-r .t-Region-body > .container > .row > .col.nc-dp-col-meia:not(#nc-dp-x):not(#nc-dp-y) {
+    grid-column: span 6;
+  }
+
+  @app.nc-dp .nc-dp-r .t-Region-body > .container > .row > .col.nc-dp-col-larga:not(#nc-dp-x):not(#nc-dp-y) {
+    grid-column: 1 / -1;
+  }
+
+  @app.nc-dp .nc-dp-r .t-Region-body > .container > .row > .col.nc-dp-col-vazia:not(#nc-dp-x):not(#nc-dp-y) {
+    display: none;
+  }
+}
+
+/* ── o cartão "Cadastro" na coluna da foto: claro, com o % como dado principal, e o sumário ──
+   (cabeçalho claro, roxo cheio só no dado principal — e a faixa rosa sob o título) */
+@app.nc-dp.nc-dp-com-lado .t-Body-side > .nc-dp-resumo:not(#nc-dp-x):not(#nc-dp-y) {
+  display: block;
+  width: auto;
+  margin: 12px 0 18px 12px;
+  padding: 0 0 6px;
+  border: 1px solid var(--nc-nevoa);
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: var(--nc-soft);
+  color: var(--nc-tinta);
+}
+
+@app.nc-dp.nc-dp-com-lado .t-Body-side .nc-dp-resumo-txt {
+  padding: 0;
+}
+
+@app.nc-dp.nc-dp-com-lado .t-Body-side .nc-dp-ola {
+  padding: 13px 16px 11px;
+  border-bottom: 2px solid var(--nc-rosa);
+  font-size: 15px;
+  font-weight: 800;
+  line-height: 1.3;
+  color: var(--nc-tinta);
+}
+
+@app.nc-dp.nc-dp-com-lado .t-Body-side :is(.nc-dp-pronto, .nc-dp-medidor, .nc-dp-salva, .nc-dp-acoes) {
+  margin-right: 16px;
+  margin-left: 16px;
+}
+
+@app.nc-dp.nc-dp-com-lado .t-Body-side .nc-dp-pronto {
+  margin-top: 12px;
+  font-size: 13.5px;
+  color: var(--nc-grafite);
+}
+
+@app.nc-dp.nc-dp-com-lado .t-Body-side .nc-dp-pronto b {
+  font-size: 15px;
+  color: var(--nc-roxo);
+}
+
+@app.nc-dp.nc-dp-com-lado .t-Body-side .nc-dp-medidor {
+  height: 8px;
+  margin-top: 8px;
+  background: var(--nc-nevoa2);
+}
+
+@app.nc-dp.nc-dp-com-lado .t-Body-side .nc-dp-medidor i {
+  background: linear-gradient(90deg, var(--nc-rosa), var(--nc-roxo));
+}
+
+@app.nc-dp.nc-dp-com-lado .t-Body-side .nc-dp-salva {
+  gap: 8px;
+  margin-top: 10px;
+  font-size: 12.5px;
+  line-height: 1.4;
+  color: var(--nc-grafite);
+}
+
+@app.nc-dp.nc-dp-com-lado .t-Body-side .nc-dp-salva b {
+  color: var(--nc-tinta);
+}
+
+@app.nc-dp.nc-dp-com-lado .t-Body-side .nc-dp-salva .nc-dp-ic {
+  width: 18px;
+  height: 18px;
+  margin-top: 0;
+  color: var(--nc-roxo);
+}
+
+/* os botões do fluxo do RH, em pé e na largura do cartão */
+@app.nc-dp.nc-dp-com-lado .t-Body-side .nc-dp-acoes {
+  flex-direction: column;
+  margin-top: 12px;
+}
+
+@app.nc-dp.nc-dp-com-lado .t-Body-side .nc-dp-acoes .t-Button.nc-dp-acao:not(#nc-dp-x):not(#nc-dp-y) {
+  width: 100%;
+  min-height: 42px;
+  justify-content: center;
+  background: var(--nc-roxo);
+  box-shadow: none;
+  font-size: 14px;
+  color: #fff;
+}
+
+@app.nc-dp.nc-dp-com-lado .t-Body-side .nc-dp-acoes .t-Button:is(.nc-dp-acao--canc-alt-cad, .nc-dp-acao--del-alt-cad):not(#nc-dp-x):not(#nc-dp-y) {
+  background: #fff;
+  box-shadow: inset 0 0 0 1px var(--nc-borda-botao);
+  color: var(--nc-roxo);
+}
+
+/* "Currículo" e "Configuração da Conta" lado a lado quando cabem (a coluna da foto fica mais
+   baixa e o sumário cabe); quando a coluna é estreita, um embaixo do outro, na largura toda —
+   antes os dois dividiam 250 px e "Configuração da Conta" saía cortado (05/10). A base de cada
+   botão é o próprio texto (flex 1 1 auto): o que não cabe na linha desce. */
+@app.nc-dp.nc-dp-com-lado .t-Body-side .t-Region-body:has(> .t-Button--stretch):not(#nc-dp-x):not(#nc-dp-y) {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+@app.nc-dp.nc-dp-com-lado .t-Body-side .t-Region-body > .t-Button--stretch:not(#nc-dp-x):not(#nc-dp-y) {
+  flex: 1 1 auto;
+  width: auto;
+  min-width: 0;
+  margin: 0;
+  white-space: normal;
+}
+
+/* o sumário */
+@app.nc-dp .nc-dp-indice {
+  display: grid;
+  gap: 2px;
+  margin: 12px 8px 0;
+  padding-top: 10px;
+  border-top: 1px solid var(--nc-nevoa);
+}
+
+@app.nc-dp .nc-dp-ind:not(#nc-dp-x):not(#nc-dp-y) {
+  display: grid;
+  grid-template-columns: 24px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  min-height: 40px;
+  margin: 0;
+  padding: 6px 8px;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  box-shadow: none;
+  font: inherit;
+  text-align: left;
+  color: var(--nc-tinta);
+  cursor: pointer;
+}
+
+@app.nc-dp .nc-dp-ind:hover:not(#nc-dp-x):not(#nc-dp-y) {
+  background: var(--nc-off);
+}
+
+@app.nc-dp .nc-dp-ind:focus-visible:not(#nc-dp-x):not(#nc-dp-y) {
+  outline: 2px solid var(--nc-roxo);
+  outline-offset: 1px;
+}
+
+@app.nc-dp .nc-dp-ind.is-aberto:not(#nc-dp-x):not(#nc-dp-y) {
+  background: rgba(var(--nc-t-roxo-rgb, 81, 28, 118), .07);
+}
+
+@app.nc-dp .nc-dp-ind-num {
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border: 1.5px solid var(--nc-nevoa);
+  border-radius: 50%;
+  background: #fff;
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--nc-cinza);
+}
+
+@app.nc-dp .nc-dp-ind-num svg {
+  width: 14px;
+  height: 14px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+@app.nc-dp .nc-dp-ind.is-aberto .nc-dp-ind-num {
+  border-color: transparent;
+  background: var(--nc-roxo);
+  color: #fff;
+}
+
+@app.nc-dp .nc-dp-ind.is-completo:not(.is-aberto) .nc-dp-ind-num {
+  border-color: var(--nc-roxo);
+  background: var(--nc-nevoa2);
+  color: var(--nc-roxo);
+}
+
+@app.nc-dp .nc-dp-ind-tit {
+  overflow: hidden;
+  font-size: 13.5px;
+  font-weight: 600;
+  line-height: 1.3;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@app.nc-dp .nc-dp-ind.is-aberto .nc-dp-ind-tit {
+  font-weight: 800;
+  color: var(--nc-roxo);
+}
+
+@app.nc-dp .nc-dp-ind-est {
+  font-size: 11.5px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+@app.nc-dp .nc-dp-ind-est .nc-dp-est-falta {
+  padding: 2px 8px;
+}
+
+@app.nc-dp .nc-dp-ind-est .nc-dp-est-n {
+  color: var(--nc-cinza);
+}
+
+/* "Ver tudo aberto" no cartão claro: botão sem fundo, borda do sistema */
+@app.nc-dp.nc-dp-com-lado .t-Body-side .nc-dp-ver:not(#nc-dp-x):not(#nc-dp-y) {
+  display: flex;
+  justify-content: center;
+  min-height: 36px;
+  margin: 10px 16px 10px;
+  border: 1px solid var(--nc-borda-botao);
+  border-radius: 10px;
+  background: #fff;
+  font-size: 13px;
+  color: var(--nc-roxo);
+}
+
+@app.nc-dp.nc-dp-com-lado .t-Body-side .nc-dp-ver:hover:not(#nc-dp-x):not(#nc-dp-y) {
+  border-color: var(--nc-borda-botao-forte);
+  background: var(--nc-off);
+}
+
+/* ═══ [C7] MENOS MOVIMENTO ═════════════════════════════════════════════════════════════════
+   Para quem pediu "reduzir movimento" nas configurações do computador ou celular
+   (acessibilidade): sem transições, sem a animação de abrir o capítulo, e a rodinha do
+   "Salvando…" gira mais devagar.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@media (prefers-reduced-motion: reduce) {
+  @app.nc-dp :is(.nc-dp-cap, .nc-dp-cap-seta, .nc-dp-cap-barra i, .nc-dp-medidor i, .nc-dp-fim) {
+    transition: none;
+  }
+
+  @app.nc-dp .t-Region.nc-dp-r:not(.nc-dp-fechado) {
+    animation: none;
+  }
+
+  @app.nc-dp .nc-dp-gira {
+    animation-duration: 2.4s;
+  }
+}

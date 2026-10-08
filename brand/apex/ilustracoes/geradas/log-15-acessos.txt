@@ -1,0 +1,15 @@
+/Users/igor_sala/instalacoes/Projetos/natcorp-landing/brand/apex/ilustracoes/geradas/acessos-v1.png 1164741 bytes
+{
+ "input_tokens": 2068,
+ "input_tokens_details": {
+  "image_tokens": 1521,
+  "text_tokens": 547
+ },
+ "output_tokens": 7024,
+ "output_tokens_details": {
+  "image_tokens": 7024,
+  "text_tokens": 0
+ },
+ "total_tokens": 9092
+}
+ilustra-acessos.png (981, 952)

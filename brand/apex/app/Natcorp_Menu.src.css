@@ -1,0 +1,660 @@
+/* ╔════════════════════════════════════════════════════════════════════════════════════════╗
+   ║  NATCORP · CABEÇALHO E MENU  —  a "roupa" do alto e da lateral de TODAS as páginas (CSS) ║
+   ╚════════════════════════════════════════════════════════════════════════════════════════╝
+   Primeira vez num arquivo destes? Leia antes o manual: brand/apex/MANUAL-APEX.md (parte 1).
+
+   O QUE FAZ   Pinta o cabeçalho do alto e o menu lateral das páginas internas com o mesmo
+               fundo e efeito do painel roxo do login: degradê Azul → Roxo, brilho Rosa,
+               malha, rede de pontos à deriva e losangos com a luz correndo na borda. Só as
+               três cores da marca: Roxo #511C76 · Rosa #C95788 · Azul #2C1A63 (o Rosa
+               clareado #E4A9C4 / #F3C9DA só nos brilhos e ícones sobre o escuro). Também o
+               menu SUPERIOR das aplicações com navegação no topo. O conteúdo das páginas
+               fica no Natcorp_Paginas.src.css.
+   ONDE ENTRA  Não sobe sozinho: o gerar-app.mjs o junta ao Natcorp_Paginas e ao Natcorp_Temas
+               no fim do Natcorp_Style_Min.css (o arquivo que sobe e que toda página carrega).
+               Ele também troca os marcadores @@…@@ pelas imagens do ../painel-natcorp.mjs.
+               Edite ESTE arquivo, não o gerado.
+   CUIDADO     As medidas que o tema calcula — cabeçalho de 48 px, menu de 240 px aberto e
+               48 px recolhido — NÃO podem mudar: o theme42.js e o layout dependem delas.
+
+   ÍNDICE (Ctrl+F pelo código)
+     [C1] As cores deste arquivo ......... os nomes das cores                 PODE MEXER
+     [C2] O cabeçalho do alto ............ fundo, logo, botões (Notificações, usuário)
+     [C3] O menu lateral ................. fundo, itens, item atual, subníveis
+     [C4] Menu SUPERIOR dentro do painel . a barra clara de abas das aplicações no iframe
+     [C5] Menu SUPERIOR em janela própria  a faixa roxa, "Sair" e os botões no celular
+
+   RECEITAS RÁPIDAS
+     Mudar o roxo/azul do cabeçalho e do menu → os valores em [C1] (e os mesmos nomes no
+       Natcorp_Paginas.src.css, parte [C1], para não ficarem diferentes).
+     Mudar a cor do item atual do menu lateral → [C3], procure "item atual / selecionado".
+     Mudar a cor da aba atual do menu superior → [C4], procure "a aba atual".
+
+   COMO LER CSS EM 30 SEGUNDOS (a versão completa está no Natcorp_Paginas.src.css)
+     QUEM { COMO; }   ex.:  @app .t-Header { background-color: var(--nc-azul); }
+     QUEM é o "seletor" (o pedaço da tela); COMO é  propriedade: valor;  (aqui, fundo Azul).
+     @app = prioridade sobre o tema do APEX. var(--nc-azul) = uma cor da marca, pelo nome.
+     @media (max-width: 639px) { … } = só em telas até 639 px. Não apague  ;  {  }.
+*/
+
+/* ═══ [C1] AS CORES DESTE ARQUIVO ════ PODE MEXER: o valor (#…) de cada nome, nunca o nome. */
+:root {
+  --nc-azul: #2C1A63; --nc-roxo: #511C76; --nc-rosa: #C95788;
+  --nc-rosa-claro: #E4A9C4;
+  --nc-tinta: #1B1238;
+}
+
+/* ---------- [C2] 1. Cabeçalho: a continuação do painel -------------------- */
+/* Começa no Azul, onde encosta no topo do menu, e vai ao Roxo, com o
+   brilho Rosa à direita — o mesmo desenho do painel, na horizontal. */
+
+@app .t-Header {
+  background-color: var(--nc-azul);
+  background-image:
+    radial-gradient(38% 260% at 88% 0%, rgba(var(--nc-t-rosa-rgb, 201, 87, 136), .38), transparent 70%),
+    radial-gradient(30% 220% at 45% 100%, rgba(var(--nc-t-roxo-rgb, 81, 28, 118), .55), transparent 70%),
+    linear-gradient(90deg, var(--nc-azul, #2C1A63) 0%, var(--nc-roxo, #511C76) 100%);
+  backdrop-filter: none;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, .07), 0 10px 28px -18px rgba(var(--nc-t-azul-rgb, 44, 26, 99), .8);
+  border: 0;
+  color: #fff;
+}
+
+/* o tema e a Natcorp Skin pintam também os FILHOS do cabeçalho (o degradê antigo está no
+   .t-Header-branding, o roxo no .t-Header-nav): sem isto eles cobrem o fundo novo */
+@app .t-Header-branding,
+@app .t-Header-nav,
+@app .t-Header-navBar,
+@app .t-Header-logo {
+  background: transparent;
+  background-image: none;
+  box-shadow: none;
+}
+
+/* o símbolo Natcorp, branco, antes do nome do app */
+@app .t-Header-logo-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: #fff;
+  text-decoration: none;
+}
+
+@app .t-Header-logo-link::before {
+  content: "";
+  width: 22px;
+  height: 22px;
+  flex: none;
+  background: @@SIMBOLO_BRANCO@@ center / contain no-repeat;
+}
+
+@app .t-Header-logo,
+@app .t-Header-logo-link,
+@app .t-Header-logo span {
+  font-family: "Inter NC", Inter, ui-sans-serif, system-ui, "Segoe UI", Arial, sans-serif;
+  font-size: 16px;
+  font-weight: 800;
+  letter-spacing: -.02em;
+  color: #fff;
+}
+
+/* "Manual" e "Blog" são <a>, "Notificações" e o usuário são <button>: o navegador centraliza
+   o conteúdo do botão mas não o do link. inline-flex centraliza os dois igual. */
+@app .t-Header .t-Button--header {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 36px;
+  margin: 6px 2px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  box-shadow: none;
+  color: rgba(255, 255, 255, .86);
+  font-family: "Inter NC", Inter, ui-sans-serif, system-ui, "Segoe UI", Arial, sans-serif;
+  font-size: 13.5px;
+  font-weight: 600;
+  transition: background-color .2s, color .2s;
+}
+
+@app .t-Header .t-Button--header .t-Icon,
+@app .t-Header .t-Button--header .t-Button-label,
+@app .t-Header .t-Button--header .a-Icon {
+  color: inherit;
+}
+
+@app .t-Header .t-Button--header:hover,
+@app .t-Header .t-Button--header.is-active,
+@app .t-Header .t-Button--header[aria-expanded="true"] {
+  background: rgba(255, 255, 255, .12);
+  color: #fff;
+}
+
+@app .t-Header .t-Button--header:focus-visible {
+  outline: 2px solid var(--nc-rosa-claro);
+  outline-offset: 2px;
+}
+
+/* ...mas o botão do MENU LATERAL (hambúrguer) só existe quando há menu lateral: o tema o
+   esconde na aplicação de navegação no topo e na página sem navegação. A regra acima
+   (display: inline-flex em todo botão do cabeçalho) o trazia de volta — aparecia um
+   hambúrguer que não abre nada (portal "Conhecendo Você"). */
+@app.apex-top-nav .t-Header .t-Button--headerTree,
+@app.t-PageBody--noNav .t-Header .t-Button--headerTree {
+  display: none;
+}
+
+/* o botão do menu (hambúrguer): quadrado de 36 com o ícone no centro —
+   o tema dava margem ao ícone e ele ficava 10 px à esquerda */
+@app .t-Header .t-Button--headerTree {
+  width: 36px;
+  padding: 0;
+  margin-left: 8px;
+  color: #fff;
+}
+
+@app .t-Header .t-Button--headerTree .t-Icon {
+  margin: 0;
+  position: static;
+}
+
+/* ---------- [C3] 2. Menu lateral: o painel do login ---------------------- */
+/* O fundo vai no .t-Body-nav, que é quem ROLA: fundo em elemento que rola
+   fica parado enquanto os itens passam por cima. O logo Natcorp é a PRIMEIRA
+   camada desse fundo — assim fica preso ao pé do menu, sem elemento novo no
+   HTML, e a lista (com 96 px de folga no fim) nunca termina em cima dele.
+   08/10: o painel do menu é o PARADO (mesmo desenho, sem movimento). O animado, como imagem de
+   fundo de um elemento de 240×860 px que fica na tela o dia todo, fazia a página redesenhar
+   ~40 vezes por segundo SEM PARAR (medido: 242 pinturas em 3 s → 0 com o parado), pesando em
+   todo computador — e muito nos de 4–8 GB. O login continua animado (tela de passagem).
+   NÃO volte para @@PAINEL_MENU_ANIMADO@@ aqui. */
+
+@app .t-Body-nav {
+  background-color: var(--nc-azul);
+  background-image:
+    @@LOGO_BRANCO@@,
+    @@PAINEL_MENU_PARADO@@,
+    radial-gradient(90% 40% at 0% 0%, rgba(var(--nc-t-rosa-rgb, 201, 87, 136), .28), transparent 70%),
+    radial-gradient(120% 45% at 100% 100%, rgba(var(--nc-t-rosa-rgb, 201, 87, 136), .22), transparent 70%),
+    linear-gradient(180deg, var(--nc-azul, #2C1A63) 0%, var(--nc-roxo, #511C76) 100%);
+  background-size: 104px auto, cover, auto, auto, auto;
+  background-position: left 24px bottom 24px, center bottom, 0 0, 0 0, 0 0;
+  background-repeat: no-repeat;
+  box-shadow: inset -1px 0 0 rgba(255, 255, 255, .06);
+  scrollbar-color: rgba(255, 255, 255, .25) transparent;
+  scrollbar-width: thin;
+}
+
+/* recolhido (48 px): o logo não cabe, e o símbolo sozinho pediria mais uma cópia do
+   painel animado nesta folha (+30 KB) — a camada do logo só some */
+@app.js-navCollapsed .t-Body-nav {
+  background-size: 0 0, cover, auto, auto, auto;
+}
+
+@app #t_TreeNav,
+@app #t_TreeNav ul {
+  background: transparent;
+  background-image: none;
+}
+
+/* O pé do menu é do logo: com um submenu aberto (Requisições tem 20 itens) a lista
+   rolava POR CIMA dele. Aberto, quem rola passa a ser a lista, que termina 80 px antes
+   do fim e some em degradê; o .t-Body-nav não rola mais. Recolhido (sem logo), volta
+   tudo ao tema: lá os submenus abrem para fora e não podem ser cortados. */
+@app #t_TreeNav {
+  padding: 12px 0 16px;
+}
+
+@app:not(.js-navCollapsed) .t-Body-nav {
+  overflow: hidden;
+}
+
+@app:not(.js-navCollapsed) #t_TreeNav {
+  height: calc(100% - 80px);
+  min-height: 0;                       /* o tema dá min-height: 99% à árvore, e ele vencia a altura */
+  overflow-x: hidden;
+  overflow-y: auto;
+  scrollbar-color: rgba(255, 255, 255, .25) transparent;
+  scrollbar-width: thin;
+  -webkit-mask-image: linear-gradient(to bottom, #000 calc(100% - 28px), transparent);
+  mask-image: linear-gradient(to bottom, #000 calc(100% - 28px), transparent);
+}
+
+/* a linha é a camada de fundo do item (o tema a usa para o destaque): vira um
+   bloco arredondado recuado, como a lista lateral do site */
+/* Medido: destaque de x=10 a 230, ícone na caixa de 0 a 40 — o glifo ficava a ~2 px da
+   borda do destaque. A linha recua 8 px e o conteúdo anda 10 px: o ícone fica com 14 px
+   de respiro dentro do destaque, o mesmo que sobra à direita da seta. */
+@app #t_TreeNav .a-TreeView-row {
+  left: 8px;
+  right: 8px;
+  width: auto;
+  border-radius: 10px;
+  background: transparent;
+  transition: background-color .2s;
+}
+
+@app #t_TreeNav .a-TreeView-content {
+  padding-left: 10px;
+  color: rgba(255, 255, 255, .84);
+  background: transparent;
+}
+
+/* a seta de abrir/fechar anda junto, para não ficar colada à borda direita do destaque */
+@app #t_TreeNav .a-TreeView-toggle {
+  margin-right: 8px;
+}
+
+/* menu recolhido (48 px, só ícones): sem o recuo — senão o ícone sai da coluna */
+@app.js-navCollapsed #t_TreeNav .a-TreeView-content {
+  padding-left: 0;
+}
+
+@app.js-navCollapsed #t_TreeNav .a-TreeView-row {
+  left: 4px;
+  right: 4px;
+}
+
+/* propriedades separadas, nunca o atalho "font:" — ele zera o line-height que o
+   tema usa para centralizar o texto com o ícone */
+@app #t_TreeNav .a-TreeView-label {
+  font-family: "Inter NC", Inter, ui-sans-serif, system-ui, "Segoe UI", Arial, sans-serif;
+  font-size: 13.5px;
+  font-weight: 600;
+  letter-spacing: normal;
+  color: rgba(255, 255, 255, .84);
+}
+
+@app #t_TreeNav .a-TreeView-content .fa,
+@app #t_TreeNav .a-TreeView-content .t-Icon {
+  color: var(--nc-rosa-claro);
+  opacity: 1;
+}
+
+@app #t_TreeNav .a-TreeView-toggle {
+  color: rgba(255, 255, 255, .55);
+}
+
+/* hover */
+@app #t_TreeNav .a-TreeView-node:hover > .a-TreeView-row {
+  background: rgba(255, 255, 255, .07);
+}
+
+@app #t_TreeNav .a-TreeView-node:hover > .a-TreeView-content .a-TreeView-label {
+  color: #fff;
+}
+
+/* item atual / selecionado: vidro claro com um fio de luz, texto branco em negrito.
+   Sem filete colorido na borda: o destaque inteiro já diz onde você está. */
+@app #t_TreeNav .a-TreeView-row.is-selected,
+@app #t_TreeNav .a-TreeView-row.is-current,
+@app #t_TreeNav .a-TreeView-row.is-current--top {
+  background: rgba(255, 255, 255, .14);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .08), 0 6px 16px -10px rgba(20, 8, 50, .6);
+}
+
+@app #t_TreeNav .a-TreeView-content.is-selected .fa,
+@app #t_TreeNav .a-TreeView-content.is-current--top .fa {
+  color: #fff;
+}
+
+@app #t_TreeNav .a-TreeView-content.is-selected .a-TreeView-label,
+@app #t_TreeNav .a-TreeView-content.is-current .a-TreeView-label,
+@app #t_TreeNav .a-TreeView-content.is-current--top .a-TreeView-label {
+  color: #fff;
+  font-weight: 700;
+}
+
+/* subníveis: o tema pinta a lista de cinza-escuro (rgb 30,36,40) — sai (regra acima);
+   o texto fica um tom abaixo */
+@app #t_TreeNav .a-TreeView-node .a-TreeView-node .a-TreeView-label {
+  font-size: 13px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, .7);
+}
+
+@app #t_TreeNav .a-TreeView-node .a-TreeView-node:hover > .a-TreeView-content .a-TreeView-label,
+@app #t_TreeNav .a-TreeView-node .a-TreeView-node .a-TreeView-content.is-selected .a-TreeView-label,
+@app #t_TreeNav .a-TreeView-node .a-TreeView-node .a-TreeView-content.is-current .a-TreeView-label {
+  color: #fff;
+}
+
+/* ---------- [C4] 3. Menu SUPERIOR (aplicações com navegação no topo — as de dentro do iframe) ----------
+   As aplicações abertas dentro do painel (eSocial, …) usam o menu no topo ("eSocial ·
+   Cadastros ▾"). Lá o cabeçalho escuro deste arquivo virava uma SEGUNDA faixa roxa logo
+   abaixo do cabeçalho do painel, com a aba atual num lilás chapado — dois cabeçalhos
+   empilhados. Dentro do painel ele é uma sub-navegação da página, não um cabeçalho: barra
+   clara com o fio Névoa embaixo, abas em texto, a atual em Roxo com o fio Rosa de 2 px (o
+   mesmo das abas de região) e o Lavanda suave no hover. A área clicável de cada aba é um
+   bloco de 32 px com cantos de 8 — a barra fica nos 40 px do tema (ele posiciona o título
+   da página por essa altura), com o texto e a seta do submenu juntos. */
+@app.apex-top-nav .t-Header {
+  background: #fff;
+  background-image: none;
+  border: 0;
+  box-shadow: inset 0 -1px 0 var(--nc-nevoa), 0 6px 18px -16px rgba(27, 18, 56, .35);
+  color: var(--nc-tinta);
+}
+
+@app.apex-top-nav .t-Header-nav {
+  padding: 0 16px;
+  background: transparent;
+}
+
+@app.apex-top-nav .t-Header-nav-list,
+@app.apex-top-nav .t-Header-nav-list.a-MenuBar {
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+}
+
+@app.apex-top-nav .t-Header-nav-list > ul {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  height: 40px;
+  min-height: 0;
+  margin: 0;
+  padding: 0;
+  background: transparent;
+}
+
+@app.apex-top-nav .a-MenuBar-item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  height: 32px;
+  margin: 4px 0;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  box-shadow: none;
+  transition: background-color .2s;
+}
+
+@app.apex-top-nav .a-MenuBar-item .a-MenuBar-label {
+  display: flex;
+  align-items: center;
+  height: 32px;
+  padding: 0 12px;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  font-family: "Inter NC", Inter, ui-sans-serif, system-ui, "Segoe UI", Arial, sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: normal;
+  line-height: 1;
+  color: var(--nc-grafite);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+/* aba com submenu: o texto e a seta formam UM alvo — sem vão entre eles */
+@app.apex-top-nav .a-MenuBar-item.a-Menu--split .a-MenuBar-label {
+  padding-right: 2px;
+}
+
+@app.apex-top-nav .a-MenuBar-item > .a-Menu-subMenuCol {
+  display: flex;
+  align-items: center;
+  height: 32px;
+  padding: 0 10px 0 4px;
+  background: transparent;
+  color: var(--nc-cinza);
+  cursor: pointer;
+}
+
+/* a seta: o ícone do APEX é uma IMAGEM de fundo, e a Skin pinta um fundo Roxo por cima
+   quando o menu abre — virava um quadrado cheio. Vira o glifo da Font APEX, na cor do texto
+   em todos os estados. */
+@app.apex-top-nav .a-MenuBar-item > .a-Menu-subMenuCol .a-Icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 14px;
+  height: 14px;
+  background: none;
+  color: inherit;
+}
+
+@app.apex-top-nav .a-MenuBar-item > .a-Menu-subMenuCol .a-Icon::before {
+  content: "\f107";                     /* fa-angle-down */
+  font-family: "Font APEX Small", "Font APEX";
+  font-size: 14px;
+  line-height: 1;
+  color: inherit;
+  transition: transform .2s cubic-bezier(.22, 1, .36, 1);
+}
+
+@app.apex-top-nav .a-MenuBar-item.is-expanded > .a-Menu-subMenuCol .a-Icon::before {
+  transform: rotate(180deg);
+}
+
+/* o submenu desce da barra: a Skin corta tudo o que passa dos 40 px dela (overflow
+   hidden na barra e na lista) e o menu abria invisível */
+@app.apex-top-nav .t-Header-nav,
+@app.apex-top-nav .t-Header-nav-list {
+  overflow: visible;
+}
+
+@app.apex-top-nav .a-MenuBar-item:hover,
+@app.apex-top-nav .a-MenuBar-item.is-focused,
+@app.apex-top-nav .a-MenuBar-item.is-expanded {
+  background: var(--nc-nevoa2);
+}
+
+@app.apex-top-nav .a-MenuBar-item:hover .a-MenuBar-label,
+@app.apex-top-nav .a-MenuBar-item.is-focused .a-MenuBar-label,
+@app.apex-top-nav .a-MenuBar-item.is-expanded .a-MenuBar-label,
+@app.apex-top-nav .a-MenuBar-item:hover > .a-Menu-subMenuCol,
+@app.apex-top-nav .a-MenuBar-item.is-expanded > .a-Menu-subMenuCol {
+  background: transparent;
+  color: var(--nc-roxo);
+}
+
+/* a aba atual: texto Roxo e o fio Rosa encostado na base da barra */
+@app.apex-top-nav .a-MenuBar-item.a-Menu--current {
+  background: transparent;
+}
+
+@app.apex-top-nav .a-MenuBar-item.a-Menu--current:hover,
+@app.apex-top-nav .a-MenuBar-item.a-Menu--current.is-expanded {
+  background: var(--nc-nevoa2);
+}
+
+@app.apex-top-nav .a-MenuBar-item.a-Menu--current .a-MenuBar-label,
+@app.apex-top-nav .a-MenuBar-item.a-Menu--current > .a-Menu-subMenuCol {
+  background: transparent;
+  color: var(--nc-roxo);
+}
+
+@app.apex-top-nav .a-MenuBar-item.a-Menu--current .a-MenuBar-label {
+  font-weight: 800;
+}
+
+@app.apex-top-nav .a-MenuBar-item.a-Menu--current::after {
+  content: "";
+  position: absolute;
+  left: 10px;
+  right: 10px;
+  bottom: -4px;
+  height: 2px;
+  border-radius: 2px 2px 0 0;
+  background: var(--nc-rosa);
+}
+
+@app.apex-top-nav .a-MenuBar-item .a-MenuBar-label:focus-visible {
+  outline: 2px solid var(--nc-roxo);
+  outline-offset: -2px;
+  border-radius: 8px;
+}
+
+/* o submenu abre colado à barra, não 4 px sobre o fio da aba */
+@app.apex-top-nav .a-MenuBar .a-Menu--top {
+  margin-top: 4px;
+}
+
+/* a faixa da MARCA no cabeçalho claro (o portal "Conhecendo Você", com as etapas no lugar
+   do menu): o nome do app, o símbolo e os botões ("Sair", o menu) são brancos — foram
+   desenhados para o cabeçalho escuro — e sumiam no branco. Com eles sumia o ÚNICO jeito de
+   sair do sistema. Nome em Tinta, símbolo no degradê real do logo (Ameixa → Roxo → Azul),
+   botões em Grafite com o Lavanda suave no hover, como as abas daqui. */
+@app.apex-top-nav .t-Header-logo,
+@app.apex-top-nav .t-Header-logo-link,
+@app.apex-top-nav .t-Header-logo span {
+  color: var(--nc-tinta);
+}
+
+@app.apex-top-nav .t-Header-logo-link::before {
+  background: linear-gradient(135deg, var(--nc-ameixa, #9A408A) 0%, var(--nc-roxo, #511C76) 50%, var(--nc-azul, #2C1A63) 100%);
+  -webkit-mask: @@SIMBOLO_BRANCO@@ center / contain no-repeat;
+  mask: @@SIMBOLO_BRANCO@@ center / contain no-repeat;
+}
+
+@app.apex-top-nav .t-Header .t-Button--header,
+@app.apex-top-nav .t-Header .t-Button--headerTree {
+  color: var(--nc-grafite);
+}
+
+@app.apex-top-nav .t-Header .t-Button--header:hover,
+@app.apex-top-nav .t-Header .t-Button--header.is-active,
+@app.apex-top-nav .t-Header .t-Button--header[aria-expanded="true"] {
+  background: var(--nc-nevoa2);
+  color: var(--nc-roxo);
+}
+
+@app.apex-top-nav .t-Header .t-Button--header:focus-visible {
+  outline-color: var(--nc-roxo);
+}
+
+/* ---------- [C5] 3b. Menu SUPERIOR em JANELA PRÓPRIA (Chamados) ----------
+   A barra clara acima é para quando a aplicação abre DENTRO do Painel. Aberta na janela
+   dela, a barra é o cabeçalho da aplicação — e volta a ser a faixa roxa do Painel do
+   Operador (a mesma da seção 1). Quem diz "janela própria" é o Natcorp_Barra.js (classe
+   nc-janela-propria no body); sem ele — o portal "Conhecendo Você", que não o carrega —
+   continua a barra clara. */
+@app.apex-top-nav.nc-janela-propria .t-Header {
+  background-color: var(--nc-azul);
+  background-image:
+    radial-gradient(38% 260% at 88% 0%, rgba(var(--nc-t-rosa-rgb, 201, 87, 136), .38), transparent 70%),
+    radial-gradient(30% 220% at 45% 100%, rgba(var(--nc-t-roxo-rgb, 81, 28, 118), .55), transparent 70%),
+    linear-gradient(90deg, var(--nc-azul, #2C1A63) 0%, var(--nc-roxo, #511C76) 100%);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, .07), 0 10px 28px -18px rgba(var(--nc-t-azul-rgb, 44, 26, 99), .8);
+  color: #fff;
+}
+
+@app.apex-top-nav.nc-janela-propria .t-Header-logo,
+@app.apex-top-nav.nc-janela-propria .t-Header-logo-link,
+@app.apex-top-nav.nc-janela-propria .t-Header-logo span {
+  color: #fff;
+}
+
+@app.apex-top-nav.nc-janela-propria .t-Header-logo-link::before {
+  background: @@SIMBOLO_BRANCO@@ center / contain no-repeat;
+  -webkit-mask: none;
+  mask: none;
+}
+
+@app.apex-top-nav.nc-janela-propria .t-Header .t-Button--header {
+  color: rgba(255, 255, 255, .86);
+}
+
+/* celular: o nome da aplicação não cabe ao lado dos botões e era cortado no meio
+   ("Acompanh"); fica o símbolo — que continua sendo o link para o início — e o nome vai
+   para o leitor de tela. O título da página, logo abaixo, diz onde se está. */
+@media (max-width: 639px) {
+  @app.apex-top-nav.nc-janela-propria .t-Header-logo .apex-logo-text {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+}
+
+@app.apex-top-nav.nc-janela-propria .t-Header .t-Button--header:hover,
+@app.apex-top-nav.nc-janela-propria .t-Header .t-Button--header.is-active,
+@app.apex-top-nav.nc-janela-propria .t-Header .t-Button--header[aria-expanded="true"] {
+  background: rgba(255, 255, 255, .12);
+  color: #fff;
+}
+
+@app.apex-top-nav.nc-janela-propria .t-Header .t-Button--header:focus-visible {
+  outline-color: var(--nc-rosa-claro);
+}
+
+/* abas do menu (quando a aplicação tem): texto branco, o hover no branco translúcido do
+   painel, a atual em branco cheio com o fio Rosa-claro */
+@app.apex-top-nav.nc-janela-propria .a-MenuBar-item .a-MenuBar-label,
+@app.apex-top-nav.nc-janela-propria .a-MenuBar-item > .a-Menu-subMenuCol {
+  color: rgba(255, 255, 255, .86);
+}
+
+@app.apex-top-nav.nc-janela-propria .a-MenuBar-item:hover,
+@app.apex-top-nav.nc-janela-propria .a-MenuBar-item.is-focused,
+@app.apex-top-nav.nc-janela-propria .a-MenuBar-item.is-expanded,
+@app.apex-top-nav.nc-janela-propria .a-MenuBar-item.a-Menu--current:hover,
+@app.apex-top-nav.nc-janela-propria .a-MenuBar-item.a-Menu--current.is-expanded {
+  background: rgba(255, 255, 255, .12);
+}
+
+@app.apex-top-nav.nc-janela-propria .a-MenuBar-item:hover .a-MenuBar-label,
+@app.apex-top-nav.nc-janela-propria .a-MenuBar-item.is-focused .a-MenuBar-label,
+@app.apex-top-nav.nc-janela-propria .a-MenuBar-item.is-expanded .a-MenuBar-label,
+@app.apex-top-nav.nc-janela-propria .a-MenuBar-item:hover > .a-Menu-subMenuCol,
+@app.apex-top-nav.nc-janela-propria .a-MenuBar-item.is-expanded > .a-Menu-subMenuCol,
+@app.apex-top-nav.nc-janela-propria .a-MenuBar-item.a-Menu--current .a-MenuBar-label,
+@app.apex-top-nav.nc-janela-propria .a-MenuBar-item.a-Menu--current > .a-Menu-subMenuCol {
+  color: #fff;
+}
+
+@app.apex-top-nav.nc-janela-propria .a-MenuBar-item.a-Menu--current::after {
+  background: var(--nc-rosa-claro);
+}
+
+@app.apex-top-nav.nc-janela-propria .a-MenuBar-item .a-MenuBar-label:focus-visible {
+  outline-color: var(--nc-rosa-claro);
+}
+
+/* "Sair": o ícone do tema é uma corrente partida (fa-chain-broken) e, no celular, o tema
+   esconde a palavra — sobrava um desenho que pouca gente reconhece como "sair". Fica o
+   ícone de saída (porta com a seta) e a palavra "Sair" sempre visível. */
+@app.apex-top-nav .t-Button--navBar .fa-chain-broken::before {
+  content: "\f08b";
+}
+
+/* só no "Sair" (e no item com contador, que perderia o número): os outros ficam só com o
+   ícone no celular, como o tema faz — com os rótulos de todos, o "Sair" saía da tela */
+@app.apex-top-nav .t-Button--navBar:is(:has(.fa-chain-broken), :has(.nc-contador)) .t-Button-label {
+  display: inline;
+  position: static;
+  width: auto;
+  height: auto;
+  margin: 0;
+  clip: auto;
+}
+
+/* celular: os outros itens da barra (Usuários, Manual, Alertas sem contador) viram botões
+   quadrados só com o ícone — o nome continua para o leitor de tela (visually hidden). Com
+   todos os rótulos, a barra passava de 440 px e o "Sair" ficava fora da tela. */
+@media (max-width: 639px) {
+  @app.apex-top-nav .t-Button--navBar:not(:has(.fa-chain-broken)):not(:has(.nc-contador)) {
+    width: 36px;
+    padding: 0;
+  }
+
+  @app.apex-top-nav .t-Button--navBar:not(:has(.fa-chain-broken)):not(:has(.nc-contador)) .t-Button-label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+}

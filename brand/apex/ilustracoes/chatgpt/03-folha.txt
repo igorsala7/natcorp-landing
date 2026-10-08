@@ -1,0 +1,5 @@
+Next image of the same series — module "Folha de Pagamento". Same style as the attached sheet and the style guide, square 1:1, transparent background.
+
+SCENE — the hero object is a large isometric payslip sheet lying on the floor like a platform, with abstract rows and a highlighted pink total bar, next to a big isometric desk calculator with square keys in purple and periwinkle. Around it: a woman in a pink top pressing keys on the calculator; a man in a navy blazer walking with a stack of coins; a man with a beard sitting on a stack of coins using a laptop; a woman holding a clipboard. Props: three stacks of coins in plum and pink, a floating bar chart card with rising pink bars, a floating card with a wallet icon.
+
+STRICT — no text, no letters, no numbers, no words, no logos, no brand marks, no flags, no national symbols, no watermark, no signature, no border or frame. Faceless people. Flat vector only. Pure white background.

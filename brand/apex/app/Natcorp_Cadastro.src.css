@@ -1,0 +1,925 @@
+/* ╔════════════════════════════════════════════════════════════════════════════════════════╗
+   ║  NATCORP · ALTERAÇÃO CADASTRAL E DE ENDEREÇO  —  a "roupa" da tela (CSS)               ║
+   ║  App 200 · Páginas 136 (Alteração Cadastral) e 134 (Alteração de Endereço)             ║
+   ╚════════════════════════════════════════════════════════════════════════════════════════╝
+
+   Primeira vez num arquivo destes? Leia antes o manual: brand/apex/MANUAL-APEX.md (parte 1).
+
+   ── O QUE ESTE ARQUIVO FAZ ──────────────────────────────────────────────────────────────────
+   Dá a aparência das páginas de Alteração Cadastral (136) e de Endereço (134): cores, tamanhos,
+   espaços, bordas, e como a tela se arruma no computador e no celular. Ele NÃO muda nada de
+   lugar: quem muda as coisas de lugar é o arquivo-irmão Natcorp_Cadastro.js. Os dois juntos:
+     o JS monta "os cartões dos assuntos"  →  este arquivo diz como os cartões se parecem.
+   Sem o JS, este arquivo não faz nada: todas as regras dependem da marca nc-cad que só o
+   Natcorp_Cadastro.js põe no corpo da página.
+   Público: colaboradores (e gestores por eles), muitos com pouca leitura, quase sempre no
+   celular. Por isso: alvos grandes (48px ou mais), letra de 16px nos campos, uma pergunta por
+   vez, ícone + duas palavras. Nada aqui vence o display:none das ações dinâmicas (o que o
+   APEX esconde continua escondido).
+
+   ── ONDE ELE ENTRA NO APEX ──────────────────────────────────────────────────────────────────
+     Página 136 (e 134) › CSS › File URLs:   #WORKSPACE_IMAGES#Natcorp_Cadastro.css
+     Este é o arquivo-FONTE (.src.css). O arquivo que sobe (o .css de mesmo nome, sem ".src") é
+     gerado a partir dele pelo gerar-app.mjs, que escreve o @app por extenso e põe os !important:
+     edite ESTE arquivo, não o .css (manual, parte 2).
+
+   ── ÍNDICE: as partes deste arquivo (Ctrl+F pelo código entre colchetes) ────────────────────
+     [C1] O que sai de cena                       (o que o JS esconde)
+     [C2] O alto                                  ← montado pelo JS em [J6]
+     [C3] A pergunta: cartões grandes             ← montada pelo JS em [J5] e [J7]
+     [C4] Os blocos de dados e o "antes"          ← [J5] e [J7]
+     [C5] Os comprovantes                         ← [J8]
+     [C6] Confira antes de enviar                 ← [J9]
+     [C7] A barra do rodapé                       ← [J10]
+     [C8] Celular                                 (ajustes para telas pequenas)
+     [C9] Menos movimento                         (para quem pediu "reduzir movimento")
+
+   ── RECEITAS RÁPIDAS ────────────────────────────────────────────────────────────────────────
+     Quero mudar uma cor
+       → use uma das cores da marca, pelo nome: var(--nc-roxo), var(--nc-grafite)… A lista
+         completa, com amostras, está no manual (parte 3). Assim a cor acompanha o tema que
+         o usuário escolheu em "Cores". Evite escrever cores soltas, como #511C76.
+     Quero mudar a cor do campo que mudou       → [C4], procure .nc-cad-mudou
+     Quero aumentar ou diminuir um texto        → procure font-size na parte certa.
+     Quero mais ou menos espaço                  → padding (espaço por DENTRO da caixa) e
+                                                   margin (espaço por FORA, até a vizinha).
+     Algo ficou bom no computador e ruim no celular → [C8]: o que está dentro de
+                                                   @media (max-width: 767px) só vale no celular.
+
+   ── COMO LER UM ARQUIVO CSS EM 30 SEGUNDOS ──────────────────────────────────────────────────
+     Cada regra tem duas partes:     QUEM { COMO; }
+       @app.nc-cad .nc-cad-topo {         ← QUEM: o "seletor", diz em que pedaço da tela vale
+         display: flex;                   ← COMO: propriedade: valor;  (põe as peças lado a lado)
+         gap: 18px;                       ←       18px de espaço entre elas
+       }
+     .nome-com-ponto       uma "classe": uma etiqueta posta num pedaço da tela (pelo APEX ou
+                           pelo JS).
+     @app                  atalho que dá prioridade às nossas regras sobre as do tema do APEX.
+                           No arquivo que sobe para o APEX ele aparece por extenso, como
+                           html body:is(.t-PageBody…):not(#nc-a1):not(#nc-a2) — é a mesma coisa.
+     :not(#nc-…-x)…        peso extra, para vencer uma regra do tema. Pode ignorar ao ler.
+     !important            no arquivo que sobe, toda linha ganha um: é o mesmo "vencer o tema".
+     @media (max-width: 767px) { … }   as regras de dentro só valem em telas até 767px (celular).
+     var(--nc-roxo)        uma cor da marca, pelo nome (muda junto com o tema escolhido).
+     px                    pixels, o tamanho de um pontinho da tela. 16px é o texto normal.
+     Toda linha COMO termina em ;   e todo { é fechado por um }. Não apague esses sinais.
+*/
+
+/* ═══ [C1] O QUE SAI DE CENA ═══════════════════════════════════════════════════════════════
+   O que o JS manda esconder: as regiões absorvidas (Seletor, solicitação), as colunas que
+   ficaram vazias e os blocos não escolhidos (.nc-cad-fora). display: none = não aparece.
+   ════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-cad .nc-cad-absorvida:not(#nc-cad-x):not(#nc-cad-y),
+@app.nc-cad .col.nc-cad-col-vazia:not(#nc-cad-x):not(#nc-cad-y),
+@app.nc-cad .t-Region.nc-cad-fora:not(#nc-cad-x):not(#nc-cad-y) {
+  display: none;
+}
+
+/* ═══ [C2] O ALTO ══════════════════════════════════════════════════════════════════════════
+   Montado pelo JS em [J6]. .nc-cad-topo é o bloco; .nc-cad-topo-ilu, a ilustração;
+   .nc-cad-topo-tit, "Atualizar meus dados".
+   ════════════════════════════════════════════════════════════════════════════════════════ */
+/* ---------- o alto ---------- */
+@app.nc-cad .nc-cad-topo {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  margin: 0 0 14px;
+  padding: 16px 22px 16px 14px;
+  border: 1px solid var(--nc-nevoa);
+  border-radius: 18px;
+  background: linear-gradient(135deg, #FBF8FE 0%, #FFFFFF 62%);
+}
+
+@app.nc-cad .nc-cad-topo-ilu {
+  flex: none;
+  width: 64px;
+  height: auto;
+}
+
+@app.nc-cad .nc-cad-topo-tit {
+  margin: 0;
+  font-family: inherit;
+  font-size: 24px;
+  font-weight: 800;
+  line-height: 1.2;
+  letter-spacing: -.015em;
+  color: var(--nc-tinta);
+}
+
+@app.nc-cad .nc-cad-topo-quem,
+@app.nc-cad .nc-cad-topo-req {
+  margin: 4px 0 0;
+  font-size: 15px;
+  line-height: 1.4;
+  color: var(--nc-grafite);
+}
+
+@app.nc-cad .nc-cad-topo-quem b,
+@app.nc-cad .nc-cad-topo-req b {
+  color: var(--nc-tinta);
+}
+
+/* ═══ [C3] A PERGUNTA: CARTÕES GRANDES ═════════════════════════════════════════════════════
+   Montada pelo JS em [J5] e [J7]. Peças principais:
+     .nc-cad-escolha   o bloco da pergunta      .nc-cad-cartao   cada cartão (.is-on = escolhido)
+     .nc-cad-cartao-tit / -dica   título e frase  .nc-cad-cartao-conta  "2 mudanças"
+     .nc-cad-todos     o botão "Ver todos os dados"
+   ════════════════════════════════════════════════════════════════════════════════════════ */
+/* ---------- a pergunta: cartões grandes ---------- */
+@app.nc-cad .nc-cad-escolha {
+  margin: 14px 0;
+  padding: 20px 22px 18px;
+  border: 1px solid var(--nc-nevoa);
+  border-radius: 18px;
+  background: #fff;
+  box-shadow: 0 14px 30px -26px rgba(var(--nc-t-azul-rgb, 44, 26, 99), .5);
+}
+
+@app.nc-cad .nc-cad-escolha h2 {
+  margin: 0;
+  font-family: inherit;
+  font-size: 21px;
+  font-weight: 800;
+  line-height: 1.25;
+  color: var(--nc-tinta);
+}
+
+@app.nc-cad .nc-cad-escolha > p {
+  margin: 4px 0 16px;
+  font-size: 15px;
+  line-height: 1.45;
+  color: var(--nc-grafite);
+}
+
+@app.nc-cad .nc-cad-cartoes {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(168px, 1fr));
+  gap: 10px;
+}
+
+@app.nc-cad .nc-cad-cartao {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  grid-template-rows: auto auto;
+  align-items: center;
+  gap: 2px 12px;
+  min-height: 76px;
+  padding: 14px 14px;
+  border: 1.5px solid var(--nc-nevoa);
+  border-radius: 16px;
+  background: #fff;
+  font: inherit;
+  text-align: left;
+  color: var(--nc-tinta);
+  cursor: pointer;
+  transition: border-color .15s ease-out, background-color .15s ease-out, transform .15s ease-out;
+}
+
+@app.nc-cad .nc-cad-cartao:hover {
+  border-color: #CDBDE2 /*reserva*/;
+  border-color: oklch(from #CDBDE2 l calc(c * var(--nc-t-croma, 1)) calc(h + var(--nc-t-giro, 0)));
+  background: #FCFAFE;
+}
+
+@app.nc-cad .nc-cad-cartao:active {
+  transform: scale(.985);
+}
+
+@app.nc-cad .nc-cad-cartao:focus-visible,
+@app.nc-cad .nc-cad-todos:focus-visible,
+@app.nc-cad .nc-cad-falta:focus-visible {
+  outline: 3px solid var(--nc-roxo);
+  outline-offset: 2px;
+}
+
+@app.nc-cad .nc-cad-cartao-ic {
+  display: grid;
+  grid-row: 1 / span 2;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  border-radius: 14px;
+  background: var(--nc-nevoa2);
+  color: var(--nc-roxo);
+}
+
+@app.nc-cad .nc-cad-cartao-ic svg {
+  width: 26px;
+  height: 26px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+@app.nc-cad .nc-cad-cartao-tit {
+  align-self: end;
+  font-size: 16px;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+@app.nc-cad .nc-cad-cartao-dica {
+  align-self: start;
+  font-size: 13.5px;
+  line-height: 1.3;
+  color: #6E6882;
+}
+
+@app.nc-cad .nc-cad-cartao-marca {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  display: none;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--nc-roxo);
+  color: #fff;
+}
+
+@app.nc-cad .nc-cad-cartao-marca svg,
+@app.nc-cad .nc-cad-ic {
+  width: 14px;
+  height: 14px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+@app.nc-cad .nc-cad-cartao.is-on {
+  border-color: var(--nc-roxo);
+  background: #F7F2FC;
+}
+
+@app.nc-cad .nc-cad-cartao.is-on .nc-cad-cartao-ic {
+  background: var(--nc-roxo);
+  color: #fff;
+}
+
+@app.nc-cad .nc-cad-cartao.is-on .nc-cad-cartao-marca {
+  display: grid;
+}
+
+@app.nc-cad .nc-cad-cartao-conta {
+  grid-column: 2;
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--nc-roxo);
+}
+
+@app.nc-cad .nc-cad-cartao-conta:empty {
+  display: none;
+}
+
+@app.nc-cad .nc-cad-todos {
+  margin: 12px 0 0;
+  padding: 6px 2px;
+  border: 0;
+  background: none;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--nc-roxo);
+  text-decoration: underline;
+  text-decoration-color: rgba(var(--nc-t-roxo-rgb, 81, 28, 118), .35);
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+
+@app.nc-cad .nc-cad-blocos-vazio {
+  margin: 0 0 14px;
+  padding: 18px;
+  border: 1.5px dashed #D9D1E6;
+  border-radius: 16px;
+  font-size: 15px;
+  text-align: center;
+  color: var(--nc-grafite);
+}
+
+@app.nc-cad .nc-cad-blocos-vazio[hidden] {
+  display: none;
+}
+
+/* ═══ [C4] OS BLOCOS DE DADOS E O "ANTES" ══════════════════════════════════════════════════
+   Montados pelo JS em [J5] e [J7]. .nc-cad-blocos é a caixa dos blocos; .nc-cad-mudou, o campo
+   que mudou; .nc-cad-antes, o "antes: …" na linha do nome; .nc-cad-bloco-conta, "N mudanças".
+   ════════════════════════════════════════════════════════════════════════════════════════ */
+/* ---------- os blocos de dados ---------- */
+@app.nc-cad .nc-cad-blocos {
+  display: grid;
+  gap: 12px;
+  margin: 0 0 14px;
+}
+
+@app.nc-cad .nc-cad-blocos > .t-Region:not(#nc-cad-x):not(#nc-cad-y) {
+  margin: 0;
+  border: 1px solid var(--nc-nevoa);
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: 0 10px 24px -22px rgba(var(--nc-t-azul-rgb, 44, 26, 99), .5);
+  animation: nc-cad-entra .24s cubic-bezier(.2, .7, .2, 1);
+}
+
+@keyframes nc-cad-entra {
+  from { transform: translateY(6px); }
+  to { transform: none; }
+}
+
+@app.nc-cad .nc-cad-blocos > .t-Region > .t-Region-header {
+  padding: 16px 20px 8px;
+  border-bottom: 0;
+  background: none;
+}
+
+@app.nc-cad .nc-cad-blocos > .t-Region > .t-Region-header .t-Region-title {
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--nc-tinta);
+}
+
+@app.nc-cad .nc-cad-bloco-conta {
+  margin-left: 10px;
+  padding: 2px 10px;
+  border-radius: 999px;
+  background: #EFE8F7;
+  font-size: 12.5px;
+  font-weight: 800;
+  color: var(--nc-roxo);
+}
+
+@app.nc-cad .nc-cad-bloco-conta:empty {
+  display: none;
+}
+
+@app.nc-cad .nc-cad-blocos > .t-Region > .t-Region-bodyWrap > .t-Region-body {
+  padding: 4px 20px 20px;
+}
+
+/* campos: letra de 16px (o celular não amplia a tela ao tocar) e alvos de 48px */
+@app.nc-cad .nc-cad-blocos .t-Form-label {
+  font-size: 14.5px;
+  font-weight: 700;
+  color: var(--nc-tinta);
+}
+
+@app.nc-cad .nc-cad-blocos :is(input.apex-item-text, select, textarea) {
+  min-height: 48px;
+  border-radius: 12px;
+  font-size: 16px;
+}
+
+/* campo + botão: o padrão geral (Natcorp_Paginas) já os une e estica; aqui só a medida */
+@app.nc-cad .nc-cad-blocos :is(.a-Button--popupLOV, .ui-datepicker-trigger, .a-Button--calendar) {
+  min-width: 48px;
+  border-radius: 0 12px 12px 0;
+}
+
+/* o que mudou: destaque calmo e "Antes: …" logo abaixo */
+@app.nc-cad .t-Form-fieldContainer.nc-cad-mudou :is(input.apex-item-text, select, textarea) {
+  border-color: #A98BCF /*reserva*/;
+  border-color: oklch(from #A98BCF l calc(c * var(--nc-t-croma, 1)) calc(h + var(--nc-t-giro, 0)));
+  background: #FBF7FE;
+}
+
+/* o rótulo e o "antes" dividem a mesma linha (o campo não sai do lugar) */
+@app.nc-cad .t-Form-fieldContainer.nc-cad-mudou > .t-Form-labelContainer:not(#nc-cad-x):not(#nc-cad-y) {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  min-width: 0;
+}
+
+@app.nc-cad .t-Form-fieldContainer.nc-cad-mudou > .t-Form-labelContainer > .t-Form-label:not(#nc-cad-x):not(#nc-cad-y) {
+  flex: 0 1 auto;
+  width: auto;
+  min-width: 0;
+}
+
+@app.nc-cad .t-Form-fieldContainer.nc-cad-mudou > .t-Form-labelContainer:not(#nc-cad-x):not(#nc-cad-y) {
+  flex-direction: row;            /* no celular o tema empilha o rótulo (coluna) */
+  flex-wrap: nowrap;
+}
+
+@app.nc-cad .nc-cad-antes {
+  flex: 0 1 auto;
+  min-width: 0;
+  max-width: 62%;
+  overflow: hidden;
+  font-size: 12.5px;
+  line-height: 1.3;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  color: #6E6882;
+}
+
+@app.nc-cad .nc-cad-antes b {
+  font-weight: 700;
+  text-decoration: line-through;
+  text-decoration-color: rgba(var(--nc-t-roxo-rgb, 81, 28, 118), .45);
+  color: #5E5872;
+}
+
+/* ═══ [C5] OS COMPROVANTES ═════════════════════════════════════════════════════════════════
+   Montados pelo JS em [J8]. .nc-cad-docs é a lista de documentos; li.is-ok = anexado,
+   li.is-falta = falta anexar; .nc-cad-anexos--falta = a região quando falta algum documento.
+   ════════════════════════════════════════════════════════════════════════════════════════ */
+/* ---------- comprovantes ---------- */
+@app.nc-cad .t-Region.nc-cad-anexos:not(#nc-cad-x):not(#nc-cad-y) {
+  margin: 0 0 14px;
+  border: 1px solid var(--nc-nevoa);
+  border-radius: 16px;
+}
+
+/* os documentos pedidos pelo que mudou: uma lista com o que falta e o que já foi */
+@app.nc-cad .t-Region.nc-cad-anexos.nc-cad-anexos--falta:not(#nc-cad-x):not(#nc-cad-y) {
+  border-color: #E8C77A;
+  box-shadow: 0 12px 28px -24px rgba(138, 90, 0, .5);
+}
+
+@app.nc-cad .nc-cad-docs {
+  margin: 4px 0 12px;
+}
+
+@app.nc-cad .nc-cad-docs-tit {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.45;
+  color: var(--nc-grafite);
+}
+
+@app.nc-cad .nc-cad-docs-tit b {
+  color: var(--nc-tinta);
+}
+
+@app.nc-cad .nc-cad-docs-tit > svg {
+  flex: none;
+  width: 20px;
+  height: 20px;
+  margin-top: 1px;
+  fill: none;
+  stroke: var(--nc-roxo);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+@app.nc-cad .nc-cad-docs-conta {
+  margin-left: auto;
+  padding: 2px 10px;
+  border-radius: 999px;
+  background: #FFF4DE;
+  font-size: 13px;
+  font-weight: 800;
+  white-space: nowrap;
+  color: #6B4700;
+}
+
+@app.nc-cad .nc-cad-anexos:not(.nc-cad-anexos--falta) .nc-cad-docs-conta {
+  background: #E4F4EC;
+  color: var(--nc-bom);
+}
+
+@app.nc-cad .nc-cad-docs--livre .nc-cad-docs-tit {
+  color: #6E6882;
+}
+
+/* o corpo da região não tem respiro (o relatório cuida do seu); a lista precisa do dela */
+@app.nc-cad .nc-cad-docs {
+  padding: 16px 20px 8px;
+}
+
+@media (max-width: 640px) {
+  @app.nc-cad .nc-cad-docs {
+    padding: 14px 14px 6px;
+  }
+}
+
+@app.nc-cad .nc-cad-docs-lista {
+  display: grid;
+  gap: 8px;
+  margin: 12px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+@app.nc-cad .nc-cad-docs-lista li {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px;
+  min-height: 52px;
+  padding: 8px 14px;
+  border: 1.5px solid #F0DDB0;
+  border-radius: 14px;
+  background: #FFFBF1;
+}
+
+@app.nc-cad .nc-cad-docs-lista li.is-ok {
+  border-color: #BFE3CF;
+  background: #F4FBF7;
+}
+
+@app.nc-cad .nc-cad-docs-marca {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #FFF0CC;
+  color: #8A5A00;
+}
+
+@app.nc-cad .nc-cad-docs-lista li.is-ok .nc-cad-docs-marca {
+  background: var(--nc-bom);
+  color: #fff;
+}
+
+@app.nc-cad .nc-cad-docs-marca svg {
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+@app.nc-cad .nc-cad-docs-nome {
+  font-size: 15.5px;
+  font-weight: 800;
+  line-height: 1.3;
+  color: var(--nc-tinta);
+}
+
+@app.nc-cad .nc-cad-docs-estado {
+  font-size: 13px;
+  font-weight: 800;
+  white-space: nowrap;
+  color: #8A5A00;
+}
+
+@app.nc-cad .nc-cad-docs-lista li.is-ok .nc-cad-docs-estado {
+  color: var(--nc-bom);
+}
+
+@app.nc-cad .nc-cad-docs-como {
+  margin: 12px 0 0;
+  font-size: 14px;
+  line-height: 1.45;
+  color: var(--nc-grafite);
+}
+
+@app.nc-cad .nc-cad-docs-como b {
+  color: var(--nc-tinta);
+}
+
+/* com documento faltando, o "Anexar" do APEX ganha destaque */
+@app.nc-cad .nc-cad-anexos--falta > .t-Region-header .t-Button:not(#nc-cad-x):not(#nc-cad-y) {
+  height: 44px;
+  padding: 0 18px;
+  border-radius: 12px;
+  box-shadow: 0 0 0 4px #F3E8FB;
+}
+
+@app.nc-cad .nc-cad-falta--doc {
+  background: #F3E8FB;
+  color: var(--nc-roxo);
+}
+
+/* ═══ [C6] CONFIRA ANTES DE ENVIAR ═════════════════════════════════════════════════════════
+   Montado pelo JS em [J9]. .nc-cad-resumo é o bloco; .nc-cad-de / .nc-cad-para, antes e depois.
+   ════════════════════════════════════════════════════════════════════════════════════════ */
+/* ---------- confira antes de enviar ---------- */
+@app.nc-cad .nc-cad-resumo {
+  margin: 0 0 14px;
+  padding: 18px 20px;
+  border-radius: 16px;
+  background: #F7F3FB;
+}
+
+@app.nc-cad .nc-cad-resumo[hidden] {
+  display: none;
+}
+
+@app.nc-cad .nc-cad-resumo h2 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 10px;
+  font-family: inherit;
+  font-size: 17px;
+  font-weight: 800;
+  color: var(--nc-tinta);
+}
+
+@app.nc-cad .nc-cad-resumo h2 span {
+  display: grid;
+  place-items: center;
+  min-width: 24px;
+  height: 24px;
+  padding: 0 7px;
+  border-radius: 999px;
+  background: var(--nc-roxo);
+  font-size: 12.5px;
+  color: #fff;
+}
+
+@app.nc-cad .nc-cad-resumo ul {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+@app.nc-cad .nc-cad-resumo li {
+  display: grid;
+  grid-template-columns: minmax(140px, 200px) minmax(0, 1fr) 16px minmax(0, 1fr);
+  align-items: center;
+  gap: 4px 12px;
+  font-size: 15px;
+}
+
+@app.nc-cad .nc-cad-resumo-rot {
+  font-weight: 700;
+  color: var(--nc-tinta);
+}
+
+@app.nc-cad .nc-cad-de {
+  text-decoration: line-through;
+  text-decoration-color: rgba(var(--nc-t-roxo-rgb, 81, 28, 118), .4);
+  color: #6E6882;
+}
+
+@app.nc-cad .nc-cad-para {
+  font-weight: 800;
+  color: var(--nc-roxo);
+}
+
+@app.nc-cad .nc-cad-resumo-seta {
+  width: 15px;
+  height: 15px;
+  color: var(--nc-roxo);
+}
+
+/* ═══ [C7] A BARRA DO RODAPÉ ═══════════════════════════════════════════════════════════════
+   Montada pelo JS em [J10]. .nc-cad-acoes é a barra; .nc-cad-falta, cada coisa que falta;
+   .nc-cad-so-largo só aparece no computador e .nc-cad-so-celular só no celular.
+   ════════════════════════════════════════════════════════════════════════════════════════ */
+/* ---------- a barra do rodapé ---------- */
+@app.nc-cad .t-ButtonRegion.nc-cad-acoes:not(.nc-cad-acoes--leitura):not(#nc-cad-x):not(#nc-cad-y) {
+  position: sticky;
+  bottom: 0;
+  z-index: 20;
+  margin: 0;
+  padding: 12px 16px;
+  border: 1px solid var(--nc-nevoa);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, .97);
+  box-shadow: 0 -12px 28px -22px rgba(var(--nc-t-azul-rgb, 44, 26, 99), .55);
+}
+
+@app.nc-cad .t-ButtonRegion.nc-cad-acoes .t-ButtonRegion-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 16px;
+}
+
+@app.nc-cad .t-ButtonRegion.nc-cad-acoes .t-ButtonRegion-col--left { order: 1; flex: none; width: auto; }
+@app.nc-cad .t-ButtonRegion.nc-cad-acoes .nc-cad-status { order: 2; flex: 1 1 240px; }
+@app.nc-cad .t-ButtonRegion.nc-cad-acoes .t-ButtonRegion-col--content { order: 3; flex: none; width: auto; }
+@app.nc-cad .t-ButtonRegion.nc-cad-acoes .t-ButtonRegion-col--right { order: 4; flex: none; width: auto; }
+@app.nc-cad .t-ButtonRegion.nc-cad-acoes .t-ButtonRegion-col--content table { width: auto; }
+@app.nc-cad .t-ButtonRegion.nc-cad-acoes .t-ButtonRegion-col--right:not(:has(.t-Button)) { display: none; }
+
+@app.nc-cad .t-ButtonRegion.nc-cad-acoes .t-ButtonRegion-col--content .t-ButtonRegion-buttons:empty {
+  display: none;
+}
+
+@app.nc-cad .t-ButtonRegion.nc-cad-acoes:not(.nc-cad-acoes--leitura) .t-Button {
+  height: 52px;
+  padding: 0 24px;
+  border-radius: 14px;
+  font-size: 16px;
+}
+
+@app.nc-cad .nc-cad-status {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 8px;
+  font-size: 15px;
+  color: var(--nc-grafite);
+}
+
+@app.nc-cad .nc-cad-status-rot {
+  font-weight: 800;
+  color: #6B4700;
+}
+
+@app.nc-cad .nc-cad-falta {
+  min-height: 36px;
+  padding: 4px 12px;
+  border: 0;
+  border-radius: 999px;
+  background: #FFF4DE;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  color: #6B4700;
+  cursor: pointer;
+}
+
+@app.nc-cad .nc-cad-status-ok {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 800;
+  color: var(--nc-roxo);
+}
+
+@app.nc-cad .nc-cad-status-ok .nc-cad-ic {
+  width: 18px;
+  height: 18px;
+}
+
+@app.nc-cad .nc-cad-so-celular {
+  display: none;
+}
+
+@app.nc-cad .nc-cad-status-nada {
+  color: #6E6882;
+}
+
+@app.nc-cad :is(.t-Body, .t-Body-main, .t-Body-content),
+@app.nc-cad .t-Body-contentInner > .container {
+  overflow: clip;
+}
+
+/* ═══ [C8] CELULAR ═════════════════════════════════════════════════════════════════════════
+   As regras de dentro do  @media (max-width: 767px)  só valem em telas de até 767px (celular).
+   Em geral: o que era lado a lado passa a ficar um embaixo do outro.
+   ════════════════════════════════════════════════════════════════════════════════════════ */
+/* ---------- celular ---------- */
+@media (max-width: 767px) {
+  @app.nc-cad .nc-cad-topo {
+    padding: 14px 16px;
+  }
+
+  @app.nc-cad .nc-cad-topo-ilu {
+    width: 48px;
+  }
+
+  @app.nc-cad .nc-cad-topo-tit {
+    font-size: 21px;
+  }
+
+  @app.nc-cad .nc-cad-escolha {
+    padding: 18px 14px 14px;
+  }
+
+  @app.nc-cad .nc-cad-escolha h2 {
+    font-size: 20px;
+  }
+
+  /* dois cartões por linha, ícone em cima */
+  @app.nc-cad .nc-cad-cartoes {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  @app.nc-cad .nc-cad-cartao {
+    grid-template-columns: minmax(0, 1fr);
+    justify-items: start;
+    gap: 4px;
+    min-height: 118px;
+    padding: 14px 12px 12px;
+  }
+
+  @app.nc-cad .nc-cad-cartao-ic {
+    grid-row: auto;
+    margin-bottom: 4px;
+  }
+
+  @app.nc-cad .nc-cad-blocos > .t-Region > .t-Region-header {
+    padding: 14px 14px 6px;
+  }
+
+  @app.nc-cad .nc-cad-blocos > .t-Region > .t-Region-bodyWrap > .t-Region-body {
+    padding: 2px 14px 16px;
+  }
+
+  @app.nc-cad .nc-cad-resumo li {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0;
+    padding: 6px 0;
+    border-bottom: 1px solid #E6DEF0;
+  }
+
+  @app.nc-cad .nc-cad-resumo-seta {
+    display: none;
+  }
+
+  @app.nc-cad .nc-cad-de::before {
+    content: "Antes: ";
+    text-decoration: none;
+  }
+
+  @app.nc-cad .nc-cad-para::before {
+    content: "Agora: ";
+    font-weight: 400;
+    color: var(--nc-grafite);
+  }
+
+  @app.nc-cad .t-ButtonRegion.nc-cad-acoes:not(.nc-cad-acoes--leitura):not(#nc-cad-x):not(#nc-cad-y) {
+    margin: 0 -4px;
+    border-radius: 16px 16px 0 0;
+  }
+
+  /* uma linha com o que falta, e embaixo Voltar | Enviar pedido */
+  @app.nc-cad .t-ButtonRegion.nc-cad-acoes .t-ButtonRegion-wrap:not(#nc-cad-x):not(#nc-cad-y) {
+    flex-wrap: wrap;
+    gap: 8px 10px;
+  }
+
+  @app.nc-cad .t-ButtonRegion.nc-cad-acoes .nc-cad-status:not(#nc-cad-x):not(#nc-cad-y) {
+    order: 0;
+    flex: 0 0 100%;
+  }
+
+  @app.nc-cad .t-ButtonRegion.nc-cad-acoes .t-ButtonRegion-col--left:not(#nc-cad-x):not(#nc-cad-y) {
+    order: 1;
+    flex: none;
+  }
+
+  @app.nc-cad .t-ButtonRegion.nc-cad-acoes .t-ButtonRegion-col--content:not(#nc-cad-x):not(#nc-cad-y) {
+    order: 2;
+    flex: 1;
+  }
+
+  @app.nc-cad .t-ButtonRegion.nc-cad-acoes .t-ButtonRegion-col--content table,
+  @app.nc-cad .t-ButtonRegion.nc-cad-acoes .t-ButtonRegion-col--content .t-Button {
+    width: 100%;
+  }
+
+  @app.nc-cad .nc-cad-so-largo {
+    display: none;
+  }
+
+  @app.nc-cad .nc-cad-so-celular {
+    display: inline-block;
+  }
+
+  @app.nc-cad .nc-cad-cartao-conta {
+    grid-column: auto;
+  }
+
+  @app.nc-cad .t-ButtonRegion.nc-cad-acoes .t-ButtonRegion-col--right .t-Button {
+    width: 100%;
+  }
+}
+
+/* ═══ [C9] MENOS MOVIMENTO ═════════════════════════════════════════════════════════════════
+   Para quem pediu "reduzir movimento" nas configurações do computador ou celular (acessibilidade):
+   as animações são desligadas.
+   ════════════════════════════════════════════════════════════════════════════════════════ */
+@media (prefers-reduced-motion: reduce) {
+  @app.nc-cad .nc-cad-blocos > .t-Region {
+    animation: none;
+  }
+
+  @app.nc-cad .nc-cad-cartao {
+    transition: none;
+  }
+}
+
+/* ═══ FAIXA DA REGIÃO (padrão 03/10) ════════════════════════════════════════════════════════
+   Todo painel com título segue o cabeçalho de região da Skin: o título numa faixa que atravessa
+   o cartão de ponta a ponta, com a linha de 2px na cor de destaque do TEMA (var(--nc-rosa) — a
+   mesma da Skin; muda com os 14 temas). As margens negativas são o recuo de dentro do cartão:
+   mudou o recuo do cartão, mude aqui junto. Guia: brand/apex/MANUAL-APEX.md.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-cad .nc-cad-escolha > h2:not(#nc-fx1):not(#nc-fx2):not(#nc-fx3) {
+  box-sizing: border-box;
+  width: calc(100% + 44px);
+  margin: -20px -22px 12px;
+  padding: 12px 22px 10px;
+  border-bottom: 2px solid var(--nc-rosa, #C95788);
+}
+/* a região nativa: a linha do tema volta (antes era tirada aqui) */
+@app.nc-cad .nc-cad-blocos > .t-Region > .t-Region-header:not(#nc-fx1):not(#nc-fx2):not(#nc-fx3) {
+  border-bottom: 2px solid var(--nc-rosa, #C95788);
+  padding-bottom: 12px;
+}

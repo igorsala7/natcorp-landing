@@ -1,0 +1,853 @@
+/* ╔════════════════════════════════════════════════════════════════════════════════════════╗
+   ║  NATCORP · CANDIDATO NO PROCESSO  —  a "roupa" da tela (CSS)                             ║
+   ║  App 9113 (Recrutamento e Seleção) · Página 32 ("Dados do Candidato")                    ║
+   ╚════════════════════════════════════════════════════════════════════════════════════════╝
+
+   Primeira vez num arquivo destes? Leia antes o manual: brand/apex/MANUAL-APEX.md (parte 1).
+
+   ── O QUE ESTE ARQUIVO FAZ ────────────────────────────────────────────────────────────────
+   A aparência do que o Natcorp_CandidatoProcesso.js monta: o cartão do candidato, o resumo
+   em grupos, a linha do tempo das fases, o questionário agrupado e os outros processos. Sem
+   o JS, nada daqui vale (tudo depende da marca nc-cp-ativo no body).
+
+   ── ONDE ELE ENTRA NO APEX ────────────────────────────────────────────────────────────────
+     Página 32 › CSS › File URLs:   #WORKSPACE_IMAGES#Natcorp_CandidatoProcesso.css
+     CUIDADO: este é o arquivo-FONTE (.src.css). O gerador (gerar-app.mjs) cria o .css.
+
+   ── ÍNDICE ────────────────────────────────────────────────────────────────────────────────
+     [C1] As cores                                              PODE MEXER
+     [C2] O que sai da vista
+     [C3] O alto (subtítulo, Pessoa anterior)
+     [C4] O cartão do candidato
+     [C5] As abas
+     [C6] Resumo
+     [C7] Vistas: cabeçalho e "Ver tabela"
+     [C8] Fases e avaliações (linha do tempo)
+     [C9] Questionário
+     [C10] Outros processos
+     [C11] Celular
+*/
+
+/* ═══ [C1] AS CORES ═════════════════════════════════════════════════════════════════════════ */
+@app.nc-cp-ativo {
+  --nc-cp-borda: var(--nc-nevoa, #E9E5F1);
+  --nc-cp-fundo: var(--nc-off, #F7F5FA);
+  --nc-cp-texto: var(--nc-tinta, #1B1238);
+  --nc-cp-fraco: #77708C;
+  --nc-cp-bom: var(--nc-bom, #1F7A52);
+  --nc-cp-aberto: #8A5A00;
+}
+
+/* ═══ [C2] O QUE SAI DA VISTA ═══════════════════════════════════════════════════════════════ */
+@app.nc-cp-ativo .nc-cp-guardado:not(#nc-cp-x),
+@app.nc-cp-ativo .nc-cp-transformado:not(.nc-cp-modo-tabela) .a-IRR-container:not(#nc-cp-x),
+@app.nc-cp-ativo .nc-cp-transformado.nc-cp-modo-tabela .nc-cp-vista > :not(.nc-cp-vista-cab):not(#nc-cp-x) {
+  display: none;
+}
+
+@app.nc-cp-ativo .nc-cp-ic {
+  flex: 0 0 auto;
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.9;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+@app.nc-cp-ativo .nc-cp-fraco {
+  color: var(--nc-cp-fraco);
+}
+
+/* ═══ [C3] O ALTO ═══════════════════════════════════════════════════════════════════════════ */
+/* o número do processo ao lado do cargo, mais leve (o mesmo da página 29) */
+@app.nc-cp-ativo .t-HeroRegion-title .nc-cp-num {
+  font-weight: 500;
+  color: var(--nc-cp-fraco);
+}
+
+@app.nc-cp-ativo .t-HeroRegion .nc-cp-sub {
+  margin: 2px 0 0;
+  font-size: 15px;
+  color: var(--nc-grafite, #4A4460);
+}
+
+@app.nc-cp-ativo .t-HeroRegion-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+@app.nc-cp-ativo .t-HeroRegion-buttons .nc-cp-bt:not(#nc-cp-x) {
+  border: 1px solid var(--nc-borda-botao);
+  background: #fff;
+  color: var(--nc-roxo, #511C76);
+}
+
+@app.nc-cp-ativo .t-HeroRegion-buttons .nc-cp-bt:not(#nc-cp-x) .t-Button-label {
+  color: inherit;
+}
+
+/* ═══ [C4] O CARTÃO DO CANDIDATO ════════════════════════════════════════════════════════════ */
+@app.nc-cp-ativo .nc-cp-cartao {
+  display: grid;
+  grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 16px 28px;
+  margin: 0 0 18px;
+  padding: 18px 20px;
+  border: 1px solid var(--nc-cp-borda);
+  border-radius: 16px;
+  background: #fff;
+  color: var(--nc-cp-texto);
+}
+
+/* logo abaixo do alto, acima da barra das etapas: o .t-Body-fullContent não tem o recuo do
+   conteúdo, então o cartão o recebe aqui (alinhado às abas) */
+@app.nc-cp-ativo .t-Body-fullContent > .nc-cp-cartao {
+  margin: 20px 20px 0;
+}
+
+@media (max-width: 640px) {
+  @app.nc-cp-ativo .t-Body-fullContent > .nc-cp-cartao {
+    margin: 16px 12px 0;
+  }
+}
+
+@app.nc-cp-ativo .nc-cp-quem {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  min-width: 0;
+}
+
+@app.nc-cp-ativo .nc-cp-quem p,
+@app.nc-cp-ativo .nc-cp-contato p {
+  margin: 0;
+}
+
+@app.nc-cp-ativo .nc-cp-avatar {
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--nc-roxo, #511C76) 10%, #fff);
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--nc-roxo, #511C76);
+}
+
+@app.nc-cp-ativo .nc-cp-nome {
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+@app.nc-cp-ativo .nc-cp-cod {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--nc-cp-fraco);
+}
+
+@app.nc-cp-ativo .nc-cp-social {
+  font-size: 13px;
+  color: var(--nc-cp-fraco);
+}
+
+@app.nc-cp-ativo .nc-cp-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 6px;
+  margin-top: 4px !important;
+  font-size: 14px;
+  color: var(--nc-grafite, #4A4460);
+}
+
+@app.nc-cp-ativo .nc-cp-meta .nc-cp-ic {
+  width: 15px;
+  height: 15px;
+  margin-right: 2px;
+  color: var(--nc-cp-fraco);
+}
+
+@app.nc-cp-ativo .nc-cp-etapa {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 12px;
+  margin-top: 8px !important;
+}
+
+@app.nc-cp-ativo .nc-cp-fase {
+  display: inline-flex;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--nc-roxo, #511C76) 9%, #fff);
+  font-size: 12.5px;
+  font-weight: 650;
+  color: var(--nc-roxo, #511C76);
+}
+
+@app.nc-cp-ativo .nc-cp-nota {
+  display: inline-flex;
+  gap: 1px;
+}
+
+/* as estrelas ORIGINAIS (P32_PONTUACAO) movidas para o cartão: clicáveis, gravam */
+@app.nc-cp-ativo .nc-cp-nota-viva {
+  display: inline-flex;
+  align-items: center;
+}
+
+@app.nc-cp-ativo .nc-cp-nota-viva .a-StarRating-star {
+  cursor: pointer;
+}
+
+@app.nc-cp-ativo .nc-cp-nota-viva .a-StarRating-stars-bg {
+  color: #E2DCEB;
+}
+
+@app.nc-cp-ativo .nc-cp-nota-viva .a-StarRating-stars-fg {
+  color: var(--nc-rosa, #C95788) !important;
+}
+
+@app.nc-cp-ativo .nc-cp-nota-viva .a-StarRating input:focus-visible + .a-StarRating-stars {
+  outline: 2px solid var(--nc-roxo, #511C76);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+@app.nc-cp-ativo .nc-cp-estrela {
+  width: 15px;
+  height: 15px;
+  fill: #E2DCEB;
+}
+
+@app.nc-cp-ativo .nc-cp-estrela.is-cheia {
+  fill: var(--nc-rosa, #C95788);
+}
+
+@app.nc-cp-ativo .nc-cp-contato {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+  padding-left: 24px;
+  border-left: 1px solid var(--nc-cp-borda);
+  font-size: 14px;
+}
+
+@app.nc-cp-ativo .nc-cp-contato p {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+@app.nc-cp-ativo .nc-cp-contato p > .nc-cp-ic {
+  color: var(--nc-cp-fraco);
+}
+
+@app.nc-cp-ativo .nc-cp-contato a {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--nc-roxo, #511C76);
+}
+
+@app.nc-cp-ativo .nc-cp-copiar,
+@app.nc-cp-ativo .nc-cp-whats {
+  display: inline-grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: 28px;
+  height: 28px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  box-shadow: none;
+  color: #8E88A3;
+  cursor: pointer;
+}
+
+@app.nc-cp-ativo .nc-cp-copiar:hover,
+@app.nc-cp-ativo .nc-cp-whats:hover {
+  background: var(--nc-cp-fundo);
+  color: var(--nc-roxo, #511C76);
+}
+
+@app.nc-cp-ativo .nc-cp-whats {
+  color: var(--nc-cp-bom);
+}
+
+@app.nc-cp-ativo .nc-cp-copiar.is-copiado {
+  color: var(--nc-cp-bom);
+}
+
+@app.nc-cp-ativo .nc-cp-copiar .nc-cp-ic {
+  width: 15px;
+  height: 15px;
+}
+
+@app.nc-cp-ativo .nc-cp-acoes {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 8px;
+}
+
+/* os botões originais (Aprovar candidato, Avaliar fase, Ver currículo) no cartão */
+@app.nc-cp-ativo .nc-cp-bt:not(#nc-cp-x) {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: auto;
+  height: 38px;
+  margin: 0;
+  padding: 0 16px;
+  border: 1px solid var(--nc-borda-botao);
+  border-radius: 10px;
+  background: #fff;
+  box-shadow: none;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--nc-cp-texto);
+  white-space: nowrap;
+  text-decoration: none;
+}
+
+/* 04/10: o botão que a página esconde (ação "Sit. Concluida" esconde Excluir Candidato) continua
+   escondido — o inline-flex acima, com !important, vencia o style="display:none" */
+@app.nc-cp-ativo .nc-cp-bt:not(#nc-cp-x)[style*="none"] {
+  display: none;
+}
+
+@app.nc-cp-ativo .nc-cp-bt:not(#nc-cp-x) .t-Button-label,
+@app.nc-cp-ativo .nc-cp-bt:not(#nc-cp-x) .t-Icon {
+  color: inherit;
+}
+
+@app.nc-cp-ativo .nc-cp-bt:not(#nc-cp-x) .t-Icon--right {
+  display: none;
+}
+
+@app.nc-cp-ativo .nc-cp-bt.nc-cp-bt--sucesso:not(#nc-cp-x) {
+  border-color: var(--nc-cp-bom);
+  background: var(--nc-cp-bom);
+  color: #fff;
+}
+
+@app.nc-cp-ativo .nc-cp-bt.nc-cp-bt--primario:not(#nc-cp-x) {
+  border-color: var(--nc-roxo, #511C76);
+  background: var(--nc-roxo, #511C76);
+  color: #fff;
+}
+
+@app.nc-cp-ativo .nc-cp-bt.nc-cp-bt--mini:not(#nc-cp-x) {
+  height: 30px;
+  margin-left: auto;
+  padding: 0 10px;
+  font-size: 12.5px;
+  color: var(--nc-roxo, #511C76);
+}
+
+@app.nc-cp-ativo .nc-cp-bt:not(#nc-cp-x):focus-visible,
+@app.nc-cp-ativo .nc-cp-copiar:focus-visible,
+@app.nc-cp-ativo .nc-cp-vertabela:focus-visible {
+  outline: 2px solid var(--nc-roxo, #511C76);
+  outline-offset: 2px;
+}
+
+/* ═══ [C5] AS ABAS ══════════════════════════════════════════════════════════════════════════
+   O mesmo desenho das abas da página 35 (Dados Funcionais): pílulas em frase, com ícone, que
+   quebram linha em vez de esconder abas atrás da seta do APEX. Ao lado do nome, quantos itens a
+   aba tem (o JS conta em [K4]); aba sem nada fica apagada, mas continua clicável.
+   CUIDADO  O APEX põe white-space/overflow no próprio ul (style): por isso os !important.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-cp-ativo .t-TabsRegion .apex-rds-slider:not(#nc-cp-x):not(#nc-cp-y) {
+  display: none;
+}
+
+@app.nc-cp-ativo .t-TabsRegion ul.t-Tabs:not(#nc-cp-x):not(#nc-cp-y) {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0 0 14px;
+  padding: 0;
+  overflow: visible !important;
+  white-space: normal !important;
+  border: 0;
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+}
+
+/* o APEX grava no painel a altura da aba mais alta (style): a aba curta ficava com um vão enorme */
+@app.nc-cp-ativo .t-TabsRegion > .t-TabsRegion-items:not(#nc-cp-x):not(#nc-cp-y) {
+  min-height: 0 !important;
+}
+
+@app.nc-cp-ativo .t-TabsRegion ul.t-Tabs > .t-Tabs-item:not(#nc-cp-x):not(#nc-cp-y) {
+  flex: 0 0 auto;
+  margin: 0;
+  border: 0;
+  background: none;
+}
+
+@app.nc-cp-ativo .t-TabsRegion ul.t-Tabs .t-Tabs-link:not(#nc-cp-x):not(#nc-cp-y) {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 40px;
+  padding: 0 12px 0 10px;
+  border: 1.5px solid var(--nc-cp-borda);
+  border-radius: 999px;
+  background: #fff;
+  font-size: 14px;
+  font-weight: 650;
+  line-height: 1.2;
+  letter-spacing: 0;
+  text-transform: none;
+  white-space: nowrap;
+  color: var(--nc-roxo, #511C76);
+  box-shadow: none;
+  transition: background-color .16s cubic-bezier(.22, 1, .36, 1), border-color .16s cubic-bezier(.22, 1, .36, 1), color .16s cubic-bezier(.22, 1, .36, 1);
+}
+
+@app.nc-cp-ativo .t-TabsRegion ul.t-Tabs .t-Tabs-link:not(#nc-cp-x):not(#nc-cp-y)::before,
+@app.nc-cp-ativo .t-TabsRegion ul.t-Tabs .t-Tabs-link:not(#nc-cp-x):not(#nc-cp-y)::after {
+  display: none;
+}
+
+@app.nc-cp-ativo .t-TabsRegion ul.t-Tabs .t-Tabs-link:hover:not(#nc-cp-x):not(#nc-cp-y) {
+  border-color: #BBA9D6 /*reserva*/;
+  border-color: oklch(from #BBA9D6 l calc(c * var(--nc-t-croma, 1)) calc(h + var(--nc-t-giro, 0)));
+  background: var(--nc-nevoa2, #F4F1F8);
+}
+
+@app.nc-cp-ativo .t-TabsRegion ul.t-Tabs .t-Tabs-link:focus-visible:not(#nc-cp-x):not(#nc-cp-y) {
+  outline: 2px solid var(--nc-roxo, #511C76);
+  outline-offset: 2px;
+}
+
+@app.nc-cp-ativo .t-TabsRegion ul.t-Tabs > .t-Tabs-item.is-active .t-Tabs-link:not(#nc-cp-x):not(#nc-cp-y) {
+  border-color: var(--nc-roxo, #511C76);
+  background: var(--nc-roxo, #511C76);
+  color: #fff;
+}
+
+@app.nc-cp-ativo .t-TabsRegion .t-Tabs-link .nc-cp-ic {
+  width: 18px;
+  height: 18px;
+}
+
+/* a contagem: número em pílula, alinhado (tnum) */
+@app.nc-cp-ativo .nc-cp-aba-conta {
+  display: inline-grid;
+  place-items: center;
+  min-width: 22px;
+  height: 20px;
+  padding: 0 7px;
+  border-radius: 999px;
+  background: var(--nc-cp-fundo);
+  font-size: 12px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--nc-roxo, #511C76);
+}
+
+@app.nc-cp-ativo .t-Tabs-item.is-active .nc-cp-aba-conta {
+  background: rgba(255, 255, 255, .2);
+  color: #fff;
+}
+
+/* aba sem nada: texto e ícone apagados (a ativa continua cheia) */
+@app.nc-cp-ativo .t-TabsRegion ul.t-Tabs > .t-Tabs-item.is-vazia:not(.is-active) .t-Tabs-link:not(#nc-cp-x):not(#nc-cp-y) {
+  font-weight: 500;
+  color: var(--nc-cp-fraco);
+}
+
+/* ═══ [C6] RESUMO ═══════════════════════════════════════════════════════════════════════════ */
+@app.nc-cp-ativo .nc-cp-resumo {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+  padding: 4px 2px;
+}
+
+@app.nc-cp-ativo .nc-cp-resumo section {
+  padding: 14px 16px;
+  border: 1px solid var(--nc-cp-borda);
+  border-radius: 12px;
+  background: #fff;
+}
+
+@app.nc-cp-ativo .nc-cp-resumo h3 {
+  margin: 0 0 10px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid var(--nc-rosa, #C95788);
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--nc-cp-texto);
+}
+
+@app.nc-cp-ativo .nc-cp-resumo dl,
+@app.nc-cp-ativo .nc-cp-jornada dl {
+  display: grid;
+  gap: 7px;
+  margin: 0;
+}
+
+@app.nc-cp-ativo .nc-cp-resumo dl > div {
+  display: grid;
+  grid-template-columns: 120px minmax(0, 1fr);
+  gap: 10px;
+  align-items: baseline;
+}
+
+@app.nc-cp-ativo .nc-cp-resumo dt,
+@app.nc-cp-ativo .nc-cp-jornada dt {
+  margin: 0;
+  font-size: 12.5px;
+  color: var(--nc-cp-fraco);
+}
+
+@app.nc-cp-ativo .nc-cp-resumo dd,
+@app.nc-cp-ativo .nc-cp-jornada dd {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--nc-cp-texto);
+  overflow-wrap: anywhere;
+}
+
+/* ═══ [C7] VISTAS: CABEÇALHO E "VER TABELA" ═════════════════════════════════════════════════ */
+@app.nc-cp-ativo .nc-cp-vista-cab {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0 0 12px;
+}
+
+@app.nc-cp-ativo .nc-cp-vista-cab p {
+  margin: 0;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--nc-cp-fraco);
+}
+
+@app.nc-cp-ativo .nc-cp-vertabela {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 32px;
+  margin: 0 0 0 auto;
+  padding: 0 12px;
+  border: 1px solid var(--nc-cp-borda);
+  border-radius: 9px;
+  background: #fff;
+  box-shadow: none;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--nc-roxo, #511C76);
+  cursor: pointer;
+}
+
+@app.nc-cp-ativo .nc-cp-vista {
+  padding: 4px 2px 8px;
+}
+
+@app.nc-cp-ativo .nc-cp-selo {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 9px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--nc-cp-t) 11%, #fff);
+  font-size: 12px;
+  font-weight: 650;
+  white-space: nowrap;
+  color: var(--nc-cp-t);
+  --nc-cp-t: var(--nc-cp-fraco);
+}
+
+@app.nc-cp-ativo .nc-cp-selo[data-tom="bom"] { --nc-cp-t: var(--nc-cp-bom); }
+@app.nc-cp-ativo .nc-cp-selo[data-tom="aberto"] { --nc-cp-t: var(--nc-cp-aberto); }
+@app.nc-cp-ativo .nc-cp-selo[data-tom="info"] { --nc-cp-t: #2E6CB5; }
+
+/* ═══ [C8] FASES E AVALIAÇÕES (linha do tempo) ══════════════════════════════════════════════ */
+@app.nc-cp-ativo .nc-cp-jornada {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+@app.nc-cp-ativo .nc-cp-jornada > li {
+  position: relative;
+  display: grid;
+  grid-template-columns: 34px minmax(0, 1fr);
+  gap: 14px;
+  margin: 0;
+  padding: 0 0 18px;
+}
+
+/* o fio entre os marcos */
+@app.nc-cp-ativo .nc-cp-jornada > li:not(:last-child)::before {
+  content: "";
+  position: absolute;
+  top: 34px;
+  bottom: 0;
+  left: 16px;
+  width: 2px;
+  background: var(--nc-cp-borda);
+}
+
+@app.nc-cp-ativo .nc-cp-marco {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--nc-cp-aberto) 12%, #fff);
+  color: var(--nc-cp-aberto);
+}
+
+@app.nc-cp-ativo .nc-cp-jornada > li[data-tom="bom"] .nc-cp-marco {
+  background: color-mix(in srgb, var(--nc-cp-bom) 12%, #fff);
+  color: var(--nc-cp-bom);
+}
+
+@app.nc-cp-ativo .nc-cp-jornada-corpo {
+  min-width: 0;
+  padding: 12px 16px;
+  border: 1px solid var(--nc-cp-borda);
+  border-radius: 12px;
+  background: #fff;
+}
+
+@app.nc-cp-ativo .nc-cp-jornada-titulo {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 10px;
+  margin: 0 0 10px;
+  font-size: 15px;
+  color: var(--nc-cp-texto);
+}
+
+@app.nc-cp-ativo .nc-cp-jornada dl {
+  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+  gap: 10px 18px;
+}
+
+/* ═══ [C9] QUESTIONÁRIO ═════════════════════════════════════════════════════════════════════ */
+@app.nc-cp-ativo .nc-cp-q-grupo {
+  margin: 0 0 16px;
+  border: 1px solid var(--nc-cp-borda);
+  border-radius: 12px;
+  background: #fff;
+}
+
+@app.nc-cp-ativo .nc-cp-q-grupo header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 12px;
+  padding: 12px 16px 10px;
+  border-bottom: 2px solid var(--nc-rosa, #C95788);
+}
+
+@app.nc-cp-ativo .nc-cp-q-grupo h3 {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--nc-cp-texto);
+}
+
+@app.nc-cp-ativo .nc-cp-q-grupo header .nc-cp-fraco {
+  margin-left: auto;
+  font-size: 12.5px;
+}
+
+@app.nc-cp-ativo .nc-cp-q-grupo ol {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: nc-q;
+}
+
+@app.nc-cp-ativo .nc-cp-q-grupo li {
+  display: grid;
+  grid-template-columns: 28px minmax(0, 1fr) auto;
+  grid-template-areas: "num pergunta pontos" "num resposta pontos";
+  gap: 2px 10px;
+  margin: 0;
+  padding: 12px 16px;
+  border-top: 1px solid var(--nc-cp-borda);
+  counter-increment: nc-q;
+}
+
+@app.nc-cp-ativo .nc-cp-q-grupo li:first-child {
+  border-top: 0;
+}
+
+@app.nc-cp-ativo .nc-cp-q-grupo li::before {
+  content: counter(nc-q);
+  grid-area: num;
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--nc-cp-fundo);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--nc-roxo, #511C76);
+}
+
+@app.nc-cp-ativo .nc-cp-pergunta {
+  grid-area: pergunta;
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.45;
+  color: var(--nc-cp-texto);
+}
+
+@app.nc-cp-ativo .nc-cp-resposta {
+  grid-area: resposta;
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.45;
+  color: var(--nc-grafite, #4A4460);
+}
+
+@app.nc-cp-ativo .nc-cp-pontos {
+  grid-area: pontos;
+  align-self: center;
+  margin: 0;
+  font-size: 12.5px;
+  white-space: nowrap;
+  color: var(--nc-cp-fraco);
+}
+
+@app.nc-cp-ativo .nc-cp-pontos b {
+  color: var(--nc-cp-texto);
+}
+
+/* ═══ [C10] OUTROS PROCESSOS ════════════════════════════════════════════════════════════════ */
+@app.nc-cp-ativo .nc-cp-proc-lista {
+  margin: 0;
+  padding: 0;
+  border: 1px solid var(--nc-cp-borda);
+  border-radius: 12px;
+  background: #fff;
+  list-style: none;
+}
+
+@app.nc-cp-ativo .nc-cp-proc-lista li {
+  display: grid;
+  grid-template-columns: 120px minmax(0, 1fr) 20px;
+  align-items: center;
+  gap: 14px;
+  margin: 0;
+  padding: 12px 16px;
+  border-top: 1px solid var(--nc-cp-borda);
+}
+
+@app.nc-cp-ativo .nc-cp-proc-lista li:first-child {
+  border-top: 0;
+}
+
+@app.nc-cp-ativo .nc-cp-proc-lista li.is-atual {
+  background: color-mix(in srgb, #2E6CB5 4%, #fff);
+}
+
+@app.nc-cp-ativo .nc-cp-proc-lista li > .nc-cp-selo {
+  justify-self: start;
+}
+
+@app.nc-cp-ativo .nc-cp-proc-corpo {
+  min-width: 0;
+  color: inherit;
+  text-decoration: none;
+}
+
+@app.nc-cp-ativo .nc-cp-proc-corpo p {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+@app.nc-cp-ativo .nc-cp-proc-vaga {
+  font-size: 14.5px !important;
+  color: var(--nc-cp-texto);
+}
+
+@app.nc-cp-ativo a.nc-cp-proc-corpo:hover .nc-cp-proc-vaga b {
+  color: var(--nc-roxo, #511C76);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+@app.nc-cp-ativo .nc-cp-proc-lista li > .nc-cp-ic {
+  color: #8E88A3;
+}
+
+/* ═══ [C11] CELULAR ═════════════════════════════════════════════════════════════════════════ */
+@media (max-width: 900px) {
+  @app.nc-cp-ativo .nc-cp-cartao {
+    grid-template-columns: 1fr;
+  }
+
+  /* as abas rolam de lado numa linha só, com encaixe no toque (como na página 35) */
+  @app.nc-cp-ativo .t-TabsRegion ul.t-Tabs:not(#nc-cp-x):not(#nc-cp-y) {
+    flex-wrap: nowrap;
+    overflow-x: auto !important;
+    scroll-snap-type: x proximity;
+    padding-bottom: 4px;
+    scrollbar-width: none;
+  }
+
+  @app.nc-cp-ativo .t-TabsRegion ul.t-Tabs > .t-Tabs-item:not(#nc-cp-x):not(#nc-cp-y) {
+    scroll-snap-align: start;
+  }
+
+  @app.nc-cp-ativo .nc-cp-contato {
+    padding: 14px 0 0;
+    border-top: 1px solid var(--nc-cp-borda);
+    border-left: 0;
+  }
+
+  @app.nc-cp-ativo .nc-cp-acoes {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  @app.nc-cp-ativo .nc-cp-acoes .nc-cp-bt:not(#nc-cp-x) {
+    flex: 1 1 auto;
+  }
+
+  @app.nc-cp-ativo .nc-cp-proc-lista li {
+    grid-template-columns: minmax(0, 1fr) 20px;
+  }
+
+  @app.nc-cp-ativo .nc-cp-proc-lista li > .nc-cp-selo {
+    grid-column: 1 / -1;
+  }
+
+  @app.nc-cp-ativo .nc-cp-q-grupo li {
+    grid-template-columns: 28px minmax(0, 1fr);
+    grid-template-areas: "num pergunta" "num resposta" "num pontos";
+  }
+
+  @app.nc-cp-ativo .nc-cp-pontos {
+    white-space: normal;
+  }
+}

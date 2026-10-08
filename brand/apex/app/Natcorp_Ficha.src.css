@@ -1,0 +1,1818 @@
+/* ╔════════════════════════════════════════════════════════════════════════════════════════╗
+   ║  NATCORP · DADOS FUNCIONAIS (a ficha do colaborador)  —  a "roupa" da tela (CSS)          ║
+   ║  App 200 · Página 17                                                                      ║
+   ╚════════════════════════════════════════════════════════════════════════════════════════╝
+
+   Primeira vez num arquivo destes? Leia antes o manual: brand/apex/MANUAL-APEX.md (parte 1).
+   Guia desta página: brand/apex/app/FICHA-MANUTENCAO.md
+
+   ── O QUE ESTE ARQUIVO FAZ ────────────────────────────────────────────────────────────────
+   Dá a aparência da ficha: cores, tamanhos, espaços, bordas, e como a tela se arruma no
+   computador e no celular. Ele NÃO muda nada de lugar: quem muda as coisas de lugar é o
+   arquivo-irmão Natcorp_Ficha.js. Os dois trabalham juntos:
+     o JS monta "o alto" com foto e fatos  →  este arquivo diz como o alto se parece.
+   Sem o JS, este arquivo não faz nada (todas as regras dependem da marca nc-df que o JS põe
+   na página).
+   Público: o RH, que abre esta página centenas de vezes por dia para consultar e conferir.
+   A página é um PERFIL: o alto com a marca e o "quem é", navegação à esquerda, seções por
+   assunto, dependentes em cartões, ocorrências numa linha do tempo. Densidade é ferramenta;
+   o brilho fica no alto e nos detalhes. Nada aqui vence o display:none das ações dinâmicas
+   (o que o APEX esconde continua escondido).
+
+   ── ONDE ELE ENTRA NO APEX ────────────────────────────────────────────────────────────────
+     Página 17 › CSS › File URLs:   #WORKSPACE_IMAGES#Natcorp_Ficha.css
+
+   ── ÍNDICE: as partes deste arquivo (Ctrl+F pelo código entre colchetes) ──────────────────
+     [C1] O que sai da vista                          (abas, grade vazia, grupos fechados)
+     [C2] O alto: faixa, foto, nome, situação, fatos  ← montado pelo JS em [J5]
+     [C3] A disposição e a navegação à esquerda       ← montadas pelo JS em [J4], [J10], [J13]
+     [C4] As seções: grupos, campos, valores em R$, dependentes, ocorrências, busca, aviso
+          de "copiado"                                ← montadas pelo JS em [J6] a [J12]
+     [C5] Telas menores e "menos movimento"           (ajustes para telas pequenas)
+     [C6] A janela "Benefícios"                       ← montada pelo JS em [J9]
+
+   ── RECEITAS RÁPIDAS ──────────────────────────────────────────────────────────────────────
+     Quero mudar uma cor
+       → use uma das cores da marca, pelo nome: var(--nc-roxo), var(--nc-grafite)… A lista
+         completa, com amostras, está no manual (parte 3). Assim a cor acompanha o tema que
+         o usuário escolheu em "Cores". Evite escrever cores soltas, como #511C76.
+     Quero o nome do colaborador maior ou menor  → [C2], .nc-df-nome, font-size.
+     Quero mais ou menos espaço                  → padding (espaço por DENTRO da caixa) e
+                                                   margin (espaço por FORA, até a vizinha).
+     Algo ficou bom no computador e ruim no celular → [C5]: o que está dentro de
+                                                   @media (max-width: 640px) só vale no celular.
+
+   ── COMO LER UM ARQUIVO CSS EM 30 SEGUNDOS ────────────────────────────────────────────────
+     Cada regra tem duas partes:     QUEM { COMO; }
+       @app.nc-df .nc-df-nome {            ← QUEM: o "seletor", diz em que pedaço da tela vale
+         font-size: 30px;                  ← COMO: propriedade: valor;  (tamanho da letra)
+         font-weight: 800;                 ←       letra bem grossa (negrito forte)
+       }
+     .nome-com-ponto       uma "classe": uma etiqueta posta num pedaço da tela (pelo APEX ou
+                           pelo JS). .nc-df-nome é o nome do colaborador, no alto.
+     @app                  atalho que dá prioridade às nossas regras sobre as do tema do APEX.
+                           No arquivo que sobe para o APEX ele aparece por extenso, como
+                           html body:is(.t-PageBody…):not(#nc-a1):not(#nc-a2) — é a mesma coisa.
+     :not(#nc-df-x)…       peso extra, para vencer uma regra do tema. Pode ignorar ao ler.
+     !important            no arquivo que sobe, toda linha ganha um: é o mesmo "vencer o tema".
+     @media (max-width: 640px) { … }   as regras de dentro só valem em telas até 640px (celular).
+     var(--nc-roxo)        uma cor da marca, pelo nome (muda junto com o tema escolhido).
+     px                    pixels, o tamanho de um pontinho da tela. 16px é o texto normal.
+     Toda linha COMO termina em ;   e todo { é fechado por um }. Não apague esses sinais.
+
+   (lembrete técnico: "@app" e os !important são postos pelo gerar-app.mjs — edite ESTE
+   arquivo, o .src.css, e não o .css gerado.)
+*/
+
+/* ═══ [C1] O QUE SAI DA VISTA ═════════════════════════════════════════════════════════════════
+   .nc-df-oculto: o que o JS tirou da vista (as abas, a grade vazia do APEX).
+   .nc-df-fechado: um grupo fechado ("N campos sem informação", deficiência). display: none =
+   não aparece.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-df .nc-df-oculto:not(#nc-df-x):not(#nc-df-y),
+@app.nc-df .nc-df-grade.nc-df-fechado:not(#nc-df-x):not(#nc-df-y) {
+  display: none;
+}
+
+/* ═══ [C2] O ALTO: FAIXA DA MARCA, FOTO, NOME, SITUAÇÃO E OS FATOS ══════════════════════════
+   Montado pelo JS em [J5]. Peças principais:
+     .nc-df-hero        o cartão do alto        .nc-df-hero-faixa  a faixa da marca (com as ações)
+     .nc-df-foto        a foto (ou iniciais)    .nc-df-nome        o nome
+     .nc-df-sit         a situação: .nc-df-sit--ok (verde) · --nao (vermelho) · as outras
+                        ficam no tom neutro do próprio .nc-df-sit
+     .nc-df-fatos       os 6 fatos              .nc-df-fato        cada fato
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-df .t-Region.nc-df-com-hero:not(#nc-df-x):not(#nc-df-y) {
+  overflow: hidden;
+  border: 1px solid var(--nc-nevoa);
+  border-radius: 22px;
+  background: #fff;
+  box-shadow: 0 22px 44px -34px rgba(var(--nc-t-azul-rgb, 44, 26, 99), .55);
+}
+
+@app.nc-df .t-Region.nc-df-com-hero > .t-Region-header:not(#nc-df-x):not(#nc-df-y) {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+}
+
+@app.nc-df .t-Region.nc-df-com-hero > .t-Region-bodyWrap > .t-Region-body:not(#nc-df-x):not(#nc-df-y) {
+  padding: 0;
+}
+
+@app.nc-df .nc-df-hero-faixa {
+  position: relative;
+  height: 112px;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 88% 10%, rgba(201, 87, 136, .6), transparent 42%),
+    radial-gradient(circle at 60% 130%, rgba(154, 64, 138, .55), transparent 50%),
+    linear-gradient(118deg, #2C1A63 0%, #511C76 58%, #7A2E82 100%) /*reserva*/;
+  background:
+    radial-gradient(circle at 88% 10%, rgba(var(--nc-t-rosa-rgb, 201, 87, 136), .6), transparent 42%),
+    radial-gradient(circle at 60% 130%, rgba(var(--nc-t-ameixa-rgb, 154, 64, 138), .55), transparent 50%),
+    linear-gradient(118deg, var(--nc-azul, #2C1A63) 0%, var(--nc-roxo, #511C76) 58%, oklch(from #7A2E82 l calc(c * var(--nc-t-croma, 1)) calc(h + var(--nc-t-giro, 0))) 100%);
+}
+
+/* os anéis da marca, bem de leve, no canto */
+@app.nc-df .nc-df-hero-faixa::before,
+@app.nc-df .nc-df-hero-faixa::after {
+  content: "";
+  position: absolute;
+  border: 1.5px solid rgba(255, 255, 255, .14);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+@app.nc-df .nc-df-hero-faixa::before {
+  top: -120px;
+  right: 180px;
+  width: 260px;
+  height: 260px;
+}
+
+@app.nc-df .nc-df-hero-faixa::after {
+  top: -60px;
+  right: 110px;
+  width: 150px;
+  height: 150px;
+}
+
+@app.nc-df .nc-df-hero-acoes {
+  position: absolute;
+  top: 16px;
+  right: 20px;
+  display: flex;
+  gap: 8px;
+}
+
+@app.nc-df .nc-df-hero-acoes .t-Button:not(#nc-df-x):not(#nc-df-y) {
+  height: 38px;
+  border: 1px solid rgba(255, 255, 255, .32);
+  border-radius: 11px;
+  background: rgba(255, 255, 255, .12);
+  box-shadow: none;
+  color: #fff;
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+}
+
+@app.nc-df .nc-df-hero-acoes .t-Button:hover:not(#nc-df-x):not(#nc-df-y) {
+  background: rgba(255, 255, 255, .22);
+}
+
+@app.nc-df .nc-df-hero-acoes .t-Button :is(.t-Icon, .fa, .t-Button-label) {
+  color: #fff;
+}
+
+@app.nc-df .nc-df-hero-corpo {
+  display: flex;
+  align-items: flex-start;
+  gap: 22px;
+  margin: -60px 0 0;
+  padding: 0 28px;
+}
+
+@app.nc-df .nc-df-foto {
+  position: relative;
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 128px;
+  height: 128px;
+  border: 5px solid #fff;
+  border-radius: 50%;
+  overflow: hidden;
+  background: var(--nc-grad);
+  box-shadow: 0 16px 30px -18px rgba(var(--nc-t-azul-rgb, 44, 26, 99), .75);
+}
+
+@app.nc-df .nc-df-foto img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  max-width: none;
+  max-height: none;
+  object-fit: cover;
+  object-position: center 30%;
+  background: #fff;
+}
+
+@app.nc-df .nc-df-foto span {
+  font-size: 38px;
+  font-weight: 800;
+  color: #fff;
+}
+
+/* o nome começa logo abaixo da faixa (a foto sobe 60px sobre ela) */
+@app.nc-df .nc-df-quem {
+  flex: 1 1 auto;
+  min-width: 0;
+  padding: 74px 0 4px;
+}
+
+@app.nc-df .nc-df-nome {
+  margin: 0;
+  font-family: inherit;
+  font-size: 30px;
+  font-weight: 800;
+  line-height: 1.12;
+  letter-spacing: -.025em;
+  color: var(--nc-tinta);
+}
+
+@app.nc-df .nc-df-linha {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 12px;
+  margin: 10px 0 0;
+}
+
+@app.nc-df .nc-df-sit {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  height: 28px;
+  padding: 0 12px;
+  border-radius: 999px;
+  background: #FFF4DE;
+  font-size: 13.5px;
+  font-weight: 800;
+  color: #6B4700;
+}
+
+@app.nc-df .nc-df-sit span {
+  font-weight: 600;
+}
+
+@app.nc-df .nc-df-sit i {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--nc-alerta);
+}
+
+@app.nc-df .nc-df-sit--ok { background: #E8F4EE; color: var(--nc-bom); }
+@app.nc-df .nc-df-sit--ok i { background: var(--nc-bom); box-shadow: 0 0 0 3px rgba(31, 122, 82, .15); }
+@app.nc-df .nc-df-sit--nao { background: #FDF3F4; color: var(--nc-ruim); }
+@app.nc-df .nc-df-sit--nao i { background: var(--nc-ruim); }
+
+@app.nc-df .nc-df-mot {
+  font-size: 14px;
+  color: var(--nc-grafite);
+}
+
+/* os seis fatos */
+@app.nc-df .nc-df-fatos {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 0;
+  margin: 22px 0 0;
+  border-top: 1px solid var(--nc-nevoa2);
+}
+
+@app.nc-df .nc-df-fato {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  min-width: 0;
+  padding: 16px 20px 18px;
+  border-right: 1px solid var(--nc-nevoa2);
+  transition: background-color .12s ease-out;
+}
+
+@app.nc-df .nc-df-fato:last-child {
+  border-right: 0;
+}
+
+@app.nc-df .nc-df-fato-ic {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 11px;
+  background: var(--nc-nevoa2);
+  color: var(--nc-roxo);
+}
+
+@app.nc-df .nc-df-fato-ic svg {
+  width: 19px;
+  height: 19px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+@app.nc-df .nc-df-fato dl {
+  min-width: 0;
+  margin: 0;
+}
+
+@app.nc-df .nc-df-fato dt {
+  margin: 0 0 3px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--nc-cinza);
+}
+
+@app.nc-df .nc-df-fato dd {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 800;
+  line-height: 1.3;
+  font-variant-numeric: tabular-nums;
+  color: var(--nc-tinta);
+  overflow-wrap: anywhere;
+}
+
+@app.nc-df .nc-df-sutil {
+  display: block;
+  margin-top: 2px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--nc-roxo);
+}
+
+/* ═══ [C3] A DISPOSIÇÃO: NAVEGAÇÃO À ESQUERDA, SEÇÕES À DIREITA ═════════════════════════════
+   Montada pelo JS em [J4]; a navegação em [J10] e [J13]. Peças principais:
+     .nc-df-layout   as duas colunas           .nc-df-nav     a navegação
+     .nc-df-nav.is-fixa   a navegação presa ao rolar (posição calculada pelo JS)
+     .nc-df-busca    a caixa "Buscar campo…"   a.is-atual     a seção que está à vista
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-df .t-Region.nc-df-com-layout:not(#nc-df-x):not(#nc-df-y) {
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+@app.nc-df .t-Region.nc-df-com-layout > .t-Region-header:not(#nc-df-x):not(#nc-df-y) {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+}
+
+@app.nc-df .t-Region.nc-df-com-layout > .t-Region-bodyWrap > .t-Region-body:not(#nc-df-x):not(#nc-df-y) {
+  padding: 0;
+  overflow: visible;
+}
+
+@app.nc-df .nc-df-layout {
+  display: grid;
+  grid-template-columns: 236px minmax(0, 1fr);
+  align-items: start;
+  gap: 20px;
+  margin: 4px 0 0;
+}
+
+@app.nc-df .nc-df-lado {
+  position: relative;
+  min-height: 1px;
+}
+
+/* ---------- a navegação ---------- */
+@app.nc-df .nc-df-nav {
+  z-index: 25;
+  padding: 12px;
+  border: 1px solid var(--nc-nevoa);
+  border-radius: 18px;
+  background: #fff;
+  box-shadow: 0 16px 34px -30px rgba(var(--nc-t-azul-rgb, 44, 26, 99), .55);
+}
+
+@app.nc-df .nc-df-nav.is-fixa {
+  position: fixed;
+}
+
+@app.nc-df .nc-df-mini {
+  display: none;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 12px;
+  padding: 2px 4px 12px;
+  border-bottom: 1px solid var(--nc-nevoa2);
+}
+
+@app.nc-df .nc-df-nav.is-colada .nc-df-mini {
+  display: flex;
+}
+
+@app.nc-df .nc-df-mini-foto {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: var(--nc-grad);
+  font-size: 13px;
+  font-weight: 800;
+  color: #fff;
+}
+
+@app.nc-df .nc-df-mini-foto img {
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  max-width: none;
+  max-height: none;
+  object-fit: cover;
+  object-position: center 30%;
+}
+
+@app.nc-df .nc-df-mini-txt {
+  display: grid;
+  min-width: 0;
+  line-height: 1.25;
+}
+
+@app.nc-df .nc-df-mini-txt b {
+  overflow: hidden;
+  font-size: 14px;
+  font-weight: 800;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--nc-tinta);
+}
+
+@app.nc-df .nc-df-mini-txt > span {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--nc-grafite);
+}
+
+@app.nc-df .nc-df-mini--ok { color: var(--nc-bom); }
+@app.nc-df .nc-df-mini--nao { color: var(--nc-ruim); }
+
+@app.nc-df .nc-df-busca {
+  position: relative;
+  display: flex;
+  align-items: center;
+  margin: 0;
+}
+
+@app.nc-df .nc-df-busca > svg {
+  position: absolute;
+  left: 11px;
+  width: 17px;
+  height: 17px;
+  fill: none;
+  stroke: var(--nc-cinza);
+  stroke-width: 2;
+  stroke-linecap: round;
+  pointer-events: none;
+}
+
+@app.nc-df .nc-df-busca input:not(#nc-df-x):not(#nc-df-y) {
+  width: 100%;
+  height: 40px;
+  min-height: 0;
+  padding: 0 34px 0 36px;
+  border: 1px solid var(--nc-nevoa);
+  border-radius: 11px;
+  background: var(--nc-quase);
+  font-size: 14.5px;
+  color: var(--nc-tinta);
+}
+
+@app.nc-df .nc-df-busca input:focus:not(#nc-df-x):not(#nc-df-y) {
+  border-color: var(--nc-roxo);
+  background: #fff;
+  box-shadow: var(--nc-anel);
+  outline: none;
+}
+
+@app.nc-df .nc-df-busca kbd {
+  position: absolute;
+  right: 9px;
+  display: grid;
+  place-items: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 5px;
+  border: 1px solid var(--nc-nevoa);
+  border-radius: 5px;
+  background: #fff;
+  font-size: 11.5px;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--nc-cinza);
+  pointer-events: none;
+}
+
+@app.nc-df .nc-df-busca input:focus ~ kbd {
+  display: none;
+}
+
+@app.nc-df .nc-df-busca-conta {
+  margin: 6px 4px 0;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--nc-grafite);
+}
+
+@app.nc-df .nc-df-busca-conta:empty {
+  display: none;
+}
+
+@app.nc-df .nc-df-nav-lista {
+  display: grid;
+  gap: 2px;
+  margin: 12px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+@app.nc-df .nc-df-nav-lista a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 40px;
+  padding: 0 10px;
+  border-radius: 10px;
+  font-size: 14.5px;
+  font-weight: 600;
+  color: var(--nc-grafite);
+  text-decoration: none;
+  transition: background-color .12s ease-out, color .12s ease-out;
+}
+
+@app.nc-df .nc-df-nav-lista a:hover {
+  background: var(--nc-quase);
+  color: var(--nc-tinta);
+}
+
+@app.nc-df .nc-df-nav-lista a:focus-visible {
+  outline: 3px solid var(--nc-roxo);
+  outline-offset: 1px;
+}
+
+@app.nc-df .nc-df-nav-lista svg {
+  flex: none;
+  width: 19px;
+  height: 19px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  color: var(--nc-cinza);
+}
+
+@app.nc-df .nc-df-nav-lista span {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+@app.nc-df .nc-df-nav-lista em {
+  padding: 1px 8px;
+  border-radius: 999px;
+  background: var(--nc-nevoa2);
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--nc-grafite);
+}
+
+@app.nc-df .nc-df-nav-lista em:empty {
+  display: none;
+}
+
+@app.nc-df .nc-df-nav-lista a.is-atual {
+  background: #F4EEFA;
+  font-weight: 800;
+  color: var(--nc-roxo);
+}
+
+@app.nc-df .nc-df-nav-lista a.is-atual svg {
+  color: var(--nc-roxo);
+}
+
+@app.nc-df .nc-df-nav-lista a.is-atual em {
+  background: var(--nc-roxo);
+  color: #fff;
+}
+
+/* ═══ [C4] AS SEÇÕES ════════════════════════════════════════════════════════════════════════
+   Montadas pelo JS em [J6] a [J12], nesta ordem neste arquivo: grupos e campos, o valor como
+   texto, copiar, resumo e links de abrir, os números em R$, alternar cartões/tabela,
+   dependentes ([J7]), ocorrências ([J8]), a busca ([J12]) e o aviso de "copiado" ([J11]).
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-df .nc-df-main {
+  min-width: 0;
+}
+
+@app.nc-df .nc-df-main > .t-Region.nc-df-sec:not(#nc-df-x):not(#nc-df-y) {
+  margin: 0 0 16px;
+  border: 1px solid var(--nc-nevoa);
+  border-radius: 18px;
+  background: #fff;
+  box-shadow: 0 16px 34px -32px rgba(var(--nc-t-azul-rgb, 44, 26, 99), .55);
+  scroll-margin-top: 140px;
+}
+
+@app.nc-df .nc-df-sec > .t-Region-header:not(#nc-df-x):not(#nc-df-y) {
+  min-height: 0;
+  padding: 16px 20px 6px 18px;
+  border-bottom: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+@app.nc-df .nc-df-sec > .t-Region-header::after {
+  content: none;
+  display: none;
+}
+
+@app.nc-df .nc-df-sec > .t-Region-header .t-Region-title:not(#nc-df-x):not(#nc-df-y) {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 18px;
+  font-weight: 800;
+  line-height: 1.25;
+  color: var(--nc-tinta);
+}
+
+@app.nc-df .nc-df-sec-ic {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #F4EEFA 0%, #FBEAF2 100%);
+  color: var(--nc-roxo);
+}
+
+@app.nc-df .nc-df-sec-ic svg {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+@app.nc-df .nc-df-sec-res {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--nc-cinza);
+}
+
+@app.nc-df .nc-df-sec > .t-Region-bodyWrap > .t-Region-body:not(#nc-df-x):not(#nc-df-y) {
+  padding: 6px 20px 20px;
+}
+
+/* ---------- grupos e campos ---------- */
+@app.nc-df .nc-df-grupo + .nc-df-grupo {
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid var(--nc-nevoa2);
+}
+
+@app.nc-df .nc-df-grupo-tit {
+  margin: 0 0 6px 10px;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: .01em;
+  color: var(--nc-roxo);
+}
+
+@app.nc-df .nc-df-grade {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 2px 16px;
+}
+
+@app.nc-df .nc-df-grade > .t-Form-fieldContainer.nc-df-largo:not(#nc-df-x):not(#nc-df-y) {
+  grid-column: span 2;
+}
+
+/* 04/10: :not([style*="none"]) — o display: block não pode vencer o esconder de uma ação da página */
+@app.nc-df .nc-df-main .t-Form-fieldContainer.nc-df-campo:not([style*="none"]):not(#nc-df-x):not(#nc-df-y) {
+  position: relative;
+  display: block;
+  width: auto;
+  margin: 0;
+  padding: 9px 10px 10px;
+  border-radius: 10px;
+  transition: background-color .12s ease-out, opacity .12s ease-out;
+}
+
+@app.nc-df .nc-df-main .nc-df-campo > :is(.t-Form-labelContainer, .t-Form-inputContainer):not(#nc-df-x):not(#nc-df-y) {
+  float: none;
+  width: 100%;
+  max-width: none;
+  min-height: 0;
+  padding: 0;
+  text-align: left;
+}
+
+@app.nc-df .nc-df-main .nc-df-campo > .t-Form-labelContainer:not(#nc-df-x):not(#nc-df-y) {
+  padding-bottom: 3px;
+}
+
+@app.nc-df .nc-df-main .nc-df-campo .t-Form-label:not(#nc-df-x):not(#nc-df-y) {
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--nc-cinza);
+}
+
+/* o valor como texto (o item do APEX fica no lugar, fora da vista: a página não grava) */
+@app.nc-df .nc-df-main .nc-df-campo.nc-df-espelho .t-Form-itemWrapper:not(#nc-df-x):not(#nc-df-y) {
+  display: none;
+}
+
+@app.nc-df .nc-df-valor {
+  display: block;
+  font-size: 14.5px;
+  font-weight: 700;
+  line-height: 1.4;
+  font-variant-numeric: tabular-nums;
+  color: var(--nc-tinta);
+  overflow-wrap: anywhere;
+}
+
+@app.nc-df .nc-df-vazio .nc-df-valor {
+  font-weight: 500;
+  color: #C9C3D6;
+}
+
+@app.nc-df .nc-df-main .nc-df-campo.nc-df-vazio .t-Form-label:not(#nc-df-x):not(#nc-df-y) {
+  color: #B4AEC4;
+}
+
+/* copiar: o valor responde ao mouse */
+@app.nc-df :is(.nc-df-main .nc-df-campo[data-copiar], .nc-df-fato[data-copiar-valor]) {
+  cursor: copy;
+}
+
+@app.nc-df :is(.nc-df-main .nc-df-campo[data-copiar], .nc-df-fato[data-copiar-valor]):hover {
+  background: #F7F2FC;
+}
+
+@app.nc-df .nc-df-main .nc-df-campo[data-copiar]:hover::after {
+  content: "";
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 15px;
+  height: 15px;
+  background: var(--nc-roxo);
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='8.5' y='8.5' width='11' height='12' rx='2'/%3E%3Cpath d='M15.5 8.5V6a2 2 0 0 0-2-2h-7a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h2'/%3E%3C/svg%3E") center / contain no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='8.5' y='8.5' width='11' height='12' rx='2'/%3E%3Cpath d='M15.5 8.5V6a2 2 0 0 0-2-2h-7a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h2'/%3E%3C/svg%3E") center / contain no-repeat;
+  pointer-events: none;
+}
+
+/* resumo (deficiência) e os links de abrir */
+@app.nc-df .nc-df-resumo {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin: 2px 10px 0;
+  font-size: 14.5px;
+  font-weight: 700;
+  color: var(--nc-tinta);
+}
+
+@app.nc-df .nc-df-resumo > svg {
+  width: 18px;
+  height: 18px;
+  padding: 2px;
+  border-radius: 50%;
+  background: #E8F4EE;
+  fill: none;
+  stroke: var(--nc-bom);
+  stroke-width: 2.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+@app.nc-df .nc-df-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 2px;
+  border: 0;
+  background: none;
+  font: inherit;
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--nc-roxo);
+  cursor: pointer;
+}
+
+@app.nc-df .nc-df-link:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+@app.nc-df .nc-df-link:focus-visible,
+@app.nc-df .nc-df-olho:focus-visible,
+@app.nc-df :is(.nc-df-dep, .nc-df-dep-cpf, .nc-df-chip--copiar):focus-visible {
+  outline: 3px solid var(--nc-roxo);
+  outline-offset: 2px;
+}
+
+@app.nc-df .nc-df-link svg {
+  width: 15px;
+  height: 15px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: transform .15s ease-out;
+}
+
+@app.nc-df .nc-df-vazios-bt {
+  margin-left: 8px;
+  color: var(--nc-grafite);
+}
+
+@app.nc-df .nc-df-vazios-bt.is-aberto svg {
+  transform: rotate(90deg);
+}
+
+@app.nc-df .nc-df-vazios .nc-df-grade {
+  margin-top: 4px;
+}
+
+/* ---------- os números (salário, total, benefícios) ---------- */
+@app.nc-df .nc-df-numeros {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 4px 12px;
+  margin: 0 0 16px;
+  padding: 14px 110px 14px 8px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, #FBF8FE 0%, #F4EEFA 55%, #FBEEF4 100%);
+}
+
+@app.nc-df .nc-df-numeros .nc-df-numero .t-Form-label:not(#nc-df-x):not(#nc-df-y) {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--nc-grafite);
+}
+
+@app.nc-df .nc-df-numeros .nc-df-valor {
+  font-size: 24px;
+  font-weight: 800;
+  letter-spacing: -.02em;
+  color: var(--nc-tinta);
+  transition: filter .18s ease-out;
+}
+
+@app.nc-df .nc-df-numeros.is-oculto .nc-df-valor {
+  filter: blur(8px);
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+@app.nc-df .nc-df-numeros.is-oculto .nc-df-campo {
+  pointer-events: none;
+}
+
+@app.nc-df .nc-df-olho {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 32px;
+  padding: 0 10px;
+  border: 1px solid rgba(var(--nc-t-roxo-rgb, 81, 28, 118), .18);
+  border-radius: 9px;
+  background: rgba(255, 255, 255, .7);
+  font: inherit;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--nc-roxo);
+  cursor: pointer;
+}
+
+@app.nc-df .nc-df-olho svg {
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.9;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* ---------- alternar cartões / tabela ---------- */
+@app.nc-df .nc-df-tabela-bt {
+  display: flex;
+  width: fit-content;
+  margin: 12px 0 0 auto;
+}
+
+@app.nc-df .nc-df-em-cartoes > .t-Region-bodyWrap > .t-Region-body > :not(.nc-df-deps):not(.nc-df-tempo):not(.nc-df-tabela-bt):not(.nc-df-bn):not(.nc-df-bn-tabela):not(#nc-df-x) {
+  display: none;
+}
+
+@app.nc-df .t-Region:not(.nc-df-em-cartoes) :is(.nc-df-deps, .nc-df-tempo, .nc-df-bn):not(#nc-df-x):not(#nc-df-y) {
+  display: none;
+}
+
+@app.nc-df .nc-df-vazio-msg {
+  margin: 0;
+  padding: 16px;
+  border: 1.5px dashed var(--nc-nevoa);
+  border-radius: 12px;
+  list-style: none;
+  font-size: 14.5px;
+  text-align: center;
+  color: var(--nc-grafite);
+}
+
+/* ---------- dependentes em cartões ---------- */
+@app.nc-df .nc-df-deps {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 10px;
+}
+
+@app.nc-df .nc-df-dep {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px 36px 14px 14px;
+  border: 1px solid var(--nc-nevoa);
+  border-radius: 14px;
+  background: #fff;
+  cursor: pointer;
+  transition: border-color .15s ease-out, box-shadow .15s ease-out, transform .15s ease-out;
+}
+
+@app.nc-df .nc-df-dep:hover {
+  border-color: #CDBDE2 /*reserva*/;
+  border-color: oklch(from #CDBDE2 l calc(c * var(--nc-t-croma, 1)) calc(h + var(--nc-t-giro, 0)));
+  box-shadow: 0 14px 26px -22px rgba(var(--nc-t-azul-rgb, 44, 26, 99), .6);
+  transform: translateY(-1px);
+}
+
+@app.nc-df .nc-df-dep.is-baixa {
+  opacity: .6;
+}
+
+@app.nc-df .nc-df-dep-av {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: #EFE8F7;
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--nc-roxo);
+}
+
+@app.nc-df .nc-df-dep-av.is-f {
+  background: #FBEAF2;
+  color: #A63F6E /*reserva*/;
+  color: oklch(from #A63F6E l calc(c * var(--nc-t-croma, 1)) calc(h + var(--nc-t-giro, 0)));
+}
+
+@app.nc-df .nc-df-dep-txt {
+  min-width: 0;
+}
+
+@app.nc-df .nc-df-dep-txt h4 {
+  margin: 0;
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 800;
+  line-height: 1.25;
+  color: var(--nc-tinta);
+}
+
+@app.nc-df .nc-df-dep-txt p {
+  margin: 2px 0 0;
+  font-size: 13.5px;
+  color: var(--nc-grafite);
+}
+
+@app.nc-df .nc-df-dep-cpf {
+  display: inline-block;
+  margin: 6px 0 0;
+  padding: 0;
+  border: 0;
+  border-bottom: 1px dashed #CDBDE2 /*reserva*/;
+  border-bottom: 1px dashed oklch(from #CDBDE2 l calc(c * var(--nc-t-croma, 1)) calc(h + var(--nc-t-giro, 0)));
+  background: none;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--nc-tinta);
+  cursor: copy;
+}
+
+@app.nc-df .nc-df-dep-cpf.is-vazio {
+  border: 0;
+  font-weight: 500;
+  color: var(--nc-cinza);
+  cursor: default;
+}
+
+@app.nc-df .nc-df-dep-ir {
+  position: absolute;
+  top: 50%;
+  right: 12px;
+  margin-top: -9px;
+  color: #B4AEC4;
+  transition: transform .15s ease-out, color .15s ease-out;
+}
+
+@app.nc-df .nc-df-dep:hover .nc-df-dep-ir {
+  color: var(--nc-roxo);
+  transform: translateX(2px);
+}
+
+@app.nc-df .nc-df-dep-ir svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+@app.nc-df .nc-df-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin: 8px 0 0;
+}
+
+@app.nc-df .nc-df-chip {
+  display: inline-flex;
+  align-items: center;
+  height: 22px;
+  padding: 0 8px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--nc-nevoa2);
+  font: inherit;
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--nc-grafite);
+}
+
+@app.nc-df .nc-df-chip--copiar {
+  background: #fff;
+  box-shadow: inset 0 0 0 1px var(--nc-nevoa);
+  font-variant-numeric: tabular-nums;
+  cursor: copy;
+}
+
+/* ---------- ocorrências: a linha do tempo ---------- */
+@app.nc-df .nc-df-tempo {
+  position: relative;
+  display: grid;
+  gap: 12px;
+  margin: 4px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+@app.nc-df .nc-df-tempo::before {
+  content: "";
+  position: absolute;
+  top: 8px;
+  bottom: 8px;
+  left: 105px;
+  width: 2px;
+  border-radius: 2px;
+  background: var(--nc-nevoa);
+}
+
+@app.nc-df .nc-df-oc {
+  position: relative;
+  display: grid;
+  grid-template-columns: 88px 26px minmax(0, 1fr);
+  align-items: start;
+}
+
+@app.nc-df .nc-df-oc-data {
+  grid-column: 1;
+  grid-row: 1;
+  padding-top: 12px;
+  font-size: 13px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+  color: var(--nc-grafite);
+}
+
+@app.nc-df .nc-df-oc-ponto {
+  grid-column: 2;
+  grid-row: 1;
+  justify-self: center;
+  width: 12px;
+  height: 12px;
+  margin-top: 15px;
+  margin-left: 9px;
+  border: 3px solid #fff;
+  border-radius: 50%;
+  background: var(--nc-roxo);
+  box-shadow: 0 0 0 1px var(--nc-nevoa);
+}
+
+@app.nc-df .nc-df-oc.is-grave .nc-df-oc-ponto {
+  background: var(--nc-ruim);
+}
+
+@app.nc-df .nc-df-oc-cartao {
+  grid-column: 3;
+  grid-row: 1;
+  padding: 12px 14px;
+  border: 1px solid var(--nc-nevoa);
+  border-radius: 14px;
+  background: #fff;
+}
+
+@app.nc-df .nc-df-oc:not(.nc-df-apagado):hover .nc-df-oc-cartao {
+  border-color: #CDBDE2 /*reserva*/;
+  border-color: oklch(from #CDBDE2 l calc(c * var(--nc-t-croma, 1)) calc(h + var(--nc-t-giro, 0)));
+}
+
+@app.nc-df .nc-df-oc-cab {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px 12px;
+}
+
+@app.nc-df .nc-df-oc-cab h4 {
+  margin: 0;
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--nc-tinta);
+}
+
+@app.nc-df .nc-df-oc.is-grave .nc-df-oc-cab h4 {
+  color: #8E2430;
+}
+
+@app.nc-df .nc-df-oc-st {
+  padding: 2px 10px;
+  border-radius: 999px;
+  background: #FFF4DE;
+  font-size: 12px;
+  font-weight: 700;
+  color: #6B4700;
+}
+
+@app.nc-df .nc-df-oc-st.is-ok {
+  background: #E8F4EE;
+  color: var(--nc-bom);
+}
+
+@app.nc-df .nc-df-oc-motivo {
+  margin: 6px 0 0;
+  font-size: 14px;
+  line-height: 1.45;
+  color: var(--nc-grafite);
+}
+
+/* ---------- a busca: o que casa acende, o resto recua ---------- */
+@app.nc-df .nc-df-main.nc-df-buscando :is(.nc-df-campo, .nc-df-dep, .nc-df-oc).nc-df-apagado {
+  opacity: .25;
+}
+
+@app.nc-df .nc-df-main.nc-df-buscando .nc-df-campo.nc-df-achou:not(#nc-df-x):not(#nc-df-y),
+@app.nc-df .nc-df-main.nc-df-buscando .nc-df-dep.nc-df-achou {
+  background: #FFF6D6;
+  box-shadow: inset 0 0 0 1.5px #E3B000;
+}
+
+@app.nc-df .nc-df-main.nc-df-buscando .nc-df-oc.nc-df-achou .nc-df-oc-cartao {
+  background: #FFF6D6;
+  border-color: #E3B000;
+}
+
+@app.nc-df .nc-df-main.nc-df-buscando .nc-df-campo.nc-df-atual:not(#nc-df-x):not(#nc-df-y) {
+  background: #FFE9A8;
+  box-shadow: inset 0 0 0 2px #D9A300;
+}
+
+/* ---------- o aviso de "copiado" ---------- */
+@app.nc-df .nc-df-aviso {
+  position: fixed;
+  left: 50%;
+  bottom: 28px;
+  z-index: 900;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  max-width: calc(100vw - 32px);
+  padding: 10px 16px;
+  border-radius: 12px;
+  background: var(--nc-tinta);
+  box-shadow: 0 16px 32px -16px rgba(27, 18, 56, .6);
+  font-size: 14px;
+  font-weight: 600;
+  color: #fff;
+  opacity: 0;
+  transform: translate(-50%, 12px);
+  transition: opacity .18s ease-out, transform .18s cubic-bezier(.2, .8, .2, 1);
+  pointer-events: none;
+}
+
+@app.nc-df .nc-df-aviso.is-on {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+@app.nc-df .nc-df-aviso svg {
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: #9BE0BC;
+  stroke-width: 2.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* ═══ [C5] TELAS MENORES E "MENOS MOVIMENTO" ═════════════════════════════════════════════════
+   @media (max-width: 1099px): notebooks pequenos e tablets — a navegação deixa de ser coluna.
+   @media (max-width: 640px):  celular — o que era lado a lado fica um embaixo do outro.
+   prefers-reduced-motion: para quem pediu "reduzir movimento" no aparelho, sem animações.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@media (max-width: 1099px) {
+  @app.nc-df .nc-df-layout {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+  }
+
+  @app.nc-df .nc-df-nav {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+  }
+
+  @app.nc-df .nc-df-nav .nc-df-mini {
+    display: none;
+  }
+
+  @app.nc-df .nc-df-busca {
+    flex: 1 1 240px;
+  }
+
+  @app.nc-df .nc-df-busca-conta {
+    flex: 1 1 100%;
+    margin: 0 4px;
+  }
+
+  @app.nc-df .nc-df-nav-lista {
+    display: flex;
+    flex: 1 1 100%;
+    gap: 6px;
+    margin: 0;
+    overflow-x: auto;
+    scrollbar-width: thin;
+  }
+
+  @app.nc-df .nc-df-nav-lista a {
+    min-height: 36px;
+    white-space: nowrap;
+    background: var(--nc-quase);
+  }
+}
+
+@media (max-width: 640px) {
+  @app.nc-df .nc-df-hero-faixa {
+    height: 96px;
+  }
+
+  @app.nc-df .nc-df-hero-acoes {
+    top: 12px;
+    right: 12px;
+  }
+
+  @app.nc-df .nc-df-hero-corpo {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    margin-top: -52px;
+    padding: 0 16px;
+  }
+
+  @app.nc-df .nc-df-foto {
+    width: 96px;
+    height: 96px;
+    border-width: 4px;
+  }
+
+  @app.nc-df .nc-df-quem {
+    padding-top: 0;
+  }
+
+  @app.nc-df .nc-df-nome {
+    font-size: 23px;
+  }
+
+  @app.nc-df .nc-df-fatos {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  @app.nc-df .nc-df-fato {
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--nc-nevoa2);
+  }
+
+  @app.nc-df .nc-df-fato:nth-child(2n) {
+    border-right: 0;
+  }
+
+  @app.nc-df .nc-df-fato-ic {
+    display: none;
+  }
+
+  @app.nc-df .nc-df-sec > .t-Region-bodyWrap > .t-Region-body:not(#nc-df-x):not(#nc-df-y) {
+    padding: 4px 10px 16px;
+  }
+
+  @app.nc-df .nc-df-grade {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  @app.nc-df .nc-df-numeros {
+    padding: 50px 8px 12px;
+  }
+
+  @app.nc-df .nc-df-numeros .nc-df-valor {
+    font-size: 20px;
+  }
+
+  @app.nc-df .nc-df-deps {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  @app.nc-df .nc-df-tempo::before {
+    left: 6px;
+  }
+
+  @app.nc-df .nc-df-oc {
+    grid-template-columns: 20px minmax(0, 1fr);
+  }
+
+  @app.nc-df .nc-df-oc-ponto {
+    grid-column: 1;
+    grid-row: 1;
+    margin: 4px 0 0;
+    justify-self: start;
+  }
+
+  @app.nc-df .nc-df-oc-data {
+    grid-column: 2;
+    grid-row: 1;
+    padding: 0 0 4px;
+    text-align: left;
+  }
+
+  @app.nc-df .nc-df-oc-cartao {
+    grid-column: 2;
+    grid-row: 2;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  @app.nc-df :is(.nc-df-aviso, .nc-df-dep, .nc-df-dep-ir, .nc-df-link svg) {
+    transition: none;
+  }
+
+  @app.nc-df .nc-df-dep:hover {
+    transform: none;
+  }
+}
+
+/* ═══ [C6] A JANELA "BENEFÍCIOS": CARTÕES POR GRUPO, TODAS AS LINHAS ════════════════════════
+   Montada pelo JS em [J9]. Peças principais:
+     .nc-df-bn-filtros  os filtros por grupo    .nc-df-bn-grupo  um grupo
+     .nc-df-bn-card     cada benefício          .is-encerrado    benefício encerrado (apagado)
+     .nc-df-bn-ic--saude / --dente / --talher… a cor do ícone, um tom por família de benefício
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+/* dentro da janela, a região não é mais um cartão (seria caixa dentro de caixa) */
+@app.nc-df .t-Region.nc-df-beneficios:not(#nc-df-x):not(#nc-df-y) {
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+@app.nc-df .nc-df-beneficios > .t-Region-bodyWrap > .t-Region-body:not(#nc-df-x):not(#nc-df-y) {
+  padding: 4px 4px 12px;
+}
+
+@app.nc-df .nc-df-bn-carregando {
+  margin: 24px 0;
+  font-size: 14.5px;
+  text-align: center;
+  color: var(--nc-grafite);
+}
+
+@app.nc-df .nc-df-bn-topo {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px 20px;
+  margin: 0 0 14px;
+  padding: 16px 18px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, #FBF8FE 0%, #F4EEFA 55%, #FBEEF4 100%);
+}
+
+@app.nc-df .nc-df-bn-resumo {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--nc-grafite);
+}
+
+@app.nc-df .nc-df-bn-resumo b {
+  margin-right: 2px;
+  font-size: 26px;
+  font-weight: 800;
+  letter-spacing: -.02em;
+  color: var(--nc-tinta);
+}
+
+@app.nc-df .nc-df-bn-resumo span {
+  color: var(--nc-cinza);
+}
+
+@app.nc-df .nc-df-bn-soma {
+  display: grid;
+  justify-items: end;
+  line-height: 1.2;
+}
+
+@app.nc-df .nc-df-bn-soma span {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--nc-grafite);
+}
+
+@app.nc-df .nc-df-bn-soma b {
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: -.02em;
+  font-variant-numeric: tabular-nums;
+  color: var(--nc-roxo);
+}
+
+/* os filtros por grupo */
+@app.nc-df .nc-df-bn-filtros {
+  display: flex;
+  gap: 6px;
+  margin: 0 0 16px;
+  padding: 0 0 2px;
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+
+@app.nc-df .nc-df-bn-filtros button {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: 7px;
+  height: 36px;
+  padding: 0 12px;
+  border: 1px solid var(--nc-borda-botao);
+  border-radius: 999px;
+  background: #fff;
+  font: inherit;
+  font-size: 13.5px;
+  font-weight: 700;
+  white-space: nowrap;
+  color: var(--nc-grafite);
+  cursor: pointer;
+}
+
+@app.nc-df .nc-df-bn-filtros button:hover {
+  border-color: #CDBDE2 /*reserva*/;
+  border-color: oklch(from #CDBDE2 l calc(c * var(--nc-t-croma, 1)) calc(h + var(--nc-t-giro, 0)));
+  color: var(--nc-tinta);
+}
+
+@app.nc-df .nc-df-bn-filtros button:focus-visible {
+  outline: 3px solid var(--nc-roxo);
+  outline-offset: 2px;
+}
+
+@app.nc-df .nc-df-bn-filtros button svg {
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.9;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+@app.nc-df .nc-df-bn-filtros em {
+  padding: 0 7px;
+  border-radius: 999px;
+  background: var(--nc-nevoa2);
+  font-size: 11.5px;
+  font-style: normal;
+  font-weight: 800;
+}
+
+@app.nc-df .nc-df-bn-filtros button[aria-pressed="true"] {
+  border-color: var(--nc-roxo);
+  background: var(--nc-roxo);
+  color: #fff;
+}
+
+@app.nc-df .nc-df-bn-filtros button[aria-pressed="true"] em {
+  background: rgba(255, 255, 255, .22);
+  color: #fff;
+}
+
+/* um grupo */
+@app.nc-df .nc-df-bn-grupo + .nc-df-bn-grupo {
+  margin-top: 20px;
+}
+
+@app.nc-df .nc-df-bn-g-cab {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 0 2px 10px;
+}
+
+@app.nc-df .nc-df-bn-g-cab h3 {
+  margin: 0;
+  font-family: inherit;
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--nc-tinta);
+}
+
+@app.nc-df .nc-df-bn-g-cab span {
+  font-size: 14px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  color: var(--nc-grafite);
+}
+
+@app.nc-df .nc-df-bn-lista {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+  gap: 10px;
+}
+
+@app.nc-df .nc-df-bn-encerrados {
+  display: none;
+  margin-top: 8px;
+}
+
+@app.nc-df .nc-df-bn-grupo.is-enc-aberto .nc-df-bn-encerrados {
+  display: grid;
+}
+
+@app.nc-df .nc-df-bn-enc-bt {
+  margin: 8px 0 0;
+  color: var(--nc-grafite);
+}
+
+@app.nc-df .nc-df-bn-grupo.is-enc-aberto .nc-df-bn-enc-bt svg {
+  transform: rotate(90deg);
+}
+
+@app.nc-df .nc-df-bn-nenhum {
+  margin: 0;
+  font-size: 14px;
+  color: var(--nc-cinza);
+}
+
+/* o cartão */
+@app.nc-df .nc-df-bn-card {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: start;
+  gap: 12px;
+  padding: 14px;
+  border: 1px solid var(--nc-nevoa);
+  border-radius: 14px;
+  background: #fff;
+}
+
+@app.nc-df .nc-df-bn-card.is-encerrado {
+  background: var(--nc-quase);
+}
+
+@app.nc-df .nc-df-bn-card.is-encerrado :is(.nc-df-bn-ic, .nc-df-bn-txt h4, .nc-df-bn-total b) {
+  filter: grayscale(1);
+  opacity: .65;
+}
+
+@app.nc-df .nc-df-bn-ic {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 13px;
+  background: var(--nc-nevoa2);
+  color: var(--nc-roxo);
+}
+
+@app.nc-df .nc-df-bn-ic svg {
+  width: 22px;
+  height: 22px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* a cor diz o tipo (um tom por família de benefício) */
+@app.nc-df .nc-df-bn-ic--saude { background: #FBEAF2; color: #A63F6E /*reserva*/;
+  color: oklch(from #A63F6E l calc(c * var(--nc-t-croma, 1)) calc(h + var(--nc-t-giro, 0))); }
+@app.nc-df .nc-df-bn-ic--dente { background: #E9F3FB; color: #2C6A9A; }
+@app.nc-df .nc-df-bn-ic--talher,
+@app.nc-df .nc-df-bn-ic--cesta { background: #FFF3DC; color: #8A5A00; }
+@app.nc-df .nc-df-bn-ic--onibus,
+@app.nc-df .nc-df-bn-ic--carro { background: #E8EEFB; color: var(--nc-azul, #2C1A63); }
+@app.nc-df .nc-df-bn-ic--halter { background: #E8F4EE; color: var(--nc-bom); }
+@app.nc-df .nc-df-bn-ic--cofrinho,
+@app.nc-df .nc-df-bn-ic--escudo { background: #EFE8F7; color: var(--nc-roxo); }
+@app.nc-df .nc-df-bn-ic--capelo { background: #F3EDFA; color: #6B3FA0 /*reserva*/;
+  color: oklch(from #6B3FA0 l calc(c * var(--nc-t-croma, 1)) calc(h + var(--nc-t-giro, 0))); }
+
+@app.nc-df .nc-df-bn-txt {
+  min-width: 0;
+}
+
+@app.nc-df .nc-df-bn-cab {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 8px;
+}
+
+@app.nc-df .nc-df-bn-txt h4 {
+  margin: 0;
+  font-family: inherit;
+  font-size: 15.5px;
+  font-weight: 800;
+  line-height: 1.25;
+  color: var(--nc-tinta);
+}
+
+@app.nc-df .nc-df-bn-fim {
+  padding: 1px 8px;
+  border-radius: 999px;
+  background: var(--nc-nevoa2);
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--nc-grafite);
+}
+
+@app.nc-df .nc-df-bn-linhas {
+  display: grid;
+  gap: 3px;
+  margin: 6px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+@app.nc-df .nc-df-bn-linhas li {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  min-width: 0;
+  font-size: 13.5px;
+  color: var(--nc-grafite);
+}
+
+@app.nc-df .nc-df-bn-l-tipo {
+  flex: 0 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@app.nc-df .nc-df-bn-l-n {
+  flex: none;
+  padding: 0 6px;
+  border-radius: 6px;
+  background: var(--nc-nevoa2);
+  font-size: 11.5px;
+  font-style: normal;
+  font-weight: 800;
+  color: var(--nc-grafite);
+}
+
+@app.nc-df .nc-df-bn-l-valor {
+  flex: none;
+  margin-left: auto;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--nc-tinta);
+}
+
+@app.nc-df .nc-df-bn-datas {
+  margin: 6px 0 0;
+  font-size: 12.5px;
+  color: var(--nc-cinza);
+}
+
+@app.nc-df .nc-df-bn-total {
+  display: grid;
+  justify-items: end;
+  min-width: 96px;
+  line-height: 1.2;
+  text-align: right;
+}
+
+@app.nc-df .nc-df-bn-total b {
+  font-size: 17px;
+  font-weight: 800;
+  letter-spacing: -.01em;
+  font-variant-numeric: tabular-nums;
+  color: var(--nc-tinta);
+}
+
+@app.nc-df .nc-df-bn-total span {
+  margin-top: 2px;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--nc-cinza);
+}
+
+@app.nc-df .nc-df-bn-semvalor {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--nc-cinza);
+}
+
+@app.nc-df .nc-df-bn-tabela {
+  display: flex;
+  width: fit-content;
+  margin: 16px 0 0 auto;
+}
+
+@media (max-width: 640px) {
+  @app.nc-df .nc-df-bn-lista {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  @app.nc-df .nc-df-bn-card {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+
+  @app.nc-df .nc-df-bn-total {
+    grid-column: 2;
+    justify-items: start;
+    text-align: left;
+  }
+
+  @app.nc-df .nc-df-bn-soma {
+    justify-items: start;
+  }
+}
+
+/* ═══ FAIXA DA REGIÃO (padrão 03/10) ════════════════════════════════════════════════════════
+   Todo painel com título segue o cabeçalho de região da Skin: o título numa faixa que atravessa
+   o cartão de ponta a ponta, com a linha de 2px na cor de destaque do TEMA (var(--nc-rosa) — a
+   mesma da Skin; muda com os 14 temas). As margens negativas são o recuo de dentro do cartão:
+   mudou o recuo do cartão, mude aqui junto. Guia: brand/apex/MANUAL-APEX.md.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+/* as seções nativas da ficha: a linha do tema volta (antes era tirada aqui) */
+@app.nc-df .nc-df-sec > .t-Region-header:not(#nc-fx1):not(#nc-fx2):not(#nc-fx3) {
+  border-bottom: 2px solid var(--nc-rosa, #C95788);
+  padding-bottom: 10px;
+}

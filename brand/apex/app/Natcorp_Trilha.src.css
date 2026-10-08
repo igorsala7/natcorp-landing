@@ -1,0 +1,223 @@
+/* ╔════════════════════════════════════════════════════════════════════════════════════════╗
+   ║  NATCORP · TRILHA  —  a faixa do caminho que a pessoa fez (CSS)                          ║
+   ║  Vale para o SISTEMA TODO: entra no Natcorp_Style_Min.css (gerar-app.mjs, lista FOLHAS)  ║
+   ╚════════════════════════════════════════════════════════════════════════════════════════╝
+
+   Primeira vez num arquivo destes? Leia antes o manual: brand/apex/MANUAL-APEX.md (parte 1).
+
+   ── O QUE ESTE ARQUIVO FAZ ────────────────────────────────────────────────────────────────
+   A aparência da faixa que o Natcorp_Trilha.js põe logo abaixo do menu superior: "Voltar" à
+   esquerda e o caminho (as últimas páginas visitadas e a atual). Sem o JS, nada daqui vale.
+
+   ── ÍNDICE ────────────────────────────────────────────────────────────────────────────────
+     [C1] A faixa                                                PODE MEXER (cores, altura)
+     [C2] Voltar
+     [C3] O caminho
+     [C4] Casca: o iframe encolhe a altura da faixa              CUIDADO
+     [C5] Celular
+*/
+
+/* ═══ [C1] A FAIXA ══════════════════════════════════════════════════════════════════════════
+   PODE MEXER: --nc-tr-alt (a altura; o iframe da casca encolhe o mesmo tanto) e as cores.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-tr-ativo {
+  --nc-tr-alt: 40px;
+}
+
+@app.nc-tr-ativo .nc-tr {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  height: var(--nc-tr-alt);
+  margin: 0;
+  padding: 0 16px;
+  border-bottom: 1px solid var(--nc-nevoa, #E9E5F1);
+  background: #FBFAFD;
+  font-size: 13px;
+  line-height: 1;
+  color: var(--nc-grafite, #4A4460);
+  overflow: hidden;
+}
+
+@app.nc-tr-ativo .nc-tr-ic {
+  flex: 0 0 auto;
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.9;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* ═══ [C2] VOLTAR ═══════════════════════════════════════════════════════════════════════════ */
+@app.nc-tr-ativo .nc-tr-voltar {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 4px;
+  height: 28px;
+  margin: 0;
+  padding: 0 11px 0 7px;
+  border: 1px solid #E2DCEB;
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: 0 1px 1px rgba(27, 18, 56, .04);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--nc-roxo, #511C76);
+  cursor: pointer;
+  transition: border-color .15s, background-color .15s;
+}
+
+@app.nc-tr-ativo .nc-tr-voltar:hover:not(:disabled) {
+  border-color: color-mix(in srgb, var(--nc-roxo, #511C76) 40%, #fff);
+  background: color-mix(in srgb, var(--nc-roxo, #511C76) 5%, #fff);
+}
+
+@app.nc-tr-ativo .nc-tr-voltar:disabled {
+  border-color: var(--nc-nevoa, #E9E5F1);
+  background: transparent;
+  box-shadow: none;
+  color: #A39DB5;
+  cursor: default;
+}
+
+@app.nc-tr-ativo .nc-tr-voltar:focus-visible,
+@app.nc-tr-ativo .nc-tr-caminho a:focus-visible {
+  outline: 2px solid var(--nc-roxo, #511C76);
+  outline-offset: 2px;
+}
+
+/* ═══ [C3] O CAMINHO ════════════════════════════════════════════════════════════════════════
+   O ícone de "relógio que volta" diz que é o HISTÓRICO (não o menu). Cada item ocupa no máximo
+   uma fatia da largura e corta com "…" (o nome inteiro aparece ao parar o mouse).
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-tr-ativo .nc-tr-caminho {
+  display: flex;
+  flex: 1 1 auto;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  margin: 0;
+  padding: 0 0 0 12px;
+  border-left: 1px solid var(--nc-nevoa, #E9E5F1);
+  list-style: none;
+}
+
+@app.nc-tr-ativo .nc-tr-caminho > li {
+  display: flex;
+  flex: 0 1 auto;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+}
+
+@app.nc-tr-ativo .nc-tr-caminho > li.nc-tr-passou {
+  flex: 0 0 auto;
+  color: color-mix(in srgb, var(--nc-roxo, #511C76) 60%, #fff);
+}
+
+@app.nc-tr-ativo .nc-tr-caminho > li.nc-tr-mais {
+  flex: 0 0 auto;
+  color: #8E88A3;
+}
+
+@app.nc-tr-ativo .nc-tr-caminho a,
+@app.nc-tr-ativo .nc-tr-caminho span[aria-current] {
+  display: block;
+  max-width: 260px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  line-height: 1.6;
+}
+
+@app.nc-tr-ativo .nc-tr-caminho a {
+  border-radius: 4px;
+  color: var(--nc-grafite, #4A4460);
+  text-decoration: none;
+}
+
+@app.nc-tr-ativo .nc-tr-caminho a:hover {
+  color: var(--nc-roxo, #511C76);
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, var(--nc-roxo, #511C76) 40%, transparent);
+  text-underline-offset: 3px;
+}
+
+@app.nc-tr-ativo .nc-tr-caminho span[aria-current] {
+  max-width: 440px;
+  font-weight: 650;
+  color: var(--nc-tinta, #1B1238);
+}
+
+@app.nc-tr-ativo .nc-tr-sep {
+  width: 12px;
+  height: 12px;
+  color: #B7B1C8;
+}
+
+/* ═══ [C4] CASCA: O IFRAME ENCOLHE A ALTURA DA FAIXA ════════════════════════════════════════
+   CUIDADO  Na casca (200:762) toda a cadeia até o iframe tem height:100% fixo (no próprio
+            elemento). A faixa entra logo antes do iframe; o iframe (cujo height:100% não tem
+            !important) fica com 100% menos a faixa. Sem isso, o fim da página ficaria cortado.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-tr-casca .nc-tr + iframe {
+  height: calc(100% - var(--nc-tr-alt)) !important;
+}
+
+/* O rodapé da casca: a página o "esconde" com height:0, mas o conteúdo vazava e somava na
+   altura do corpo (overflow:hidden) — o corpo rolava ~90px e o rodapé aparecia fixo embaixo
+   do iframe, por cima da página. O rodapé que vale é o da página DENTRO do iframe, no fim.
+   CUIDADO  Nada de display:none: o botão fixo da NATI (#BTN_NATI) mora nele. */
+@app.nc-tr-casca .t-Footer {
+  height: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  overflow: hidden !important;
+}
+
+/* página direta: a faixa está dentro da barra de título fixa — encosta nas bordas dela */
+@app.nc-tr-no-titulo .t-Body-title > .nc-tr {
+  margin: 0 0 6px;
+}
+
+/* ═══ [C5] CELULAR ══════════════════════════════════════════════════════════════════════════
+   Pouca largura: o "Voltar" vira só a seta, e do caminho ficam a anterior e a atual.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@media (max-width: 640px) {
+  @app.nc-tr-ativo .nc-tr {
+    gap: 8px;
+    padding: 0 10px;
+  }
+
+  @app.nc-tr-ativo .nc-tr-voltar {
+    padding: 0 7px;
+  }
+
+  @app.nc-tr-ativo .nc-tr-voltar span {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+  }
+
+  @app.nc-tr-ativo .nc-tr-caminho {
+    padding-left: 8px;
+  }
+
+  @app.nc-tr-ativo .nc-tr-caminho > li:not(.is-atual):not(:nth-last-child(2)):not(.nc-tr-passou) {
+    display: none;
+  }
+
+  @app.nc-tr-ativo .nc-tr-caminho a,
+  @app.nc-tr-ativo .nc-tr-caminho span[aria-current] {
+    max-width: 42vw;
+  }
+}

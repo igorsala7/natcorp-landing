@@ -1,0 +1,2543 @@
+/* ╔════════════════════════════════════════════════════════════════════════════════════════╗
+   ║  NATCORP · AVALIAÇÃO DE DESEMPENHO  —  a "roupa" das telas (CSS)                          ║
+   ║  App 9118 · Página 140 (a avaliação) e Página 144 (a janela de uma pergunta)             ║
+   ╚════════════════════════════════════════════════════════════════════════════════════════╝
+
+   Primeira vez num arquivo destes? Leia antes o manual: brand/apex/MANUAL-APEX.md (parte 1).
+
+   ── O QUE ESTE ARQUIVO FAZ ────────────────────────────────────────────────────────────────
+   Dá a aparência das páginas 140 e 144: cores, tamanhos, espaços, bordas, e como a tela se
+   arruma no computador e no celular. Ele NÃO muda nada de lugar: quem muda as coisas de lugar
+   é o arquivo-irmão Natcorp_Avaliacao.js. Os dois trabalham juntos:
+     o JS cria os cartões das perguntas  →  este arquivo diz como eles se parecem.
+   Sem o JS, este arquivo não faz nada: as regras dependem da marca nc-av (página 140) ou
+   nc-avq (página 144), que só o JS põe na página.
+   Quem responde é o colaborador, 9 em 10 vezes pelo celular: desenhado para 390px primeiro.
+
+   ── REGRA DESTE ARQUIVO (CUIDADO) ─────────────────────────────────────────────────────────
+   Nada aqui põe "display" em algo que as ações dinâmicas mostram/escondem (regiões,
+   BTN_NEXT/PREV_*, P144_ACAO, P144_RADIO_GROUP_CONTAINER, a resposta escrita). O gerador põe
+   !important em tudo, e isso venceria o "esconder" (.hide()) do APEX: a página quebraria.
+
+   ── ONDE ELE ENTRA NO APEX ────────────────────────────────────────────────────────────────
+     Páginas 140 e 144 › CSS › File URLs:   #WORKSPACE_IMAGES#Natcorp_Avaliacao.css
+     CUIDADO: este é o arquivo-FONTE (.src.css). O gerador (gerar-app.mjs) cria a partir dele o
+     Natcorp_Avaliacao.css que sobe para o APEX (com o @app por extenso e os !important). Edite
+     ESTE arquivo, não o gerado: o gerado é reescrito a cada geração (manual, parte 2).
+
+   ── ÍNDICE: as partes deste arquivo (Ctrl+F pelo código entre colchetes) ──────────────────
+     [C1]  O que some e os ícones                  (regiões absorvidas, colunas vazias)
+     [C2]  140 · O alto                             ← montado pelo JS em [J4], [J10], [J11]
+     [C3]  140 · O resultado lado a lado            ← região "Resultado"
+     [C4]  140 · As perguntas em cartões            ← montadas pelo JS em [J5]
+     [C5]  140 · O resumo das perguntas             ← montado pelo JS em [J5]
+     [C6]  140 · Os textos                          ← marcados pelo JS em [J12]
+     [C7]  140 · A barra de Salvar e o Excluir      ← montados pelo JS em [J13]
+     [C8]  144 · A janela da pergunta               ← montada pelo JS em [J14] e [J15]
+     [C9]  140 · Criação: "Nova avaliação"          ← montada pelo JS em [J10]
+     [C10] 140 · O avaliado                         ← montado pelo JS em [J6]
+     [C11] 140 · O resultado em destaque            ← marcado pelo JS em [J7]
+     [C12] 140 · O plano como PDI                   ← montado pelo JS em [J8]
+     [C13] 140 · O comentário como conversa         ← montado pelo JS em [J9]
+     [C14] Celular e menos movimento                (as duas páginas)
+
+   ── RECEITAS RÁPIDAS ──────────────────────────────────────────────────────────────────────
+     Quero mudar uma cor
+       → use uma das cores da marca, pelo nome: var(--nc-roxo), var(--nc-grafite)… A lista
+         completa, com amostras, está no manual (parte 3). Assim a cor acompanha o tema que
+         o usuário escolheu em "Cores". Evite escrever cores soltas, como #511C76.
+     Quero a pergunta da 144 maior ou menor       → [C8], font-size de .nc-avq-texto (hoje 21px)
+     Quero os cartões das opções mais baixos       → [C8], .nc-avq-opcoes .apex-item-option label
+                                                   (min-height: 58px e padding)
+     Quero mais ou menos espaço                    → padding (espaço por DENTRO da caixa) e
+                                                   margin (espaço por FORA, até a vizinha).
+     Algo ficou bom no computador e ruim no celular → [C14]: o que está dentro de
+                                                   @media (max-width: 640px) só vale no celular.
+
+   ── COMO LER UM ARQUIVO CSS EM 30 SEGUNDOS ────────────────────────────────────────────────
+     Cada regra tem duas partes:     QUEM { COMO; }
+       @app.nc-av .nc-av-hero {            ← QUEM: o "seletor", diz em que pedaço da tela vale
+         border-radius: 22px;              ← COMO: propriedade: valor;  (cantos arredondados)
+         background: #fff;                 ←       fundo branco
+       }
+     .nome-com-ponto       uma "classe": uma etiqueta posta num pedaço da tela (pelo APEX ou
+                           pelo JS). .nc-av-hero é o quadro do alto da página 140.
+     @app                  atalho que dá prioridade às nossas regras sobre as do tema do APEX.
+                           No arquivo que sobe para o APEX ele aparece por extenso, como
+                           html body:is(.t-PageBody…):not(#nc-a1):not(#nc-a2) — é a mesma coisa.
+     :not(#nc-av-x)…       peso extra, para vencer uma regra do tema. Pode ignorar ao ler.
+     !important            no arquivo que sobe, toda linha ganha um: é o mesmo "vencer o tema".
+     @media (max-width: 640px) { … }   as regras de dentro só valem em telas até 640px (celular).
+     var(--nc-roxo)        uma cor da marca, pelo nome (muda junto com o tema escolhido).
+     px                    pixels, o tamanho de um pontinho da tela. 16px é o texto normal.
+     Toda linha COMO termina em ;   e todo { é fechado por um }. Não apague esses sinais.
+*/
+
+/* ═══ [C1] O QUE SOME E OS ÍCONES ═══════════════════════════════════════════════════════════
+   • .nc-av-fora: o que o JS tirou da vista (regiões absorvidas, campos já mostrados no alto).
+     display: none = não aparece. A coluna de uma região tirada sai junto, e a vizinha
+     (Resultado) ocupa a linha toda.
+   • .nc-av-svg: o jeito de desenhar todos os ícones (linha, sem preenchimento).
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@app:is(.nc-av, .nc-avq) .nc-av-fora:not(#nc-av-x):not(#nc-av-y) {
+  display: none;
+}
+
+/* região posta fora da vista (Relatórios, Avaliação): a coluna dela sai junto e a vizinha
+   (Resultado) ocupa a linha toda */
+@app.nc-av .row > .col:has(> .t-Region.nc-av-fora):not(:has(> .t-Region:not(.nc-av-fora))):not(#nc-av-x):not(#nc-av-y) {
+  display: none;
+}
+
+@app.nc-av .row:has(> .col > .t-Region.nc-av-fora) > .col:has(> .t-Region.nc-av-resultado):not(#nc-av-x):not(#nc-av-y) {
+  width: 100%;
+  max-width: 100%;
+  flex: 0 0 100%;
+}
+
+@app:is(.nc-av, .nc-avq) .nc-av-svg {
+  flex: none;
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.9;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+@app:is(.nc-av, .nc-avq) ::selection {
+  background: rgba(var(--nc-t-rosa-rgb, 201, 87, 136), .24);
+}
+
+/* ═══ [C2] 140 · O ALTO: O ANDAMENTO, A TRILHA, OS FATOS, AS ETAPAS E A IMPRESSÃO ═══════════
+   Montado pelo JS em [J4], [J10] e [J11]. Peças principais:
+     .nc-av-hero     o quadro do alto          .nc-av-cta      o botão "Começar" / "Responder…"
+     .nc-av-trilha   um traço por pergunta     .nc-av-fatos    tipo, ciclo, data, avaliador
+     .nc-av-etapas   as pílulas das etapas     .nc-av-docs     os botões de imprimir
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+/* =====================================================================
+   140 · O ALTO — o que falta, a trilha, o próximo passo e as etapas
+   ===================================================================== */
+@app.nc-av .nc-av-hero {
+  position: relative;
+  margin: 0 0 20px;
+  overflow: hidden;
+  border-radius: 22px;
+  background: #fff;
+  box-shadow: 0 1px 2px rgba(27, 18, 56, .05), 0 22px 44px -30px rgba(var(--nc-t-azul-rgb, 44, 26, 99), .55);
+}
+
+@app.nc-av .nc-av-hero-topo {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 18px 28px;
+  padding: 26px 28px 22px;
+  background:
+    radial-gradient(circle at 92% -10%, rgba(201, 87, 136, .55), transparent 45%),
+    radial-gradient(circle at 55% 140%, rgba(154, 64, 138, .5), transparent 55%),
+    linear-gradient(120deg, #2C1A63 0%, #511C76 60%, #74307F 100%) /*reserva*/;
+  background:
+    radial-gradient(circle at 92% -10%, rgba(var(--nc-t-rosa-rgb, 201, 87, 136), .55), transparent 45%),
+    radial-gradient(circle at 55% 140%, rgba(var(--nc-t-ameixa-rgb, 154, 64, 138), .5), transparent 55%),
+    linear-gradient(120deg, var(--nc-azul, #2C1A63) 0%, var(--nc-roxo, #511C76) 60%, oklch(from #74307F l calc(c * var(--nc-t-croma, 1)) calc(h + var(--nc-t-giro, 0))) 100%);
+  color: #fff;
+}
+
+@app.nc-av .nc-av-hero-txt {
+  flex: 1 1 320px;
+  min-width: 0;
+}
+
+@app.nc-av .nc-av-hero-titulo:not(#nc-av-x):not(#nc-av-y) {
+  margin: 0;
+  padding: 0;
+  font-size: 26px;
+  font-weight: 800;
+  line-height: 1.18;
+  letter-spacing: -.02em;
+  text-wrap: balance;
+  color: #fff;
+}
+
+@app.nc-av .nc-av-hero-sub {
+  margin: 8px 0 0;
+  max-width: 62ch;
+  font-size: 14.5px;
+  font-weight: 500;
+  line-height: 1.5;
+  color: #E7DDF3;
+}
+
+@app.nc-av .nc-av-cta:not(#nc-av-x):not(#nc-av-y) {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 52px;
+  margin: 0;
+  padding: 0 22px 0 24px;
+  border: 0;
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: 0 10px 24px -12px rgba(20, 8, 44, .7);
+  font: inherit;
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--nc-roxo);
+  cursor: pointer;
+  transition: transform .15s, box-shadow .15s;
+}
+
+@app.nc-av .nc-av-cta:hover:not(#nc-av-x):not(#nc-av-y) {
+  transform: translateY(-1px);
+  box-shadow: 0 14px 28px -12px rgba(20, 8, 44, .8);
+}
+
+@app.nc-av .nc-av-cta--calmo:not(#nc-av-x):not(#nc-av-y) {
+  background: rgba(255, 255, 255, .14);
+  box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, .55);
+  color: #fff;
+}
+
+@app.nc-av .nc-av-cta .nc-av-svg {
+  width: 20px;
+  height: 20px;
+  stroke-width: 2.2;
+}
+
+/* a trilha: um traço por pergunta, com respiro entre as competências */
+@app.nc-av .nc-av-trilha {
+  display: flex;
+  gap: 8px;
+  padding: 0 28px 20px;
+  background: linear-gradient(120deg, #2C1A63 0%, #511C76 60%, #74307F 100%) /*reserva*/;
+  background: linear-gradient(120deg, var(--nc-azul, #2C1A63) 0%, var(--nc-roxo, #511C76) 60%, oklch(from #74307F l calc(c * var(--nc-t-croma, 1)) calc(h + var(--nc-t-giro, 0))) 100%);
+}
+
+@app.nc-av .nc-av-trilha[hidden] {
+  display: none;
+}
+
+@app.nc-av .nc-av-trilha-g {
+  display: flex;
+  flex: 1 1 0;
+  gap: 3px;
+  min-width: 0;
+}
+
+@app.nc-av .nc-av-trilha-g i {
+  flex: 1 1 0;
+  min-width: 2px;
+  height: 8px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, .2);
+  transform-origin: left center;
+  animation: nc-av-traco .5s cubic-bezier(.16, 1, .3, 1) both;
+}
+
+@app.nc-av .nc-av-trilha-g i.is-ok {
+  background: linear-gradient(90deg, #F2B8D1, #fff) /*reserva*/;
+  background: linear-gradient(90deg, oklch(from #F2B8D1 l calc(c * var(--nc-t-croma, 1)) calc(h + var(--nc-t-giro, 0))), #fff);
+}
+
+@app.nc-av .nc-av-trilha-g i.is-prox {
+  background: rgba(255, 255, 255, .2);
+  box-shadow: inset 0 0 0 1.5px #F2B8D1 /*reserva*/;
+  box-shadow: inset 0 0 0 1.5px oklch(from #F2B8D1 l calc(c * var(--nc-t-croma, 1)) calc(h + var(--nc-t-giro, 0)));
+}
+
+@keyframes nc-av-traco {
+  from { transform: scaleX(.3); }
+  to { transform: scaleX(1); }
+}
+
+/* os fatos da avaliação */
+@app.nc-av .nc-av-fatos:not(#nc-av-x):not(#nc-av-y) {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 22px;
+  margin: 0;
+  padding: 16px 28px 4px;
+  list-style: none;
+}
+
+@app.nc-av .nc-av-fatos li {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  margin: 0;
+  font-size: 13.5px;
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--nc-grafite);
+}
+
+@app.nc-av .nc-av-fatos li:first-child {
+  font-weight: 800;
+  color: var(--nc-roxo);
+}
+
+@app.nc-av .nc-av-fatos .nc-av-svg {
+  width: 16px;
+  height: 16px;
+  color: var(--nc-cinza);
+}
+
+@app.nc-av .nc-av-fatos li:first-child .nc-av-svg {
+  color: var(--nc-roxo);
+}
+
+@app.nc-av .nc-av-perfil.t-Button:not(#nc-av-x):not(#nc-av-y) {
+  width: 30px;
+  min-width: 0;
+  height: 30px;
+  margin: 0 0 0 2px;
+  padding: 0;
+  border-radius: 9px;
+  box-shadow: none;
+}
+
+/* as etapas */
+@app.nc-av .nc-av-etapas {
+  padding: 14px 20px 6px;
+}
+
+@app.nc-av .nc-av-etapas[hidden] {
+  display: none;
+}
+
+@app.nc-av .nc-av-etapas ol:not(#nc-av-x):not(#nc-av-y) {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+@app.nc-av .nc-av-etapa {
+  margin: 0;
+}
+
+@app.nc-av .nc-av-etapa a:not(#nc-av-x):not(#nc-av-y) {
+  display: grid;
+  grid-template-columns: 34px minmax(0, 1fr);
+  align-items: center;
+  column-gap: 11px;
+  min-height: 56px;
+  padding: 9px 12px 9px 10px;
+  border: 1px solid var(--nc-nevoa);
+  border-radius: 14px;
+  background: #fff;
+  text-decoration: none;
+  color: var(--nc-tinta);
+  transition: border-color .15s, background-color .15s;
+}
+
+@app.nc-av .nc-av-etapa a:hover:not(#nc-av-x):not(#nc-av-y) {
+  border-color: #D6CCE6;
+  background: #FBF9FE;
+}
+
+@app.nc-av .nc-av-etapa-ic {
+  display: grid;
+  grid-row: span 2;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: #F1EDF7;
+  color: var(--nc-grafite);
+}
+
+@app.nc-av .nc-av-etapa.is-meio .nc-av-etapa-ic {
+  background: #F3ECF8;
+  color: var(--nc-roxo);
+  box-shadow: inset 0 0 0 1.5px #CDB4E3 /*reserva*/;
+  box-shadow: inset 0 0 0 1.5px oklch(from #CDB4E3 l calc(c * var(--nc-t-croma, 1)) calc(h + var(--nc-t-giro, 0)));
+}
+
+@app.nc-av .nc-av-etapa.is-ok .nc-av-etapa-ic {
+  background: #1F7A52;
+  color: #fff;
+}
+
+@app.nc-av .nc-av-etapa.is-ok .nc-av-etapa-ic .nc-av-svg {
+  stroke-width: 2.6;
+}
+
+@app.nc-av .nc-av-etapa-nome {
+  font-size: 14px;
+  font-weight: 800;
+  line-height: 1.25;
+}
+
+@app.nc-av .nc-av-etapa-txt {
+  font-size: 12.5px;
+  font-weight: 600;
+  line-height: 1.3;
+  font-variant-numeric: tabular-nums;
+  color: var(--nc-cinza);
+}
+
+@app.nc-av .nc-av-etapa.is-ok .nc-av-etapa-txt {
+  color: #1F7A52;
+}
+
+/* as impressões */
+@app.nc-av .nc-av-docs {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin: 8px 20px 0;
+  padding: 12px 0 18px;
+  border-top: 1px solid var(--nc-nevoa);
+}
+
+@app.nc-av .nc-av-docs[hidden] {
+  display: none;
+}
+
+@app.nc-av .nc-av-docs > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-right: 4px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--nc-grafite);
+}
+
+@app.nc-av .nc-av-docs .nc-av-svg {
+  width: 16px;
+  height: 16px;
+}
+
+@app.nc-av .nc-av-doc-bt.t-Button:not(#nc-av-x):not(#nc-av-y) {
+  width: auto;
+  min-height: 36px;
+  margin: 0;
+  padding: 0 14px;
+  border: 1px solid var(--nc-borda-botao);
+  border-radius: 999px;
+  background: #fff;
+  box-shadow: none;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--nc-roxo);
+}
+
+@app.nc-av .nc-av-doc-bt.t-Button:hover:not(#nc-av-x):not(#nc-av-y) {
+  background: #F4F0F9;
+}
+
+@app.nc-av .nc-av-doc-bt :is(.t-Icon, .t-Button-label):not(#nc-av-x):not(#nc-av-y) {
+  color: var(--nc-roxo);
+}
+
+/* ═══ [C3] 140 · O RESULTADO: TRÊS NÚMEROS LADO A LADO ══════════════════════════════════════
+   A região "Resultado" (nc-av-resultado). O destaque do número principal está em [C11].
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+/* =====================================================================
+   140 · RESULTADO — três números lado a lado
+   ===================================================================== */
+@app.nc-av .t-Region.nc-av-resultado .t-Region-body > .container:not(#nc-av-x):not(#nc-av-y) {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 14px 24px;
+  width: 100%;
+  max-width: none;
+  padding: 0;
+}
+
+@app.nc-av .t-Region.nc-av-resultado .t-Region-body > .container > .row:not(#nc-av-x):not(#nc-av-y) {
+  display: contents;
+}
+
+@app.nc-av .t-Region.nc-av-resultado .t-Region-body > .container::before,
+@app.nc-av .t-Region.nc-av-resultado .t-Region-body > .container::after,
+@app.nc-av .t-Region.nc-av-resultado .t-Region-body > .container > .row::before,
+@app.nc-av .t-Region.nc-av-resultado .t-Region-body > .container > .row::after {
+  display: none;
+}
+
+@app.nc-av .t-Region.nc-av-resultado .t-Region-body > .container > .row > .col:not(#nc-av-x):not(#nc-av-y) {
+  float: none;
+  width: auto;
+  max-width: none;
+  min-width: 0;
+  padding: 0;
+}
+
+@app.nc-av .t-Region.nc-av-resultado .t-Region-body > .container > .row > .col:has(.t-Button):not(#nc-av-x):not(#nc-av-y) {
+  grid-column: 1 / -1;
+}
+
+@app.nc-av .t-Region.nc-av-resultado .t-Form-fieldContainer:not(#nc-av-x):not(#nc-av-y) {
+  margin: 0;
+  padding: 14px 16px;
+  border-radius: 14px;
+  background: #FBF9FE;
+}
+
+@app.nc-av .t-Region.nc-av-resultado .t-Form-label:not(#nc-av-x):not(#nc-av-y) {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--nc-grafite);
+}
+
+@app.nc-av .t-Region.nc-av-resultado :is(input, .display_only):not([type=hidden]):not(#nc-av-x):not(#nc-av-y) {
+  height: auto;
+  min-height: 0;
+  padding: 2px 0 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  opacity: 1;
+  font-size: 26px;
+  font-weight: 800;
+  letter-spacing: -.02em;
+  font-variant-numeric: tabular-nums;
+  color: var(--nc-roxo);
+  -webkit-text-fill-color: var(--nc-roxo);
+}
+
+/* ═══ [C4] 140 · AS PERGUNTAS EM CARTÕES ════════════════════════════════════════════════════
+   Montados pelo JS em [J5]. Peças principais:
+     .nc-av-grupo   cada competência           .nc-av-q        cada cartão de pergunta
+     .nc-av-q.is-ok respondida                 .nc-av-q.is-prox a próxima sem resposta
+   No celular o cartão é "n | pergunta | seta" com a resposta embaixo; no computador (1000px ou
+   mais) vira LINHA, com a coluna das respostas alinhada para quem valida.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+/* =====================================================================
+   140 · AS PERGUNTAS — cartões por competência
+   ===================================================================== */
+@app.nc-av .t-Region.nc-av-em-cartoes .t-Report:not(#nc-av-x):not(#nc-av-y) {
+  display: none;
+}
+
+@app.nc-av .t-Region:not(.nc-av-em-cartoes) > .t-Region-bodyWrap > .t-Region-body > .nc-av-qs:not(#nc-av-x):not(#nc-av-y) {
+  display: none;
+}
+
+@app.nc-av .nc-av-grupo + .nc-av-grupo {
+  margin-top: 26px;
+}
+
+@app.nc-av .nc-av-grupo-cab {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px 12px;
+}
+
+@app.nc-av .nc-av-grupo-cab h3:not(#nc-av-x):not(#nc-av-y) {
+  margin: 0;
+  padding: 0;
+  font-size: 17px;
+  font-weight: 800;
+  line-height: 1.3;
+  letter-spacing: -.01em;
+  color: var(--nc-tinta);
+}
+
+@app.nc-av .nc-av-grupo-conta {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: #F1EDF7;
+  font-size: 12.5px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  color: var(--nc-grafite);
+}
+
+@app.nc-av .nc-av-grupo.is-completo .nc-av-grupo-conta {
+  background: #E6F4EC;
+  color: #1F7A52;
+}
+
+@app.nc-av .nc-av-grupo-conta .nc-av-svg {
+  width: 14px;
+  height: 14px;
+  stroke-width: 2.6;
+}
+
+@app.nc-av .nc-av-grupo-sobre {
+  max-width: 75ch;
+  margin: 4px 0 0;
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: var(--nc-grafite);
+}
+
+@app.nc-av .nc-av-grupo-info {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 12px;
+}
+
+@app.nc-av .nc-av-grupo-media {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--nc-grafite);
+}
+
+@app.nc-av .nc-av-grupo-media b {
+  font-size: 15px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  color: var(--nc-roxo);
+}
+
+@app.nc-av .nc-av-q-lista:not(#nc-av-x):not(#nc-av-y) {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 8px;
+  margin: 12px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+@app.nc-av .nc-av-q-lista > li {
+  margin: 0;
+}
+
+/* o cartão (celular) — n | pergunta | seta, e a resposta embaixo da pergunta */
+@app.nc-av .nc-av-q:not(#nc-av-x):not(#nc-av-y) {
+  position: relative;
+  display: grid;
+  grid-template-columns: 32px minmax(0, 1fr) 18px;
+  grid-template-areas: "n txt acao" "n res acao";
+  align-items: center;
+  gap: 8px 11px;
+  width: 100%;
+  min-height: 64px;
+  margin: 0;
+  padding: 13px 12px 13px 11px;
+  border: 1px solid var(--nc-nevoa);
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: none;
+  font: inherit;
+  text-align: left;
+  color: var(--nc-tinta);
+  cursor: pointer;
+  transition: border-color .15s, box-shadow .15s, background-color .15s;
+}
+
+@app.nc-av .nc-av-q:hover:not(#nc-av-x):not(#nc-av-y) {
+  border-color: #D6CCE6;
+  box-shadow: 0 10px 22px -18px rgba(var(--nc-t-roxo-rgb, 81, 28, 118), .5);
+}
+
+@app.nc-av .nc-av-q.is-prox:not(#nc-av-x):not(#nc-av-y) {
+  border-color: var(--nc-rosa);
+  box-shadow: 0 0 0 3px rgba(var(--nc-t-rosa-rgb, 201, 87, 136), .14);
+}
+
+@app.nc-av .nc-av-q-n {
+  display: grid;
+  grid-area: n;
+  align-self: start;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border: 1.5px solid #D6CCE6;
+  border-radius: 50%;
+  font-size: 13.5px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  color: var(--nc-grafite);
+}
+
+@app.nc-av .nc-av-q.is-ok .nc-av-q-n {
+  border-color: transparent;
+  background: var(--nc-roxo);
+  color: #fff;
+}
+
+@app.nc-av .nc-av-q.is-ok .nc-av-q-n .nc-av-svg {
+  width: 16px;
+  height: 16px;
+  stroke-width: 2.6;
+}
+
+@app.nc-av .nc-av-q-txt {
+  display: grid;
+  grid-area: txt;
+  gap: 4px;
+  min-width: 0;
+}
+
+@app.nc-av .nc-av-q-perg {
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.4;
+  text-wrap: pretty;
+  color: var(--nc-tinta);
+}
+
+@app.nc-av .nc-av-q-obs {
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--nc-grafite);
+}
+
+@app.nc-av .nc-av-q-res {
+  display: flex;
+  flex-wrap: wrap;
+  grid-area: res;
+  align-items: center;
+  gap: 6px 10px;
+  min-width: 0;
+}
+
+@app.nc-av .nc-av-q-resp {
+  padding: 3px 10px;
+  border-radius: 8px;
+  background: #F3ECF8;
+  font-size: 13.5px;
+  font-weight: 800;
+  color: var(--nc-roxo);
+}
+
+@app.nc-av .nc-av-q-pontos {
+  display: inline-flex;
+  gap: 3px;
+}
+
+@app.nc-av .nc-av-q-pontos i {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #E4DDEE;
+}
+
+@app.nc-av .nc-av-q-pontos i.is-on {
+  background: var(--nc-roxo);
+}
+
+@app.nc-av .nc-av-q-nota {
+  font-size: 13px;
+  font-style: normal;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  color: var(--nc-grafite);
+}
+
+@app.nc-av .nc-av-q-falta {
+  font-size: 13px;
+  font-weight: 700;
+  color: #A63F6E /*reserva*/;
+  color: oklch(from #A63F6E l calc(c * var(--nc-t-croma, 1)) calc(h + var(--nc-t-giro, 0)));
+}
+
+@app.nc-av .nc-av-q-acao {
+  display: inline-flex;
+  grid-area: acao;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 4px;
+  font-size: 13.5px;
+  font-weight: 800;
+  color: #A63F6E /*reserva*/;
+  color: oklch(from #A63F6E l calc(c * var(--nc-t-croma, 1)) calc(h + var(--nc-t-giro, 0)));
+}
+
+@app.nc-av .nc-av-q-acao b {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+}
+
+@app.nc-av .nc-av-q.is-ok .nc-av-q-acao {
+  color: var(--nc-cinza);
+}
+
+/* a LINHA (computador) — quem valida lê a coluna das respostas de cima a baixo */
+@media (min-width: 1000px) {
+  @app.nc-av .nc-av-q-lista:not(#nc-av-x):not(#nc-av-y) {
+    gap: 0;
+    margin: 10px 0 0;
+    overflow: hidden;
+    border: 1px solid var(--nc-nevoa);
+    border-radius: 14px;
+    background: #fff;
+  }
+
+  @app.nc-av .nc-av-q-lista > li + li {
+    border-top: 1px solid #F0ECF5;
+  }
+
+  @app.nc-av .nc-av-q:not(#nc-av-x):not(#nc-av-y) {
+    grid-template-columns: 30px minmax(0, 1fr) minmax(250px, 300px) 96px;
+    grid-template-areas: "n txt res acao";
+    gap: 0 16px;
+    min-height: 58px;
+    padding: 12px 16px;
+    border: 0;
+    border-radius: 0;
+  }
+
+  @app.nc-av .nc-av-q:hover:not(#nc-av-x):not(#nc-av-y) {
+    background: #FBF9FE;
+    box-shadow: none;
+  }
+
+  @app.nc-av .nc-av-q.is-prox:not(#nc-av-x):not(#nc-av-y) {
+    background: #FDF5F9;
+    box-shadow: inset 3px 0 0 var(--nc-rosa);
+  }
+
+  @app.nc-av .nc-av-q-n {
+    align-self: center;
+    width: 30px;
+    height: 30px;
+  }
+
+  @app.nc-av .nc-av-q-perg {
+    font-size: 14.5px;
+    font-weight: 600;
+  }
+
+  @app.nc-av .nc-av-q-res {
+    flex-wrap: nowrap;
+  }
+
+  @app.nc-av .nc-av-q-resp {
+    min-width: 118px;
+    text-align: center;
+  }
+
+  @app.nc-av .nc-av-q-acao b {
+    position: static;
+    width: auto;
+    height: auto;
+    overflow: visible;
+    clip: auto;
+  }
+
+  @app.nc-av .nc-av-q.is-ok .nc-av-q-acao::before {
+    content: "Ver";
+    font-weight: 700;
+    opacity: 0;
+    transition: opacity .15s;
+  }
+
+  @app.nc-av .nc-av-q.is-ok:hover .nc-av-q-acao::before {
+    opacity: 1;
+  }
+}
+
+/* ═══ [C5] 140 · O RESUMO DAS PERGUNTAS ═════════════════════════════════════════════════════
+   Montado pelo JS em [J5]: média por competência (.nc-av-rc, com a barra) e a distribuição
+   das respostas (.nc-av-dist-barra; as cores dela vêm da lista TONS do JS).
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+/* =====================================================================
+   140 · O RESUMO das perguntas (média por competência + distribuição)
+   ===================================================================== */
+@app.nc-av .nc-av-resumo {
+  display: grid;
+  grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr);
+  gap: 16px;
+  margin: 0 0 28px;
+}
+
+@app.nc-av .nc-av-resumo > section {
+  padding: 18px 20px 16px;
+  border-radius: 16px;
+  background: #FBF9FE;
+}
+
+@app.nc-av .nc-av-resumo header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 4px 12px;
+  margin: 0 0 12px;
+}
+
+@app.nc-av .nc-av-resumo h3:not(#nc-av-x):not(#nc-av-y) {
+  margin: 0;
+  padding: 0;
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--nc-tinta);
+}
+
+@app.nc-av .nc-av-resumo header > span {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--nc-cinza);
+}
+
+@app.nc-av .nc-av-resumo header > span b {
+  font-size: 15px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  color: var(--nc-roxo);
+}
+
+@app.nc-av .nc-av-resumo-comp ol:not(#nc-av-x):not(#nc-av-y) {
+  display: grid;
+  gap: 2px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+@app.nc-av .nc-av-resumo-comp li {
+  margin: 0;
+}
+
+@app.nc-av .nc-av-rc:not(#nc-av-x):not(#nc-av-y) {
+  display: grid;
+  grid-template-columns: minmax(150px, 1.1fr) minmax(80px, 1fr) 40px 42px;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  min-height: 38px;
+  margin: 0;
+  padding: 4px 8px;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  box-shadow: none;
+  font: inherit;
+  text-align: left;
+  color: var(--nc-tinta);
+  cursor: pointer;
+}
+
+@app.nc-av .nc-av-rc:hover:not(#nc-av-x):not(#nc-av-y) {
+  background: #F1EBF8;
+}
+
+@app.nc-av .nc-av-rc-nome {
+  font-size: 13.5px;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+@app.nc-av .nc-av-rc-barra {
+  height: 10px;
+  overflow: hidden;
+  border-radius: 5px;
+  background: #E9E2F2;
+}
+
+@app.nc-av .nc-av-rc-barra i {
+  display: block;
+  height: 100%;
+  border-radius: 5px;
+  background: linear-gradient(90deg, var(--nc-roxo, #511C76), var(--nc-ameixa, #9A408A));
+  transform-origin: left center;
+  animation: nc-av-traco .6s cubic-bezier(.16, 1, .3, 1) both;
+}
+
+@app.nc-av .nc-av-rc-media {
+  font-size: 15px;
+  font-weight: 800;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  color: var(--nc-roxo);
+}
+
+@app.nc-av .nc-av-rc-conta {
+  font-size: 12.5px;
+  font-weight: 600;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  color: var(--nc-cinza);
+}
+
+@app.nc-av .nc-av-dist-barra {
+  display: flex;
+  gap: 2px;
+  height: 14px;
+  overflow: hidden;
+  border-radius: 7px;
+}
+
+@app.nc-av .nc-av-dist-barra i {
+  min-width: 6px;
+  height: 100%;
+}
+
+@app.nc-av .nc-av-dist-leg:not(#nc-av-x):not(#nc-av-y) {
+  display: grid;
+  gap: 6px;
+  margin: 14px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+@app.nc-av .nc-av-dist-leg li {
+  display: grid;
+  grid-template-columns: 12px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--nc-tinta);
+}
+
+@app.nc-av .nc-av-dist-leg i {
+  width: 12px;
+  height: 12px;
+  border-radius: 4px;
+}
+
+@app.nc-av .nc-av-dist-leg b {
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  color: var(--nc-grafite);
+}
+
+@app.nc-av .nc-av-link:not(#nc-av-x):not(#nc-av-y) {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 40px;
+  margin: 16px 0 0;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  box-shadow: none;
+  font: inherit;
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--nc-roxo);
+  cursor: pointer;
+}
+
+@app.nc-av .nc-av-link:hover:not(#nc-av-x):not(#nc-av-y) {
+  background: #F4F0F9;
+}
+
+@app.nc-av .nc-av-vazio {
+  margin: 20px 0;
+  font-size: 14.5px;
+  text-align: center;
+  color: var(--nc-grafite);
+}
+
+/* ═══ [C6] 140 · OS TEXTOS (PLANO, COMENTÁRIO, CONCLUSÃO) ═══════════════════════════════════
+   As caixas de texto das regiões marcadas pelo JS em [J12] com .nc-av-textos. A altura que
+   acompanha o texto vem do JS em --nc-av-h.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+/* =====================================================================
+   140 · OS TEXTOS (plano, comentário, conclusão)
+   ===================================================================== */
+@app.nc-av .nc-av-textos .t-Form-label:not(#nc-av-x):not(#nc-av-y) {
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--nc-tinta);
+}
+
+@app.nc-av .nc-av-textos textarea:not(#nc-av-x):not(#nc-av-y) {
+  height: var(--nc-av-h, auto);
+  min-height: 92px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  font-size: 15px;
+  line-height: 1.5;
+  resize: vertical;
+}
+
+@app.nc-av .nc-av-textos textarea::placeholder {
+  color: #9A93AE;
+}
+
+@app.nc-av .nc-av-textos textarea:disabled:not(#nc-av-x):not(#nc-av-y) {
+  min-height: 0;
+  border-style: dashed;
+  background: #FBF9FE;
+  color: var(--nc-tinta);
+  -webkit-text-fill-color: var(--nc-tinta);
+  opacity: 1;
+  resize: none;
+}
+
+@app.nc-av .nc-av-textos textarea:disabled::placeholder {
+  font-style: italic;
+  color: #8E88A3;
+  -webkit-text-fill-color: #8E88A3;
+}
+
+/* ═══ [C7] 140 · A BARRA DE SALVAR E O FIM DA PÁGINA ════════════════════════════════════════
+   Montados pelo JS em [J13]. .nc-av-barra é a barra presa no pé (.is-sujo = "Há texto ainda
+   não salvo"); .nc-av-fim e .nc-av-deletar, o "Excluir esta avaliação" no fim da página.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+/* =====================================================================
+   140 · A BARRA DE SALVAR e o fim da página
+   ===================================================================== */
+@app.nc-av.nc-av-com-barra .t-Body-contentInner:not(#nc-av-x):not(#nc-av-y) {
+  padding-bottom: 96px;
+}
+
+@app.nc-av .nc-av-barra {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 480;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px 20px;
+  padding: 12px max(20px, calc((100vw - 1180px) / 2)) calc(12px + env(safe-area-inset-bottom, 0px));
+  border-top: 1px solid var(--nc-nevoa);
+  background: rgba(255, 255, 255, .96);
+  box-shadow: 0 -12px 28px -20px rgba(var(--nc-t-azul-rgb, 44, 26, 99), .45);
+  transition: background-color .2s;
+}
+
+@app.nc-av .nc-av-barra.is-sujo {
+  border-top-color: #F0D9A8;
+  background: #FFF8E8;
+}
+
+@app.nc-av .nc-av-barra-txt {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.35;
+  color: var(--nc-grafite);
+}
+
+@app.nc-av .nc-av-barra-txt .nc-av-svg {
+  width: 17px;
+  height: 17px;
+  color: #1F7A52;
+}
+
+@app.nc-av .nc-av-barra.is-sujo .nc-av-barra-txt {
+  font-weight: 800;
+  color: #7A4B00;
+}
+
+@app.nc-av .nc-av-barra.is-sujo .nc-av-barra-txt .nc-av-svg {
+  color: #9A6200;
+}
+
+@app.nc-av .nc-av-salvar.t-Button:not(#nc-av-x):not(#nc-av-y) {
+  flex: none;
+  min-width: 160px;
+  height: 50px;
+  margin: 0;
+  padding: 0 24px;
+  border-radius: 14px;
+  font-size: 16px;
+  font-weight: 800;
+}
+
+@app.nc-av .nc-av-salvar .nc-av-svg {
+  margin-right: 8px;
+  vertical-align: -3px;
+}
+
+@app.nc-av .nc-av-fim {
+  display: grid;
+  justify-items: center;
+  gap: 8px;
+  margin: 12px auto 0;
+  padding: 26px 16px 8px;
+  border-top: 1px dashed #DCD3E8;
+  text-align: center;
+}
+
+@app.nc-av .nc-av-fim p {
+  margin: 0;
+  font-size: 13px;
+  color: var(--nc-cinza);
+}
+
+@app.nc-av .nc-av-deletar.t-Button:not(#nc-av-x):not(#nc-av-y) {
+  height: 42px;
+  margin: 0;
+  padding: 0 16px;
+  border: 1px solid #E8C4C9;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: none;
+  font-size: 14px;
+  font-weight: 700;
+  color: #B8323F;
+}
+
+@app.nc-av .nc-av-deletar.t-Button:hover:not(#nc-av-x):not(#nc-av-y) {
+  background: #FDF1F2;
+}
+
+@app.nc-av .nc-av-deletar .t-Icon:not(#nc-av-x):not(#nc-av-y) {
+  color: #B8323F;
+}
+
+@app.nc-av :is(.nc-av-hero, .nc-av-qs, .nc-av-barra) :is(a, button):focus-visible {
+  outline: 2px solid var(--nc-roxo);
+  outline-offset: 2px;
+}
+
+/* o título que recebe o foco ao ir para uma etapa (tabindex -1): sem o contorno do navegador */
+@app.nc-av .t-Region-title[tabindex="-1"]:focus {
+  outline: none;
+}
+
+@app.nc-av .nc-av-hero-topo .nc-av-cta:focus-visible {
+  outline-color: #fff;
+}
+
+/* ═══ [C8] 144 · A JANELA DA PERGUNTA ═══════════════════════════════════════════════════════
+   Daqui até antes de [C9], tudo é da página 144 (as regras começam com .nc-avq, a marca que o
+   JS põe em [J14]). Peças principais:
+     .nc-avq-topo / .nc-avq-progresso   "Pergunta 3 de 23" e a barra
+     .nc-avq-texto     a pergunta em letra grande
+     .nc-avq-opcoes    as opções em cartões de toque; .nc-avq-escala, os pontos
+     .nc-avq-escrita   a resposta escrita;  .nc-avq-salvo-txt, "Salvando…" / "Resposta salva"
+     .nc-avq-alerta    o aviso "Indicar ação";  .nc-avq-nav, os botões Anterior / Próxima
+   CUIDADO: nada aqui põe "display" nas regiões, nos botões BTN_NEXT/PREV_*, no P144_ACAO, no
+   P144_RADIO_GROUP_CONTAINER nem na resposta escrita: quem mostra e esconde é o APEX.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+/* =====================================================================
+   144 · A PERGUNTA
+   ===================================================================== */
+@app.nc-avq .t-Region.nc-av-pergunta > .t-Region-header:not(#nc-av-x):not(#nc-av-y) {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+}
+
+@app.nc-avq .t-Region.nc-av-pergunta:not(#nc-av-x):not(#nc-av-y) {
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+@app.nc-avq .t-Region.nc-av-pergunta > .t-Region-bodyWrap > .t-Region-body:not(#nc-av-x):not(#nc-av-y) {
+  padding: 4px 4px 0;
+}
+
+@app.nc-avq .nc-avq-progresso {
+  display: grid;
+  gap: 8px;
+  margin: 0 0 18px;
+}
+
+@app.nc-avq .nc-avq-prog-txt {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  font-size: 14px;
+  font-variant-numeric: tabular-nums;
+  color: var(--nc-grafite);
+}
+
+@app.nc-avq .nc-avq-prog-txt b {
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--nc-roxo);
+}
+
+@app.nc-avq .nc-avq-prog-barra {
+  height: 8px;
+  overflow: hidden;
+  border-radius: 4px;
+  background: #EEE9F5;
+}
+
+@app.nc-avq .nc-avq-prog-barra i {
+  display: block;
+  height: 100%;
+  border-radius: 4px;
+  background: linear-gradient(90deg, var(--nc-roxo, #511C76), var(--nc-rosa, #C95788));
+}
+
+@app.nc-avq .nc-avq-comp {
+  display: inline-block;
+  margin: 0 0 8px;
+  padding: 4px 10px;
+  border-radius: 8px;
+  background: #FBEEF4;
+  font-size: 13px;
+  font-weight: 800;
+  color: #A63F6E /*reserva*/;
+  color: oklch(from #A63F6E l calc(c * var(--nc-t-croma, 1)) calc(h + var(--nc-t-giro, 0)));
+}
+
+@app.nc-avq .nc-avq-texto:not(#nc-av-x):not(#nc-av-y) {
+  margin: 0;
+  padding: 0;
+  font-size: 21px;
+  font-weight: 800;
+  line-height: 1.32;
+  letter-spacing: -.015em;
+  text-wrap: pretty;
+  color: var(--nc-tinta);
+}
+
+@app.nc-avq .nc-avq-sobre {
+  max-width: 62ch;
+  margin: 10px 0 0;
+  font-size: 14.5px;
+  line-height: 1.55;
+  color: var(--nc-grafite);
+}
+
+/* a região das respostas */
+@app.nc-avq .t-Region.nc-av-respostas:not(#nc-av-x):not(#nc-av-y) {
+  margin-top: 14px;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+@app.nc-avq .t-Region.nc-av-respostas > .t-Region-bodyWrap > .t-Region-body:not(#nc-av-x):not(#nc-av-y) {
+  padding: 4px;
+}
+
+@app.nc-avq .nc-av-respostas .t-Form-label:not(#nc-av-x):not(#nc-av-y) {
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--nc-tinta);
+}
+
+/* as opções em cartões de toque (a faixa cortava as últimas no celular) */
+@app.nc-avq :is(.nc-avq-opcoes, .nc-avq-escrita) :is(.t-Form-labelContainer, .t-Form-inputContainer):not(#nc-av-x):not(#nc-av-y) {
+  flex: 1 1 100%;
+  width: 100%;
+  max-width: none;
+  float: none;
+}
+
+/* a coluna do APEX que leva as opções (ou a resposta escrita) ocupa a linha toda: a nota, ao lado,
+   só aparece quando existe */
+@app.nc-avq .row > .col:has(> :is(.nc-avq-opcoes, .nc-avq-escrita)):not(#nc-av-x):not(#nc-av-y) {
+  flex: 0 0 100%;
+  width: 100%;
+  max-width: 100%;
+}
+
+/* a Skin desenha o grupo como faixa de 38 px com overflow escondido: aqui ele cresce */
+@app.nc-avq .nc-avq-opcoes :is(.t-Form-inputContainer, .t-Form-itemWrapper):not(#nc-av-x):not(#nc-av-y) {
+  height: auto;
+  max-height: none;
+  overflow: visible;
+}
+
+@app.nc-avq .nc-avq-opcoes .apex-item-group:not(#nc-av-x):not(#nc-av-y) {
+  height: auto;
+  max-height: none;
+  overflow: visible;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+@app.nc-avq .nc-avq-opcoes .apex-item-option:not(#nc-av-x):not(#nc-av-y) {
+  position: relative;
+  flex: none;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+@app.nc-avq .nc-avq-opcoes .apex-item-option input[type=radio]:not(#nc-av-x):not(#nc-av-y) {
+  position: absolute;
+  top: 50%;
+  left: 18px;
+  width: 22px;
+  height: 22px;
+  margin: -11px 0 0;
+  opacity: 0;
+}
+
+@app.nc-avq .nc-avq-opcoes .apex-item-option label:not(#nc-av-x):not(#nc-av-y) {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  min-height: 58px;
+  margin: 0;
+  padding: 12px 16px;
+  border: 1.5px solid var(--nc-nevoa);
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: none;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.3;
+  text-align: left;
+  color: var(--nc-tinta);
+  cursor: pointer;
+  transition: border-color .15s, background-color .15s;
+}
+
+@app.nc-avq .nc-avq-opcoes .apex-item-option label::before,
+@app.nc-avq .nc-avq-opcoes .apex-item-option label::after {
+  display: none;
+}
+
+@app.nc-avq .nc-avq-opcoes .apex-item-option label:hover:not(#nc-av-x):not(#nc-av-y) {
+  border-color: #CDB4E3 /*reserva*/;
+  border-color: oklch(from #CDB4E3 l calc(c * var(--nc-t-croma, 1)) calc(h + var(--nc-t-giro, 0)));
+  background: #FBF9FE;
+}
+
+@app.nc-avq .nc-avq-opcoes .apex-item-option input:checked + label:not(#nc-av-x):not(#nc-av-y) {
+  border-color: var(--nc-roxo);
+  background: #F6F0FB;
+  color: var(--nc-roxo);
+}
+
+@app.nc-avq .nc-avq-opcoes .apex-item-option input:focus-visible + label:not(#nc-av-x):not(#nc-av-y) {
+  outline: 2px solid var(--nc-roxo);
+  outline-offset: 2px;
+}
+
+@app.nc-avq .nc-avq-opcoes .apex-item-option input:disabled + label:not(#nc-av-x):not(#nc-av-y) {
+  opacity: 1;
+  cursor: default;
+}
+
+@app.nc-avq .nc-avq-opcoes .apex-item-option input:disabled:not(:checked) + label:not(#nc-av-x):not(#nc-av-y) {
+  color: var(--nc-grafite);
+  background: #fff;
+}
+
+@app.nc-avq .nc-avq-marca {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border: 2px solid #CFC6DD;
+  border-radius: 50%;
+  color: transparent;
+  transition: background-color .15s, border-color .15s;
+}
+
+@app.nc-avq .nc-avq-marca .nc-av-svg {
+  width: 15px;
+  height: 15px;
+  stroke-width: 3;
+}
+
+@app.nc-avq .nc-avq-opcoes input:checked + label .nc-avq-marca {
+  border-color: var(--nc-roxo);
+  background: var(--nc-roxo);
+  color: #fff;
+}
+
+@app.nc-avq .nc-avq-escala {
+  display: inline-flex;
+  flex: none;
+  gap: 4px;
+  margin-left: auto;
+}
+
+@app.nc-avq .nc-avq-escala i {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #E4DDEE;
+}
+
+@app.nc-avq .nc-avq-escala i.is-on {
+  background: #B79BD0 /*reserva*/;
+  background: oklch(from #B79BD0 l calc(c * var(--nc-t-croma, 1)) calc(h + var(--nc-t-giro, 0)));
+}
+
+@app.nc-avq .nc-avq-opcoes input:checked + label .nc-avq-escala i.is-on {
+  background: var(--nc-roxo);
+}
+
+/* a resposta escrita */
+@app.nc-avq .nc-avq-escrita textarea:not(#nc-av-x):not(#nc-av-y) {
+  min-height: 170px;
+  padding: 14px 16px;
+  border-radius: 14px;
+  font-size: 16px;
+  line-height: 1.55;
+}
+
+@app.nc-avq .nc-avq-salvo-txt {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 22px;
+  margin: 8px 0 0;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--nc-cinza);
+}
+
+@app.nc-avq .nc-avq-salvo-txt.is-ok {
+  color: #1F7A52;
+}
+
+@app.nc-avq .nc-avq-salvo-txt.is-erro {
+  color: #B8323F;
+}
+
+@app.nc-avq .nc-avq-salvo-txt .nc-av-svg {
+  width: 16px;
+  height: 16px;
+  stroke-width: 2.4;
+}
+
+/* avisos */
+@app.nc-avq :is(.nc-avq-ler, .nc-avq-alerta, .nc-avq-toast) {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin: 0 0 14px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.45;
+}
+
+@app.nc-avq :is(.nc-avq-ler, .nc-avq-alerta, .nc-avq-toast) .nc-av-svg {
+  margin-top: 1px;
+}
+
+@app.nc-avq .nc-avq-ler {
+  background: #F4F1F8;
+  color: var(--nc-grafite);
+}
+
+@app.nc-avq .nc-avq-alerta {
+  margin: 14px 0 0;
+  background: #FFF4DA;
+  color: #6E4400;
+}
+
+@app.nc-avq .nc-avq-alerta[hidden] {
+  display: none;
+}
+
+@app.nc-avq .nc-avq-alerta .nc-av-svg {
+  color: #9A6200;
+}
+
+@app.nc-avq .nc-avq-toast {
+  margin: 14px 0 0;
+  background: #E6F4EC;
+  color: #14553A;
+  animation: nc-avq-chegou .45s cubic-bezier(.16, 1, .3, 1) both;
+}
+
+@app.nc-avq .nc-avq-toast .nc-av-svg {
+  stroke-width: 2.6;
+}
+
+@keyframes nc-avq-chegou {
+  from { transform: translateY(6px); }
+  to { transform: none; }
+}
+
+/* os botões do rodapé da janela: com rótulo, e a Próxima em destaque */
+@app.nc-avq .nc-avq-nav.t-Button:not(#nc-av-x):not(#nc-av-y) {
+  min-width: 0;
+  height: 48px;
+  padding: 0 18px;
+  border-radius: 13px;
+  font-size: 15px;
+  font-weight: 800;
+}
+
+@app.nc-avq .nc-avq-nav .t-Button-label:not(#nc-av-x):not(#nc-av-y) {
+  padding: 0;
+  vertical-align: middle;
+}
+
+@app.nc-avq .nc-avq-nav .t-Icon:not(#nc-av-x):not(#nc-av-y) {
+  margin: 0 0 0 8px;
+  vertical-align: middle;
+}
+
+@app.nc-avq .nc-avq-ant.t-Button:not(#nc-av-x):not(#nc-av-y) {
+  border: 1.5px solid #DCD3E8;
+  background: #fff;
+  box-shadow: none;
+  color: var(--nc-roxo);
+}
+
+@app.nc-avq .nc-avq-ant :is(.t-Icon, .t-Button-label):not(#nc-av-x):not(#nc-av-y) {
+  margin: 0 8px 0 0;
+  color: var(--nc-roxo);
+}
+
+@app.nc-avq .nc-avq-nav.is-destaque:not(#nc-av-x):not(#nc-av-y) {
+  box-shadow: 0 0 0 4px rgba(var(--nc-t-rosa-rgb, 201, 87, 136), .28), 0 10px 22px -12px rgba(var(--nc-t-roxo-rgb, 81, 28, 118), .8);
+}
+
+@app.nc-avq .nc-avq-voltar.t-Button:not(#nc-av-x):not(#nc-av-y) {
+  height: 48px;
+  padding: 0 16px;
+  border: 0;
+  border-radius: 13px;
+  background: transparent;
+  box-shadow: none;
+  font-size: 14.5px;
+  font-weight: 700;
+  color: var(--nc-roxo);
+}
+
+@app.nc-avq .nc-avq-voltar.t-Button:hover:not(#nc-av-x):not(#nc-av-y) {
+  background: #F4F0F9;
+}
+
+@app.nc-avq .nc-avq-voltar.is-final.t-Button:not(#nc-av-x):not(#nc-av-y) {
+  background: var(--nc-roxo);
+  color: #fff;
+}
+
+@app.nc-avq .nc-avq-voltar .nc-av-svg {
+  width: 18px;
+  height: 18px;
+  margin-right: 7px;
+  vertical-align: -4px;
+}
+
+@app.nc-avq .nc-avq-acao.t-Button:not(#nc-av-x):not(#nc-av-y) {
+  height: 48px;
+  border-radius: 13px;
+  font-size: 15px;
+  font-weight: 800;
+}
+
+@app.nc-avq.nc-avq-pede-acao .nc-avq-acao.t-Button:not(#nc-av-x):not(#nc-av-y) {
+  box-shadow: 0 0 0 4px rgba(245, 183, 0, .35);
+}
+
+/* o rodapé em grade: [Voltar à lista] [Anterior] [Próxima]; no celular Anterior | Próxima em
+   cima e Voltar embaixo. As colunas do APEX viram "contents" (os botões continuam onde estão; o
+   display deles é das ações dinâmicas) */
+@app.nc-avq .t-Dialog-footer .t-ButtonRegion-wrap:not(#nc-av-x):not(#nc-av-y) {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+}
+
+@app.nc-avq .t-Dialog-footer :is(.t-ButtonRegion-col--left, .t-ButtonRegion-col--right, .t-ButtonRegion-buttons):not(#nc-av-x):not(#nc-av-y) {
+  display: contents;
+}
+
+@app.nc-avq .t-Dialog-footer .t-ButtonRegion-col--content:not(#nc-av-x):not(#nc-av-y) {
+  display: none;
+}
+
+@app.nc-avq .t-Dialog-footer .t-Button:not(#nc-av-x):not(#nc-av-y) {
+  margin: 0;
+}
+
+@app.nc-avq .t-Dialog-footer .nc-avq-voltar:not(#nc-av-x):not(#nc-av-y) {
+  grid-column: 1;
+  grid-row: 1;
+  justify-self: start;
+}
+
+@app.nc-avq .t-Dialog-footer .nc-avq-ant:not(#nc-av-x):not(#nc-av-y) {
+  grid-column: 2;
+  grid-row: 1;
+}
+
+@app.nc-avq .t-Dialog-footer :is(#BTN_NEXT_RECORD, #BTN_NEXT_ALERTA):not(#nc-av-x) {
+  grid-column: 3;
+  grid-row: 1;
+}
+
+/* ═══ [C9] 140 · CRIAÇÃO: "NOVA AVALIAÇÃO" EM TRÊS PASSOS ═══════════════════════════════════
+   Montado pelo JS em [J10] (.nc-av-passos, .nc-av-passo). Também aqui: os formulários da
+   criação (Avaliação e Avaliado) com o rótulo em cima, Empresa | Matrícula lado a lado, o
+   avaliador com o botão do perfil na mesma linha, e a região "Botões" fora da vista enquanto
+   nenhum botão dela estiver à mostra (o APEX decide quais).
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+/* =====================================================================
+   140 · CRIAÇÃO — "Nova avaliação" em três passos
+   ===================================================================== */
+@app.nc-av .nc-av-hero :is(.nc-av-fatos, .nc-av-passos, .nc-av-etapas)[hidden]:not(#nc-av-x):not(#nc-av-y) {
+  display: none;
+}
+
+@app.nc-av .nc-av-passos:not(#nc-av-x):not(#nc-av-y) {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  margin: 0;
+  padding: 16px 20px 20px;
+  list-style: none;
+}
+
+@app.nc-av .nc-av-passo {
+  margin: 0;
+}
+
+@app.nc-av .nc-av-passo-in:not(#nc-av-x):not(#nc-av-y) {
+  display: grid;
+  grid-template-columns: 36px minmax(0, 1fr);
+  align-items: center;
+  column-gap: 12px;
+  height: 100%;
+  min-height: 64px;
+  padding: 11px 14px 11px 12px;
+  border: 1px solid var(--nc-nevoa);
+  border-radius: 14px;
+  background: #fff;
+  text-decoration: none;
+  color: var(--nc-tinta);
+}
+
+@app.nc-av a.nc-av-passo-in:hover:not(#nc-av-x):not(#nc-av-y) {
+  border-color: #D6CCE6;
+  background: #FBF9FE;
+}
+
+@app.nc-av .nc-av-passo-n {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #F1EDF7;
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--nc-cinza);
+}
+
+@app.nc-av .nc-av-passo-txt {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+@app.nc-av .nc-av-passo-txt b {
+  font-size: 14.5px;
+  font-weight: 800;
+  line-height: 1.25;
+}
+
+@app.nc-av .nc-av-passo-txt span {
+  overflow: hidden;
+  font-size: 12.5px;
+  font-weight: 600;
+  line-height: 1.35;
+  text-overflow: ellipsis;
+  color: var(--nc-grafite);
+}
+
+@app.nc-av .nc-av-passo.is-ok .nc-av-passo-n {
+  background: #1F7A52;
+  color: #fff;
+}
+
+@app.nc-av .nc-av-passo.is-ok .nc-av-passo-n .nc-av-svg {
+  stroke-width: 2.6;
+}
+
+@app.nc-av .nc-av-passo.is-atual .nc-av-passo-in:not(#nc-av-x):not(#nc-av-y) {
+  border-color: var(--nc-rosa);
+  box-shadow: 0 0 0 3px rgba(var(--nc-t-rosa-rgb, 201, 87, 136), .14);
+}
+
+@app.nc-av .nc-av-passo.is-atual .nc-av-passo-n {
+  background: var(--nc-roxo);
+  color: #fff;
+}
+
+@app.nc-av .nc-av-passo.is-depois .nc-av-passo-txt {
+  color: var(--nc-cinza);
+}
+
+@app.nc-av .nc-av-passo.is-depois .nc-av-passo-txt b {
+  color: var(--nc-grafite);
+}
+
+/* os formulários da criação (Avaliação, Avaliado): rótulo em cima, campo inteiro. Só em quem o
+   APEX não escondeu (style="display: none" continua valendo) */
+@app.nc-av .t-Region:is(.nc-av-dados, .nc-av-avaliado) .t-Form-fieldContainer:not([style*="none"]):not(#nc-av-x):not(#nc-av-y) {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 6px;
+  margin: 0 0 14px;
+}
+
+@app.nc-av .t-Region:is(.nc-av-dados, .nc-av-avaliado) .t-Form-fieldContainer :is(.t-Form-labelContainer, .t-Form-inputContainer):not(#nc-av-x):not(#nc-av-y) {
+  flex: none;
+  width: 100%;
+  max-width: none;
+  min-height: 0;
+  float: none;
+  padding: 0;
+  text-align: left;
+}
+
+@app.nc-av .t-Region:is(.nc-av-dados, .nc-av-avaliado) .t-Form-label:not(#nc-av-x):not(#nc-av-y) {
+  padding: 0;
+  font-size: 13.5px;
+  font-weight: 800;
+  text-align: left;
+  color: var(--nc-tinta);
+}
+
+@app.nc-av .t-Region.nc-av-dados .row:not(#nc-av-x):not(#nc-av-y) {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+}
+
+@app.nc-av .t-Region.nc-av-dados .row::before,
+@app.nc-av .t-Region.nc-av-dados .row::after {
+  display: none;
+}
+
+@app.nc-av .t-Region.nc-av-dados .col:has(> #p140_btn_solicitante):not(#nc-av-x):not(#nc-av-y) {
+  padding-bottom: 14px;
+}
+
+@app.nc-av .t-Region:is(.nc-av-dados, .nc-av-avaliado) :is(input, select):disabled:not([type=hidden]):not(#nc-av-x):not(#nc-av-y) {
+  border-color: transparent;
+  background: #F6F3FA;
+  opacity: 1;
+  color: var(--nc-tinta);
+  -webkit-text-fill-color: var(--nc-tinta);
+}
+
+/* o avaliado na criação: a dica e os dois campos lado a lado (o espaçador do grid sai) */
+@app.nc-av .t-Region.nc-av-avaliado .col:has(> .apex-grid-nbsp):not(#nc-av-x):not(#nc-av-y) {
+  display: none;
+}
+
+@app.nc-av .t-Region.nc-av-avaliado .row:has(> .col > .t-Form-fieldContainer):not(#nc-av-x):not(#nc-av-y) {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 18px;
+  margin: 0;
+}
+
+@app.nc-av .t-Region.nc-av-avaliado .row:has(> .col > .t-Form-fieldContainer)::before,
+@app.nc-av .t-Region.nc-av-avaliado .row:has(> .col > .t-Form-fieldContainer)::after {
+  display: none;
+}
+
+@app.nc-av .t-Region.nc-av-avaliado .row > .col:has(> .t-Form-fieldContainer):not(#nc-av-x):not(#nc-av-y) {
+  flex: 1 1 260px;
+  width: auto;
+  max-width: none;
+  padding: 0;
+}
+
+@app.nc-av .t-Region.nc-av-avaliado .apex-item-popup-lov:not(:disabled):not(#nc-av-x):not(#nc-av-y) {
+  height: 48px;
+  font-size: 16px;
+}
+
+@app.nc-av .nc-av-escolha-dica:not(#nc-av-x):not(#nc-av-y) {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin: 0 0 16px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: #F6F0FB;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.45;
+  color: var(--nc-tinta);
+}
+
+@app.nc-av .nc-av-escolha-dica[hidden]:not(#nc-av-x):not(#nc-av-y),
+@app.nc-av .nc-av-pessoa[hidden]:not(#nc-av-x):not(#nc-av-y),
+@app.nc-av :is(.nc-av-barra, .nc-av-fim)[hidden]:not(#nc-av-x):not(#nc-av-y) {
+  display: none;
+}
+
+@app.nc-av .nc-av-escolha-dica .nc-av-svg {
+  margin-top: 1px;
+  color: var(--nc-roxo);
+}
+
+@app.nc-av #AVISO.nc-av-aviso-vazio:not(#nc-av-x) {
+  display: none;
+}
+
+/* Avaliador e o botão do perfil na mesma linha, também no celular */
+@app.nc-av .t-Region.nc-av-dados .row:has(> .col > #P140_AVALIADOR_CONTAINER):not(#nc-av-x):not(#nc-av-y) {
+  flex-wrap: nowrap;
+  gap: 8px;
+}
+
+@app.nc-av .t-Region.nc-av-dados .row > .col:has(> #P140_AVALIADOR_CONTAINER):not(#nc-av-x):not(#nc-av-y) {
+  flex: 1 1 auto;
+  width: auto;
+  max-width: none;
+  min-width: 0;
+}
+
+@app.nc-av .t-Region.nc-av-dados .row > .col:has(> #p140_btn_solicitante):not(#nc-av-x):not(#nc-av-y) {
+  flex: none;
+  width: auto;
+  max-width: none;
+}
+
+@app.nc-av #p140_btn_solicitante.t-Button:not(.nc-av-perfil):not(#nc-av-x) {
+  width: 42px;
+  height: 42px;
+}
+
+/* "Botões": fora da vista enquanto nenhum botão dela está à mostra (o APEX decide quais) */
+@app.nc-av .t-Region.nc-av-acoes:not(:has(.t-Button:not([style*="none"]))):not(#nc-av-x):not(#nc-av-y) {
+  display: none;
+}
+
+/* ═══ [C10] 140 · O AVALIADO: O PERFIL DE QUEM ESTÁ SENDO AVALIADO ══════════════════════════
+   Montado pelo JS em [J6]. .nc-av-pessoa é o cartão; .nc-av-pessoa-fatos, os dados que abrem
+   em "Ver dados"; .is-bom (verde) e .is-atencao nas faltas.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+/* =====================================================================
+   140 · AVALIADO — o perfil de quem está sendo avaliado
+   ===================================================================== */
+@app.nc-av .t-Region.nc-av-avaliado > .t-Region-bodyWrap > .t-Region-body:not(#nc-av-x):not(#nc-av-y) {
+  padding: 20px 22px 22px;
+}
+
+@app.nc-av .nc-av-pessoa-carregando {
+  margin: 8px 0;
+  font-size: 14px;
+  color: var(--nc-cinza);
+}
+
+@app.nc-av .nc-av-pessoa-topo {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+@app.nc-av .nc-av-pessoa-foto {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 76px;
+  height: 76px;
+  overflow: hidden;
+  padding: 3px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--nc-roxo, #511C76), var(--nc-rosa, #C95788));
+  box-shadow: 0 12px 24px -16px rgba(var(--nc-t-roxo-rgb, 81, 28, 118), .8);
+}
+
+@app.nc-av .nc-av-pessoa-foto img,
+@app.nc-av .nc-av-pessoa-foto span {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  border: 3px solid #fff;
+  border-radius: 50%;
+  background: #F3ECF8;
+  object-fit: cover;
+  object-position: center 30%;
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--nc-roxo);
+}
+
+@app.nc-av .nc-av-pessoa-id {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+@app.nc-av .nc-av-pessoa-id h3:not(#nc-av-x):not(#nc-av-y) {
+  margin: 0;
+  padding: 0;
+  font-size: 22px;
+  font-weight: 800;
+  line-height: 1.2;
+  letter-spacing: -.015em;
+  color: var(--nc-tinta);
+}
+
+@app.nc-av .nc-av-pessoa-id p {
+  margin: 4px 0 0;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.4;
+  color: var(--nc-grafite);
+}
+
+@app.nc-av .nc-av-pessoa-sit {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+
+@app.nc-av p.nc-av-pessoa-sit {
+  margin-top: 8px;
+  padding: 3px 10px 3px 8px;
+  border-radius: 999px;
+  background: #F1EDF7;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--nc-grafite);
+}
+
+@app.nc-av .nc-av-pessoa-sit i {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--nc-cinza);
+}
+
+@app.nc-av p.nc-av-pessoa-sit.is-ativo {
+  background: #E6F4EC;
+  color: #14553A;
+}
+
+@app.nc-av .nc-av-pessoa-sit.is-ativo i {
+  background: #1F7A52;
+}
+
+@app.nc-av .nc-av-pessoa-sit span {
+  font-weight: 600;
+}
+
+@app.nc-av .nc-av-pessoa-mais:not(#nc-av-x):not(#nc-av-y) {
+  display: none;
+}
+
+@app.nc-av .nc-av-pessoa-fatos:not(#nc-av-x):not(#nc-av-y) {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 10px;
+  margin: 20px 0 0;
+  padding: 0;
+}
+
+@app.nc-av .nc-av-pf {
+  min-width: 0;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: #FBF9FE;
+}
+
+@app.nc-av .nc-av-pf dt {
+  margin: 0 0 3px;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--nc-grafite);
+}
+
+@app.nc-av .nc-av-pf dd {
+  display: grid;
+  gap: 2px;
+  margin: 0;
+  font-size: 16px;
+  font-weight: 800;
+  line-height: 1.3;
+  color: var(--nc-tinta);
+}
+
+@app.nc-av .nc-av-pf small {
+  font-size: 12.5px;
+  font-weight: 600;
+  line-height: 1.35;
+  font-variant-numeric: tabular-nums;
+  color: var(--nc-cinza);
+}
+
+@app.nc-av .nc-av-pf.is-bom {
+  background: #EEF8F2;
+}
+
+@app.nc-av .nc-av-pf.is-bom dd {
+  color: #14553A;
+}
+
+@app.nc-av .nc-av-pf.is-atencao {
+  background: #FFF6E2;
+}
+
+@app.nc-av .nc-av-pf.is-atencao dd {
+  color: #7A4B00;
+}
+
+/* ═══ [C11] 140 · O RESULTADO EM DESTAQUE E O RECURSO ═══════════════════════════════════════
+   Marcados pelo JS em [J7]: .is-principal é o número principal; .nc-av-recurso, o Pedido de
+   Recurso como ação secundária.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+/* =====================================================================
+   140 · RESULTADO — o número principal em destaque, recurso como ação secundária
+   ===================================================================== */
+@app.nc-av .t-Region.nc-av-resultado .t-Form-fieldContainer.is-principal:not(#nc-av-x):not(#nc-av-y) {
+  background: linear-gradient(135deg, #2C1A63 0%, #511C76 70%, #74307F 100%) /*reserva*/;
+  background: linear-gradient(135deg, var(--nc-azul, #2C1A63) 0%, var(--nc-roxo, #511C76) 70%, oklch(from #74307F l calc(c * var(--nc-t-croma, 1)) calc(h + var(--nc-t-giro, 0))) 100%);
+}
+
+@app.nc-av .t-Region.nc-av-resultado .is-principal .t-Form-label:not(#nc-av-x):not(#nc-av-y) {
+  color: #E7DDF3;
+}
+
+@app.nc-av .t-Region.nc-av-resultado .is-principal :is(input, .display_only):not([type=hidden]):not(#nc-av-x):not(#nc-av-y) {
+  font-size: 32px;
+  color: #fff;
+  -webkit-text-fill-color: #fff;
+}
+
+@app.nc-av .nc-av-recurso.t-Button:not(#nc-av-x):not(#nc-av-y) {
+  width: auto;
+  min-height: 42px;
+  margin: 4px 0 0;
+  padding: 0 18px;
+  border: 1.5px solid #CDB4E3 /*reserva*/;
+  border: 1.5px solid oklch(from #CDB4E3 l calc(c * var(--nc-t-croma, 1)) calc(h + var(--nc-t-giro, 0)));
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: none;
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--nc-roxo);
+}
+
+@app.nc-av .nc-av-recurso :is(.t-Icon, .t-Button-label):not(#nc-av-x):not(#nc-av-y) {
+  color: var(--nc-roxo);
+}
+
+@app.nc-av .nc-av-recurso.t-Button:hover:not(#nc-av-x):not(#nc-av-y) {
+  background: #F4F0F9;
+}
+
+/* ═══ [C12] 140 · O PLANO DE DESENVOLVIMENTO COMO UM PDI ════════════════════════════════════
+   Montado pelo JS em [J8]. .nc-av-pdi é cada bloco; as cores dos três blocos são
+   .nc-av-pdi--verde, .nc-av-pdi--ambar e .nc-av-pdi--roxo (o "tom" da lista PDI do JS).
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+/* =====================================================================
+   140 · PLANO DE DESENVOLVIMENTO — como um PDI
+   ===================================================================== */
+@app.nc-av .nc-av-pdi {
+  --nc-av-pdi-t: var(--nc-roxo);
+  --nc-av-pdi-f: #F3ECF8;
+}
+
+@app.nc-av .nc-av-pdi--verde {
+  --nc-av-pdi-t: #1F7A52;
+  --nc-av-pdi-f: #E6F4EC;
+}
+
+@app.nc-av .nc-av-pdi--ambar {
+  --nc-av-pdi-t: #8A5300;
+  --nc-av-pdi-f: #FFF3D6;
+}
+
+@app.nc-av .nc-av-pdi + .nc-av-pdi {
+  margin-top: 26px;
+  padding-top: 22px;
+  border-top: 1px solid var(--nc-nevoa);
+}
+
+@app.nc-av .nc-av-pdi-cab {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0 0 14px;
+}
+
+@app.nc-av .nc-av-pdi-ic {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  background: var(--nc-av-pdi-f);
+  color: var(--nc-av-pdi-t);
+}
+
+@app.nc-av .nc-av-pdi-cab h3:not(#nc-av-x):not(#nc-av-y) {
+  margin: 0;
+  padding: 0;
+  font-size: 16px;
+  font-weight: 800;
+  line-height: 1.25;
+  color: var(--nc-tinta);
+}
+
+@app.nc-av .nc-av-pdi-cab p {
+  margin: 2px 0 0;
+  font-size: 13px;
+  line-height: 1.4;
+  color: var(--nc-grafite);
+}
+
+@app.nc-av .nc-av-pdi-campos {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 14px 18px;
+}
+
+@app.nc-av .nc-av-pdi-campos > .t-Form-fieldContainer:not(#nc-av-x):not(#nc-av-y) {
+  float: none;
+  width: auto;
+  max-width: none;
+  margin: 0;
+  padding: 0;
+}
+
+@app.nc-av .nc-av-pdi-campos :is(.t-Form-labelContainer, .t-Form-inputContainer):not(#nc-av-x):not(#nc-av-y) {
+  float: none;
+  width: 100%;
+  max-width: none;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+@app.nc-av .nc-av-pdi-campos textarea:focus:not(#nc-av-x):not(#nc-av-y) {
+  border-color: var(--nc-av-pdi-t);
+}
+
+/* ═══ [C13] 140 · O COMENTÁRIO COMO CONVERSA E A CONCLUSÃO ══════════════════════════════════
+   Montado pelo JS em [J9]. .nc-av-voz é cada comentário (--avaliador, --avaliado,
+   --examinador); .is-seu, o que a pessoa pode escrever. No fim, a conclusão.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+/* =====================================================================
+   140 · COMENTÁRIO — uma conversa entre avaliador, avaliado e examinador
+   ===================================================================== */
+@app.nc-av .nc-av-voz:not(#nc-av-x):not(#nc-av-y) {
+  margin-bottom: 18px;
+}
+
+@app.nc-av .nc-av-voz .t-Form-labelContainer:not(#nc-av-x):not(#nc-av-y) {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  overflow: visible;
+  margin-left: 0;
+  text-align: left;
+  gap: 10px;
+  width: 100%;
+  max-width: none;
+  float: none;
+  padding: 0 0 8px;
+}
+
+@app.nc-av .nc-av-voz .t-Form-label:not(#nc-av-x):not(#nc-av-y) {
+  margin: 0;
+  padding: 0;
+}
+
+@app.nc-av .nc-av-voz .t-Form-inputContainer:not(#nc-av-x):not(#nc-av-y) {
+  width: 100%;
+  max-width: none;
+  float: none;
+}
+
+/* a margem negativa do grid do APEX punha o ícone 8 px para fora da região: alinha com o texto */
+@app.nc-av .nc-av-voz-ic {
+  display: grid;
+  flex: none;
+  margin-left: calc(var(--nc-av-voz-x, 0px));
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: #F1EDF7;
+  color: var(--nc-grafite);
+}
+
+@app.nc-av .nc-av-voz-ic .nc-av-svg {
+  width: 17px;
+  height: 17px;
+}
+
+@app.nc-av .nc-av-voz--avaliador .nc-av-voz-ic {
+  background: #F3ECF8;
+  color: var(--nc-roxo);
+}
+
+@app.nc-av .nc-av-voz--avaliado .nc-av-voz-ic {
+  background: #FBEEF4;
+  color: #A63F6E /*reserva*/;
+  color: oklch(from #A63F6E l calc(c * var(--nc-t-croma, 1)) calc(h + var(--nc-t-giro, 0)));
+}
+
+@app.nc-av .nc-av-voz-tag {
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: #FBEEF4;
+  font-size: 11.5px;
+  font-style: normal;
+  font-weight: 800;
+  color: #A63F6E /*reserva*/;
+  color: oklch(from #A63F6E l calc(c * var(--nc-t-croma, 1)) calc(h + var(--nc-t-giro, 0)));
+}
+
+@app.nc-av .nc-av-voz textarea:not(#nc-av-x):not(#nc-av-y) {
+  border-radius: 4px 16px 16px 16px;
+}
+
+@app.nc-av .nc-av-voz.is-seu textarea:not(#nc-av-x):not(#nc-av-y) {
+  border-color: #E4B9CD /*reserva*/;
+  border-color: oklch(from #E4B9CD l calc(c * var(--nc-t-croma, 1)) calc(h + var(--nc-t-giro, 0)));
+}
+
+/* a CONCLUSÃO: o fecho da avaliação */
+@app.nc-av .t-Region.nc-av-conclusao-box:not(#nc-av-x):not(#nc-av-y) {
+  border-color: #DCCBEB;
+  background: linear-gradient(180deg, #FBF8FE 0%, #fff 60%);
+}
+
+/* ═══ [C14] CELULAR E MENOS MOVIMENTO ═══════════════════════════════════════════════════════
+   O que está dentro de  @media (max-width: 640px)  só vale em telas até 640px (celular),
+   nas duas páginas. No fim, @media (prefers-reduced-motion: reduce): para quem pediu "reduzir
+   movimento" nas configurações (acessibilidade), sem animações nem transições.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+/* =====================================================================
+   CELULAR
+   ===================================================================== */
+@media (max-width: 640px) {
+  @app.nc-av .nc-av-hero {
+    margin: 0 0 16px;
+    border-radius: 18px;
+  }
+
+  @app.nc-av .nc-av-hero-topo {
+    padding: 22px 18px 18px;
+  }
+
+  @app.nc-av .nc-av-hero-titulo:not(#nc-av-x):not(#nc-av-y) {
+    font-size: 23px;
+  }
+
+  @app.nc-av .nc-av-hero-cta {
+    flex: 1 1 100%;
+  }
+
+  @app.nc-av .nc-av-cta:not(#nc-av-x):not(#nc-av-y) {
+    width: 100%;
+  }
+
+  @app.nc-av .nc-av-trilha {
+    gap: 5px;
+    padding: 0 18px 18px;
+  }
+
+  @app.nc-av .nc-av-trilha-g {
+    gap: 2px;
+  }
+
+  @app.nc-av .nc-av-fatos:not(#nc-av-x):not(#nc-av-y) {
+    gap: 8px 16px;
+    padding: 14px 18px 2px;
+  }
+
+  @app.nc-av .nc-av-etapas {
+    padding: 12px 12px 4px;
+  }
+
+  @app.nc-av .nc-av-etapas ol:not(#nc-av-x):not(#nc-av-y) {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 6px;
+  }
+
+  @app.nc-av .nc-av-etapa a:not(#nc-av-x):not(#nc-av-y) {
+    grid-template-columns: 34px minmax(0, 1fr) auto;
+    min-height: 52px;
+  }
+
+  @app.nc-av .nc-av-etapa-ic {
+    grid-row: auto;
+  }
+
+  @app.nc-av .nc-av-docs {
+    margin: 8px 12px 0;
+    padding: 12px 0 16px;
+  }
+
+  @app.nc-av .t-Region.nc-av-avaliado > .t-Region-bodyWrap > .t-Region-body:not(#nc-av-x):not(#nc-av-y) {
+    padding: 16px 14px;
+  }
+
+  @app.nc-av .nc-av-passos:not(#nc-av-x):not(#nc-av-y) {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 6px;
+    padding: 12px 12px 16px;
+  }
+
+  @app.nc-av .nc-av-pessoa-topo {
+    flex-wrap: wrap;
+    gap: 12px 14px;
+  }
+
+  @app.nc-av .nc-av-pessoa-foto {
+    width: 60px;
+    height: 60px;
+  }
+
+  @app.nc-av .nc-av-pessoa-id h3:not(#nc-av-x):not(#nc-av-y) {
+    font-size: 19px;
+  }
+
+  /* no celular os dados ficam recolhidos: quem responde é, quase sempre, a própria pessoa */
+  @app.nc-av .nc-av-pessoa-mais:not(#nc-av-x):not(#nc-av-y) {
+    display: inline-flex;
+    flex: 1 1 100%;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    min-height: 42px;
+    margin: 0;
+    padding: 0 12px;
+    border: 1px solid #DCD3E8;
+    border-radius: 12px;
+    background: #fff;
+    box-shadow: none;
+    font: inherit;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--nc-roxo);
+    cursor: pointer;
+  }
+
+  @app.nc-av .nc-av-pessoa-mais .nc-av-svg {
+    transform: rotate(90deg);
+    transition: transform .18s;
+  }
+
+  @app.nc-av .nc-av-pessoa.is-aberto .nc-av-pessoa-mais .nc-av-svg {
+    transform: rotate(-90deg);
+  }
+
+  @app.nc-av .nc-av-pessoa:not(.is-aberto) .nc-av-pessoa-fatos:not(#nc-av-x):not(#nc-av-y) {
+    display: none;
+  }
+
+  @app.nc-av .nc-av-pessoa-fatos:not(#nc-av-x):not(#nc-av-y) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+    margin-top: 12px;
+  }
+
+  @app.nc-av .nc-av-pf {
+    padding: 10px 12px;
+  }
+
+  @app.nc-av .nc-av-pf dd {
+    font-size: 15px;
+  }
+
+  @app.nc-av .nc-av-pdi-campos {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  @app.nc-av .nc-av-resumo {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 10px;
+    margin: 0 0 22px;
+  }
+
+  @app.nc-av .nc-av-resumo > section {
+    padding: 14px 12px 12px;
+  }
+
+  @app.nc-av .nc-av-rc:not(#nc-av-x):not(#nc-av-y) {
+    grid-template-columns: minmax(0, 1fr) 64px 34px;
+    gap: 10px;
+    padding: 6px 6px;
+  }
+
+  @app.nc-av .nc-av-rc-conta {
+    display: none;
+  }
+
+  @app.nc-av .nc-av-barra {
+    padding: 10px 14px calc(10px + env(safe-area-inset-bottom, 0px));
+  }
+
+  @app.nc-av .nc-av-barra-txt {
+    font-size: 12.5px;
+  }
+
+  @app.nc-av .nc-av-salvar.t-Button:not(#nc-av-x):not(#nc-av-y) {
+    min-width: 120px;
+    height: 48px;
+    padding: 0 18px;
+  }
+
+  @app.nc-avq .nc-avq-texto:not(#nc-av-x):not(#nc-av-y) {
+    font-size: 19px;
+  }
+
+  @app.nc-avq .nc-avq-nav.t-Button:not(#nc-av-x):not(#nc-av-y) {
+    padding: 0 14px;
+  }
+
+  @app.nc-avq .t-Dialog-footer .t-ButtonRegion-wrap:not(#nc-av-x):not(#nc-av-y) {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr);
+  }
+
+  @app.nc-avq .t-Dialog-footer .nc-avq-ant:not(#nc-av-x):not(#nc-av-y) {
+    grid-column: 1;
+  }
+
+  @app.nc-avq .t-Dialog-footer :is(#BTN_NEXT_RECORD, #BTN_NEXT_ALERTA):not(#nc-av-x) {
+    grid-column: 2;
+  }
+
+  @app.nc-avq.nc-avq-sem-ant .t-Dialog-footer :is(#BTN_NEXT_RECORD, #BTN_NEXT_ALERTA):not(#nc-av-x) {
+    grid-column: 1 / -1;
+  }
+
+  @app.nc-avq .t-Dialog-footer .nc-avq-voltar:not(#nc-av-x):not(#nc-av-y) {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    justify-self: center;
+  }
+
+  @app.nc-avq .t-Dialog-footer .nc-avq-voltar.is-final:not(#nc-av-x):not(#nc-av-y) {
+    justify-self: stretch;
+  }
+
+  @app.nc-avq .t-Dialog-footer .nc-avq-nav.t-Button:not(#nc-av-x):not(#nc-av-y) {
+    width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  @app:is(.nc-av, .nc-avq) *,
+  @app:is(.nc-av, .nc-avq) *::before {
+    animation: none;
+    transition: none;
+  }
+}

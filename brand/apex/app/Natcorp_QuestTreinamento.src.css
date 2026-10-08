@@ -1,0 +1,1009 @@
+/* ╔════════════════════════════════════════════════════════════════════════════════════════╗
+   ║  NATCORP · QUESTIONÁRIO DO TREINAMENTO  —  a "roupa" da tela (CSS)                       ║
+   ║  App 9104 (Treinamento - Processos) · Página 2 ("Respostas de Questionário")              ║
+   ╚════════════════════════════════════════════════════════════════════════════════════════╝
+
+   Primeira vez num arquivo destes? Leia antes o manual: brand/apex/MANUAL-APEX.md (parte 1).
+
+   ── O QUE ESTE ARQUIVO FAZ ────────────────────────────────────────────────────────────────
+   A aparência do que o Natcorp_QuestTreinamento.js monta: os passos da escolha do
+   treinamento, a pergunta por tela (com as carinhas da escala), o "Obrigado!" e a lista para
+   conferir. Desenhado PRIMEIRO para o celular (390px): texto grande, botões de 64px.
+   Não depende do Natcorp_Style_Min.css (o app 9104 não o carrega): as cores e a fonte estão
+   aqui. Sem o JS, nada daqui vale (tudo depende da marca nc-tq-ativo no body).
+
+   ── ONDE ELE ENTRA NO APEX ────────────────────────────────────────────────────────────────
+     Página 2 › CSS › File URLs:   #WORKSPACE_IMAGES#Natcorp_QuestTreinamento.css
+     CUIDADO: este é o arquivo-FONTE (.src.css). O gerador (gerar-app.mjs) cria o .css.
+
+   ── ÍNDICE ────────────────────────────────────────────────────────────────────────────────
+     [C1] As cores e a letra                                    PODE MEXER
+     [C2] O que sai da vista (e a lista original, de reserva)
+     [C3] O alto
+     [C4] Os parâmetros (os campos originais, com roupa nova)
+     [C5] As respostas (botões grandes, carinhas, Sim/Não)
+     [C6] Progresso, Ouvir e a navegação
+     [C7] Escrever
+     [C8] O fim e a lista para conferir
+     [C9] As janelas de busca do APEX (curso, pessoa)
+     [C10] Tela larga
+*/
+
+/* ═══ [C1] AS CORES E A LETRA ═══════════════════════════════════════════════════════════════
+   PODE MEXER  as cores (as da marca entram pelas variáveis --nc-*, se a página tiver o tema).
+   As cores da escala: ótimo e bom em verde, regular em âmbar, ruim e péssimo em vermelho —
+   sempre com a palavra junto (a cor sozinha não diz nada a quem não enxerga cor).
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-tq-ativo {
+  --tq-roxo: var(--nc-roxo, #511C76);
+  --tq-roxo-claro: #F3EDF9;
+  --tq-rosa: var(--nc-rosa, #C95788);
+  --tq-tinta: var(--nc-tinta, #1B1238);
+  --tq-fraco: #5B5470;
+  --tq-borda: #E2DCEC;
+  --tq-fundo: #F7F5FA;
+  --tq-bom: #17784C;
+  --tq-erro: #B42318;
+  --tq-otimo: #17784C;
+  --tq-bomzinho: #3F8F2E;
+  --tq-regular: #A86A12;
+  --tq-ruim: #C2410C;
+  --tq-pessimo: #B42318;
+  --tq-ease: cubic-bezier(.22, 1, .36, 1);
+  background: var(--tq-fundo);
+}
+
+@app.nc-tq-ativo .nc-tq {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 8px 16px 32px;
+  font-family: Inter, "Segoe UI", Roboto, system-ui, -apple-system, sans-serif;
+  font-size: 17px;
+  line-height: 1.45;
+  color: var(--tq-tinta);
+  -webkit-text-size-adjust: 100%;
+}
+
+@app.nc-tq-ativo .nc-tq button {
+  font-family: inherit;
+  -webkit-tap-highlight-color: transparent;
+}
+
+@app.nc-tq-ativo .nc-tq ::selection {
+  background: #E5D6F2;
+  color: var(--tq-tinta);
+}
+
+@app.nc-tq-ativo .nc-tq-ic {
+  flex: none;
+  width: 22px;
+  height: 22px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.9;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+@app.nc-tq-ativo .nc-tq button:focus-visible {
+  outline: 3px solid var(--tq-roxo);
+  outline-offset: 2px;
+}
+
+@app.nc-tq-ativo .nc-tq [tabindex="-1"]:focus {
+  outline: none;
+}
+
+/* ═══ [C2] O QUE SAI DA VISTA ═══════════════════════════════════════════════════════════════
+   O título do APEX e a lista de perguntas saem da vista (os campos vão para o cartão novo).
+   Sem os processos novos, a lista original volta (nc-tq-lista-original).
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-tq-ativo .t-Body-title,
+@app.nc-tq-ativo .t-Footer,
+@app.nc-tq-ativo:not(.nc-tq-lista-original) .nc-tq-lista,
+@app.nc-tq-ativo .nc-tq-form[hidden] {
+  display: none;
+}
+
+/* o APEX reserva no alto a altura da barra de título (que saiu): sem isso, sobra um vão de 80px */
+@app.nc-tq-ativo #t_Body_content_offset {
+  height: 0;
+}
+
+@app.nc-tq-ativo.nc-tq-lista-original .t-Body-contentInner > .container {
+  display: block;
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 0 16px 32px;
+}
+
+@app.nc-tq-ativo.nc-tq-lista-original .t-Region.i-h240 {
+  display: block;
+  border: 1px solid var(--tq-borda);
+  border-radius: 16px;
+  overflow: hidden;
+  background: #fff;
+}
+
+@app.nc-tq-ativo.nc-tq-lista-original .t-Region.i-h240 .t-Region-header {
+  display: none;
+}
+
+@app.nc-tq-ativo.nc-tq-lista-original .t-Region.i-h240 .t-Region-body {
+  height: auto;
+  max-height: none;
+  overflow: visible;
+}
+
+@app.nc-tq-ativo.nc-tq-lista-original .a-ListView-item > a {
+  padding: 16px 44px 16px 16px;
+  font-size: 17px;
+  line-height: 1.35;
+  white-space: normal;
+}
+
+/* ═══ [C3] O ALTO ═══════════════════════════════════════════════════════════════════════════ */
+@app.nc-tq-ativo .nc-tq-topo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 8px 0 18px;
+}
+
+@app.nc-tq-ativo .nc-tq-topo h1 {
+  margin: 0;
+  font-size: 21px;
+  font-weight: 750;
+  line-height: 1.2;
+  letter-spacing: -.01em;
+  color: var(--tq-tinta);
+}
+
+@app.nc-tq-ativo .nc-tq-topo p {
+  margin: 2px 0 0;
+  font-size: 15px;
+  color: var(--tq-fraco);
+}
+
+@app.nc-tq-ativo .nc-tq-sair {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  border: 1.5px solid var(--tq-borda);
+  border-radius: 50%;
+  background: #fff;
+  color: var(--tq-roxo);
+  cursor: pointer;
+}
+
+/* o cartão do treinamento escolhido (fica no alto das perguntas) */
+@app.nc-tq-ativo .nc-tq-cartao {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0 0 16px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: #fff;
+  border: 1px solid var(--tq-borda);
+}
+
+@app.nc-tq-ativo .nc-tq-cartao > .nc-tq-ic {
+  width: 26px;
+  height: 26px;
+  color: var(--tq-rosa);
+}
+
+@app.nc-tq-ativo .nc-tq-cartao > div {
+  flex: 1;
+  min-width: 0;
+}
+
+@app.nc-tq-ativo .nc-tq-cartao b {
+  display: block;
+  font-size: 16px;
+  line-height: 1.3;
+}
+
+@app.nc-tq-ativo .nc-tq-cartao small {
+  display: block;
+  font-size: 14px;
+  color: var(--tq-fraco);
+}
+
+@app.nc-tq-ativo .nc-tq-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 44px;
+  padding: 0 6px;
+  border: 0;
+  background: none;
+  font-size: 15px;
+  font-weight: 650;
+  color: var(--tq-roxo);
+  cursor: pointer;
+}
+
+@app.nc-tq-ativo .nc-tq-link .nc-tq-ic {
+  width: 19px;
+  height: 19px;
+}
+
+@app.nc-tq-ativo .nc-tq-passo {
+  padding: 20px 16px;
+  border-radius: 20px;
+  background: #fff;
+  box-shadow: 0 1px 2px rgba(27, 18, 56, .05), 0 8px 24px -12px rgba(27, 18, 56, .14);
+}
+
+@app.nc-tq-ativo .nc-tq-pergunta {
+  margin: 0 0 18px;
+  font-size: 24px;
+  font-weight: 750;
+  line-height: 1.25;
+  letter-spacing: -.015em;
+  text-wrap: balance;
+  color: var(--tq-tinta);
+}
+
+@app.nc-tq-ativo .nc-tq-ajuda {
+  margin: -6px 0 14px;
+  font-size: 16px;
+  color: var(--tq-fraco);
+}
+
+@app.nc-tq-ativo .nc-tq-carregando,
+@app.nc-tq-ativo .nc-tq-aviso {
+  margin: 8px 0;
+  padding: 16px;
+  border-radius: 14px;
+  background: var(--tq-fundo);
+  font-size: 16px;
+  color: var(--tq-fraco);
+}
+
+@app.nc-tq-ativo .nc-tq-carregando {
+  animation: nc-tq-pulsa 1.4s ease-in-out infinite;
+}
+
+@keyframes nc-tq-pulsa {
+  50% { opacity: .55; }
+}
+
+/* ═══ [C4] OS PARÂMETROS ═══════════════════════════════════════════════════════════════════
+   Os campos do APEX (modelo de rótulo flutuante) viram rótulo em cima + campo grande. As
+   linhas da grade do APEX somem (display: contents): os 6 campos ficam numa grade só — uma
+   coluna no celular, duas no computador. O triângulo vermelho de obrigatório sai (todos são).
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-tq-ativo .nc-tq-form {
+  padding: 20px 16px;
+  border-radius: 20px;
+  background: #fff;
+  box-shadow: 0 1px 2px rgba(27, 18, 56, .05), 0 8px 24px -12px rgba(27, 18, 56, .14);
+}
+
+@app.nc-tq-ativo .nc-tq-form .t-Region,
+@app.nc-tq-ativo .nc-tq-form .t-Region-body,
+@app.nc-tq-ativo .nc-tq-form .container {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  box-shadow: none;
+}
+
+@app.nc-tq-ativo .nc-tq-form .container {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 16px;
+  width: auto;
+  max-width: none;
+}
+
+/* linhas e colunas da grade do APEX somem: quem entra na grade são os campos (as colunas
+   vazias que o APEX põe para completar a linha não ocupam lugar) */
+@app.nc-tq-ativo .nc-tq-form .row,
+@app.nc-tq-ativo .nc-tq-form .col {
+  display: contents;
+}
+
+/* o "clearfix" das linhas e da grade (::before/::after) viraria célula vazia da grade */
+@app.nc-tq-ativo .nc-tq-form .container::before,
+@app.nc-tq-ativo .nc-tq-form .container::after,
+@app.nc-tq-ativo .nc-tq-form .row::before,
+@app.nc-tq-ativo .nc-tq-form .row::after {
+  display: none;
+  content: none;
+}
+
+@app.nc-tq-ativo .nc-tq-form .t-Form-fieldContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+}
+
+@app.nc-tq-ativo .nc-tq-form .t-Form-fieldContainer::before,
+@app.nc-tq-ativo .nc-tq-form .t-Form-fieldContainer::after,
+@app.nc-tq-ativo .nc-tq-form .t-Form-inputContainer::before,
+@app.nc-tq-ativo .nc-tq-form .t-Form-itemWrapper::before,
+@app.nc-tq-ativo .nc-tq-form .t-Form-labelContainer::before {
+  display: none;
+}
+
+@app.nc-tq-ativo .nc-tq-form .t-Form-labelContainer {
+  position: static;
+  width: auto;
+  height: auto;
+  margin: 0;
+  padding: 0;
+  text-align: left;
+  pointer-events: auto;
+}
+
+@app.nc-tq-ativo .nc-tq-form .t-Form-label {
+  position: static;
+  display: block;
+  margin: 0;
+  padding: 0;
+  transform: none;
+  font-size: 16px;
+  font-weight: 650;
+  line-height: 1.3;
+  letter-spacing: 0;
+  text-transform: none;
+  white-space: normal;
+  color: var(--tq-tinta);
+}
+
+@app.nc-tq-ativo .nc-tq-form .t-Form-inputContainer,
+@app.nc-tq-ativo .nc-tq-form .t-Form-itemWrapper {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+@app.nc-tq-ativo .nc-tq-form .t-Form-itemWrapper {
+  display: flex;
+  align-items: stretch;
+}
+
+@app.nc-tq-ativo .nc-tq-form select,
+@app.nc-tq-ativo .nc-tq-form input.apex-item-text,
+@app.nc-tq-ativo .nc-tq-form input.popup_lov,
+@app.nc-tq-ativo .nc-tq-form input.text_field {
+  flex: 1;
+  width: 100%;
+  min-width: 0;
+  height: 54px;
+  min-height: 54px;
+  margin: 0;
+  padding: 0 14px;
+  border: 2px solid var(--tq-borda);
+  border-radius: 12px;
+  background-color: #fff;
+  font-family: inherit;
+  font-size: 17px;
+  line-height: 1.2;
+  color: var(--tq-tinta);
+  box-shadow: none;
+  text-overflow: ellipsis;
+}
+
+@app.nc-tq-ativo .nc-tq-form select {
+  padding-right: 40px;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23511C76' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6.5 9.5L12 15l5.5-5.5'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 20px;
+}
+
+@app.nc-tq-ativo .nc-tq-form select:focus,
+@app.nc-tq-ativo .nc-tq-form input:focus {
+  border-color: var(--tq-roxo);
+  outline: none;
+  box-shadow: 0 0 0 4px #E5D6F2;
+}
+
+/* a data da resposta é só para ver (os campos de busca também são readonly no APEX, mas para
+   quem usa são campos normais: ficam com a borda cheia) */
+@app.nc-tq-ativo .nc-tq-form #P2_DT_RESPOSTA {
+  padding-left: 14px;
+  border-style: dashed;
+  background: var(--tq-fundo);
+  color: var(--tq-fraco);
+}
+
+/* a busca (curso, matrícula): campo + botão da lupa colados */
+@app.nc-tq-ativo .nc-tq-form .apex-item-group--popup-lov {
+  display: flex;
+  flex: 1;
+  width: 100%;
+  min-width: 0;
+}
+
+@app.nc-tq-ativo .nc-tq-form .apex-item-group--popup-lov input.popup_lov {
+  border-right: 0;
+  border-radius: 12px 0 0 12px;
+}
+
+@app.nc-tq-ativo .nc-tq-form .a-Button--popupLOV {
+  flex: none;
+  width: 54px;
+  height: 54px;
+  margin: 0;
+  padding: 0;
+  border: 2px solid var(--tq-borda);
+  border-radius: 0 12px 12px 0;
+  background: var(--tq-roxo-claro);
+  color: var(--tq-roxo);
+  box-shadow: none;
+}
+
+@app.nc-tq-ativo .nc-tq-form .t-Form-itemIcon,
+@app.nc-tq-ativo .nc-tq-form .apex-item-icon {
+  display: none;
+}
+
+/* faltou: borda e rótulo em vermelho, com a frase embaixo do cartão */
+@app.nc-tq-ativo .nc-tq-form .nc-tq-falta .t-Form-label {
+  color: var(--tq-erro);
+}
+
+@app.nc-tq-ativo .nc-tq-form .nc-tq-falta select,
+@app.nc-tq-ativo .nc-tq-form .nc-tq-falta input,
+@app.nc-tq-ativo .nc-tq-form .nc-tq-falta .a-Button--popupLOV {
+  border-color: var(--tq-erro);
+}
+
+@app.nc-tq-ativo .nc-tq-form-tit {
+  margin-bottom: 6px;
+}
+
+@app.nc-tq-ativo .nc-tq-form > .nc-tq-ajuda {
+  margin: 0 0 18px;
+}
+
+@app.nc-tq-ativo .nc-tq-form .nc-tq-status:empty {
+  display: none;
+}
+
+@app.nc-tq-ativo .nc-tq-form .nc-tq-bt--largo {
+  margin-top: 20px;
+}
+
+/* ═══ [C5] AS RESPOSTAS ═════════════════════════════════════════════════════════════════════
+   Uma embaixo da outra (no celular é o que cabe com letra grande). Tocou: borda roxa, fundo
+   claro e o sinal de feito à direita. Gravando: a borda pulsa.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-tq-ativo .nc-tq-opcoes {
+  display: grid;
+  gap: 10px;
+}
+
+@app.nc-tq-ativo .nc-tq-op {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  min-height: 64px;
+  padding: 10px 14px 10px 16px;
+  border: 2px solid var(--tq-borda);
+  border-radius: 16px;
+  background: #fff;
+  text-align: left;
+  color: var(--tq-tinta);
+  cursor: pointer;
+  transition: border-color .18s var(--tq-ease), background-color .18s var(--tq-ease), transform .12s var(--tq-ease);
+}
+
+@app.nc-tq-ativo .nc-tq-op:active {
+  transform: scale(.985);
+}
+
+@app.nc-tq-ativo .nc-tq-op-txt {
+  flex: 1;
+  min-width: 0;
+}
+
+@app.nc-tq-ativo .nc-tq-op-txt b {
+  display: block;
+  font-size: 19px;
+  font-weight: 650;
+  line-height: 1.3;
+}
+
+@app.nc-tq-ativo .nc-tq-op-txt small {
+  display: block;
+  margin-top: 2px;
+  font-size: 15px;
+  color: var(--tq-fraco);
+}
+
+@app.nc-tq-ativo .nc-tq-marca {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 30px;
+  height: 30px;
+  border: 2px solid var(--tq-borda);
+  border-radius: 50%;
+  color: transparent;
+}
+
+@app.nc-tq-ativo .nc-tq-marca .nc-tq-ic {
+  width: 18px;
+  height: 18px;
+  stroke-width: 2.6;
+}
+
+@app.nc-tq-ativo .nc-tq-op[aria-checked="true"] {
+  border-color: var(--tq-roxo);
+  background: var(--tq-roxo-claro);
+}
+
+@app.nc-tq-ativo .nc-tq-op[aria-checked="true"] .nc-tq-marca {
+  border-color: var(--tq-roxo);
+  background: var(--tq-roxo);
+  color: #fff;
+}
+
+@app.nc-tq-ativo .nc-tq-op.is-gravando {
+  animation: nc-tq-grava 1s ease-in-out infinite;
+}
+
+@keyframes nc-tq-grava {
+  50% { border-color: #B79BD3 /*reserva*/;
+  border-color: oklch(from #B79BD3 l calc(c * var(--nc-t-croma, 1)) calc(h + var(--nc-t-giro, 0))); }
+}
+
+/* as carinhas: o rosto na cor da escala, com o fundo bem claro da mesma cor */
+@app.nc-tq-ativo .nc-tq-cara {
+  flex: none;
+  width: 42px;
+  height: 42px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+@app.nc-tq-ativo .nc-tq-cara > circle:first-child {
+  fill: color-mix(in srgb, currentColor 12%, #fff);
+}
+
+@app.nc-tq-ativo .nc-tq-cara .nc-tq-olho,
+@app.nc-tq-ativo .nc-tq-cara .nc-tq-cheio {
+  fill: currentColor;
+  stroke: none;
+}
+
+@app.nc-tq-ativo .nc-tq-op[data-tom="otimo"] .nc-tq-cara { color: var(--tq-otimo); }
+@app.nc-tq-ativo .nc-tq-op[data-tom="bom"] .nc-tq-cara { color: var(--tq-bomzinho); }
+@app.nc-tq-ativo .nc-tq-op[data-tom="regular"] .nc-tq-cara { color: var(--tq-regular); }
+@app.nc-tq-ativo .nc-tq-op[data-tom="ruim"] .nc-tq-cara { color: var(--tq-ruim); }
+@app.nc-tq-ativo .nc-tq-op[data-tom="pessimo"] .nc-tq-cara { color: var(--tq-pessimo); }
+
+/* Sim / Não: o sinal de feito ou o X, num círculo */
+@app.nc-tq-ativo .nc-tq-sinal {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+}
+
+@app.nc-tq-ativo .nc-tq-sinal .nc-tq-ic {
+  width: 24px;
+  height: 24px;
+  stroke-width: 2.4;
+}
+
+@app.nc-tq-ativo .nc-tq-sinal[data-sinal="sim"] {
+  background: #E5F3EC;
+  color: var(--tq-bom);
+}
+
+@app.nc-tq-ativo .nc-tq-sinal[data-sinal="nao"] {
+  background: #FBE9E7;
+  color: var(--tq-erro);
+}
+
+/* ═══ [C6] PROGRESSO, OUVIR E A NAVEGAÇÃO ═══════════════════════════════════════════════════ */
+@app.nc-tq-ativo .nc-tq-progresso {
+  margin: 0 0 14px;
+}
+
+@app.nc-tq-ativo .nc-tq-progresso-txt {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 6px;
+  font-size: 16px;
+}
+
+@app.nc-tq-ativo .nc-tq-trilho {
+  display: flex;
+  gap: 4px;
+}
+
+@app.nc-tq-ativo .nc-tq-trilho i {
+  flex: 1;
+  height: 6px;
+  border-radius: 3px;
+  background: var(--tq-borda);
+}
+
+@app.nc-tq-ativo .nc-tq-trilho i.is-feita {
+  background: var(--tq-roxo);
+}
+
+@app.nc-tq-ativo .nc-tq-trilho i.is-atual {
+  background: var(--tq-rosa);
+}
+
+@app.nc-tq-ativo .nc-tq-q-cab {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+@app.nc-tq-ativo .nc-tq-q-cab .nc-tq-pergunta {
+  flex: 1;
+  min-width: 0;
+}
+
+@app.nc-tq-ativo .nc-tq-ouvir {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  flex: none;
+  width: 60px;
+  min-height: 56px;
+  padding: 6px 0;
+  border: 1.5px solid var(--tq-borda);
+  border-radius: 14px;
+  background: #fff;
+  font-size: 13px;
+  font-weight: 650;
+  color: var(--tq-roxo);
+  cursor: pointer;
+}
+
+@app.nc-tq-ativo .nc-tq-ouvir[aria-pressed="true"] {
+  border-color: var(--tq-roxo);
+  background: var(--tq-roxo);
+  color: #fff;
+}
+
+@app.nc-tq-ativo .nc-tq-status {
+  min-height: 24px;
+  margin: 12px 0 0;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--tq-bom);
+}
+
+@app.nc-tq-ativo .nc-tq-status.is-erro {
+  color: var(--tq-erro);
+}
+
+/* Anterior | Próxima: presos no pé da tela no celular (o polegar alcança). FIXOS, não sticky:
+   no tema um contêiner de cima tem overflow e o sticky não gruda. A tela ganha o espaço
+   embaixo para a última resposta não ficar atrás deles. */
+@app.nc-tq-ativo .nc-tq:has(.nc-tq-nav) {
+  padding-bottom: calc(110px + env(safe-area-inset-bottom, 0px));
+}
+
+@app.nc-tq-ativo .nc-tq-nav {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 50;
+  display: grid;
+  grid-template-columns: 1fr 1.4fr;
+  gap: 10px;
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 12px 16px calc(12px + env(safe-area-inset-bottom, 0px));
+  background: var(--tq-fundo);
+  border-top: 1px solid var(--tq-borda);
+}
+
+@app.nc-tq-ativo .nc-tq-bt {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 56px;
+  padding: 0 18px;
+  border: 2px solid var(--tq-roxo);
+  border-radius: 16px;
+  background: var(--tq-roxo);
+  font-size: 18px;
+  font-weight: 700;
+  color: #fff;
+  cursor: pointer;
+}
+
+@app.nc-tq-ativo .nc-tq-bt--sec {
+  background: #fff;
+  color: var(--tq-roxo);
+}
+
+@app.nc-tq-ativo .nc-tq-bt:disabled {
+  border-color: var(--tq-borda);
+  background: #fff;
+  color: #A8A1B8;
+  cursor: default;
+}
+
+@app.nc-tq-ativo .nc-tq-bt--largo {
+  width: 100%;
+  margin-top: 12px;
+}
+
+/* ═══ [C7] ESCREVER ═════════════════════════════════════════════════════════════════════════ */
+@app.nc-tq-ativo .nc-tq-texto {
+  display: block;
+  width: 100%;
+  min-height: 140px;
+  padding: 14px 16px;
+  border: 2px solid var(--tq-borda);
+  border-radius: 16px;
+  background: #fff;
+  font-family: inherit;
+  font-size: 18px;
+  line-height: 1.45;
+  color: var(--tq-tinta);
+  caret-color: var(--tq-roxo);
+  resize: vertical;
+}
+
+@app.nc-tq-ativo .nc-tq-texto:focus {
+  border-color: var(--tq-roxo);
+  outline: none;
+}
+
+@app.nc-tq-ativo .nc-tq-mic {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+@app.nc-tq-ativo .nc-tq-mic .nc-tq-ic {
+  width: 18px;
+  height: 18px;
+  color: var(--tq-roxo);
+}
+
+/* "Qual?" depois do Sim: preso à pergunta de cima */
+@app.nc-tq-ativo .nc-tq-extra {
+  margin-top: 18px;
+  padding-top: 18px;
+  border-top: 1px dashed var(--tq-borda);
+}
+
+@app.nc-tq-ativo .nc-tq-pergunta--extra {
+  display: block;
+  margin-bottom: 10px;
+  font-size: 21px;
+}
+
+/* ═══ [C8] O FIM E A LISTA PARA CONFERIR ════════════════════════════════════════════════════ */
+@app.nc-tq-ativo .nc-tq-fim {
+  padding: 28px 20px 20px;
+  border-radius: 20px;
+  background: #fff;
+  text-align: center;
+  box-shadow: 0 1px 2px rgba(27, 18, 56, .05), 0 8px 24px -12px rgba(27, 18, 56, .14);
+}
+
+@app.nc-tq-ativo .nc-tq-fim-ic {
+  display: inline-grid;
+  place-items: center;
+  width: 76px;
+  height: 76px;
+  margin-bottom: 12px;
+  border-radius: 50%;
+  background: var(--tq-roxo-claro);
+  color: var(--tq-roxo);
+}
+
+@app.nc-tq-ativo .nc-tq-fim-ic .nc-tq-ic {
+  width: 38px;
+  height: 38px;
+}
+
+@app.nc-tq-ativo .nc-tq-fim .nc-tq-pergunta {
+  margin-bottom: 6px;
+  font-size: 28px;
+}
+
+@app.nc-tq-ativo .nc-tq-fim-txt {
+  margin: 0 0 8px;
+  font-size: 18px;
+  color: var(--tq-fraco);
+}
+
+@app.nc-tq-ativo .nc-tq-todas {
+  margin-top: 24px;
+}
+
+@app.nc-tq-ativo .nc-tq-todas h3 {
+  margin: 0 0 4px;
+  font-size: 19px;
+  font-weight: 750;
+}
+
+@app.nc-tq-ativo .nc-tq-todas .nc-tq-ajuda {
+  margin: 0 0 10px;
+}
+
+@app.nc-tq-ativo .nc-tq-todas ol {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+@app.nc-tq-ativo .nc-tq-todas button {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  min-height: 60px;
+  padding: 10px 12px;
+  border: 1px solid var(--tq-borda);
+  border-radius: 14px;
+  background: #fff;
+  text-align: left;
+  color: var(--tq-tinta);
+  cursor: pointer;
+}
+
+@app.nc-tq-ativo .nc-tq-n {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: var(--tq-roxo);
+  font-size: 14px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: #fff;
+}
+
+@app.nc-tq-ativo .nc-tq-todas button.is-falta .nc-tq-n {
+  border: 2px dashed #B9B0CC;
+  background: #fff;
+  color: var(--tq-fraco);
+}
+
+@app.nc-tq-ativo .nc-tq-todas-txt {
+  flex: 1;
+  min-width: 0;
+}
+
+@app.nc-tq-ativo .nc-tq-todas-txt b {
+  display: block;
+  font-size: 16px;
+  font-weight: 650;
+  line-height: 1.3;
+}
+
+@app.nc-tq-ativo .nc-tq-todas-txt small {
+  display: block;
+  font-size: 15px;
+  color: var(--tq-fraco);
+}
+
+@app.nc-tq-ativo .nc-tq-todas button:not(.is-falta) .nc-tq-todas-txt small {
+  font-weight: 600;
+  color: var(--tq-roxo);
+}
+
+@app.nc-tq-ativo .nc-tq-seta {
+  color: #A8A1B8;
+}
+
+/* ═══ [C9] AS JANELAS DE BUSCA DO APEX (curso, pessoa) ══════════════════════════════════════
+   As da própria página, abertas pelo botão "Procurar…": linhas mais altas e letra maior.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-tq-ativo .ui-dialog.ui-dialog-popuplov {
+  max-width: calc(100vw - 16px);
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+@app.nc-tq-ativo .ui-dialog-popuplov .ui-dialog-titlebar {
+  background: var(--tq-roxo);
+  color: #fff;
+}
+
+@app.nc-tq-ativo .ui-dialog-popuplov .ui-dialog-title {
+  font-size: 17px;
+  font-weight: 650;
+  color: #fff;
+}
+
+@app.nc-tq-ativo .ui-dialog-popuplov .a-PopupLOV-search,
+@app.nc-tq-ativo .ui-dialog-popuplov input[type="text"] {
+  min-height: 48px;
+  font-size: 17px;
+}
+
+@app.nc-tq-ativo .ui-dialog-popuplov .a-PopupLOV-results li a,
+@app.nc-tq-ativo .ui-dialog-popuplov .a-PopupLOV-results li {
+  min-height: 48px;
+  padding: 12px 14px;
+  font-size: 17px;
+  line-height: 1.35;
+  white-space: normal;
+}
+
+/* ═══ [C10] TELA LARGA ══════════════════════════════════════════════════════════════════════
+   No computador a tela continua estreita (uma coluna de leitura); as carinhas lado a lado.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@media (min-width: 720px) {
+  @app.nc-tq-ativo .nc-tq {
+    max-width: 760px;
+    padding-top: 24px;
+  }
+
+  @app.nc-tq-ativo .nc-tq-form .container {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px 20px;
+  }
+
+  /* a turma (texto longo) e a data ocupam a linha inteira */
+  @app.nc-tq-ativo .nc-tq-form #P2_TURMA_CONTAINER,
+  @app.nc-tq-ativo .nc-tq-form #P2_DT_RESPOSTA_CONTAINER {
+    grid-column: 1 / -1;
+  }
+
+  @app.nc-tq-ativo .nc-tq-form {
+    padding: 28px;
+  }
+
+  @app.nc-tq-ativo .nc-tq-passo {
+    padding: 28px;
+  }
+
+  @app.nc-tq-ativo .nc-tq:has(.nc-tq-nav) {
+    padding-bottom: 32px;
+  }
+
+  @app.nc-tq-ativo .nc-tq-nav {
+    position: static;
+    margin: 18px 0 0;
+    padding: 0;
+    border: 0;
+    background: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  @app.nc-tq-ativo .nc-tq *,
+  @app.nc-tq-ativo .nc-tq {
+    animation: none;
+    transition: none;
+  }
+}

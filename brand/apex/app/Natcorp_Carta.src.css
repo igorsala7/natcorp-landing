@@ -1,0 +1,429 @@
+/* ╔════════════════════════════════════════════════════════════════════════════════════════╗
+   ║  NATCORP · CARTA DE APRESENTAÇÃO  —  a "roupa" da tela (CSS)                              ║
+   ║  App 600 (portal Conhecendo Você) · Página 14                                            ║
+   ╚════════════════════════════════════════════════════════════════════════════════════════╝
+
+   Primeira vez num arquivo destes? Leia antes o manual: brand/apex/MANUAL-APEX.md (parte 1).
+
+   ── O QUE ESTE ARQUIVO FAZ ────────────────────────────────────────────────────────────────
+   Dá a aparência da página 14: cores, tamanhos, espaços, bordas, e como a tela se arruma no
+   celular. Ele NÃO cria nada: quem cria as ajudas (intro, começos de frase, microfone,
+   exemplo, "quanto já tem") é o arquivo-irmão Natcorp_Carta.js. Os dois trabalham juntos:
+     o JS cria os botões de começo de frase  →  este arquivo diz como eles se parecem.
+   Sem o JS, este arquivo não faz nada (todas as regras dependem da marca nc-ca que o JS põe
+   na página). Público: colaborador e candidato, 9 em cada 10 no celular, muitos com pouca
+   leitura — por isso letras grandes e botões altos (fáceis de tocar com o dedo).
+
+   ── ONDE ELE ENTRA NO APEX ────────────────────────────────────────────────────────────────
+     Página 14 › CSS › File URLs:   #WORKSPACE_IMAGES#Natcorp_Carta.css
+     CUIDADO: este é o arquivo-FONTE (.src.css). O gerador (gerar-app.mjs) cria a partir dele o
+     Natcorp_Carta.css que sobe para o APEX (com o @app por extenso e os !important). Edite
+     ESTE arquivo, não o gerado: o gerado é reescrito a cada geração (manual, parte 2).
+
+   ── ÍNDICE: as partes deste arquivo (Ctrl+F pelo código entre colchetes) ──────────────────
+     [C1] O que some e a caixa travada              (escondidos, ícones)
+     [C2] "Conte um pouco sobre você" (a intro)     ← criada pelo JS em [J4]
+     [C3] Começos de frase, microfone e exemplo     ← criados pelo JS em [J4]
+     [C4] A caixa e "quanto já tem"                 ← atualizados pelo JS em [J5]
+     [C5] A carta como leitura (caixa travada)      ← mostrada pelo JS em [J5]
+     [C6] Celular                                   (ajustes para telas até 640px)
+     [C7] Menos movimento                           (para quem pediu "reduzir movimento")
+
+   ── RECEITAS RÁPIDAS ──────────────────────────────────────────────────────────────────────
+     Quero mudar uma cor
+       → use uma das cores da marca, pelo nome: var(--nc-roxo), var(--nc-grafite)… A lista
+         completa, com amostras, está no manual (parte 3). Assim a cor acompanha o tema que
+         o usuário escolheu em "Cores". Evite escrever cores soltas, como #511C76.
+     Quero a letra da carta maior ou menor        → [C4], font-size da caixa (hoje 17px).
+     Quero a caixa mais alta ao abrir             → [C4], height e min-height (hoje 220px).
+                                                   O máximo de 560px também está no JS [J5].
+     Quero os botões de começo de frase menores   → [C3], min-height e font-size de .nc-ca-comeco
+     Algo ficou bom no computador e ruim no celular → [C6]: o que está dentro de
+                                                   @media (max-width: 640px) só vale no celular.
+
+   ── COMO LER UM ARQUIVO CSS EM 30 SEGUNDOS ────────────────────────────────────────────────
+     Cada regra tem duas partes:     QUEM { COMO; }
+       @app.nc-ca .nc-ca-comeco {          ← QUEM: o "seletor", diz em que pedaço da tela vale
+         min-height: 48px;                 ← COMO: propriedade: valor;  (altura mínima do botão)
+         border-radius: 999px;             ←       cantos totalmente redondos (formato pílula)
+       }
+     .nome-com-ponto       uma "classe": uma etiqueta posta num pedaço da tela (pelo APEX ou
+                           pelo JS). .nc-ca-comeco é cada botão de começo de frase.
+     @app                  atalho que dá prioridade às nossas regras sobre as do tema do APEX.
+                           No arquivo que sobe para o APEX ele aparece por extenso, como
+                           html body:is(.t-PageBody…):not(#nc-a1):not(#nc-a2) — é a mesma coisa.
+     :not(#nc-ca-x)…       peso extra, para vencer uma regra do tema. Pode ignorar ao ler.
+     !important            no arquivo que sobe, toda linha ganha um: é o mesmo "vencer o tema".
+     @media (max-width: 640px) { … }   as regras de dentro só valem em telas até 640px (celular).
+     var(--nc-roxo)        uma cor da marca, pelo nome (muda junto com o tema escolhido).
+     px                    pixels, o tamanho de um pontinho da tela. 16px é o texto normal.
+     Toda linha COMO termina em ;   e todo { é fechado por um }. Não apague esses sinais.
+*/
+
+/* ═══ [C1] O QUE SOME E A CAIXA TRAVADA ═════════════════════════════════════════════════════
+   • As ajudas que o JS marcou como escondidas (hidden) e o botão "maximizar" da região somem.
+     display: none = não aparece.
+   • Caixa travada (quem só consulta): a caixa original sai da vista (fica do tamanho de um
+     pontinho, mas continua na página para o APEX) e a carta aparece como leitura em [C5].
+   • .nc-ca-ic: o jeito de desenhar todos os ícones (linha, sem preenchimento).
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-ca :is(.nc-ca-ajuda, .nc-ca-depois, .nc-ca-leitura, .nc-ca-conta)[hidden]:not(#nc-ca-x):not(#nc-ca-y),
+@app.nc-ca .nc-ca-reg .js-maximizeButtonContainer:not(#nc-ca-x):not(#nc-ca-y) {
+  display: none;
+}
+
+/* travada (quem só consulta): a caixa sai, a leitura fica */
+@app.nc-ca.nc-ca-travada .nc-ca-reg [id$="_DESC_QUALIFIC_FUNC_CONTAINER"]:not(#nc-ca-x):not(#nc-ca-y) {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+}
+
+@app.nc-ca .nc-ca-ic {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.9;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* ═══ [C2] "CONTE UM POUCO SOBRE VOCÊ" (A INTRO) ═══════════════════════════════════════════
+   Criada pelo JS em [J4]. .nc-ca-intro é o bloco; .nc-ca-intro-ic, o quadrado do ícone;
+   .nc-ca-tit, o título.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-ca .nc-ca-intro {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  margin: 0 0 18px;
+  padding: 20px 22px;
+  border-radius: 20px;
+  background:
+    radial-gradient(110% 130% at 100% 0%, rgba(var(--nc-t-rosa-rgb, 201, 87, 136), .36) 0%, rgba(var(--nc-t-rosa-rgb, 201, 87, 136), 0) 55%),
+    linear-gradient(135deg, var(--nc-azul) 0%, var(--nc-roxo) 72%);
+  color: #fff;
+}
+
+@app.nc-ca .nc-ca-intro-ic {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  border-radius: 16px;
+  background: #fff;
+  color: var(--nc-roxo);
+}
+
+@app.nc-ca .nc-ca-intro-ic .nc-ca-ic {
+  width: 28px;
+  height: 28px;
+}
+
+@app.nc-ca .nc-ca-tit {
+  margin: 2px 0 0;
+  font-family: inherit;
+  font-size: 22px;
+  font-weight: 800;
+  line-height: 1.2;
+  color: #fff;
+}
+
+@app.nc-ca .nc-ca-intro p {
+  margin: 8px 0 0;
+  max-width: 62ch;
+  font-size: 16px;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, .88);
+}
+
+@app.nc-ca .nc-ca-intro b {
+  font-weight: 800;
+  color: #fff;
+}
+
+/* ═══ [C3] COMEÇOS DE FRASE, MICROFONE E EXEMPLO ════════════════════════════════════════════
+   Criados pelo JS em [J4].
+     .nc-ca-comeco          cada botão de começo de frase (em formato pílula, 48px de altura)
+     .nc-ca-comeco.is-usado o começo já usado na carta: fica verde
+     .nc-ca-mic             a dica do microfone       .nc-ca-exemplo   "Ver um exemplo de carta"
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-ca .nc-ca-ajuda {
+  margin: 0 0 16px;
+}
+
+@app.nc-ca .nc-ca-ajuda-tit {
+  margin: 0 0 10px;
+  font-size: 16px;
+  font-weight: 800;
+  line-height: 1.35;
+  color: var(--nc-tinta);
+}
+
+@app.nc-ca .nc-ca-comecos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+@app.nc-ca .nc-ca-comeco {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 48px;
+  padding: 0 16px 0 12px;
+  border: 1.5px solid #CDBFE0;
+  border-radius: 999px;
+  background: #fff;
+  font: inherit;
+  font-size: 15.5px;
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--nc-roxo);
+  cursor: pointer;
+  transition: border-color .15s, background-color .15s;
+}
+
+@app.nc-ca .nc-ca-comeco:hover {
+  border-color: var(--nc-roxo);
+  background: var(--nc-nevoa2);
+}
+
+@app.nc-ca .nc-ca-comeco:focus-visible,
+@app.nc-ca .nc-ca-exemplo summary:focus-visible {
+  outline: 3px solid var(--nc-rosa);
+  outline-offset: 2px;
+}
+
+@app.nc-ca .nc-ca-comeco .nc-ca-ic {
+  width: 18px;
+  height: 18px;
+  stroke-width: 2.4;
+}
+
+/* já usado: fica marcado (e continua tocável) */
+@app.nc-ca .nc-ca-comeco.is-usado {
+  border-color: #B9E0C8;
+  background: #E4F4EA;
+  color: #1E6B45;
+}
+
+@app.nc-ca .nc-ca-depois {
+  margin: 14px 0 4px;
+}
+
+@app.nc-ca .nc-ca-mic {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin: 0;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: var(--nc-nevoa2);
+  font-size: 15px;
+  line-height: 1.45;
+  color: var(--nc-tinta);
+}
+
+@app.nc-ca .nc-ca-mic b {
+  font-weight: 800;
+}
+
+@app.nc-ca .nc-ca-mic .nc-ca-ic {
+  flex: none;
+  width: 24px;
+  height: 24px;
+  color: var(--nc-roxo);
+}
+
+@app.nc-ca .nc-ca-exemplo {
+  margin: 10px 0 0;
+}
+
+@app.nc-ca .nc-ca-exemplo summary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 0 4px;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--nc-roxo);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  cursor: pointer;
+  list-style: none;
+}
+
+@app.nc-ca .nc-ca-exemplo summary::-webkit-details-marker {
+  display: none;
+}
+
+@app.nc-ca .nc-ca-exemplo summary .nc-ca-ic {
+  width: 19px;
+  height: 19px;
+}
+
+@app.nc-ca .nc-ca-exemplo p {
+  margin: 6px 0 0;
+  padding: 14px 16px;
+  border-radius: 14px;
+  background: #FBF9FD;
+  box-shadow: inset 0 0 0 1px var(--nc-nevoa);
+  font-size: 15.5px;
+  font-style: italic;
+  line-height: 1.6;
+  color: var(--nc-grafite);
+}
+
+/* ═══ [C4] A CAIXA E "QUANTO JÁ TEM" ════════════════════════════════════════════════════════
+   A caixa de texto do APEX, maior e com letra de 17px. A altura acompanha o texto: o JS em
+   [J5] calcula e entrega o valor em --nc-ca-h. .nc-ca-conta é a linha embaixo da caixa (a
+   frase de incentivo, "N de 2000 letras" e a barrinha que enche); .nc-ca-n.is-perto é o
+   contador em destaque quando faltam menos de 100 letras.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-ca .nc-ca-reg textarea.apex-item-textarea:not(#nc-ca-x) {
+  height: var(--nc-ca-h, 220px);
+  min-height: 220px;
+  max-height: 560px;
+  resize: vertical;
+  font-size: 17px;
+  line-height: 1.6;
+}
+
+/* quanto já tem: a linha enche até "está ótimo" */
+@app.nc-ca .nc-ca-conta {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px 12px;
+  margin: 10px 0 4px;
+  padding-top: 12px;
+  font-size: 14.5px;
+  line-height: 1.4;
+  color: var(--nc-grafite);
+}
+
+@app.nc-ca .nc-ca-conta::before,
+@app.nc-ca .nc-ca-conta::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 5px;
+  border-radius: 999px;
+}
+
+@app.nc-ca .nc-ca-conta::before {
+  right: 0;
+  background: var(--nc-nevoa2);
+}
+
+@app.nc-ca .nc-ca-conta::after {
+  width: var(--nc-ca-p, 0%);
+  background: linear-gradient(90deg, var(--nc-roxo), var(--nc-rosa));
+  transition: width .4s cubic-bezier(.16, 1, .3, 1);
+}
+
+@app.nc-ca .nc-ca-quase {
+  font-weight: 700;
+  color: #6B4700;
+}
+
+@app.nc-ca .nc-ca-bom {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 700;
+  color: #1E6B45;
+}
+
+@app.nc-ca .nc-ca-bom .nc-ca-ic {
+  width: 18px;
+  height: 18px;
+  stroke-width: 2.6;
+}
+
+@app.nc-ca .nc-ca-n {
+  font-variant-numeric: tabular-nums;
+  color: #6E6882;
+}
+
+@app.nc-ca .nc-ca-n.is-perto {
+  font-weight: 800;
+  color: var(--nc-ruim);
+}
+
+/* ═══ [C5] A CARTA COMO LEITURA (CAIXA TRAVADA) ═════════════════════════════════════════════
+   Mostrada pelo JS em [J5] para quem só consulta. .nc-ca-leitura-vazia é o aviso "Ainda não
+   tem carta de apresentação".
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-ca .nc-ca-leitura p {
+  margin: 0 0 8px;
+  padding: 18px 20px;
+  border-radius: 16px;
+  background: #FBF9FD;
+  box-shadow: inset 0 0 0 1px var(--nc-nevoa);
+  font-size: 16.5px;
+  line-height: 1.65;
+  color: var(--nc-tinta);
+}
+
+@app.nc-ca .nc-ca-leitura .nc-ca-leitura-vazia {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-style: normal;
+  color: var(--nc-grafite);
+}
+
+@app.nc-ca .nc-ca-leitura-vazia .nc-ca-ic {
+  width: 22px;
+  height: 22px;
+  color: #9A8FB3 /*reserva*/;
+  color: oklch(from #9A8FB3 l calc(c * var(--nc-t-croma, 1)) calc(h + var(--nc-t-giro, 0)));
+}
+
+/* ═══ [C6] CELULAR ═══════════════════════════════════════════════════════════════════════════
+   O que está dentro de  @media (max-width: 640px)  só vale em telas até 640px (celular):
+   intro mais compacta e os começos de frase ocupando a linha (duas pílulas por linha).
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@media (max-width: 640px) {
+  @app.nc-ca .nc-ca-intro {
+    gap: 12px;
+    padding: 16px;
+    border-radius: 18px;
+  }
+
+  @app.nc-ca .nc-ca-intro-ic {
+    width: 44px;
+    height: 44px;
+    border-radius: 13px;
+  }
+
+  @app.nc-ca .nc-ca-tit {
+    font-size: 20px;
+  }
+
+  /* os começos em pílulas (duas por linha, quase sempre): a caixa fica logo abaixo */
+  @app.nc-ca .nc-ca-comeco {
+    flex: 1 1 auto;
+    justify-content: center;
+    padding: 0 14px 0 10px;
+    font-size: 15px;
+  }
+}
+
+/* ═══ [C7] MENOS MOVIMENTO ══════════════════════════════════════════════════════════════════
+   Para quem pediu "reduzir movimento" nas configurações do computador ou celular (por
+   acessibilidade): os botões e a barrinha mudam sem transição suave.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@media (prefers-reduced-motion: reduce) {
+  @app.nc-ca :is(.nc-ca-comeco, .nc-ca-conta::after) {
+    transition: none;
+  }
+}

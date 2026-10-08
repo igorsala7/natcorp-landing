@@ -1,0 +1,2242 @@
+/* ╔════════════════════════════════════════════════════════════════════════════════════════╗
+   ║  NATCORP · ALTERAÇÃO FUNCIONAL  —  a "roupa" da tela (CSS)                                ║
+   ║  App 200 (Painel do Operador) · Página 116                                               ║
+   ╚════════════════════════════════════════════════════════════════════════════════════════╝
+
+   Primeira vez num arquivo destes? Leia antes o manual: brand/apex/MANUAL-APEX.md (parte 1).
+   Guia desta página: MOVIMENTACAO-MANUTENCAO.md.
+
+   ── O QUE ESTE ARQUIVO FAZ ────────────────────────────────────────────────────────────────
+   Dá a aparência da página 116: cores, tamanhos, espaços, bordas, e como a tela se arruma no
+   computador e no celular. Ele NÃO muda a ordem nem a coluna de nada no Page Designer: quem
+   reorganiza é o arquivo-irmão Natcorp_Movimentacao.js. Os dois trabalham juntos:
+     o JS monta "o quadro Antes | Depois"  →  este arquivo diz como o quadro se parece.
+   Cada regra vale para uma classe posta no APEX ou pelo JS, e tudo depende da marca nc-mov,
+   que só o JS põe na página: sem o JS, este arquivo não faz nada.
+   Uso: 60% no computador e 40% no celular — as duas larguras importam.
+   As cores da marca, var(--nc-…), vêm da folha geral (Natcorp_Style_Min.css), que toda
+   página carrega.
+
+   ── ONDE ELE ENTRA NO APEX ────────────────────────────────────────────────────────────────
+     Página 116 › CSS › File URLs:   #WORKSPACE_IMAGES#Natcorp_Movimentacao.css
+     CUIDADO: edite ESTE arquivo (Natcorp_Movimentacao.src.css, a fonte) e gere o arquivo que sobe com
+     node brand/apex/app/gerar-app.mjs  — o gerador troca @app pelo prefixo longo e põe
+     !important em toda linha. O Natcorp_Movimentacao.css da pasta login/ é refeito a cada geração:
+     o que for mudado só nele se perde. (Manual, parte 2.)
+
+   ── ÍNDICE: as partes deste arquivo (Ctrl+F pelo código entre colchetes) ──────────────────
+   Algumas partes aparecem em dois trechos do arquivo: o Ctrl+F acha os dois.
+     [C1]  Passo 2: "O que você quer fazer?" e as listas  ← montado pelo JS em [J2]
+     [C2]  Passo 3: os blocos e a fila; "Alterações"       ← montado pelo JS em [J3] e [J10]
+     [C3]  Reais e salário                                 ← montado pelo JS em [J4]
+     [C4]  Passo 4: o quadro Antes | Depois                ← montado pelo JS em [J5]
+     [C5]  A região de botões (Voltar…), o último cartão   (classe nc-mov-acoes do APEX)
+     [C6]  Os títulos dos passos                           ← montado pelo JS em [J6]
+     [C7]  O Parecer: começos de frase                     ← montado pelo JS em [J7]
+     [C8]  A barra do pé e os erros do servidor            ← montada pelo JS em [J9]
+     [C9]  O pedido gravado e a aprovação                  ← montado pelo JS em [J8]
+     [C10] Benefícios: o arranjo das colunas               ← montado pelo JS em [J10]
+     [C11] Leitura no celular e ao sol                     (cinzas mais fortes, medidos)
+
+   ── RECEITAS RÁPIDAS ──────────────────────────────────────────────────────────────────────
+     Quero mudar uma cor
+       → use uma das cores da marca, pelo nome: var(--nc-roxo), var(--nc-grafite)… A lista
+         completa, com amostras, está no manual (parte 3). Assim a cor acompanha o tema que
+         o usuário escolheu em "Cores". Evite escrever cores soltas, como #511C76.
+     Quero aumentar ou diminuir um texto        → procure font-size na parte certa.
+     Quero mais ou menos espaço                  → padding (espaço por DENTRO da caixa) e
+                                                   margin (espaço por FORA, até a vizinha).
+     Os cartões do passo 2 estão largos/estreitos → [C1], .nc-mov-intencoes-lista,
+                                                   minmax(250px, …) é a largura mínima de cada um.
+     Algo ficou bom no computador e ruim no celular → procure @media (max-width: 639px): o que
+                                                   está dentro só vale no celular.
+
+   ── COMO LER UM ARQUIVO CSS EM 30 SEGUNDOS ────────────────────────────────────────────────
+     Cada regra tem duas partes:     QUEM { COMO; }
+       @app.nc-mov .nc-mov-intencao {      ← QUEM: o "seletor", diz em que pedaço da tela vale
+         min-height: 76px;                 ← COMO: propriedade: valor;  (altura mínima do cartão)
+         border: 1.5px solid var(--nc-nevoa);  ← borda fina, na cor névoa da marca
+       }
+     .nome-com-ponto       uma "classe": uma etiqueta posta num pedaço da tela (pelo APEX ou
+                           pelo JS). .nc-mov-intencao é cada cartão do passo 2.
+     @app                  atalho que dá prioridade às nossas regras sobre as do tema do APEX.
+                           No arquivo que sobe para o APEX ele aparece por extenso, como
+                           html body:is(.t-PageBody…):not(#nc-a1):not(#nc-a2) — é a mesma coisa.
+     :not(#nc-mov-x)…      peso extra, para vencer uma regra do tema. Pode ignorar ao ler.
+     !important            no arquivo que sobe, toda linha ganha um: é o mesmo "vencer o tema".
+     @media (max-width: 639px) { … }   as regras de dentro só valem em telas até 639px (celular).
+     var(--nc-roxo)        uma cor da marca, pelo nome (muda junto com o tema escolhido).
+     px                    pixels, o tamanho de um pontinho da tela. 16px é o texto normal.
+     Toda linha COMO termina em ;   e todo { é fechado por um }. Não apague esses sinais.
+     Linhas em DUPLA (a primeira termina com a palavra reserva entre barra-asterisco): a
+     primeira é a cor para navegador antigo; a segunda, com oklch(…), é a mesma cor
+     acompanhando o tema. Se mudar uma, mude as duas. Não apague a marca reserva.
+*/
+
+/* ═══ [C1] PASSO 2: "O QUE VOCÊ QUER FAZER?" ════════════════════════════════════════════════
+   Montado pelo JS em [J2]. Peças principais:
+     .nc-mov-intencoes-lista  a grade de cartões      .nc-mov-intencao  cada cartão de intenção
+   A lista que cada cartão abre está mais adiante: procure de novo [C1].
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+/* ---------- "O que você quer fazer?" ---------- */
+@app.nc-mov .nc-mov-intencoes-lista {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 10px;
+}
+
+@app.nc-mov .nc-mov-intencao {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  min-height: 76px;
+  margin: 0;
+  padding: 14px 14px 14px 16px;
+  border: 1.5px solid var(--nc-nevoa);
+  border-radius: 14px;
+  background: #fff;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color .2s, background-color .2s, box-shadow .25s;
+}
+
+@app.nc-mov .nc-mov-intencao:hover {
+  border-color: var(--nc-realce);
+}
+
+@app.nc-mov .nc-mov-intencao[aria-pressed="true"] {
+  border-color: var(--nc-roxo);
+  background: var(--nc-nevoa2);
+  box-shadow: var(--nc-anel);
+}
+
+/* 04/10: caixa travada pela página (Salário/Cargo sem permissão, Vaga de um pedido gravado):
+   o cartão mostra o estado, mas não aceita toque */
+@app.nc-mov .nc-mov-intencao:disabled,
+@app.nc-mov .nc-mov-sub-item:disabled,
+@app.nc-mov .nc-mov-barra-bt:disabled {
+  cursor: not-allowed;
+  opacity: .55;
+}
+
+@app.nc-mov .nc-mov-intencao:focus-visible {
+  outline: 2px solid var(--nc-roxo);
+  outline-offset: 2px;
+}
+
+@app.nc-mov .nc-mov-icone {
+  flex: none;
+  width: 40px;
+  height: 40px;
+  padding: 9px;
+  border-radius: 12px;
+  background: var(--nc-nevoa2);
+  fill: none;
+  stroke: var(--nc-roxo);
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+@app.nc-mov .nc-mov-intencao[aria-pressed="true"] .nc-mov-icone {
+  background: var(--nc-roxo);
+  stroke: #fff;
+}
+
+@app.nc-mov .nc-mov-intencao-texto {
+  display: grid;
+  flex: 1;
+  gap: 3px;
+  min-width: 0;
+}
+
+@app.nc-mov .nc-mov-intencao-nome {
+  font: 800 15.5px/1.25 "Inter NC", Inter, ui-sans-serif, system-ui, "Segoe UI", Arial, sans-serif;
+  color: var(--nc-tinta);
+}
+
+@app.nc-mov .nc-mov-intencao-desc {
+  font-size: 13.5px;
+  line-height: 1.4;
+  color: var(--nc-grafite);
+}
+
+/* marcar/desmarcar: um quadrado que se preenche — visível sem depender da cor */
+@app.nc-mov .nc-mov-marca {
+  flex: none;
+  width: 24px;
+  height: 24px;
+  margin-top: 1px;
+}
+
+@app.nc-mov .nc-mov-marca rect {
+  fill: #fff;
+  stroke: #C9C2D6;
+  stroke-width: 1.5;
+}
+
+@app.nc-mov .nc-mov-marca path {
+  fill: none;
+  stroke: transparent;
+  stroke-width: 2.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+@app.nc-mov [aria-pressed="true"] > .nc-mov-marca rect {
+  fill: var(--nc-roxo);
+  stroke: var(--nc-roxo);
+}
+
+@app.nc-mov [aria-pressed="true"] > .nc-mov-marca path {
+  stroke: #fff;
+}
+
+/* as caixas de verdade (P116_BLK_*) ficam fora da vista: os itens das categorias as marcam */
+@app.nc-mov .t-Region.nc-mov-intencoes > .t-Region-bodyWrap > .t-Region-body > .container {
+  display: none;
+}
+
+@app.nc-mov .nc-mov-dica {
+  margin: 0;
+  font-size: 13.5px;
+  line-height: 1.45;
+  color: var(--nc-grafite);
+}
+
+/* ═══ [C2] PASSO 3: OS BLOCOS E A FILA; "ALTERAÇÕES" ═════════════════════════════════════════
+   Montado pelo JS em [J3] (os blocos) e [J10] (sem as abas). Peças principais:
+     .nc-mov-bloco   cada bloco de alteração (cartão)   .nc-mov-hoje  a coluna "Hoje" (só leitura)
+     .nc-mov-depois  o formulário "Como fica"
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+/* ---------- "Alterações": sem as abas repetidas ---------- */
+@app.nc-mov .t-Region.nc-mov-alteracoes .apex-rds-container {
+  display: none;
+}
+
+/* ---------- cada bloco: um cartão, Hoje (estreito) → Como fica ---------- */
+/* :not(#nc-mov-x):not(#nc-mov-y): a regra geral de bordas das regiões tem dois ids */
+@app.nc-mov .t-Region.nc-mov-bloco:not(#nc-mov-x):not(#nc-mov-y) {
+  margin: 0 0 16px;
+  border: 1px solid var(--nc-nevoa);
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: 0 10px 24px -20px rgba(var(--nc-t-azul-rgb, 44, 26, 99), .45);
+}
+
+@app.nc-mov .t-Region.nc-mov-bloco.nc-mov-mudou:not(#nc-mov-x):not(#nc-mov-y) {
+  border-color: var(--nc-realce);
+}
+
+@app.nc-mov .t-Region.nc-mov-bloco > .t-Region-bodyWrap > .t-Region-body {
+  padding: 0;
+}
+
+/* ---------- a fila: cada bloco é uma linha; só um aberto ---------- */
+@app.nc-mov .nc-mov-cab {
+  display: flex;
+  align-items: center;
+  gap: 12px 14px;
+  width: 100%;
+  min-height: 64px;
+  margin: 0;
+  padding: 12px 18px;
+  border: 0;
+  border-bottom: 1px solid var(--nc-nevoa);
+  border-radius: 16px 16px 0 0;
+  background: transparent;
+  font: inherit;
+  text-align: left;
+  color: inherit;
+  cursor: pointer;
+}
+
+@app.nc-mov .nc-mov-bloco.nc-mov-fechado .nc-mov-cab {
+  border-bottom: 0;
+  border-radius: 16px;
+}
+
+@app.nc-mov .nc-mov-cab:hover {
+  background: var(--nc-quase);
+}
+
+@app.nc-mov .nc-mov-cab:focus-visible,
+@app.nc-mov .nc-mov-prox:focus-visible {
+  outline: 2px solid var(--nc-roxo);
+  outline-offset: 2px;
+}
+
+@app.nc-mov .nc-mov-cab-marca {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: inset 0 0 0 2px #D9D3E3;
+}
+
+@app.nc-mov .nc-mov-cab-marca svg {
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: #fff;
+  stroke-width: 2.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+@app.nc-mov .nc-mov-cab-marca--ok { background: var(--nc-bom); box-shadow: none; }
+@app.nc-mov .nc-mov-cab-marca--falta { background: #E0A100; box-shadow: none; }
+@app.nc-mov .nc-mov-cab-marca--vazio svg { stroke: #B7AEC6; }
+
+@app.nc-mov .nc-mov-cab-txt {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+@app.nc-mov .nc-mov-cab-titulo {
+  font: 800 16px/1.25 "Inter NC", Inter, ui-sans-serif, system-ui, "Segoe UI", Arial, sans-serif;
+  color: var(--nc-tinta);
+}
+
+@app.nc-mov .nc-mov-cab-mudanca {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 6px;
+  margin: 0;
+  font-size: 13.5px;
+  line-height: 1.35;
+  color: var(--nc-grafite);
+}
+
+@app.nc-mov .nc-mov-selo {
+  flex: none;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12.5px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+@app.nc-mov .nc-mov-selo--ok { background: #E4F5EA; color: var(--nc-bom); }
+@app.nc-mov .nc-mov-selo--falta { background: #FFF4D6; color: #8A5A00; }
+@app.nc-mov .nc-mov-selo--vazio { background: var(--nc-quase); color: var(--nc-grafite); }
+
+@app.nc-mov .nc-mov-cab-seta {
+  flex: none;
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: var(--nc-grafite);
+  stroke-width: 2.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: transform .2s;
+}
+
+@app.nc-mov .nc-mov-cab[aria-expanded="true"] .nc-mov-cab-seta {
+  transform: rotate(180deg);
+}
+
+/* fechado: só a linha; o formulário continua no DOM (as ações dinâmicas não percebem nada) */
+@app.nc-mov .t-Region.nc-mov-bloco.nc-mov-fechado > .t-Region-bodyWrap > .t-Region-body > :not(.nc-mov-cab) {
+  display: none;
+}
+
+@app.nc-mov .t-Region.nc-mov-bloco.nc-mov-fechado:not(#nc-mov-x):not(#nc-mov-y) {
+  margin-bottom: 10px;
+  box-shadow: none;
+}
+
+/* aberto: a coluna Hoje sai da vista — cada campo traz o seu "Hoje" */
+@app.nc-mov .nc-mov-bloco.nc-mov-comparado > .t-Region-bodyWrap > .t-Region-body > .container > .row > .col:has(> .nc-mov-hoje) {
+  display: none;
+}
+
+@app.nc-mov .nc-mov-bloco.nc-mov-comparado > .t-Region-bodyWrap > .t-Region-body > .container > .row > .col:has(> .nc-mov-depois) {
+  flex: 1 1 100%;
+  max-width: 100%;
+}
+
+/* o par Hoje → Novo de cada campo: a caixa cinza (hoje, só leitura) à esquerda, a seta e o campo
+   novo à direita, com a marca roxa; o resto do contêiner (erro, ajuda) na largura toda */
+@app.nc-mov .nc-mov-comparado .t-Form-inputContainer.nc-mov-par {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 32px minmax(0, 1.25fr);
+  align-items: center;
+}
+
+@app.nc-mov .nc-mov-comparado .t-Form-inputContainer.nc-mov-par > * {
+  grid-column: 1 / -1;
+}
+
+@app.nc-mov .nc-mov-comparado .t-Form-inputContainer.nc-mov-par > .nc-mov-campo-hoje {
+  grid-column: 1;
+  grid-row: 1;
+}
+
+@app.nc-mov .nc-mov-comparado .t-Form-inputContainer.nc-mov-par > .t-Form-itemWrapper {
+  grid-column: 3;
+  grid-row: 1;
+  min-width: 0;
+}
+
+@app.nc-mov .nc-mov-comparado .t-Form-inputContainer.nc-mov-par::before {
+  content: "→";
+  grid-column: 2;
+  grid-row: 1;
+  justify-self: center;
+  font: 800 18px/1 "Inter NC", Inter, ui-sans-serif, system-ui, "Segoe UI", Arial, sans-serif;
+  color: var(--nc-rosa);
+}
+
+@app.nc-mov .nc-mov-campo-hoje {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  min-height: 40px;
+  margin: 0;
+  padding: 6px 12px;
+  border: 1px solid #E3DDEC;
+  border-radius: 10px;
+  background: #F4F1F8;
+  font-size: 14px;
+  line-height: 1.35;
+  color: var(--nc-tinta);
+}
+
+@app.nc-mov .nc-mov-campo-hoje b {
+  min-width: 0;
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+
+@app.nc-mov .nc-mov-campo-hoje i {
+  font-style: normal;
+  color: #8A8497;
+}
+
+@app.nc-mov .nc-mov-tag {
+  flex: none;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: #E3DDEC;
+  font-size: 11.5px;
+  font-weight: 800;
+  color: var(--nc-grafite);
+}
+
+/* o campo novo: a marca roxa à esquerda */
+@app.nc-mov .nc-mov-comparado .nc-mov-par > .t-Form-itemWrapper :is(input:not([type="hidden"]):not([type="checkbox"]):not([type="radio"]), select, textarea) {
+  border-color: rgba(var(--nc-t-roxo-rgb, 81, 28, 118), .4);
+  box-shadow: inset 3px 0 0 var(--nc-roxo);
+}
+
+/* a legenda no alto do bloco aberto */
+@app.nc-mov .nc-mov-legenda {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 14px;
+}
+
+@app.nc-mov .nc-mov-legenda svg {
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: var(--nc-rosa);
+  stroke-width: 2.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+@app.nc-mov .nc-mov-leg {
+  padding: 4px 10px;
+  border-radius: 8px;
+  font-size: 12.5px;
+  font-weight: 800;
+}
+
+@app.nc-mov .nc-mov-leg--hoje {
+  border: 1px solid #E3DDEC;
+  background: #F4F1F8;
+  color: var(--nc-grafite);
+}
+
+@app.nc-mov .nc-mov-leg--novo {
+  border: 1px solid rgba(var(--nc-t-roxo-rgb, 81, 28, 118), .4);
+  background: #fff;
+  box-shadow: inset 3px 0 0 var(--nc-roxo);
+  color: var(--nc-roxo);
+}
+
+@media (max-width: 639px) {
+  @app.nc-mov .nc-mov-comparado .t-Form-inputContainer.nc-mov-par {
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: 6px;
+  }
+
+  @app.nc-mov .nc-mov-comparado .t-Form-inputContainer.nc-mov-par > .t-Form-itemWrapper {
+    grid-column: 1;
+    grid-row: 2;
+  }
+
+  @app.nc-mov .nc-mov-comparado .t-Form-inputContainer.nc-mov-par::before {
+    display: none;
+  }
+}
+
+@app.nc-mov .nc-mov-tambem {
+  margin: 0 0 14px;
+  padding: 8px 12px;
+  border-radius: 10px;
+  background: var(--nc-quase);
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--nc-grafite);
+}
+
+@app.nc-mov .nc-mov-tambem b {
+  color: var(--nc-tinta);
+}
+
+@app.nc-mov .nc-mov-bloco-pe {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px 16px;
+  padding: 12px 18px 16px;
+  border-top: 1px solid var(--nc-nevoa2);
+}
+
+@app.nc-mov .nc-mov-bloco-pe:empty {
+  display: none;
+}
+
+@app.nc-mov .nc-mov-bloco-pe .nc-mov-dica {
+  color: #8A5A00;
+  font-weight: 700;
+}
+
+@app.nc-mov .nc-mov-prox {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  margin-left: auto;
+  padding: 0 18px;
+  border: 1.5px solid var(--nc-roxo);
+  border-radius: 12px;
+  background: #fff;
+  font: inherit;
+  font-size: 14.5px;
+  font-weight: 800;
+  color: var(--nc-roxo);
+  cursor: pointer;
+}
+
+@app.nc-mov .nc-mov-prox:hover {
+  background: var(--nc-nevoa2);
+}
+
+@app.nc-mov .nc-mov-prox svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* o placar da fila, no passo 3 */
+@app.nc-mov .nc-mov-placar {
+  flex-basis: 100%;
+  margin: 8px 0 0 42px;
+  font-size: 13.5px;
+  color: var(--nc-grafite);
+}
+
+@app.nc-mov .nc-mov-placar[hidden] {
+  display: none;
+}
+
+@app.nc-mov .nc-mov-placar b {
+  color: var(--nc-tinta);
+}
+
+/* o formulário aberto não estica além do que se lê de uma vez */
+@app.nc-mov .nc-mov-bloco.nc-mov-comparado .t-Region.nc-mov-depois > .t-Region-bodyWrap > .t-Region-body {
+  max-width: 980px;
+}
+
+@media (max-width: 639px) {
+  @app.nc-mov .nc-mov-cab {
+    flex-wrap: wrap;
+    padding: 12px 14px;
+  }
+
+  @app.nc-mov .nc-mov-cab-txt {
+    flex-basis: calc(100% - 90px);
+  }
+
+  @app.nc-mov .nc-mov-selo {
+    margin-left: 42px;
+  }
+
+  @app.nc-mov .nc-mov-cab-seta {
+    margin-left: auto;
+  }
+
+  @app.nc-mov .nc-mov-placar {
+    margin-left: 0;
+  }
+
+  @app.nc-mov .nc-mov-prox {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  @app.nc-mov .nc-mov-cab-seta {
+    transition: none;
+  }
+}
+
+@app.nc-mov :is(.nc-mov-cab-mudanca, .nc-mov-resumo-mudanca, .nc-mov-salario-conta) svg {
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: var(--nc-rosa);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  vertical-align: -3px;
+}
+
+@app.nc-mov .nc-mov-cab-mudanca b {
+  color: var(--nc-roxo);
+}
+
+/* só as duas colunas do bloco (Hoje | Como fica): as linhas de DENTRO de cada uma ficam como
+   o APEX as põe (Salário e % de aumento lado a lado) */
+@app.nc-mov .nc-mov-bloco > .t-Region-bodyWrap > .t-Region-body > .container > .row {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 0;
+}
+
+@app.nc-mov .nc-mov-bloco > .t-Region-bodyWrap > .t-Region-body > .container > .row > .col {
+  flex: 1 1 100%;
+  max-width: 100%;
+  padding: 0;
+}
+
+@media (min-width: 900px) {
+  @app.nc-mov .nc-mov-bloco > .t-Region-bodyWrap > .t-Region-body > .container > .row > .col:has(> .nc-mov-hoje) {
+    flex: 0 0 34%;
+    max-width: 34%;
+  }
+
+  @app.nc-mov .nc-mov-bloco > .t-Region-bodyWrap > .t-Region-body > .container > .row > .col:has(> .nc-mov-depois) {
+    flex: 1 1 0;
+    max-width: none;
+  }
+}
+
+/* Hoje e Como fica: dentro do cartão, sem moldura própria; o título do APEX dá lugar ao rótulo */
+@app.nc-mov .t-Region:is(.nc-mov-hoje, .nc-mov-depois):not(#nc-mov-x):not(#nc-mov-y) {
+  margin: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+@app.nc-mov .t-Region:is(.nc-mov-hoje, .nc-mov-depois) > .t-Region-header .t-Region-headerItems--title {
+  display: none;
+}
+
+@app.nc-mov .t-Region:is(.nc-mov-hoje, .nc-mov-depois) > .t-Region-header:not(:has(.t-Button)) {
+  display: none;
+}
+
+@app.nc-mov .t-Region.nc-mov-hoje:not(#nc-mov-x):not(#nc-mov-y) {
+  height: 100%;
+  border-radius: 0 0 0 16px;
+  background: var(--nc-quase);
+}
+
+@app.nc-mov .t-Region.nc-mov-hoje > .t-Region-bodyWrap > .t-Region-body,
+@app.nc-mov .t-Region.nc-mov-depois > .t-Region-bodyWrap > .t-Region-body {
+  padding: 14px 18px 16px;
+}
+
+@app.nc-mov .nc-mov-rotulo {
+  margin: 0 0 6px;
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--nc-roxo);
+}
+
+@app.nc-mov .t-Region.nc-mov-hoje .nc-mov-rotulo {
+  color: var(--nc-grafite);
+}
+
+/* em Hoje os campos são leitura: viram texto (rótulo pequeno, valor embaixo) */
+/* rótulo em cima, valor embaixo — o modelo "rel-col" usa colunas que não seguram a altura */
+/* 04/10: :not([style*="none"]) — o gerador põe !important e o flex venceria o esconder das ações
+   dinâmicas (ex.: Grade/Faixa salarial quando a empresa não usa estrutura salarial) */
+@app.nc-mov .t-Region.nc-mov-hoje .t-Form-fieldContainer:not([style*="none"]) {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  margin: 0;
+  padding: 5px 0;
+  opacity: 1;
+}
+
+@app.nc-mov .t-Region.nc-mov-hoje .t-Form-fieldContainer > :is(.t-Form-labelContainer, .t-Form-inputContainer) {
+  float: none;
+  width: 100%;
+  max-width: none;
+  flex: none;
+  padding: 0;
+  text-align: left;
+}
+
+@app.nc-mov .t-Region.nc-mov-hoje .t-Form-label {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--nc-grafite);
+}
+
+@app.nc-mov .t-Region.nc-mov-hoje :is(input, select, textarea):is(:disabled, [readonly], .apex_disabled) {
+  height: auto;
+  min-height: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  font-size: 14.5px;
+  font-weight: 700;
+  color: var(--nc-tinta);
+  opacity: 1;
+  -webkit-text-fill-color: var(--nc-tinta);
+  appearance: none;
+}
+
+@app.nc-mov .t-Region.nc-mov-hoje .t-Form-itemWrapper :is(.a-Button, .t-Button, button) {
+  display: none;
+}
+
+/* os espaços vazios que o APEX deixa entre campos (colunas em branco) somem em Hoje */
+@app.nc-mov .t-Region.nc-mov-hoje .row > .col:not(:has(.t-Form-fieldContainer)):not(.t-Form-labelContainer, .t-Form-inputContainer) {
+  display: none;
+}
+
+/* ═══ [C3] REAIS E SALÁRIO ══════════════════════════════════════════════════════════════════
+   Montado pelo JS em [J4]. O par salário | % aumento está mais adiante: procure de novo [C3].
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+/* ---------- reais ---------- */
+@app.nc-mov .nc-mov-moeda input:not([type="hidden"]) {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  border: 0;
+}
+
+@app.nc-mov .nc-mov-moeda-valor {
+  font-size: 14.5px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--nc-tinta);
+}
+
+@app.nc-mov .nc-mov-salario-conta {
+  margin: 0 0 12px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: #F3EEF9;
+}
+
+@app.nc-mov .nc-mov-salario-conta[hidden] {
+  display: none;
+}
+
+@app.nc-mov .nc-mov-salario-conta ul {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 15px;
+  font-variant-numeric: tabular-nums;
+  color: var(--nc-tinta);
+}
+
+@app.nc-mov .nc-mov-salario-conta li > span {
+  display: inline-block;
+  min-width: 11ch;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--nc-grafite);
+}
+
+@app.nc-mov .nc-mov-pct {
+  margin-left: 4px;
+  padding: 2px 7px;
+  border-radius: 999px;
+  background: #E3F2EA;
+  font-size: 12.5px;
+  font-style: normal;
+  font-weight: 800;
+  color: var(--nc-bom);
+}
+
+@app.nc-mov .nc-mov-pct--menos {
+  background: #FDE8E8;
+  color: #A32020;
+}
+
+@app.nc-mov .nc-mov-parc-nota {
+  margin-top: 8px;
+}
+
+@app.nc-mov .nc-mov-parc-nota[hidden] {
+  display: none;
+}
+
+/* ═══ [C4] PASSO 4: O QUADRO ANTES | DEPOIS ═════════════════════════════════════════════════
+   Montado pelo JS em [J5]. O antes apagado, o depois em destaque numa coluna tingida.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+/* ---------- o quadro Antes | Depois (o resumo) ----------
+   uma olhada e decide: o antes apagado, o depois em destaque numa coluna tingida; agrupado por
+   bloco, com o motivo e o "a partir de". No celular, as mesmas duas colunas, o campo em cima */
+@app.nc-mov .nc-mov-ad {
+  display: grid;
+  grid-template-columns: minmax(150px, .8fr) minmax(0, 1.1fr) minmax(0, 1.3fr);
+  overflow: hidden;
+  border: 1px solid var(--nc-nevoa);
+  border-radius: 14px;
+  background: #fff;
+}
+
+@app.nc-mov :is(.nc-mov-ad-cab, .nc-mov-ad-grupo, .nc-mov-ad-linha) {
+  display: grid;
+  grid-column: 1 / -1;
+  grid-template-columns: subgrid;
+}
+
+@app.nc-mov .nc-mov-ad-cab > span {
+  padding: 10px 16px;
+  background: var(--nc-quase);
+  font-size: 12.5px;
+  font-weight: 800;
+  color: var(--nc-grafite);
+}
+
+@app.nc-mov .nc-mov-ad-cab > span:last-child {
+  background: var(--nc-nevoa2);
+  color: var(--nc-roxo);
+}
+
+/* o título de cada grupo (Cargo / Função, Salário, Benefícios): uma faixa própria, com a marca
+   roxa à esquerda — separa o título das linhas de detalhe logo abaixo */
+@app.nc-mov .nc-mov-ad-gtit {
+  grid-column: 1 / -1;
+  padding: 10px 16px 10px 13px;
+  border-top: 1px solid var(--nc-nevoa);
+  border-bottom: 1px solid var(--nc-nevoa2);
+  border-left: 3px solid var(--nc-roxo);
+  background: #F7F4FB;
+}
+
+@app.nc-mov .nc-mov-ad-grupo:first-of-type .nc-mov-ad-gtit,
+@app.nc-mov .nc-mov-ad-cab + .nc-mov-ad-grupo .nc-mov-ad-gtit {
+  border-top: 0;
+}
+
+@app.nc-mov .nc-mov-ad-gtit b {
+  font-size: 16px;
+  letter-spacing: -.005em;
+}
+
+@app.nc-mov .nc-mov-ad-linha:first-of-type > span,
+@app.nc-mov .nc-mov-ad-gtit + .nc-mov-ad-linha > span {
+  padding-top: 12px;
+}
+
+/* a data e o motivo informados, embaixo do valor novo */
+@app.nc-mov .nc-mov-ad-info {
+  display: flex;
+  flex-basis: 100%;
+  flex-wrap: wrap;
+  gap: 2px 14px;
+  margin-top: 2px;
+  font-size: 12.5px;
+  font-weight: 500;
+  line-height: 1.4;
+  color: var(--nc-grafite);
+}
+
+@app.nc-mov .nc-mov-ad-depois .nc-mov-ad-info b {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--nc-tinta);
+}
+
+@app.nc-mov .nc-mov-ad-gtit > span {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 2px 14px;
+  font-size: 15px;
+  color: var(--nc-tinta);
+}
+
+@app.nc-mov .nc-mov-ad-gtit b {
+  font-weight: 800;
+}
+
+@app.nc-mov .nc-mov-ad-meta {
+  font-size: 13px;
+  color: var(--nc-grafite);
+}
+
+@app.nc-mov .nc-mov-ad-meta b {
+  font-weight: 700;
+  color: var(--nc-tinta);
+}
+
+@app.nc-mov .nc-mov-ad-falta {
+  font-size: 13px;
+  font-weight: 700;
+  color: #8A5A00;
+}
+
+@app.nc-mov .nc-mov-ad-linha > span {
+  padding: 8px 16px;
+  font-size: 14.5px;
+  line-height: 1.4;
+}
+
+@app.nc-mov .nc-mov-ad-linha:last-child > span {
+  padding-bottom: 14px;
+}
+
+@app.nc-mov .nc-mov-ad-rot {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--nc-grafite);
+}
+
+@app.nc-mov .nc-mov-ad-antes {
+  color: #8A8497;
+}
+
+@app.nc-mov .nc-mov-ad-depois {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 8px;
+  background: var(--nc-quase);
+  color: var(--nc-tinta);
+}
+
+@app.nc-mov .nc-mov-ad-depois > svg {
+  flex: none;
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: var(--nc-rosa);
+  stroke-width: 2.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+@app.nc-mov .nc-mov-ad-depois b {
+  font-weight: 800;
+  color: var(--nc-roxo);
+}
+
+@app.nc-mov .nc-mov-ad-mob {
+  display: none;
+}
+
+/* a decisão de quem aprova, logo abaixo do quadro */
+@app.nc-mov .nc-mov-decisao[hidden] {
+  display: none;
+}
+
+@app.nc-mov #nc-mov-decisao.nc-mov-decisao {
+  margin-top: 14px;
+  padding: 14px 16px;
+  border: 1.5px solid #F0D9A0;
+  border-radius: 14px;
+  background: #FFFBEF;
+}
+
+@app.nc-mov #nc-mov-decisao .t-Button {
+  min-height: 46px;
+  padding: 0 22px;
+  border-radius: 12px;
+  font-size: 15px;
+}
+
+@media (max-width: 639px) {
+  @app.nc-mov .nc-mov-ad {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+
+  @app.nc-mov .nc-mov-ad-cab > .nc-mov-ad-rot {
+    display: none;
+  }
+
+  @app.nc-mov .nc-mov-ad-cab > span {
+    padding: 8px 12px;
+  }
+
+  @app.nc-mov .nc-mov-ad-gtit {
+    padding: 12px 12px 4px;
+  }
+
+  @app.nc-mov .nc-mov-ad-linha > .nc-mov-ad-rot {
+    grid-column: 1 / -1;
+    padding: 8px 12px 2px;
+  }
+
+  @app.nc-mov .nc-mov-ad-linha > :is(.nc-mov-ad-antes, .nc-mov-ad-depois) {
+    padding: 6px 12px 8px;
+    font-size: 14px;
+  }
+
+  @app.nc-mov .nc-mov-ad-depois > svg {
+    display: none;
+  }
+
+  @app.nc-mov #nc-mov-decisao .nc-mov-decisao-botoes {
+    width: 100%;
+  }
+
+  @app.nc-mov #nc-mov-decisao .t-Button {
+    flex: 1;
+  }
+}
+
+@app.nc-mov :is(.nc-mov-sutil, .nc-mov-vazio) {
+  color: var(--nc-grafite);
+}
+
+@app.nc-mov .nc-mov-vazio {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.45;
+}
+
+/* ═══ [C5] A REGIÃO DE BOTÕES (VOLTAR…): O ÚLTIMO CARTÃO ════════════════════════════════════
+   A região com a classe nc-mov-acoes do APEX vira um cartão no fim da página. O botão
+   principal (Enviar/Salvar) é levado para a barra do pé ([C8]).
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+/* ---------- botões: o último cartão, com o que falta ---------- */
+@app.nc-mov .t-ButtonRegion.nc-mov-acoes {
+  margin: 20px 0 0;
+  padding: 16px;
+  border: 1px solid var(--nc-nevoa);
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: 0 10px 24px -18px rgba(var(--nc-t-azul-rgb, 44, 26, 99), .4);
+}
+
+@app.nc-mov .t-ButtonRegion.nc-mov-acoes .t-ButtonRegion-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 16px;
+}
+
+@app.nc-mov .t-ButtonRegion.nc-mov-acoes .t-ButtonRegion-col--content {
+  flex: 1 1 280px;
+  order: 1;
+}
+
+@app.nc-mov .t-ButtonRegion.nc-mov-acoes :is(.t-ButtonRegion-col--left, .t-ButtonRegion-col--right) {
+  flex: none;
+  width: auto;
+}
+
+@app.nc-mov .t-ButtonRegion.nc-mov-acoes .t-ButtonRegion-col--left { order: 2; }
+@app.nc-mov .t-ButtonRegion.nc-mov-acoes .t-ButtonRegion-col--right { order: 3; }
+
+@app.nc-mov .t-ButtonRegion.nc-mov-acoes .t-ButtonRegion-col--content .t-ButtonRegion-buttons:empty {
+  display: none;
+}
+
+@app.nc-mov .t-ButtonRegion.nc-mov-acoes .t-Button {
+  height: 48px;
+  padding: 0 22px;
+  border-radius: 12px;
+  font-size: 15.5px;
+}
+
+@media (max-width: 639px) {
+  @app.nc-mov .nc-mov-intencoes-lista {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  @app.nc-mov .nc-mov-intencao {
+    min-height: 0;
+  }
+
+  @app.nc-mov .t-Region.nc-mov-hoje > .t-Region-bodyWrap > .t-Region-body,
+  @app.nc-mov .t-Region.nc-mov-depois > .t-Region-bodyWrap > .t-Region-body {
+    padding: 12px 14px 14px;
+  }
+
+  @app.nc-mov .t-ButtonRegion.nc-mov-acoes .t-ButtonRegion-col--right {
+    flex: 1;
+  }
+
+  @app.nc-mov .t-ButtonRegion.nc-mov-acoes .t-Button--hot {
+    width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  @app.nc-mov .nc-mov-intencao {
+    transition: none;
+  }
+}
+
+@app.nc-mov .nc-mov-sem-mudanca {
+  margin: 12px 0 0;
+  font-size: 13.5px;
+  line-height: 1.45;
+  color: var(--nc-grafite);
+}
+
+/* Hoje: sem os itens vazios que o APEX usa de espaçador (P116_BLANK_*) e sem o fundo das listas */
+@app.nc-mov .t-Region:is(.nc-mov-hoje, .nc-mov-depois) .t-Form-fieldContainer:not(:has(select, textarea, input:not([type="hidden"]), .apex-item-display-only:not(:empty))) {
+  display: none;
+}
+
+@app.nc-mov .t-Region.nc-mov-hoje :is(.apex-item-group, .t-Form-itemWrapper) {
+  background: transparent;
+  box-shadow: none;
+}
+
+/* no celular, Hoje em duas colunas: menos rolagem para chegar em Como fica */
+@media (max-width: 639px) {
+  @app.nc-mov .t-Region.nc-mov-hoje > .t-Region-bodyWrap > .t-Region-body > .container {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0 14px;
+  }
+
+  @app.nc-mov .t-Region.nc-mov-hoje > .t-Region-bodyWrap > .t-Region-body > .container > .row,
+  @app.nc-mov .t-Region.nc-mov-hoje > .t-Region-bodyWrap > .t-Region-body > .container > .row > .col {
+    display: contents;
+  }
+
+  @app.nc-mov .t-Region.nc-mov-hoje > .t-Region-bodyWrap > .t-Region-body > .container::before,
+  @app.nc-mov .t-Region.nc-mov-hoje > .t-Region-bodyWrap > .t-Region-body > .container::after,
+  @app.nc-mov .t-Region.nc-mov-hoje > .t-Region-bodyWrap > .t-Region-body > .container > .row::before,
+  @app.nc-mov .t-Region.nc-mov-hoje > .t-Region-bodyWrap > .t-Region-body > .container > .row::after {
+    display: none;
+  }
+}
+
+/* o resumo é vazio no APEX (o JS escreve): se o JS não carregou, ele não aparece vazio */
+@app:not(.nc-mov) .t-Region.nc-mov-resumo {
+  display: none;
+}
+
+/* ═══ [C6] OS TÍTULOS DOS PASSOS ════════════════════════════════════════════════════════════
+   Montado pelo JS em [J6]. .nc-mov-passo-n é o número na bolinha; .nc-mov-passo-t, o título;
+   .nc-mov-passo-sub, a frase de explicação.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+/* ---------- os passos (como nas outras requisições) ---------- */
+@app.nc-mov .nc-mov-passo {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin: 0;
+}
+
+@app.nc-mov .nc-mov-passo-n {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: var(--nc-roxo);
+  font-size: 14px;
+  font-weight: 800;
+  color: #fff;
+}
+
+@app.nc-mov .nc-mov-passo-txt {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+@app.nc-mov .nc-mov-passo-t {
+  font-size: 16.5px;
+  font-weight: 800;
+  line-height: 1.3;
+  color: var(--nc-tinta);
+}
+
+@app.nc-mov .nc-mov-passo-sub {
+  font-size: 13.5px;
+  font-weight: 500;
+  line-height: 1.4;
+  white-space: normal;
+  color: var(--nc-grafite);
+}
+
+/* o título da região vira o passo: a linha rosa do tema sai, o cabeçalho respira */
+@app.nc-mov .t-Region.nc-mov-com-passo > .t-Region-header {
+  align-items: flex-start;
+  padding-block: 16px 6px;
+  border-bottom: 0;
+}
+
+@app.nc-mov .t-Region.nc-mov-com-passo > .t-Region-header .t-Region-title {
+  white-space: normal;
+}
+
+@app.nc-mov .nc-mov-passo--solto {
+  flex-wrap: wrap;
+  margin: 8px 0 12px;
+  padding: 16px 18px;
+  border: 1px solid var(--nc-nevoa);
+  border-radius: 16px;
+  background: #fff;
+}
+
+@app.nc-mov .nc-mov-passo-vazio {
+  flex-basis: 100%;
+  margin: 4px 0 0 42px;
+  padding: 12px 14px;
+  border: 1.5px dashed var(--nc-nevoa);
+  border-radius: 12px;
+  font-size: 14px;
+  color: var(--nc-grafite);
+}
+
+@app.nc-mov .nc-mov-passo-vazio[hidden] {
+  display: none;
+}
+
+@app.nc-mov .nc-mov-pede {
+  margin-left: 10px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #8A5A00;
+}
+
+/* ═══ [C7] O PARECER: COMEÇOS DE FRASE ══════════════════════════════════════════════════════
+   Montado pelo JS em [J7]. .nc-mov-atalho é cada botão de começo de frase.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+/* ---------- o Parecer: motivo com começos de frase ---------- */
+@app.nc-mov .nc-mov-motivos {
+  display: grid;
+  gap: 8px;
+  margin: 0 0 10px;
+}
+
+@app.nc-mov .nc-mov-motivos .nc-mov-dica {
+  margin: 0;
+}
+
+@app.nc-mov .nc-mov-atalhos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+@app.nc-mov .nc-mov-atalho {
+  min-height: 36px;
+  padding: 0 14px;
+  border: 1px solid var(--nc-borda-botao);
+  border-radius: 999px;
+  background: #fff;
+  font: inherit;
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--nc-roxo);
+  cursor: pointer;
+}
+
+@app.nc-mov .nc-mov-atalho:hover {
+  border-color: rgba(var(--nc-t-roxo-rgb, 81, 28, 118), .45);
+  background: var(--nc-quase);
+}
+
+@app.nc-mov .nc-mov-atalho:focus-visible {
+  outline: 2px solid var(--nc-roxo);
+  outline-offset: 2px;
+}
+
+@app.nc-mov #P116_OBS.textarea {
+  width: 100%;
+  min-height: 96px;
+}
+
+/* ═══ [C8] A BARRA DO PÉ ════════════════════════════════════════════════════════════════════
+   Montada pelo JS em [J9]. .nc-mov-barra é a barra; .nc-mov-barra-bt, o botão principal.
+   Os erros do servidor estão mais adiante: procure de novo [C8].
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+/* ---------- a barra do pé ---------- */
+@app.nc-mov.nc-mov-com-barra {
+  padding-bottom: 96px;
+}
+
+@app.nc-mov .t-Button.nc-mov-na-barra,
+@app.nc-mov.nc-mov-com-barra .nc-mov-status {
+  display: none;
+}
+
+@app.nc-mov .nc-mov-barra {
+  position: fixed;
+  right: var(--nc-mov-barra-r, 0px);
+  bottom: 0;
+  left: var(--nc-mov-barra-l, 0px);
+  z-index: 800;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 20px calc(12px + env(safe-area-inset-bottom, 0px));
+  border-top: 1px solid var(--nc-nevoa);
+  background: rgba(255, 255, 255, .96);
+  box-shadow: 0 -10px 28px -20px rgba(var(--nc-t-azul-rgb, 44, 26, 99), .45);
+  backdrop-filter: saturate(1.4) blur(8px);
+}
+
+@app.nc-mov .nc-mov-barra-txt {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+@app.nc-mov .nc-mov-frase {
+  margin: 0;
+  font-size: 14.5px;
+  color: var(--nc-grafite);
+}
+
+@app.nc-mov .nc-mov-frase b {
+  color: var(--nc-roxo);
+}
+
+@app.nc-mov .nc-mov-falta-lista {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+
+@app.nc-mov .nc-mov-barra-rot {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--nc-grafite);
+}
+
+@app.nc-mov .nc-mov-falta {
+  min-height: 30px;
+  padding: 0 10px;
+  border: 1px solid rgba(184, 50, 63, .3);
+  border-radius: 999px;
+  background: #FBECEE;
+  font: inherit;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: #A32020;
+  cursor: pointer;
+}
+
+@app.nc-mov .nc-mov-barra-ok {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--nc-bom);
+}
+
+@app.nc-mov .nc-mov-barra-ok svg,
+@app.nc-mov .nc-mov-barra-bt svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+@app.nc-mov .nc-mov-barra-bt {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: 8px;
+  min-height: 48px;
+  padding: 0 22px;
+  border: 0;
+  border-radius: 12px;
+  background: var(--nc-roxo);
+  font: inherit;
+  font-size: 15.5px;
+  font-weight: 800;
+  color: #fff;
+  cursor: pointer;
+}
+
+@app.nc-mov .nc-mov-barra-bt:hover {
+  background: #3F145D /*reserva*/;
+  background: oklch(from #3F145D l calc(c * var(--nc-t-croma, 1)) calc(h + var(--nc-t-giro, 0)));
+}
+
+@app.nc-mov .nc-mov-barra-bt:focus-visible,
+@app.nc-mov .nc-mov-falta:focus-visible {
+  outline: 2px solid var(--nc-roxo);
+  outline-offset: 2px;
+}
+
+/* ═══ [C9] O PEDIDO GRAVADO E A APROVAÇÃO ═══════════════════════════════════════════════════
+   Montado pelo JS em [J8]. Quase tudo aqui aparece só num pedido já gravado (o JS põe a
+   marca nc-mov-modo-pedido na página); as colunas de largura toda valem sempre.
+   O "só o essencial à vista" está mais adiante: procure de novo [C9].
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+/* ---------- o pedido gravado: cabeçalho e aprovação no alto, na largura toda ---------- */
+@app.nc-mov .nc-mov-col-cheia {
+  flex: 0 0 100%;
+  width: 100%;
+  max-width: 100%;
+}
+
+@app.nc-mov .nc-mov-col-vazia,
+@app.nc-mov .t-Form-fieldContainer.nc-mov-dito,
+@app.nc-mov.nc-mov-leitura .t-Region.nc-mov-intencoes {
+  display: none;
+}
+
+@app.nc-mov .nc-mov-pedido {
+  display: grid;
+  gap: 4px;
+  margin: 0 0 6px;
+}
+
+@app.nc-mov .nc-mov-pedido p {
+  margin: 0;
+}
+
+@app.nc-mov .t-Region.nc-mov-pedido-reg > .t-Region-header .t-Region-title {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 12px;
+  font-size: 20px;
+  font-weight: 800;
+  white-space: normal;
+  color: var(--nc-tinta);
+}
+
+@app.nc-mov .nc-mov-pedido-meta {
+  font-size: 14.5px;
+  color: var(--nc-grafite);
+}
+
+@app.nc-mov .nc-mov-pedido-meta b {
+  color: var(--nc-tinta);
+}
+
+@app.nc-mov .nc-mov-sutil {
+  color: #8A8497;
+}
+
+@app.nc-mov .nc-mov-sit {
+  display: inline-flex;
+  align-items: center;
+  min-height: 26px;
+  padding: 0 10px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+@app.nc-mov .nc-mov-sit--espera { background: #FFF4D6; color: #8A5A00; }
+@app.nc-mov .nc-mov-sit--bom { background: #E4F5EA; color: var(--nc-bom); }
+@app.nc-mov .nc-mov-sit--ruim { background: #FDECEC; color: #A32020; }
+@app.nc-mov .nc-mov-sit--neutro { background: var(--nc-quase); color: var(--nc-grafite); }
+
+@app.nc-mov .t-Region.nc-mov-aprov {
+  margin-top: 0;
+  border: 0;
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: inset 0 0 0 1px var(--nc-nevoa), 0 10px 24px -22px rgba(var(--nc-t-azul-rgb, 44, 26, 99), .5);
+}
+
+@app.nc-mov .t-Region.nc-mov-aprov--vazio {
+  display: none;
+}
+
+/* o caminho substitui a tabela; ela continua no DOM (os botões e a justificativa vêm dela) */
+@app.nc-mov .t-Region.nc-mov-aprov > .t-Region-header,
+@app.nc-mov .t-Region.nc-mov-aprov .t-Report,
+@app.nc-mov .t-Region.nc-mov-aprov table {
+  display: none;
+}
+
+@app.nc-mov .t-Region.nc-mov-aprov > .t-Region-bodyWrap > .t-Region-body {
+  padding: 14px 18px;
+}
+
+@app.nc-mov .nc-mov-ap {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px 20px;
+}
+
+@app.nc-mov .nc-mov-ap:empty,
+@app.nc-mov .nc-mov-ap-ver {
+  display: none;
+}
+
+@app.nc-mov .nc-mov-ap-cab {
+  display: grid;
+  gap: 2px;
+}
+
+@app.nc-mov .nc-mov-ap-cab p {
+  margin: 0;
+}
+
+@app.nc-mov .nc-mov-ap-rot {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--nc-grafite);
+}
+
+@app.nc-mov .nc-mov-ap-resumo {
+  font-size: 14.5px;
+  color: var(--nc-grafite);
+}
+
+@app.nc-mov .nc-mov-ap-resumo b { color: var(--nc-tinta); }
+@app.nc-mov .nc-mov-ap--vez .nc-mov-ap-resumo b:last-child { color: #8A5A00; }
+@app.nc-mov .nc-mov-ap--ok .nc-mov-ap-resumo b { color: var(--nc-bom); }
+@app.nc-mov .nc-mov-ap--nao .nc-mov-ap-resumo b { color: #A32020; }
+
+@app.nc-mov .nc-mov-ap-passos {
+  display: flex;
+  grid-column: 1 / -1;
+  margin: 0;
+  padding: 4px 0 0;
+  overflow-x: auto;
+  list-style: none;
+}
+
+@app.nc-mov .nc-mov-ap-p {
+  position: relative;
+  display: flex;
+  flex: 1 1 0;
+  flex-direction: column;
+  align-items: center;
+  min-width: 104px;
+  padding: 0 4px;
+  text-align: center;
+}
+
+@app.nc-mov .nc-mov-ap-p:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  top: 13px;
+  left: calc(50% + 17px);
+  right: calc(-50% + 17px);
+  height: 2px;
+  border-radius: 2px;
+  background: #E3DDEC;
+}
+
+@app.nc-mov .nc-mov-ap-p.is-ok:not(:last-child)::after { background: var(--nc-bom); }
+
+@app.nc-mov .nc-mov-ap-marca {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  margin: 0 0 6px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: inset 0 0 0 2px #D9D3E3;
+}
+
+@app.nc-mov .nc-mov-ap-marca svg {
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: #fff;
+  stroke-width: 2.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+@app.nc-mov .nc-mov-ap-p.is-ok .nc-mov-ap-marca { background: var(--nc-bom); box-shadow: none; }
+@app.nc-mov .nc-mov-ap-p.is-nao .nc-mov-ap-marca { background: #C0392B; box-shadow: none; }
+@app.nc-mov .nc-mov-ap-p.is-vez .nc-mov-ap-marca { background: #E0A100; box-shadow: 0 0 0 5px rgba(224, 161, 0, .18); }
+
+@app.nc-mov .nc-mov-ap-texto {
+  display: grid;
+  justify-items: center;
+  gap: 1px;
+  max-width: 100%;
+}
+
+@app.nc-mov .nc-mov-ap-nome {
+  max-width: 100%;
+  overflow: hidden;
+  font-size: 13.5px;
+  font-weight: 800;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--nc-tinta);
+}
+
+@app.nc-mov .nc-mov-ap-estado {
+  font-size: 12px;
+  color: var(--nc-grafite);
+}
+
+@app.nc-mov .nc-mov-ap-p.is-ok .nc-mov-ap-estado { color: var(--nc-bom); }
+@app.nc-mov .nc-mov-ap-p.is-nao .nc-mov-ap-estado { color: #A32020; font-weight: 700; }
+@app.nc-mov .nc-mov-ap-p.is-vez .nc-mov-ap-estado { color: #8A5A00; font-weight: 700; }
+@app.nc-mov .nc-mov-ap-p.is-fila :is(.nc-mov-ap-nome, .nc-mov-ap-estado) { color: #8A8497; }
+
+@app.nc-mov .nc-mov-decisao {
+  display: flex;
+  flex-wrap: wrap;
+  grid-column: 1 / -1;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px 16px;
+  padding: 12px 0 0;
+  border-top: 1px solid var(--nc-nevoa2);
+}
+
+@app.nc-mov .nc-mov-decisao-txt {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 700;
+  color: #8A5A00;
+}
+
+@app.nc-mov .nc-mov-decisao-botoes {
+  display: flex;
+  gap: 8px;
+}
+
+@app.nc-mov .nc-mov-decisao-botoes .t-Button.nc-mov-aprovar:not(#nc-mov-x):not(#nc-mov-y) { border: 0; background: var(--nc-bom); color: #fff; }
+@app.nc-mov .nc-mov-decisao-botoes .t-Button.nc-mov-reprovar:not(#nc-mov-x):not(#nc-mov-y) { border: 1.5px solid #E7B7B7; background: #fff; box-shadow: none; color: #A32020; }
+
+@app.nc-mov .nc-mov-ap-justs {
+  display: grid;
+  grid-column: 1 / -1;
+  gap: 6px;
+}
+
+@app.nc-mov .nc-mov-ap-just {
+  margin: 0;
+  padding: 8px 12px;
+  border: 0;
+  border-radius: 10px;
+  background: var(--nc-quase);
+  font-size: 14px;
+}
+
+@app.nc-mov .nc-mov-ap-just.is-nao { background: #FDF0F0; }
+
+
+@media (max-width: 639px) {
+  @app.nc-mov .nc-mov-barra {
+    gap: 10px;
+    padding: 10px 12px calc(10px + env(safe-area-inset-bottom, 0px));
+  }
+
+  @app.nc-mov .nc-mov-frase {
+    font-size: 13px;
+  }
+
+  @app.nc-mov .nc-mov-falta-lista .nc-mov-barra-rot {
+    display: none;
+  }
+
+  @app.nc-mov .nc-mov-barra-bt {
+    min-height: 44px;
+    padding: 0 14px;
+    font-size: 14.5px;
+  }
+
+  @app.nc-mov .nc-mov-barra-bt svg {
+    display: none;
+  }
+
+  @app.nc-mov .nc-mov-passo-vazio {
+    margin-left: 0;
+  }
+
+  @app.nc-mov .nc-mov-pede {
+    display: block;
+    margin: 4px 0 0;
+  }
+
+  @app.nc-mov .nc-mov-ap-cab {
+    grid-template-columns: minmax(0, 1fr) auto;
+    column-gap: 12px;
+  }
+
+  @app.nc-mov .nc-mov-ap-ver {
+    display: inline-flex;
+    grid-column: 2;
+    grid-row: 1 / span 2;
+    align-self: center;
+    align-items: center;
+    height: 34px;
+    padding: 0 12px;
+    border: 1px solid var(--nc-nevoa);
+    border-radius: 10px;
+    background: #fff;
+    font: inherit;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--nc-roxo);
+  }
+
+  @app.nc-mov .nc-mov-ap-passos {
+    display: none;
+  }
+
+  @app.nc-mov .nc-mov-ap-aberto .nc-mov-ap-passos {
+    display: grid;
+    gap: 10px;
+  }
+
+  @app.nc-mov .nc-mov-ap-aberto .nc-mov-ap-p {
+    flex-direction: row;
+    gap: 10px;
+    text-align: left;
+  }
+
+  @app.nc-mov .nc-mov-ap-aberto .nc-mov-ap-p::after {
+    display: none;
+  }
+
+  @app.nc-mov .nc-mov-ap-aberto .nc-mov-ap-marca {
+    margin: 0;
+  }
+
+  @app.nc-mov .nc-mov-ap-aberto .nc-mov-ap-texto {
+    justify-items: start;
+  }
+}
+
+/* com a barra, a região de botões fica só com o Voltar: sem a coluna do meio vazia */
+@app.nc-mov.nc-mov-com-barra .t-ButtonRegion.nc-mov-acoes .t-ButtonRegion-col--content:not(:has(.t-Button)) {
+  display: none;
+}
+
+/* ═══ [C10] BENEFÍCIOS: O ARRANJO DAS COLUNAS ═══════════════════════════════════════════════
+   Montado pelo JS em [J10]. O desenho de cada tabela de benefícios é do Natcorp_Beneficios.css;
+   aqui só a largura das colunas.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+/* ---------- Benefícios: o arranjo da Requisição de Benefícios (200:168) ----------
+   a linha das 4 + 3 + 5 colunas do APEX vira: Adicionar (5) | Novo pacote + Hoje (7) */
+@app.nc-mov .row.nc-mov-ben-grade {
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  align-items: start;
+}
+
+/* o clearfix da linha viraria célula da grade */
+@app.nc-mov .row.nc-mov-ben-grade::before,
+@app.nc-mov .row.nc-mov-ben-grade::after {
+  display: none;
+}
+
+@app.nc-mov .row.nc-mov-ben-grade > .col {
+  float: none;
+  width: auto;
+  max-width: none;
+  flex: none;
+}
+
+@app.nc-mov .row.nc-mov-ben-grade > .nc-mov-ben-c-escolha {
+  grid-column: 1;
+  grid-row: 1 / span 2;
+}
+
+@app.nc-mov .row.nc-mov-ben-grade > .nc-mov-ben-c-pacote {
+  grid-column: 2;
+  grid-row: 1;
+}
+
+@app.nc-mov .row.nc-mov-ben-grade > .nc-mov-ben-c-hoje {
+  grid-column: 2;
+  grid-row: 2;
+}
+
+/* pedido gravado: Requisitados e depois o de hoje, na largura toda */
+@app.nc-mov .row.nc-mov-ben-grade.nc-mov-ben-sem-escolha {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+@app.nc-mov .row.nc-mov-ben-grade.nc-mov-ben-sem-escolha > .nc-mov-ben-c-pacote {
+  grid-column: 1;
+  grid-row: 1;
+}
+
+@app.nc-mov .row.nc-mov-ben-grade.nc-mov-ben-sem-escolha > .nc-mov-ben-c-hoje {
+  grid-column: 1;
+  grid-row: 2;
+}
+
+@app.nc-mov .row.nc-mov-ben-grade > .nc-mov-ben-c-vazia,
+@app.nc-mov .t-Region.nc-ben-medidor.nc-mov-ben-so-consulta {
+  display: none;
+}
+
+@media (max-width: 767px) {
+  @app.nc-mov .row.nc-mov-ben-grade {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  /* a ordem da 168 no celular: Adicionar, o Novo pacote (ou os Requisitados) e o de hoje */
+  @app.nc-mov .row.nc-mov-ben-grade > :is(.nc-mov-ben-c-escolha, .nc-mov-ben-c-pacote, .nc-mov-ben-c-hoje),
+  @app.nc-mov .row.nc-mov-ben-grade.nc-mov-ben-sem-escolha > :is(.nc-mov-ben-c-pacote, .nc-mov-ben-c-hoje) {
+    grid-column: 1;
+    grid-row: auto;
+  }
+
+  @app.nc-mov .row.nc-mov-ben-grade > .nc-mov-ben-c-escolha { order: 1; }
+  @app.nc-mov .row.nc-mov-ben-grade > .nc-mov-ben-c-pacote { order: 2; }
+  @app.nc-mov .row.nc-mov-ben-grade > .nc-mov-ben-c-hoje { order: 3; }
+}
+
+/* o aviso da vigência é texto, não campo: nota clara, sem a moldura de caixa de digitar */
+@app.nc-mov #P116_TEXTO_DIA_LIMITE_CONTAINER :is(.apex-item-display-only, .display_only) {
+  border-color: transparent;
+  background: var(--nc-quase);
+  box-shadow: none;
+  font-size: 14px;
+  line-height: 1.45;
+  color: var(--nc-grafite);
+}
+
+/* ═══ [C3] (continuação) SALÁRIO: VALOR E % LADO A LADO ══════════════════════════════════════ */
+/* ---------- Salário: valor e % lado a lado (como no APEX), um calcula o outro ----------
+   Salário | % aumento, Remuneração variável | % aumento RV, Total | % aumento total: o valor
+   ocupa o resto da linha, o % uma coluna estreita fixa; no celular continuam lado a lado */
+@app.nc-mov .t-Region.nc-mov-depois .row:has(> .col > [id^="P116_PERC_"][id$="_CONTAINER"]) {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: flex-end;
+}
+
+@app.nc-mov .t-Region.nc-mov-depois .row:has(> .col > [id^="P116_PERC_"][id$="_CONTAINER"]) > .col {
+  flex: 1 1 auto;
+  width: auto;
+  max-width: none;
+}
+
+@app.nc-mov .t-Region.nc-mov-depois .row:has(> .col > [id^="P116_PERC_"][id$="_CONTAINER"]) > .col:has(> [id^="P116_PERC_"]) {
+  flex: 0 0 34%;
+  max-width: 200px;
+}
+
+@app.nc-mov .nc-mov-par-dica {
+  margin: 6px 0 2px;
+}
+
+/* o cabeçalho do pedido em uma faixa só: quem abriu e quando, e a Situação ao lado (no celular,
+   uma embaixo da outra) — sobra a primeira tela para o quadro Antes e depois */
+@app.nc-mov .t-Region.nc-mov-pedido-reg > .t-Region-bodyWrap > .t-Region-body {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 24px;
+  padding-block: 10px;
+}
+
+@app.nc-mov .t-Region.nc-mov-pedido-reg .nc-mov-pedido {
+  flex: 1 1 320px;
+  margin: 0;
+}
+
+@app.nc-mov .t-Region.nc-mov-pedido-reg > .t-Region-bodyWrap > .t-Region-body > .container {
+  flex: 0 0 340px;
+  width: 340px;
+  max-width: 100%;
+}
+
+@media (max-width: 639px) {
+  @app.nc-mov .t-Region.nc-mov-pedido-reg > .t-Region-bodyWrap > .t-Region-body > .container {
+    flex-basis: 100%;
+    width: 100%;
+  }
+}
+
+/* a Situação ocupa a faixa dela: rótulo e lista lado a lado; as colunas que só guardavam o que o
+   cabeçalho já diz (número, data, solicitante) não ocupam lugar */
+@app.nc-mov .nc-mov-pedido-reg .row > .col:has(> .nc-mov-dito):not(:has(> .t-Form-fieldContainer:not(.nc-mov-dito))) {
+  display: none;
+}
+
+@app.nc-mov .nc-mov-pedido-reg .row > .col:has(> #P116_COD_SIT_SOLICITACAO_CONTAINER) {
+  flex: 1 1 100%;
+  width: 100%;
+  max-width: 100%;
+}
+
+@app.nc-mov .nc-mov-pedido-reg #P116_COD_SIT_SOLICITACAO_CONTAINER {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+@app.nc-mov .nc-mov-pedido-reg #P116_COD_SIT_SOLICITACAO_CONTAINER > .t-Form-labelContainer {
+  flex: none;
+  width: auto;
+  max-width: none;
+  padding-top: 0;
+}
+
+@app.nc-mov .nc-mov-pedido-reg #P116_COD_SIT_SOLICITACAO_CONTAINER > .t-Form-inputContainer {
+  flex: 1 1 auto;
+  width: auto;
+  max-width: none;
+}
+
+/* ═══ [C1] (continuação) A LISTA QUE CADA CARTÃO DO PASSO 2 ABRE ════════════════════════════ */
+/* ---------- categorias com itens (passo 2) ----------
+   a categoria abre a lista dela logo abaixo da linha de cartões, na largura toda */
+@app.nc-mov .nc-mov-intencoes-lista {
+  grid-auto-flow: row dense;
+}
+
+@app.nc-mov .nc-mov-intencao.is-aberta {
+  border-color: var(--nc-roxo);
+  border-bottom-left-radius: 6px;
+  border-bottom-right-radius: 6px;
+}
+
+@app.nc-mov .nc-mov-intencao-conta {
+  justify-self: start;
+  margin-top: 4px;
+  padding: 2px 9px;
+  border-radius: 999px;
+  background: var(--nc-roxo);
+  font-size: 12px;
+  font-weight: 800;
+  color: #fff;
+}
+
+@app.nc-mov .nc-mov-seta {
+  flex: none;
+  width: 22px;
+  height: 22px;
+  margin-top: 1px;
+  fill: none;
+  stroke: var(--nc-grafite);
+  stroke-width: 2.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: transform .2s;
+}
+
+@app.nc-mov .nc-mov-intencao[aria-expanded="true"] .nc-mov-seta {
+  transform: rotate(180deg);
+  stroke: var(--nc-roxo);
+}
+
+@app.nc-mov .nc-mov-sub {
+  display: grid;
+  grid-column: 1 / -1;
+  gap: 10px;
+  margin: -4px 0 4px;
+  padding: 14px 16px 16px;
+  border: 1.5px solid var(--nc-roxo);
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: var(--nc-anel);
+}
+
+@app.nc-mov .nc-mov-sub-tit {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--nc-tinta);
+}
+
+@app.nc-mov .nc-mov-sub-tit span {
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--nc-grafite);
+}
+
+@app.nc-mov .nc-mov-sub-lista {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 8px;
+}
+
+@app.nc-mov .nc-mov-sub-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 48px;
+  margin: 0;
+  padding: 8px 12px;
+  border: 1.5px solid var(--nc-nevoa);
+  border-radius: 12px;
+  background: #fff;
+  font: inherit;
+  font-size: 14.5px;
+  font-weight: 700;
+  line-height: 1.3;
+  text-align: left;
+  color: var(--nc-tinta);
+  cursor: pointer;
+}
+
+@app.nc-mov .nc-mov-sub-item:hover {
+  border-color: var(--nc-realce);
+}
+
+@app.nc-mov .nc-mov-sub-item[aria-checked="true"] {
+  border-color: var(--nc-roxo);
+  background: var(--nc-nevoa2);
+}
+
+@app.nc-mov .nc-mov-sub-item:focus-visible {
+  outline: 2px solid var(--nc-roxo);
+  outline-offset: 2px;
+}
+
+@app.nc-mov [aria-checked="true"] > .nc-mov-marca rect {
+  fill: var(--nc-roxo);
+  stroke: var(--nc-roxo);
+}
+
+@app.nc-mov [aria-checked="true"] > .nc-mov-marca path {
+  stroke: #fff;
+}
+
+@app.nc-mov .nc-mov-marca--p {
+  margin-top: 0;
+}
+
+/* ═══ [C9] (continuação) O PEDIDO GRAVADO: SÓ O ESSENCIAL À VISTA ═══════════════════════════ */
+/* ---------- o pedido gravado: só o essencial à vista ----------
+   cabeçalho, colaborador, o quadro (motivo, antes e depois, decisão) e a aprovação; o passo 2 e
+   os blocos com todos os campos ficam em "Ver todos os campos do pedido" */
+@app.nc-mov.nc-mov-modo-pedido:not(.nc-mov-ver-tudo) :is(.t-Region.nc-mov-intencoes, .t-Region.nc-mov-alteracoes) {
+  display: none;
+}
+
+@app.nc-mov .nc-mov-ver-tudo {
+  display: flex;
+  justify-content: center;
+  margin-top: 14px;
+}
+
+@app.nc-mov .nc-mov-ver-tudo-bt {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 0 18px;
+  border: 1.5px solid var(--nc-nevoa);
+  border-radius: 12px;
+  background: #fff;
+  font: inherit;
+  font-size: 14.5px;
+  font-weight: 800;
+  color: var(--nc-roxo);
+  cursor: pointer;
+}
+
+@app.nc-mov .nc-mov-ver-tudo-bt:hover {
+  border-color: var(--nc-roxo);
+}
+
+@app.nc-mov .nc-mov-ver-tudo-bt:focus-visible {
+  outline: 2px solid var(--nc-roxo);
+  outline-offset: 2px;
+}
+
+@app.nc-mov .nc-mov-ver-tudo-bt svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: transform .2s;
+}
+
+@app.nc-mov .nc-mov-ver-tudo-bt[aria-expanded="true"] svg {
+  transform: rotate(180deg);
+}
+
+/* o motivo do gestor, no alto do quadro */
+@app.nc-mov .nc-mov-ad-motivo {
+  margin: 0 0 12px;
+  padding: 12px 14px;
+  border: 0;
+  border-left: 3px solid var(--nc-rosa);
+  border-radius: 10px;
+  background: var(--nc-quase);
+  font-size: 14.5px;
+  line-height: 1.5;
+  color: var(--nc-tinta);
+}
+
+@app.nc-mov .nc-mov-ad-linha--total > span {
+  border-top: 1px dashed var(--nc-nevoa);
+  font-weight: 800;
+}
+
+/* ═══ [C8] (continuação) A BARRA DO PÉ: O QUE O SERVIDOR RECUSOU ═════════════════════════════ */
+/* ---------- a barra do pé: o que o servidor recusou ---------- */
+@app.nc-mov .nc-mov-srv {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 700;
+  color: #A32020;
+}
+
+@app.nc-mov .nc-mov-srv-bt {
+  margin-left: 4px;
+  padding: 2px 10px;
+  border: 1px solid #E7B7B7;
+  border-radius: 999px;
+  background: #fff;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 800;
+  color: #A32020;
+  cursor: pointer;
+}
+
+@app.nc-mov .nc-mov-srv-lista {
+  display: grid;
+  gap: 6px;
+  max-height: 40vh;
+  margin: 4px 0;
+  padding: 10px 12px 10px 30px;
+  overflow: auto;
+  border-radius: 10px;
+  background: #FDF0F0;
+  font-size: 13.5px;
+  line-height: 1.45;
+  color: #7A1C1C;
+}
+
+@app.nc-mov .nc-mov-srv-lista[hidden] {
+  display: none;
+}
+
+/* "Outro Colaborador" só com um colaborador escolhido */
+@app.nc-mov:not(.nc-mov-com-colab) .t-Button.nc-mov-bt-outro {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  @app.nc-mov :is(.nc-mov-seta, .nc-mov-ver-tudo-bt svg) {
+    transition: none;
+  }
+}
+
+/* ═══ [C11] LEITURA NO CELULAR E AO SOL ═════════════════════════════════════════════════════
+   Cinzas mais fortes para ler bem em qualquer luz. CUIDADO: não clareie estes cinzas de
+   novo — o contraste foi medido (o antigo, 3,4:1, não se lia ao sol).
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+/* ---------- leitura no celular e ao sol (medido 01/10) ----------
+   o "Antes" do quadro e os textos de apoio passavam de cinza claro demais (contraste 3,4–3,6:1)
+   para um cinza que se lê (≈ 6:1) — o antes é o dado que quem aprova compara */
+@app.nc-mov .nc-mov-ad-antes,
+@app.nc-mov .nc-mov-sutil,
+@app.nc-mov .nc-mov-campo-hoje i {
+  color: #5E586E;
+}
+
+/* os rótulos dos campos só de leitura (Empresa, Matrícula, Situação, Admissão) vinham da Skin em
+   cinza claro com seletor mais forte — o :not(#…) só soma peso */
+@app.nc-mov .t-Form-label:not(#nc-mov-x) {
+  color: #4A4458;
+}
+
+/* toque no celular: campos e listas com 44 px; os botões pequenos com 40 */
+@media (max-width: 639px) {
+  @app.nc-mov :is(input.apex-item-text:not(.nc-moeda-real), select.apex-item-select, input.apex-item-datepicker, textarea.apex-item-textarea) {
+    min-height: 44px;
+    font-size: 16px;
+  }
+
+  @app.nc-mov .nc-mov-ap-ver {
+    min-height: 40px;
+  }
+
+  /* o tema prende os botões do cabeçalho das regiões em 32 px ("Refazer Distribuição") */
+  @app.nc-mov .t-Region-header .t-Region-headerItems--buttons .t-Button:not(.t-Button--noLabel):not(#nc-mov-x) {
+    height: 40px;
+    min-height: 40px;
+  }
+}
+
+/* ═══ FAIXA DA REGIÃO (padrão 03/10) ════════════════════════════════════════════════════════
+   Todo painel com título segue o cabeçalho de região da Skin: o título numa faixa que atravessa
+   o cartão de ponta a ponta, com a linha de 2px na cor de destaque do TEMA (var(--nc-rosa) — a
+   mesma da Skin; muda com os 14 temas). As margens negativas são o recuo de dentro do cartão:
+   mudou o recuo do cartão, mude aqui junto. Guia: brand/apex/MANUAL-APEX.md.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-mov .nc-mov-cab:not(#nc-fx1):not(#nc-fx2):not(#nc-fx3) {
+  border-bottom: 2px solid var(--nc-rosa, #C95788);
+}
+@app.nc-mov .nc-mov-ap > .nc-mov-ap-rot:not(#nc-fx1):not(#nc-fx2):not(#nc-fx3) {
+  box-sizing: border-box;
+  width: calc(100% + 36px);
+  margin: -14px -18px 2px;
+  padding: 12px 18px 10px;
+  border-bottom: 2px solid var(--nc-rosa, #C95788);
+  grid-column: 1 / -1;
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.3;
+}
+/* a região nativa do passo: a linha do tema volta (antes era tirada aqui) */
+@app.nc-mov .t-Region.nc-mov-com-passo > .t-Region-header:not(#nc-fx1):not(#nc-fx2):not(#nc-fx3) {
+  border-bottom: 2px solid var(--nc-rosa, #C95788);
+}

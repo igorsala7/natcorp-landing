@@ -1,0 +1,1275 @@
+/* ╔════════════════════════════════════════════════════════════════════════════════════════╗
+   ║  NATCORP · PROCESSO SELETIVO (DETALHE)  —  a "roupa" da tela (CSS)                       ║
+   ║  App 9113 (Recrutamento e Seleção) · Página 29 ("Descrição da Vaga")                     ║
+   ╚════════════════════════════════════════════════════════════════════════════════════════╝
+
+   Primeira vez num arquivo destes? Leia antes o manual: brand/apex/MANUAL-APEX.md (parte 1).
+
+   ── O QUE ESTE ARQUIVO FAZ ────────────────────────────────────────────────────────────────
+   A aparência do que o Natcorp_ProcessoDetalhe.js monta: a ficha da vaga, o funil das etapas,
+   a lista de candidatos (uma linha por candidato) e a barra de seleção. Sem o JS, nada daqui
+   vale (tudo depende da marca nc-pd-ativo no body).
+
+   ── ONDE ELE ENTRA NO APEX ────────────────────────────────────────────────────────────────
+     Página 29 › CSS › File URLs:   #WORKSPACE_IMAGES#Natcorp_ProcessoDetalhe.css
+     CUIDADO: este é o arquivo-FONTE (.src.css). O gerador (gerar-app.mjs) cria o
+     Natcorp_ProcessoDetalhe.css que sobe para o APEX. Edite ESTE arquivo.
+
+   ── ÍNDICE ────────────────────────────────────────────────────────────────────────────────
+     [C1] As cores                                              PODE MEXER
+     [C2] O que sai da vista (e a coluna lateral)
+     [C3] As duas colunas; a vaga na coluna da esquerda
+     [C4] O painel dos candidatos e o funil (em pé, na coluna da esquerda)
+     [C5] As linhas dos candidatos                              (colunas: --nc-pd-colunas)
+     [C6] A barra de seleção e os botões
+     [C7] Celular
+     [C8] Sinais que filtram, ordenar e "mais sobre o candidato"
+     [C9] O pé da janela "Mudança de fase"
+*/
+
+/* ═══ [C1] AS CORES ═════════════════════════════════════════════════════════════════════════ */
+@app.nc-pd-ativo {
+  --nc-pd-borda: var(--nc-nevoa, #E9E5F1);
+  --nc-pd-fundo: var(--nc-off, #F7F5FA);
+  --nc-pd-texto: var(--nc-tinta, #1B1238);
+  --nc-pd-fraco: var(--nc-grafite, #4A4460);
+  --nc-pd-bom: var(--nc-bom, #1F7A52);
+  --nc-pd-ruim: var(--nc-ruim, #B8323F);
+  --nc-pd-atencao: #8A5A00;
+  /* a coluna dos atalhos tem largura FIXA (4 atalhos + abrir): assim a Etapa fica alinhada em toda linha */
+  --nc-pd-colunas: 34px 40px minmax(0, 1fr) minmax(170px, 230px) 232px;
+}
+
+@app.nc-pd-ativo [data-sit] { --nc-pd-s: #6E6884; }
+@app.nc-pd-ativo [data-sit="prevista"] { --nc-pd-s: #2E6CB5; }
+@app.nc-pd-ativo [data-sit="aberta"] { --nc-pd-s: #8A5A00; }
+@app.nc-pd-ativo [data-sit="publicada"] { --nc-pd-s: var(--nc-roxo, #511C76); }
+@app.nc-pd-ativo [data-sit="fechada"] { --nc-pd-s: var(--nc-bom, #1F7A52); }
+@app.nc-pd-ativo [data-sit="cancelada"],
+@app.nc-pd-ativo [data-sit="reprovada"] { --nc-pd-s: var(--nc-ruim, #B8323F); }
+
+/* ═══ [C2] O QUE SAI DA VISTA ═══════════════════════════════════════════════════════════════
+   A região "Descrição da Vaga" (lida para a ficha), os cartões de etapa (lidos para o funil) e,
+   na Lista, a tabela do relatório. A coluna lateral sai: a página usa a largura toda.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-pd-ativo .nc-pd-guardado:not(#nc-pd-x),
+@app.nc-pd-ativo .nc-pd [hidden]:not(#nc-pd-x),
+@app.nc-pd-ativo .nc-pd[hidden]:not(#nc-pd-x),
+@app.nc-pd-ativo.nc-pd-sem-lado .t-Body-side:not(#nc-pd-x) {
+  display: none;
+}
+
+@app.nc-pd-ativo.nc-pd-sem-lado .t-Body-main:not(#nc-pd-x),
+@app.nc-pd-ativo.nc-pd-sem-lado .t-Body-content:not(#nc-pd-x) {
+  margin-left: 0;
+}
+
+@app.nc-pd-ativo:not(.nc-pd-tabela) .nc-pd-reg #partnersIRR .a-IRR-tableContainer:not(#nc-pd-x),
+@app.nc-pd-ativo:not(.nc-pd-tabela) .nc-pd-reg #partnersIRR .a-IRR-table:not(#nc-pd-x) {
+  display: none;
+}
+
+@app.nc-pd-ativo.nc-pd-tabela .nc-pd-resto .nc-pd-titulos,
+@app.nc-pd-ativo.nc-pd-tabela .nc-pd-resto .nc-pd-lista,
+@app.nc-pd-ativo.nc-pd-tabela .nc-pd-resto .nc-pd-mais {
+  display: none;
+}
+
+@app.nc-pd-ativo .nc-pd-ic {
+  flex: 0 0 auto;
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.9;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+@app.nc-pd-ativo .t-HeroRegion-title .nc-pd-num {
+  font-weight: 500;
+  color: var(--nc-pd-fraco);
+}
+
+/* ═══ [C3] AS DUAS COLUNAS E A COLUNA DA ESQUERDA (a vaga, as etapas, os sinais) ═══════════════
+   À direita só os candidatos — é a visão principal do selecionador. À esquerda, o que situa e
+   filtra. A coluna acompanha a rolagem (top = altura do cabeçalho fixo, medida pelo JS em
+   --nc-pd-topo) e rola sozinha se for mais alta que a tela.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-pd-ativo .nc-pd-layout {
+  display: grid;
+  grid-template-columns: 284px minmax(0, 1fr);
+  align-items: start;
+  gap: 18px;
+}
+
+@app.nc-pd-ativo .nc-pd-principal {
+  min-width: 0;
+}
+
+/* CUIDADO  o tema põe overflow: hidden em .t-Body, .t-Body-main, .t-Body-content e .container — isso
+   faz deles caixas de rolagem e o sticky da coluna para de funcionar (ela subia com a página e
+   nascia 140 px abaixo). clip corta igual, mas não vira caixa de rolagem. Só nesta página. */
+@app.nc-pd-ativo :is(.t-Body, .t-Body-main, .t-Body-content, .container:has(.nc-pd-layout)):not(#nc-pd-x) {
+  overflow: clip;
+}
+
+@app.nc-pd-ativo .nc-pd-principal > .t-Region {
+  margin: 0;
+}
+
+@app.nc-pd-ativo .nc-pd-lado {
+  position: sticky;
+  top: var(--nc-pd-topo, 12px);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  min-width: 0;
+  gap: 12px;
+  max-height: calc(100vh - var(--nc-pd-topo, 12px) - 12px);
+  overflow-y: auto;
+  scrollbar-width: thin;
+  color: var(--nc-pd-texto);
+}
+
+@app.nc-pd-ativo .nc-pd-lado > * {
+  min-width: 0;               /* o funil deitado (celular) rola de lado em vez de alargar a coluna */
+  margin: 0;
+  border: 1px solid var(--nc-pd-borda);
+  border-radius: 14px;
+  background: #fff;
+}
+
+@app.nc-pd-ativo .nc-pd-lado-tit {
+  margin: 0;
+  padding: 12px 14px 8px;
+  border-bottom: 2px solid var(--nc-rosa, #C95788);
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--nc-pd-texto);
+}
+
+/* a vaga */
+@app.nc-pd-ativo .nc-pd-ficha-cab {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 10px;
+  padding: 12px 14px 9px;
+  border-bottom: 2px solid var(--nc-rosa, #C95788);
+}
+
+@app.nc-pd-ativo .nc-pd-ficha-cab h2,
+@app.nc-pd-ativo .nc-pd-cab h2 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--nc-pd-texto);
+}
+
+@app.nc-pd-ativo .nc-pd-ficha-cab h2 {
+  font-size: 14.5px;
+}
+
+@app.nc-pd-ativo .nc-pd-situacao {
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--nc-pd-s) 11%, #fff);
+  font-size: 12px;
+  font-weight: 650;
+  color: var(--nc-pd-s);
+}
+
+@app.nc-pd-ativo .nc-pd-prazo {
+  display: grid;
+  gap: 1px;
+  margin: 0;
+  padding: 10px 14px 4px;
+}
+
+@app.nc-pd-ativo .nc-pd-prazo span {
+  font-size: 11.5px;
+  color: #77708C;
+}
+
+@app.nc-pd-ativo .nc-pd-prazo b {
+  font-size: 15px;
+  font-weight: 700;
+}
+
+@app.nc-pd-ativo .nc-pd-prazo small {
+  font-size: 12px;
+  font-weight: 650;
+}
+
+@app.nc-pd-ativo .nc-pd-prazo small[data-tom="vencido"] { color: var(--nc-pd-ruim); }
+@app.nc-pd-ativo .nc-pd-prazo small[data-tom="perto"] { color: var(--nc-pd-atencao); }
+@app.nc-pd-ativo .nc-pd-prazo small[data-tom="ok"] { color: var(--nc-pd-bom); }
+
+@app.nc-pd-ativo .nc-pd-ficha-mais {
+  margin: 0;
+  padding: 2px 14px 6px;
+}
+
+@app.nc-pd-ativo .nc-pd-ficha-mais summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 0;
+  font-size: 12.5px;
+  font-weight: 650;
+  color: var(--nc-roxo, #511C76);
+  list-style: none;
+  cursor: pointer;
+}
+
+@app.nc-pd-ativo .nc-pd-ficha-mais summary::-webkit-details-marker {
+  display: none;
+}
+
+@app.nc-pd-ativo .nc-pd-ficha-mais summary::after {
+  content: "";
+  width: 7px;
+  height: 7px;
+  margin-right: 3px;
+  border-right: 1.8px solid currentColor;
+  border-bottom: 1.8px solid currentColor;
+  transform: rotate(45deg) translateY(-2px);
+  transition: transform .15s;
+}
+
+@app.nc-pd-ativo .nc-pd-ficha-mais[open] summary::after {
+  transform: rotate(-135deg) translateY(-2px);
+}
+
+@app.nc-pd-ativo .nc-pd-ficha dl {
+  display: grid;
+  gap: 8px;
+  margin: 0 0 6px;
+}
+
+@app.nc-pd-ativo .nc-pd-ficha dt {
+  margin: 0;
+  font-size: 11.5px;
+  color: #77708C;
+}
+
+@app.nc-pd-ativo .nc-pd-ficha dd {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.35;
+  color: var(--nc-pd-texto);
+  overflow-wrap: anywhere;
+}
+
+@app.nc-pd-ativo .nc-pd-acoes {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  padding: 10px 14px 14px;
+  border-top: 1px solid var(--nc-pd-borda);
+}
+
+@app.nc-pd-ativo .nc-pd-acoes .nc-pd-bt:not(#nc-pd-x) {
+  justify-content: flex-start;
+  width: 100%;
+  min-width: 0;
+  height: auto;
+  min-height: 34px;
+  padding: 6px 9px;
+  font-size: 12px;
+  line-height: 1.25;
+  white-space: normal;
+  text-align: left;
+}
+
+@app.nc-pd-ativo .nc-pd-acoes .nc-pd-bt:not(#nc-pd-x) .t-Icon {
+  flex: 0 0 auto;
+}
+
+/* ═══ [C4] O PAINEL DOS CANDIDATOS E O FUNIL ════════════════════════════════════════════════
+   O título original da região sai; o nosso ("Candidatos") leva a faixa da região.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-pd-ativo .nc-pd-reg:not(#nc-pd-x) > .t-Region-header {
+  display: none;
+}
+
+@app.nc-pd-ativo .nc-pd {
+  color: var(--nc-pd-texto);
+  font-variant-numeric: tabular-nums;
+}
+
+@app.nc-pd-ativo .nc-pd-cab {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 10px;
+  padding: 10px 14px 10px 18px;
+  border-bottom: 2px solid var(--nc-rosa, #C95788);
+}
+
+@app.nc-pd-ativo .nc-pd-cab-acoes {
+  margin-left: 0;
+}
+
+@app.nc-pd-ativo .nc-pd-grupo {
+  display: inline-flex;
+  gap: 2px;
+  padding: 3px;
+  border-radius: 10px;
+  background: var(--nc-pd-fundo);
+}
+
+@app.nc-pd-ativo .nc-pd-grupo button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 32px;
+  margin: 0;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  box-shadow: none;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--nc-pd-fraco);
+  cursor: pointer;
+}
+
+@app.nc-pd-ativo .nc-pd-grupo button[aria-pressed="true"] {
+  background: #fff;
+  box-shadow: 0 1px 2px rgba(27, 18, 56, .1), 0 1px 1px rgba(27, 18, 56, .04);
+  color: var(--nc-roxo, #511C76);
+}
+
+/* o funil (coluna da esquerda): uma etapa por linha, com quantos e uma barra do tamanho dessa
+   parte no total (--nc-pd-parte, posto pelo JS); a escolhida fica marcada */
+@app.nc-pd-ativo .nc-pd-funil ul,
+@app.nc-pd-ativo .nc-pd-filtros-lista {
+  display: grid;
+  gap: 2px;
+  margin: 0;
+  padding: 6px;
+  list-style: none;
+}
+
+@app.nc-pd-ativo .nc-pd-funil li,
+@app.nc-pd-ativo .nc-pd-filtros-lista li {
+  margin: 0;
+}
+
+@app.nc-pd-ativo .nc-pd-funil button,
+@app.nc-pd-ativo .nc-pd-filtro {
+  position: relative;
+  display: grid;
+  grid-template-columns: 24px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  min-height: 38px;
+  margin: 0;
+  padding: 6px 8px 9px;
+  border: 0;
+  border-radius: 9px;
+  background: transparent;
+  box-shadow: none;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  text-align: left;
+  color: var(--nc-pd-texto);
+  cursor: pointer;
+}
+
+/* a barra da parte, rente ao pé da linha */
+@app.nc-pd-ativo .nc-pd-funil button::after {
+  content: "";
+  position: absolute;
+  left: 40px;
+  bottom: 4px;
+  width: calc(100% - 52px);
+  height: 3px;
+  border-radius: 3px;
+  background: linear-gradient(to right, color-mix(in srgb, var(--nc-roxo, #511C76) 55%, #fff) var(--nc-pd-parte, 0%), var(--nc-pd-borda) var(--nc-pd-parte, 0%));
+}
+
+@app.nc-pd-ativo .nc-pd-funil button i {
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--nc-pd-fundo);
+  font-style: normal;
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--nc-roxo, #511C76);
+}
+
+@app.nc-pd-ativo .nc-pd-funil button i .nc-pd-ic {
+  width: 14px;
+  height: 14px;
+}
+
+@app.nc-pd-ativo .nc-pd-funil button span,
+@app.nc-pd-ativo .nc-pd-filtro span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@app.nc-pd-ativo .nc-pd-funil button b,
+@app.nc-pd-ativo .nc-pd-filtro b {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--nc-pd-fraco);
+}
+
+@app.nc-pd-ativo .nc-pd-funil button[data-zero] {
+  color: #8E88A3;
+}
+
+@app.nc-pd-ativo .nc-pd-funil button:hover,
+@app.nc-pd-ativo .nc-pd-filtro:hover {
+  background: var(--nc-pd-fundo);
+}
+
+@app.nc-pd-ativo .nc-pd-funil button[aria-pressed="true"] {
+  background: color-mix(in srgb, var(--nc-roxo, #511C76) 8%, #fff);
+  color: var(--nc-roxo, #511C76);
+}
+
+@app.nc-pd-ativo .nc-pd-funil button[aria-pressed="true"] i {
+  background: var(--nc-roxo, #511C76);
+  color: #fff;
+}
+
+@app.nc-pd-ativo .nc-pd-funil button[aria-pressed="true"] b {
+  color: var(--nc-roxo, #511C76);
+}
+
+/* ═══ [C5] AS LINHAS DOS CANDIDATOS ═════════════════════════════════════════════════════════ */
+@app.nc-pd-ativo .nc-pd-titulos {
+  display: grid;
+  grid-template-columns: var(--nc-pd-colunas);
+  align-items: center;
+  gap: 12px;
+  padding: 10px 18px 8px;
+  border-bottom: 1px solid var(--nc-pd-borda);
+  font-size: 12px;
+  font-weight: 600;
+  color: #77708C;
+}
+
+@app.nc-pd-ativo .nc-pd-lista {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+@app.nc-pd-ativo .nc-pd-cand {
+  display: grid;
+  grid-template-columns: var(--nc-pd-colunas);
+  align-items: center;
+  gap: 12px;
+  margin: 0;
+  padding: 12px 18px;
+  border-bottom: 1px solid var(--nc-pd-borda);
+  transition: background-color .12s;
+}
+
+@app.nc-pd-ativo .nc-pd-cand:hover {
+  background: color-mix(in srgb, var(--nc-roxo, #511C76) 2.5%, #fff);
+}
+
+@app.nc-pd-ativo .nc-pd-cand[data-tom="bom"] {
+  background: color-mix(in srgb, var(--nc-pd-bom) 6%, #fff);
+}
+
+@app.nc-pd-ativo .nc-pd-cand[data-tom="ruim"] {
+  background: color-mix(in srgb, var(--nc-pd-ruim) 5%, #fff);
+}
+
+@app.nc-pd-ativo .nc-pd-caixa {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  margin: 0;
+  cursor: pointer;
+}
+
+@app.nc-pd-ativo .nc-pd-caixa input {
+  width: 18px;
+  height: 18px;
+  margin: 0;
+  accent-color: var(--nc-roxo, #511C76);
+  cursor: pointer;
+}
+
+@app.nc-pd-ativo .nc-pd-caixa input:disabled {
+  cursor: not-allowed;
+  opacity: .4;
+}
+
+@app.nc-pd-ativo .nc-pd-avatar {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--nc-roxo, #511C76) 10%, #fff);
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--nc-roxo, #511C76);
+}
+
+@app.nc-pd-ativo .nc-pd-quem {
+  min-width: 0;
+}
+
+@app.nc-pd-ativo .nc-pd-quem p {
+  margin: 0;
+}
+
+@app.nc-pd-ativo .nc-pd-nome {
+  font-size: 15px;
+  font-weight: 650;
+  line-height: 1.35;
+}
+
+@app.nc-pd-ativo .nc-pd-nome a {
+  color: var(--nc-pd-texto);
+  text-decoration: none;
+}
+
+@app.nc-pd-ativo .nc-pd-nome a:hover {
+  color: var(--nc-roxo, #511C76);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+@app.nc-pd-ativo .nc-pd-semnome {
+  font-style: italic;
+  font-weight: 500;
+  color: #77708C;
+}
+
+@app.nc-pd-ativo .nc-pd-cod {
+  font-size: 12.5px;
+  font-weight: 500;
+  color: #77708C;
+}
+
+@app.nc-pd-ativo .nc-pd-tipo {
+  margin-left: 4px;
+  padding: 1px 7px;
+  border-radius: 999px;
+  background: var(--nc-pd-fundo);
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--nc-pd-fraco);
+}
+
+@app.nc-pd-ativo .nc-pd-meta {
+  margin-top: 2px;
+  font-size: 13px;
+  color: var(--nc-pd-fraco);
+}
+
+@app.nc-pd-ativo .nc-pd-fraco {
+  color: #77708C;
+}
+
+@app.nc-pd-ativo .nc-pd-sinais {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 6px;
+  margin-top: 6px;
+}
+
+@app.nc-pd-ativo .nc-pd-sinal {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px 2px 6px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--nc-pd-t) 10%, #fff);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--nc-pd-t);
+  --nc-pd-t: var(--nc-pd-fraco);
+}
+
+@app.nc-pd-ativo .nc-pd-sinal .nc-pd-ic {
+  width: 13px;
+  height: 13px;
+}
+
+@app.nc-pd-ativo .nc-pd-sinal[data-tom="bom"] { --nc-pd-t: var(--nc-pd-bom); }
+@app.nc-pd-ativo .nc-pd-sinal[data-tom="ruim"] { --nc-pd-t: var(--nc-pd-ruim); }
+@app.nc-pd-ativo .nc-pd-sinal[data-tom="atencao"] { --nc-pd-t: var(--nc-pd-atencao); }
+@app.nc-pd-ativo .nc-pd-sinal[data-tom="info"] { --nc-pd-t: #2E6CB5; }
+
+@app.nc-pd-ativo .nc-pd-etapa {
+  display: grid;
+  justify-items: start;
+  gap: 4px;
+  min-width: 0;
+  font-size: 12px;
+  color: #77708C;
+}
+
+@app.nc-pd-ativo .nc-pd-fase {
+  display: inline-flex;
+  align-items: flex-start;
+  gap: 6px;
+  max-width: 100%;
+  padding: 3px 10px 3px 4px;
+  border-radius: 12px;
+  background: var(--nc-pd-fundo);
+  font-size: 12.5px;
+  font-weight: 600;
+  line-height: 20px;
+  color: var(--nc-pd-texto);
+}
+
+@app.nc-pd-ativo .nc-pd-fase i {
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  min-width: 20px;
+  height: 20px;
+  border-radius: 999px;
+  background: #fff;
+  font-style: normal;
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--nc-roxo, #511C76);
+}
+
+@app.nc-pd-ativo .nc-pd-nota {
+  display: inline-flex;
+  gap: 1px;
+}
+
+@app.nc-pd-ativo .nc-pd-estrela {
+  width: 14px;
+  height: 14px;
+  fill: #E2DCEB;
+}
+
+@app.nc-pd-ativo .nc-pd-estrela.is-cheia {
+  fill: var(--nc-rosa, #C95788);
+}
+
+@app.nc-pd-ativo .nc-pd-atalhos {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 4px;
+}
+
+@app.nc-pd-ativo .nc-pd-atalho,
+@app.nc-pd-ativo .nc-pd-abrir {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border: 1px solid var(--nc-borda-botao);
+  border-radius: 9px;
+  background: #fff;
+  color: var(--nc-roxo, #511C76);
+  text-decoration: none;
+}
+
+@app.nc-pd-ativo .nc-pd-atalho:hover,
+@app.nc-pd-ativo .nc-pd-abrir:hover {
+  border-color: color-mix(in srgb, var(--nc-roxo, #511C76) 40%, #fff);
+  background: color-mix(in srgb, var(--nc-roxo, #511C76) 5%, #fff);
+}
+
+@app.nc-pd-ativo .nc-pd-abrir {
+  margin-left: 4px;
+  border-color: transparent;
+  background: transparent;
+  color: #8E88A3;
+}
+
+@app.nc-pd-ativo .nc-pd-cand a:focus-visible,
+@app.nc-pd-ativo .nc-pd button:focus-visible,
+@app.nc-pd-ativo .nc-pd-caixa input:focus-visible {
+  outline: 2px solid var(--nc-roxo, #511C76);
+  outline-offset: 2px;
+}
+
+@app.nc-pd-ativo .nc-pd-vazio {
+  padding: 32px 20px;
+  border-bottom: 1px solid var(--nc-pd-borda);
+  text-align: center;
+  font-size: 14px;
+  color: var(--nc-pd-fraco);
+}
+
+@app.nc-pd-ativo .nc-pd-vazio p {
+  margin: 0 0 6px;
+}
+
+@app.nc-pd-ativo .nc-pd-mais {
+  margin: 0;
+  padding: 10px 18px;
+  font-size: 13px;
+  color: var(--nc-pd-fraco);
+}
+
+/* ═══ [C8] SINAIS QUE FILTRAM, ORDENAR E "MAIS SOBRE O CANDIDATO" ═══════════════════════════ */
+/* os sinais (coluna da esquerda): bolinha da cor do sinal, nome e quantos */
+@app.nc-pd-ativo .nc-pd-filtro {
+  grid-template-columns: 24px minmax(0, 1fr) auto;
+  padding: 6px 8px;
+  --nc-pd-t: var(--nc-pd-fraco);
+}
+
+@app.nc-pd-ativo .nc-pd-filtro[data-tom="bom"] { --nc-pd-t: var(--nc-pd-bom); }
+@app.nc-pd-ativo .nc-pd-filtro[data-tom="ruim"] { --nc-pd-t: var(--nc-pd-ruim); }
+@app.nc-pd-ativo .nc-pd-filtro[data-tom="atencao"] { --nc-pd-t: var(--nc-pd-atencao); }
+@app.nc-pd-ativo .nc-pd-filtro[data-tom="info"] { --nc-pd-t: #2E6CB5; }
+
+@app.nc-pd-ativo .nc-pd-filtro i {
+  justify-self: center;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--nc-pd-t);
+}
+
+@app.nc-pd-ativo .nc-pd-filtro[aria-pressed="true"] {
+  background: color-mix(in srgb, var(--nc-pd-t) 10%, #fff);
+  color: var(--nc-pd-t);
+}
+
+@app.nc-pd-ativo .nc-pd-filtro[aria-pressed="true"] b {
+  color: var(--nc-pd-t);
+}
+
+/* a barra dos candidatos numa linha: título e quantos · busca · ordem · Lista|Tabela · Incluir */
+@app.nc-pd-ativo .nc-pd-conta {
+  margin-left: 4px;
+  padding: 1px 8px;
+  border-radius: 999px;
+  background: var(--nc-pd-fundo);
+  font-size: 12.5px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  vertical-align: 2px;
+  color: var(--nc-roxo, #511C76);
+}
+
+@app.nc-pd-ativo .nc-pd-conta:empty {
+  display: none;
+}
+
+/* "50 nesta página": a lista só cobre a página do relatório à vista (o número da pílula é o total) */
+@app.nc-pd-ativo .nc-pd-conta-pag {
+  margin-left: 8px;
+  font-size: 12.5px;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  vertical-align: 2px;
+  white-space: nowrap;
+  color: var(--nc-pd-fraco);
+}
+
+@app.nc-pd-ativo .nc-pd-conta-pag[hidden] {
+  display: none;
+}
+
+@app.nc-pd-ativo .nc-pd-busca {
+  position: relative;
+  display: flex;
+  align-items: center;
+  flex: 1 1 260px;
+  min-width: 0;
+  max-width: 460px;
+  margin: 0;
+}
+
+@app.nc-pd-ativo .nc-pd-busca .nc-pd-ic {
+  position: absolute;
+  left: 11px;
+  color: #8E88A3;
+  pointer-events: none;
+}
+
+@app.nc-pd-ativo .nc-pd-busca input:not(#nc-pd-x) {
+  width: 100%;
+  height: 36px;
+  margin: 0;
+  padding: 0 12px 0 34px;
+  border: 1px solid var(--nc-pd-borda);
+  border-radius: 10px;
+  background: var(--nc-pd-fundo);
+  box-shadow: none;
+  font: inherit;
+  font-size: 13.5px;
+  color: var(--nc-pd-texto);
+}
+
+@app.nc-pd-ativo .nc-pd-busca input:not(#nc-pd-x):focus {
+  border-color: var(--nc-roxo, #511C76);
+  background: #fff;
+  outline: 0;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--nc-roxo, #511C76) 14%, transparent);
+}
+
+@app.nc-pd-ativo .nc-pd-ordem {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  margin: 0;
+}
+
+@app.nc-pd-ativo .nc-pd-ordem .nc-pd-ic {
+  position: absolute;
+  left: 10px;
+  color: #8E88A3;
+  pointer-events: none;
+}
+
+@app.nc-pd-ativo .nc-pd-ordem select:not(#nc-pd-x) {
+  width: auto;
+  height: 36px;
+  margin: 0;
+  padding: 0 28px 0 32px;
+  border: 1px solid var(--nc-pd-borda);
+  border-radius: 10px;
+  background-color: #fff;
+  font: inherit;
+  font-size: 13px;
+  color: var(--nc-pd-texto);
+}
+
+/* na Lista, a barra do relatório (lupa, Ir, Ações) sai: a busca e a ordem da nossa barra fazem o
+   trabalho. Na Tabela ela volta inteira (Ações, filtros, baixar…) */
+@app.nc-pd-ativo:not(.nc-pd-tabela) #partnersIRR .a-IRR-toolbar:not(#nc-pd-x) {
+  display: none;
+}
+
+@app.nc-pd-ativo .nc-pd-cand {
+  cursor: pointer;
+}
+
+@app.nc-pd-ativo .nc-pd-cand.is-aberta {
+  background: color-mix(in srgb, var(--nc-roxo, #511C76) 3%, #fff);
+}
+
+@app.nc-pd-ativo .nc-pd-detalhe-bt {
+  margin: 0;
+  padding: 0;
+  box-shadow: none;
+  cursor: pointer;
+}
+
+@app.nc-pd-ativo .nc-pd-detalhe-bt .nc-pd-ic {
+  transition: transform .15s;
+}
+
+@app.nc-pd-ativo .nc-pd-detalhe-bt[aria-expanded="true"] .nc-pd-ic {
+  transform: rotate(180deg);
+}
+
+@app.nc-pd-ativo .nc-pd-info {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px 24px;
+  margin: 4px 0 2px 86px;
+  padding: 14px 16px;
+  border: 1px solid var(--nc-pd-borda);
+  border-radius: 12px;
+  background: #fff;
+  cursor: auto;
+}
+
+@app.nc-pd-ativo .nc-pd-info h3 {
+  margin: 0 0 8px;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--nc-roxo, #511C76);
+}
+
+@app.nc-pd-ativo .nc-pd-info dl {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+}
+
+@app.nc-pd-ativo .nc-pd-info dl > div {
+  display: grid;
+  grid-template-columns: 128px minmax(0, 1fr);
+  gap: 8px;
+  align-items: baseline;
+}
+
+@app.nc-pd-ativo .nc-pd-info dt {
+  margin: 0;
+  font-size: 12.5px;
+  color: #77708C;
+}
+
+@app.nc-pd-ativo .nc-pd-info dd {
+  margin: 0;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--nc-pd-texto);
+  overflow-wrap: anywhere;
+}
+
+@app.nc-pd-ativo .nc-pd-info dd a {
+  color: var(--nc-roxo, #511C76);
+}
+
+@app.nc-pd-ativo .nc-pd-info footer {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding-top: 12px;
+  border-top: 1px solid var(--nc-pd-borda);
+}
+
+@app.nc-pd-ativo a.nc-pd-bt:not(#nc-pd-x) {
+  text-decoration: none;
+}
+
+@app.nc-pd-ativo .nc-pd-copiar {
+  display: inline-grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  margin: -4px 0 -4px 2px;
+  padding: 0;
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  box-shadow: none;
+  vertical-align: middle;
+  color: #8E88A3;
+  cursor: pointer;
+}
+
+@app.nc-pd-ativo .nc-pd-copiar:hover {
+  background: var(--nc-pd-fundo);
+  color: var(--nc-roxo, #511C76);
+}
+
+@app.nc-pd-ativo .nc-pd-copiar.is-copiado {
+  color: var(--nc-pd-bom);
+}
+
+@app.nc-pd-ativo .nc-pd-copiar .nc-pd-ic {
+  width: 15px;
+  height: 15px;
+}
+
+/* as janelas da página (Mudança de fase, Incluir candidato): quem vai mudar, no alto */
+@app.nc-pd-ativo .nc-pd-quem-muda {
+  margin: 0 0 12px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: var(--nc-pd-fundo, #F7F5FA);
+  font-size: 13.5px;
+  line-height: 1.45;
+  color: var(--nc-pd-texto, #1B1238);
+}
+
+@app.nc-pd-ativo .nc-pd-quem-muda p {
+  margin: 0;
+}
+
+@app.nc-pd-ativo .nc-pd-quem-muda p + ul,
+@app.nc-pd-ativo .nc-pd-quem-muda ul + p {
+  margin-top: 6px;
+}
+
+@app.nc-pd-ativo .nc-pd-quem-muda ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+@app.nc-pd-ativo .nc-pd-quem-muda li {
+  padding: 3px 10px;
+  border: 1px solid var(--nc-pd-borda, #E9E5F1);
+  border-radius: 999px;
+  background: #fff;
+  font-weight: 600;
+}
+
+/* ═══ [C6] A BARRA DE SELEÇÃO E OS BOTÕES ═══════════════════════════════════════════════════ */
+@app.nc-pd-ativo .nc-pd-barra {
+  position: sticky;
+  bottom: 12px;
+  z-index: 5;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 16px;
+  margin: 12px 18px;
+  padding: 10px 12px 10px 16px;
+  border-radius: 12px;
+  background: var(--nc-tinta, #1B1238);
+  box-shadow: 0 12px 30px -12px rgba(27, 18, 56, .5);
+  color: #fff;
+}
+
+@app.nc-pd-ativo .nc-pd-barra-n {
+  font-size: 14px;
+  font-weight: 650;
+}
+
+@app.nc-pd-ativo .nc-pd-barra-acoes {
+  display: flex;
+  gap: 8px;
+  margin-left: auto;
+}
+
+@app.nc-pd-ativo .nc-pd-barra .nc-pd-link {
+  color: #fff;
+}
+
+@app.nc-pd-ativo .nc-pd-link {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  box-shadow: none;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+
+@app.nc-pd-ativo .nc-pd-bt:not(#nc-pd-x) {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  width: auto;
+  height: 36px;
+  margin: 0;
+  padding: 0 14px;
+  border: 1px solid var(--nc-borda-botao);
+  border-radius: 10px;
+  background: #fff;
+  box-shadow: none;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--nc-pd-texto);
+  white-space: nowrap;
+}
+
+/* 04/10: botão que a página esconde (as ações escondem "Mudar Fase" sem selecionados) continua
+   escondido — o inline-flex acima, com !important, vencia o style="display:none" */
+@app.nc-pd-ativo .nc-pd-bt:not(#nc-pd-x)[style*="none"] {
+  display: none;
+}
+
+/* o botão "hot" do tema pinta o rótulo de branco: aqui o rótulo segue a cor do nosso botão */
+@app.nc-pd-ativo .nc-pd-bt:not(#nc-pd-x) .t-Button-label,
+@app.nc-pd-ativo .nc-pd-bt:not(#nc-pd-x) .t-Icon {
+  color: inherit;
+}
+
+@app.nc-pd-ativo .nc-pd-bt:not(#nc-pd-x) .t-Icon--right {
+  display: none;
+}
+
+@app.nc-pd-ativo .nc-pd-bt:not(#nc-pd-x):hover {
+  border-color: color-mix(in srgb, var(--nc-roxo, #511C76) 35%, #fff);
+  background: color-mix(in srgb, var(--nc-roxo, #511C76) 4%, #fff);
+}
+
+@app.nc-pd-ativo .nc-pd-bt.nc-pd-bt--primario:not(#nc-pd-x) {
+  border-color: var(--nc-roxo, #511C76);
+  background: var(--nc-roxo, #511C76);
+  color: #fff;
+}
+
+@app.nc-pd-ativo .nc-pd-bt.nc-pd-bt--perigo:not(#nc-pd-x) {
+  color: var(--nc-pd-ruim);
+}
+
+/* ═══ [C7] CELULAR (e telas estreitas) ══════════════════════════════════════════════════════
+   Até 1000 px: uma coluna só. A vaga vem recolhida; etapas e sinais deitados, rolando de lado.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@media (max-width: 1000px) {
+  @app.nc-pd-ativo .nc-pd-layout {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+  }
+
+  @app.nc-pd-ativo .nc-pd-lado {
+    position: static;
+    max-height: none;
+    overflow: visible;
+    gap: 10px;
+  }
+
+  @app.nc-pd-ativo .nc-pd-funil ul,
+  @app.nc-pd-ativo .nc-pd-filtros-lista {
+    display: flex;
+    gap: 6px;
+    overflow-x: auto;
+    scrollbar-width: thin;
+  }
+
+  @app.nc-pd-ativo .nc-pd-funil li,
+  @app.nc-pd-ativo .nc-pd-filtros-lista li {
+    flex: 0 0 auto;
+  }
+
+  @app.nc-pd-ativo .nc-pd-funil button,
+  @app.nc-pd-ativo .nc-pd-filtro {
+    width: auto;
+    border: 1px solid var(--nc-pd-borda);
+  }
+
+  @app.nc-pd-ativo .nc-pd-funil button span,
+  @app.nc-pd-ativo .nc-pd-filtro span {
+    overflow: visible;
+  }
+
+  @app.nc-pd-ativo .nc-pd-acoes {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  @app.nc-pd-ativo .nc-pd-busca {
+    flex-basis: 100%;
+    max-width: none;
+    order: 5;
+  }
+}
+
+/* ═══ [C7b] CELULAR ═════════════════════════════════════════════════════════════════════════ */
+@media (max-width: 860px) {
+  @app.nc-pd-ativo .nc-pd-titulos span {
+    display: none;
+  }
+
+  @app.nc-pd-ativo .nc-pd-titulos {
+    grid-template-columns: 34px 1fr;
+  }
+
+  @app.nc-pd-ativo .nc-pd-cand {
+    grid-template-columns: 34px minmax(0, 1fr);
+    gap: 8px 10px;
+    padding: 12px 14px;
+  }
+
+  @app.nc-pd-ativo .nc-pd-avatar {
+    display: none;
+  }
+
+  @app.nc-pd-ativo .nc-pd-etapa,
+  @app.nc-pd-ativo .nc-pd-atalhos {
+    grid-column: 2;
+  }
+
+  @app.nc-pd-ativo .nc-pd-etapa {
+    grid-auto-flow: column;
+    justify-content: start;
+    align-items: center;
+    gap: 8px;
+  }
+
+  @app.nc-pd-ativo .nc-pd-atalhos {
+    justify-content: flex-start;
+  }
+
+  @app.nc-pd-ativo .nc-pd-acoes,
+  @app.nc-pd-ativo .nc-pd-cab-acoes {
+    margin-left: 0;
+  }
+
+  @app.nc-pd-ativo .nc-pd-barra {
+    margin: 10px;
+  }
+
+  @app.nc-pd-ativo .nc-pd-info {
+    grid-template-columns: 1fr;
+    margin-left: 0;
+  }
+
+  @app.nc-pd-ativo .nc-pd-info dl > div {
+    grid-template-columns: 112px minmax(0, 1fr);
+  }
+
+  @app.nc-pd-ativo .nc-pd-ordem {
+    margin-left: 0;
+  }
+
+  /* a ficha em duas colunas: os fatos são curtos e uma coluna só alongava demais a tela */
+  @app.nc-pd-ativo .nc-pd-ficha dl {
+    grid-template-columns: 1fr 1fr;
+    gap: 10px 14px;
+    padding: 12px 14px 14px;
+  }
+}
+
+/* ═══ [C9] O PÉ DA JANELA "MUDANÇA DE FASE" ═════════════════════════════════════════════════
+   Os botões vinham em duas linhas (Voltar sozinho; Aprovar no meio, esticado). O JS junta
+   tudo na região "fase botoes" e marca com nc-pd-janela-pe.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-pd-ativo .nc-pd-janela-pe:not(#nc-pd-x) {
+  margin-top: 8px;
+  padding: 14px 0 0;
+  border-top: 1px solid var(--nc-pd-borda, #E9E5F1);
+}
+
+@app.nc-pd-ativo .nc-pd-janela-pe:not(#nc-pd-x) .t-ButtonRegion-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* a coluna do meio (vazia) ocupava a largura toda e espremia as laterais a 0 px */
+@app.nc-pd-ativo .nc-pd-janela-pe:not(#nc-pd-x) .t-ButtonRegion-col--content:not(:has(.t-Button)) {
+  display: none;
+}
+
+@app.nc-pd-ativo .nc-pd-janela-pe:not(#nc-pd-x) :is(.t-ButtonRegion-col--left, .t-ButtonRegion-col--right) {
+  flex: 0 0 auto;
+  width: auto;
+}
+
+@app.nc-pd-ativo .nc-pd-janela-pe:not(#nc-pd-x) .t-ButtonRegion-col--right {
+  margin-left: auto;
+}
+
+@app.nc-pd-ativo .nc-pd-janela-pe:not(#nc-pd-x) .t-ButtonRegion-buttons {
+  padding: 0;
+}
+
+@app.nc-pd-ativo .nc-pd-janela-pe:not(#nc-pd-x) .t-ButtonRegion-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+@app.nc-pd-ativo .nc-pd-janela-pe:not(#nc-pd-x) .t-Button {
+  width: auto;
+  margin: 0;
+}
+
+@app.nc-pd-ativo .nc-pd-janela-pe:not(#nc-pd-x) .nc-pd-aprovar .t-Icon--left {
+  display: none;
+}

@@ -1,0 +1,5 @@
+Next image of the same series — module "NatPay". Same style as the attached sheet and the style guide, square 1:1, transparent background.
+
+SCENE — the hero object is a giant isometric smartphone lying at an angle like a platform, its screen showing an abstract payment confirmation: a large pink circle with a white check mark and two thin lines. Around it: a woman in a pink top tapping a contactless card on the phone; a man in a navy blazer sending coins that fly in an arc from one small phone in his hand toward the big phone; a man with a beard holding a wallet; a woman seated on a coin stack using a tablet. Floating cards: a bank card in purple and plum, a card with two curved arrows forming a loop (instant transfer), a card with a coin.
+
+STRICT — no text, no letters, no numbers, no words, no logos, no brand marks, no flags, no national symbols, no watermark, no signature, no border or frame. Faceless people. Flat vector only. Pure white background.

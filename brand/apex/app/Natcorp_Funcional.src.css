@@ -1,0 +1,457 @@
+/* ╔════════════════════════════════════════════════════════════════════════════════════════╗
+   ║  NATCORP · INFORMAÇÕES FUNCIONAIS  —  a "roupa" da tela (CSS)                             ║
+   ║  App 600 · Página 35 · etapa "Dados Funcionais" do RH                                     ║
+   ╚════════════════════════════════════════════════════════════════════════════════════════╝
+
+   Primeira vez num arquivo destes? Leia antes o manual: brand/apex/MANUAL-APEX.md (parte 1).
+
+   ── O QUE ESTE ARQUIVO FAZ ────────────────────────────────────────────────────────────────
+   Dá a aparência da página 35: a ficha do alto, as abas com ícone, a diferença entre campo de
+   CONSULTA (fundo claro, sem borda) e campo de EDIÇÃO (caixa branca com borda), e a coluna
+   das ações. Ele NÃO muda nada de lugar e não troca textos: quem faz isso é o arquivo-irmão
+   Natcorp_Funcional.js. Os dois trabalham juntos:
+     o JS marca o campo como "só de consulta"  →  este arquivo diz como ele se parece.
+   Sem o JS, este arquivo não faz nada (todas as regras dependem da marca nc-fu que o JS põe
+   na página).
+   Detalhes que valem para o arquivo todo:
+     • A "caixa" do campo é o próprio campo (borda, fundo, cantos): é nele que consulta e
+       edição se separam.
+     • Nada aqui esconde botão ou campo controlado por ação dinâmica. A ÚNICA regra que
+       esconde botão é a da consulta que a própria página DESLIGOU (disabled).
+
+   ── ONDE ELE ENTRA NO APEX ────────────────────────────────────────────────────────────────
+     Página 35 › CSS › File URLs:   #WORKSPACE_IMAGES#Natcorp_Funcional.css
+     CUIDADO: edite ESTE arquivo (Natcorp_Funcional.src.css, a fonte) e gere o arquivo que sobe com
+     node brand/apex/app/gerar-app.mjs  — o gerador troca @app pelo prefixo longo e põe
+     !important em toda linha. O Natcorp_Funcional.css da pasta login/ é refeito a cada geração:
+     o que for mudado só nele se perde. (Manual, parte 2.)
+
+   ── ÍNDICE: as partes deste arquivo (Ctrl+F pelo código entre colchetes) ──────────────────
+     [C1] O que fica escondido e os ícones           (inclui o "Ir para seção" do celular)
+     [C2] A ficha do alto                             ← montada pelo JS em [J3] e [J4]
+     [C3] As abas                                     ← arrumadas pelo JS em [J3]
+     [C4] Consulta × edição                           ← marcada pelo JS em [J4]
+     [C5] As ações (Alterar Dados e consultas)        ← arrumadas pelo JS em [J3]
+     [C6] Telas médias e celular                      (ajustes para telas menores)
+     [C7] Menos movimento                             (para quem pediu "reduzir movimento")
+
+   ── RECEITAS RÁPIDAS ──────────────────────────────────────────────────────────────────────
+     Quero mudar uma cor
+       → use uma das cores da marca, pelo nome: var(--nc-roxo), var(--nc-nevoa)… A lista
+         completa, com amostras, está no manual (parte 3). Assim a cor acompanha o tema que
+         o usuário escolheu em "Cores". Evite escrever cores soltas, como #511C76.
+     Quero mudar o fundo dos campos de consulta  → [C4], a regra com .nc-fu-leitura.
+     Quero o "Alterar Dados" maior ou menor       → [C5], a regra com .nc-fu-alterar.
+     Algo ficou bom no computador e ruim no celular → [C6]: o que está dentro de
+                                                   @media (max-width: 640px) só vale no celular.
+
+   ── COMO LER UM ARQUIVO CSS EM 30 SEGUNDOS ────────────────────────────────────────────────
+     Cada regra tem duas partes:     QUEM { COMO; }
+       @app.nc-fu .nc-fu-acoes-tit {       ← QUEM: o "seletor", diz em que pedaço da tela vale
+         font-size: 13px;                  ← COMO: propriedade: valor;  (tamanho da letra)
+         font-weight: 800;                 ←       letra bem forte (negrito)
+       }
+     .nome-com-ponto       uma "classe": uma etiqueta posta num pedaço da tela (pelo APEX ou
+                           pelo JS). .nc-fu-acoes-tit é o título "Consultas desta aba".
+     @app                  atalho que dá prioridade às nossas regras sobre as do tema do APEX.
+                           No arquivo que sobe para o APEX ele aparece por extenso, como
+                           html body:is(.t-PageBody…):not(#nc-a1):not(#nc-a2) — é a mesma coisa.
+     :not(#nc-fu-x)…       peso extra, para vencer uma regra do tema. Pode ignorar ao ler.
+     !important            no arquivo que sobe, toda linha ganha um: é o mesmo "vencer o tema".
+     @media (max-width: 640px) { … }   as regras de dentro só valem em telas até 640px (celular).
+     var(--nc-roxo)        uma cor da marca, pelo nome (muda junto com o tema escolhido).
+     px                    pixels, o tamanho de um pontinho da tela. 16px é o texto normal.
+     Toda linha COMO termina em ;   e todo { é fechado por um }. Não apague esses sinais.
+*/
+
+/* ═══ [C1] O QUE FICA ESCONDIDO E OS ÍCONES ══════════════════════════════════════════════════
+   display: none = não aparece. Somem: a ficha/aviso/título quando o JS os deixa vazios
+   ([hidden]) e as consultas que a página desligou para a aba aberta (.nc-fu-apagada).
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-fu :is(.nc-fu-ficha, .nc-fu-modo, .nc-fu-acoes-tit)[hidden]:not(#nc-fu-x):not(#nc-fu-y),
+@app.nc-fu .nc-fu-acoes .t-Button.nc-fu-apagada:not(#nc-fu-x):not(#nc-fu-y) {
+  display: none;
+}
+
+/* o "Ir para seção" do Natcorp_Formulario_Celular lista as regiões de TODAS as abas: aqui as abas já são a navegação */
+@app.nc-fu .nc-secoes-botao:not(#nc-fu-x):not(#nc-fu-y) {
+  display: none;
+}
+
+/* os ícones desenhados pelo JS: só o contorno, na cor do texto ao redor */
+@app.nc-fu .nc-fu-ic {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.9;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* ═══ [C2] A FICHA DO ALTO ═════════════════════════════════════════════════════════════════
+   Montada pelo JS em [J3] e preenchida em [J4]. Peças principais:
+     .nc-fu-ficha       a faixa inteira          .nc-fu-fato      cada dado (é um botão)
+     .nc-fu-fato-rot    o rótulo pequeno         .nc-fu-fato-v    o valor
+     .nc-fu-fato--ok    situação ativa (verde)   .nc-fu-fato--fim / --aviso  ícone vermelho / amarelo
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-fu .nc-fu-ficha {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  margin: 0 0 14px;
+}
+
+@app.nc-fu .nc-fu-fato {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  min-height: 72px;
+  padding: 12px 14px;
+  border: 1px solid var(--nc-nevoa);
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: 0 10px 22px -20px rgba(var(--nc-t-azul-rgb, 44, 26, 99), .6);
+  font: inherit;
+  text-align: left;
+  color: var(--nc-tinta);
+  cursor: pointer;
+  transition: border-color .15s, box-shadow .15s;
+}
+
+@app.nc-fu .nc-fu-fato:hover {
+  border-color: #CDBFE0;
+  box-shadow: 0 14px 26px -20px rgba(var(--nc-t-azul-rgb, 44, 26, 99), .7);
+}
+
+@app.nc-fu .nc-fu-fato:focus-visible {
+  outline: 3px solid var(--nc-rosa);
+  outline-offset: 2px;
+}
+
+@app.nc-fu .nc-fu-fato-ic {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  background: var(--nc-nevoa2);
+  color: var(--nc-roxo);
+}
+
+@app.nc-fu .nc-fu-fato-ic .nc-fu-ic {
+  width: 21px;
+  height: 21px;
+}
+
+@app.nc-fu .nc-fu-fato-txt {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+}
+
+@app.nc-fu .nc-fu-fato-rot {
+  font-size: 12.5px;
+  font-weight: 700;
+  line-height: 1.3;
+  color: #6E6882;
+}
+
+@app.nc-fu .nc-fu-fato-v {
+  font-size: 16px;
+  font-weight: 800;
+  line-height: 1.3;
+  color: var(--nc-tinta);
+  overflow-wrap: anywhere;
+}
+
+@app.nc-fu .nc-fu-fato-sub {
+  font-size: 12.5px;
+  line-height: 1.3;
+  color: var(--nc-grafite);
+}
+
+@app.nc-fu .nc-fu-fato--ok .nc-fu-fato-ic {
+  background: #E4F4EA;
+  color: #1E6B45;
+}
+
+@app.nc-fu .nc-fu-fato--ok .nc-fu-fato-v {
+  color: #1E6B45;
+}
+
+@app.nc-fu .nc-fu-fato--aviso .nc-fu-fato-ic {
+  background: #FFF4DE;
+  color: #6B4700;
+}
+
+@app.nc-fu .nc-fu-fato--fim .nc-fu-fato-ic {
+  background: #FBEAEC;
+  color: var(--nc-ruim);
+}
+
+/* o dado que a ficha levou: acende um instante */
+@app.nc-fu .t-Form-fieldContainer.nc-fu-pisca {
+  animation: nc-fu-pisca 1.6s cubic-bezier(.16, 1, .3, 1);
+  border-radius: 10px;
+}
+
+@keyframes nc-fu-pisca {
+  0%, 30% { box-shadow: 0 0 0 4px rgba(var(--nc-t-rosa-rgb, 201, 87, 136), .45); }
+  100% { box-shadow: 0 0 0 4px rgba(var(--nc-t-rosa-rgb, 201, 87, 136), 0); }
+}
+
+/* ═══ [C3] AS ABAS ═════════════════════════════════════════════════════════════════════════
+   Arrumadas pelo JS em [J3] (letra normal + ícone). .nc-fu-abas é a região de abas.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-fu .nc-fu-abas .apex-rds-slider:not(#nc-fu-x):not(#nc-fu-y) {
+  display: none;
+}
+
+@app.nc-fu .nc-fu-abas .t-Tabs:not(#nc-fu-x):not(#nc-fu-y) {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0 0 12px;
+  padding: 0;
+  overflow: visible;
+  white-space: normal;
+  border: 0;
+  background: none;
+}
+
+@app.nc-fu .nc-fu-abas .t-Tabs-item:not(#nc-fu-x):not(#nc-fu-y) {
+  flex: 0 0 auto;
+  margin: 0;
+  border: 0;
+}
+
+@app.nc-fu .nc-fu-abas .t-Tabs-link:not(#nc-fu-x):not(#nc-fu-y) {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 42px;
+  padding: 0 14px 0 11px;
+  border: 1.5px solid var(--nc-nevoa);
+  border-radius: 999px;
+  background: #fff;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: 0;
+  text-transform: none;
+  white-space: nowrap;
+  color: var(--nc-roxo);
+  box-shadow: none;
+}
+
+@app.nc-fu .nc-fu-abas .t-Tabs-link:hover:not(#nc-fu-x):not(#nc-fu-y) {
+  border-color: #BBA9D6 /*reserva*/;
+  border-color: oklch(from #BBA9D6 l calc(c * var(--nc-t-croma, 1)) calc(h + var(--nc-t-giro, 0)));
+  background: var(--nc-nevoa2);
+}
+
+@app.nc-fu .nc-fu-abas .t-Tabs-item.is-active .t-Tabs-link:not(#nc-fu-x):not(#nc-fu-y) {
+  border-color: var(--nc-roxo);
+  background: var(--nc-roxo);
+  color: #fff;
+}
+
+@app.nc-fu .nc-fu-abas .t-Tabs-link .nc-fu-ic {
+  flex: none;
+  width: 18px;
+  height: 18px;
+}
+
+/* ═══ [C4] CONSULTA × EDIÇÃO ═══════════════════════════════════════════════════════════════
+   Marcada pelo JS em [J4]. .nc-fu-leitura = campo só de consulta (o APEX o deixou readonly
+   ou disabled). .nc-fu-modo é a linha de aviso acima das abas.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-fu .nc-fu-modo {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin: 0 0 10px;
+  font-size: 14px;
+  line-height: 1.45;
+  color: var(--nc-grafite);
+}
+
+@app.nc-fu .nc-fu-modo b {
+  font-weight: 800;
+  color: var(--nc-tinta);
+}
+
+@app.nc-fu .nc-fu-modo .nc-fu-ic {
+  flex: none;
+  width: 18px;
+  height: 18px;
+  margin-top: 1px;
+  color: var(--nc-roxo);
+}
+
+/* só de leitura: fundo claro, sem borda, valor firme; o botão de lista/calendário sai */
+@app.nc-fu .nc-fu-leitura :is(input.apex-item-text, input.apex-item-datepicker, input.number_field, textarea, select):not(#nc-fu-x):not(#nc-fu-y) {
+  background: #F6F3FA;
+  box-shadow: none;
+  font-weight: 600;
+  color: var(--nc-tinta);
+  opacity: 1;
+  resize: none;
+}
+
+/* 04/10: a COR da borda fica em regras à parte, com :not([style*="border-color"]) — o "Destaca
+   Itens Obrigatórios" da página pinta o obrigatório com borda inline (#511c76, 2px) e a cor daqui
+   (que vira !important) apagava essa marca. Campo com a marca da página fica com a borda dela. */
+@app.nc-fu .nc-fu-leitura :is(input.apex-item-text, input.apex-item-datepicker, input.number_field, textarea, select):not([style*="border-color"]):not(#nc-fu-x):not(#nc-fu-y) {
+  border-color: transparent;
+}
+
+@app.nc-fu .nc-fu-leitura :is(input, textarea)::placeholder {
+  color: #A59DBA;
+  opacity: 1;
+}
+
+@app.nc-fu .nc-fu-leitura :is(.a-Button--popupLOV, .ui-datepicker-trigger, .a-Button--calendar):not(#nc-fu-x):not(#nc-fu-y) {
+  visibility: hidden;
+  width: 0;
+  min-width: 0;
+  padding: 0;
+  border: 0;
+}
+
+@app.nc-fu .nc-fu-leitura .apex-item-group:is(.apex-item-group--popup-lov, .apex-item-group--dp) :is(input):not(#nc-fu-x):not(#nc-fu-y) {
+  border-radius: 8px;
+}
+
+/* o que se edita: caixa branca com borda firme (a cor da borda respeita a marca de obrigatório da página) */
+@app.nc-fu #TABS .t-Form-fieldContainer:not(.nc-fu-leitura) :is(input.apex-item-text, input.apex-item-datepicker, input.number_field, textarea, select):not(#nc-fu-x):not(#nc-fu-y) {
+  background: #fff;
+}
+
+@app.nc-fu #TABS .t-Form-fieldContainer:not(.nc-fu-leitura) :is(input.apex-item-text, input.apex-item-datepicker, input.number_field, textarea, select):not([style*="border-color"]):not(#nc-fu-x):not(#nc-fu-y) {
+  border-color: #CDBFE0;
+}
+
+/* ═══ [C5] AS AÇÕES: "ALTERAR DADOS" E AS CONSULTAS ════════════════════════════════════════
+   Arrumadas pelo JS em [J3]. .nc-fu-alterar = o botão Alterar Dados; .nc-fu-consulta = cada
+   consulta; .nc-fu-acoes-tit = o título "Consultas desta aba".
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-fu .nc-fu-acoes .t-Button.nc-fu-alterar:not(#nc-fu-x):not(#nc-fu-y) {
+  min-height: 50px;
+  border-radius: 14px;
+  font-size: 15.5px;
+}
+
+/* o tema esconde o texto do botão no celular (mobileHideLabel): aqui o texto é o que explica */
+@app.nc-fu .nc-fu-acoes .t-Button :is(.t-Button-label):not(#nc-fu-x):not(#nc-fu-y) {
+  display: inline;
+  position: static;
+  width: auto;
+  height: auto;
+  clip: auto;
+  overflow: visible;
+  color: inherit;
+}
+
+@app.nc-fu .nc-fu-acoes .t-Button.nc-fu-alterar .t-Button-label:not(#nc-fu-x):not(#nc-fu-y) {
+  color: #fff;
+}
+
+@app.nc-fu .nc-fu-acoes-tit {
+  margin: 18px 2px 8px;
+  font-size: 13px;
+  font-weight: 800;
+  line-height: 1.3;
+  color: #6E6882;
+}
+
+@app.nc-fu .nc-fu-acoes .t-Button.nc-fu-consulta:not(#nc-fu-x):not(#nc-fu-y) {
+  min-height: 44px;
+  border: 1.5px solid var(--nc-nevoa);
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: none;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--nc-roxo);
+}
+
+@app.nc-fu .nc-fu-acoes .t-Button.nc-fu-consulta :is(.t-Button-label, .t-Icon):not(#nc-fu-x):not(#nc-fu-y) {
+  color: inherit;
+}
+
+@app.nc-fu .nc-fu-acoes .t-Button.nc-fu-consulta:hover:not(#nc-fu-x):not(#nc-fu-y) {
+  border-color: var(--nc-roxo);
+  background: var(--nc-nevoa2);
+}
+
+/* ═══ [C6] TELAS MÉDIAS E CELULAR ══════════════════════════════════════════════════════════
+   O que está dentro de  @media (max-width: 1100px)  vale em notebooks pequenos e tablets;
+   dentro de  @media (max-width: 640px), só no celular.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@media (max-width: 1100px) {
+  @app.nc-fu .nc-fu-ficha {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  /* a ficha em duas colunas, sem o ícone: cabe na primeira tela */
+  @app.nc-fu .nc-fu-ficha {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 6px;
+  }
+
+  @app.nc-fu .nc-fu-fato {
+    min-height: 0;
+    padding: 10px 12px;
+    border-radius: 14px;
+  }
+
+  @app.nc-fu .nc-fu-fato-ic {
+    display: none;
+  }
+
+  @app.nc-fu .nc-fu-fato-v {
+    font-size: 15px;
+  }
+
+  /* as abas rolam de lado (uma linha só), com o encaixe no toque */
+  @app.nc-fu .nc-fu-abas .t-Tabs:not(#nc-fu-x):not(#nc-fu-y) {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scroll-snap-type: x proximity;
+    padding-bottom: 4px;
+    scrollbar-width: none;
+  }
+
+  @app.nc-fu .nc-fu-abas .t-Tabs-item:not(#nc-fu-x):not(#nc-fu-y) {
+    scroll-snap-align: start;
+  }
+
+  /* as ações sobem para antes das abas (a linha da grade vira coluna para a ordem valer) */
+  @app.nc-fu .row:has(> .col.nc-fu-acoes):not(#nc-fu-x):not(#nc-fu-y) {
+    display: flex;
+    flex-direction: column;
+  }
+
+  @app.nc-fu .row > .col.nc-fu-acoes:not(#nc-fu-x):not(#nc-fu-y) {
+    order: -1;
+    margin-bottom: 12px;
+  }
+}
+
+/* ═══ [C7] MENOS MOVIMENTO ═════════════════════════════════════════════════════════════════
+   Para quem pediu "reduzir movimento" nas configurações do computador ou celular
+   (acessibilidade): sem piscar e sem transições.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@media (prefers-reduced-motion: reduce) {
+  @app.nc-fu .t-Form-fieldContainer.nc-fu-pisca {
+    animation: none;
+  }
+
+  @app.nc-fu .nc-fu-fato {
+    transition: none;
+  }
+}

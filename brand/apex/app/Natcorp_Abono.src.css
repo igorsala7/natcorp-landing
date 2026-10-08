@@ -1,0 +1,2174 @@
+/* ╔════════════════════════════════════════════════════════════════════════════════════════╗
+   ║  NATCORP · MARCAÇÃO - ABONO  —  a "roupa" da tela (CSS)                                   ║
+   ║  App 9503 (FREQ_LANC_NATCORP) · Página 714 · a janela do ajuste de uma marcação de ponto  ║
+   ╚════════════════════════════════════════════════════════════════════════════════════════╝
+
+   Primeira vez num arquivo destes? Leia antes o manual: brand/apex/MANUAL-APEX.md (parte 1).
+
+   ── O QUE ESTE ARQUIVO FAZ ────────────────────────────────────────────────────────────────
+   Dá a aparência da janela: cores, tamanhos, espaços, bordas, e como ela se arruma no
+   computador e no celular. Ele NÃO muda nada de lugar: quem muda as coisas de lugar é o
+   arquivo-irmão Natcorp_Abono.js. Os dois trabalham juntos:
+     o JS monta "O que aconteceu?" em 3 cartões  →  este arquivo diz como os cartões se parecem.
+   Sem o JS, este arquivo não faz nada (todas as regras dependem da marca nc-ab-ativo que o JS
+   põe na página). Uma coluna só (eram duas caixas lado a lado com 13 campos): a pergunta em
+   cima, as escolhas em botões grandes, o pé com a frase do pedido.
+
+   ── ONDE ELE ENTRA NO APEX ────────────────────────────────────────────────────────────────
+     Página 714 › CSS › File URLs:   #WORKSPACE_IMAGES#Natcorp_Abono.css
+     ATENÇÃO: esta página não tem exportação no projeto — a URL é posta À MÃO no Page Designer.
+     Este é o arquivo-FONTE (Natcorp_Abono.src.css). O arquivo que sobe (Natcorp_Abono.css) é
+     gerado a partir dele pelo gerar-app.mjs, que escreve o @app por extenso e põe os
+     !important: edite ESTE arquivo, não o gerado (o caminho completo está no manual, parte 2).
+
+   ── ÍNDICE: as partes deste arquivo (Ctrl+F pelo código entre colchetes) ──────────────────
+     [C1] Peças gerais                          (ícones; o que o JS esconde)
+     [C2] Uma coluna só                         (as duas regiões, uma embaixo da outra)
+     [C3] O cabeçalho                           ← montado pelo JS em [J3] e [J8]
+     [C4] As perguntas e as escolhas            ← montadas pelo JS em [J3] e [J8]
+     [C5] O motivo                              ← montado pelo JS em [J4]
+     [C6] O pé                                  ← montado pelo JS em [J5] e [J8]
+     [C7] O pedido já feito                     ← montado pelo JS em [J9]
+     [C8] Celular e "menos movimento"           (ajustes para telas pequenas)
+     [C9] Segunda passada                       (lista de motivos, aviso, consulta, botões)
+     [C10] A janela inteira                      (sem moldura sobrando; duas colunas no computador)
+     [C11] Linha do tempo, sugestão e motivos    (as batidas com horário, "Levar…", "Ver todos")
+     [C12] Um passo por vez no celular           (← montado pelo JS em [J12])
+     [C13] "Por quê?" sem bagunça             (motivos em lista, observação e comprovante atrás de um toque)
+     [C14] O pedido já feito e os aprovadores  (← montado pelo JS em [J9] e [J13])
+     [C15] Aberta pela lista: a posição só é mostrada (← montado pelo JS em [J3] e [J12])
+
+   ── RECEITAS RÁPIDAS ──────────────────────────────────────────────────────────────────────
+     Quero mudar uma cor
+       → use uma das cores da marca, pelo nome: var(--nc-roxo), var(--nc-grafite)… A lista
+         completa, com amostras, está no manual (parte 3). Assim a cor acompanha o tema que
+         o usuário escolheu em "Cores". Evite escrever cores soltas, como #511C76.
+     Quero mudar a altura da caixa de motivos   → [C9], procure max-height.
+     Quero aumentar ou diminuir um texto        → procure font-size na parte certa.
+     Quero mais ou menos espaço                  → padding (espaço por DENTRO da caixa) e
+                                                   margin (espaço por FORA, até a vizinha).
+     Algo ficou bom no computador e ruim no celular → [C8] e o fim de [C9]: o que está dentro
+                                                   de @media (max-width: 640px) só vale no celular.
+
+   ── COMO LER UM ARQUIVO CSS EM 30 SEGUNDOS ────────────────────────────────────────────────
+     Cada regra tem duas partes:     QUEM { COMO; }
+       @app.nc-ab-ativo .nc-ab-ic {
+         width: 18px;    ← largura: 18 pontinhos
+         height: 18px;   ← altura: 18 pontinhos
+       }
+       (a primeira linha é o QUEM: o "seletor", diz em que pedaço da tela a regra vale;
+        as de dentro são o COMO:  propriedade: valor;)
+     .nome-com-ponto       uma "classe": uma etiqueta posta num pedaço da tela (pelo APEX ou
+                           pelo JS). .nc-ab-ic é cada ícone.
+     @app                  atalho que dá prioridade às nossas regras sobre as do tema do APEX.
+                           No arquivo que sobe para o APEX ele aparece por extenso, como
+                           html body:is(.t-PageBody…):not(#nc-a1):not(#nc-a2) — é a mesma coisa.
+     :not(#nc-…-x)…        peso extra, para vencer uma regra do tema. Pode ignorar ao ler.
+     !important            no arquivo que sobe, toda linha ganha um: é o mesmo "vencer o tema".
+     @media (max-width: 640px) { … }   as regras de dentro só valem em telas até 640px (celular).
+     var(--nc-roxo)        uma cor da marca, pelo nome (muda junto com o tema escolhido).
+     px                    pixels, o tamanho de um pontinho da tela. 16px é o texto normal.
+     Toda linha COMO termina em ;   e todo { é fechado por um }. Não apague esses sinais.
+*/
+
+/* ═══ [C1] PEÇAS GERAIS ═════════════════════════════════════════════════════════════════════
+   O tamanho e o traço dos ícones (.nc-ab-ic) e o que o JS esconde: os campos técnicos
+   (.nc-ab-oculto), os vazios da consulta (.nc-ab-vazio) e os blocos fechados ([hidden]).
+   display: none = não aparece.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-ab-ativo .nc-ab-ic {
+  flex: none;
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+@app.nc-ab-ativo :is(.nc-ab-oculto, .nc-ab-vazio):not(#nc-ab-x):not(#nc-ab-y),
+@app.nc-ab-ativo :is(.nc-ab-bloco, .nc-ab-databox, .nc-ab-busca)[hidden]:not(#nc-ab-x):not(#nc-ab-y) {
+  display: none;
+}
+
+/* ═══ [C2] UMA COLUNA SÓ ════════════════════════════════════════════════════════════════════
+   As regiões MARC ("A marcação") e JUST ("Por quê?") ficam uma embaixo da outra, e os campos
+   que continuam à vista ganham o rótulo em cima.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+/* ---------- uma coluna: "Qual marcação?" em cima, "Por quê?" embaixo ---------- */
+@app.nc-ab-ativo .row:has(> .col > #MARC):not(#nc-ab-x):not(#nc-ab-y) {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+@app.nc-ab-ativo .row:has(> .col > #MARC) > .col:not(#nc-ab-x):not(#nc-ab-y) {
+  width: 100%;
+  max-width: none;
+  flex: none;
+  padding: 0;
+}
+
+@app.nc-ab-ativo .t-Region.nc-ab-reg:not(#nc-ab-x):not(#nc-ab-y) {
+  margin: 0;
+}
+
+@app.nc-ab-ativo .t-Region.nc-ab-reg > .t-Region-header .t-Region-title:not(#nc-ab-x):not(#nc-ab-y) {
+  font-size: 17px;
+  font-weight: 800;
+  color: var(--nc-tinta);
+}
+
+/* os campos que ficam à vista: rótulo em cima, sem o "(Valor Necessário)" gritando */
+@app.nc-ab-ativo .nc-ab-reg .t-Form-label:not(#nc-ab-x):not(#nc-ab-y) {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--nc-grafite);
+}
+
+/* ═══ [C3] O CABEÇALHO: O DIA E O QUE O RELÓGIO REGISTROU ═══════════════════════════════════
+   Montado pelo JS em [J3] e [J8]: o dia por extenso (.nc-ab-dia), "Mudar o dia", os botões
+   das marcações (.nc-ab-pos) e as etiquetas "Previsto / Bateu / Não bateu" (.nc-ab-tag).
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-ab-ativo .nc-ab-cab {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 0 0 6px;
+}
+
+@app.nc-ab-ativo .nc-ab-dia {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px 12px;
+}
+
+@app.nc-ab-ativo .nc-ab-dia-txt {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 18px;
+  color: var(--nc-tinta);
+}
+
+@app.nc-ab-ativo .nc-ab-dia-txt b {
+  font-weight: 800;
+}
+
+@app.nc-ab-ativo .nc-ab-dia-txt .nc-ab-ic {
+  width: 20px;
+  height: 20px;
+  color: var(--nc-roxo);
+}
+
+@app.nc-ab-ativo .nc-ab-databox {
+  padding: 12px;
+  border-radius: 14px;
+  background: #FAF8FC;
+}
+
+@app.nc-ab-ativo .nc-ab-databox > .t-Form-fieldContainer:not(#nc-ab-x):not(#nc-ab-y) {
+  max-width: 280px;
+  margin: 0;
+  padding: 0;
+}
+
+@app.nc-ab-ativo .nc-ab-link {
+  padding: 4px 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 800;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  color: var(--nc-roxo);
+  cursor: pointer;
+}
+
+@app.nc-ab-ativo .nc-ab-fato {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+@app.nc-ab-ativo .nc-ab-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 34px;
+  padding: 0 12px;
+  border-radius: 999px;
+  background: #F4F1F8;
+  font-size: 14px;
+  color: var(--nc-grafite);
+}
+
+@app.nc-ab-ativo .nc-ab-tag b {
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  color: var(--nc-tinta);
+}
+
+@app.nc-ab-ativo .nc-ab-tag .nc-ab-ic {
+  width: 16px;
+  height: 16px;
+  color: var(--nc-roxo);
+}
+
+@app.nc-ab-ativo .nc-ab-tag--feito {
+  background: #E9F6EE;
+}
+
+@app.nc-ab-ativo .nc-ab-tag--feito .nc-ab-ic {
+  color: #1E6B45;
+}
+
+@app.nc-ab-ativo .nc-ab-tag--falta {
+  background: #FBEAEC;
+  color: #9B2230;
+}
+
+@app.nc-ab-ativo .nc-ab-tag--falta :is(b, .nc-ab-ic) {
+  color: #9B2230;
+}
+
+/* ═══ [C4] AS PERGUNTAS E AS ESCOLHAS ═══════════════════════════════════════════════════════
+   Montadas pelo JS em [J3] e [J8]: a pergunta (.nc-ab-perg), os botões de opção (.nc-ab-opc;
+   .is-on = escolhido), os 3 cartões "O que aconteceu?" (.nc-ab-cartao) e o horário certo
+   (.nc-ab-relogio, o seletor do aparelho, grande).
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-ab-ativo .nc-ab-bloco {
+  margin: 14px 0 0;
+}
+
+@app.nc-ab-ativo .nc-ab-cab .nc-ab-bloco {
+  margin: 0;
+}
+
+@app.nc-ab-ativo .nc-ab-perg {
+  margin: 0 0 8px;
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--nc-tinta);
+}
+
+@app.nc-ab-ativo .nc-ab-pos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+@app.nc-ab-ativo .nc-ab-opc {
+  min-width: 120px;
+  min-height: 46px;
+  padding: 0 16px;
+  border: 1.5px solid var(--nc-nevoa);
+  border-radius: 12px;
+  background: #fff;
+  font: inherit;
+  font-size: 15px;
+  color: var(--nc-tinta);
+  cursor: pointer;
+  transition: border-color .15s, background-color .15s;
+}
+
+@app.nc-ab-ativo .nc-ab-opc b {
+  font-weight: 800;
+}
+
+@app.nc-ab-ativo .nc-ab-opc:hover:not(:disabled) {
+  border-color: var(--nc-roxo);
+}
+
+@app.nc-ab-ativo .nc-ab-opc.is-on {
+  border-color: var(--nc-roxo);
+  background: var(--nc-roxo);
+  color: #fff;
+}
+
+/* o que aconteceu: três cartões grandes, com ícone e duas linhas */
+@app.nc-ab-ativo .nc-ab-cartoes {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+@app.nc-ab-ativo .nc-ab-cartao {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  min-height: 112px;
+  padding: 14px;
+  border: 1.5px solid var(--nc-nevoa);
+  border-radius: 14px;
+  background: #fff;
+  font: inherit;
+  text-align: left;
+  color: var(--nc-tinta);
+  cursor: pointer;
+  transition: border-color .15s, background-color .15s, box-shadow .15s;
+}
+
+/* 04/10: "mover" some quando a página não desenha ENVIAR_MARCACAO (perfil que bloqueia) */
+@app.nc-ab-ativo .nc-ab-cartao[hidden]:not(#nc-ab-x):not(#nc-ab-y) {
+  display: none;
+}
+
+@app.nc-ab-ativo .nc-ab-cartao .nc-ab-ic {
+  width: 22px;
+  height: 22px;
+  color: var(--nc-roxo);
+}
+
+@app.nc-ab-ativo .nc-ab-cartao span {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+@app.nc-ab-ativo .nc-ab-cartao b {
+  font-size: 15px;
+  font-weight: 800;
+  line-height: 1.3;
+}
+
+@app.nc-ab-ativo .nc-ab-cartao small {
+  font-size: 13px;
+  line-height: 1.35;
+  color: #5E586E;
+}
+
+@app.nc-ab-ativo .nc-ab-cartao:hover:not(:disabled) {
+  border-color: var(--nc-roxo);
+}
+
+@app.nc-ab-ativo .nc-ab-cartao.is-on {
+  border-color: var(--nc-roxo);
+  background: #F6F1FA;
+  box-shadow: 0 0 0 1px var(--nc-roxo);
+}
+
+@app.nc-ab-ativo .nc-ab-cartao[data-acao="apagar"].is-on {
+  border-color: #B8323F;
+  background: #FFF6F7;
+  box-shadow: 0 0 0 1px #B8323F;
+}
+
+@app.nc-ab-ativo .nc-ab-cartao[data-acao="apagar"] .nc-ab-ic {
+  color: #B8323F;
+}
+
+@app.nc-ab-ativo :is(.nc-ab-cartao, .nc-ab-opc, .nc-ab-motivo):disabled {
+  cursor: not-allowed;
+  opacity: .5;
+}
+
+/* o horário certo: o seletor do aparelho, grande */
+@app.nc-ab-ativo .nc-ab-hora-linha > .t-Form-fieldContainer:not(#nc-ab-x):not(#nc-ab-y) {
+  max-width: 260px;
+  margin: 0;
+  padding: 0;
+}
+
+@app.nc-ab-ativo .nc-ab-hora-linha .t-Form-labelContainer:not(#nc-ab-x):not(#nc-ab-y) {
+  display: none;
+}
+
+@app.nc-ab-ativo input.nc-ab-relogio:not(#nc-ab-x):not(#nc-ab-y) {
+  width: 100%;
+  height: 56px;
+  min-height: 56px;
+  padding: 0 14px;
+  border: 1.5px solid var(--nc-nevoa);
+  border-radius: 12px;
+  background: #fff;
+  font-size: 24px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  color: var(--nc-tinta);
+}
+
+@app.nc-ab-ativo input.nc-ab-relogio:focus:not(#nc-ab-x):not(#nc-ab-y) {
+  border-color: var(--nc-roxo);
+  box-shadow: 0 0 0 3px rgba(var(--nc-t-roxo-rgb, 81, 28, 118), .15);
+}
+
+@app.nc-ab-ativo .nc-ab-hora-atalhos,
+@app.nc-ab-ativo .nc-ab-comecos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+@app.nc-ab-ativo .nc-ab-comecos {
+  margin: 0 0 8px;
+}
+
+@app.nc-ab-ativo .nc-ab-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 38px;
+  padding: 0 13px;
+  border: 1.5px solid var(--nc-nevoa);
+  border-radius: 999px;
+  background: #fff;
+  font: inherit;
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--nc-roxo);
+  cursor: pointer;
+}
+
+@app.nc-ab-ativo .nc-ab-chip:hover {
+  border-color: var(--nc-roxo);
+  background: #F6F1FA;
+}
+
+@app.nc-ab-ativo .nc-ab-chip .nc-ab-ic {
+  width: 15px;
+  height: 15px;
+}
+
+@app.nc-ab-ativo .nc-ab-nota {
+  margin: 8px 0 0;
+  font-size: 14px;
+  line-height: 1.45;
+  color: #5E586E;
+}
+
+@app.nc-ab-ativo .nc-ab-nota b {
+  color: var(--nc-tinta);
+}
+
+@app.nc-ab-ativo .nc-ab-confirma {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: #FFF6F7;
+  font-size: 15px;
+  line-height: 1.45;
+  color: #6E1A24;
+}
+
+@app.nc-ab-ativo .nc-ab-confirma .nc-ab-ic {
+  margin-top: 2px;
+  color: #B8323F;
+}
+
+/* ═══ [C5] O MOTIVO ═════════════════════════════════════════════════════════════════════════
+   Montado pelo JS em [J4]: os motivos em botões (.nc-ab-motivo), a busca (.nc-ab-busca), os
+   começos de frase (.nc-ab-chip). A animação nc-ab-pisca faz a pergunta piscar quando a pessoa
+   toca num item do "Falta".
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-ab-ativo .nc-ab-busca {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 8px;
+  padding: 0 12px;
+  border: 1.5px solid var(--nc-nevoa);
+  border-radius: 12px;
+  background: #fff;
+  color: #5E586E;
+}
+
+@app.nc-ab-ativo .nc-ab-busca input {
+  flex: 1 1 auto;
+  min-width: 0;
+  height: 44px;
+  border: 0;
+  outline: 0;
+  background: none;
+  font: inherit;
+  font-size: 15px;
+  color: var(--nc-tinta);
+}
+
+@app.nc-ab-ativo .nc-ab-motivos {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px;
+}
+
+@app.nc-ab-ativo .nc-ab-motivo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 48px;
+  padding: 8px 12px;
+  border: 1.5px solid var(--nc-nevoa);
+  border-radius: 12px;
+  background: #fff;
+  font: inherit;
+  font-size: 14.5px;
+  font-weight: 600;
+  line-height: 1.3;
+  text-align: left;
+  color: var(--nc-tinta);
+  cursor: pointer;
+}
+
+@app.nc-ab-ativo .nc-ab-motivo:hover:not(:disabled) {
+  border-color: var(--nc-roxo);
+}
+
+@app.nc-ab-ativo .nc-ab-motivo.is-on {
+  border-color: var(--nc-roxo);
+  background: var(--nc-roxo);
+  color: #fff;
+}
+
+@app.nc-ab-ativo :is(.nc-ab-cartao, .nc-ab-opc, .nc-ab-motivo, .nc-ab-chip, .nc-ab-link):focus-visible {
+  outline: 3px solid var(--nc-rosa);
+  outline-offset: 2px;
+}
+
+@app.nc-ab-ativo .nc-ab-pisca {
+  animation: nc-ab-pisca 1.6s cubic-bezier(.16, 1, .3, 1);
+}
+
+@keyframes nc-ab-pisca {
+  0%, 30% { box-shadow: 0 0 0 4px rgba(var(--nc-t-rosa-rgb, 201, 87, 136), .4); border-radius: 14px; }
+  100% { box-shadow: 0 0 0 4px rgba(var(--nc-t-rosa-rgb, 201, 87, 136), 0); border-radius: 14px; }
+}
+
+/* ═══ [C6] O PÉ: A FRASE DO PEDIDO E O QUE FALTA ════════════════════════════════════════════
+   Montado pelo JS em [J5] e [J8]: a frase (.nc-ab-frase), o "Falta" (.nc-ab-falta; .is-pronto
+   quando não falta nada), o botão "Enviar pedido" (.nc-ab-enviar) e o "Ver no mapa".
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-ab-ativo .nc-ab-pe {
+  max-width: 720px;
+  margin: 14px auto 0;
+  padding: 14px 16px;
+  border-radius: 16px;
+  background: #F6F1FA;
+}
+
+@app.nc-ab-ativo .nc-ab-frase-o {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.4;
+  color: var(--nc-tinta);
+}
+
+@app.nc-ab-ativo .nc-ab-frase-o b {
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  color: var(--nc-roxo);
+}
+
+@app.nc-ab-ativo .nc-ab-frase-o s {
+  text-decoration-thickness: 1.5px;
+  color: #6E6882;
+}
+
+@app.nc-ab-ativo .nc-ab-frase-sub {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 4px 0 0;
+  font-size: 13.5px;
+  color: #5E586E;
+}
+
+@app.nc-ab-ativo .nc-ab-frase-sub .nc-ab-ic {
+  width: 15px;
+  height: 15px;
+}
+
+@app.nc-ab-ativo .nc-ab-falta {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin: 10px 0 0;
+  font-size: 14px;
+  color: #6B4700;
+}
+
+@app.nc-ab-ativo .nc-ab-falta .nc-ab-ic {
+  margin-top: 2px;
+}
+
+@app.nc-ab-ativo .nc-ab-falta .nc-ab-link {
+  padding: 0;
+  font-size: 14px;
+  color: #6B4700;
+}
+
+@app.nc-ab-ativo .nc-ab-falta.is-pronto {
+  color: #1E6B45;
+  font-weight: 700;
+}
+
+@app.nc-ab-ativo .nc-ab-frase:empty + .nc-ab-falta {
+  margin-top: 0;
+}
+
+/* "Enviar pedido" e "Ver no mapa" */
+@app.nc-ab-ativo .t-Button.nc-ab-enviar:not(#nc-ab-x):not(#nc-ab-y) {
+  min-height: 46px;
+  padding: 0 22px;
+  font-size: 15px;
+  font-weight: 800;
+}
+
+@app.nc-ab-ativo .t-Button.nc-ab-mapa:not(#nc-ab-x):not(#nc-ab-y) {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  width: auto;
+  min-height: 38px;
+  padding: 0 12px;
+  border: 1.5px solid var(--nc-nevoa);
+  background: #fff;
+  box-shadow: none;
+  color: var(--nc-roxo);
+}
+
+@app.nc-ab-ativo .t-Button.nc-ab-mapa .t-Icon:not(#nc-ab-x):not(#nc-ab-y) {
+  color: inherit;
+}
+
+@app.nc-ab-ativo .nc-ab-mapa-rot {
+  font-size: 13.5px;
+  font-weight: 700;
+}
+
+/* ═══ [C7] O PEDIDO JÁ FEITO: O RESUMO EM FRASE ═════════════════════════════════════════════
+   Montado pelo JS em [J9]. .nc-ab-resumo é o bloco; .nc-ab-sit, o selo da situação:
+   --ok (verde) · --nao (vermelho) · --anda (em andamento).
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-ab-ativo .nc-ab-resumo {
+  padding: 14px 16px;
+  border-radius: 16px;
+  background: #F6F1FA;
+}
+
+@app.nc-ab-ativo .nc-ab-resumo-topo {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 6px;
+}
+
+@app.nc-ab-ativo .nc-ab-resumo-n {
+  font-size: 13.5px;
+  font-weight: 800;
+  color: #5E586E;
+}
+
+@app.nc-ab-ativo .nc-ab-sit {
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 12.5px;
+  font-weight: 800;
+  background: #FFF4DE;
+  color: #6B4700;
+}
+
+@app.nc-ab-ativo .nc-ab-sit--ok { background: #E4F4EA; color: #1E6B45; }
+@app.nc-ab-ativo .nc-ab-sit--nao { background: #FBEAEC; color: #9B2230; }
+
+@app.nc-ab-ativo .nc-ab-coment {
+  margin: 6px 0 0;
+  font-size: 14px;
+  font-style: italic;
+  color: var(--nc-grafite);
+}
+
+/* ═══ [C8] CELULAR E "MENOS MOVIMENTO" ══════════════════════════════════════════════════════
+   O que está dentro de  @media (max-width: 640px)  só vale no celular. Depois,
+   @media (prefers-reduced-motion: reduce) desliga as animações para quem pediu "reduzir
+   movimento" nas configurações do aparelho (acessibilidade).
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@media (max-width: 640px) {
+  @app.nc-ab-ativo .nc-ab-cartoes,
+  @app.nc-ab-ativo .nc-ab-motivos {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  @app.nc-ab-ativo .nc-ab-cartao {
+    flex-direction: row;
+    align-items: center;
+    min-height: 64px;
+    padding: 12px;
+  }
+
+  @app.nc-ab-ativo .nc-ab-opc {
+    flex: 1 1 40%;
+    min-width: 0;
+  }
+
+  @app.nc-ab-ativo .nc-ab-dia-txt {
+    font-size: 16px;
+  }
+
+  @app.nc-ab-ativo .nc-ab-hora-linha > .t-Form-fieldContainer:not(#nc-ab-x):not(#nc-ab-y) {
+    max-width: none;
+  }
+
+  @app.nc-ab-ativo .t-Button.nc-ab-enviar:not(#nc-ab-x):not(#nc-ab-y) {
+    flex: 1 1 auto;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  @app.nc-ab-ativo :is(.nc-ab-cartao, .nc-ab-opc) {
+    transition: none;
+  }
+
+  @app.nc-ab-ativo .nc-ab-pisca {
+    animation: none;
+  }
+}
+
+/* ═══ [C9] SEGUNDA PASSADA: MOTIVOS, AVISO, CONSULTA E BOTÕES DO PÉ ═════════════════════════
+   Ajustes feitos depois da primeira versão: a lista de motivos com altura máxima, o aviso do
+   horário igual, a consulta enxuta (campos atrás de "Ver todos os campos do pedido") e, no
+   celular, os botões do pé (que moram numa tabela antiga do tema).
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-ab-ativo .nc-ab-perg small {
+  font-size: 13px;
+  font-weight: 500;
+  color: #5E586E;
+}
+
+@app.nc-ab-ativo .nc-ab-motivos {
+  max-height: 340px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 2px;
+  scrollbar-width: thin;
+}
+
+@app.nc-ab-ativo :is(.nc-ab-escolha, .nc-ab-escolhido)[hidden]:not(#nc-ab-x):not(#nc-ab-y) {
+  display: none;
+}
+
+@app.nc-ab-ativo .nc-ab-escolhido {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 14px;
+}
+
+@app.nc-ab-ativo .nc-ab-escolhido .nc-ab-motivo {
+  cursor: default;
+}
+
+@app.nc-ab-ativo .nc-ab-aviso {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  width: 100%;
+  margin: 2px 0 0;
+  font-size: 14px;
+  color: #6B4700;
+}
+
+@app.nc-ab-ativo .nc-ab-aviso .nc-ab-ic {
+  width: 16px;
+  height: 16px;
+  margin-top: 2px;
+}
+
+/* consulta: os campos repetem o resumo e ficam atrás de "Ver todos os campos do pedido" */
+@app.nc-ab-ativo.nc-ab-consulta:not(.nc-ab-campos) .nc-ab-reg .t-Form-fieldContainer:not([id$="_ARQUIVO_JUST_CONTAINER"]):not(#nc-ab-x):not(#nc-ab-y) {
+  display: none;
+}
+
+@app.nc-ab-ativo .nc-ab-vertodos {
+  align-self: flex-start;
+}
+
+/* os botões do pé (Voltar · Só justificar · Enviar pedido) moram numa tabela antiga do tema, que
+   não quebra linha: no celular, "Enviar pedido" em cima, largura toda; os outros embaixo */
+@media (max-width: 640px) {
+  @app.nc-ab-ativo .t-ButtonRegion-col:not(#nc-ab-x):not(#nc-ab-y) {
+    display: block;
+    width: 100%;
+  }
+
+  @app.nc-ab-ativo .t-ButtonRegion-col :is(table, tbody, tr):not(#nc-ab-x):not(#nc-ab-y) {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    width: 100%;
+  }
+
+  @app.nc-ab-ativo .t-ButtonRegion-col td:not(#nc-ab-x):not(#nc-ab-y) {
+    display: block;
+    flex: 1 1 auto;
+    padding: 0;
+  }
+
+  @app.nc-ab-ativo .t-ButtonRegion-col td:has(.nc-ab-enviar):not(#nc-ab-x):not(#nc-ab-y) {
+    order: -1;
+    flex-basis: 100%;
+  }
+
+  @app.nc-ab-ativo .t-ButtonRegion-col td .t-Button:not(#nc-ab-x):not(#nc-ab-y) {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* ═══ [C10] A JANELA INTEIRA: SEM MOLDURA SOBRANDO, E DUAS COLUNAS NO COMPUTADOR ════════════════
+   As regiões MARCACAO › MNU › DAD embrulhavam o conteúdo umas nas outras e somavam 70 px de vão
+   no alto (e no celular deixavam o cartão com 297 px numa tela de 433). Aqui elas ficam sem
+   espaço próprio. No computador (gestores: 70% usam), "A marcação" e "Por quê?" lado a lado:
+   quase sem rolar. Montado pelo JS em [J2] e [J8].
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-ab-ativo :is(#MARCACAO, #MNU, #DAD):not(#nc-ab-x) {
+  margin: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+@app.nc-ab-ativo :is(#MARCACAO, #MNU, #DAD) > .t-Region-bodyWrap > .t-Region-body:not(#nc-ab-x):not(#nc-ab-y) {
+  padding: 0;
+}
+
+@app.nc-ab-ativo :is(#MARCACAO, #MNU, #DAD) .row:has(> .col > #MARC) > .col:not(#nc-ab-x):not(#nc-ab-y),
+@app.nc-ab-ativo :is(#MARCACAO, #MNU, #DAD) > .t-Region-bodyWrap > .t-Region-body > .container > .row > .col:not(#nc-ab-x):not(#nc-ab-y) {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+@media (min-width: 900px) {
+  @app.nc-ab-ativo:not(.nc-ab-consulta) .row:has(> .col > #MARC):not(#nc-ab-x):not(#nc-ab-y) {
+    display: grid;
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+    align-items: start;
+    gap: 16px;
+    max-width: none;
+  }
+
+  /* cada região na sua casa: a linha do APEX tem outras colunas (vazias ou escondidas) que, sem
+     isto, ocupavam a primeira casa e empurravam "A marcação" para a direita */
+  @app.nc-ab-ativo:not(.nc-ab-consulta) .row:has(> .col > #MARC) > .col:not(#nc-ab-x):not(#nc-ab-y) {
+    grid-column: 1 / -1;
+  }
+
+  @app.nc-ab-ativo:not(.nc-ab-consulta) .row:has(> .col > #MARC) > .col:has(> #MARC):not(#nc-ab-x):not(#nc-ab-y) {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  @app.nc-ab-ativo:not(.nc-ab-consulta) .row:has(> .col > #MARC) > .col:has(> #JUST):not(#nc-ab-x):not(#nc-ab-y) {
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  @app.nc-ab-ativo:not(.nc-ab-consulta) .nc-ab-pe:not(#nc-ab-x):not(#nc-ab-y) {
+    max-width: none;
+  }
+
+  /* com duas colunas, os três cartões de "O que aconteceu?" ficam um embaixo do outro */
+  @app.nc-ab-ativo:not(.nc-ab-consulta) .nc-ab-cartoes:not(#nc-ab-x):not(#nc-ab-y) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  @app.nc-ab-ativo:not(.nc-ab-consulta) .nc-ab-cartao:not(#nc-ab-x):not(#nc-ab-y) {
+    flex-direction: row;
+    align-items: center;
+    min-height: 64px;
+  }
+}
+
+/* ═══ [C11] A LINHA DO TEMPO DO DIA, A SUGESTÃO E OS MOTIVOS ═══════════════════════════════════
+   Montados pelo JS em [J3] e [J11]. .nc-ab-pos--dia = as batidas com o horário de cada uma
+   (vindo da Tratativa de Abono); .nc-ab-dica = a sugestão "Levar 18:01 para a 2ª saída";
+   .nc-ab-todos = "Ver todos os motivos".
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-ab-ativo .nc-ab-sub {
+  margin: -4px 0 10px;
+  font-size: 14px;
+  color: var(--nc-grafite);
+}
+
+@app.nc-ab-ativo .nc-ab-pos.nc-ab-pos--dia {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(76px, 1fr));
+  gap: 8px;
+}
+
+@app.nc-ab-ativo .nc-ab-pos--dia .nc-ab-opc {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  min-width: 0;
+  min-height: 72px;
+  padding: 8px 6px;
+}
+
+@app.nc-ab-ativo .nc-ab-pos--dia .nc-ab-opc small {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--nc-grafite);
+}
+
+@app.nc-ab-ativo .nc-ab-pos-h {
+  font-size: 20px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.15;
+  color: var(--nc-tinta);
+}
+
+@app.nc-ab-ativo .nc-ab-pos-h--problema {
+  color: var(--nc-ruim);
+}
+
+@app.nc-ab-ativo .nc-ab-pos-h--conferir {
+  color: var(--nc-alerta-texto);
+}
+
+@app.nc-ab-ativo .nc-ab-pos-h--vazia {
+  color: var(--nc-cinza);
+}
+
+@app.nc-ab-ativo .nc-ab-pos--dia .nc-ab-opc i {
+  font-size: 11.5px;
+  font-style: normal;
+  font-weight: 700;
+  color: var(--nc-roxo);
+}
+
+@app.nc-ab-ativo .nc-ab-pos--dia .nc-ab-opc.is-on :is(small, .nc-ab-pos-h, i) {
+  color: #fff;
+}
+
+@app.nc-ab-ativo .nc-ab-dica {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin: 0 0 12px;
+  padding: 12px 14px;
+  border: 1px solid rgba(var(--nc-t-roxo-rgb, 81, 28, 118), .18);
+  border-radius: 14px;
+  background: #F8F4FC;
+  font-size: 15px;
+  line-height: 1.45;
+  color: var(--nc-tinta);
+}
+
+@app.nc-ab-ativo .nc-ab-dica[hidden] {
+  display: none;
+}
+
+@app.nc-ab-ativo .nc-ab-dica > .nc-ab-ic {
+  flex: none;
+  width: 22px;
+  height: 22px;
+  margin-top: 1px;
+  color: var(--nc-roxo);
+}
+
+@app.nc-ab-ativo .nc-ab-dica p {
+  margin: 0 0 6px;
+}
+
+@app.nc-ab-ativo .nc-ab-dica b {
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+
+@app.nc-ab-ativo .nc-ab-sugere {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 46px;
+  margin-top: 4px;
+  padding: 0 16px;
+  border: 0;
+  border-radius: 12px;
+  background: var(--nc-roxo);
+  font: inherit;
+  font-size: 15px;
+  font-weight: 800;
+  color: #fff;
+  cursor: pointer;
+}
+
+@app.nc-ab-ativo .nc-ab-sugere:hover {
+  background: var(--nc-azul);
+}
+
+@app.nc-ab-ativo .nc-ab-sugere:focus-visible {
+  outline: 3px solid rgba(var(--nc-t-roxo-rgb, 81, 28, 118), .35);
+  outline-offset: 2px;
+}
+
+@app.nc-ab-ativo .nc-ab-todos {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 46px;
+  border: 1.5px dashed var(--nc-nevoa);
+  border-radius: 12px;
+  background: #fff;
+  font: inherit;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--nc-roxo);
+  cursor: pointer;
+}
+
+@app.nc-ab-ativo .nc-ab-todos:hover {
+  border-color: var(--nc-roxo);
+}
+
+/* ═══ [C12] UM PASSO POR VEZ NO CELULAR ════════════════════════════════════════════════════════
+   Montado pelo JS em [J12]. Só no celular (até 640 px) e só quando a página não mostra erro
+   (body.nc-ab-passos-on). data-passo marca a qual passo cada bloco pertence; data-nc-passo no
+   body diz qual passo está aberto. Embaixo: Voltar e Continuar (.nc-ab-nav).
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-ab-ativo .nc-ab-passos,
+@app.nc-ab-ativo .nc-ab-nav {
+  display: none;
+}
+
+@app.nc-ab-ativo .nc-ab-fora:not(#nc-ab-x):not(#nc-ab-y) {
+  display: none;
+}
+
+@media (max-width: 640px) {
+  @app.nc-ab-ativo .t-Dialog-body:not(#nc-ab-x):not(#nc-ab-y) {
+    padding: 12px 12px 8px;
+  }
+
+  @app.nc-ab-passos-on .nc-ab-passos {
+    display: block;
+    margin: 0 0 14px;
+  }
+
+  @app.nc-ab-passos-on .nc-ab-passos-barra {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 6px;
+    margin: 0 0 12px;
+  }
+
+  @app.nc-ab-passos-on .nc-ab-passos-barra i {
+    height: 6px;
+    border-radius: 999px;
+    background: var(--nc-nevoa);
+    transition: background-color .3s cubic-bezier(.16, 1, .3, 1);
+  }
+
+  @app.nc-ab-passos-on .nc-ab-passos-barra i.is-on {
+    background: var(--nc-roxo);
+  }
+
+  @app.nc-ab-passos-on .nc-ab-passos-n {
+    margin: 0;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--nc-grafite);
+  }
+
+  @app.nc-ab-passos-on .nc-ab-passos-tit {
+    margin: 2px 0 0;
+    font-size: 22px;
+    font-weight: 800;
+    line-height: 1.25;
+    color: var(--nc-tinta);
+  }
+
+  @app.nc-ab-passos-on .nc-ab-passos-ctx:not(:empty) {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-top: 10px;
+    padding: 10px 12px;
+    border-radius: 12px;
+    background: var(--nc-off);
+    font-size: 14.5px;
+    color: var(--nc-tinta);
+  }
+
+  @app.nc-ab-passos-on .nc-ab-passos-ctx span {
+    display: inline-flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+
+  @app.nc-ab-passos-on .nc-ab-passos-ctx b {
+    font-weight: 800;
+  }
+
+  /* cada passo mostra só os seus blocos */
+  @app.nc-ab-passos-on[data-nc-passo="1"] [data-passo]:not([data-passo="1"]):not(#nc-ab-x):not(#nc-ab-y),
+  @app.nc-ab-passos-on[data-nc-passo="2"] [data-passo]:not([data-passo="2"]):not(#nc-ab-x):not(#nc-ab-y),
+  @app.nc-ab-passos-on[data-nc-passo="3"] [data-passo]:not([data-passo="3"]):not(#nc-ab-x):not(#nc-ab-y),
+  @app.nc-ab-passos-on[data-nc-passo="4"] [data-passo]:not([data-passo="4"]):not(#nc-ab-x):not(#nc-ab-y) {
+    display: none;   /* com o peso dos IDs: a regra geral dos botões (Ver no mapa) não vence */
+  }
+
+  /* o título do passo já diz a pergunta: o cabeçalho das regiões sai */
+  @app.nc-ab-passos-on .t-Region.nc-ab-reg > .t-Region-header:not(#nc-ab-x):not(#nc-ab-y) {
+    display: none;
+  }
+
+  @app.nc-ab-passos-on .t-Region.nc-ab-reg:not(#nc-ab-x):not(#nc-ab-y) {
+    border: 0;
+    background: transparent;
+    box-shadow: none;
+  }
+
+  @app.nc-ab-passos-on .t-Region.nc-ab-reg > .t-Region-bodyWrap > .t-Region-body:not(#nc-ab-x):not(#nc-ab-y) {
+    padding: 0;
+  }
+
+  /* passo 4: a frase do pedido em destaque */
+  @app.nc-ab-passos-on[data-nc-passo="4"] .nc-ab-pe:not(#nc-ab-x):not(#nc-ab-y) {
+    margin: 0;
+    padding: 18px;
+  }
+
+  @app.nc-ab-passos-on[data-nc-passo="4"] .nc-ab-frase-o:not(#nc-ab-x):not(#nc-ab-y) {
+    font-size: 19px;
+  }
+
+  /* embaixo: [Voltar] [Continuar]; no passo 4, [Voltar] [Enviar pedido] */
+  /* a barra dos botões fica PRESA embaixo da tela (antes ela seguia o conteúdo e subia
+     até o meio quando o passo era curto); o corpo ganha folga para nada ficar atrás dela */
+  @app.nc-ab-passos-on .t-ButtonRegion:has(> .nc-ab-nav):not(#nc-ab-x):not(#nc-ab-y) {
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 20;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: stretch;
+    gap: 10px;
+    margin: 0;
+    padding: 12px 12px calc(12px + env(safe-area-inset-bottom, 0px));
+    border-top: 1px solid var(--nc-nevoa);
+    background: #fff;
+    box-shadow: 0 -10px 24px -18px rgba(var(--nc-t-azul-rgb, 44, 26, 99), .45);
+  }
+
+  @app.nc-ab-passos-on .t-Dialog-body:not(#nc-ab-x):not(#nc-ab-y) {
+    padding-bottom: 150px;
+  }
+
+  @app.nc-ab-passos-on .nc-ab-nav,
+  @app.nc-ab-passos-on .nc-ab-nav-bts {
+    display: contents;
+  }
+
+  @app.nc-ab-passos-on .nc-ab-nav-falta {
+    order: -10;
+    flex: 0 0 100%;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+    padding: 10px 12px;
+    border-radius: 12px;
+    background: #FFF4DE;
+    font-size: 15px;
+    font-weight: 700;
+    color: #6B4700;
+  }
+
+  @app.nc-ab-passos-on .nc-ab-nav-falta[hidden] {
+    display: none;
+  }
+
+  @app.nc-ab-passos-on .t-ButtonRegion:has(> .nc-ab-nav) > :not(.nc-ab-nav):not(#nc-ab-x):not(#nc-ab-y) {
+    order: 0;
+    flex: 1 1 0;
+    min-width: 0;
+  }
+
+  @app.nc-ab-passos-on .t-ButtonRegion-col td:has(.nc-ab-fora):not(#nc-ab-x):not(#nc-ab-y) {
+    display: none;
+  }
+
+  @app.nc-ab-passos-on :is(.nc-ab-nav-volta, .nc-ab-nav-segue) {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    min-height: 52px;
+    border-radius: 14px;
+    font: inherit;
+    font-size: 17px;
+    font-weight: 800;
+    cursor: pointer;
+  }
+
+  @app.nc-ab-passos-on :is(.nc-ab-nav-volta, .nc-ab-nav-segue)[hidden] {
+    display: none;
+  }
+
+  @app.nc-ab-passos-on .nc-ab-nav-volta {
+    order: -5;
+    flex: 0 0 auto;
+    padding: 0 16px;
+    border: 1.5px solid var(--nc-nevoa);
+    background: #fff;
+    color: var(--nc-tinta);
+  }
+
+  @app.nc-ab-passos-on .nc-ab-nav-segue {
+    order: 5;
+    flex: 2 1 0;
+    padding: 0 18px;
+    border: 0;
+    background: var(--nc-roxo);
+    color: #fff;
+  }
+
+  @app.nc-ab-passos-on .nc-ab-nav-segue:active,
+  @app.nc-ab-passos-on .nc-ab-nav-volta:active {
+    transform: translateY(1px);
+  }
+
+  @app.nc-ab-passos-on :is(.nc-ab-nav-volta, .nc-ab-nav-segue):focus-visible {
+    outline: 3px solid rgba(var(--nc-t-roxo-rgb, 81, 28, 118), .35);
+    outline-offset: 2px;
+  }
+
+  @app.nc-ab-passos-on :is(.nc-ab-nav-volta, .nc-ab-nav-segue) .nc-ab-ic {
+    width: 20px;
+    height: 20px;
+  }
+
+  @app.nc-ab-passos-on .t-Button.nc-ab-enviar:not(#nc-ab-x):not(#nc-ab-y) {
+    min-height: 52px;
+    font-size: 17px;
+  }
+}
+
+/* no passo a passo, o título do passo já faz a pergunta: a pergunta repetida do bloco sai */
+@media (max-width: 640px) {
+  @app.nc-ab-passos-on .nc-ab-perg--passo {
+    display: none;
+  }
+}
+
+/* as linhas da grade do APEX têm margem negativa: na janela elas passavam 4 px de cada lado da
+   tela (no celular, cortava "Mudar o dia" e o botão Continuar) */
+@app.nc-ab-ativo .t-Dialog-body .row:not(#nc-ab-x):not(#nc-ab-y) {
+  margin-right: 0;
+  margin-left: 0;
+}
+
+/* destino do "Bateu no lugar errado": "Outra batida (5ª, 6ª…)" ocupa a linha toda da grade */
+@app.nc-ab-ativo .nc-ab-env-todos {
+  grid-column: 1 / -1;
+  justify-self: start;
+  min-height: 44px;
+}
+
+/* ═══ [C13] "POR QUÊ?" SEM BAGUNÇA ═════════════════════════════════════════════════════════════
+   Montado pelo JS em [J4]. O motivo numa lista de UMA coluna, cada um com a bolinha de escolha;
+   "Outro motivo" no fim (abre a busca com todos). A observação e o comprovante, opcionais, ficam
+   atrás de um toque (.nc-ab-extra) e abrem sozinhos quando já têm conteúdo ou são exigidos.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-ab-ativo .nc-ab-motivos:not(#nc-ab-x):not(#nc-ab-y) {
+  grid-template-columns: minmax(0, 1fr);
+  gap: 6px;
+}
+
+@app.nc-ab-ativo .nc-ab-motivo:not(#nc-ab-x):not(#nc-ab-y) {
+  position: relative;
+  min-height: 50px;
+  padding: 10px 14px 10px 46px;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+/* a bolinha de escolha */
+@app.nc-ab-ativo .nc-ab-motivo::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 14px;
+  width: 20px;
+  height: 20px;
+  margin-top: -10px;
+  border: 2px solid var(--nc-nevoa);
+  border-radius: 50%;
+  background: #fff;
+  box-sizing: border-box;
+}
+
+@app.nc-ab-ativo .nc-ab-motivo.is-on:not(#nc-ab-x):not(#nc-ab-y) {
+  border-color: var(--nc-roxo);
+  background: #F8F4FC;
+  color: var(--nc-tinta);
+}
+
+@app.nc-ab-ativo .nc-ab-motivo.is-on::before {
+  border-color: var(--nc-roxo);
+  background: var(--nc-roxo);
+  box-shadow: inset 0 0 0 4px #fff;
+}
+
+@app.nc-ab-ativo .nc-ab-todos:not(#nc-ab-x):not(#nc-ab-y),
+@app.nc-ab-ativo .nc-ab-extra {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 10px;
+  width: 100%;
+  min-height: 50px;
+  padding: 10px 14px;
+  border: 1.5px dashed var(--nc-nevoa);
+  border-radius: 12px;
+  background: #fff;
+  font: inherit;
+  font-size: 15px;
+  font-weight: 700;
+  text-align: left;
+  color: var(--nc-roxo);
+  cursor: pointer;
+}
+
+@app.nc-ab-ativo :is(.nc-ab-todos, .nc-ab-extra) small {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--nc-grafite);
+}
+
+@app.nc-ab-ativo :is(.nc-ab-todos, .nc-ab-extra):hover {
+  border-color: var(--nc-roxo);
+  border-style: solid;
+}
+
+@app.nc-ab-ativo .nc-ab-extra:focus-visible {
+  outline: 3px solid var(--nc-rosa);
+  outline-offset: 2px;
+}
+
+@app.nc-ab-ativo :is(.nc-ab-todos, .nc-ab-extra) .nc-ab-ic {
+  flex: none;
+  width: 20px;
+  height: 20px;
+}
+
+@app.nc-ab-ativo .nc-ab-extras {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 18px 0 0;
+}
+
+@app.nc-ab-ativo :is(.nc-ab-extras, .nc-ab-extra)[hidden] {
+  display: none;
+}
+
+@app.nc-ab-ativo .t-Form-fieldContainer.nc-ab-recolhido:not(#nc-ab-x):not(#nc-ab-y) {
+  display: none;
+}
+
+/* a validade do motivo numa frase ("Vale só para este dia (05/03/2025) · Mudar") */
+@app.nc-ab-ativo .nc-ab-validade {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px 10px;
+  margin: 14px 0 0;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: var(--nc-off);
+  font-size: 15px;
+  color: var(--nc-tinta);
+}
+
+@app.nc-ab-ativo .nc-ab-validade[hidden] {
+  display: none;
+}
+
+@app.nc-ab-ativo .nc-ab-validade .nc-ab-ic {
+  width: 18px;
+  height: 18px;
+  color: var(--nc-roxo);
+}
+
+@app.nc-ab-ativo .nc-ab-validade b {
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ═══ [C14] O PEDIDO JÁ FEITO E OS APROVADORES ═════════════════════════════════════════════════
+   Montado pelo JS em [J9] e [J13]. Para entender de relance: a SITUAÇÃO grande e colorida, o
+   dia, e a MUDANÇA desenhada em "antes → depois" com os horários grandes (.nc-ab-mud); depois os
+   fatos em duas colunas (.nc-ab-fatos2) e a faixa da aprovação (.nc-ab-apfaixa). A aba
+   Aprovadores (.nc-ab-aprv) vira o caminho da aprovação (.nc-ab-caminho).
+   Cores da situação: --ok verde · --anda âmbar · --nao vermelho.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+/* a região "A marcação" sem moldura: o cartão do pedido já é o destaque */
+@app.nc-ab-ativo.nc-ab-consulta #MARC > .t-Region-header:not(#nc-ab-x):not(#nc-ab-y) {
+  display: none;
+}
+
+@app.nc-ab-ativo.nc-ab-consulta #MARC:not(#nc-ab-x):not(#nc-ab-y) {
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+@app.nc-ab-ativo.nc-ab-consulta #MARC > .t-Region-bodyWrap > .t-Region-body:not(#nc-ab-x):not(#nc-ab-y) {
+  padding: 0;
+}
+
+@app.nc-ab-ativo.nc-ab-consulta .nc-ab-resumo:not(#nc-ab-x):not(#nc-ab-y) {
+  padding: 20px 22px;
+  border: 1px solid var(--nc-nevoa);
+  border-radius: 18px;
+  background: #fff;
+  box-shadow: 0 14px 30px -24px rgba(var(--nc-t-azul-rgb, 44, 26, 99), .5);
+}
+
+@app.nc-ab-ativo.nc-ab-consulta .nc-ab-resumo-topo:not(#nc-ab-x):not(#nc-ab-y) {
+  gap: 8px 12px;
+  margin: 0;
+}
+
+@app.nc-ab-ativo.nc-ab-consulta .nc-ab-sit:not(#nc-ab-x):not(#nc-ab-y) {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px 6px 10px;
+  font-size: 15px;
+}
+
+@app.nc-ab-ativo .nc-ab-sit .nc-ab-ic {
+  width: 18px;
+  height: 18px;
+}
+
+@app.nc-ab-ativo.nc-ab-consulta .nc-ab-resumo-n:not(#nc-ab-x):not(#nc-ab-y) {
+  margin-left: auto;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--nc-grafite);
+}
+
+@app.nc-ab-ativo .nc-ab-resumo-n b {
+  font-weight: 800;
+  color: var(--nc-tinta);
+}
+
+@app.nc-ab-ativo .nc-ab-resumo-dia {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 16px 0 0;
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--nc-tinta);
+}
+
+@app.nc-ab-ativo .nc-ab-resumo-dia .nc-ab-ic {
+  width: 20px;
+  height: 20px;
+  color: var(--nc-roxo);
+}
+
+/* a mudança: antes → depois */
+@app.nc-ab-ativo .nc-ab-mud {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: stretch;
+  gap: 10px;
+  margin: 14px 0 10px;
+}
+
+@app.nc-ab-ativo .nc-ab-mud > .nc-ab-ic {
+  align-self: center;
+  width: 28px;
+  height: 28px;
+  color: var(--nc-roxo);
+}
+
+@app.nc-ab-ativo :is(.nc-ab-mud-antes, .nc-ab-mud-depois) {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 2px;
+  min-height: 84px;
+  padding: 12px 16px;
+  border-radius: 14px;
+  background: var(--nc-off);
+}
+
+@app.nc-ab-ativo .nc-ab-mud-depois {
+  background: rgba(var(--nc-t-roxo-rgb, 81, 28, 118), .08);
+}
+
+@app.nc-ab-ativo :is(.nc-ab-mud-antes, .nc-ab-mud-depois) small {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--nc-grafite);
+}
+
+@app.nc-ab-ativo :is(.nc-ab-mud-antes, .nc-ab-mud-depois) b {
+  font-size: 30px;
+  font-weight: 800;
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+  color: var(--nc-tinta);
+}
+
+@app.nc-ab-ativo .nc-ab-mud-antes b {
+  color: var(--nc-cinza);
+}
+
+@app.nc-ab-ativo .nc-ab-mud-depois b {
+  color: var(--nc-roxo);
+}
+
+@app.nc-ab-ativo .nc-ab-mud :is(.nc-ab-mud-vazio, .nc-ab-mud-apag):not(#nc-ab-x):not(#nc-ab-y) {
+  font-size: 18px;
+  font-weight: 700;
+}
+
+@app.nc-ab-ativo .nc-ab-mud .nc-ab-mud-apag:not(#nc-ab-x):not(#nc-ab-y) {
+  color: var(--nc-ruim);
+}
+
+@app.nc-ab-ativo.nc-ab-consulta .nc-ab-resumo .nc-ab-frase-o:not(#nc-ab-x):not(#nc-ab-y) {
+  font-size: 15px;
+  color: var(--nc-grafite);
+}
+
+/* os fatos, rótulo pequeno em cima e valor forte embaixo */
+@app.nc-ab-ativo .nc-ab-fatos2 {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px 20px;
+  margin: 16px 0 0;
+  padding: 16px 0 0;
+  border-top: 1px solid var(--nc-nevoa);
+}
+
+@app.nc-ab-ativo .nc-ab-fato2 dt {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--nc-grafite);
+}
+
+@app.nc-ab-ativo .nc-ab-fato2 dd {
+  margin: 2px 0 0;
+  font-size: 15.5px;
+  font-weight: 700;
+  line-height: 1.35;
+  color: var(--nc-tinta);
+}
+
+@app.nc-ab-ativo.nc-ab-consulta .nc-ab-coment:not(#nc-ab-x):not(#nc-ab-y) {
+  margin: 14px 0 0;
+  padding: 10px 14px;
+  border-radius: 12px;
+  background: var(--nc-off);
+  font-size: 15px;
+}
+
+/* a faixa da aprovação */
+@app.nc-ab-ativo .nc-ab-apfaixa {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 10px;
+  margin: 16px 0 0;
+  padding: 12px 14px;
+  border-radius: 12px;
+  font-size: 15px;
+}
+
+@app.nc-ab-ativo .nc-ab-apfaixa > .nc-ab-ic {
+  width: 20px;
+  height: 20px;
+}
+
+@app.nc-ab-ativo .nc-ab-apfaixa .nc-ab-link {
+  margin-left: auto;
+}
+
+@app.nc-ab-ativo .nc-ab-apfaixa--ok { background: #E4F4EA; color: #1E6B45; }
+@app.nc-ab-ativo .nc-ab-apfaixa--anda { background: #FFF4DE; color: #6B4700; }
+@app.nc-ab-ativo .nc-ab-apfaixa--nao { background: #FBEAEC; color: #9B2230; }
+
+/* ---------- a aba Aprovadores: o caminho da aprovação ---------- */
+/* 04/10: só o RELATÓRIO sai; os itens da região (P714_OBS_APROVADOR, que o aprovador pendente
+   edita) continuam à vista — a regra antiga escondia tudo que não fosse o caminho. */
+@app.nc-ab-ativo .nc-ab-aprv > .t-Region-bodyWrap > .t-Region-body > :not(.nc-ab-caminho):not(.t-Form-fieldContainer):not(:has(.t-Form-fieldContainer)):not(#nc-ab-x):not(#nc-ab-y) {
+  display: none;   /* o relatório original continua na página, escondido */
+}
+
+@app.nc-ab-ativo .nc-ab-caminho {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 18px 20px;
+  border: 1px solid var(--nc-nevoa);
+  border-radius: 18px;
+  background: #fff;
+}
+
+@app.nc-ab-ativo .nc-ab-caminho-res {
+  margin: 0 0 12px;
+  font-size: 16px;
+  color: var(--nc-tinta);
+}
+
+@app.nc-ab-ativo .nc-ab-caminho-lista {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+@app.nc-ab-ativo .nc-ab-ap {
+  position: relative;
+  display: grid;
+  grid-template-columns: 36px minmax(0, 1fr) auto;
+  align-items: start;
+  gap: 4px 14px;
+  padding: 12px 0;
+}
+
+/* a linha que liga um aprovador ao próximo */
+@app.nc-ab-ativo .nc-ab-ap:not(:last-child)::before {
+  content: "";
+  position: absolute;
+  top: 52px;
+  bottom: -8px;
+  left: 17px;
+  width: 2px;
+  border-radius: 2px;
+  background: var(--nc-nevoa);
+}
+
+@app.nc-ab-ativo .nc-ab-ap-marca {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--nc-off);
+  color: var(--nc-cinza);
+}
+
+@app.nc-ab-ativo .nc-ab-ap-marca .nc-ab-ic {
+  width: 18px;
+  height: 18px;
+}
+
+@app.nc-ab-ativo .nc-ab-ap.is-ok .nc-ab-ap-marca { background: #E4F4EA; color: #1E6B45; }
+@app.nc-ab-ativo .nc-ab-ap.is-nao .nc-ab-ap-marca { background: #FBEAEC; color: #9B2230; }
+@app.nc-ab-ativo .nc-ab-ap.is-vez .nc-ab-ap-marca { background: #FFF4DE; color: #6B4700; }
+
+@app.nc-ab-ativo .nc-ab-ap-nome {
+  margin: 6px 0 0;
+  font-size: 15.5px;
+  font-weight: 800;
+  color: var(--nc-tinta);
+}
+
+@app.nc-ab-ativo .nc-ab-ap-meta {
+  margin: 2px 0 0;
+  font-size: 13px;
+  color: var(--nc-grafite);
+}
+
+@app.nc-ab-ativo .nc-ab-ap-just {
+  margin: 8px 0 0;
+  padding: 8px 12px;
+  border-radius: 10px;
+  background: var(--nc-off);
+  font-size: 14px;
+  font-style: italic;
+  color: var(--nc-tinta);
+}
+
+@app.nc-ab-ativo .nc-ab-ap-fim {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+  padding-top: 6px;
+}
+
+@app.nc-ab-ativo .nc-ab-ap-st {
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 800;
+  background: var(--nc-off);
+  color: var(--nc-grafite);
+}
+
+@app.nc-ab-ativo .nc-ab-ap.is-ok .nc-ab-ap-st { background: #E4F4EA; color: #1E6B45; }
+@app.nc-ab-ativo .nc-ab-ap.is-nao .nc-ab-ap-st { background: #FBEAEC; color: #9B2230; }
+@app.nc-ab-ativo .nc-ab-ap.is-vez .nc-ab-ap-st { background: #FFF4DE; color: #6B4700; }
+
+@app.nc-ab-ativo .nc-ab-ap-fim small {
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+  color: var(--nc-grafite);
+}
+
+/* a contagem na aba ("Aprovadores 2/2") */
+@app.nc-ab-ativo .nc-ab-aba-n {
+  margin-left: 6px;
+  padding: 1px 8px;
+  border-radius: 999px;
+  background: var(--nc-off);
+  font-size: 12.5px;
+  font-weight: 800;
+  color: var(--nc-roxo);
+}
+
+@app.nc-ab-ativo .nc-ab-aba-n[hidden] {
+  display: none;
+}
+
+@media (max-width: 640px) {
+  @app.nc-ab-ativo.nc-ab-consulta .nc-ab-resumo:not(#nc-ab-x):not(#nc-ab-y) {
+    padding: 16px;
+  }
+
+  @app.nc-ab-ativo.nc-ab-consulta .nc-ab-resumo-n:not(#nc-ab-x):not(#nc-ab-y) {
+    flex-basis: 100%;
+    margin-left: 0;
+  }
+
+  @app.nc-ab-ativo :is(.nc-ab-mud-antes, .nc-ab-mud-depois) b {
+    font-size: 26px;
+  }
+
+  @app.nc-ab-ativo .nc-ab-fatos2 {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  @app.nc-ab-ativo .nc-ab-ap {
+    grid-template-columns: 36px minmax(0, 1fr);
+  }
+
+  @app.nc-ab-ativo .nc-ab-ap-fim {
+    grid-column: 2;
+    flex-direction: row;
+    align-items: center;
+    padding-top: 0;
+  }
+}
+
+/* a aba Aprovadores sem moldura em volta do caminho (era cartão dentro de cartão, e o título
+   repetia o nome da aba) */
+@app.nc-ab-ativo .t-Region.nc-ab-aprv:not(#nc-ab-x):not(#nc-ab-y) {
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+@app.nc-ab-ativo .t-Region.nc-ab-aprv > .t-Region-header:not(#nc-ab-x):not(#nc-ab-y) {
+  display: none;
+}
+
+@app.nc-ab-ativo .t-Region.nc-ab-aprv > .t-Region-bodyWrap > .t-Region-body:not(#nc-ab-x):not(#nc-ab-y) {
+  padding: 0;
+}
+
+/* no pedido já feito, "Cancelar Requisição" é a ação rara e que não tem volta: contornada em
+   vermelho, sem o peso de botão principal (continua sendo o botão da página, com a ação dela) */
+@app.nc-ab-ativo.nc-ab-consulta .t-Button.t-Button--danger:not(.t-Button--link):not(#nc-ab-x):not(#nc-ab-y) {
+  border: 1.5px solid var(--nc-ruim);
+  background: #fff;
+  box-shadow: none;
+  color: var(--nc-ruim);
+}
+
+@app.nc-ab-ativo.nc-ab-consulta .t-Button.t-Button--danger:not(.t-Button--link):hover:not(#nc-ab-x):not(#nc-ab-y) {
+  background: #FBEAEC;
+}
+
+@app.nc-ab-ativo.nc-ab-consulta .t-Button.t-Button--danger:not(.t-Button--link) :is(.t-Icon, .t-Button-label):not(#nc-ab-x):not(#nc-ab-y) {
+  color: var(--nc-ruim);
+}
+
+/* ---------- [C14] o motivo em destaque, com o comentário junto ---------- */
+@app.nc-ab-ativo .nc-ab-motivo-dest {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin: 16px 0 0;
+  padding: 14px 16px;
+  border: 1px solid rgba(var(--nc-t-roxo-rgb, 81, 28, 118), .16);
+  border-radius: 14px;
+  background: #F8F4FC;
+}
+
+@app.nc-ab-ativo .nc-ab-motivo-dest > .nc-ab-ic {
+  flex: none;
+  width: 22px;
+  height: 22px;
+  margin-top: 2px;
+  color: var(--nc-roxo);
+}
+
+@app.nc-ab-ativo .nc-ab-motivo-rot {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--nc-grafite);
+}
+
+@app.nc-ab-ativo .nc-ab-motivo-v {
+  margin: 2px 0 0;
+  font-size: 19px;
+  font-weight: 800;
+  line-height: 1.3;
+  color: var(--nc-tinta);
+}
+
+@app.nc-ab-ativo .nc-ab-motivo-com {
+  margin: 8px 0 0;
+  font-size: 15px;
+  font-style: italic;
+  color: var(--nc-grafite);
+}
+
+/* os outros fatos numa linha de três (no celular, um embaixo do outro) */
+@app.nc-ab-ativo.nc-ab-consulta .nc-ab-fatos2:not(#nc-ab-x):not(#nc-ab-y) {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+/* o caminho da aprovação, agora na mesma página: com título */
+@app.nc-ab-ativo .nc-ab-caminho-tit {
+  margin: 0 0 4px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--nc-grafite);
+}
+
+@app.nc-ab-ativo .nc-ab-caminho:not(#nc-ab-x):not(#nc-ab-y) {
+  margin-top: 16px;
+}
+
+/* ---------- [C14] "Campos do pedido": uma ficha de leitura, não um formulário ----------
+   Rótulo à esquerda, valor como texto forte à direita, linhas finas entre eles. Sem caixas,
+   sem asterisco e sem "(Valor Necessário)": aqui nada se edita. */
+@app.nc-ab-ativo .nc-ab-campos-tit {
+  display: none;
+}
+
+@app.nc-ab-ativo.nc-ab-consulta.nc-ab-campos .nc-ab-campos-tit {
+  display: block;
+  margin: 18px 0 8px;
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--nc-tinta);
+}
+
+@app.nc-ab-ativo.nc-ab-consulta.nc-ab-campos .nc-ab-ficha:not(#nc-ab-x):not(#nc-ab-y),
+@app.nc-ab-ativo.nc-ab-consulta.nc-ab-campos #JUST:not(.nc-ab-oculto) > .t-Region-bodyWrap > .t-Region-body:not(#nc-ab-x):not(#nc-ab-y) {
+  padding: 4px 20px;
+  border: 1px solid var(--nc-nevoa);
+  border-radius: 16px;
+  background: #fff;
+}
+
+/* "O motivo" (JUST) continua a mesma ficha, logo embaixo, sem o cabeçalho de região */
+@app.nc-ab-ativo.nc-ab-consulta.nc-ab-campos #JUST:not(#nc-ab-x):not(#nc-ab-y) {
+  margin-top: 10px;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+@app.nc-ab-ativo.nc-ab-consulta.nc-ab-campos #JUST > .t-Region-header:not(#nc-ab-x):not(#nc-ab-y) {
+  display: none;
+}
+
+/* 04/10: :not([style*="none"]) — o display: grid não pode reacender o campo que a ação da página
+   escondeu (Hide Fields, Hide Fields_1, Oculta horas abono…) */
+@app.nc-ab-ativo.nc-ab-consulta.nc-ab-campos :is(.nc-ab-ficha, #JUST) .t-Form-fieldContainer:not(.nc-ab-vazio):not([style*="none"]):not(#nc-ab-x):not(#nc-ab-y) {
+  display: grid;
+  grid-template-columns: minmax(150px, 34%) minmax(0, 1fr);
+  align-items: baseline;
+  gap: 4px 16px;
+  margin: 0;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--nc-nevoa);
+}
+
+@app.nc-ab-ativo.nc-ab-consulta.nc-ab-campos :is(.nc-ab-ficha, #JUST) .row:last-child .t-Form-fieldContainer:not(#nc-ab-x):not(#nc-ab-y) {
+  border-bottom: 0;
+}
+
+@app.nc-ab-ativo.nc-ab-consulta.nc-ab-campos :is(.nc-ab-ficha, #JUST) :is(.t-Form-labelContainer, .t-Form-inputContainer):not(#nc-ab-x):not(#nc-ab-y) {
+  width: auto;
+  min-height: 0;
+  margin: 0;
+  padding: 0;
+}
+
+@app.nc-ab-ativo.nc-ab-consulta.nc-ab-campos :is(.nc-ab-ficha, #JUST) .t-Form-label:not(#nc-ab-x):not(#nc-ab-y) {
+  margin: 0;
+  padding: 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--nc-grafite);
+}
+
+/* nada é obrigatório numa leitura: sai o asterisco e o "(Valor Necessário)" escondido */
+@app.nc-ab-ativo.nc-ab-consulta.nc-ab-campos :is(.nc-ab-ficha, #JUST) .t-Form-label::before,
+@app.nc-ab-ativo.nc-ab-consulta.nc-ab-campos :is(.nc-ab-ficha, #JUST) .t-Form-label::after,
+@app.nc-ab-ativo.nc-ab-consulta.nc-ab-campos :is(.nc-ab-ficha, #JUST) :is(.t-Form-required, .t-Form-labelContainer .u-VisuallyHidden):not(#nc-ab-x):not(#nc-ab-y) {
+  display: none;
+  content: none;
+}
+
+/* o valor: texto, sem caixa, sem seta de lista */
+@app.nc-ab-ativo.nc-ab-consulta.nc-ab-campos :is(.nc-ab-ficha, #JUST) :is(input:not([type="checkbox"]):not([type="radio"]), select, textarea, .display_only, .apex-item-display-only):not(#nc-ab-x):not(#nc-ab-y) {
+  width: auto;
+  min-height: 0;
+  height: auto;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  font: inherit;
+  font-size: 15.5px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.4;
+  color: var(--nc-tinta);
+  opacity: 1;
+  -webkit-appearance: none;
+  appearance: none;
+  background-image: none;
+  pointer-events: none;
+}
+
+@app.nc-ab-ativo.nc-ab-consulta.nc-ab-campos :is(.nc-ab-ficha, #JUST) .t-Form-itemWrapper:not(#nc-ab-x):not(#nc-ab-y) {
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+@app.nc-ab-ativo.nc-ab-consulta.nc-ab-campos :is(.nc-ab-ficha, #JUST) :is(.t-Form-itemWrapper > .ui-datepicker-trigger, .t-Form-itemWrapper > .a-Button, .t-Form-itemWrapper > button):not(#nc-ab-x):not(#nc-ab-y) {
+  display: none;
+}
+
+@media (max-width: 640px) {
+  @app.nc-ab-ativo.nc-ab-consulta .nc-ab-fatos2:not(#nc-ab-x):not(#nc-ab-y) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  @app.nc-ab-ativo.nc-ab-consulta.nc-ab-campos :is(.nc-ab-ficha, #JUST) .t-Form-fieldContainer:not(.nc-ab-vazio):not(#nc-ab-x):not(#nc-ab-y) {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 2px;
+  }
+
+  @app.nc-ab-ativo.nc-ab-consulta.nc-ab-campos .nc-ab-ficha:not(#nc-ab-x):not(#nc-ab-y),
+  @app.nc-ab-ativo.nc-ab-consulta.nc-ab-campos #JUST:not(.nc-ab-oculto) > .t-Region-bodyWrap > .t-Region-body:not(#nc-ab-x):not(#nc-ab-y) {
+    padding: 4px 16px;
+  }
+}
+
+/* "Ver todos os campos do pedido" e "Ver no mapa", na mesma linha abaixo do resumo */
+@app.nc-ab-ativo .nc-ab-links {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px 16px;
+  margin: 14px 0 0;
+}
+
+/* a caixa de marcar vira "Sim" / "Não" na ficha */
+@app.nc-ab-ativo .nc-ab-sn {
+  display: none;
+}
+
+@app.nc-ab-ativo.nc-ab-consulta.nc-ab-campos .nc-ab-sn {
+  display: inline;
+  font-size: 15.5px;
+  font-weight: 700;
+  color: var(--nc-tinta);
+}
+
+@app.nc-ab-ativo.nc-ab-consulta.nc-ab-campos :is(.nc-ab-ficha, #JUST) :is(.checkbox_group, .apex-item-checkbox, .apex-item-group--checkbox):not(#nc-ab-x):not(#nc-ab-y) {
+  display: none;
+}
+
+/* campo vazio (o comprovante sem arquivo, por exemplo) não aparece na ficha */
+@app.nc-ab-ativo.nc-ab-consulta .t-Form-fieldContainer.nc-ab-vazio:not(#nc-ab-x):not(#nc-ab-y) {
+  display: none;
+}
+
+/* o "Sim/Não" no lugar da caixa de marcar, na mesma linha do rótulo: o que sobrou da caixa sai */
+@app.nc-ab-ativo.nc-ab-consulta.nc-ab-campos .t-Form-inputContainer:has(> .nc-ab-sn) > :not(.nc-ab-sn):not(#nc-ab-x):not(#nc-ab-y) {
+  display: none;
+}
+
+/* a última linha de cada cartão não tem divisória embaixo: o cartão corta a linha que sobra */
+@app.nc-ab-ativo.nc-ab-consulta.nc-ab-campos .nc-ab-ficha:not(#nc-ab-x):not(#nc-ab-y),
+@app.nc-ab-ativo.nc-ab-consulta.nc-ab-campos #JUST:not(.nc-ab-oculto) > .t-Region-bodyWrap > .t-Region-body:not(#nc-ab-x):not(#nc-ab-y) {
+  padding-bottom: 0;
+  overflow: hidden;
+}
+
+@app.nc-ab-ativo.nc-ab-consulta.nc-ab-campos :is(.nc-ab-ficha, #JUST) .t-Form-fieldContainer:not(.nc-ab-vazio):not(#nc-ab-x):not(#nc-ab-y) {
+  margin-bottom: -1px;
+}
+
+/* a linha da grade que ficou sem nenhum campo (o comprovante vazio, por exemplo) não ocupa espaço */
+@app.nc-ab-ativo.nc-ab-consulta :is(.nc-ab-ficha, #JUST) .row:not(:has(.t-Form-fieldContainer:not(.nc-ab-vazio))):not(#nc-ab-x):not(#nc-ab-y) {
+  display: none;
+}
+
+/* "O que aconteceu?": a linha de baixo de cada cartão mostra o EFEITO com o horário de verdade;
+   o cartão sugerido (o da posição vazia) ganha destaque e o selo "Sugestão" */
+@app.nc-ab-ativo .nc-ab-cartao small b {
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  color: var(--nc-tinta);
+}
+
+@app.nc-ab-ativo .nc-ab-cartao.is-sugerido:not(.is-on):not(#nc-ab-x):not(#nc-ab-y) {
+  position: relative;
+  border-color: rgba(var(--nc-t-roxo-rgb, 81, 28, 118), .45);
+  background: #F8F4FC;
+}
+
+@app.nc-ab-ativo .nc-ab-cartao .nc-ab-selo {
+  align-self: flex-start;
+  margin-left: auto;
+  padding: 2px 9px;
+  border-radius: 999px;
+  background: var(--nc-roxo);
+  font-size: 12px;
+  font-weight: 800;
+  color: #fff;
+}
+
+@app.nc-ab-ativo .nc-ab-cartao .nc-ab-selo[hidden],
+@app.nc-ab-ativo .nc-ab-cartao.is-on .nc-ab-selo {
+  display: none;
+}
+
+/* ═══ [C15] ABERTA PELA LISTA: A POSIÇÃO SÓ É MOSTRADA ═════════════════════════════════════════
+   Montado pelo JS em [J3]/[J12] (body.nc-ab-fixo). O dia e a posição chegaram pelo link da
+   grade: a posição escolhida fica em destaque; as outras aparecem esmaecidas, só para dar o
+   contexto do dia, e não reagem ao toque. No celular, a barra de progresso tem 3 partes.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-ab-ativo .nc-ab-pos--fixo .nc-ab-opc:not(#nc-ab-x):not(#nc-ab-y) {
+  pointer-events: none;
+  cursor: default;
+}
+
+@app.nc-ab-ativo .nc-ab-pos--fixo .nc-ab-opc:not(.is-on):not(#nc-ab-x):not(#nc-ab-y) {
+  border-color: transparent;
+  background: var(--nc-off);
+  opacity: .72;
+}
+
+@app.nc-ab-ativo .nc-ab-pos--fixo .nc-ab-opc.is-on:not(#nc-ab-x):not(#nc-ab-y) {
+  box-shadow: 0 8px 18px -12px rgba(var(--nc-t-roxo-rgb, 81, 28, 118), .7);
+}
+
+@app.nc-ab-ativo.nc-ab-fixo .nc-ab-passos-barra:not(#nc-ab-x):not(#nc-ab-y) {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+@app.nc-ab-ativo .nc-ab-passos-barra i[hidden] {
+  display: none;
+}
+
+/* ═══ [C16] AJUSTE EM SEQUÊNCIA (A JANELA) ═════════════════════════════════════════════════════
+   Montado pelo JS em [J15]. .nc-ab-fila é a faixa "Ajuste em sequência · 4 de 23 · Pular · Parar";
+   .nc-ab-motivo.is-sugerido, o motivo do ajuste anterior (sugerido, não escolhido);
+   .nc-ab-extra--rep, o atalho "Repetir a observação anterior".
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-ab-ativo .nc-ab-fila {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 14px;
+  margin: 0 0 12px;
+  padding: 10px 14px;
+  border-radius: 12px;
+  background: #F2ECF8;
+  font-size: 14.5px;
+  color: var(--nc-tinta);
+}
+
+@app.nc-ab-ativo .nc-ab-fila > span {
+  flex: 1 1 auto;
+}
+
+@app.nc-ab-ativo .nc-ab-fila > .nc-ab-ic {
+  width: 18px;
+  height: 18px;
+  color: var(--nc-roxo);
+}
+
+@app.nc-ab-ativo .nc-ab-motivo.is-sugerido:not(.is-on):not(#nc-ab-x):not(#nc-ab-y) {
+  border-color: rgba(var(--nc-t-roxo-rgb, 81, 28, 118), .45);
+  border-style: dashed;
+  background: #FBF8FD;
+}
+
+@app.nc-ab-ativo .nc-ab-motivo .nc-ab-selo {
+  flex: none;
+  margin-left: auto;
+  padding: 2px 9px;
+  border-radius: 999px;
+  background: #F2ECF8;
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--nc-roxo);
+}
+
+@app.nc-ab-ativo .nc-ab-motivo.is-on .nc-ab-selo {
+  display: none;
+}
+
+@app.nc-ab-ativo .nc-ab-extra--rep small {
+  font-style: italic;
+}
+
+/* ═══ FAIXA DA REGIÃO (padrão 03/10) ════════════════════════════════════════════════════════
+   Todo painel com título segue o cabeçalho de região da Skin: o título numa faixa que atravessa
+   o cartão de ponta a ponta, com a linha de 2px na cor de destaque do TEMA (var(--nc-rosa) — a
+   mesma da Skin; muda com os 14 temas). As margens negativas são o recuo de dentro do cartão:
+   mudou o recuo do cartão, mude aqui junto. Guia: brand/apex/MANUAL-APEX.md.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-ab-ativo .nc-ab-caminho > .nc-ab-caminho-tit:not(#nc-fx1):not(#nc-fx2):not(#nc-fx3) {
+  box-sizing: border-box;
+  width: calc(100% + 40px);
+  margin: -18px -20px 10px;
+  padding: 12px 20px 10px;
+  border-bottom: 2px solid var(--nc-rosa, #C95788);
+  font-size: 15px;
+  font-weight: 700;
+}

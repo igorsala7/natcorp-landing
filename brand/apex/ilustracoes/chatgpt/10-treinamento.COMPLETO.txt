@@ -1,0 +1,21 @@
+The attached image shows four illustrations from one series. Draw a new one for the same series, same illustrator — module "Treinamento".
+
+ART STYLE — corporate flat isometric vector illustration, the kind used in modern SaaS / HR software onboarding screens. Pure vector look, as if exported from Adobe Illustrator: crisp geometric shapes, perfectly flat color fills, NO outlines or strokes on any shape, NO gradients, NO texture, NO grain, NO noise, NO glow, NO 3D render, NO photorealism, NO painterly or hand-drawn marks.
+
+PROJECTION — true isometric projection, all receding edges at exactly 30 degrees, no perspective, no vanishing point, camera seen from above at the classic isometric angle. Every object sits on the same invisible isometric floor plane.
+
+SHADING — exactly one tone step per face of every object: top face lightest, left face medium, right face darkest (light comes from the upper left). Flat, hard-edged shading only. Under every object and every person, a flat pale ground shadow shaped as an isometric rhombus or ellipse in #E4F0F0, hard edged.
+
+PEOPLE — slender, elongated adult office workers, about 8 heads tall, standing or working naturally. Small simple heads with NO facial features at all (no eyes, no mouth, no nose, no eyebrows): the face is a plain skin-colored shape. Hair drawn as one solid block of color, simple modern cuts (short side-parted, long straight, ponytail, bun, short beard). Hands are simple rounded shapes. Clothes are flat blocks with at most one darker fold: blazers and sweaters in deep navy or purple, tops in pink or light periwinkle, straight trousers in dark navy or light blue, simple block shoes. Varied skin tones (peach #F0C0A8, light #FCC0A8, brown #845460) and genders. Calm, professional body language, collaborative.
+
+OBJECTS — large, simple, readable isometric objects built from boxes, slabs and rounded rectangles. Floating interface cards: rounded rectangles in pale lilac #E9E5F1 or #D8E4F0 with thin 1-pixel light blue #9CB4D8 lines as abstract text, a round avatar icon, small bar or line charts in pink. No real screens content, no readable UI.
+
+PALETTE — use ONLY these colors, in roughly these proportions: pale ground/light surfaces #E4F0F0 and #D8E4F0 and #E9E5F1 and white (about 30%); slate purple #544884 (13%); periwinkle blue #9CB4D8 (11%); deep navy #242460 / #2C1A63 (10%); purple #48246C / #511C76 (8%); plum #784890 / #9A408A (7%); soft pink #D884B4 (7%); raspberry pink #C05484 / #C95788 (5%); plus the skin tones. NO green, NO yellow, NO orange, NO red, NO black, NO cyan, NO brown objects.
+
+COMPOSITION — square canvas, one hero object in the center, four or five people arranged around it doing distinct tasks, secondary props and two or three floating interface cards around them. One pink speech bubble with three white dots floating near the top. Generous empty margin on all sides (the whole scene occupies about 75% of the canvas), nothing cropped by the edge. Solid pure white background #FFFFFF, no floor color, no scenery, no walls, no sky.
+
+SCENE — the hero object is a large isometric presentation screen on a stand showing an abstract slide with a pink bar chart and a play triangle, beside a stack of books and a graduation cap in deep navy with a pink tassel. Around it: a woman in a pink top presenting and pointing at the screen; three people seated on simple stools facing the screen, one with a laptop, one with a notebook, one raising a hand; a rolled certificate with a pink ribbon on the floor. Floating cards: a certificate card with a medal, a card with a light bulb.
+
+STRICT — no text, no letters, no numbers, no words, no logos, no brand marks, no flags, no national symbols, no watermark, no signature, no border or frame. Faceless people. Flat vector only. Pure white background.
+
+Square 1:1 PNG, transparent background (or pure white #FFFFFF).

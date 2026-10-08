@@ -1,0 +1,969 @@
+/* ╔════════════════════════════════════════════════════════════════════════════════════════╗
+   ║  NATCORP · REQUISIÇÃO DE SERVIÇO DE TERCEIROS  —  a "roupa" da tela (CSS)              ║
+   ║  App 2290 · Página 186                                                                 ║
+   ╚════════════════════════════════════════════════════════════════════════════════════════╝
+
+   Primeira vez num arquivo destes? Leia antes o manual: brand/apex/MANUAL-APEX.md (parte 1).
+
+   ── O QUE ESTE ARQUIVO FAZ ──────────────────────────────────────────────────────────────────
+   Dá a aparência da página de Requisição de Serviço de Terceiros (a página aberta pela aba
+   "Requisição de Serviços de Terceiros"): cores, tamanhos, espaços, bordas, e como a tela se
+   arruma no computador e no celular. Ele NÃO muda nada de lugar: quem muda as coisas de lugar
+   é o arquivo-irmão Natcorp_Terceiros.js. Os dois trabalham juntos:
+     o JS monta "a lista de documentos"  →  este arquivo diz como a lista se parece.
+   Sem o JS, este arquivo não faz nada: todas as regras dependem da marca nc-ter que só o
+   Natcorp_Terceiros.js põe no corpo da página.
+   O stepper "Página única / Etapas" é do time (o visual dele está no Natcorp_Style_Min.css):
+   nada aqui o redesenha.
+
+   ── ONDE ELE ENTRA NO APEX ──────────────────────────────────────────────────────────────────
+     App 2290 › Página 186 › CSS › File URLs:   #WORKSPACE_IMAGES#Natcorp_Terceiros.css
+     Este é o arquivo-FONTE (.src.css). O arquivo que sobe (o .css de mesmo nome, sem ".src") é
+     gerado a partir dele pelo gerar-app.mjs, que escreve o @app por extenso e põe os !important:
+     edite ESTE arquivo, não o .css (manual, parte 2).
+
+   ── ÍNDICE: as partes deste arquivo (Ctrl+F pelo código entre colchetes) ────────────────────
+     [C1] Ícones e partes recolhidas            (o tamanho dos ícones; o que o JS esconde)
+     [C2] A abertura, a lista de documentos e os botões   ← montada pelo JS em [J3]
+     [C3] As perguntas e o placar de cada bloco           ← montadas pelo JS em [J4]
+     [C4] Os anexos                                       ← montados pelo JS em [J5]
+     [C5] Dicas, Observação e o Prestador por assunto     ← montados pelo JS em [J6] e [J7]
+     [C6] A barra do pé                                   ← montada pelo JS em [J8]
+     [C7] O pedido gravado e a aprovação                  ← montados pelo JS em [J9] e [J10]
+     [C8] Telas menores e celular                         (ajustes para telas menores)
+
+   ── RECEITAS RÁPIDAS ────────────────────────────────────────────────────────────────────────
+     Quero mudar uma cor
+       → use uma das cores da marca, pelo nome: var(--nc-roxo), var(--nc-grafite)… A lista
+         completa, com amostras, está no manual (parte 3). Assim a cor acompanha o tema que
+         o usuário escolheu em "Cores". Evite escrever cores soltas, como #511C76.
+     Quero aumentar ou diminuir um texto        → procure font-size na parte certa.
+     Quero mais ou menos espaço                  → padding (espaço por DENTRO da caixa) e
+                                                   margin (espaço por FORA, até a vizinha).
+     Algo ficou bom no computador e ruim no celular → [C8]: o que está dentro de
+                                                   @media (max-width: 639px) só vale no celular.
+
+   ── COMO LER UM ARQUIVO CSS EM 30 SEGUNDOS ──────────────────────────────────────────────────
+     Cada regra tem duas partes:     QUEM { COMO; }
+       @app.nc-ter .nc-ter-ic {           ← QUEM: o "seletor", diz em que pedaço da tela vale
+         width: 18px;                     ← COMO: propriedade: valor;  (largura do ícone)
+         stroke: currentColor;            ←       o traço do ícone usa a cor do texto em volta
+       }
+     .nome-com-ponto       uma "classe": uma etiqueta posta num pedaço da tela (pelo APEX ou
+                           pelo JS).
+     @app                  atalho que dá prioridade às nossas regras sobre as do tema do APEX.
+                           No arquivo que sobe para o APEX ele aparece por extenso, como
+                           html body:is(.t-PageBody…):not(#nc-a1):not(#nc-a2) — é a mesma coisa.
+     :not(#nc-…-x)…        peso extra, para vencer uma regra do tema. Pode ignorar ao ler.
+     !important            no arquivo que sobe, toda linha ganha um: é o mesmo "vencer o tema".
+     @media (max-width: 767px) { … }   as regras de dentro só valem em telas até 767px (celular).
+     var(--nc-roxo)        uma cor da marca, pelo nome (muda junto com o tema escolhido).
+     px                    pixels, o tamanho de um pontinho da tela. 16px é o texto normal.
+     Toda linha COMO termina em ;   e todo { é fechado por um }. Não apague esses sinais.
+*/
+
+/* ═══ [C1] ÍCONES E PARTES RECOLHIDAS ══════════════════════════════════════════════════════
+   O tamanho e o traço dos ícones (desenhos pequenos), e o que o JS recolhe da tela:
+   .nc-ter-recolhida = não aparece (display: none). Ex.: perguntas da FISPQ sem produto químico.
+   ════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-ter .nc-ter-ic {
+  flex: none;
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.9;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+@app.nc-ter .nc-ter-recolhida:not(#nc-ter-x):not(#nc-ter-y) {
+  display: none;
+}
+
+/* ═══ [C2] A ABERTURA, A LISTA DE DOCUMENTOS E OS BOTÕES ═══════════════════════════════════
+   Montada pelo JS em [J3]. Peças principais:
+     .nc-ter-abertura     o bloco do alto            .nc-ter-docs        a lista de documentos
+     .nc-ter-docs-lista   os itens da lista (li.is-ok = já anexado)
+     .nc-ter-bt           os botões nossos: --claro (Copiar), --zap (WhatsApp), --forte (Enviar)
+   ════════════════════════════════════════════════════════════════════════════════════════ */
+/* ---------- a abertura e a lista de documentos ---------- */
+@app.nc-ter .nc-ter-abertura {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.35fr);
+  gap: 18px;
+  margin: 0 0 18px;
+  padding: 22px;
+  border-radius: 20px;
+  background:
+    radial-gradient(90% 120% at 0% 0%, rgba(var(--nc-t-rosa-rgb, 201, 87, 136), .3) 0%, rgba(var(--nc-t-rosa-rgb, 201, 87, 136), 0) 55%),
+    linear-gradient(135deg, var(--nc-azul) 0%, var(--nc-roxo) 70%);
+  color: #fff;
+}
+
+@app.nc-ter .nc-ter-abertura-tit {
+  margin: 0 0 8px;
+  font-size: 22px;
+  font-weight: 800;
+  line-height: 1.2;
+  color: #fff;
+}
+
+@app.nc-ter .nc-ter-abertura-txt p {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, .88);
+}
+
+@app.nc-ter .nc-ter-docs {
+  padding: 16px 18px;
+  border-radius: 16px;
+  background: #fff;
+  color: var(--nc-tinta);
+  box-shadow: 0 12px 28px -18px rgba(20, 10, 50, .6);
+}
+
+@app.nc-ter .nc-ter-docs-cab {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+@app.nc-ter .nc-ter-docs-cab > .nc-ter-ic {
+  width: 22px;
+  height: 22px;
+  margin-top: 2px;
+  color: var(--nc-roxo);
+}
+
+@app.nc-ter .nc-ter-docs-tit {
+  margin: 0;
+  font-size: 15.5px;
+  font-weight: 800;
+  line-height: 1.3;
+  color: var(--nc-tinta);
+}
+
+@app.nc-ter .nc-ter-docs-sub {
+  margin: 2px 0 0;
+  font-size: 13px;
+  color: var(--nc-grafite);
+}
+
+@app.nc-ter .nc-ter-docs-lista {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px 14px;
+  margin: 0 0 12px;
+  padding: 0;
+  list-style: none;
+}
+
+@app.nc-ter .nc-ter-docs-lista li {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 13px;
+  line-height: 1.35;
+  color: var(--nc-tinta);
+}
+
+@app.nc-ter .nc-ter-docs-marca {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 18px;
+  height: 18px;
+  margin-top: 1px;
+  border-radius: 6px;
+  box-shadow: inset 0 0 0 1.5px #CFC5E2;
+  color: #fff;
+}
+
+@app.nc-ter .nc-ter-docs-marca .nc-ter-ic {
+  width: 13px;
+  height: 13px;
+  stroke-width: 2.8;
+}
+
+@app.nc-ter .nc-ter-docs-lista li.is-ok {
+  color: var(--nc-grafite);
+}
+
+@app.nc-ter .nc-ter-docs-lista li.is-ok .nc-ter-docs-marca {
+  background: var(--nc-bom);
+  box-shadow: none;
+}
+
+@app.nc-ter .nc-ter-docs-acoes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+/* ---------- [C2] botões ---------- */
+@app.nc-ter .nc-ter-bt {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 40px;
+  padding: 0 14px;
+  border: 0;
+  border-radius: 10px;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color .15s, box-shadow .15s;
+}
+
+@app.nc-ter .nc-ter-bt:focus-visible {
+  outline: none;
+  box-shadow: var(--nc-anel);
+}
+
+@app.nc-ter .nc-ter-bt--claro {
+  background: #F1EAF8;
+  color: var(--nc-roxo);
+}
+
+@app.nc-ter .nc-ter-bt--claro:hover {
+  background: #E7DCF3;
+}
+
+@app.nc-ter .nc-ter-bt--claro.is-ok {
+  background: #E4F4EA;
+  color: var(--nc-bom);
+}
+
+@app.nc-ter a.nc-ter-bt--zap:not(#nc-ter-x):not(#nc-ter-y) {
+  background: #E7F6EC;
+  color: #146C3A;
+}
+
+@app.nc-ter a.nc-ter-bt--zap:hover:not(#nc-ter-x):not(#nc-ter-y) {
+  background: #D6F0DF;
+}
+
+@app.nc-ter .nc-ter-bt--forte {
+  min-height: 46px;
+  padding: 0 20px;
+  background: var(--nc-roxo);
+  font-size: 15px;
+  color: #fff;
+  box-shadow: 0 8px 18px -10px rgba(var(--nc-t-roxo-rgb, 81, 28, 118), .8);
+}
+
+@app.nc-ter .nc-ter-bt--forte:hover {
+  background: #45176A /*reserva*/;
+  background: oklch(from #45176A l calc(c * var(--nc-t-croma, 1)) calc(h + var(--nc-t-giro, 0)));
+}
+
+/* ═══ [C3] AS PERGUNTAS E O PLACAR DE CADA BLOCO ═══════════════════════════════════════════
+   Montadas pelo JS em [J4]. Peças principais:
+     .nc-ter-perg       cada pergunta (cartão)       .nc-ter-simples   a frase simples em negrito
+     .nc-ter-num        o número da pergunta         .nc-ter-conf      "Veio marcado" / "Conferido"
+     .nc-ter-siglas     as siglas explicadas         .nc-ter-aviso     o aviso de Não / Não se aplica
+     .is-conferida      pergunta já conferida        .is-nao           resposta Não (cartão amarelo)
+     .nc-ter-placar     "3 de 5 conferidas · 1 de 3 anexos", no cabeçalho do bloco
+   ════════════════════════════════════════════════════════════════════════════════════════ */
+/* ---------- as perguntas ---------- */
+@app.nc-ter .t-Form-fieldContainer.nc-ter-perg {
+  padding: 12px 14px 10px;
+  border: 1px solid var(--nc-nevoa);
+  border-radius: 14px;
+  background: #fff;
+  transition: border-color .2s, background-color .2s;
+}
+
+@app.nc-ter .t-Form-fieldContainer.nc-ter-perg.is-conferida {
+  border-color: #CDE8D6;
+}
+
+@app.nc-ter .t-Form-fieldContainer.nc-ter-perg.is-nao {
+  border-color: #F0D9A8;
+  background: #FFFBF1;
+}
+
+@app.nc-ter .nc-ter-lc {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+
+@app.nc-ter .nc-ter-lc > .t-Form-label:not(#nc-ter-x):not(#nc-ter-y) {
+  order: 2;
+  margin: 4px 0 8px;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.45;
+  color: #6F6883;
+}
+
+@app.nc-ter .nc-ter-simples {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 4px 10px;
+  order: 1;
+}
+
+@app.nc-ter .nc-ter-num {
+  display: grid;
+  flex: none;
+  place-items: center;
+  min-width: 24px;
+  height: 24px;
+  padding: 0 6px;
+  border-radius: 8px;
+  background: var(--nc-nevoa2);
+  font-size: 12.5px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  color: var(--nc-roxo);
+}
+
+@app.nc-ter .nc-ter-simples-txt {
+  flex: 1 1 220px;
+  font-size: 15px;
+  font-weight: 800;
+  line-height: 1.35;
+  color: var(--nc-tinta);
+}
+
+@app.nc-ter .nc-ter-conf {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 22px;
+  padding: 0 8px;
+  border-radius: 999px;
+  background: #FFF4D6;
+  font-size: 11.5px;
+  font-weight: 700;
+  white-space: nowrap;
+  color: #7A5300;
+}
+
+@app.nc-ter .is-conferida .nc-ter-conf {
+  background: #E4F4EA;
+  color: var(--nc-bom);
+}
+
+@app.nc-ter .nc-ter-conf .nc-ter-ic {
+  width: 13px;
+  height: 13px;
+  stroke-width: 2.6;
+}
+
+@app.nc-ter .nc-ter-siglas {
+  display: grid;
+  grid-template-columns: 15px minmax(0, 1fr);
+  align-items: start;
+  gap: 3px 8px;
+  margin: 8px 0 0;
+  font-size: 12.5px;
+  line-height: 1.4;
+  color: var(--nc-grafite);
+}
+
+@app.nc-ter .nc-ter-siglas > .nc-ter-ic {
+  width: 15px;
+  height: 15px;
+  margin-top: 1px;
+  color: var(--nc-roxo);
+}
+
+@app.nc-ter .nc-ter-siglas > span {
+  grid-column: 2;
+}
+
+@app.nc-ter .nc-ter-siglas > .nc-ter-ic {
+  grid-row: 1;
+}
+
+@app.nc-ter .nc-ter-siglas b {
+  color: var(--nc-roxo);
+}
+
+@app.nc-ter .nc-ter-aviso {
+  margin: 8px 0 0;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.4;
+  color: #6B4A00;
+}
+
+@app.nc-ter .nc-ter-aviso:empty,
+@app.nc-ter .nc-ter-nota[hidden] {
+  display: none;
+}
+
+@app.nc-ter .nc-ter-nota {
+  margin: 8px 0 0;
+  padding: 8px 12px;
+  border-radius: 10px;
+  background: var(--nc-quase);
+  font-size: 13px;
+  color: var(--nc-grafite);
+}
+
+/* o placar de cada bloco, no cabeçalho */
+@app.nc-ter .nc-ter-placar {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-left: auto;
+  padding-left: 12px;
+}
+
+@app.nc-ter .nc-ter-placar > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 24px;
+  padding: 0 10px;
+  border-radius: 999px;
+  background: #FFF4D6;
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+  color: #7A5300;
+}
+
+@app.nc-ter .nc-ter-placar > span.is-ok {
+  background: #E4F4EA;
+  color: var(--nc-bom);
+}
+
+@app.nc-ter .nc-ter-placar .nc-ter-ic {
+  width: 13px;
+  height: 13px;
+}
+
+@app.nc-ter .nc-ter-bloco > .t-Region-header .t-Region-headerItems--title {
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+/* ═══ [C4] OS ANEXOS ═══════════════════════════════════════════════════════════════════════
+   Montados pelo JS em [J5]. .nc-ter-anexo é cada anexo; .nc-ter-anexo-nome, o nome simples;
+   .nc-ter-anexo-est, "Falta anexar" / "Anexado"; .is-anexado, o anexo que já tem arquivo.
+   ════════════════════════════════════════════════════════════════════════════════════════ */
+/* ---------- os anexos ---------- */
+@app.nc-ter .nc-ter-anexo-nome {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 8px;
+  margin-bottom: 4px;
+  font-size: 14px;
+  font-weight: 800;
+  line-height: 1.35;
+  color: var(--nc-tinta);
+}
+
+@app.nc-ter .nc-ter-anexo-nome > .nc-ter-ic {
+  width: 16px;
+  height: 16px;
+  color: var(--nc-roxo);
+}
+
+@app.nc-ter .nc-ter-anexo-nome > span:nth-child(2) {
+  flex: 1 1 180px;
+}
+
+@app.nc-ter .nc-ter-anexo .t-Form-labelContainer {
+  display: flex;
+  flex-direction: column;
+}
+
+@app.nc-ter .nc-ter-anexo .t-Form-labelContainer > .t-Form-label:not(#nc-ter-x):not(#nc-ter-y) {
+  margin-bottom: 8px;
+  font-size: 12px;
+  font-weight: 500;
+  color: #6F6883;
+}
+
+@app.nc-ter .nc-ter-anexo-est {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 22px;
+  padding: 0 8px;
+  border-radius: 999px;
+  background: #FBECEE;
+  font-size: 11.5px;
+  font-weight: 700;
+  white-space: nowrap;
+  color: var(--nc-ruim);
+}
+
+@app.nc-ter .is-anexado .nc-ter-anexo-est {
+  background: #E4F4EA;
+  color: var(--nc-bom);
+}
+
+@app.nc-ter .nc-ter-anexo-est .nc-ter-ic {
+  width: 13px;
+  height: 13px;
+  stroke-width: 2.6;
+}
+
+@app.nc-ter .is-anexado .apex-item-group--file {
+  border-color: #9FD3B2;
+  border-style: solid;
+  background: #F2FAF5;
+}
+
+/* ═══ [C5] DICAS, OBSERVAÇÃO E O PRESTADOR POR ASSUNTO ═════════════════════════════════════
+   Montados pelo JS em [J6] e [J7]. Peças principais:
+     .nc-ter-dica        a dica entre o nome do campo e a caixa
+     .nc-ter-grupo       "A empresa contratada" / "O contrato"   .nc-ter-grade  a grade de 12 colunas
+     .nc-ter-span-6      ocupa 6 das 12 colunas (meia linha); -4 = um terço; -3 = um quarto
+     .nc-ter-cel--botao  a célula do botão "Cadastrar nova empresa"
+   CUIDADO  A altura do botão e a dos nomes de campo são MEDIDAS pelo JS na tela; não as fixe aqui.
+   ════════════════════════════════════════════════════════════════════════════════════════ */
+/* ---------- dicas: entre o nome do campo e a caixa ---------- */
+@app.nc-ter .t-Form-labelContainer:has(> .nc-ter-dica) {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+@app.nc-ter .nc-ter-dica {
+  width: 100%;
+  margin: 2px 0 6px;
+  font-size: 12.5px;
+  font-weight: 500;
+  line-height: 1.4;
+  color: var(--nc-grafite);
+}
+
+/* a Observação ocupa a largura toda, como a Descrição */
+@app.nc-ter [id$="_OBSERVACAO"].textarea:not(#nc-ter-x):not(#nc-ter-y) {
+  width: 100%;
+  min-height: 84px;
+}
+
+/* ---------- o Prestador por assunto ---------- */
+@app.nc-ter .nc-ter-grupos {
+  display: grid;
+  gap: 18px;
+  padding: 4px 0 8px;
+}
+
+@app.nc-ter .nc-ter-grupo + .nc-ter-grupo {
+  padding-top: 16px;
+  border-top: 1px solid var(--nc-nevoa2);
+}
+
+@app.nc-ter .nc-ter-grupo-tit {
+  margin: 0 0 6px;
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--nc-roxo);
+}
+
+/* o campo já traz 8 px de cada lado (como nas linhas do APEX): a grade devolve isso nas bordas,
+   e as caixas ficam na mesma margem das outras regiões */
+@app.nc-ter .nc-ter-grade {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  align-items: end;
+  gap: 0;
+  margin: 0 -8px;
+}
+
+@app.nc-ter .nc-ter-cel--botao {
+  padding: 0 8px;
+}
+
+@app.nc-ter .nc-ter-span-3 { grid-column: span 3; }
+@app.nc-ter .nc-ter-span-4 { grid-column: span 4; }
+@app.nc-ter .nc-ter-span-6 { grid-column: span 6; }
+
+@app.nc-ter .nc-ter-cel {
+  min-width: 0;
+}
+
+@app.nc-ter .nc-ter-cel > .t-Form-fieldContainer {
+  width: 100%;
+}
+
+/* o botão da linha: secundário, com a altura e a base da caixa ao lado (medidas pelo JS) */
+@app.nc-ter .nc-ter-cel--botao {
+  display: flex;
+  align-items: flex-end;
+}
+
+@app.nc-ter .nc-ter-cel--botao .t-Button:not(#nc-ter-x):not(#nc-ter-y) {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 0;
+  margin: 0;
+  padding: 0 12px;
+  border: 1.5px solid var(--nc-roxo);
+  border-radius: 10px;
+  background: #fff;
+  box-shadow: none;
+  font-size: 13.5px;
+  line-height: 1.1;
+  white-space: nowrap;
+  color: var(--nc-roxo);
+}
+
+@app.nc-ter .nc-ter-cel--botao .t-Button:hover:not(#nc-ter-x):not(#nc-ter-y) {
+  background: #F4EEFA;
+}
+
+@app.nc-ter .nc-ter-cel--botao .t-Button .t-Button-label:not(#nc-ter-x):not(#nc-ter-y) {
+  color: var(--nc-roxo);
+}
+
+/* fora da Segurança, as linhas alinham as caixas pela base (como a Skin já faz no Contratante) */
+@app.nc-ter .t-Region:not(.nc-ter-bloco) .row:not(:has(.nc-ter-perg, .nc-ter-anexo, .t-Region)):not(#nc-ter-x) {
+  align-items: flex-end;
+}
+
+/* a área do nome recebe a altura da linha (JS): o nome fica em cima, a dica logo abaixo */
+@app.nc-ter .t-Form-labelContainer {
+  justify-content: flex-start;
+}
+
+/* ═══ [C6] A BARRA DO PÉ ═══════════════════════════════════════════════════════════════════
+   Montada pelo JS em [J8]. .nc-ter-barra é a barra presa embaixo; .nc-ter-falta, cada coisa que
+   falta (tocar leva até ela); .nc-ter-falta--total, a versão curta, de uma linha, do celular.
+   ════════════════════════════════════════════════════════════════════════════════════════ */
+/* ---------- a barra do pé ---------- */
+@app.nc-ter.nc-ter-com-barra {
+  padding-bottom: 88px;
+}
+
+@app.nc-ter .nc-ter-barra {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 800;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 20px calc(12px + env(safe-area-inset-bottom, 0px));
+  border-top: 1px solid var(--nc-nevoa);
+  background: rgba(255, 255, 255, .96);
+  box-shadow: 0 -10px 28px -20px rgba(var(--nc-t-azul-rgb, 44, 26, 99), .45);
+  backdrop-filter: saturate(1.4) blur(8px);
+}
+
+@app.nc-ter .nc-ter-barra-txt {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+
+@app.nc-ter .nc-ter-barra-rot {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--nc-grafite);
+}
+
+@app.nc-ter .nc-ter-falta {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  min-height: 30px;
+  max-width: 100%;
+  padding: 0 10px;
+  overflow: hidden;
+  border: 1px solid rgba(184, 50, 63, .3);
+  border-radius: 999px;
+  background: #FBECEE;
+  font: inherit;
+  font-size: 12.5px;
+  font-weight: 700;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--nc-ruim);
+  cursor: pointer;
+}
+
+@app.nc-ter .nc-ter-falta .nc-ter-ic {
+  width: 14px;
+  height: 14px;
+}
+
+@app.nc-ter .nc-ter-falta--total {
+  display: none;
+}
+
+@app.nc-ter .nc-ter-mais {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--nc-grafite);
+}
+
+@app.nc-ter .nc-ter-barra-ok {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--nc-bom);
+}
+
+/* ═══ [C7] O PEDIDO GRAVADO E A APROVAÇÃO ══════════════════════════════════════════════════
+   Montados pelo JS em [J9] e [J10]. Peças principais:
+     .nc-ter-hero     o cabeçalho do pedido          .nc-ter-sit   a situação: --bom (verde),
+                                                                   --ruim (vermelho), --neutro, --espera
+     .nc-ter-ap       a faixa da aprovação           .nc-ter-ap-p  cada aprovador: .is-ok aprovou ·
+                                                                   .is-nao reprovou · .is-vez a vez · .is-fila
+   ════════════════════════════════════════════════════════════════════════════════════════ */
+/* ---------- o pedido gravado ---------- */
+@app.nc-ter .nc-ter-hero {
+  margin: 0 0 16px;
+  padding: 18px 22px;
+  border-radius: 18px;
+  background:
+    radial-gradient(110% 130% at 100% 0%, rgba(var(--nc-t-rosa-rgb, 201, 87, 136), .28) 0%, rgba(var(--nc-t-rosa-rgb, 201, 87, 136), 0) 55%),
+    linear-gradient(135deg, var(--nc-azul) 0%, var(--nc-roxo) 72%);
+  color: #fff;
+}
+
+@app.nc-ter .nc-ter-hero-topo {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+@app.nc-ter .nc-ter-hero-n {
+  margin: 0;
+  font-size: 13.5px;
+  color: rgba(255, 255, 255, .8);
+}
+
+@app.nc-ter .nc-ter-hero-n b,
+@app.nc-ter .nc-ter-hero-linha b,
+@app.nc-ter .nc-ter-hero-quem b {
+  color: #fff;
+}
+
+@app.nc-ter .nc-ter-hero-tit {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 8px 0 4px;
+  font-size: 21px;
+  font-weight: 800;
+  color: #fff;
+}
+
+@app.nc-ter .nc-ter-hero-tit .nc-ter-ic {
+  width: 22px;
+  height: 22px;
+  color: var(--nc-realce);
+}
+
+@app.nc-ter .nc-ter-hero-linha,
+@app.nc-ter .nc-ter-hero-desc {
+  margin: 4px 0 0;
+  font-size: 14.5px;
+  line-height: 1.45;
+  color: rgba(255, 255, 255, .9);
+}
+
+@app.nc-ter .nc-ter-hero-quem {
+  margin: 10px 0 0;
+  padding-top: 10px;
+  border-top: 1px solid rgba(255, 255, 255, .18);
+  font-size: 13.5px;
+  color: rgba(255, 255, 255, .8);
+}
+
+@app.nc-ter .nc-ter-sit {
+  display: inline-flex;
+  align-items: center;
+  height: 26px;
+  padding: 0 12px;
+  border-radius: 999px;
+  background: #fff;
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--nc-grafite);
+}
+
+@app.nc-ter .nc-ter-sit--espera { background: var(--nc-alerta); color: #3D2A00; }
+@app.nc-ter .nc-ter-sit--bom { color: var(--nc-bom); }
+@app.nc-ter .nc-ter-sit--ruim { color: var(--nc-ruim); }
+
+@app.nc-ter .nc-ter-ap-rot { margin: 0; font-size: 12.5px; font-weight: 700; color: var(--nc-grafite); }
+@app.nc-ter .nc-ter-ap-resumo { margin: 2px 0 10px; font-size: 14.5px; color: var(--nc-grafite); }
+@app.nc-ter .nc-ter-ap-resumo b { color: var(--nc-tinta); }
+
+@app.nc-ter .nc-ter-ap-passos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0 0 8px;
+  padding: 0;
+  list-style: none;
+}
+
+@app.nc-ter .nc-ter-ap-p {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px 6px 8px;
+  border-radius: 999px;
+  background: var(--nc-quase);
+  font-size: 13px;
+}
+
+@app.nc-ter .nc-ter-ap-marca {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #D9D3E3;
+}
+
+@app.nc-ter .nc-ter-ap-p.is-ok .nc-ter-ap-marca { background: var(--nc-bom); }
+@app.nc-ter .nc-ter-ap-p.is-nao .nc-ter-ap-marca { background: #C0392B; }
+@app.nc-ter .nc-ter-ap-p.is-vez .nc-ter-ap-marca { background: #E0A100; }
+@app.nc-ter .nc-ter-ap-nome { font-weight: 800; color: var(--nc-tinta); }
+@app.nc-ter .nc-ter-ap-estado { color: var(--nc-grafite); }
+
+@app.nc-ter .nc-ter-decisao {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding-top: 10px;
+  border-top: 1px solid var(--nc-nevoa2);
+}
+
+@app.nc-ter .nc-ter-decisao p {
+  margin: 0;
+  font-weight: 700;
+  color: #8A5A00;
+}
+
+@app.nc-ter .nc-ter-decisao-botoes {
+  display: flex;
+  gap: 8px;
+}
+
+/* ═══ [C8] TELAS MENORES E CELULAR ═════════════════════════════════════════════════════════
+   Ajustes para telas menores. O que está dentro de  @media (max-width: 899px)  vale em tablets e
+   notebooks pequenos; dentro de  @media (max-width: 639px), só no celular.
+   Em geral: o que era lado a lado passa a ficar um embaixo do outro.
+   ════════════════════════════════════════════════════════════════════════════════════════ */
+/* ---------- celular ---------- */
+@media (max-width: 899px) {
+  @app.nc-ter .nc-ter-abertura {
+    grid-template-columns: minmax(0, 1fr);
+    padding: 18px;
+  }
+}
+
+@media (max-width: 899px) {
+  @app.nc-ter .nc-ter-span-3 {
+    grid-column: span 6;
+  }
+
+  @app.nc-ter .nc-ter-m-12 {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 639px) {
+  @app.nc-ter .nc-ter-span-3,
+  @app.nc-ter .nc-ter-span-4,
+  @app.nc-ter .nc-ter-span-6 {
+    grid-column: 1 / -1;
+  }
+
+  @app.nc-ter .nc-ter-cel--botao {
+    padding: 4px 8px 16px;
+  }
+
+  /* no celular, "Cadastrar nova empresa" logo abaixo da Empresa Contratada, a que ele se refere */
+  @app.nc-ter .nc-ter-grade > .nc-ter-cel { order: 3; }
+  @app.nc-ter .nc-ter-grade > .nc-ter-cel:first-child { order: 0; }
+  @app.nc-ter .nc-ter-grade > .nc-ter-cel--botao { order: 1; }
+  @app.nc-ter .nc-ter-grade > .nc-ter-cel:nth-child(2) { order: 2; }
+
+  @app.nc-ter .nc-ter-docs-lista {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  @app.nc-ter .nc-ter-docs-acoes .nc-ter-bt {
+    flex: 1 1 100%;
+    justify-content: center;
+  }
+
+  @app.nc-ter .nc-ter-placar {
+    flex-basis: 100%;
+    margin: 6px 0 0;
+    padding-left: 0;
+  }
+
+  @app.nc-ter .nc-ter-barra {
+    gap: 10px;
+    padding: 10px 12px calc(10px + env(safe-area-inset-bottom, 0px));
+  }
+
+  @app.nc-ter .nc-ter-barra-txt > :not(.nc-ter-falta--total):not(.nc-ter-barra-ok) {
+    display: none;
+  }
+
+  @app.nc-ter .nc-ter-falta--total {
+    display: inline-flex;
+    min-height: 36px;
+    white-space: normal;
+    text-align: left;
+    line-height: 1.25;
+  }
+
+  @app.nc-ter .nc-ter-barra .nc-ter-bt--forte {
+    flex: none;
+    min-height: 44px;
+    padding: 0 14px;
+  }
+
+  @app.nc-ter .nc-ter-barra .nc-ter-bt--forte .nc-ter-ic {
+    display: none;
+  }
+
+  @app.nc-ter .nc-ter-barra-ok {
+    font-size: 13px;
+  }
+
+  @app.nc-ter.nc-ter-com-barra {
+    padding-bottom: 80px;
+  }
+}
+
+/* ═══ FAIXA DA REGIÃO (padrão 03/10) ════════════════════════════════════════════════════════
+   Todo painel com título segue o cabeçalho de região da Skin: o título numa faixa que atravessa
+   o cartão de ponta a ponta, com a linha de 2px na cor de destaque do TEMA (var(--nc-rosa) — a
+   mesma da Skin; muda com os 14 temas). As margens negativas são o recuo de dentro do cartão:
+   mudou o recuo do cartão, mude aqui junto. Guia: brand/apex/MANUAL-APEX.md.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-ter .nc-ter-docs > .nc-ter-docs-cab:not(#nc-fx1):not(#nc-fx2):not(#nc-fx3) {
+  box-sizing: border-box;
+  width: calc(100% + 36px);
+  margin: -16px -18px 10px;
+  padding: 12px 18px 10px;
+  border-bottom: 2px solid var(--nc-rosa, #C95788);
+}

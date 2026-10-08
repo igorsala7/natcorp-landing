@@ -1,0 +1,925 @@
+/* ╔════════════════════════════════════════════════════════════════════════════════════════╗
+   ║  NATCORP · ALTERAÇÃO CADASTRAL E DE ENDEREÇO  —  a "roupa" da tela (CSS)               ║
+   ║  App 200 · Páginas 136 (Alteração Cadastral) e 134 (Alteração de Endereço)             ║
+   ╚════════════════════════════════════════════════════════════════════════════════════════╝
+
+   Primeira vez num arquivo destes? Leia antes o manual: brand/apex/MANUAL-APEX.md (parte 1).
+
+   ── O QUE ESTE ARQUIVO FAZ ──────────────────────────────────────────────────────────────────
+   Dá a aparência das páginas de Alteração Cadastral (136) e de Endereço (134): cores, tamanhos,
+   espaços, bordas, e como a tela se arruma no computador e no celular. Ele NÃO muda nada de
+   lugar: quem muda as coisas de lugar é o arquivo-irmão Natcorp_Cadastro.js. Os dois juntos:
+     o JS monta "os cartões dos assuntos"  →  este arquivo diz como os cartões se parecem.
+   Sem o JS, este arquivo não faz nada: todas as regras dependem da marca nc-cad que só o
+   Natcorp_Cadastro.js põe no corpo da página.
+   Público: colaboradores (e gestores por eles), muitos com pouca leitura, quase sempre no
+   celular. Por isso: alvos grandes (48px ou mais), letra de 16px nos campos, uma pergunta por
+   vez, ícone + duas palavras. Nada aqui vence o display:none das ações dinâmicas (o que o
+   APEX esconde continua escondido).
+
+   ── ONDE ELE ENTRA NO APEX ──────────────────────────────────────────────────────────────────
+     Página 136 (e 134) › CSS › File URLs:   #WORKSPACE_IMAGES#Natcorp_Cadastro.css
+     Este é o arquivo-FONTE (.src.css). O arquivo que sobe (o .css de mesmo nome, sem ".src") é
+     gerado a partir dele pelo gerar-app.mjs, que escreve o @app por extenso e põe os !important:
+     edite ESTE arquivo, não o .css (manual, parte 2).
+
+   ── ÍNDICE: as partes deste arquivo (Ctrl+F pelo código entre colchetes) ────────────────────
+     [C1] O que sai de cena                       (o que o JS esconde)
+     [C2] O alto                                  ← montado pelo JS em [J6]
+     [C3] A pergunta: cartões grandes             ← montada pelo JS em [J5] e [J7]
+     [C4] Os blocos de dados e o "antes"          ← [J5] e [J7]
+     [C5] Os comprovantes                         ← [J8]
+     [C6] Confira antes de enviar                 ← [J9]
+     [C7] A barra do rodapé                       ← [J10]
+     [C8] Celular                                 (ajustes para telas pequenas)
+     [C9] Menos movimento                         (para quem pediu "reduzir movimento")
+
+   ── RECEITAS RÁPIDAS ────────────────────────────────────────────────────────────────────────
+     Quero mudar uma cor
+       → use uma das cores da marca, pelo nome: var(--nc-roxo), var(--nc-grafite)… A lista
+         completa, com amostras, está no manual (parte 3). Assim a cor acompanha o tema que
+         o usuário escolheu em "Cores". Evite escrever cores soltas, como #511C76.
+     Quero mudar a cor do campo que mudou       → [C4], procure .nc-cad-mudou
+     Quero aumentar ou diminuir um texto        → procure font-size na parte certa.
+     Quero mais ou menos espaço                  → padding (espaço por DENTRO da caixa) e
+                                                   margin (espaço por FORA, até a vizinha).
+     Algo ficou bom no computador e ruim no celular → [C8]: o que está dentro de
+                                                   @media (max-width: 767px) só vale no celular.
+
+   ── COMO LER UM ARQUIVO CSS EM 30 SEGUNDOS ──────────────────────────────────────────────────
+     Cada regra tem duas partes:     QUEM { COMO; }
+       @app.nc-cad .nc-cad-topo {         ← QUEM: o "seletor", diz em que pedaço da tela vale
+         display: flex;                   ← COMO: propriedade: valor;  (põe as peças lado a lado)
+         gap: 18px;                       ←       18px de espaço entre elas
+       }
+     .nome-com-ponto       uma "classe": uma etiqueta posta num pedaço da tela (pelo APEX ou
+                           pelo JS).
+     @app                  atalho que dá prioridade às nossas regras sobre as do tema do APEX.
+                           No arquivo que sobe para o APEX ele aparece por extenso, como
+                           html body:is(.t-PageBody…):not(#nc-a1):not(#nc-a2) — é a mesma coisa.
+     :not(#nc-…-x)…        peso extra, para vencer uma regra do tema. Pode ignorar ao ler.
+     !important            no arquivo que sobe, toda linha ganha um: é o mesmo "vencer o tema".
+     @media (max-width: 767px) { … }   as regras de dentro só valem em telas até 767px (celular).
+     var(--nc-roxo)        uma cor da marca, pelo nome (muda junto com o tema escolhido).
+     px                    pixels, o tamanho de um pontinho da tela. 16px é o texto normal.
+     Toda linha COMO termina em ;   e todo { é fechado por um }. Não apague esses sinais.
+*/
+
+/* ═══ [C1] O QUE SAI DE CENA ═══════════════════════════════════════════════════════════════
+   O que o JS manda esconder: as regiões absorvidas (Seletor, solicitação), as colunas que
+   ficaram vazias e os blocos não escolhidos (.nc-cad-fora). display: none = não aparece.
+   ════════════════════════════════════════════════════════════════════════════════════════ */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-cad .nc-cad-absorvida:not(#nc-cad-x):not(#nc-cad-y),
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-cad .col.nc-cad-col-vazia:not(#nc-cad-x):not(#nc-cad-y),
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-cad .t-Region.nc-cad-fora:not(#nc-cad-x):not(#nc-cad-y) {
+  display: none !important;
+}
+
+/* ═══ [C2] O ALTO ══════════════════════════════════════════════════════════════════════════
+   Montado pelo JS em [J6]. .nc-cad-topo é o bloco; .nc-cad-topo-ilu, a ilustração;
+   .nc-cad-topo-tit, "Atualizar meus dados".
+   ════════════════════════════════════════════════════════════════════════════════════════ */
+/* ---------- o alto ---------- */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-cad .nc-cad-topo {
+  display: flex !important;
+  align-items: center !important;
+  gap: 18px !important;
+  margin: 0 0 14px !important;
+  padding: 16px 22px 16px 14px !important;
+  border: 1px solid var(--nc-nevoa) !important;
+  border-radius: 18px !important;
+  background: linear-gradient(135deg, #FBF8FE 0%, #FFFFFF 62%) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-cad .nc-cad-topo-ilu {
+  flex: none !important;
+  width: 64px !important;
+  height: auto !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-cad .nc-cad-topo-tit {
+  margin: 0 !important;
+  font-family: inherit !important;
+  font-size: 24px !important;
+  font-weight: 800 !important;
+  line-height: 1.2 !important;
+  letter-spacing: -.015em !important;
+  color: var(--nc-tinta) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-cad .nc-cad-topo-quem,
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-cad .nc-cad-topo-req {
+  margin: 4px 0 0 !important;
+  font-size: 15px !important;
+  line-height: 1.4 !important;
+  color: var(--nc-grafite) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-cad .nc-cad-topo-quem b,
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-cad .nc-cad-topo-req b {
+  color: var(--nc-tinta) !important;
+}
+
+/* ═══ [C3] A PERGUNTA: CARTÕES GRANDES ═════════════════════════════════════════════════════
+   Montada pelo JS em [J5] e [J7]. Peças principais:
+     .nc-cad-escolha   o bloco da pergunta      .nc-cad-cartao   cada cartão (.is-on = escolhido)
+     .nc-cad-cartao-tit / -dica   título e frase  .nc-cad-cartao-conta  "2 mudanças"
+     .nc-cad-todos     o botão "Ver todos os dados"
+   ════════════════════════════════════════════════════════════════════════════════════════ */
+/* ---------- a pergunta: cartões grandes ---------- */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-cad .nc-cad-escolha {
+  margin: 14px 0 !important;
+  padding: 20px 22px 18px !important;
+  border: 1px solid var(--nc-nevoa) !important;
+  border-radius: 18px !important;
+  background: #fff !important;
+  box-shadow: 0 14px 30px -26px rgba(var(--nc-t-azul-rgb, 44, 26, 99), .5) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-cad .nc-cad-escolha h2 {
+  margin: 0 !important;
+  font-family: inherit !important;
+  font-size: 21px !important;
+  font-weight: 800 !important;
+  line-height: 1.25 !important;
+  color: var(--nc-tinta) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-cad .nc-cad-escolha > p {
+  margin: 4px 0 16px !important;
+  font-size: 15px !important;
+  line-height: 1.45 !important;
+  color: var(--nc-grafite) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-cad .nc-cad-cartoes {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fill, minmax(168px, 1fr)) !important;
+  gap: 10px !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-cad .nc-cad-cartao {
+  position: relative !important;
+  display: grid !important;
+  grid-template-columns: auto minmax(0, 1fr) !important;
+  grid-template-rows: auto auto !important;
+  align-items: center !important;
+  gap: 2px 12px !important;
+  min-height: 76px !important;
+  padding: 14px 14px !important;
+  border: 1.5px solid var(--nc-nevoa) !important;
+  border-radius: 16px !important;
+  background: #fff !important;
+  font: inherit !important;
+  text-align: left !important;
+  color: var(--nc-tinta) !important;
+  cursor: pointer !important;
+  transition: border-color .15s ease-out, background-color .15s ease-out, transform .15s ease-out !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-cad .nc-cad-cartao:hover {
+  border-color: #CDBDE2 /*reserva*/ !important;
+  border-color: oklch(from #CDBDE2 l calc(c * var(--nc-t-croma, 1)) calc(h + var(--nc-t-giro, 0))) !important;
+  background: #FCFAFE !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-cad .nc-cad-cartao:active {
+  transform: scale(.985) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-cad .nc-cad-cartao:focus-visible,
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-cad .nc-cad-todos:focus-visible,
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-cad .nc-cad-falta:focus-visible {
+  outline: 3px solid var(--nc-roxo) !important;
+  outline-offset: 2px !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-cad .nc-cad-cartao-ic {
+  display: grid !important;
+  grid-row: 1 / span 2 !important;
+  place-items: center !important;
+  width: 46px !important;
+  height: 46px !important;
+  border-radius: 14px !important;
+  background: var(--nc-nevoa2) !important;
+  color: var(--nc-roxo) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-cad .nc-cad-cartao-ic svg {
+  width: 26px !important;
+  height: 26px !important;
+  fill: none !important;
+  stroke: currentColor !important;
+  stroke-width: 1.8 !important;
+  stroke-linecap: round !important;
+  stroke-linejoin: round !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-cad .nc-cad-cartao-tit {
+  align-self: end !important;
+  font-size: 16px !important;
+  font-weight: 800 !important;
+  line-height: 1.2 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-cad .nc-cad-cartao-dica {
+  align-self: start !important;
+  font-size: 13.5px !important;
+  line-height: 1.3 !important;
+  color: #6E6882 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-cad .nc-cad-cartao-marca {
+  position: absolute !important;
+  top: 8px !important;
+  right: 8px !important;
+  display: none !important;
+  place-items: center !important;
+  width: 22px !important;
+  height: 22px !important;
+  border-radius: 50% !important;
+  background: var(--nc-roxo) !important;
+  color: #fff !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-cad .nc-cad-cartao-marca svg,
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-cad .nc-cad-ic {
+  width: 14px !important;
+  height: 14px !important;
+  fill: none !important;
+  stroke: currentColor !important;
+  stroke-width: 2.6 !important;
+  stroke-linecap: round !important;
+  stroke-linejoin: round !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-cad .nc-cad-cartao.is-on {
+  border-color: var(--nc-roxo) !important;
+  background: #F7F2FC !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-cad .nc-cad-cartao.is-on .nc-cad-cartao-ic {
+  background: var(--nc-roxo) !important;
+  color: #fff !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-cad .nc-cad-cartao.is-on .nc-cad-cartao-marca {
+  display: grid !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-cad .nc-cad-cartao-conta {
+  grid-column: 2 !important;
+  font-size: 12px !important;
+  font-weight: 800 !important;
+  color: var(--nc-roxo) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-cad .nc-cad-cartao-conta:empty {
+  display: none !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-cad .nc-cad-todos {
+  margin: 12px 0 0 !important;
+  padding: 6px 2px !important;
+  border: 0 !important;
+  background: none !important;
+  font: inherit !important;
+  font-size: 14px !important;
+  font-weight: 700 !important;
+  color: var(--nc-roxo) !important;
+  text-decoration: underline !important;
+  text-decoration-color: rgba(var(--nc-t-roxo-rgb, 81, 28, 118), .35) !important;
+  text-underline-offset: 3px !important;
+  cursor: pointer !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-cad .nc-cad-blocos-vazio {
+  margin: 0 0 14px !important;
+  padding: 18px !important;
+  border: 1.5px dashed #D9D1E6 !important;
+  border-radius: 16px !important;
+  font-size: 15px !important;
+  text-align: center !important;
+  color: var(--nc-grafite) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-cad .nc-cad-blocos-vazio[hidden] {
+  display: none !important;
+}
+
+/* ═══ [C4] OS BLOCOS DE DADOS E O "ANTES" ══════════════════════════════════════════════════
+   Montados pelo JS em [J5] e [J7]. .nc-cad-blocos é a caixa dos blocos; .nc-cad-mudou, o campo
+   que mudou; .nc-cad-antes, o "antes: …" na linha do nome; .nc-cad-bloco-conta, "N mudanças".
+   ════════════════════════════════════════════════════════════════════════════════════════ */
+/* ---------- os blocos de dados ---------- */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-cad .nc-cad-blocos {
+  display: grid !important;
+  gap: 12px !important;
+  margin: 0 0 14px !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-cad .nc-cad-blocos > .t-Region:not(#nc-cad-x):not(#nc-cad-y) {
+  margin: 0 !important;
+  border: 1px solid var(--nc-nevoa) !important;
+  border-radius: 16px !important;
+  background: #fff !important;
+  box-shadow: 0 10px 24px -22px rgba(var(--nc-t-azul-rgb, 44, 26, 99), .5) !important;
+  animation: nc-cad-entra .24s cubic-bezier(.2, .7, .2, 1) !important;
+}
+
+@keyframes nc-cad-entra {
+  from { transform: translateY(6px); }
+  to { transform: none; }
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-cad .nc-cad-blocos > .t-Region > .t-Region-header {
+  padding: 16px 20px 8px !important;
+  border-bottom: 0 !important;
+  background: none !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-cad .nc-cad-blocos > .t-Region > .t-Region-header .t-Region-title {
+  font-size: 18px !important;
+  font-weight: 800 !important;
+  color: var(--nc-tinta) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-cad .nc-cad-bloco-conta {
+  margin-left: 10px !important;
+  padding: 2px 10px !important;
+  border-radius: 999px !important;
+  background: #EFE8F7 !important;
+  font-size: 12.5px !important;
+  font-weight: 800 !important;
+  color: var(--nc-roxo) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-cad .nc-cad-bloco-conta:empty {
+  display: none !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-cad .nc-cad-blocos > .t-Region > .t-Region-bodyWrap > .t-Region-body {
+  padding: 4px 20px 20px !important;
+}
+
+/* campos: letra de 16px (o celular não amplia a tela ao tocar) e alvos de 48px */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-cad .nc-cad-blocos .t-Form-label {
+  font-size: 14.5px !important;
+  font-weight: 700 !important;
+  color: var(--nc-tinta) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-cad .nc-cad-blocos :is(input.apex-item-text, select, textarea) {
+  min-height: 48px !important;
+  border-radius: 12px !important;
+  font-size: 16px !important;
+}
+
+/* campo + botão: o padrão geral (Natcorp_Paginas) já os une e estica; aqui só a medida */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-cad .nc-cad-blocos :is(.a-Button--popupLOV, .ui-datepicker-trigger, .a-Button--calendar) {
+  min-width: 48px !important;
+  border-radius: 0 12px 12px 0 !important;
+}
+
+/* o que mudou: destaque calmo e "Antes: …" logo abaixo */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-cad .t-Form-fieldContainer.nc-cad-mudou :is(input.apex-item-text, select, textarea) {
+  border-color: #A98BCF /*reserva*/ !important;
+  border-color: oklch(from #A98BCF l calc(c * var(--nc-t-croma, 1)) calc(h + var(--nc-t-giro, 0))) !important;
+  background: #FBF7FE !important;
+}
+
+/* o rótulo e o "antes" dividem a mesma linha (o campo não sai do lugar) */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-cad .t-Form-fieldContainer.nc-cad-mudou > .t-Form-labelContainer:not(#nc-cad-x):not(#nc-cad-y) {
+  display: flex !important;
+  align-items: baseline !important;
+  justify-content: space-between !important;
+  gap: 8px !important;
+  min-width: 0 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-cad .t-Form-fieldContainer.nc-cad-mudou > .t-Form-labelContainer > .t-Form-label:not(#nc-cad-x):not(#nc-cad-y) {
+  flex: 0 1 auto !important;
+  width: auto !important;
+  min-width: 0 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-cad .t-Form-fieldContainer.nc-cad-mudou > .t-Form-labelContainer:not(#nc-cad-x):not(#nc-cad-y) {
+  flex-direction: row !important;            /* no celular o tema empilha o rótulo (coluna) */
+  flex-wrap: nowrap !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-cad .nc-cad-antes {
+  flex: 0 1 auto !important;
+  min-width: 0 !important;
+  max-width: 62% !important;
+  overflow: hidden !important;
+  font-size: 12.5px !important;
+  line-height: 1.3 !important;
+  white-space: nowrap !important;
+  text-overflow: ellipsis !important;
+  color: #6E6882 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-cad .nc-cad-antes b {
+  font-weight: 700 !important;
+  text-decoration: line-through !important;
+  text-decoration-color: rgba(var(--nc-t-roxo-rgb, 81, 28, 118), .45) !important;
+  color: #5E5872 !important;
+}
+
+/* ═══ [C5] OS COMPROVANTES ═════════════════════════════════════════════════════════════════
+   Montados pelo JS em [J8]. .nc-cad-docs é a lista de documentos; li.is-ok = anexado,
+   li.is-falta = falta anexar; .nc-cad-anexos--falta = a região quando falta algum documento.
+   ════════════════════════════════════════════════════════════════════════════════════════ */
+/* ---------- comprovantes ---------- */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-cad .t-Region.nc-cad-anexos:not(#nc-cad-x):not(#nc-cad-y) {
+  margin: 0 0 14px !important;
+  border: 1px solid var(--nc-nevoa) !important;
+  border-radius: 16px !important;
+}
+
+/* os documentos pedidos pelo que mudou: uma lista com o que falta e o que já foi */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-cad .t-Region.nc-cad-anexos.nc-cad-anexos--falta:not(#nc-cad-x):not(#nc-cad-y) {
+  border-color: #E8C77A !important;
+  box-shadow: 0 12px 28px -24px rgba(138, 90, 0, .5) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-cad .nc-cad-docs {
+  margin: 4px 0 12px !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-cad .nc-cad-docs-tit {
+  display: flex !important;
+  align-items: flex-start !important;
+  gap: 8px !important;
+  margin: 0 !important;
+  font-size: 15px !important;
+  line-height: 1.45 !important;
+  color: var(--nc-grafite) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-cad .nc-cad-docs-tit b {
+  color: var(--nc-tinta) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-cad .nc-cad-docs-tit > svg {
+  flex: none !important;
+  width: 20px !important;
+  height: 20px !important;
+  margin-top: 1px !important;
+  fill: none !important;
+  stroke: var(--nc-roxo) !important;
+  stroke-width: 2 !important;
+  stroke-linecap: round !important;
+  stroke-linejoin: round !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-cad .nc-cad-docs-conta {
+  margin-left: auto !important;
+  padding: 2px 10px !important;
+  border-radius: 999px !important;
+  background: #FFF4DE !important;
+  font-size: 13px !important;
+  font-weight: 800 !important;
+  white-space: nowrap !important;
+  color: #6B4700 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-cad .nc-cad-anexos:not(.nc-cad-anexos--falta) .nc-cad-docs-conta {
+  background: #E4F4EC !important;
+  color: var(--nc-bom) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-cad .nc-cad-docs--livre .nc-cad-docs-tit {
+  color: #6E6882 !important;
+}
+
+/* o corpo da região não tem respiro (o relatório cuida do seu); a lista precisa do dela */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-cad .nc-cad-docs {
+  padding: 16px 20px 8px !important;
+}
+
+@media (max-width: 640px) {
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-cad .nc-cad-docs {
+    padding: 14px 14px 6px !important;
+  }
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-cad .nc-cad-docs-lista {
+  display: grid !important;
+  gap: 8px !important;
+  margin: 12px 0 0 !important;
+  padding: 0 !important;
+  list-style: none !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-cad .nc-cad-docs-lista li {
+  display: grid !important;
+  grid-template-columns: auto minmax(0, 1fr) auto !important;
+  align-items: center !important;
+  gap: 12px !important;
+  min-height: 52px !important;
+  padding: 8px 14px !important;
+  border: 1.5px solid #F0DDB0 !important;
+  border-radius: 14px !important;
+  background: #FFFBF1 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-cad .nc-cad-docs-lista li.is-ok {
+  border-color: #BFE3CF !important;
+  background: #F4FBF7 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-cad .nc-cad-docs-marca {
+  display: grid !important;
+  place-items: center !important;
+  width: 32px !important;
+  height: 32px !important;
+  border-radius: 50% !important;
+  background: #FFF0CC !important;
+  color: #8A5A00 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-cad .nc-cad-docs-lista li.is-ok .nc-cad-docs-marca {
+  background: var(--nc-bom) !important;
+  color: #fff !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-cad .nc-cad-docs-marca svg {
+  width: 16px !important;
+  height: 16px !important;
+  fill: none !important;
+  stroke: currentColor !important;
+  stroke-width: 2.4 !important;
+  stroke-linecap: round !important;
+  stroke-linejoin: round !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-cad .nc-cad-docs-nome {
+  font-size: 15.5px !important;
+  font-weight: 800 !important;
+  line-height: 1.3 !important;
+  color: var(--nc-tinta) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-cad .nc-cad-docs-estado {
+  font-size: 13px !important;
+  font-weight: 800 !important;
+  white-space: nowrap !important;
+  color: #8A5A00 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-cad .nc-cad-docs-lista li.is-ok .nc-cad-docs-estado {
+  color: var(--nc-bom) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-cad .nc-cad-docs-como {
+  margin: 12px 0 0 !important;
+  font-size: 14px !important;
+  line-height: 1.45 !important;
+  color: var(--nc-grafite) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-cad .nc-cad-docs-como b {
+  color: var(--nc-tinta) !important;
+}
+
+/* com documento faltando, o "Anexar" do APEX ganha destaque */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-cad .nc-cad-anexos--falta > .t-Region-header .t-Button:not(#nc-cad-x):not(#nc-cad-y) {
+  height: 44px !important;
+  padding: 0 18px !important;
+  border-radius: 12px !important;
+  box-shadow: 0 0 0 4px #F3E8FB !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-cad .nc-cad-falta--doc {
+  background: #F3E8FB !important;
+  color: var(--nc-roxo) !important;
+}
+
+/* ═══ [C6] CONFIRA ANTES DE ENVIAR ═════════════════════════════════════════════════════════
+   Montado pelo JS em [J9]. .nc-cad-resumo é o bloco; .nc-cad-de / .nc-cad-para, antes e depois.
+   ════════════════════════════════════════════════════════════════════════════════════════ */
+/* ---------- confira antes de enviar ---------- */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-cad .nc-cad-resumo {
+  margin: 0 0 14px !important;
+  padding: 18px 20px !important;
+  border-radius: 16px !important;
+  background: #F7F3FB !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-cad .nc-cad-resumo[hidden] {
+  display: none !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-cad .nc-cad-resumo h2 {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  margin: 0 0 10px !important;
+  font-family: inherit !important;
+  font-size: 17px !important;
+  font-weight: 800 !important;
+  color: var(--nc-tinta) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-cad .nc-cad-resumo h2 span {
+  display: grid !important;
+  place-items: center !important;
+  min-width: 24px !important;
+  height: 24px !important;
+  padding: 0 7px !important;
+  border-radius: 999px !important;
+  background: var(--nc-roxo) !important;
+  font-size: 12.5px !important;
+  color: #fff !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-cad .nc-cad-resumo ul {
+  display: grid !important;
+  gap: 8px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  list-style: none !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-cad .nc-cad-resumo li {
+  display: grid !important;
+  grid-template-columns: minmax(140px, 200px) minmax(0, 1fr) 16px minmax(0, 1fr) !important;
+  align-items: center !important;
+  gap: 4px 12px !important;
+  font-size: 15px !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-cad .nc-cad-resumo-rot {
+  font-weight: 700 !important;
+  color: var(--nc-tinta) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-cad .nc-cad-de {
+  text-decoration: line-through !important;
+  text-decoration-color: rgba(var(--nc-t-roxo-rgb, 81, 28, 118), .4) !important;
+  color: #6E6882 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-cad .nc-cad-para {
+  font-weight: 800 !important;
+  color: var(--nc-roxo) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-cad .nc-cad-resumo-seta {
+  width: 15px !important;
+  height: 15px !important;
+  color: var(--nc-roxo) !important;
+}
+
+/* ═══ [C7] A BARRA DO RODAPÉ ═══════════════════════════════════════════════════════════════
+   Montada pelo JS em [J10]. .nc-cad-acoes é a barra; .nc-cad-falta, cada coisa que falta;
+   .nc-cad-so-largo só aparece no computador e .nc-cad-so-celular só no celular.
+   ════════════════════════════════════════════════════════════════════════════════════════ */
+/* ---------- a barra do rodapé ---------- */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-cad .t-ButtonRegion.nc-cad-acoes:not(.nc-cad-acoes--leitura):not(#nc-cad-x):not(#nc-cad-y) {
+  position: sticky !important;
+  bottom: 0 !important;
+  z-index: 20 !important;
+  margin: 0 !important;
+  padding: 12px 16px !important;
+  border: 1px solid var(--nc-nevoa) !important;
+  border-radius: 16px !important;
+  background: rgba(255, 255, 255, .97) !important;
+  box-shadow: 0 -12px 28px -22px rgba(var(--nc-t-azul-rgb, 44, 26, 99), .55) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-cad .t-ButtonRegion.nc-cad-acoes .t-ButtonRegion-wrap {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  align-items: center !important;
+  gap: 10px 16px !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-cad .t-ButtonRegion.nc-cad-acoes .t-ButtonRegion-col--left { order: 1 !important; flex: none !important; width: auto !important; }
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-cad .t-ButtonRegion.nc-cad-acoes .nc-cad-status { order: 2 !important; flex: 1 1 240px !important; }
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-cad .t-ButtonRegion.nc-cad-acoes .t-ButtonRegion-col--content { order: 3 !important; flex: none !important; width: auto !important; }
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-cad .t-ButtonRegion.nc-cad-acoes .t-ButtonRegion-col--right { order: 4 !important; flex: none !important; width: auto !important; }
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-cad .t-ButtonRegion.nc-cad-acoes .t-ButtonRegion-col--content table { width: auto !important; }
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-cad .t-ButtonRegion.nc-cad-acoes .t-ButtonRegion-col--right:not(:has(.t-Button)) { display: none !important; }
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-cad .t-ButtonRegion.nc-cad-acoes .t-ButtonRegion-col--content .t-ButtonRegion-buttons:empty {
+  display: none !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-cad .t-ButtonRegion.nc-cad-acoes:not(.nc-cad-acoes--leitura) .t-Button {
+  height: 52px !important;
+  padding: 0 24px !important;
+  border-radius: 14px !important;
+  font-size: 16px !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-cad .nc-cad-status {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  align-items: center !important;
+  gap: 6px 8px !important;
+  font-size: 15px !important;
+  color: var(--nc-grafite) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-cad .nc-cad-status-rot {
+  font-weight: 800 !important;
+  color: #6B4700 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-cad .nc-cad-falta {
+  min-height: 36px !important;
+  padding: 4px 12px !important;
+  border: 0 !important;
+  border-radius: 999px !important;
+  background: #FFF4DE !important;
+  font: inherit !important;
+  font-size: 14px !important;
+  font-weight: 700 !important;
+  color: #6B4700 !important;
+  cursor: pointer !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-cad .nc-cad-status-ok {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  font-weight: 800 !important;
+  color: var(--nc-roxo) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-cad .nc-cad-status-ok .nc-cad-ic {
+  width: 18px !important;
+  height: 18px !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-cad .nc-cad-so-celular {
+  display: none !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-cad .nc-cad-status-nada {
+  color: #6E6882 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-cad :is(.t-Body, .t-Body-main, .t-Body-content),
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-cad .t-Body-contentInner > .container {
+  overflow: clip !important;
+}
+
+/* ═══ [C8] CELULAR ═════════════════════════════════════════════════════════════════════════
+   As regras de dentro do  @media (max-width: 767px)  só valem em telas de até 767px (celular).
+   Em geral: o que era lado a lado passa a ficar um embaixo do outro.
+   ════════════════════════════════════════════════════════════════════════════════════════ */
+/* ---------- celular ---------- */
+@media (max-width: 767px) {
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-cad .nc-cad-topo {
+    padding: 14px 16px !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-cad .nc-cad-topo-ilu {
+    width: 48px !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-cad .nc-cad-topo-tit {
+    font-size: 21px !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-cad .nc-cad-escolha {
+    padding: 18px 14px 14px !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-cad .nc-cad-escolha h2 {
+    font-size: 20px !important;
+  }
+
+  /* dois cartões por linha, ícone em cima */
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-cad .nc-cad-cartoes {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 8px !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-cad .nc-cad-cartao {
+    grid-template-columns: minmax(0, 1fr) !important;
+    justify-items: start !important;
+    gap: 4px !important;
+    min-height: 118px !important;
+    padding: 14px 12px 12px !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-cad .nc-cad-cartao-ic {
+    grid-row: auto !important;
+    margin-bottom: 4px !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-cad .nc-cad-blocos > .t-Region > .t-Region-header {
+    padding: 14px 14px 6px !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-cad .nc-cad-blocos > .t-Region > .t-Region-bodyWrap > .t-Region-body {
+    padding: 2px 14px 16px !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-cad .nc-cad-resumo li {
+    grid-template-columns: minmax(0, 1fr) !important;
+    gap: 0 !important;
+    padding: 6px 0 !important;
+    border-bottom: 1px solid #E6DEF0 !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-cad .nc-cad-resumo-seta {
+    display: none !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-cad .nc-cad-de::before {
+    content: "Antes: " !important;
+    text-decoration: none !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-cad .nc-cad-para::before {
+    content: "Agora: " !important;
+    font-weight: 400 !important;
+    color: var(--nc-grafite) !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-cad .t-ButtonRegion.nc-cad-acoes:not(.nc-cad-acoes--leitura):not(#nc-cad-x):not(#nc-cad-y) {
+    margin: 0 -4px !important;
+    border-radius: 16px 16px 0 0 !important;
+  }
+
+  /* uma linha com o que falta, e embaixo Voltar | Enviar pedido */
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-cad .t-ButtonRegion.nc-cad-acoes .t-ButtonRegion-wrap:not(#nc-cad-x):not(#nc-cad-y) {
+    flex-wrap: wrap !important;
+    gap: 8px 10px !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-cad .t-ButtonRegion.nc-cad-acoes .nc-cad-status:not(#nc-cad-x):not(#nc-cad-y) {
+    order: 0 !important;
+    flex: 0 0 100% !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-cad .t-ButtonRegion.nc-cad-acoes .t-ButtonRegion-col--left:not(#nc-cad-x):not(#nc-cad-y) {
+    order: 1 !important;
+    flex: none !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-cad .t-ButtonRegion.nc-cad-acoes .t-ButtonRegion-col--content:not(#nc-cad-x):not(#nc-cad-y) {
+    order: 2 !important;
+    flex: 1 !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-cad .t-ButtonRegion.nc-cad-acoes .t-ButtonRegion-col--content table,
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-cad .t-ButtonRegion.nc-cad-acoes .t-ButtonRegion-col--content .t-Button {
+    width: 100% !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-cad .nc-cad-so-largo {
+    display: none !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-cad .nc-cad-so-celular {
+    display: inline-block !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-cad .nc-cad-cartao-conta {
+    grid-column: auto !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-cad .t-ButtonRegion.nc-cad-acoes .t-ButtonRegion-col--right .t-Button {
+    width: 100% !important;
+  }
+}
+
+/* ═══ [C9] MENOS MOVIMENTO ═════════════════════════════════════════════════════════════════
+   Para quem pediu "reduzir movimento" nas configurações do computador ou celular (acessibilidade):
+   as animações são desligadas.
+   ════════════════════════════════════════════════════════════════════════════════════════ */
+@media (prefers-reduced-motion: reduce) {
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-cad .nc-cad-blocos > .t-Region {
+    animation: none !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-cad .nc-cad-cartao {
+    transition: none !important;
+  }
+}
+
+/* ═══ FAIXA DA REGIÃO (padrão 03/10) ════════════════════════════════════════════════════════
+   Todo painel com título segue o cabeçalho de região da Skin: o título numa faixa que atravessa
+   o cartão de ponta a ponta, com a linha de 2px na cor de destaque do TEMA (var(--nc-rosa) — a
+   mesma da Skin; muda com os 14 temas). As margens negativas são o recuo de dentro do cartão:
+   mudou o recuo do cartão, mude aqui junto. Guia: brand/apex/MANUAL-APEX.md.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-cad .nc-cad-escolha > h2:not(#nc-fx1):not(#nc-fx2):not(#nc-fx3) {
+  box-sizing: border-box !important;
+  width: calc(100% + 44px) !important;
+  margin: -20px -22px 12px !important;
+  padding: 12px 22px 10px !important;
+  border-bottom: 2px solid var(--nc-rosa, #C95788) !important;
+}
+/* a região nativa: a linha do tema volta (antes era tirada aqui) */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-cad .nc-cad-blocos > .t-Region > .t-Region-header:not(#nc-fx1):not(#nc-fx2):not(#nc-fx3) {
+  border-bottom: 2px solid var(--nc-rosa, #C95788) !important;
+  padding-bottom: 12px !important;
+}

@@ -1,0 +1,520 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Transplantar página APEX</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&display=swap">
+<style>
+  :root {
+    --roxo: #511C76; --azul: #2C1A63; --rosa: #C95788; --ameixa: #9A408A;
+    --tinta: #1B1238; --grafite: #4A4460; --cinza: #7C7690; --nevoa: #E9E5F1;
+    --tela: #F7F5FB; --branco: #fff; --bom: #1F7A52; --bom-f: #E6F4EC;
+    --atencao: #7A4B00; --atencao-f: #FFF4DA; --ruim: #B8323F; --ruim-f: #FDECEE;
+    color-scheme: light;
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0; min-height: 100vh; background: var(--tela); color: var(--tinta);
+    font: 15px/1.5 Manrope, "Segoe UI", system-ui, -apple-system, sans-serif;
+  }
+  ::selection { background: rgba(201, 87, 136, .25); }
+  .topo {
+    padding: 34px 20px 64px;
+    background:
+      radial-gradient(circle at 88% -20%, rgba(201, 87, 136, .55), transparent 45%),
+      radial-gradient(circle at 40% 160%, rgba(154, 64, 138, .45), transparent 55%),
+      linear-gradient(120deg, var(--azul), var(--roxo) 62%, #74307F);
+    color: #fff;
+  }
+  .topo-in, main { max-width: 1040px; margin: 0 auto; }
+  .topo h1 { margin: 0; font-size: 30px; font-weight: 800; letter-spacing: -.02em; line-height: 1.15; }
+  .topo p { margin: 10px 0 0; max-width: 66ch; color: #E7DDF3; font-size: 15.5px; }
+  .topo .local {
+    display: inline-flex; align-items: center; gap: 8px; margin-top: 16px; padding: 6px 12px;
+    border-radius: 999px; background: rgba(255, 255, 255, .14); font-size: 13px; font-weight: 700;
+  }
+  main { padding: 0 20px 60px; margin-top: -38px; }
+  .cartao {
+    background: var(--branco); border: 1px solid var(--nevoa); border-radius: 20px;
+    box-shadow: 0 1px 2px rgba(27, 18, 56, .05), 0 22px 44px -32px rgba(44, 26, 99, .5);
+  }
+  .passos { display: grid; gap: 0; }
+  .passo { display: grid; grid-template-columns: 44px minmax(0, 1fr); gap: 0 16px; padding: 22px 24px; }
+  .passo + .passo { border-top: 1px solid var(--nevoa); }
+  .passo-n {
+    display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%;
+    background: #F1EDF7; color: var(--grafite); font-weight: 800; font-size: 16px;
+  }
+  .passo.is-ok .passo-n { background: var(--bom); color: #fff; }
+  .passo h2 { margin: 6px 0 2px; font-size: 17px; font-weight: 800; }
+  .passo .ajuda { margin: 0 0 14px; color: var(--grafite); font-size: 14px; max-width: 70ch; }
+  .opcional { font-weight: 700; color: var(--cinza); font-size: 13px; margin-left: 6px; }
+
+  .soltar {
+    position: relative; display: grid; place-items: center; gap: 6px; min-height: 112px; padding: 18px;
+    border: 2px dashed #D6CCE6; border-radius: 16px; background: #FBF9FE; text-align: center;
+    cursor: pointer; transition: border-color .15s, background-color .15s;
+  }
+  .soltar:hover, .soltar.is-sobre { border-color: var(--roxo); background: #F6F0FB; }
+  .soltar:focus-within { outline: 2px solid var(--roxo); outline-offset: 2px; }
+  .soltar input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+  .soltar b { font-size: 15px; color: var(--roxo); }
+  .soltar span { font-size: 13px; color: var(--grafite); }
+  .soltar svg { width: 26px; height: 26px; color: var(--roxo); }
+
+  .arquivos { display: grid; gap: 8px; margin-top: 12px; }
+  .arq {
+    display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 6px 14px;
+    padding: 12px 14px; border: 1px solid var(--nevoa); border-radius: 14px; background: #fff;
+  }
+  .arq-nome { font-weight: 800; font-size: 14.5px; overflow-wrap: anywhere; }
+  .arq-meta { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 13px; color: var(--grafite); }
+  .arq-meta b { color: var(--tinta); font-weight: 700; font-variant-numeric: tabular-nums; }
+  .arq-erro { grid-column: 1 / -1; color: var(--ruim); font-size: 13px; font-weight: 700; }
+  .tirar {
+    border: 0; background: transparent; color: var(--cinza); font: inherit; font-size: 13px; font-weight: 700;
+    padding: 6px 10px; border-radius: 10px; cursor: pointer;
+  }
+  .tirar:hover { background: #F4F0F9; color: var(--roxo); }
+  .tipo { padding: 2px 8px; border-radius: 999px; font-size: 12px; font-weight: 800; }
+  .tipo--pagina { background: #F3ECF8; color: var(--roxo); }
+  .tipo--app { background: #E6F4EC; color: #14553A; }
+
+  details.avancado { margin-top: 14px; }
+  details.avancado summary { cursor: pointer; font-weight: 700; font-size: 14px; color: var(--roxo); }
+  details.avancado label { display: flex; gap: 10px; align-items: flex-start; margin-top: 10px; font-size: 14px; color: var(--grafite); }
+  details.avancado input { margin-top: 4px; accent-color: var(--roxo); }
+
+  .acao {
+    display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px 20px;
+    padding: 18px 24px; border-top: 1px solid var(--nevoa); background: #FBF9FE; border-radius: 0 0 20px 20px;
+  }
+  .acao p { margin: 0; font-size: 14px; color: var(--grafite); }
+  .bt {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 48px; padding: 0 22px;
+    border: 0; border-radius: 14px; background: var(--roxo); color: #fff; font: inherit; font-size: 15.5px;
+    font-weight: 800; cursor: pointer; box-shadow: 0 10px 22px -14px rgba(81, 28, 118, .9);
+    transition: transform .15s, background-color .15s;
+  }
+  .bt:hover:not(:disabled) { transform: translateY(-1px); background: #5E2489; }
+  .bt:disabled { background: #CFC6DD; box-shadow: none; cursor: not-allowed; }
+  .bt--calmo { background: #fff; color: var(--roxo); box-shadow: inset 0 0 0 1.5px #CDB4E3; }
+  .bt--calmo:hover:not(:disabled) { background: #F4F0F9; }
+  .bt svg { width: 18px; height: 18px; }
+  :is(.bt, .tirar, summary):focus-visible { outline: 2px solid var(--roxo); outline-offset: 2px; }
+
+  #resultados { display: grid; gap: 16px; margin-top: 22px; }
+  .res { padding: 22px 24px; }
+  .res-cab { display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; gap: 12px 20px; }
+  .res h3 { margin: 0; font-size: 18px; font-weight: 800; }
+  .res .rota { margin: 4px 0 0; color: var(--grafite); font-size: 14px; }
+  .selo { display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; border-radius: 999px; font-size: 13px; font-weight: 800; }
+  .selo--ok { background: var(--bom-f); color: #14553A; }
+  .selo--erro { background: var(--ruim-f); color: var(--ruim); }
+  .fatos { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 10px; margin: 18px 0 0; }
+  .fato { padding: 12px 14px; border-radius: 14px; background: #FBF9FE; }
+  .fato dt { font-size: 12.5px; font-weight: 700; color: var(--grafite); }
+  .fato dd { margin: 2px 0 0; font-size: 15px; font-weight: 800; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+  .fato dd small { display: block; margin-top: 2px; font-size: 12.5px; font-weight: 600; color: var(--grafite); }
+  .fato.is-largo { grid-column: span 2; }
+  @media (max-width: 640px) { .fato.is-largo { grid-column: 1 / -1; } }
+  .avisos { display: grid; gap: 8px; margin: 16px 0 0; padding: 0; list-style: none; }
+  .avisos li { display: flex; gap: 10px; padding: 11px 14px; border-radius: 12px; font-size: 14px; line-height: 1.45; }
+  .avisos .is-erro { background: var(--ruim-f); color: #7E1F29; }
+  .avisos .is-atencao { background: var(--atencao-f); color: var(--atencao); }
+  .avisos .is-info { background: #F4F1F8; color: var(--grafite); }
+  .avisos svg { flex: none; width: 18px; height: 18px; margin-top: 1px; }
+  .res-acoes { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
+  .antes { margin: 18px 0 0; padding: 14px 16px; border-radius: 14px; border: 1px solid var(--nevoa); }
+  .antes h4 { margin: 0 0 8px; font-size: 14px; font-weight: 800; }
+  .antes ol { margin: 0; padding-left: 20px; font-size: 14px; color: var(--grafite); display: grid; gap: 4px; }
+  .processando { display: inline-flex; align-items: center; gap: 10px; font-size: 14px; color: var(--grafite); }
+  .girando { width: 18px; height: 18px; border: 2.5px solid #E4DDEE; border-top-color: var(--roxo); border-radius: 50%; animation: gira .8s linear infinite; }
+  @keyframes gira { to { transform: rotate(360deg); } }
+  code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .92em; background: #F1EDF7; padding: 1px 6px; border-radius: 6px; }
+  .rodape { margin-top: 28px; font-size: 13px; color: var(--cinza); text-align: center; }
+  [hidden] { display: none !important; }
+  @media (max-width: 640px) {
+    .topo { padding: 26px 16px 56px; }
+    .topo h1 { font-size: 25px; }
+    main { padding: 0 12px 40px; }
+    .passo { grid-template-columns: 36px minmax(0, 1fr); gap: 0 12px; padding: 18px 16px; }
+    .passo-n { width: 34px; height: 34px; font-size: 15px; }
+    .acao { padding: 16px; }
+    .acao .bt { width: 100%; }
+    .res { padding: 18px 16px; }
+  }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation-duration: 2s !important; } }
+</style>
+</head>
+<body>
+<header class="topo">
+  <div class="topo-in">
+    <h1>Transplantar página APEX</h1>
+    <p>Leva a exportação de uma página para outro app, outro workspace ou outra base — sem instalar a aplicação inteira por cima. O arquivo gerado importa pelo App Builder do destino como se a página tivesse sido exportada lá.</p>
+    <span class="local"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="10.5" width="14" height="10" rx="2"/><path d="M8 10.5V8a4 4 0 0 1 8 0v2.5"/></svg>Tudo roda neste computador: nenhum arquivo sai daqui</span>
+  </div>
+</header>
+
+<main>
+  <section class="cartao" aria-label="Arquivos">
+    <div class="passos">
+      <div class="passo" id="p1">
+        <span class="passo-n" aria-hidden="true">1</span>
+        <div>
+          <h2>As páginas que vão mudar de lugar</h2>
+          <p class="ajuda">A exportação da página (App Builder › Exportar › Página/Componente) do app de <b>origem</b>. Pode soltar várias de uma vez: todas vão para o mesmo destino.</p>
+          <label class="soltar" data-zona="paginas">
+            <input type="file" accept=".sql,text/plain" multiple aria-label="Escolher as páginas exportadas">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H6.5A1.5 1.5 0 0 0 5 4.5v15A1.5 1.5 0 0 0 6.5 21h11a1.5 1.5 0 0 0 1.5-1.5V8z"/><path d="M14 3v5h5M12 11v6M9 14l3-3 3 3"/></svg>
+            <b>Solte aqui ou toque para escolher</b>
+            <span>f200_page_17.sql, f200_page_168.sql…</span>
+          </label>
+          <div class="arquivos" data-lista="paginas"></div>
+        </div>
+      </div>
+
+      <div class="passo" id="p2">
+        <span class="passo-n" aria-hidden="true">2</span>
+        <div>
+          <h2>O app de destino</h2>
+          <p class="ajuda">A exportação <b>completa</b> do app de destino (confere tudo). Se não houver, qualquer página exportada de lá já serve para cópias do mesmo app — o que ela não usar sai como "não conferido".</p>
+          <label class="soltar" data-zona="destino">
+            <input type="file" accept=".sql,text/plain" aria-label="Escolher a exportação do destino">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 7.5A1.5 1.5 0 0 1 5 6h4.2l2 2.2H19a1.5 1.5 0 0 1 1.5 1.5v8.8A1.5 1.5 0 0 1 19 20H5a1.5 1.5 0 0 1-1.5-1.5z"/><path d="M12 11v6M9 14l3 3 3-3"/></svg>
+            <b>Solte aqui ou toque para escolher</b>
+            <span>f207.sql (completo) ou f207_page_17.sql</span>
+          </label>
+          <div class="arquivos" data-lista="destino"></div>
+        </div>
+      </div>
+
+      <div class="passo" id="p3">
+        <span class="passo-n" aria-hidden="true">3</span>
+        <div>
+          <h2>O app de origem <span class="opcional">só se os apps não forem cópias um do outro</span></h2>
+          <p class="ajuda">Para apps diferentes, cada modelo, breadcrumb, grupo de páginas e interface é traduzido <b>pelo nome</b> — e para isso é preciso a exportação completa da origem. Entre cópias do mesmo app (200, 202, 207…) pode deixar em branco.</p>
+          <label class="soltar" data-zona="origem">
+            <input type="file" accept=".sql,text/plain" aria-label="Escolher a exportação completa da origem">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 7.5A1.5 1.5 0 0 1 5 6h4.2l2 2.2H19a1.5 1.5 0 0 1 1.5 1.5v8.8A1.5 1.5 0 0 1 19 20H5a1.5 1.5 0 0 1-1.5-1.5z"/></svg>
+            <b>Solte aqui ou toque para escolher</b>
+            <span>f200.sql (completo)</span>
+          </label>
+          <div class="arquivos" data-lista="origem"></div>
+          <details class="avancado">
+            <summary>Opções avançadas</summary>
+            <label><input type="checkbox" id="porNome"> <span>Traduzir tudo <b>por nome</b>, sem tentar a constante das cópias (precisa da origem completa). Útil para conferir.</span></label>
+          </details>
+        </div>
+      </div>
+    </div>
+    <div class="acao">
+      <p id="estado">Escolha as páginas e o destino.</p>
+      <button type="button" class="bt" id="converter" disabled>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h13M13 6l6 6-6 6"/></svg>
+        Converter
+      </button>
+    </div>
+  </section>
+
+  <div id="resultados" aria-live="polite"></div>
+
+  <p class="rodape">A mesma lógica do <code>transplantar-pagina.py</code>. Regras e provas em <code>TRANSPLANTAR-PAGINA.md</code>.</p>
+</main>
+
+<script>
+'use strict';
+/* =========================================================================
+   A lógica: a mesma do transplantar-pagina.py. Os IDs do APEX têm 21 dígitos (além do que um
+   número do JavaScript guarda sem perder precisão): tudo é BigInt.
+   ========================================================================= */
+const RE_ID = /wwv_flow_api\.id\((\d+)\)/g;
+const RE_CAB = /wwv_flow_api\.import_begin \(\n[\s\S]*?\n\);/;
+const PAIS = ['p_row_template_id', 'p_list_id', 'p_menu_id', 'p_plugin_id', 'p_plug_template_id', 'p_template_id',
+  'p_page_template_id', 'p_lov_id', 'p_group_id', 'p_theme_style_id', 'p_ui_id', 'p_user_interface_id'];
+
+function cabecalho(s) {
+  const m = s.match(RE_CAB);
+  if (!m) return null;
+  const c = m[0];
+  const v = k => { const x = c.match(new RegExp('p_' + k + "=>'?([^'\\n]*)'?")); return x ? x[1] : ''; };
+  return { texto: c, release: v('release'), workspace: v('default_workspace_id'), app: v('default_application_id'),
+    offset: BigInt(v('default_id_offset') || 0), owner: v('default_owner') };
+}
+function versao(r) { return (r.match(/\d+/g) || []).slice(0, 3).map(Number); }
+function menor(a, b) { for (let i = 0; i < 3; i++) { if ((a[i] || 0) !== (b[i] || 0)) return (a[i] || 0) < (b[i] || 0); } return false; }
+function tipoExport(s) {
+  const m = s.match(/Export Type:\s+([A-Za-z ]+?)\s*\n/);
+  return m ? m[1].trim() : '';
+}
+function catalogo(s) {
+  const cat = new Map();
+  const re = /wwv_flow_api\.(create_[a-z_0-9]+)\(\n p_id=>wwv_flow_api\.id\((\d+)\)([\s\S]*?)\n\);/g;
+  let m;
+  while ((m = re.exec(s))) {
+    const id = BigInt(m[2]);
+    /* o mesmo id pode aparecer duas vezes (create_row_template e o _patch que o estende): vale o primeiro */
+    if (cat.has(id)) continue;
+    const nm = m[3].match(/^,p_[a-z_]*name=>(.*)$/m);
+    cat.set(id, { tipo: m[1], nome: nm ? nm[1].trim() : '', t: m[3] });
+  }
+  return cat;
+}
+function chave(cat, i, pilha) {
+  pilha = pilha || [];
+  const c = cat.get(i);
+  if (!c || pilha.includes(i)) return null;
+  const tema = c.t.match(/^,p_theme_id=>(\d+)/m);
+  const pais = [];
+  for (const p of PAIS) {
+    const m = c.t.match(new RegExp('^,' + p + '=>wwv_flow_api\\.id\\((\\d+)\\)', 'm'));
+    if (m) pais.push([p, chave(cat, BigInt(m[1]), pilha.concat([i]))]);
+  }
+  return JSON.stringify([c.tipo, c.nome, tema ? tema[1] : '', pais]);
+}
+function idsDe(s) { const r = []; let m; RE_ID.lastIndex = 0; while ((m = RE_ID.exec(s))) r.push(BigInt(m[1])); return r; }
+
+/* "constante 731… (pela diferença…)" → o número em destaque e o motivo embaixo */
+function detalheModo(modo) {
+  const resto = modo.split(' · ').slice(1).join(' · ');
+  const m = resto.match(/^constante (-?\d+) \(pela (.*)\)$/);
+  return m ? ['Constante aplicada aos IDs', m[1], 'medida pela ' + m[2], true] : ['Tradução', resto, '', true];
+}
+
+/* resultado: { ok, arquivo, texto, modo, avisos:[{nivel,txt}], fatos } */
+function transplantar(pg, dst, orig, porNome) {
+  const avisos = [];
+  const erro = txt => ({ ok: false, avisos: avisos.concat([{ nivel: 'erro', txt }]) });
+  const cp = cabecalho(pg), cd = cabecalho(dst);
+  if (!cp) return erro('Este arquivo não tem o cabeçalho de uma exportação do APEX (import_begin).');
+  if (!cd) return erro('O destino não tem o cabeçalho de uma exportação do APEX (import_begin).');
+  const tp = tipoExport(pg);
+  if (!/^(Page|Component) Export$/.test(tp)) return erro('Este arquivo é "' + (tp || 'desconhecido') + '", não uma exportação de página ou componente.');
+  if (menor(versao(cd.release), versao(cp.release))) return erro('O destino (' + cd.release + ') é mais ANTIGO que a origem (' + cp.release + '). Descer de versão ainda não é tratado: os parâmetros das rotinas create_* mudam entre 5.0, 5.1, 18.2 e 19.2.');
+
+  const mp = pg.match(/remove_page \(p_flow_id=>wwv_flow\.g_flow_id, p_page_id=>(\d+)\)/);
+  const paginaN = mp ? mp[1] : '?';
+  const catPg = catalogo(pg);
+  const internos = new Set(catPg.keys());
+  const refs = idsDe(pg);
+  const externos = [...new Set(refs.filter(r => !internos.has(r)).map(String))].map(BigInt);
+  const catD = catalogo(dst);
+  const idsD = new Set([...catD.keys()].map(String));
+  const destinoCompleto = tipoExport(dst) === 'Application Export';
+  if (!destinoCompleto) idsDe(dst).forEach(i => idsD.add(String(i)));
+  let pagD = new Set();
+  if (paginaN !== '?') {
+    const alvo = 'prompt --application/pages/page_' + String(paginaN).padStart(5, '0') + '\n';
+    const i = dst.indexOf(alvo);
+    if (i >= 0) {
+      const resto = dst.slice(i + alvo.length);
+      const f = resto.search(/prompt --application\/(pages\/page_\d{5}\n|deployment|end_environment)/);
+      const sec = f >= 0 ? resto.slice(0, f) : resto;
+      pagD = new Set((sec.match(/\n p_id=>wwv_flow_api\.id\((\d+)\)/g) || []).map(x => x.match(/\d+/)[0]));
+    }
+  }
+
+  let mapa = null, modo = '';
+  const candidatos = [['diferença dos deslocamentos do cabeçalho', cd.offset - cp.offset]];
+  const ui = pg.match(/p_user_interface_id=>wwv_flow_api\.id\((\d+)\)/);
+  if (ui) {
+    const u = BigInt(ui[1]);
+    for (const [i, c] of catD) if (c.tipo === 'create_user_interface') candidatos.push(['interface de usuário ' + c.nome + ' do destino', i - u]);
+    const uiD = dst.match(/p_user_interface_id=>wwv_flow_api\.id\((\d+)\)/);
+    if (!destinoCompleto && uiD) candidatos.push(['interface de usuário da página do destino', BigInt(uiD[1]) - u]);
+  }
+  if (!porNome) {
+    for (const [motivo, d] of candidatos) {
+      const faltam = externos.filter(e => !idsD.has(String(e + d)));
+      if (!faltam.length) { mapa = x => x + d; modo = 'mesma linhagem · constante ' + d + ' (pela ' + motivo + ')'; break; }
+      if (!destinoCompleto && motivo.startsWith('interface') && faltam.length < externos.length) {
+        mapa = x => x + d; modo = 'mesma linhagem · constante ' + d + ' (pela ' + motivo + ')';
+        avisos.push({ nivel: 'atencao', txt: 'NÃO CONFERIDO: ' + faltam.length + ' de ' + externos.length + ' referências externas não aparecem na página de referência do destino (ela não usa esses componentes). Com a exportação COMPLETA do destino dá para conferir todas.' });
+        break;
+      }
+    }
+  }
+  if (!mapa) {
+    if (!orig) return erro('Os apps não parecem cópias um do outro: nenhuma constante cobre as ' + externos.length + ' referências externas da página. Coloque no passo 3 a exportação COMPLETA do app de origem para traduzir por nome.');
+    if (tipoExport(orig) !== 'Application Export') return erro('No passo 3 vai a exportação COMPLETA da origem (Application Export).');
+    const catO = catalogo(orig);
+    const porChave = new Map();
+    for (const i of catD.keys()) { const k = chave(catD, i); if (!porChave.has(k)) porChave.set(k, []); porChave.get(k).push(i); }
+    const trad = new Map(); const faltas = [];
+    for (const e of externos) {
+      const k = chave(catO, e);
+      const alvo = k ? (porChave.get(k) || []) : [];
+      const c = catO.get(e) || { tipo: '?', nome: '(não existe na origem enviada)' };
+      if (alvo.length === 1) trad.set(String(e), alvo[0]);
+      else if (!alvo.length) faltas.push('SEM CORRESPONDENTE no destino: ' + c.tipo.replace('create_', '') + ' ' + c.nome);
+      else faltas.push('AMBÍGUO no destino (' + alvo.length + ' iguais): ' + c.tipo.replace('create_', '') + ' ' + c.nome);
+    }
+    if (faltas.length) return { ok: false, avisos: faltas.map(txt => ({ nivel: 'erro', txt })).concat([{ nivel: 'info', txt: 'Nada foi gerado. Crie ou renomeie esses componentes no destino (ou na origem) e converta de novo.' }]) };
+    const dInt = cd.offset - cp.offset;
+    mapa = x => trad.has(String(x)) ? trad.get(String(x)) : x + dInt;
+    modo = 'por nome · ' + trad.size + ' referências traduzidas, componentes da página deslocados em ' + dInt;
+  }
+  const colide = [...internos].map(mapa).filter(i => idsD.has(String(i)) && !pagD.has(String(i)));
+  if (colide.length) return erro(colide.length + ' componentes da página cairiam em IDs que já são de OUTRA parte do destino (ex.: ' + colide[0] + '). Nada foi gerado.');
+
+  let novo = pg.replace(RE_ID, (m, n) => 'wwv_flow_api.id(' + mapa(BigInt(n)) + ')');
+  novo = novo.replace(RE_CAB, () => cd.texto);
+  novo = novo.replace(/^prompt APPLICATION \d+ - /m, 'prompt APPLICATION ' + cd.app + ' - ');
+  novo = novo.replace(/^(--   Application:\s+)\d+/m, (m, a) => a + cd.app);
+
+  const links = [...new Set(pg.match(new RegExp('f\\?p=' + cp.app + ":[^'\"\\s]{0,40}", 'g')) || [])];
+  links.forEach(l => avisos.push({ nivel: 'atencao', txt: 'Link fixo para o app de origem (' + cp.app + '): ' + l + ' — o &APP_ID. se ajusta sozinho, este não.' }));
+  if (cp.owner && cp.owner !== cd.owner && new RegExp('\\b' + cp.owner + '\\.', 'i').test(pg)) avisos.push({ nivel: 'atencao', txt: 'O código cita o esquema de origem (' + cp.owner + '.) escrito à mão.' });
+  if (pagD.size) avisos.push({ nivel: 'info', txt: 'A página ' + paginaN + ' do destino (' + pagD.size + ' componentes hoje) será SUBSTITUÍDA inteira ao importar. Exporte-a antes, como cópia.' });
+
+  return { ok: true, texto: novo, modo, avisos, pagina: paginaN,
+    rota: 'app ' + cp.app + ' (' + cp.owner + ') → app ' + cd.app + ' (' + cd.owner + ')',
+    fatos: [['Modo', modo.split(' · ')[0]], detalheModo(modo), ['Componentes da página', internos.size], ['Referências externas', externos.length], ['Versão', cp.release + ' → ' + cd.release]],
+    arquivo: 'f' + cd.app + '_page_' + paginaN + '.transplantada.sql' };
+}
+
+/* =========================================================================
+   A tela
+   ========================================================================= */
+const ESTADO = { paginas: [], destino: null, origem: null };
+const $ = s => document.querySelector(s);
+const ICONE = {
+  erro: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 8v5M12 16v.01"/></svg>',
+  atencao: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3.5l9 16H3z"/><path d="M12 10v4M12 17v.01"/></svg>',
+  info: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 11v5M12 8v.01"/></svg>'
+};
+function esc(t) { return String(t).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c])); }
+function tamanho(n) { return n > 1048576 ? (n / 1048576).toFixed(1).replace('.', ',') + ' MB' : Math.max(1, Math.round(n / 1024)) + ' KB'; }
+
+/* lê em UTF-8; se não for, em Windows-1252 (e grava de volta igual). Guarda se as linhas eram CRLF. */
+async function ler(file) {
+  const buf = await file.arrayBuffer();
+  let texto, cod = 'utf-8';
+  try { texto = new TextDecoder('utf-8', { fatal: true }).decode(buf); }
+  catch (e) { texto = new TextDecoder('windows-1252').decode(buf); cod = 'windows-1252'; }
+  const crlf = texto.includes('\r\n');
+  if (crlf) texto = texto.replace(/\r\n/g, '\n');
+  const cab = cabecalho(texto);
+  return { nome: file.name, bytes: buf.byteLength, texto, cod, crlf, cab, tipo: tipoExport(texto),
+    pagina: (texto.match(/remove_page \(p_flow_id=>wwv_flow\.g_flow_id, p_page_id=>(\d+)\)/) || [])[1] || '' };
+}
+
+function desenharLista(zona) {
+  const box = document.querySelector('[data-lista="' + zona + '"]');
+  const itens = zona === 'paginas' ? ESTADO.paginas : (ESTADO[zona] ? [ESTADO[zona]] : []);
+  box.innerHTML = itens.map((a, i) => {
+    const eApp = a.tipo === 'Application Export';
+    const meta = a.cab ? [
+      ['App', a.cab.app], ['Dono', a.cab.owner], ['Versão', a.cab.release], a.pagina ? ['Página', a.pagina] : null, ['Tamanho', tamanho(a.bytes)]
+    ].filter(Boolean).map(x => '<span>' + x[0] + ' <b>' + esc(x[1]) + '</b></span>').join('') : '';
+    const errado = !a.cab ? 'Não parece uma exportação do APEX (não achei o import_begin).'
+      : zona === 'paginas' && !/^(Page|Component) Export$/.test(a.tipo) ? 'Isto é "' + a.tipo + '": aqui vai a exportação de UMA página.'
+      : zona === 'origem' && !eApp ? 'Aqui vai a exportação COMPLETA da origem.' : '';
+    return '<div class="arq"><div><div class="arq-nome">' + esc(a.nome) + ' <span class="tipo ' + (eApp ? 'tipo--app">app completo' : 'tipo--pagina">página') + '</span></div>' +
+      '<div class="arq-meta">' + meta + (a.cod !== 'utf-8' ? '<span>codificação <b>' + a.cod + '</b></span>' : '') + '</div></div>' +
+      '<button type="button" class="tirar" data-tirar="' + zona + ':' + i + '" aria-label="Tirar ' + esc(a.nome) + '">Tirar</button>' +
+      (errado ? '<p class="arq-erro">' + esc(errado) + '</p>' : '') + '</div>';
+  }).join('');
+  atualizar();
+}
+function atualizar() {
+  const okP = ESTADO.paginas.length && ESTADO.paginas.every(a => a.cab && /^(Page|Component) Export$/.test(a.tipo));
+  const okD = ESTADO.destino && ESTADO.destino.cab;
+  $('#p1').classList.toggle('is-ok', !!okP);
+  $('#p2').classList.toggle('is-ok', !!okD);
+  $('#p3').classList.toggle('is-ok', !!(ESTADO.origem && ESTADO.origem.cab));
+  $('#converter').disabled = !(okP && okD);
+  $('#estado').textContent = !ESTADO.paginas.length ? 'Escolha as páginas e o destino.'
+    : !okD ? 'Falta o app de destino.'
+    : !okP ? 'Alguma página não é uma exportação de página.'
+    : ESTADO.paginas.length + (ESTADO.paginas.length === 1 ? ' página' : ' páginas') + ' → app ' + ESTADO.destino.cab.app + ' (' + ESTADO.destino.cab.owner + ')';
+}
+
+async function receber(zona, files) {
+  files = [...files].filter(f => /\.sql$/i.test(f.name) || f.type === 'text/plain' || !f.type);
+  if (!files.length) return;
+  $('#estado').innerHTML = '<span class="processando"><span class="girando"></span>Lendo ' + esc(files.map(f => f.name).join(', ')) + '…</span>';
+  const lidos = await Promise.all(files.map(ler));
+  if (zona === 'paginas') ESTADO.paginas = ESTADO.paginas.concat(lidos);
+  else ESTADO[zona] = lidos[0];
+  desenharLista(zona);
+}
+
+document.querySelectorAll('.soltar').forEach(z => {
+  const zona = z.getAttribute('data-zona');
+  const inp = z.querySelector('input');
+  inp.addEventListener('change', () => { receber(zona, inp.files); inp.value = ''; });
+  ['dragenter', 'dragover'].forEach(ev => z.addEventListener(ev, e => { e.preventDefault(); z.classList.add('is-sobre'); }));
+  ['dragleave', 'drop'].forEach(ev => z.addEventListener(ev, e => { e.preventDefault(); z.classList.remove('is-sobre'); }));
+  z.addEventListener('drop', e => receber(zona, e.dataTransfer.files));
+});
+document.addEventListener('click', e => {
+  const t = e.target.closest('[data-tirar]');
+  if (!t) return;
+  const [zona, i] = t.getAttribute('data-tirar').split(':');
+  if (zona === 'paginas') ESTADO.paginas.splice(+i, 1); else ESTADO[zona] = null;
+  desenharLista(zona);
+});
+
+function baixar(res, base) {
+  let dados = res.texto;
+  if (base.crlf) dados = dados.replace(/\n/g, '\r\n');
+  let blob;
+  if (base.cod === 'utf-8') blob = new Blob([dados], { type: 'application/sql;charset=utf-8' });
+  else { const b = new Uint8Array(dados.length); for (let i = 0; i < dados.length; i++) b[i] = dados.charCodeAt(i) & 255; blob = new Blob([b], { type: 'application/sql' }); }
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob); a.download = res.arquivo;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+}
+
+$('#converter').addEventListener('click', () => {
+  const box = $('#resultados');
+  box.innerHTML = '<div class="cartao res"><span class="processando"><span class="girando"></span>Convertendo…</span></div>';
+  setTimeout(() => {
+    const out = ESTADO.paginas.map(p => {
+      let r;
+      try { r = transplantar(p.texto, ESTADO.destino.texto, ESTADO.origem && ESTADO.origem.texto, $('#porNome').checked); }
+      catch (err) { r = { ok: false, avisos: [{ nivel: 'erro', txt: 'Erro inesperado: ' + err.message }] }; }
+      r.fonte = p;
+      return r;
+    });
+    RESULTADOS = out;
+    box.innerHTML = out.map((r, i) => {
+      const fatos = r.ok ? '<dl class="fatos">' + r.fatos.map(f => '<div class="fato' + (f[3] ? ' is-largo' : '') + '"><dt>' + esc(f[0]) + '</dt><dd>' + esc(f[1]) + (f[2] ? '<small>' + esc(f[2]) + '</small>' : '') + '</dd></div>').join('') + '</dl>' : '';
+      return '<article class="cartao res">' +
+        '<div class="res-cab"><div><h3>' + esc(r.fonte.nome) + '</h3>' + (r.rota ? '<p class="rota">Página ' + esc(r.pagina) + ' · ' + esc(r.rota) + '</p>' : '') + '</div>' +
+        (r.ok ? '<span class="selo selo--ok">Pronto para importar</span>' : '<span class="selo selo--erro">Não gerado</span>') + '</div>' +
+        fatos +
+        (r.avisos.length ? '<ul class="avisos">' + r.avisos.map(a => '<li class="is-' + a.nivel + '">' + ICONE[a.nivel] + '<span>' + esc(a.txt) + '</span></li>').join('') + '</ul>' : '') +
+        (r.ok ? '<div class="res-acoes"><button type="button" class="bt" data-baixar="' + i + '"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg>Baixar ' + esc(r.arquivo) + '</button>' +
+          '<button type="button" class="bt bt--calmo" data-relatorio="' + i + '">Copiar relatório</button></div>' +
+          '<div class="antes"><h4>Antes de importar no destino</h4><ol>' +
+            '<li>Exporte a página ' + esc(r.pagina) + ' do destino, como cópia de segurança.</li>' +
+            '<li>Importe o arquivo em App Builder › Importar › "Página ou componente", já no workspace do destino.</li>' +
+            '<li>Confira que as tabelas, pacotes e funções usados pela página existem no esquema de lá, e que os arquivos do Workspace Images (Natcorp_*.css/.js) também estão lá.</li>' +
+          '</ol></div>' : '') +
+      '</article>';
+    }).join('');
+    box.querySelector('.res').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, 30);
+});
+let RESULTADOS = [];
+document.addEventListener('click', e => {
+  const b = e.target.closest('[data-baixar]');
+  if (b) { const r = RESULTADOS[+b.getAttribute('data-baixar')]; baixar(r, r.fonte); return; }
+  const c = e.target.closest('[data-relatorio]');
+  if (c) {
+    const r = RESULTADOS[+c.getAttribute('data-relatorio')];
+    const txt = [r.fonte.nome + ' — página ' + r.pagina, r.rota, 'modo: ' + r.modo].concat(r.avisos.map(a => '- ' + a.txt)).join('\n');
+    const ok = () => { c.textContent = 'Copiado'; setTimeout(() => { c.textContent = 'Copiar relatório'; }, 1600); };
+    if (navigator.clipboard) navigator.clipboard.writeText(txt).then(ok, () => {}); else ok();
+  }
+});
+atualizar();
+</script>
+</body>
+</html>

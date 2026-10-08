@@ -1,0 +1,11 @@
+The attached image shows four illustrations from one series, drawn by the same illustrator. Draw a SMALL SPOT ILLUSTRATION for the same series — a single object, no people, no scene. It will be shown at 64–96 px next to a benefit name in an HR app, so it must read instantly at that size.
+
+STYLE — corporate flat isometric vector, exactly like the sheet: crisp geometric shapes, perfectly flat fills, NO outlines, NO gradients, NO texture, NO grain, NO glow, NO 3D render. True isometric projection (edges at 30 degrees). One tone step per face: top lightest, left medium, right darkest, light from the upper left. A flat pale ground shadow rhombus in #E4F0F0 under the object.
+
+PALETTE — only: slate purple #544884, deep navy #2C1A63, purple #511C76, plum #9A408A, soft pink #D884B4, raspberry pink #C95788, periwinkle #9CB4D8, pale lilac #E9E5F1, white. NO green, NO yellow, NO orange, NO red, NO black.
+
+COMPOSITION — square canvas, the object centered and big (about 70% of the canvas), generous empty margin, at most one or two tiny floating accents (a sparkle, a small coin without symbols, a small card) near it. Transparent background.
+
+OBJECT — a shield in slate purple with a pink heart in its center, a small open umbrella in plum behind it
+
+STRICT — no text, no letters, no numbers, no currency symbols ($, R$), no logos, no brand marks, no people, no hands. Flat vector only. Square 1:1 PNG, transparent background.

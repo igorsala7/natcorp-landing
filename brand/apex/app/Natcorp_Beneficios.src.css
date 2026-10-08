@@ -1,0 +1,1751 @@
+/* ╔════════════════════════════════════════════════════════════════════════════════════════╗
+   ║  NATCORP · REQUISIÇÃO DE BENEFÍCIOS  —  a "roupa" da tela (CSS)                           ║
+   ║  App 200 · Página 168  ·  App 200 · Página 116 (Alteração Funcional)  ·  App 600 · Pág. 168 ║
+   ╚════════════════════════════════════════════════════════════════════════════════════════╝
+
+   Primeira vez num arquivo destes? Leia antes o manual: brand/apex/MANUAL-APEX.md (parte 1).
+   Guia desta página: brand/apex/app/BENEFICIOS-MANUTENCAO.md
+
+   ── O QUE ESTE ARQUIVO FAZ ────────────────────────────────────────────────────────────────
+   Dá a aparência da tela de benefícios: cores, tamanhos, espaços, bordas, e como a tela se
+   arruma no computador e no celular. Ele NÃO muda nada de lugar: a POSIÇÃO das regiões e dos
+   itens é a do Page Designer (a grade do APEX) — nada aqui muda ordem nem coluna.
+   Quem cria os desenhos novos (cartões, barra do saldo, botões) é o arquivo-irmão
+   Natcorp_Beneficios.js. Os dois trabalham juntos:
+     o JS monta "a barra do saldo"  →  este arquivo diz como a barra se parece.
+   Sem o JS, este arquivo não faz nada: todas as regras dependem da marca nc-ben que o JS
+   põe na página. Cada regra vale para uma classe posta no APEX (o "combinado"; a lista está
+   no começo do Natcorp_Beneficios.js e no guia da página).
+
+   ── ONDE ELE ENTRA NO APEX ────────────────────────────────────────────────────────────────
+     Página 168 (e 116) › CSS › File URLs:   #WORKSPACE_IMAGES#Natcorp_Beneficios.css
+     As cores com nome (var(--nc-…)) vêm do Natcorp_Style_Min.css, que toda página carrega.
+
+   ── ÍNDICE: as partes deste arquivo (Ctrl+F pelo código entre colchetes) ──────────────────
+     [C1]  As listas de verdade, fora da vista      (o APEX continua lendo e escrevendo nelas)
+     [C2]  O cartão do colaborador                   ← montado pelo JS em [J5]
+     [C3]  A barra do saldo                          ← montada pelo JS em [J6]
+     [C4]  A escolha: Opção, Benefício e Tipo        ← montada pelo JS em [J8]
+     [C5]  O valor: − / +, régua e atalhos           ← montado pelo JS em [J9]
+     [C6]  Os cartões do pacote e de hoje            ← montados pelo JS em [J10]
+     [C7]  A barra dos botões, presa ao pé da tela   ← o resumo vem do JS em [J13]
+     [C8]  Celular e "menos movimento"               (ajustes para telas pequenas)
+     [C9]  O aviso de "não cabe no saldo"            ← montado pelo JS em [J9]
+     [C10] Pedido gravado: Benefícios Requisitados e o pacote do portal  ← JS em [J10]
+     [C11] A faixa do pedido                         ← montada pelo JS em [J11]
+     [C12] O caminho da aprovação                    ← montado pelo JS em [J12]
+     [C13] Acertos finais: linhas do valor, "Adicionar um benefício", máscara de dinheiro,
+           leitura e toque                           ← JS em [J7] e [J9]
+
+   ── RECEITAS RÁPIDAS ──────────────────────────────────────────────────────────────────────
+     Quero mudar uma cor
+       → use uma das cores da marca, pelo nome: var(--nc-roxo), var(--nc-grafite)… A lista
+         completa, com amostras, está no manual (parte 3). Assim a cor acompanha o tema que
+         o usuário escolheu em "Cores". Evite escrever cores soltas, como #511C76.
+         (As cores de CADA BENEFÍCIO na barra do saldo não estão aqui: estão na lista CORES
+         do Natcorp_Beneficios.js, parte [J2].)
+     Quero aumentar ou diminuir um texto        → procure font-size na parte certa.
+     Quero mais ou menos espaço                  → padding (espaço por DENTRO da caixa) e
+                                                   margin (espaço por FORA, até a vizinha).
+     Algo ficou bom no computador e ruim no celular → o que está dentro de
+                                                   @media (max-width: 639px) só vale no celular.
+
+   ── COMO LER UM ARQUIVO CSS EM 30 SEGUNDOS ────────────────────────────────────────────────
+     Cada regra tem duas partes:     QUEM { COMO; }
+       @app.nc-ben .nc-ben-perfil {        ← QUEM: o "seletor", diz em que pedaço da tela vale
+         display: grid;                    ← COMO: propriedade: valor;  (arruma em grade)
+         gap: 16px 20px;                   ←       espaço entre as partes: 16 entre linhas, 20 entre colunas
+       }
+     .nome-com-ponto       uma "classe": uma etiqueta posta num pedaço da tela (pelo APEX ou
+                           pelo JS). .nc-ben-perfil é o cartão do colaborador.
+     @app                  atalho que dá prioridade às nossas regras sobre as do tema do APEX.
+                           No arquivo que sobe para o APEX ele aparece por extenso, como
+                           html body:is(.t-PageBody…):not(#nc-a1):not(#nc-a2) — é a mesma coisa.
+     :not(#nc-ben-x)…      peso extra, para vencer uma regra do tema. Pode ignorar ao ler.
+     !important            no arquivo que sobe, toda linha ganha um: é o mesmo "vencer o tema".
+     @media (max-width: 639px) { … }   as regras de dentro só valem em telas até 639px (celular).
+     var(--nc-roxo)        uma cor da marca, pelo nome (muda junto com o tema escolhido).
+     px                    pixels, o tamanho de um pontinho da tela. 16px é o texto normal.
+     Toda linha COMO termina em ;   e todo { é fechado por um }. Não apague esses sinais.
+
+   (texto original do topo, mantido:)
+   Natcorp_Beneficios — folha SÓ da página 168 do app 200 (Requisição de Benefícios).
+   "@app" e os !important são postos pelo gerar-app.mjs: edite ESTE arquivo (.src.css), não o
+   .css gerado. A POSIÇÃO das regiões e dos itens é a do Page Designer (grade do APEX) — nada
+   aqui muda ordem nem coluna. Tudo depende de nc-ben, que só o Natcorp_Beneficios.js põe no
+   body: sem o arquivo, a página é a de sempre.
+*/
+
+/* ====================================================================================
+   REQUISIÇÃO DE BENEFÍCIOS (app 200, página 168) — a tela para o colaborador
+   Tudo aqui depende da classe nc-ben, que só o Natcorp_Beneficios.js põe no body: sem o
+   arquivo, a página é a de sempre. O desenho: o colaborador num cartão, o SALDO como
+   medidor, a escolha em cartões ilustrados, "quanto você quer?" com − / + e régua, o
+   pacote novo comparado com o de hoje, e "Enviar pedido" numa barra presa ao pé.
+   ==================================================================================== */
+
+/* ═══ [C1] AS LISTAS DE VERDADE, FORA DA VISTA ══════════════════════════════════════════════
+   As listas do APEX que o JS desenhou como botões e cartões (Opção, Benefício, Tipo) e os
+   itens da região do saldo saem da vista, mas continuam NO LUGAR: o APEX continua lendo,
+   escrevendo e escondendo esses itens. "position: absolute; width: 1px" = invisível, mas
+   presente (diferente de display: none, que tiraria o item da tela de verdade).
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+/* a LISTA real dos itens desenhados como botões/cartões: fora da vista, no lugar — o rótulo
+   do APEX continua em cima e o APEX continua lendo, escrevendo e escondendo o item */
+/* a classe vem no contêiner do item (Avançado › Classes CSS) — ou na própria lista */
+@app.nc-ben :is(.nc-ben-segmento, .nc-ben-chips, .nc-ben-cartoes) select,
+@app.nc-ben select:is(.nc-ben-segmento, .nc-ben-chips, .nc-ben-cartoes),
+@app.nc-ben .nc-ben-medidor .t-Region-body > .container {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ═══ [C2] O CARTÃO DO COLABORADOR ══════════════════════════════════════════════════════════
+   Montado pelo JS em [J5]. Peças principais:
+     .nc-ben-perfil   o cartão inteiro         .nc-ben-avatar  as iniciais ou a foto
+     .nc-ben-nome     o nome                   .nc-ben-meta    matrícula · empresa
+     .nc-ben-fatos    Cargo / Situação / Na empresa desde / vigência
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-ben .nc-ben-com-perfil .t-Region-body > .container,
+@app.nc-ben .nc-ben-com-perfil .t-Region-body > .t-Region {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+}
+
+@app.nc-ben .nc-ben-perfil {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 16px 20px;
+  padding: 4px 2px;
+}
+
+@app.nc-ben .nc-ben-avatar {
+  display: grid;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+  border-radius: 20px;
+  overflow: hidden;
+  background-image: var(--nc-icone-fundo);
+  background-color: #7a3a8a /*reserva*/;
+  background-color: oklch(from #7A3A8A l calc(c * var(--nc-t-croma, 1)) calc(h + var(--nc-t-giro, 0)));
+  box-shadow: 0 12px 24px -14px rgba(var(--nc-t-rosa-rgb, 201, 87, 136), .9);
+  color: #fff;
+  font: 800 22px/1 "Inter NC", Inter, ui-sans-serif, system-ui, "Segoe UI", Arial, sans-serif;
+  letter-spacing: .02em;
+}
+
+@app.nc-ben .nc-ben-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+@app.nc-ben .nc-ben-nome {
+  margin: 0;
+  font: 800 22px/1.2 "Inter NC", Inter, ui-sans-serif, system-ui, "Segoe UI", Arial, sans-serif;
+  letter-spacing: -.02em;
+  color: var(--nc-tinta);
+}
+
+@app.nc-ben .nc-ben-meta {
+  margin: 4px 0 0;
+  font-size: 13.5px;
+  color: var(--nc-grafite);
+}
+
+@app.nc-ben .nc-ben-fatos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 28px;
+  margin: 0;
+}
+
+@app.nc-ben .nc-ben-fatos dt {
+  margin: 0 0 3px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--nc-cinza);
+}
+
+@app.nc-ben .nc-ben-fatos dd {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--nc-tinta);
+}
+
+@app.nc-ben .nc-ben-vigencia dd {
+  color: var(--nc-roxo);
+}
+
+@app.nc-ben .nc-ben-sutil {
+  font-weight: 500;
+  color: var(--nc-cinza);
+}
+
+@app.nc-ben .nc-ben-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 24px;
+  padding: 0 10px;
+  border-radius: 999px;
+  background: var(--nc-nevoa2);
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--nc-grafite);
+}
+
+@app.nc-ben .nc-ben-chip--ok {
+  background: #E8F4EE;
+  color: var(--nc-bom);
+}
+
+@app.nc-ben .nc-ben-chip--ok::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+/* ═══ [C3] A BARRA DO SALDO ═════════════════════════════════════════════════════════════════
+   Montada pelo JS em [J6]. Peças principais:
+     .nc-ben-saldo    o bloco todo             .nc-ben-total   o valor total
+     .nc-ben-barra    a barra colorida         .nc-ben-seg     cada pedaço (um por benefício)
+     .nc-ben-legenda  a legenda                .nc-ben-frase   a frase do que fazer
+   O estado (livre / completo / passou) vem em data-estado e muda a cor.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-ben .nc-ben-medidor.nc-ben-sem-dados {
+  display: none;
+}
+
+@app.nc-ben .nc-ben-medidor > .t-Region-bodyWrap > .t-Region-body {
+  padding: 22px 24px 20px;
+}
+
+@app.nc-ben .nc-ben-saldo {
+  margin: 0;
+}
+
+@app.nc-ben .nc-ben-saldo-topo {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px 24px;
+}
+
+@app.nc-ben .nc-ben-rot {
+  margin: 0 0 4px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--nc-grafite);
+}
+
+@app.nc-ben .nc-ben-total {
+  margin: 0;
+  font: 800 22px/1.1 "Inter NC", Inter, ui-sans-serif, system-ui, "Segoe UI", Arial, sans-serif;
+  font-variant-numeric: tabular-nums;
+  color: var(--nc-tinta);
+}
+
+@app.nc-ben .nc-ben-sobra {
+  text-align: right;
+}
+
+@app.nc-ben .nc-ben-sobra-valor {
+  margin: 0;
+  font: 800 34px/1 "Inter NC", Inter, ui-sans-serif, system-ui, "Segoe UI", Arial, sans-serif;
+  letter-spacing: -.03em;
+  font-variant-numeric: tabular-nums;
+  color: var(--nc-roxo);
+}
+
+@app.nc-ben .nc-ben-saldo[data-estado="completo"] .nc-ben-sobra-valor {
+  color: var(--nc-bom);
+}
+
+@app.nc-ben .nc-ben-saldo[data-estado="passou"] .nc-ben-sobra-valor {
+  color: var(--nc-ruim);
+}
+
+@app.nc-ben .nc-ben-barra {
+  display: flex;
+  gap: 3px;
+  height: 14px;
+  margin: 16px 0 12px;
+  padding: 3px;
+  border-radius: 999px;
+  background: var(--nc-nevoa2);
+}
+
+@app.nc-ben .nc-ben-seg {
+  min-width: 6px;
+  border-radius: 999px;
+  transition: flex-grow .5s cubic-bezier(.22, 1, .36, 1);
+}
+
+@app.nc-ben .nc-ben-seg--livre {
+  background: repeating-linear-gradient(135deg, #fff 0 4px, var(--nc-nevoa) 4px 8px);
+  box-shadow: inset 0 0 0 1px var(--nc-nevoa);
+}
+
+@app.nc-ben .nc-ben-legenda {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 18px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 13px;
+  color: var(--nc-grafite);
+}
+
+@app.nc-ben .nc-ben-legenda li {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+
+@app.nc-ben .nc-ben-legenda i {
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+}
+
+@app.nc-ben .nc-ben-legenda b {
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--nc-tinta);
+}
+
+@app.nc-ben .nc-ben-leg-livre i {
+  background: repeating-linear-gradient(135deg, #fff 0 2px, var(--nc-nevoa) 2px 4px);
+  box-shadow: inset 0 0 0 1px var(--nc-nevoa);
+}
+
+@app.nc-ben .nc-ben-frase {
+  margin: 12px 0 0;
+  padding-top: 12px;
+  border-top: 1px solid var(--nc-nevoa2);
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--nc-grafite);
+}
+
+@app.nc-ben .nc-ben-frase b {
+  color: var(--nc-tinta);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------- a coluna "Pacote" (região sem moldura): as de dentro com o respiro de sempre ---------- */
+@app.nc-ben .nc-ben-coluna-pacote > .t-Region-bodyWrap > .t-Region-body > .container .t-Region {
+  margin-bottom: 16px;
+}
+
+/* ═══ [C4] A ESCOLHA: OPÇÃO, BENEFÍCIO E TIPO ═══════════════════════════════════════════════
+   Montada pelo JS em [J8]. Peças principais:
+     .nc-ben-segmento-ctrl  os dois botões de Opção     .nc-ben-chips-ctrl  os botões de Benefício
+     .nc-ben-cartoes-ctrl   os cartões de Tipo          .nc-ben-cartao      cada cartão
+     .nc-ben-ilu            a ilustração                [aria-checked="true"] = a opção escolhida
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+/* o desenho ocupa a largura do item: no celular o contêiner do campo encolhia (e centrava)
+   o que vai dentro dele */
+@app.nc-ben .nc-ben-ctrl,
+@app.nc-ben .t-Form-itemWrapper.nc-ben-valor-linha {
+  width: 100%;
+  align-self: stretch;
+}
+
+@app.nc-ben .nc-ben-ctrl {
+  margin: 2px 0 6px;
+}
+
+@app.nc-ben .nc-ben-segmento-ctrl {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 8px;
+}
+
+@app.nc-ben .nc-ben-segmento-ctrl button,
+@app.nc-ben .nc-ben-chips-ctrl button {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  min-height: 44px;
+  margin: 0;
+  padding: 10px 14px;
+  border: 1.5px solid var(--nc-nevoa);
+  border-radius: 12px;
+  background: #fff;
+  font: 700 14px/1.25 "Inter NC", Inter, ui-sans-serif, system-ui, "Segoe UI", Arial, sans-serif;
+  color: var(--nc-tinta);
+  text-align: left;
+  cursor: pointer;
+  transition: border-color .2s, background-color .2s, box-shadow .2s;
+}
+
+@app.nc-ben .nc-ben-segmento-ctrl small {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--nc-cinza);
+}
+
+@app.nc-ben .nc-ben-chips-ctrl {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+@app.nc-ben .nc-ben-chips-ctrl button {
+  flex-direction: row;
+  align-items: center;
+  min-height: 36px;
+  padding: 7px 14px;
+  border-radius: 999px;
+  font-size: 13.5px;
+}
+
+@app.nc-ben :is(.nc-ben-segmento-ctrl, .nc-ben-chips-ctrl) button:hover {
+  border-color: var(--nc-realce);
+  background: var(--nc-quase);
+}
+
+@app.nc-ben :is(.nc-ben-segmento-ctrl, .nc-ben-chips-ctrl) button[aria-checked="true"] {
+  border-color: var(--nc-roxo);
+  background: var(--nc-nevoa2);
+  box-shadow: var(--nc-anel);
+  color: var(--nc-roxo);
+}
+
+@app.nc-ben :is(.nc-ben-segmento-ctrl, .nc-ben-chips-ctrl, .nc-ben-cartoes-ctrl) button:focus-visible {
+  outline: 2px solid var(--nc-roxo);
+  outline-offset: 2px;
+}
+
+/* os cartões ilustrados: um por tipo de benefício */
+@app.nc-ben .nc-ben-cartoes-ctrl {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(128px, 1fr));
+  gap: 10px;
+}
+
+@app.nc-ben .nc-ben-cartao {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  min-height: 132px;
+  margin: 0;
+  padding: 14px 10px 12px;
+  border: 1.5px solid var(--nc-nevoa);
+  border-radius: 14px;
+  background: #fff;
+  font: 700 13.5px/1.3 "Inter NC", Inter, ui-sans-serif, system-ui, "Segoe UI", Arial, sans-serif;
+  color: var(--nc-tinta);
+  text-align: center;
+  cursor: pointer;
+  transition: border-color .2s, box-shadow .25s, transform .25s cubic-bezier(.22, 1, .36, 1);
+}
+
+@app.nc-ben .nc-ben-cartao:hover {
+  border-color: var(--nc-realce);
+  box-shadow: 0 12px 24px -16px rgba(var(--nc-t-roxo-rgb, 81, 28, 118), .45);
+  transform: translateY(-2px);
+}
+
+@app.nc-ben .nc-ben-cartao[aria-checked="true"] {
+  border-color: var(--nc-roxo);
+  background: linear-gradient(180deg, #fff 0%, var(--nc-nevoa2) 100%);
+  box-shadow: var(--nc-anel), 0 12px 24px -16px rgba(var(--nc-t-roxo-rgb, 81, 28, 118), .5);
+  color: var(--nc-roxo);
+}
+
+@app.nc-ben .nc-ben-cartao[aria-checked="true"]::after {
+  content: "";
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--nc-roxo) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 12.5l4 4 8-9'/%3E%3C/svg%3E") center / 12px no-repeat;
+}
+
+@app.nc-ben .nc-ben-cartao .nc-ben-ilu {
+  width: 72px;
+  height: 72px;
+}
+
+@app.nc-ben .nc-ben-cartao-selo {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--nc-cinza);
+}
+
+/* longhands: o atalho "background" (com o !important do gerador) apagava a imagem que o
+   script põe no style do elemento */
+@app.nc-ben .nc-ben-ilu {
+  display: inline-block;
+  flex: none;
+  background-position: center;
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+/* ═══ [C5] O VALOR: − / +, RÉGUA E ATALHOS ═════════════════════════════════════════════════
+   Montado pelo JS em [J9]. .nc-ben-valor-linha é a linha "− R$ [valor] +"; .nc-ben-passo,
+   os botões − e +; .nc-ben-regua, a régua; .nc-ben-atalho-valor, os atalhos; .nc-ben-limites,
+   as frases embaixo. Mais acertos do valor em [C13].
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+/* "Quanto você quer neste benefício?" — o campo P168_VALOR (classe nc-ben-valor) com − e +
+   na mesma linha, dentro da moldura do item */
+@app.nc-ben .t-Form-itemWrapper.nc-ben-valor-linha {
+  position: relative;
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr) 44px;
+  gap: 8px;
+  align-items: center;
+}
+
+@app.nc-ben .nc-ben-passo {
+  width: 44px;
+  height: 52px;
+  margin: 0;
+  padding: 0;
+  border: 1.5px solid var(--nc-nevoa);
+  border-radius: 12px;
+  background: #fff;
+  font: 600 22px/1 "Inter NC", Inter, ui-sans-serif, system-ui, "Segoe UI", Arial, sans-serif;
+  color: var(--nc-roxo);
+  cursor: pointer;
+}
+
+@app.nc-ben .nc-ben-passo:hover {
+  border-color: var(--nc-roxo);
+  background: var(--nc-nevoa2);
+}
+
+@app.nc-ben .nc-ben-valor-linha .nc-ben-rs {
+  position: absolute;
+  left: 66px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  font: 700 18px/1 "Inter NC", Inter, ui-sans-serif, system-ui, "Segoe UI", Arial, sans-serif;
+  color: var(--nc-cinza);
+}
+
+@app.nc-ben :is(input.nc-ben-valor, .nc-ben-valor input.apex-item-text) {
+  grid-column: 2;
+  grid-row: 1;
+  width: 100%;
+  height: 52px;
+  padding: 0 14px 0 46px;
+  border: 1.5px solid var(--nc-nevoa);
+  border-radius: 12px;
+  background: #fff;
+  font: 800 24px/1 "Inter NC", Inter, ui-sans-serif, system-ui, "Segoe UI", Arial, sans-serif;
+  font-variant-numeric: tabular-nums;
+  color: var(--nc-tinta);
+}
+
+@app.nc-ben :is(input.nc-ben-valor, .nc-ben-valor input.apex-item-text):focus {
+  border-color: var(--nc-roxo);
+  box-shadow: var(--nc-anel);
+}
+
+@app.nc-ben .nc-ben-valor-linha .nc-ben-passo[data-d="1"] {
+  grid-column: 3;
+  grid-row: 1;
+}
+
+@app.nc-ben .nc-ben-regua {
+  display: block;
+  width: 100%;
+  margin: 14px 0 6px;
+  accent-color: var(--nc-roxo);
+  cursor: pointer;
+}
+
+@app.nc-ben .nc-ben-regua[hidden] {
+  display: none;
+}
+
+@app.nc-ben .nc-ben-limites {
+  display: grid;
+  gap: 4px;
+  margin: 8px 0 0;
+  padding: 0;
+  list-style: none;
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--nc-grafite);
+}
+
+@app.nc-ben .nc-ben-limites b {
+  color: var(--nc-tinta);
+  font-variant-numeric: tabular-nums;
+}
+
+@app.nc-ben .nc-ben-escolha #ADICIONAR {
+  height: 44px;
+  padding: 0 20px;
+  font-size: 14.5px;
+}
+
+/* ═══ [C6] OS CARTÕES DO PACOTE E DE HOJE ═══════════════════════════════════════════════════
+   Montados pelo JS em [J10]. A tabela do relatório vira uma pilha de cartões.
+     .nc-ben-item      cada cartão (linha)      .nc-ben-selo  o selo "Novo", "Igual a hoje"…
+     .nc-ben-selo--novo / --igual / --mais / --menos / --sai   a cor de cada selo
+     .nc-ben-item--sai o benefício que sai do pacote
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-ben :is(.nc-ben-pacote, .nc-ben-hoje, .nc-ben-requisitados) table.t-Report-report,
+@app.nc-ben :is(.nc-ben-pacote, .nc-ben-hoje, .nc-ben-requisitados) table.t-Report-report tbody {
+  display: block;
+  width: 100%;
+}
+
+@app.nc-ben :is(.nc-ben-pacote, .nc-ben-hoje, .nc-ben-requisitados) table.t-Report-report thead {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+}
+
+@app.nc-ben :is(.nc-ben-pacote, .nc-ben-hoje, .nc-ben-requisitados) tr.nc-ben-item {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas: "bene valor";
+  align-items: center;
+  column-gap: 16px;
+  padding: 14px 18px 14px 16px;
+  border-bottom: 1px solid var(--nc-nevoa2);
+  background: #fff;
+}
+
+@app.nc-ben .nc-ben-pacote tr.nc-ben-item {
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  grid-template-areas: "bene valor remover";
+  box-shadow: inset 3px 0 0 var(--nc-cor, var(--nc-roxo));
+}
+
+@app.nc-ben :is(.nc-ben-pacote, .nc-ben-hoje, .nc-ben-requisitados) tr.nc-ben-item > td {
+  display: block;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  text-align: left;
+}
+
+@app.nc-ben tr.nc-ben-item > td[headers="REMOVER"] { grid-area: remover; }
+@app.nc-ben tr.nc-ben-item > td:is([headers="BENEFICIO"], [headers="BENEFÍCIO"]) {
+  grid-area: bene;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 14.5px;
+  font-weight: 700;
+  color: var(--nc-tinta);
+}
+
+/* o tipo vai dentro da célula do nome (o script copia); a célula dele sai da vista */
+@app.nc-ben tr.nc-ben-item > td.nc-ben-tipo-junto {
+  display: none;
+}
+
+@app.nc-ben .nc-ben-txt {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+@app.nc-ben .nc-ben-txt small {
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--nc-cinza);
+}
+
+@app.nc-ben .nc-ben-ilu--chip {
+  width: 22px;
+  height: 22px;
+  margin-right: 6px;
+}
+
+@app.nc-ben tr.nc-ben-item > td[headers="VALOR_TOTAL"] {
+  grid-area: valor;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+  font-size: 15px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  color: var(--nc-tinta);
+  text-align: right;
+  white-space: nowrap;
+}
+
+@app.nc-ben .nc-ben-ilu--linha {
+  width: 44px;
+  height: 44px;
+  padding: 4px;
+  border-radius: 12px;
+  background-color: var(--nc-quase);
+  background-origin: content-box;
+  box-shadow: inset 0 0 0 1px var(--nc-nevoa);
+}
+
+/* o que muda em relação a hoje */
+@app.nc-ben .nc-ben-selo {
+  display: inline-flex;
+  align-items: center;
+  height: 20px;
+  padding: 0 8px;
+  border-radius: 999px;
+  font-size: 11.5px;
+  font-weight: 700;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+@app.nc-ben .nc-ben-selo--novo { background: var(--nc-roxo); color: #fff; }
+@app.nc-ben .nc-ben-selo--igual { background: var(--nc-nevoa2); color: var(--nc-grafite); }
+@app.nc-ben .nc-ben-selo--mais { background: #FBE9F1; color: #9C3466 /*reserva*/;
+  color: oklch(from #9C3466 l calc(c * var(--nc-t-croma, 1)) calc(h + var(--nc-t-giro, 0))); }
+@app.nc-ben .nc-ben-selo--menos { background: #E9EEF8; color: #3A4E7A; }
+@app.nc-ben .nc-ben-selo--sai { background: #FDECEE; color: var(--nc-ruim); }
+
+/* "Remover": o mesmo link do APEX (abre a confirmação), discreto até o hover */
+@app.nc-ben .nc-ben-pacote td[headers="REMOVER"] a.apagarBeneficio {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: auto;
+  height: 36px;
+  min-width: 0;
+  margin: 0;
+  padding: 0 12px;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  background: transparent;
+  box-shadow: none;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--nc-cinza);
+}
+
+@app.nc-ben .nc-ben-pacote td[headers="REMOVER"] a.apagarBeneficio:hover,
+@app.nc-ben .nc-ben-pacote td[headers="REMOVER"] a.apagarBeneficio:focus-visible {
+  border-color: #F3C9CE;
+  background: #FDECEE;
+  color: var(--nc-ruim);
+}
+
+@app.nc-ben :is(.nc-ben-pacote, .nc-ben-hoje, .nc-ben-requisitados) tr.nc-ben-linha-total {
+  display: flex;
+  justify-content: space-between;
+  padding: 14px 18px;
+  background: var(--nc-quase);
+}
+
+@app.nc-ben :is(.nc-ben-pacote, .nc-ben-hoje, .nc-ben-requisitados) tr.nc-ben-linha-total > td {
+  display: block;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  font-size: 14px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  color: var(--nc-tinta);
+}
+
+@app.nc-ben :is(.nc-ben-pacote, .nc-ben-hoje, .nc-ben-requisitados) tr.nc-ben-linha-total > td:empty {
+  display: none;
+}
+
+/* o de hoje: mais quieto — é referência, não a tarefa */
+@app.nc-ben .nc-ben-hoje tr.nc-ben-item {
+  padding: 10px 16px;
+  background: transparent;
+}
+
+@app.nc-ben .nc-ben-hoje tr.nc-ben-item > td[headers="VALOR_TOTAL"] {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--nc-grafite);
+}
+
+@app.nc-ben .nc-ben-hoje .nc-ben-ilu--linha {
+  width: 36px;
+  height: 36px;
+}
+
+
+
+/* ═══ [C7] A BARRA DOS BOTÕES, PRESA AO PÉ DA TELA ══════════════════════════════════════════
+   A região nc-ben-acoes fica sempre à vista ("position: sticky"), com o resumo do pacote
+   (.nc-ben-resumo, escrito pelo JS em [J13]) ao lado dos botões.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-ben .t-ButtonRegion.nc-ben-acoes {
+  position: sticky;
+  bottom: 12px;
+  z-index: 20;
+  margin: 20px 0 0;
+  padding: 10px 12px 10px 20px;
+  border: 1px solid var(--nc-nevoa);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, .96);
+  box-shadow: 0 18px 40px -18px rgba(var(--nc-t-azul-rgb, 44, 26, 99), .45);
+}
+
+@app.nc-ben .t-ButtonRegion.nc-ben-acoes .t-ButtonRegion-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 16px;
+}
+
+@app.nc-ben .t-ButtonRegion.nc-ben-acoes .t-ButtonRegion-col--content {
+  flex: 1 1 280px;
+  order: 1;
+}
+
+/* os blocos dos botões não encolhem: com o resumo crescendo (1 1 280px) eles iam a 0 px e
+   "Voltar"/"Enviar pedido" transbordavam para fora da barra */
+@app.nc-ben .t-ButtonRegion.nc-ben-acoes .t-ButtonRegion-col--left {
+  flex: none;
+  width: auto;
+  order: 2;
+}
+
+@app.nc-ben .t-ButtonRegion.nc-ben-acoes .t-ButtonRegion-col--right {
+  flex: none;
+  width: auto;
+  order: 3;
+}
+
+@app.nc-ben .t-ButtonRegion.nc-ben-acoes .t-ButtonRegion-col--content .t-ButtonRegion-buttons:empty {
+  display: none;
+}
+
+@app.nc-ben .t-ButtonRegion.nc-ben-acoes .t-Button {
+  height: 44px;
+  padding: 0 20px;
+  border-radius: 12px;
+  font-size: 14.5px;
+}
+
+@app.nc-ben .t-ButtonRegion.nc-ben-acoes .t-Button--hot {
+  min-width: 180px;
+}
+
+@app.nc-ben .nc-ben-resumo {
+  margin: 0;
+  font-size: 14px;
+  color: var(--nc-grafite);
+  font-variant-numeric: tabular-nums;
+}
+
+@app.nc-ben .nc-ben-resumo[hidden] {
+  display: none;
+}
+
+@app.nc-ben .nc-ben-resumo b {
+  color: var(--nc-tinta);
+}
+
+/* ═══ [C8] CELULAR E "MENOS MOVIMENTO" ══════════════════════════════════════════════════════
+   O que está dentro de  @media (max-width: 639px)  só vale no celular: em geral, o que era
+   lado a lado passa a ficar um embaixo do outro. Mais regras de celular aparecem perto de
+   cada parte ([C12], [C13]).
+   prefers-reduced-motion: para quem pediu "reduzir movimento" no aparelho, sem animações.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@media (max-width: 639px) {
+  @app.nc-ben .nc-ben-perfil {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+
+  @app.nc-ben .nc-ben-fatos {
+    grid-column: 1 / -1;
+  }
+
+  @app.nc-ben .nc-ben-saldo {
+    padding: 18px 16px 16px;
+  }
+
+  @app.nc-ben .nc-ben-sobra {
+    text-align: left;
+  }
+
+  /* o pacote no celular: nome à esquerda; valor e "Remover" empilhados à direita */
+  @app.nc-ben .nc-ben-pacote tr.nc-ben-item {
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas:
+      "bene valor"
+      "bene remover";
+    row-gap: 6px;
+    padding: 12px 12px 12px 14px;
+  }
+
+  @app.nc-ben .nc-ben-pacote tr.nc-ben-item > td[headers="REMOVER"] {
+    justify-self: end;
+  }
+
+  @app.nc-ben .t-ButtonRegion.nc-ben-acoes {
+    bottom: 8px;
+    padding: 12px;
+  }
+
+  @app.nc-ben .t-ButtonRegion.nc-ben-acoes .t-ButtonRegion-col--right {
+    flex: 1;
+  }
+
+  @app.nc-ben .t-ButtonRegion.nc-ben-acoes .t-Button--hot {
+    width: 100%;
+    min-width: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  @app.nc-ben :is(.nc-ben-cartao, .nc-ben-seg) {
+    transition: none;
+  }
+}
+
+/* ═══ [C9] O AVISO DE "NÃO CABE NO SALDO" ═══════════════════════════════════════════════════
+   Montado pelo JS em [J9]: .nc-ben-aviso é a frase de alerta; .nc-ben-nao-cabe marca o item.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+/* benefício cujo mínimo passa do saldo livre: o aviso antes do "Adicionar" */
+@app.nc-ben .nc-ben-aviso {
+  display: block;
+  margin: 0 0 6px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: #FFF6E0;
+  box-shadow: inset 0 0 0 1px #F2DDA4;
+  color: var(--nc-alerta-texto);
+}
+
+@app.nc-ben .nc-ben-aviso b {
+  color: inherit;
+}
+
+@app.nc-ben .nc-ben-nao-cabe :is(input.nc-ben-valor, input.apex-item-text) {
+  border-color: #F2DDA4;
+}
+
+/* ═══ [C10] PEDIDO GRAVADO: BENEFÍCIOS REQUISITADOS E O PACOTE DO PORTAL ════════════════════
+   Montado pelo JS em [J10]. Só aparece com a requisição já criada (e, a lista do portal, no
+   app 600). As partes seguintes ([C11], [C12]) também são do pedido gravado.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+/* =====================================================================
+   PEDIDO GRAVADO — requisitados, o cabeçalho do pedido e a aprovação
+   ===================================================================== */
+
+/* "Benefícios Requisitados": o cartão do pacote; Operação e Valor Ant. viram o selo */
+@app.nc-ben .nc-ben-requisitados tr.nc-ben-item {
+  box-shadow: inset 3px 0 0 var(--nc-cor, var(--nc-roxo));
+}
+
+@app.nc-ben .nc-ben-requisitados tr.nc-ben-item > td:is([headers="TIPO"], [headers="VALOR_ANTERIOR"]),
+@app.nc-ben .nc-ben-requisitados tr.nc-ben-linha-total > td[headers="VALOR_ANTERIOR"] {
+  display: none;
+}
+
+/* o relatório pinta a linha de vermelho/verde (style inline): o selo diz o mesmo, em palavras */
+@app.nc-ben .nc-ben-requisitados tr > td {
+  color: var(--nc-tinta);
+}
+
+@app.nc-ben tr.nc-ben-item--sai > td:is([headers="BENEFICIO"], [headers="BENEFÍCIO"]) .nc-ben-txt-nome {
+  color: var(--nc-grafite);
+  text-decoration: line-through;
+  text-decoration-color: rgba(184, 50, 63, .5);
+}
+
+@app.nc-ben tr.nc-ben-item--sai .nc-ben-ilu--linha {
+  opacity: .55;
+}
+
+@app.nc-ben .nc-ben-antes {
+  color: var(--nc-cinza);
+  font-weight: 700;
+  text-decoration-color: rgba(184, 50, 63, .6);
+}
+
+@app.nc-ben .nc-ben-dif {
+  display: block;
+  margin-top: 2px;
+  font-size: 12.5px;
+  font-weight: 700;
+}
+
+@app.nc-ben .nc-ben-dif--mais { color: #9C3466 /*reserva*/;
+  color: oklch(from #9C3466 l calc(c * var(--nc-t-croma, 1)) calc(h + var(--nc-t-giro, 0))); }
+@app.nc-ben .nc-ben-dif--menos { color: #3A4E7A; }
+
+/* ---------- o pacote em MediaList (portal): o mesmo cartão ---------- */
+@app.nc-ben :is(.nc-ben-pacote, .nc-ben-requisitados) .t-MediaList {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  box-shadow: none;
+}
+
+@app.nc-ben li.nc-ben-li:not(#nc-ben-x):not(#nc-ben-y) {
+  display: block;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-bottom: 1px solid var(--nc-nevoa2);
+  background: #fff;
+  box-shadow: inset 3px 0 0 var(--nc-cor, var(--nc-roxo));
+}
+
+@app.nc-ben li.nc-ben-li > .t-MediaList-itemWrap {
+  display: none;
+}
+
+@app.nc-ben .nc-ben-li-card {
+  width: 100%;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  align-items: center;
+  column-gap: 16px;
+  padding: 14px 18px 14px 16px;
+}
+
+@app.nc-ben .nc-ben-li-bene {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+  font-size: 14.5px;
+  font-weight: 700;
+  color: var(--nc-tinta);
+}
+
+@app.nc-ben .nc-ben-li-valor {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+  font-size: 15px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  color: var(--nc-tinta);
+  white-space: nowrap;
+}
+
+@app.nc-ben .nc-ben-li-remover:empty {
+  display: none;
+}
+
+@app.nc-ben .nc-ben-li-remover a.apagarBeneficio:not(#nc-ben-x):not(#nc-ben-y) {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: auto;
+  height: 36px;
+  min-width: 0;
+  margin: 0;
+  padding: 0 12px;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  background: transparent;
+  box-shadow: none;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--nc-cinza);
+}
+
+@app.nc-ben .nc-ben-li-remover a.apagarBeneficio:hover:not(#nc-ben-x):not(#nc-ben-y),
+@app.nc-ben .nc-ben-li-remover a.apagarBeneficio:focus-visible:not(#nc-ben-x):not(#nc-ben-y) {
+  border-color: #F3C9CE;
+  background: #FDECEE;
+  color: var(--nc-ruim);
+}
+
+/* ═══ [C11] A FAIXA DO PEDIDO ═══════════════════════════════════════════════════════════════
+   Montada pelo JS em [J11]. .nc-ben-pedido-faixa é a faixa; .nc-ben-sit, a situação em cor:
+   .nc-ben-sit--espera / --bom / --ruim / --neutro (as cores da lista SIT do JS).
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-ben .t-Region.nc-ben-pedido > .t-Region-header {
+  display: none;
+}
+
+/* a faixa é o cartão: a moldura da região sai */
+@app.nc-ben .t-Region.nc-ben-pedido:not(#nc-ben-x):not(#nc-ben-y) {
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+@app.nc-ben .t-Region.nc-ben-pedido > .t-Region-bodyWrap > .t-Region-body:not(#nc-ben-x):not(#nc-ben-y) {
+  padding: 0;
+}
+
+/* 04/10: a Situação (P168_COD_SIT_REQ) é uma lista EDITÁVEL da página (ação "valida_sit_req" e
+   o Salvar gravam a troca): ela fica à vista, logo abaixo da faixa; o resto dos campos sai */
+@app.nc-ben .t-Region.nc-ben-pedido > .t-Region-bodyWrap > .t-Region-body > :not(.nc-ben-pedido-faixa):not(:has([id$="_COD_SIT_REQ_CONTAINER"])) {
+  display: none;
+}
+
+@app.nc-ben .t-Region.nc-ben-pedido > .t-Region-bodyWrap > .t-Region-body .t-Form-fieldContainer:not([id$="_COD_SIT_REQ_CONTAINER"]) {
+  display: none;
+}
+
+@app.nc-ben .nc-ben-pedido-faixa {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 6px 16px;
+  padding: 18px 20px;
+  border-radius: 16px;
+  background:
+    radial-gradient(110% 130% at 100% 0%, rgba(var(--nc-t-rosa-rgb, 201, 87, 136), .28) 0%, rgba(var(--nc-t-rosa-rgb, 201, 87, 136), 0) 55%),
+    linear-gradient(135deg, var(--nc-azul) 0%, var(--nc-roxo) 72%);
+  color: #fff;
+}
+
+@app.nc-ben .nc-ben-pedido-topo {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+}
+
+@app.nc-ben .nc-ben-pedido-n {
+  margin: 0;
+  font-size: 19px;
+  font-weight: 700;
+  color: #fff;
+}
+
+@app.nc-ben .nc-ben-pedido-n b {
+  font-weight: 800;
+}
+
+@app.nc-ben .nc-ben-pedido-conteudo {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+}
+
+@app.nc-ben .nc-ben-pedido-quem {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.45;
+  color: rgba(255, 255, 255, .85);
+}
+
+@app.nc-ben .nc-ben-pedido-quem b {
+  color: #fff;
+}
+
+@app.nc-ben .nc-ben-pedido-quem .nc-ben-sutil {
+  color: rgba(255, 255, 255, .7);
+}
+
+@app.nc-ben .nc-ben-sit {
+  display: inline-flex;
+  align-items: center;
+  height: 26px;
+  padding: 0 12px;
+  border-radius: 999px;
+  background: #fff;
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--nc-grafite);
+}
+
+@app.nc-ben .nc-ben-sit--espera { background: var(--nc-alerta); color: #3D2A00; }
+@app.nc-ben .nc-ben-sit--bom { color: var(--nc-bom); }
+@app.nc-ben .nc-ben-sit--ruim { color: var(--nc-ruim); }
+@app.nc-ben .nc-ben-sit--neutro { background: rgba(255, 255, 255, .85); }
+
+@app.nc-ben .nc-ben-pedido-faixa .nc-ben-pedido-ver {
+  margin: 0;
+  border: 0;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, .16);
+  color: #fff;
+}
+
+@app.nc-ben .nc-ben-pedido-faixa .nc-ben-pedido-ver:hover {
+  background: rgba(255, 255, 255, .26);
+}
+
+@app.nc-ben .nc-ben-pedido-faixa .nc-ben-pedido-ver .t-Icon {
+  color: inherit;
+}
+
+/* a região de onde a aprovação saiu some; a vizinha (o pedido) ocupa a linha toda */
+@app.nc-ben .col.nc-ben-col-vazia {
+  display: none;
+}
+
+@app.nc-ben .row > .col.nc-ben-col-cheia {
+  flex: 0 0 100%;
+  width: 100%;
+  max-width: 100%;
+}
+
+/* ═══ [C12] O CAMINHO DA APROVAÇÃO (o mesmo desenho da Requisição de Pessoal) ═══════════════
+   Montado pelo JS em [J12]. .nc-ben-caminho é a faixa; .nc-ben-ap, cada aprovador:
+   .is-ok aprovou · .is-nao reprovou · .is-vez aguardando · .is-fila na fila.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-ben .t-Region.nc-ben-aprov {
+  margin: 0 0 16px;
+  border: 0;
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: inset 0 0 0 1px var(--nc-nevoa), 0 10px 24px -22px rgba(var(--nc-t-azul-rgb, 44, 26, 99), .5);
+}
+
+@app.nc-ben .t-Region.nc-ben-aprov > .t-Region-header,
+@app.nc-ben .t-Region.nc-ben-aprov .t-Report {
+  display: none;
+}
+
+@app.nc-ben .t-Region.nc-ben-aprov > .t-Region-bodyWrap > .t-Region-buttons {
+  display: none;
+}
+
+@app.nc-ben .t-Region.nc-ben-aprov > .t-Region-bodyWrap > .t-Region-body {
+  padding: 14px 18px;
+}
+
+@app.nc-ben .t-Region.nc-ben-aprov.nc-ben-aprov--vazio {
+  display: none;
+}
+
+@app.nc-ben .nc-ben-caminho {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px 20px;
+}
+
+@app.nc-ben .nc-ben-caminho:empty {
+  display: none;
+}
+
+@app.nc-ben .nc-ben-caminho-cab {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+@app.nc-ben .nc-ben-caminho-cab p {
+  margin: 0;
+}
+
+@app.nc-ben .nc-ben-caminho-rot {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--nc-grafite);
+}
+
+@app.nc-ben .nc-ben-caminho-resumo {
+  font-size: 14.5px;
+  color: var(--nc-grafite);
+}
+
+@app.nc-ben .nc-ben-caminho-resumo b {
+  color: var(--nc-tinta);
+}
+
+@app.nc-ben .nc-ben-caminho--vez .nc-ben-caminho-resumo b:last-child { color: #8A5A00; }
+@app.nc-ben .nc-ben-caminho--ok .nc-ben-caminho-resumo b { color: var(--nc-bom); }
+@app.nc-ben .nc-ben-caminho--nao .nc-ben-caminho-resumo b { color: #A32020; }
+
+@app.nc-ben .nc-ben-caminho-ver {
+  display: none;
+}
+
+@app.nc-ben .nc-ben-passos-ap {
+  display: flex;
+  grid-column: 1 / -1;
+  min-width: 0;
+  margin: 0;
+  padding: 4px 0 0;
+  overflow-x: auto;
+  list-style: none;
+  scrollbar-width: thin;
+}
+
+@app.nc-ben .nc-ben-ap {
+  position: relative;
+  display: flex;
+  flex: 1 1 0;
+  flex-direction: column;
+  align-items: center;
+  min-width: 104px;
+  padding: 0 4px;
+  text-align: center;
+}
+
+@app.nc-ben .nc-ben-ap:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  top: 13px;
+  left: calc(50% + 17px);
+  right: calc(-50% + 17px);
+  height: 2px;
+  border-radius: 2px;
+  background: #E3DDEC;
+}
+
+@app.nc-ben .nc-ben-ap.is-ok:not(:last-child)::after {
+  background: var(--nc-bom);
+}
+
+@app.nc-ben .nc-ben-ap-marca {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  margin: 0 0 6px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: inset 0 0 0 2px #D9D3E3;
+}
+
+@app.nc-ben .nc-ben-ap-marca svg {
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: #fff;
+  stroke-width: 2.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+@app.nc-ben .nc-ben-ap.is-ok .nc-ben-ap-marca { background: var(--nc-bom); box-shadow: none; }
+@app.nc-ben .nc-ben-ap.is-nao .nc-ben-ap-marca { background: #C0392B; box-shadow: none; }
+@app.nc-ben .nc-ben-ap.is-vez .nc-ben-ap-marca { background: #E0A100; box-shadow: 0 0 0 5px rgba(224, 161, 0, .18); }
+
+@app.nc-ben .nc-ben-ap-texto {
+  display: grid;
+  justify-items: center;
+  gap: 1px;
+  min-width: 0;
+  max-width: 100%;
+}
+
+@app.nc-ben .nc-ben-ap-nome {
+  max-width: 100%;
+  overflow: hidden;
+  font-size: 13.5px;
+  font-weight: 800;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--nc-tinta);
+}
+
+@app.nc-ben .nc-ben-ap-estado {
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  color: var(--nc-grafite);
+}
+
+@app.nc-ben .nc-ben-ap.is-ok .nc-ben-ap-estado { color: var(--nc-bom); }
+@app.nc-ben .nc-ben-ap.is-nao .nc-ben-ap-estado { color: #A32020; font-weight: 700; }
+@app.nc-ben .nc-ben-ap.is-vez .nc-ben-ap-estado { color: #8A5A00; font-weight: 700; }
+@app.nc-ben .nc-ben-ap.is-fila :is(.nc-ben-ap-nome, .nc-ben-ap-estado) { color: #8A8497; }
+
+@app.nc-ben .nc-ben-decisao {
+  display: flex;
+  flex-wrap: wrap;
+  grid-column: 1 / -1;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px 16px;
+  padding: 12px 0 0;
+  border-top: 1px solid var(--nc-nevoa2);
+}
+
+@app.nc-ben .nc-ben-decisao-txt {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 700;
+  color: #8A5A00;
+}
+
+@app.nc-ben .nc-ben-decisao-botoes {
+  display: flex;
+  gap: 8px;
+}
+
+@app.nc-ben .nc-ben-decisao-botoes .t-Button:not(#nc-ben-x):not(#nc-ben-y) {
+  width: auto;
+  height: 44px;
+  min-height: 0;
+  margin: 0;
+  padding: 0 22px;
+  border-radius: 12px;
+  font-size: 14.5px;
+}
+
+@app.nc-ben .nc-ben-decisao-botoes .t-Button.nc-ben-aprovar:not(#nc-ben-x):not(#nc-ben-y) {
+  border: 0;
+  background: var(--nc-bom);
+  color: #fff;
+}
+
+@app.nc-ben .nc-ben-decisao-botoes .t-Button.nc-ben-reprovar:not(#nc-ben-x):not(#nc-ben-y) {
+  border: 1.5px solid #E7B7B7;
+  background: #fff;
+  box-shadow: none;
+  color: #A32020;
+}
+
+@app.nc-ben .nc-ben-decisao-botoes .t-Button :is(.t-Icon, .t-Button-label) {
+  color: inherit;
+}
+
+@app.nc-ben .t-Region.nc-ben-aprov:has(.nc-ben-caminho--vez) {
+  box-shadow: inset 0 0 0 1.5px #EBC45A, 0 10px 24px -22px rgba(138, 90, 0, .5);
+}
+
+@app.nc-ben .nc-ben-ap-justs {
+  display: grid;
+  grid-column: 1 / -1;
+  gap: 6px;
+}
+
+@app.nc-ben .nc-ben-ap-just {
+  margin: 0;
+  padding: 8px 12px;
+  border: 0;
+  border-radius: 10px;
+  background: var(--nc-quase);
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--nc-tinta);
+}
+
+@app.nc-ben .nc-ben-ap-just.is-nao {
+  background: #FDF0F0;
+}
+
+@media (max-width: 639px) {
+  @app.nc-ben .nc-ben-li-card {
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas:
+      "bene valor"
+      "bene remover";
+    row-gap: 6px;
+    padding: 12px 12px 12px 14px;
+  }
+
+  @app.nc-ben .nc-ben-li-bene { grid-area: bene; }
+  @app.nc-ben .nc-ben-li-valor { grid-area: valor; }
+  @app.nc-ben .nc-ben-li-remover { grid-area: remover; justify-self: end; }
+
+  @app.nc-ben .nc-ben-pedido-faixa {
+    padding: 16px;
+  }
+
+  @app.nc-ben .nc-ben-pedido-n {
+    font-size: 17px;
+  }
+
+  @app.nc-ben .t-Region.nc-ben-aprov > .t-Region-bodyWrap > .t-Region-body {
+    padding: 12px 14px;
+  }
+
+  @app.nc-ben .nc-ben-caminho-cab {
+    grid-column: 1 / -1;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    column-gap: 12px;
+  }
+
+  @app.nc-ben .nc-ben-caminho-rot,
+  @app.nc-ben .nc-ben-caminho-resumo {
+    grid-column: 1;
+  }
+
+  @app.nc-ben .nc-ben-caminho-ver {
+    display: inline-flex;
+    grid-column: 2;
+    grid-row: 1 / span 2;
+    align-items: center;
+    height: 34px;
+    padding: 0 12px;
+    border: 1px solid var(--nc-nevoa);
+    border-radius: 10px;
+    background: #fff;
+    font: inherit;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--nc-roxo);
+    cursor: pointer;
+  }
+
+  @app.nc-ben .t-Region.nc-ben-aprov:not(.nc-ben-ap-aberto) .nc-ben-passos-ap {
+    display: none;
+  }
+
+  @app.nc-ben .nc-ben-decisao-botoes {
+    flex: 1 0 100%;
+  }
+
+  @app.nc-ben .nc-ben-decisao-botoes .t-Button:not(#nc-ben-x):not(#nc-ben-y) {
+    flex: 1 1 0;
+    padding: 0 12px;
+  }
+}
+
+/* ═══ [C13] ACERTOS FINAIS: LINHAS DO VALOR, "ADICIONAR UM BENEFÍCIO", MÁSCARA DE DINHEIRO,
+   LEITURA E TOQUE ════════════════════════════════════════════════════════════════════════════
+   Regras acrescentadas depois, cada uma com o seu porquê logo acima. Vêm no FIM de propósito:
+   com o mesmo peso, vence a regra que vem por último.
+   A máscara de dinheiro (JS em [J7]): a caixa .nc-moeda toma o lugar do campo de verdade,
+   que continua na página com o número puro (o que vai ao banco), fora da vista.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+/* mínimo, "a empresa paga até", quantidade e total na mesma linha: caixas alinhadas pela base
+   (um rótulo de duas linhas não desalinha as outras); no celular, 2 × 2 em vez de 4 linhas */
+@app.nc-ben .nc-ben-escolha .row:has(> .col > [id$="_VALOR_MIN_CONTAINER"]) {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+}
+
+@media (max-width: 639px) {
+  @app.nc-ben .nc-ben-escolha .row:has(> .col > [id$="_VALOR_MIN_CONTAINER"]) > .col {
+    flex: 0 0 50%;
+    width: 50%;
+    max-width: 50%;
+  }
+}
+
+/* ---------- "Adicionar um benefício": rótulo em cima, campo na largura toda ----------
+   na Alteração Funcional (116) os itens vêm com o rótulo AO LADO (rótulo e campo com 2/12
+   cada): o campo do valor ficava com o − , o R$ e o + e nenhum espaço para o número. Os 8px
+   de cada coluna ficam (o contêiner do item tem margem −8px) */
+/* 04/10: :not([style*="none"]) — as ações dinâmicas escondem Benefício, Tipo, Valor, Mínimo,
+   Máximo, Quantidade e Total com style="display:none" no contêiner; o block (que vira
+   !important) vencia esse esconder */
+@app.nc-ben .nc-ben-escolha .t-Form-fieldContainer:not([style*="none"]) {
+  display: block;
+}
+
+@app.nc-ben .nc-ben-escolha .t-Form-fieldContainer > :is(.t-Form-labelContainer, .t-Form-inputContainer) {
+  float: none;
+  flex: none;
+  width: 100%;
+  max-width: 100%;
+  text-align: left;
+}
+
+@app.nc-ben .nc-ben-escolha .t-Form-fieldContainer > .t-Form-labelContainer {
+  padding-top: 0;
+  padding-bottom: 6px;
+}
+
+/* o valor: a faixa à vista e atalhos de um toque */
+@app.nc-ben .nc-ben-atalhos-valor {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 10px 0 0;
+}
+
+@app.nc-ben .nc-ben-atalhos-valor:empty {
+  display: none;
+}
+
+@app.nc-ben .nc-ben-atalho-valor {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1px;
+  min-height: 46px;
+  padding: 6px 14px;
+  border: 1.5px solid var(--nc-nevoa);
+  border-radius: 12px;
+  background: #fff;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+@app.nc-ben .nc-ben-atalho-valor span {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--nc-grafite);
+}
+
+@app.nc-ben .nc-ben-atalho-valor b {
+  font-size: 15px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  color: var(--nc-roxo);
+}
+
+@app.nc-ben .nc-ben-atalho-valor:hover {
+  border-color: var(--nc-roxo);
+  background: var(--nc-nevoa2);
+}
+
+@app.nc-ben .nc-ben-atalho-valor:focus-visible {
+  outline: 2px solid var(--nc-roxo);
+  outline-offset: 2px;
+}
+
+@app.nc-ben .nc-ben-limites .nc-ben-aviso {
+  display: block;
+  padding: 8px 12px;
+  border-radius: 10px;
+  background: #FFF4D6;
+  font-weight: 700;
+  color: #7A5200;
+}
+
+/* valor fixo: sem − e +, o número em destaque */
+@app.nc-ben .nc-ben-valor-fixo .nc-ben-passo {
+  visibility: hidden;
+}
+
+@app.nc-ben .nc-ben-valor-fixo :is(input.nc-ben-valor, input.apex-item-text) {
+  background: var(--nc-quase);
+  color: var(--nc-roxo);
+}
+
+/* o valor numa linha só dele, mesmo numa página em que ele divide a linha com Quantidade e
+   Total (a 116 antes de importar o arranjo novo): a coluna dele ocupa a linha toda */
+@app.nc-ben .nc-ben-escolha .row:has(> .col > [id$="_VALOR_CONTAINER"]) {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+}
+
+@app.nc-ben .nc-ben-escolha .row > .col:has(> [id$="_VALOR_CONTAINER"]) {
+  flex: 0 0 100%;
+  width: 100%;
+  max-width: 100%;
+}
+
+/* ---------- máscara de dinheiro ----------
+   a caixa de exibição (nc-moeda) toma o lugar do campo de verdade, que continua no DOM com o
+   número puro (o que vai ao banco) — fora da vista e fora do Tab */
+@app.nc-ben input.nc-moeda-real {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  border: 0;
+  opacity: 0;
+  clip: rect(0 0 0 0);
+  pointer-events: none;
+}
+
+@app.nc-ben input.nc-moeda {
+  font-variant-numeric: tabular-nums;
+}
+
+@app.nc-ben input.nc-moeda[readonly] {
+  background: var(--nc-quase);
+  color: var(--nc-grafite);
+}
+
+/* ---------- leitura e toque (medido 01/10) ---------- */
+@app.nc-ben :is(.nc-ben-fatos dt, .nc-ben-sutil, .nc-ben-segmento-ctrl small) {
+  color: #5E586E;
+}
+
+/* a régua do valor: um pino que o dedo pega (26 px) numa trilha visível */
+@app.nc-ben .nc-ben-regua {
+  height: 30px;
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+}
+
+@app.nc-ben .nc-ben-regua::-webkit-slider-runnable-track {
+  height: 6px;
+  border-radius: 999px;
+  background: #E3DDEC;
+}
+
+@app.nc-ben .nc-ben-regua::-webkit-slider-thumb {
+  width: 26px;
+  height: 26px;
+  margin-top: -10px;
+  border: 3px solid #fff;
+  border-radius: 50%;
+  background: var(--nc-roxo);
+  box-shadow: 0 1px 4px rgba(var(--nc-t-azul-rgb, 44, 26, 99), .35);
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+@app.nc-ben .nc-ben-regua::-moz-range-track {
+  height: 6px;
+  border-radius: 999px;
+  background: #E3DDEC;
+}
+
+@app.nc-ben .nc-ben-regua::-moz-range-thumb {
+  width: 22px;
+  height: 22px;
+  border: 3px solid #fff;
+  border-radius: 50%;
+  background: var(--nc-roxo);
+  box-shadow: 0 1px 4px rgba(var(--nc-t-azul-rgb, 44, 26, 99), .35);
+}
+
+/* ═══ FAIXA DA REGIÃO (padrão 03/10) ════════════════════════════════════════════════════════
+   Todo painel com título segue o cabeçalho de região da Skin: o título numa faixa que atravessa
+   o cartão de ponta a ponta, com a linha de 2px na cor de destaque do TEMA (var(--nc-rosa) — a
+   mesma da Skin; muda com os 14 temas). As margens negativas são o recuo de dentro do cartão:
+   mudou o recuo do cartão, mude aqui junto. Guia: brand/apex/MANUAL-APEX.md.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-ben .nc-ben-caminho > .nc-ben-caminho-rot:not(#nc-fx1):not(#nc-fx2):not(#nc-fx3) {
+  box-sizing: border-box;
+  width: calc(100% + 36px);
+  margin: -14px -18px 2px;
+  padding: 12px 18px 10px;
+  border-bottom: 2px solid var(--nc-rosa, #C95788);
+  grid-column: 1 / -1;
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.3;
+}
+@media (max-width: 639px) {
+  @app.nc-ben .nc-ben-caminho > .nc-ben-caminho-rot:not(#nc-fx1):not(#nc-fx2):not(#nc-fx3) {
+    box-sizing: border-box;
+    width: calc(100% + 28px);
+    margin: -12px -14px 2px;
+    padding: 12px 14px 10px;
+    border-bottom: 2px solid var(--nc-rosa, #C95788);
+    grid-column: 1 / -1;
+    font-size: 15px;
+    font-weight: 700;
+    line-height: 1.3;
+  }
+}

@@ -1,0 +1,368 @@
+/* ╔════════════════════════════════════════════════════════════════════════════════════════╗
+   ║  NATCORP · DADOS DO CANDIDATO  —  a "roupa" da tela (CSS)                                ║
+   ║  App 2937 (Medicina Ocupacional) · Página 29 ("Dados Candidatos Reduzido", a janela)     ║
+   ╚════════════════════════════════════════════════════════════════════════════════════════╝
+
+   Primeira vez num arquivo destes? Leia antes o manual: brand/apex/MANUAL-APEX.md (parte 1).
+
+   ── O QUE ESTE ARQUIVO FAZ ────────────────────────────────────────────────────────────────
+   A aparência da ficha que o Natcorp_DadosCandidato.js monta: quem é o candidato, o que pede
+   atenção e as seções (vaga, contato, identificação, documentos, vínculos, uniforme). Sem o
+   JS, nada daqui vale (tudo depende da marca nc-dc-ativo no body).
+
+   ── ONDE ELE ENTRA NO APEX ────────────────────────────────────────────────────────────────
+     Página 29 › CSS › File URLs:   #WORKSPACE_IMAGES#Natcorp_DadosCandidato.css
+     CUIDADO: este é o arquivo-FONTE (.src.css). O gerador (gerar-app.mjs) cria o
+     Natcorp_DadosCandidato.css que sobe para o APEX. Edite ESTE arquivo.
+
+   ── ÍNDICE ────────────────────────────────────────────────────────────────────────────────
+     [C1] As cores                                              PODE MEXER
+     [C2] O que sai da vista
+     [C3] Quem é o candidato
+     [C4] O que pede atenção
+     [C5] As seções
+     [C6] Celular
+*/
+
+/* ═══ [C1] AS CORES ═════════════════════════════════════════════════════════════════════════ */
+@app.nc-dc-ativo {
+  --nc-dc-borda: var(--nc-nevoa, #E9E5F1);
+  --nc-dc-fundo: var(--nc-off, #F7F5FA);
+  --nc-dc-texto: var(--nc-tinta, #1B1238);
+  --nc-dc-fraco: var(--nc-grafite, #4A4460);
+  --nc-dc-bom: var(--nc-bom, #1F7A52);
+  --nc-dc-atencao: #8A5A00;
+  --nc-dc-ruim: var(--nc-ruim, #B8323F);
+}
+
+/* ═══ [C2] O QUE SAI DA VISTA ═══════════════════════════════════════════════════════════════
+   O formulário original continua na página (os itens são lidos pelo JS), só fora da vista.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-dc-ativo .nc-dc-guardada:not(#nc-dc-x) {
+  display: none;
+}
+
+@app.nc-dc-ativo .nc-dc-sem-icone::before {
+  content: none;
+  display: none;
+}
+
+@app.nc-dc-ativo .nc-dc ::selection {
+  background: color-mix(in srgb, var(--nc-roxo, #511C76) 18%, #fff);
+}
+
+@app.nc-dc-ativo .nc-dc-ic {
+  flex: 0 0 auto;
+  width: 17px;
+  height: 17px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+@app.nc-dc-ativo .nc-dc {
+  max-width: 980px;
+  margin: 0 auto 24px;
+  color: var(--nc-dc-texto);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ═══ [C3] QUEM É O CANDIDATO ═══════════════════════════════════════════════════════════════ */
+@app.nc-dc-ativo .nc-dc-cab {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 18px 20px;
+  border: 1px solid var(--nc-dc-borda);
+  border-radius: 16px;
+  background: #fff;
+}
+
+@app.nc-dc-ativo .nc-dc-avatar {
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--nc-roxo, #511C76) 10%, #fff);
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--nc-roxo, #511C76);
+}
+
+@app.nc-dc-ativo .nc-dc-quem {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+@app.nc-dc-ativo .nc-dc-quem h1 {
+  margin: 0;
+  font-size: 21px;
+  font-weight: 700;
+  line-height: 1.25;
+  letter-spacing: -.01em;
+  color: var(--nc-dc-texto);
+}
+
+@app.nc-dc-ativo .nc-dc-cod {
+  font-weight: 500;
+  color: var(--nc-dc-fraco);
+}
+
+@app.nc-dc-ativo .nc-dc-quem p {
+  margin: 4px 0 0;
+  font-size: 14px;
+  line-height: 1.45;
+  color: var(--nc-dc-fraco);
+}
+
+@app.nc-dc-ativo .nc-dc-quem p b {
+  font-weight: 600;
+  color: var(--nc-dc-texto);
+}
+
+@app.nc-dc-ativo .nc-dc-status {
+  flex: 0 0 auto;
+  padding: 5px 12px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--nc-dc-t) 11%, #fff);
+  font-size: 13px;
+  font-weight: 650;
+  color: var(--nc-dc-t);
+  --nc-dc-t: var(--nc-dc-fraco);
+}
+
+@app.nc-dc-ativo .nc-dc-status[data-tom="bom"] { --nc-dc-t: var(--nc-dc-bom); }
+@app.nc-dc-ativo .nc-dc-status[data-tom="atencao"] { --nc-dc-t: var(--nc-dc-atencao); }
+@app.nc-dc-ativo .nc-dc-status[data-tom="ruim"] { --nc-dc-t: var(--nc-dc-ruim); }
+
+/* ═══ [C4] O QUE PEDE ATENÇÃO ═══════════════════════════════════════════════════════════════ */
+@app.nc-dc-ativo .nc-dc-atencao {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 10px;
+  margin: 10px 0 0;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--nc-dc-atencao) 9%, #fff);
+}
+
+@app.nc-dc-ativo .nc-dc-atencao span {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 4px 11px 4px 9px;
+  border-radius: 999px;
+  background: #fff;
+  box-shadow: 0 1px 2px rgba(27, 18, 56, .08);
+  font-size: 14px;
+  font-weight: 650;
+  color: var(--nc-dc-atencao);
+}
+
+@app.nc-dc-ativo .nc-dc-atencao small {
+  font-size: 13px;
+  color: var(--nc-dc-fraco);
+}
+
+@app.nc-dc-ativo .nc-dc-ok {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin: 10px 2px 0;
+  font-size: 13.5px;
+  color: var(--nc-dc-bom);
+}
+
+/* ═══ [C5] AS SEÇÕES ════════════════════════════════════════════════════════════════════════
+   Duas colunas que se encaixam pela altura (columns) — sem buracos entre seções de tamanhos
+   diferentes. Cada linha: o rótulo à esquerda, o valor à direita.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-dc-ativo .nc-dc-grade {
+  columns: 2 360px;
+  column-gap: 14px;
+  margin: 14px 0 0;
+}
+
+@app.nc-dc-ativo .nc-dc-sec {
+  display: inline-block;
+  width: 100%;
+  margin: 0 0 14px;
+  padding: 0 16px 12px;
+  border: 1px solid var(--nc-dc-borda);
+  border-radius: 14px;
+  background: #fff;
+  break-inside: avoid;
+}
+
+@app.nc-dc-ativo .nc-dc-sec h2 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 -16px 8px;
+  padding: 12px 16px 10px;
+  border-bottom: 2px solid var(--nc-rosa, #C95788);   /* a faixa da região (padrão da Skin, cor do tema) */
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--nc-dc-texto);
+}
+
+@app.nc-dc-ativo .nc-dc-sec h2 .nc-dc-ic {
+  color: var(--nc-roxo, #511C76);
+}
+
+@app.nc-dc-ativo .nc-dc-sec dl {
+  margin: 0;
+}
+
+@app.nc-dc-ativo .nc-dc-sec dl > div {
+  display: grid;
+  grid-template-columns: minmax(110px, 38%) minmax(0, 1fr);
+  gap: 12px;
+  padding: 7px 0;
+  border-top: 1px solid var(--nc-dc-borda);
+}
+
+@app.nc-dc-ativo .nc-dc-sec dl > div:first-child {
+  border-top: 0;
+}
+
+@app.nc-dc-ativo .nc-dc-sec dt {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--nc-dc-fraco);
+}
+
+@app.nc-dc-ativo .nc-dc-sec dd {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.45;
+  color: var(--nc-dc-texto);
+  overflow-wrap: anywhere;
+}
+
+@app.nc-dc-ativo .nc-dc-sec dd small {
+  font-weight: 500;
+  font-size: 12.5px;
+  color: var(--nc-dc-fraco);
+}
+
+@app.nc-dc-ativo .nc-dc-sec dd a {
+  color: var(--nc-roxo, #511C76);
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, var(--nc-roxo, #511C76) 35%, transparent);
+  text-underline-offset: 3px;
+}
+
+@app.nc-dc-ativo .nc-dc-sec dd a:hover {
+  text-decoration-color: currentColor;
+}
+
+@app.nc-dc-ativo .nc-dc-sec dd a:focus-visible {
+  outline: 2px solid var(--nc-roxo, #511C76);
+  outline-offset: 2px;
+  border-radius: 3px;
+}
+
+/* o uniforme: três números lado a lado */
+@app.nc-dc-ativo .nc-dc-sec dl.is-curta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 28px;
+}
+
+@app.nc-dc-ativo .nc-dc-sec dl.is-curta > div {
+  display: block;
+  padding: 2px 0;
+  border: 0;
+}
+
+@app.nc-dc-ativo .nc-dc-nada,
+@app.nc-dc-ativo .nc-dc-falta {
+  margin: 6px 0 0;
+  font-size: 12.5px;
+  line-height: 1.45;
+  color: var(--nc-dc-fraco);
+}
+
+@app.nc-dc-ativo .nc-dc-nada {
+  margin: 0;
+  font-size: 13.5px;
+}
+
+@app.nc-dc-ativo .nc-dc-falta {
+  padding-top: 7px;
+  border-top: 1px dashed var(--nc-dc-borda);
+}
+
+/* seção inteira vazia: mais baixa, sem competir com as que têm dados */
+@app.nc-dc-ativo .nc-dc-sec[data-vazia] {
+  padding: 0 16px 11px;
+  background: var(--nc-dc-fundo);
+}
+
+@app.nc-dc-ativo .nc-dc-sec[data-vazia] h2 {
+  margin: 0 -16px 8px;
+  font-size: 14px;
+  color: var(--nc-dc-fraco);
+}
+
+@app.nc-dc-ativo .nc-dc-sec[data-vazia] h2 .nc-dc-ic {
+  color: var(--nc-dc-fraco);
+}
+
+/* sem cadastro */
+@app.nc-dc-ativo .nc-dc-sem {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 18px 20px;
+  border: 1px solid color-mix(in srgb, var(--nc-dc-atencao) 30%, #fff);
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--nc-dc-atencao) 7%, #fff);
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--nc-dc-texto);
+}
+
+@app.nc-dc-ativo .nc-dc-sem .nc-dc-ic {
+  width: 22px;
+  height: 22px;
+  margin-top: 1px;
+  color: var(--nc-dc-atencao);
+}
+
+@app.nc-dc-ativo .nc-dc-sem p {
+  margin: 0 0 4px;
+}
+
+/* ═══ [C6] CELULAR ══════════════════════════════════════════════════════════════════════════ */
+@media (max-width: 640px) {
+  @app.nc-dc-ativo .nc-dc-cab {
+    flex-wrap: wrap;
+    padding: 14px;
+  }
+
+  @app.nc-dc-ativo .nc-dc-quem {
+    flex-basis: calc(100% - 64px);
+  }
+
+  @app.nc-dc-ativo .nc-dc-quem h1 {
+    font-size: 18px;
+  }
+
+  @app.nc-dc-ativo .nc-dc-status {
+    margin-left: 64px;
+  }
+
+  @app.nc-dc-ativo .nc-dc-sec dl > div {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1px;
+  }
+}

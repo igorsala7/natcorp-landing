@@ -1,0 +1,770 @@
+/* =====================================================================
+   Natcorp_Temas — os TEMAS DE COR do sistema. GERADO por gerar-temas.py: não edite à mão.
+   Cada tema é uma classe no <html> (nc-theme-<id>) posta pelo Natcorp_Temas.js e repassada
+   aos iframes e janelas pelo Natcorp_Allow_Unload_Iframes.js (mesma chave e mesmo formato do
+   seletor antigo). Padrão Natcorp = sem classe. As cores: o arco da marca girado no círculo
+   cromático (OKLCH), mesma claridade e saturação — ver gerar-temas.py.
+   ===================================================================== */
+
+/* Ameixa Natcorp */
+html.nc-theme-nc2-ameixa {
+  --nc-azul: #511C76; --nc-roxo: #742B7F; --nc-roxo-hover: #511C76;
+  --nc-ameixa: #9A408A; --nc-rosa: #C95788; --nc-rosa-claro: #E4A9C4;
+  --nc-t-azul-rgb: 81, 28, 118; --nc-t-roxo-rgb: 116, 43, 127; --nc-t-rosa-rgb: 201, 87, 136; --nc-t-ameixa-rgb: 154, 64, 138;
+  --nc-t-giro: 0; --nc-t-croma: 1;
+  --nc-primary: #742B7F; --nc-primary-rgb: 116, 43, 127; --nc-primary-deep: #511C76;
+  --nc-primary-glow: #9A408A; --nc-primary-glow-rgb: 154, 64, 138;
+  --nc-icone-fundo: linear-gradient(#742B7F, transparent), linear-gradient(to left top, #C95788, transparent), linear-gradient(to right bottom, #511C76, transparent);
+}
+
+/* Noite Natcorp */
+html.nc-theme-nc2-noite {
+  --nc-azul: #1E1049; --nc-roxo: #2C1A63; --nc-roxo-hover: #1E1049;
+  --nc-ameixa: #511C76; --nc-rosa: #C95788; --nc-rosa-claro: #E4A9C4;
+  --nc-t-azul-rgb: 30, 16, 73; --nc-t-roxo-rgb: 44, 26, 99; --nc-t-rosa-rgb: 201, 87, 136; --nc-t-ameixa-rgb: 81, 28, 118;
+  --nc-t-giro: 0; --nc-t-croma: 1;
+  --nc-primary: #2C1A63; --nc-primary-rgb: 44, 26, 99; --nc-primary-deep: #1E1049;
+  --nc-primary-glow: #511C76; --nc-primary-glow-rgb: 81, 28, 118;
+  --nc-icone-fundo: linear-gradient(#2C1A63, transparent), linear-gradient(to left top, #C95788, transparent), linear-gradient(to right bottom, #1E1049, transparent);
+}
+
+/* Fúcsia */
+html.nc-theme-nc2-fucsia {
+  --nc-azul: #480A4B; --nc-roxo: #6C064D; --nc-roxo-hover: #480A4B;
+  --nc-ameixa: #AD3950; --nc-rosa: #D05B43; --nc-rosa-claro: #EBAAA2;
+  --nc-t-azul-rgb: 72, 10, 75; --nc-t-roxo-rgb: 108, 6, 77; --nc-t-rosa-rgb: 208, 91, 67; --nc-t-ameixa-rgb: 173, 57, 80;
+  --nc-t-giro: 37.7; --nc-t-croma: 1;
+  --nc-primary: #6C064D; --nc-primary-rgb: 108, 6, 77; --nc-primary-deep: #480A4B;
+  --nc-primary-glow: #AD3950; --nc-primary-glow-rgb: 173, 57, 80;
+  --nc-icone-fundo: linear-gradient(#6C064D, transparent), linear-gradient(to left top, #D05B43, transparent), linear-gradient(to right bottom, #480A4B, transparent);
+}
+
+/* Rubi */
+html.nc-theme-nc2-rubi {
+  --nc-azul: #55002E; --nc-roxo: #750023; --nc-roxo-hover: #55002E;
+  --nc-ameixa: #AC4208; --nc-rosa: #BE6F00; --nc-rosa-claro: #E4B18C;
+  --nc-t-azul-rgb: 85, 0, 46; --nc-t-roxo-rgb: 117, 0, 35; --nc-t-rosa-rgb: 190, 111, 0; --nc-t-ameixa-rgb: 172, 66, 8;
+  --nc-t-giro: -292.3; --nc-t-croma: 1;
+  --nc-primary: #750023; --nc-primary-rgb: 117, 0, 35; --nc-primary-deep: #55002E;
+  --nc-primary-glow: #AC4208; --nc-primary-glow-rgb: 172, 66, 8;
+  --nc-icone-fundo: linear-gradient(#750023, transparent), linear-gradient(to left top, #BE6F00, transparent), linear-gradient(to right bottom, #55002E, transparent);
+}
+
+/* Vermelho */
+html.nc-theme-nc2-vermelho {
+  --nc-azul: #59000E; --nc-roxo: #770007; --nc-roxo-hover: #59000E;
+  --nc-ameixa: #C11911; --nc-rosa: #FF0000; --nc-rosa-claro: #EBAAA4;
+  --nc-t-azul-rgb: 89, 0, 14; --nc-t-roxo-rgb: 119, 0, 7; --nc-t-rosa-rgb: 255, 0, 0; --nc-t-ameixa-rgb: 193, 25, 17;
+  --nc-t-giro: -300; --nc-t-croma: 1;
+  --nc-primary: #770007; --nc-primary-rgb: 119, 0, 7; --nc-primary-deep: #59000E;
+  --nc-primary-glow: #C11911; --nc-primary-glow-rgb: 193, 25, 17;
+  --nc-icone-fundo: linear-gradient(#770007, transparent), linear-gradient(to left top, #FF0000, transparent), linear-gradient(to right bottom, #59000E, transparent);
+}
+
+/* Terracota */
+html.nc-theme-nc2-terracota {
+  --nc-azul: #59000C; --nc-roxo: #692200; --nc-roxo-hover: #59000C;
+  --nc-ameixa: #915A00; --nc-rosa: #A18000; --nc-rosa-claro: #D4BA83;
+  --nc-t-azul-rgb: 89, 0, 12; --nc-t-roxo-rgb: 105, 34, 0; --nc-t-rosa-rgb: 161, 128, 0; --nc-t-ameixa-rgb: 145, 90, 0;
+  --nc-t-giro: -265.3; --nc-t-croma: 1;
+  --nc-primary: #692200; --nc-primary-rgb: 105, 34, 0; --nc-primary-deep: #59000C;
+  --nc-primary-glow: #915A00; --nc-primary-glow-rgb: 145, 90, 0;
+  --nc-icone-fundo: linear-gradient(#692200, transparent), linear-gradient(to left top, #A18000, transparent), linear-gradient(to right bottom, #59000C, transparent);
+}
+
+/* Âmbar */
+html.nc-theme-nc2-ambar {
+  --nc-azul: #481E00; --nc-roxo: #553400; --nc-roxo-hover: #481E00;
+  --nc-ameixa: #776900; --nc-rosa: #799000; --nc-rosa-claro: #BBC38A;
+  --nc-t-azul-rgb: 72, 30, 0; --nc-t-roxo-rgb: 85, 52, 0; --nc-t-rosa-rgb: 121, 144, 0; --nc-t-ameixa-rgb: 119, 105, 0;
+  --nc-t-giro: -235.3; --nc-t-croma: 1;
+  --nc-primary: #553400; --nc-primary-rgb: 85, 52, 0; --nc-primary-deep: #481E00;
+  --nc-primary-glow: #776900; --nc-primary-glow-rgb: 119, 105, 0;
+  --nc-icone-fundo: linear-gradient(#553400, transparent), linear-gradient(to left top, #799000, transparent), linear-gradient(to right bottom, #481E00, transparent);
+}
+
+/* Oliva */
+html.nc-theme-nc2-oliva {
+  --nc-azul: #372A00; --nc-roxo: #3E4000; --nc-roxo-hover: #372A00;
+  --nc-ameixa: #307C19; --nc-rosa: #009D68; --nc-rosa-claro: #96CCA7;
+  --nc-t-azul-rgb: 55, 42, 0; --nc-t-roxo-rgb: 62, 64, 0; --nc-t-rosa-rgb: 0, 157, 104; --nc-t-ameixa-rgb: 48, 124, 25;
+  --nc-t-giro: -195.3; --nc-t-croma: 1;
+  --nc-primary: #3E4000; --nc-primary-rgb: 62, 64, 0; --nc-primary-deep: #372A00;
+  --nc-primary-glow: #307C19; --nc-primary-glow-rgb: 48, 124, 25;
+  --nc-icone-fundo: linear-gradient(#3E4000, transparent), linear-gradient(to left top, #009D68, transparent), linear-gradient(to right bottom, #372A00, transparent);
+}
+
+/* Esmeralda */
+html.nc-theme-nc2-esmeralda {
+  --nc-azul: #1D3300; --nc-roxo: #004A1D; --nc-roxo-hover: #1D3300;
+  --nc-ameixa: #007A68; --nc-rosa: #00979C; --nc-rosa-claro: #7FCDCA;
+  --nc-t-azul-rgb: 29, 51, 0; --nc-t-roxo-rgb: 0, 74, 29; --nc-t-rosa-rgb: 0, 151, 156; --nc-t-ameixa-rgb: 0, 122, 104;
+  --nc-t-giro: -157.3; --nc-t-croma: 1;
+  --nc-primary: #004A1D; --nc-primary-rgb: 0, 74, 29; --nc-primary-deep: #1D3300;
+  --nc-primary-glow: #007A68; --nc-primary-glow-rgb: 0, 122, 104;
+  --nc-icone-fundo: linear-gradient(#004A1D, transparent), linear-gradient(to left top, #00979C, transparent), linear-gradient(to right bottom, #1D3300, transparent);
+}
+
+/* Turquesa */
+html.nc-theme-nc2-turquesa {
+  --nc-azul: #003522; --nc-roxo: #00473F; --nc-roxo-hover: #003522;
+  --nc-ameixa: #007684; --nc-rosa: #0091C0; --nc-rosa-claro: #85C8E2;
+  --nc-t-azul-rgb: 0, 53, 34; --nc-t-roxo-rgb: 0, 71, 63; --nc-t-rosa-rgb: 0, 145, 192; --nc-t-ameixa-rgb: 0, 118, 132;
+  --nc-t-giro: -125.3; --nc-t-croma: 1;
+  --nc-primary: #00473F; --nc-primary-rgb: 0, 71, 63; --nc-primary-deep: #003522;
+  --nc-primary-glow: #007684; --nc-primary-glow-rgb: 0, 118, 132;
+  --nc-icone-fundo: linear-gradient(#00473F, transparent), linear-gradient(to left top, #0091C0, transparent), linear-gradient(to right bottom, #003522, transparent);
+}
+
+/* Petróleo */
+html.nc-theme-nc2-petroleo {
+  --nc-azul: #003431; --nc-roxo: #00454D; --nc-roxo-hover: #003431;
+  --nc-ameixa: #00719F; --nc-rosa: #4084DF; --nc-rosa-claro: #98C1EE;
+  --nc-t-azul-rgb: 0, 52, 49; --nc-t-roxo-rgb: 0, 69, 77; --nc-t-rosa-rgb: 64, 132, 223; --nc-t-ameixa-rgb: 0, 113, 159;
+  --nc-t-giro: -99.3; --nc-t-croma: 1;
+  --nc-primary: #00454D; --nc-primary-rgb: 0, 69, 77; --nc-primary-deep: #003431;
+  --nc-primary-glow: #00719F; --nc-primary-glow-rgb: 0, 113, 159;
+  --nc-icone-fundo: linear-gradient(#00454D, transparent), linear-gradient(to left top, #4084DF, transparent), linear-gradient(to right bottom, #003431, transparent);
+}
+
+/* Oceano */
+html.nc-theme-nc2-oceano {
+  --nc-azul: #00323D; --nc-roxo: #00425F; --nc-roxo-hover: #00323D;
+  --nc-ameixa: #3963BE; --nc-rosa: #7C74DC; --nc-rosa-claro: #B1B9EF;
+  --nc-t-azul-rgb: 0, 50, 61; --nc-t-roxo-rgb: 0, 66, 95; --nc-t-rosa-rgb: 124, 116, 220; --nc-t-ameixa-rgb: 57, 99, 190;
+  --nc-t-giro: -71.3; --nc-t-croma: 1;
+  --nc-primary: #00425F; --nc-primary-rgb: 0, 66, 95; --nc-primary-deep: #00323D;
+  --nc-primary-glow: #3963BE; --nc-primary-glow-rgb: 57, 99, 190;
+  --nc-icone-fundo: linear-gradient(#00425F, transparent), linear-gradient(to left top, #7C74DC, transparent), linear-gradient(to right bottom, #00323D, transparent);
+}
+
+/* Anil */
+html.nc-theme-nc2-anil {
+  --nc-azul: #002E50; --nc-roxo: #183287; --nc-roxo-hover: #002E50;
+  --nc-ameixa: #6F52B5; --nc-rosa: #A664C4; --nc-rosa-claro: #CBB0E3;
+  --nc-t-azul-rgb: 0, 46, 80; --nc-t-roxo-rgb: 24, 50, 135; --nc-t-rosa-rgb: 166, 100, 196; --nc-t-ameixa-rgb: 111, 82, 181;
+  --nc-t-giro: -41.3; --nc-t-croma: 1;
+  --nc-primary: #183287; --nc-primary-rgb: 24, 50, 135; --nc-primary-deep: #002E50;
+  --nc-primary-glow: #6F52B5; --nc-primary-glow-rgb: 111, 82, 181;
+  --nc-icone-fundo: linear-gradient(#183287, transparent), linear-gradient(to left top, #A664C4, transparent), linear-gradient(to right bottom, #002E50, transparent);
+}
+
+/* Grafite & Rosa */
+html.nc-theme-nc2-grafite {
+  --nc-azul: #2B2B34; --nc-roxo: #3F3946; --nc-roxo-hover: #2B2B34;
+  --nc-ameixa: #74626F; --nc-rosa: #C95788; --nc-rosa-claro: #E4A9C4;
+  --nc-t-azul-rgb: 43, 43, 52; --nc-t-roxo-rgb: 63, 57, 70; --nc-t-rosa-rgb: 201, 87, 136; --nc-t-ameixa-rgb: 116, 98, 111;
+  --nc-t-giro: 0; --nc-t-croma: 0.15;
+  --nc-primary: #3F3946; --nc-primary-rgb: 63, 57, 70; --nc-primary-deep: #2B2B34;
+  --nc-primary-glow: #74626F; --nc-primary-glow-rgb: 116, 98, 111;
+  --nc-icone-fundo: linear-gradient(#3F3946, transparent), linear-gradient(to left top, #C95788, transparent), linear-gradient(to right bottom, #2B2B34, transparent);
+}
+
+
+/* ---------- as superfícies, só com um tema escolhido ---------- */
+/* menu superior: Azul → Roxo do tema, com o brilho do destaque à direita */
+html:is(.nc-theme-nc2-ameixa, .nc-theme-nc2-noite, .nc-theme-nc2-fucsia, .nc-theme-nc2-rubi, .nc-theme-nc2-vermelho, .nc-theme-nc2-terracota, .nc-theme-nc2-ambar, .nc-theme-nc2-oliva, .nc-theme-nc2-esmeralda, .nc-theme-nc2-turquesa, .nc-theme-nc2-petroleo, .nc-theme-nc2-oceano, .nc-theme-nc2-anil, .nc-theme-nc2-grafite) body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2):not(#nc-t1) .t-Header {
+  background-color: var(--nc-azul) !important;
+  background-image:
+    radial-gradient(38% 260% at 88% 0%, rgba(var(--nc-t-rosa-rgb), .38), transparent 70%),
+    radial-gradient(30% 220% at 45% 100%, rgba(var(--nc-t-roxo-rgb), .55), transparent 70%),
+    linear-gradient(90deg, var(--nc-azul) 0%, var(--nc-roxo) 100%) !important;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, .07), 0 10px 28px -18px rgba(var(--nc-t-azul-rgb), .8) !important;
+}
+
+/* menu lateral: as MESMAS cinco camadas do Padrão — o logo no pé, o painel animado (rede de
+   pontos e losangos com a luz correndo), os dois brilhos e o degradê — nas cores do tema.
+   O painel tem as cores desenhadas dentro do SVG: o Natcorp_Temas.js o recolore para o tema
+   e o entrega em --nc-t-painel (uma cópia só, no .js; 13 cópias aqui pesariam ~250 KB a mais
+   numa folha que toda página baixa sem cache). Sem o .js, a camada fica vazia e o resto vale. */
+html:is(.nc-theme-nc2-ameixa, .nc-theme-nc2-noite, .nc-theme-nc2-fucsia, .nc-theme-nc2-rubi, .nc-theme-nc2-vermelho, .nc-theme-nc2-terracota, .nc-theme-nc2-ambar, .nc-theme-nc2-oliva, .nc-theme-nc2-esmeralda, .nc-theme-nc2-turquesa, .nc-theme-nc2-petroleo, .nc-theme-nc2-oceano, .nc-theme-nc2-anil, .nc-theme-nc2-grafite) body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2):not(#nc-t1) .t-Body-nav {
+  background-color: var(--nc-azul) !important;
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 31.596 8' fill='%23fff'%3E%3Cpath d='M4.322 0.322L5.573 1.573A0.456 0.456 0 0 1 5.573 2.218L4.322 3.469A0.456 0.456 0 0 1 3.678 3.469L2.427 2.218A0.456 0.456 0 0 1 2.427 1.573L3.678 0.322A0.456 0.456 0 0 1 4.322 0.322Z'/%3E%3Cpath d='M6.427 2.427L7.678 3.678A0.456 0.456 0 0 1 7.678 4.322L6.427 5.573A0.456 0.456 0 0 1 5.782 5.573L4.531 4.322A0.456 0.456 0 0 1 4.531 3.678L5.782 2.427A0.456 0.456 0 0 1 6.427 2.427Z'/%3E%3Cpath d='M2.218 2.427L3.469 3.678A0.456 0.456 0 0 1 3.469 4.322L2.218 5.573A0.456 0.456 0 0 1 1.573 5.573L0.322 4.322A0.456 0.456 0 0 1 0.322 3.678L1.573 2.427A0.456 0.456 0 0 1 2.218 2.427Z'/%3E%3Cpath d='M4.322 4.531L5.573 5.782A0.456 0.456 0 0 1 5.573 6.427L4.322 7.678A0.456 0.456 0 0 1 3.678 7.678L2.427 6.427A0.456 0.456 0 0 1 2.427 5.782L3.678 4.531A0.456 0.456 0 0 1 4.322 4.531Z'/%3E%3Cpath d='M11.61 5.69V4.04Q11.61 3.86 11.58 3.66Q11.55 3.46 11.47 3.28Q11.38 3.10 11.22 2.99Q11.05 2.87 10.78 2.87Q10.62 2.87 10.47 2.93Q10.32 2.98 10.21 3.10Q10.09 3.23 10.02 3.43Q9.95 3.64 9.95 3.94L9.53 3.77Q9.53 3.32 9.70 2.97Q9.87 2.62 10.19 2.42Q10.52 2.22 10.98 2.22Q11.34 2.22 11.58 2.34Q11.82 2.45 11.97 2.64Q12.11 2.83 12.19 3.05Q12.26 3.26 12.29 3.46Q12.31 3.67 12.31 3.81V5.69ZM9.25 5.69V2.31H9.87V3.32H9.95V5.69Z'/%3E%3Cpath d='M13.95 5.78Q13.58 5.78 13.32 5.64Q13.07 5.50 12.94 5.27Q12.81 5.04 12.81 4.77Q12.81 4.52 12.90 4.32Q12.99 4.13 13.16 3.99Q13.33 3.85 13.60 3.76Q13.81 3.70 14.09 3.65Q14.37 3.59 14.69 3.55Q15.00 3.51 15.33 3.46L15.08 3.60Q15.09 3.22 14.92 3.04Q14.75 2.86 14.35 2.86Q14.10 2.86 13.88 2.97Q13.66 3.09 13.57 3.36L12.93 3.17Q13.06 2.73 13.41 2.48Q13.76 2.22 14.35 2.22Q14.80 2.22 15.14 2.37Q15.48 2.52 15.64 2.86Q15.72 3.03 15.74 3.21Q15.76 3.40 15.76 3.61V5.69H15.15V4.93L15.26 5.04Q15.05 5.42 14.73 5.60Q14.41 5.78 13.95 5.78ZM14.08 5.22Q14.35 5.22 14.54 5.13Q14.73 5.03 14.85 4.89Q14.96 4.74 15.00 4.60Q15.06 4.45 15.06 4.26Q15.07 4.07 15.07 3.96L15.29 4.04Q14.97 4.09 14.72 4.12Q14.47 4.16 14.28 4.20Q14.09 4.23 13.94 4.28Q13.80 4.33 13.71 4.39Q13.61 4.46 13.55 4.55Q13.49 4.64 13.49 4.76Q13.49 4.89 13.56 4.99Q13.62 5.10 13.75 5.16Q13.88 5.22 14.08 5.22Z'/%3E%3Cpath d='M18.40 5.69Q18.07 5.75 17.76 5.74Q17.45 5.73 17.20 5.62Q16.96 5.51 16.83 5.28Q16.72 5.06 16.71 4.84Q16.71 4.62 16.71 4.34V1.38H17.40V4.30Q17.40 4.51 17.40 4.66Q17.41 4.81 17.47 4.91Q17.58 5.10 17.83 5.12Q18.07 5.15 18.40 5.10ZM16.07 2.86V2.31H18.40V2.86Z'/%3E%3Cpath d='M20.44 5.78Q19.92 5.78 19.56 5.55Q19.19 5.32 19.00 4.91Q18.80 4.51 18.80 4.00Q18.80 3.48 19.00 3.08Q19.20 2.68 19.57 2.45Q19.94 2.22 20.45 2.22Q21.01 2.22 21.41 2.50Q21.80 2.78 21.93 3.27L21.24 3.46Q21.14 3.18 20.93 3.03Q20.71 2.87 20.44 2.87Q20.13 2.87 19.93 3.02Q19.73 3.16 19.63 3.42Q19.54 3.67 19.54 4.00Q19.54 4.51 19.77 4.82Q19.99 5.13 20.44 5.13Q20.75 5.13 20.94 4.99Q21.12 4.84 21.22 4.58L21.93 4.74Q21.76 5.24 21.38 5.51Q20.99 5.78 20.44 5.78Z'/%3E%3Cpath d='M23.91 5.78Q23.40 5.78 23.03 5.55Q22.66 5.33 22.45 4.92Q22.25 4.52 22.25 4.00Q22.25 3.47 22.46 3.07Q22.67 2.67 23.04 2.44Q23.41 2.22 23.91 2.22Q24.42 2.22 24.79 2.45Q25.17 2.67 25.37 3.08Q25.58 3.48 25.58 4.00Q25.58 4.53 25.37 4.93Q25.17 5.33 24.79 5.56Q24.42 5.78 23.91 5.78ZM23.91 5.13Q24.38 5.13 24.61 4.81Q24.84 4.50 24.84 4.00Q24.84 3.48 24.61 3.18Q24.38 2.87 23.91 2.87Q23.59 2.87 23.39 3.01Q23.18 3.16 23.08 3.41Q22.98 3.66 22.98 4.00Q22.98 4.51 23.22 4.82Q23.45 5.13 23.91 5.13Z'/%3E%3Cpath d='M26.14 5.69V2.31H26.76V3.13L26.68 3.03Q26.74 2.86 26.84 2.72Q26.94 2.59 27.08 2.50Q27.21 2.41 27.36 2.36Q27.52 2.31 27.68 2.30Q27.84 2.29 28.00 2.31V2.96Q27.84 2.92 27.64 2.93Q27.44 2.95 27.27 3.06Q27.12 3.15 27.02 3.29Q26.93 3.43 26.88 3.61Q26.84 3.78 26.84 3.98V5.69Z'/%3E%3Cpath d='M30.06 5.78Q29.58 5.78 29.24 5.55Q28.91 5.31 28.75 4.91Q28.58 4.50 28.58 4.00Q28.58 3.49 28.74 3.09Q28.91 2.69 29.24 2.45Q29.57 2.22 30.04 2.22Q30.52 2.22 30.87 2.45Q31.22 2.68 31.41 3.09Q31.60 3.49 31.60 4.00Q31.60 4.50 31.41 4.91Q31.22 5.31 30.88 5.55Q30.53 5.78 30.06 5.78ZM28.46 7.19V2.31H29.07V4.72H29.16V7.19ZM29.96 5.16Q30.27 5.16 30.47 5.00Q30.67 4.85 30.76 4.59Q30.86 4.32 30.86 4.00Q30.86 3.68 30.76 3.42Q30.66 3.15 30.46 3.00Q30.26 2.84 29.94 2.84Q29.64 2.84 29.45 2.99Q29.26 3.13 29.17 3.40Q29.07 3.66 29.07 4.00Q29.07 4.34 29.17 4.60Q29.26 4.86 29.45 5.01Q29.65 5.16 29.96 5.16Z'/%3E%3C/svg%3E"),
+    var(--nc-t-painel, none),
+    radial-gradient(90% 40% at 0% 0%, rgba(var(--nc-t-rosa-rgb), .28), transparent 70%),
+    radial-gradient(120% 45% at 100% 100%, rgba(var(--nc-t-rosa-rgb), .22), transparent 70%),
+    linear-gradient(180deg, var(--nc-azul) 0%, var(--nc-roxo) 100%) !important;
+  background-size: 104px auto, cover, auto, auto, auto !important;
+  background-position: left 24px bottom 24px, center bottom, 0 0, 0 0, 0 0 !important;
+  background-repeat: no-repeat !important;
+}
+
+html:is(.nc-theme-nc2-ameixa, .nc-theme-nc2-noite, .nc-theme-nc2-fucsia, .nc-theme-nc2-rubi, .nc-theme-nc2-vermelho, .nc-theme-nc2-terracota, .nc-theme-nc2-ambar, .nc-theme-nc2-oliva, .nc-theme-nc2-esmeralda, .nc-theme-nc2-turquesa, .nc-theme-nc2-petroleo, .nc-theme-nc2-oceano, .nc-theme-nc2-anil, .nc-theme-nc2-grafite) body.js-navCollapsed:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2):not(#nc-t1) .t-Body-nav {
+  background-size: 0 0, cover, auto, auto, auto !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html:is(.nc-theme-nc2-ameixa, .nc-theme-nc2-noite, .nc-theme-nc2-fucsia, .nc-theme-nc2-rubi, .nc-theme-nc2-vermelho, .nc-theme-nc2-terracota, .nc-theme-nc2-ambar, .nc-theme-nc2-oliva, .nc-theme-nc2-esmeralda, .nc-theme-nc2-turquesa, .nc-theme-nc2-petroleo, .nc-theme-nc2-oceano, .nc-theme-nc2-anil, .nc-theme-nc2-grafite) body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2):not(#nc-t1) .t-Body-nav {
+    background-image:
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 31.596 8' fill='%23fff'%3E%3Cpath d='M4.322 0.322L5.573 1.573A0.456 0.456 0 0 1 5.573 2.218L4.322 3.469A0.456 0.456 0 0 1 3.678 3.469L2.427 2.218A0.456 0.456 0 0 1 2.427 1.573L3.678 0.322A0.456 0.456 0 0 1 4.322 0.322Z'/%3E%3Cpath d='M6.427 2.427L7.678 3.678A0.456 0.456 0 0 1 7.678 4.322L6.427 5.573A0.456 0.456 0 0 1 5.782 5.573L4.531 4.322A0.456 0.456 0 0 1 4.531 3.678L5.782 2.427A0.456 0.456 0 0 1 6.427 2.427Z'/%3E%3Cpath d='M2.218 2.427L3.469 3.678A0.456 0.456 0 0 1 3.469 4.322L2.218 5.573A0.456 0.456 0 0 1 1.573 5.573L0.322 4.322A0.456 0.456 0 0 1 0.322 3.678L1.573 2.427A0.456 0.456 0 0 1 2.218 2.427Z'/%3E%3Cpath d='M4.322 4.531L5.573 5.782A0.456 0.456 0 0 1 5.573 6.427L4.322 7.678A0.456 0.456 0 0 1 3.678 7.678L2.427 6.427A0.456 0.456 0 0 1 2.427 5.782L3.678 4.531A0.456 0.456 0 0 1 4.322 4.531Z'/%3E%3Cpath d='M11.61 5.69V4.04Q11.61 3.86 11.58 3.66Q11.55 3.46 11.47 3.28Q11.38 3.10 11.22 2.99Q11.05 2.87 10.78 2.87Q10.62 2.87 10.47 2.93Q10.32 2.98 10.21 3.10Q10.09 3.23 10.02 3.43Q9.95 3.64 9.95 3.94L9.53 3.77Q9.53 3.32 9.70 2.97Q9.87 2.62 10.19 2.42Q10.52 2.22 10.98 2.22Q11.34 2.22 11.58 2.34Q11.82 2.45 11.97 2.64Q12.11 2.83 12.19 3.05Q12.26 3.26 12.29 3.46Q12.31 3.67 12.31 3.81V5.69ZM9.25 5.69V2.31H9.87V3.32H9.95V5.69Z'/%3E%3Cpath d='M13.95 5.78Q13.58 5.78 13.32 5.64Q13.07 5.50 12.94 5.27Q12.81 5.04 12.81 4.77Q12.81 4.52 12.90 4.32Q12.99 4.13 13.16 3.99Q13.33 3.85 13.60 3.76Q13.81 3.70 14.09 3.65Q14.37 3.59 14.69 3.55Q15.00 3.51 15.33 3.46L15.08 3.60Q15.09 3.22 14.92 3.04Q14.75 2.86 14.35 2.86Q14.10 2.86 13.88 2.97Q13.66 3.09 13.57 3.36L12.93 3.17Q13.06 2.73 13.41 2.48Q13.76 2.22 14.35 2.22Q14.80 2.22 15.14 2.37Q15.48 2.52 15.64 2.86Q15.72 3.03 15.74 3.21Q15.76 3.40 15.76 3.61V5.69H15.15V4.93L15.26 5.04Q15.05 5.42 14.73 5.60Q14.41 5.78 13.95 5.78ZM14.08 5.22Q14.35 5.22 14.54 5.13Q14.73 5.03 14.85 4.89Q14.96 4.74 15.00 4.60Q15.06 4.45 15.06 4.26Q15.07 4.07 15.07 3.96L15.29 4.04Q14.97 4.09 14.72 4.12Q14.47 4.16 14.28 4.20Q14.09 4.23 13.94 4.28Q13.80 4.33 13.71 4.39Q13.61 4.46 13.55 4.55Q13.49 4.64 13.49 4.76Q13.49 4.89 13.56 4.99Q13.62 5.10 13.75 5.16Q13.88 5.22 14.08 5.22Z'/%3E%3Cpath d='M18.40 5.69Q18.07 5.75 17.76 5.74Q17.45 5.73 17.20 5.62Q16.96 5.51 16.83 5.28Q16.72 5.06 16.71 4.84Q16.71 4.62 16.71 4.34V1.38H17.40V4.30Q17.40 4.51 17.40 4.66Q17.41 4.81 17.47 4.91Q17.58 5.10 17.83 5.12Q18.07 5.15 18.40 5.10ZM16.07 2.86V2.31H18.40V2.86Z'/%3E%3Cpath d='M20.44 5.78Q19.92 5.78 19.56 5.55Q19.19 5.32 19.00 4.91Q18.80 4.51 18.80 4.00Q18.80 3.48 19.00 3.08Q19.20 2.68 19.57 2.45Q19.94 2.22 20.45 2.22Q21.01 2.22 21.41 2.50Q21.80 2.78 21.93 3.27L21.24 3.46Q21.14 3.18 20.93 3.03Q20.71 2.87 20.44 2.87Q20.13 2.87 19.93 3.02Q19.73 3.16 19.63 3.42Q19.54 3.67 19.54 4.00Q19.54 4.51 19.77 4.82Q19.99 5.13 20.44 5.13Q20.75 5.13 20.94 4.99Q21.12 4.84 21.22 4.58L21.93 4.74Q21.76 5.24 21.38 5.51Q20.99 5.78 20.44 5.78Z'/%3E%3Cpath d='M23.91 5.78Q23.40 5.78 23.03 5.55Q22.66 5.33 22.45 4.92Q22.25 4.52 22.25 4.00Q22.25 3.47 22.46 3.07Q22.67 2.67 23.04 2.44Q23.41 2.22 23.91 2.22Q24.42 2.22 24.79 2.45Q25.17 2.67 25.37 3.08Q25.58 3.48 25.58 4.00Q25.58 4.53 25.37 4.93Q25.17 5.33 24.79 5.56Q24.42 5.78 23.91 5.78ZM23.91 5.13Q24.38 5.13 24.61 4.81Q24.84 4.50 24.84 4.00Q24.84 3.48 24.61 3.18Q24.38 2.87 23.91 2.87Q23.59 2.87 23.39 3.01Q23.18 3.16 23.08 3.41Q22.98 3.66 22.98 4.00Q22.98 4.51 23.22 4.82Q23.45 5.13 23.91 5.13Z'/%3E%3Cpath d='M26.14 5.69V2.31H26.76V3.13L26.68 3.03Q26.74 2.86 26.84 2.72Q26.94 2.59 27.08 2.50Q27.21 2.41 27.36 2.36Q27.52 2.31 27.68 2.30Q27.84 2.29 28.00 2.31V2.96Q27.84 2.92 27.64 2.93Q27.44 2.95 27.27 3.06Q27.12 3.15 27.02 3.29Q26.93 3.43 26.88 3.61Q26.84 3.78 26.84 3.98V5.69Z'/%3E%3Cpath d='M30.06 5.78Q29.58 5.78 29.24 5.55Q28.91 5.31 28.75 4.91Q28.58 4.50 28.58 4.00Q28.58 3.49 28.74 3.09Q28.91 2.69 29.24 2.45Q29.57 2.22 30.04 2.22Q30.52 2.22 30.87 2.45Q31.22 2.68 31.41 3.09Q31.60 3.49 31.60 4.00Q31.60 4.50 31.41 4.91Q31.22 5.31 30.88 5.55Q30.53 5.78 30.06 5.78ZM28.46 7.19V2.31H29.07V4.72H29.16V7.19ZM29.96 5.16Q30.27 5.16 30.47 5.00Q30.67 4.85 30.76 4.59Q30.86 4.32 30.86 4.00Q30.86 3.68 30.76 3.42Q30.66 3.15 30.46 3.00Q30.26 2.84 29.94 2.84Q29.64 2.84 29.45 2.99Q29.26 3.13 29.17 3.40Q29.07 3.66 29.07 4.00Q29.07 4.34 29.17 4.60Q29.26 4.86 29.45 5.01Q29.65 5.16 29.96 5.16Z'/%3E%3C/svg%3E"),
+      var(--nc-t-painel-parado, none),
+      radial-gradient(90% 40% at 0% 0%, rgba(var(--nc-t-rosa-rgb), .28), transparent 70%),
+      radial-gradient(120% 45% at 100% 100%, rgba(var(--nc-t-rosa-rgb), .22), transparent 70%),
+      linear-gradient(180deg, var(--nc-azul) 0%, var(--nc-roxo) 100%) !important;
+  }
+}
+
+/* botões: o principal na cor do tema (o hover escurece para o tom profundo) */
+html:is(.nc-theme-nc2-ameixa, .nc-theme-nc2-noite, .nc-theme-nc2-fucsia, .nc-theme-nc2-rubi, .nc-theme-nc2-vermelho, .nc-theme-nc2-terracota, .nc-theme-nc2-ambar, .nc-theme-nc2-oliva, .nc-theme-nc2-esmeralda, .nc-theme-nc2-turquesa, .nc-theme-nc2-petroleo, .nc-theme-nc2-oceano, .nc-theme-nc2-anil, .nc-theme-nc2-grafite) body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2):not(#nc-t1) .t-Button--hot:hover {
+  box-shadow: 0 12px 28px -10px rgba(var(--nc-t-roxo-rgb), .55) !important;
+}
+
+html:is(.nc-theme-nc2-ameixa, .nc-theme-nc2-noite, .nc-theme-nc2-fucsia, .nc-theme-nc2-rubi, .nc-theme-nc2-vermelho, .nc-theme-nc2-terracota, .nc-theme-nc2-ambar, .nc-theme-nc2-oliva, .nc-theme-nc2-esmeralda, .nc-theme-nc2-turquesa, .nc-theme-nc2-petroleo, .nc-theme-nc2-oceano, .nc-theme-nc2-anil, .nc-theme-nc2-grafite) body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2):not(#nc-t1) :is(.t-Body-content, .t-Body-side, .t-Dialog-body, .t-DialogRegion, .t-Dialog-footer) .t-Button:not(.t-Button--hot):not(.t-Button--link):not(.t-Button--noUI):hover,
+html:is(.nc-theme-nc2-ameixa, .nc-theme-nc2-noite, .nc-theme-nc2-fucsia, .nc-theme-nc2-rubi, .nc-theme-nc2-vermelho, .nc-theme-nc2-terracota, .nc-theme-nc2-ambar, .nc-theme-nc2-oliva, .nc-theme-nc2-esmeralda, .nc-theme-nc2-turquesa, .nc-theme-nc2-petroleo, .nc-theme-nc2-oceano, .nc-theme-nc2-anil, .nc-theme-nc2-grafite) body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2):not(#nc-t1) .t-Body-title .t-Button:not(.t-Button--hot):hover {
+  border-color: rgba(var(--nc-t-roxo-rgb), .4) !important;
+}
+
+/* topo das regiões: o ícone com o degradê do tema e a sombra no destaque */
+html:is(.nc-theme-nc2-ameixa, .nc-theme-nc2-noite, .nc-theme-nc2-fucsia, .nc-theme-nc2-rubi, .nc-theme-nc2-vermelho, .nc-theme-nc2-terracota, .nc-theme-nc2-ambar, .nc-theme-nc2-oliva, .nc-theme-nc2-esmeralda, .nc-theme-nc2-turquesa, .nc-theme-nc2-petroleo, .nc-theme-nc2-oceano, .nc-theme-nc2-anil, .nc-theme-nc2-grafite) body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2):not(#nc-t1) .t-Region-headerIcon {
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, .28),
+    inset 0 0 0 1px rgba(255, 255, 255, .10),
+    0 2px 6px -2px rgba(var(--nc-t-roxo-rgb), .35),
+    0 12px 24px -12px rgba(var(--nc-t-rosa-rgb), .75) !important;
+}
+
+
+/* ╔════════════════════════════════════════════════════════════════════════════════════════╗
+   ║  NATCORP · CORES DO SISTEMA  —  a "roupa" da janela de cores e do simulador (CSS)        ║
+   ╚════════════════════════════════════════════════════════════════════════════════════════╝
+   Manual: brand/apex/MANUAL-APEX.md (parte 1 explica CSS do zero; parte 3, as cores).
+
+   O QUE FAZ   A aparência da janela "Cores do sistema" (os cartões com a miniatura do sistema)
+               e da moldura do simulador de aparelho. Quem cria e abre as duas é o
+               Natcorp_Temas.js; as cores de CADA TEMA não estão aqui (são geradas pelo
+               gerar-temas.py, logo acima deste trecho, no Natcorp_Temas.src.css).
+   ONDE ENTRA  Este arquivo NÃO sobe sozinho: o gerar-temas.py o junta ao Natcorp_Temas.src.css,
+               que entra no Natcorp_Style_Min.css (a folha que TODA página carrega).
+               Depois de mudar aqui: python3 gerar-temas.py, depois node gerar-app.mjs,
+               e suba o Natcorp_Style_Min.css.
+   ÍNDICE      [C1] A janela: fundo, caixa e cabeçalho    ← criada pelo JS em [J3]
+               [C2] Os cartões e a miniatura               ← criados pelo JS em [J3]
+               [C3] O pé: "Agora: …", Voltar ao Padrão, Pronto
+               [C4] Celular e menos movimento
+               [C5] Menu do usuário e a moldura do aparelho ← JS em [J4] e [J5]
+   LEITURA     Cada regra é  QUEM, e entre chaves, propriedade: valor;  — ex.: na regra de
+               .nc-tm-grade, "gap: 12px" é o espaço entre os cartões. @app dá prioridade sobre
+               o tema do APEX (aparece por extenso no arquivo que sobe). Estas regras não
+               dependem de marca posta pelo JS: valem em qualquer página, mas as peças só
+               existem quando a janela ou a moldura estão abertas.
+               var(--nc-roxo) é uma cor da marca pelo nome: acompanha o tema escolhido.
+               Toda linha termina em ; e toda chave aberta é fechada.
+   ════════════════════════════════════════════════════════════════════════════════════════ */
+
+/* ═══ [C1] A JANELA: FUNDO, CAIXA E CABEÇALHO ═══════════════════════════════════════════════
+   .nc-tm-fundo é o fundo escuro que cobre a tela; .nc-tm, a caixa; .nc-tm-cab, o título e a
+   frase; .nc-tm-x, o botão de fechar.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+/* ---------- a janela "Cores do sistema" (Natcorp_Temas.js) ----------
+   Cada cartão é uma MINIATURA do próprio sistema nas cores do tema — barra de cima, menu
+   lateral, uma região com o ícone e a linha, um botão: quem lê pouco escolhe pelo que vê.
+   A troca é na hora (atrás da janela o sistema já muda); "Pronto" só fecha. */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-tm-fundo {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 1000000 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 24px 16px !important;
+  background: rgba(27, 18, 56, .5) !important;
+  backdrop-filter: blur(3px) !important;
+  animation: nc-tm-entra .18s cubic-bezier(.16, 1, .3, 1) !important;
+}
+
+@keyframes nc-tm-entra {
+  from { background: rgba(27, 18, 56, 0); }
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-tm {
+  display: flex !important;
+  flex-direction: column !important;
+  width: min(940px, 100%) !important;
+  max-height: min(760px, 100%) !important;
+  overflow: hidden !important;
+  border-radius: 20px !important;
+  background: #fff !important;
+  box-shadow: 0 30px 70px -24px rgba(27, 18, 56, .55) !important;
+  font-family: "Inter NC", Inter, ui-sans-serif, system-ui, "Segoe UI", Arial, sans-serif !important;
+  color: #1B1238 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-tm-cab {
+  display: flex !important;
+  align-items: flex-start !important;
+  justify-content: space-between !important;
+  gap: 16px !important;
+  padding: 20px 22px 14px !important;
+  border-bottom: 1px solid #ECE7F3 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-tm-cab h2 {
+  margin: 0 !important;
+  font-family: inherit !important;
+  font-size: 20px !important;
+  font-weight: 800 !important;
+  line-height: 1.25 !important;
+  color: #1B1238 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-tm-cab p {
+  margin: 4px 0 0 !important;
+  font-size: 14px !important;
+  line-height: 1.45 !important;
+  color: #5E586E !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-tm-x {
+  display: grid !important;
+  flex: none !important;
+  place-items: center !important;
+  width: 40px !important;
+  height: 40px !important;
+  padding: 0 !important;
+  border: 1.5px solid #E2DCEC !important;
+  border-radius: 12px !important;
+  background: #fff !important;
+  color: #4A4460 !important;
+  cursor: pointer !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-tm-x:hover {
+  background: #F6F3FA !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-tm-x svg {
+  width: 18px !important;
+  height: 18px !important;
+}
+
+/* ═══ [C2] OS CARTÕES E A MINIATURA ════════════════════════════════════════════════════════
+   .nc-tm-grade é a grade de cartões; .nc-tm-cartao, cada tema (.is-on = o escolhido);
+   .nc-tm-mini, a miniatura do sistema. As cores da miniatura chegam do JS, em cada cartão:
+   --a (azul), --r (roxo), --m (ameixa, hoje sem uso aqui) e --s (rosa) daquele tema.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-tm-grade {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)) !important;
+  gap: 12px !important;
+  padding: 16px 22px 18px !important;
+  overflow-y: auto !important;
+  overscroll-behavior: contain !important;
+  scrollbar-width: thin !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-tm-cartao {
+  position: relative !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 10px !important;
+  padding: 10px 10px 12px !important;
+  border: 1.5px solid #E2DCEC !important;
+  border-radius: 16px !important;
+  background: #fff !important;
+  font: inherit !important;
+  text-align: left !important;
+  color: inherit !important;
+  cursor: pointer !important;
+  transition: border-color .15s, box-shadow .15s, transform .15s !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-tm-cartao:hover {
+  border-color: #BFB2D3 !important;
+  transform: translateY(-1px) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-tm-cartao.is-on {
+  border-color: var(--r) !important;
+  box-shadow: 0 0 0 2px var(--r), 0 14px 28px -18px var(--r) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-tm-cartao:focus-visible {
+  outline: 3px solid var(--s) !important;
+  outline-offset: 3px !important;
+}
+
+/* a miniatura: cabeçalho, menu, uma região com ícone + linha, um botão */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-tm-mini {
+  position: relative !important;
+  display: grid !important;
+  grid-template-columns: 22% 1fr !important;
+  grid-template-rows: 16px 1fr !important;
+  height: 92px !important;
+  overflow: hidden !important;
+  border-radius: 10px !important;
+  background: #F7F5FA !important;
+  box-shadow: inset 0 0 0 1px rgba(27, 18, 56, .06) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-tm-mini-topo {
+  grid-column: 1 / -1 !important;
+  background:
+    radial-gradient(40% 260% at 88% 0%, color-mix(in srgb, var(--s) 45%, transparent), transparent 70%),
+    linear-gradient(90deg, var(--a), var(--r)) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-tm-mini-lado {
+  background:
+    radial-gradient(90% 40% at 0% 0%, color-mix(in srgb, var(--s) 35%, transparent), transparent 70%),
+    linear-gradient(180deg, var(--a), var(--r)) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-tm-mini-lado::before {
+  content: "" !important;
+  display: block !important;
+  width: 60% !important;
+  height: 4px !important;
+  margin: 8px auto 0 !important;
+  border-radius: 2px !important;
+  background: rgba(255, 255, 255, .35) !important;
+  box-shadow: 0 8px 0 rgba(255, 255, 255, .2), 0 16px 0 rgba(255, 255, 255, .2) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-tm-mini-area {
+  padding: 8px !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-tm-mini-reg {
+  height: 100% !important;
+  border-radius: 7px !important;
+  background: #fff !important;
+  box-shadow: 0 1px 2px rgba(27, 18, 56, .08) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-tm-mini-reg-cab {
+  display: flex !important;
+  align-items: center !important;
+  gap: 5px !important;
+  padding: 5px 6px 4px !important;
+  border-bottom: 2px solid var(--s) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-tm-mini-ic {
+  width: 11px !important;
+  height: 11px !important;
+  border-radius: 3px !important;
+  background:
+    linear-gradient(var(--r), transparent),
+    linear-gradient(to left top, var(--s), transparent),
+    linear-gradient(to right bottom, var(--a), transparent) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-tm-mini-tit {
+  width: 46% !important;
+  height: 4px !important;
+  border-radius: 2px !important;
+  background: #CFC8DA !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-tm-mini-bt {
+  display: block !important;
+  width: 42% !important;
+  height: 12px !important;
+  margin: 9px 0 0 6px !important;
+  border-radius: 4px !important;
+  background: var(--r) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-tm-cartao.is-on .nc-tm-mini::after {
+  content: "" !important;
+  position: absolute !important;
+  top: 22px !important;
+  right: 6px !important;
+  width: 22px !important;
+  height: 22px !important;
+  border-radius: 50% !important;
+  background: var(--r) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 12.5l4 4 8-9'/%3E%3C/svg%3E") center / 14px no-repeat !important;
+  box-shadow: 0 0 0 2px #fff !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-tm-nome {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  margin: 0 !important;
+  font-size: 15px !important;
+  font-weight: 800 !important;
+  line-height: 1.25 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-tm-nome small {
+  padding: 1px 8px !important;
+  border-radius: 999px !important;
+  background: #F1ECF7 !important;
+  font-size: 11.5px !important;
+  font-weight: 800 !important;
+  color: #5E586E !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-tm-desc {
+  margin: -4px 0 0 !important;
+  font-size: 13px !important;
+  line-height: 1.4 !important;
+  color: #5E586E !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-tm-cores {
+  display: flex !important;
+  gap: 4px !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-tm-cores i {
+  width: 14px !important;
+  height: 14px !important;
+  border-radius: 50% !important;
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .08) !important;
+}
+
+/* ═══ [C3] O PÉ: "AGORA: …", VOLTAR AO PADRÃO, PRONTO ═══════════════════════════════════════ */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-tm-pe {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 10px 16px !important;
+  padding: 14px 22px 18px !important;
+  border-top: 1px solid #ECE7F3 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-tm-pe p {
+  margin: 0 !important;
+  font-size: 13.5px !important;
+  color: #5E586E !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-tm-pe p b {
+  color: #1B1238 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-tm-pe-acoes {
+  display: flex !important;
+  gap: 8px !important;
+  margin-left: auto !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-tm-padrao {
+  min-height: 42px !important;
+  padding: 0 14px !important;
+  border: 1.5px solid #E2DCEC !important;
+  border-radius: 12px !important;
+  background: #fff !important;
+  font: inherit !important;
+  font-size: 14px !important;
+  font-weight: 700 !important;
+  color: #4A4460 !important;
+  cursor: pointer !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-tm-padrao:hover {
+  background: #F6F3FA !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-tm-pronto {
+  min-height: 42px !important;
+  padding: 0 22px !important;
+  border: 0 !important;
+  border-radius: 12px !important;
+  background: var(--nc-roxo) !important;
+  font: inherit !important;
+  font-size: 14px !important;
+  font-weight: 800 !important;
+  color: #fff !important;
+  cursor: pointer !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-tm-pronto:hover {
+  background: var(--nc-roxo-hover) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) :is(.nc-tm-x, .nc-tm-padrao, .nc-tm-pronto):focus-visible {
+  outline: 3px solid var(--nc-rosa) !important;
+  outline-offset: 2px !important;
+}
+
+/* ═══ [C4] CELULAR E MENOS MOVIMENTO ═══════════════════════════════════════════════════════
+   @media (max-width: 640px) só vale no celular; prefers-reduced-motion, para quem pediu
+   "reduzir movimento" nas configurações do aparelho (acessibilidade).
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@media (max-width: 640px) {
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-tm-fundo {
+    align-items: flex-end !important;
+    padding: 0 !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-tm {
+    max-height: 92vh !important;
+    border-radius: 20px 20px 0 0 !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-tm-cab,
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-tm-grade,
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-tm-pe {
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-tm-grade {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 8px !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-tm-mini {
+    height: 72px !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-tm-desc {
+    display: none !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-tm-pe-acoes {
+    width: 100% !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-tm-pe-acoes > * {
+    flex: 1 1 auto !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-tm-fundo {
+    animation: none !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-tm-cartao {
+    transition: none !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-tm-cartao:hover {
+    transform: none !important;
+  }
+}
+
+/* ═══ [C5] MENU DO USUÁRIO E A MOLDURA DO APARELHO ══════════════════════════════════════════
+   Primeiro: os botões do time saem da barra de cima (os itens foram para o menu do usuário,
+   JS [J4]). Depois: .nc-sim é a moldura do simulador (JS [J5]); .nc-sim-aparelho, o
+   "aparelho"; .nc-sim-tela, a tela de dentro.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+/* Cores e os dispositivos foram para o menu do usuário (Natcorp_Temas.js): os botões do time
+   saem da barra de cima — só quando o menu já tem os itens (classe posta pelo .js) */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-tm-no-menu .t-Header-navBar :is(.nc-theme-navitem, .nc-preview-navitem) {
+  display: none !important;
+}
+
+/* ---------- a moldura do aparelho (Smartphone / Tablet) ----------
+   A página de verdade num iframe da largura do aparelho: o tema e as páginas respondem como
+   no celular. O aparelho é reduzido (transform) para caber; a largura de dentro não muda. */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-sim {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 999990 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  gap: 14px !important;
+  padding: 14px 24px 24px !important;
+  background:
+    radial-gradient(60% 50% at 50% 0%, rgba(var(--nc-t-rosa-rgb, 201, 87, 136), .18), transparent 70%),
+    #16112A !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-sim-barra {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 10px 16px !important;
+  font-family: "Inter NC", Inter, ui-sans-serif, system-ui, "Segoe UI", Arial, sans-serif !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-sim-modos {
+  display: inline-flex !important;
+  padding: 4px !important;
+  border-radius: 12px !important;
+  background: rgba(255, 255, 255, .08) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-sim-modos button {
+  min-height: 36px !important;
+  padding: 0 14px !important;
+  border: 0 !important;
+  border-radius: 9px !important;
+  background: none !important;
+  font: inherit !important;
+  font-size: 14px !important;
+  font-weight: 700 !important;
+  color: rgba(255, 255, 255, .78) !important;
+  cursor: pointer !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-sim-modos button.is-on {
+  background: #fff !important;
+  color: #1B1238 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-sim-medida {
+  font-size: 13px !important;
+  font-variant-numeric: tabular-nums !important;
+  color: rgba(255, 255, 255, .62) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-sim-sair {
+  min-height: 38px !important;
+  padding: 0 16px !important;
+  border: 1.5px solid rgba(255, 255, 255, .3) !important;
+  border-radius: 12px !important;
+  background: none !important;
+  font: inherit !important;
+  font-size: 14px !important;
+  font-weight: 800 !important;
+  color: #fff !important;
+  cursor: pointer !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-sim-sair:hover {
+  background: rgba(255, 255, 255, .1) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) :is(.nc-sim-modos button, .nc-sim-sair):focus-visible {
+  outline: 3px solid var(--nc-rosa) !important;
+  outline-offset: 2px !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-sim-palco {
+  position: relative !important;
+  flex: none !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-sim-aparelho {
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  box-sizing: border-box !important;
+  padding: 14px !important;
+  border-radius: 46px !important;
+  background: #0B0816 !important;
+  box-shadow: 0 0 0 2px #3A3350, 0 40px 80px -30px rgba(0, 0, 0, .7) !important;
+  transform-origin: 0 0 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-sim[data-modo="tablet"] .nc-sim-aparelho {
+  border-radius: 34px !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-sim-tela {
+  display: block !important;
+  width: 100% !important;
+  height: 100% !important;
+  border: 0 !important;
+  border-radius: 34px !important;
+  background: #fff !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-sim[data-modo="tablet"] .nc-sim-tela {
+  border-radius: 22px !important;
+}
+
+/* com a moldura aberta, a página de trás não rola */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-sim-aberto {
+  overflow: hidden !important;
+}

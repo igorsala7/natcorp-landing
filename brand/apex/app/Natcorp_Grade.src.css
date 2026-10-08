@@ -1,0 +1,1571 @@
+/* ╔════════════════════════════════════════════════════════════════════════════════════════╗
+   ║  NATCORP · GRADE PADRÃO  —  a "roupa" da lista e da gaveta de todo Interactive Grid (CSS) ║
+   ╚════════════════════════════════════════════════════════════════════════════════════════╝
+   Guia: GRADE-MANUTENCAO.md. Quem monta é o Natcorp_Grade.js; aqui é só a aparência.
+   Edite ESTE arquivo (a fonte) e gere com  node brand/apex/app/gerar-app.mjs.
+
+   AS MARCAS QUE O JS PÕE
+     .nc-gr-on       na região do grid em modo LISTA (o grid original fica escondido)
+     .nc-gr-tabela   na região em modo TABELA (o grid original de volta + "Ver como lista")
+     .nc-gr-motor    na região enquanto ela está DENTRO da gaveta (só a vista de um registro)
+   CORES  neutros; o roxo do tema só na ação principal, no foco e no registro alterado.
+
+   ÍNDICE  [GC1] cores · [GC2] a barra · [GC3] as linhas · [GC4] vazio e "mais" · [GC5] a gaveta
+           [GC6] o formulário do grid dentro da gaveta · [GC7] aviso · [GC8] celular
+   ════════════════════════════════════════════════════════════════════════════════════════ */
+
+/* ═══ [GC1] CORES E PEÇAS ══════════════════════════════════════════════════════════════════ */
+@app :is(.nc-gr, .nc-gr-gaveta, .nc-gr-aviso, .nc-gr-volta, .nc-gr-menu) {
+  --gr-acento: var(--nc-roxo, #511C76);
+  --gr-acento-fundo: #F3EEF8;
+  --gr-tinta: var(--nc-tinta, #1E1530);
+  --gr-cinza: #5E566C;
+  --gr-linha: #E6E1EC;
+  --gr-linha-forte: #CFC7DA;
+  --gr-painel: #F8F6FA;
+  --gr-ruim: #B42318;
+  --gr-bom: #1F7A4D;
+}
+
+@app :is(.nc-gr, .nc-gr-gaveta, .nc-gr-menu) :is(*, *::before, *::after) {
+  box-sizing: border-box;
+}
+
+@app .nc-gr-ic {
+  width: 16px;
+  height: 16px;
+  flex: none;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.9;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+@app .nc-gr-vis {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+@app .nc-gr-espaco {
+  flex: 1 1 auto;
+}
+
+@app .nc-gr-bt {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 36px;
+  padding: 0 12px;
+  border: 1px solid var(--nc-borda-botao, rgba(81, 28, 118, .34));
+  border-radius: 9px;
+  background: #fff;
+  font: inherit;
+  font-size: 13.5px;
+  font-weight: 700;
+  white-space: nowrap;
+  color: var(--gr-acento);
+  cursor: pointer;
+  transition: background-color .15s ease-out, border-color .15s ease-out;
+}
+
+@app .nc-gr-bt:hover {
+  background: var(--gr-acento-fundo);
+}
+
+@app .nc-gr-bt:focus-visible,
+@app .nc-gr-l:focus-visible,
+@app .nc-gr-busca:focus-within {
+  outline: 2px solid var(--gr-acento);
+  outline-offset: 1px;
+}
+
+@app .nc-gr-bt--forte {
+  border-color: var(--gr-acento);
+  background: var(--gr-acento);
+  color: #fff;
+}
+
+@app .nc-gr-bt--forte:hover {
+  background: color-mix(in srgb, var(--gr-acento) 86%, #000);
+}
+
+@app .nc-gr-bt--sem {
+  border-color: transparent;
+  background: transparent;
+}
+
+@app .nc-gr-bt--perigo {
+  border-color: #F1C4BF;
+  color: var(--gr-ruim);
+}
+
+@app .nc-gr-bt--perigo:hover {
+  background: #FEF1F0;
+}
+
+@app .nc-gr-bt--icone {
+  width: 36px;
+  padding: 0;
+  border-color: transparent;
+  background: transparent;
+  color: var(--gr-cinza);
+}
+
+@app .nc-gr-bt:disabled {
+  cursor: not-allowed;
+  opacity: .45;
+}
+
+@app .nc-gr-bt[hidden] {
+  display: none;
+}
+
+@app .nc-gr-tag {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 1px 7px;
+  border-radius: 999px;
+  background: #EFECF3;
+  font-size: 11px;
+  font-style: normal;
+  font-weight: 700;
+  vertical-align: 1px;
+  color: var(--gr-cinza);
+}
+
+@app .nc-gr-tag--novo {
+  background: var(--gr-acento-fundo);
+  color: var(--gr-acento);
+}
+
+/* o grid original some no modo lista (continua lá: é ele que carrega, filtra e grava) */
+@app .nc-gr-on:not(.nc-gr-motor) > .t-Region-bodyWrap .a-IG,
+@app .nc-gr-on:not(.nc-gr-motor) .a-IG {
+  position: absolute;
+  left: -20000px;
+  width: var(--gr-ig-w, 1100px);
+}
+
+/* modo Tabela: o grid original de volta; da lista fica só a chave Lista | Tabela, no mesmo lugar */
+@app .nc-gr-tabela .nc-gr > :not(.nc-gr-barra),
+@app .nc-gr-tabela .nc-gr-barra > :not(.nc-gr-ctl) {
+  display: none;
+}
+
+/* modo Tabela sem cabeçalho de região: a barra da lista continua à vista só com a chave, no mesmo
+   canto de cima à direita do modo Lista */
+@app .nc-gr-tabela .nc-gr-barra {
+  justify-content: flex-end;
+}
+
+@app .nc-gr-tabela .nc-gr--respiro {
+  padding-bottom: 0;
+}
+
+/* com cabeçalho de região visível a chave mora nele nos dois modos; no modo Tabela a caixa some */
+@app .nc-gr-tabela.nc-gr-chave-no-cab .nc-gr {
+  display: none;
+}
+
+@app .nc-gr-chave-no-cab > .t-Region-header .nc-gr-ctl {
+  --gr-acento: var(--nc-roxo, #511C76);
+  --gr-acento-fundo: #F3EEF8;
+  --gr-tinta: var(--nc-tinta, #1E1530);
+  --gr-cinza: #5E566C;
+  align-self: center;
+  margin-left: auto;
+}
+
+/* respiro: região sem padding nas laterais (o JS mede) */
+@app .nc-gr--respiro {
+  padding: 4px 16px 16px;
+}
+
+/* ═══ [GC2] A BARRA DA LISTA ═══════════════════════════════════════════════════════════════
+   contagem · busca (no servidor) · Lista|Tabela · Adicionar                                  */
+@app .nc-gr {
+  font-size: 14px;
+  line-height: 1.35;
+  color: var(--gr-tinta);
+}
+
+@app .nc-gr-barra {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 10px;
+  padding: 0 0 12px;
+}
+
+@app .nc-gr-conta {
+  margin: 0 6px 0 0;
+  font-size: 13.5px;
+  color: var(--gr-cinza);
+}
+
+@app .nc-gr-conta b {
+  font-size: 16px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  color: var(--gr-tinta);
+}
+
+@app .nc-gr-busca {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  width: min(340px, 100%);
+  height: 38px;
+  margin: 0;
+  padding: 0 6px 0 12px;
+  border: 1px solid var(--gr-linha-forte);
+  border-radius: 10px;
+  background: #fff;
+  color: var(--gr-cinza);
+  transition: border-color .15s ease-out, box-shadow .15s ease-out;
+}
+
+@app .nc-gr-busca:focus-within {
+  border-color: var(--gr-acento);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--gr-acento) 14%, transparent);
+  outline: 0;
+}
+
+@app .nc-gr-busca input {
+  flex: 1 1 auto;
+  min-width: 0;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  font: inherit;
+  color: var(--gr-tinta);
+  outline: 0;
+}
+
+@app .nc-gr-busca input::placeholder {
+  color: #847C92;
+}
+
+@app .nc-gr-busca input::-webkit-search-cancel-button {
+  display: none;
+}
+
+@app .nc-gr-limpa {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--gr-cinza);
+  cursor: pointer;
+}
+
+@app .nc-gr-limpa:hover {
+  background: #F0EDF4;
+}
+
+@app .nc-gr-limpa[hidden] {
+  display: none;
+}
+
+@app .nc-gr-ctl {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+@app .nc-gr-expande {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 36px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 10px;
+  background: #F0EDF4;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  white-space: nowrap;
+  color: var(--gr-cinza);
+  cursor: pointer;
+  transition: background-color .15s ease-out, color .15s ease-out;
+}
+
+@app .nc-gr-expande:hover {
+  color: var(--gr-tinta);
+}
+
+@app .nc-gr-expande[aria-pressed="true"] {
+  background: var(--gr-acento-fundo);
+  color: var(--gr-acento);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--gr-acento) 30%, transparent);
+}
+
+@app .nc-gr-expande:focus-visible {
+  outline: 2px solid var(--gr-acento);
+  outline-offset: 1px;
+}
+
+@app .nc-gr-vistas {
+  display: inline-flex;
+  padding: 3px;
+  border-radius: 10px;
+  background: #F0EDF4;
+}
+
+@app .nc-gr-vistas button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 30px;
+  padding: 0 11px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--gr-cinza);
+  cursor: pointer;
+}
+
+@app .nc-gr-vistas button[aria-pressed="true"] {
+  background: #fff;
+  color: var(--gr-tinta);
+  box-shadow: 0 1px 2px rgba(30, 21, 48, .14);
+}
+
+@app .nc-gr-vistas button:focus-visible {
+  outline: 2px solid var(--gr-acento);
+  outline-offset: 1px;
+}
+
+/* ═══ [GC3] A TABELA: CABEÇALHO E LINHAS ═══════════════════════════════════════════════════
+   O mesmo molde (--gr-tpl, montado pelo JS com a largura das colunas do grid) no cabeçalho e
+   em cada linha: as colunas ficam alinhadas. O cabeçalho gruda abaixo do que é fixo na página
+   (--gr-topo). overflow: clip (não hidden) para o "grudar" funcionar.                         */
+/* a tabela é uma JANELA que rola nos dois sentidos: o cabeçalho gruda no alto dela, a 1ª coluna
+   gruda à esquerda, e as barras de rolagem ficam sempre ao alcance (mesmo com 400+ registros) */
+@app .nc-gr-tab {
+  position: relative;
+  max-height: max(320px, calc(100vh - 230px));
+  border: 1px solid var(--gr-linha);
+  border-radius: 14px;
+  background: #fff;
+  overflow: auto;
+  box-shadow: 0 1px 2px rgba(30, 21, 48, .04);
+  scrollbar-width: thin;
+  scrollbar-color: #CFC7DA transparent;
+}
+
+@app .nc-gr-cab,
+@app .nc-gr-lista {
+  width: max-content;
+  min-width: 100%;
+}
+
+@app .nc-gr-cab,
+@app .nc-gr-l {
+  display: grid;
+  grid-template-columns: var(--gr-tpl, minmax(200px, 2fr) repeat(4, minmax(90px, 1fr)) 28px);
+  align-items: center;
+}
+
+@app .nc-gr-cab {
+  position: sticky;
+  top: 0;
+  z-index: 3;
+  min-height: 40px;
+  border-bottom: 1px solid var(--gr-linha-forte);
+  background: var(--gr-painel);
+}
+
+@app .nc-gr-thc {
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  height: 40px;
+}
+
+@app .nc-gr-thc > .nc-gr-th {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+/* coluna que o grid não ordena: o título só arrasta (sem a seta de ordem) */
+@app .nc-gr-th.is-sem-ordem {
+  cursor: grab;
+}
+
+/* o botão de opções da coluna: aparece ao passar o mouse; fica à vista com filtro ou congelamento */
+@app .nc-gr-thm {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  margin-right: 8px;
+  padding: 0;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--gr-cinza);
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity .12s ease-out, background-color .12s ease-out;
+}
+
+@app .nc-gr-thc:hover .nc-gr-thm,
+@app .nc-gr-thm:focus-visible,
+@app .nc-gr-thm.is-vivo,
+@app .nc-gr-thm[aria-expanded="true"] {
+  opacity: 1;
+}
+
+@app .nc-gr-thm:hover {
+  background: #EAE5F0;
+  color: var(--gr-tinta);
+}
+
+@app .nc-gr-thm:focus-visible {
+  outline: 2px solid var(--gr-acento);
+  outline-offset: -1px;
+}
+
+@app .nc-gr-thc.is-filtro .nc-gr-thm,
+@app .nc-gr-thc.is-filtro .nc-gr-th {
+  color: var(--gr-acento);
+}
+
+@app .nc-gr-thm .nc-gr-ic {
+  width: 15px;
+  height: 15px;
+}
+
+/* mudar a posição arrastando o título */
+@app .nc-gr-thc.is-arrastada {
+  opacity: .45;
+}
+
+@app .nc-gr.is-movendo,
+@app .nc-gr.is-movendo * {
+  cursor: grabbing;
+  user-select: none;
+}
+
+@app .nc-gr-solta {
+  position: absolute;
+  top: 0;
+  z-index: 6;
+  width: 3px;
+  margin-left: -1px;
+  border-radius: 2px;
+  background: var(--gr-acento);
+  pointer-events: none;
+}
+
+@app .nc-gr-thc.is-movida {
+  animation: nc-gr-movida .9s ease-out;
+}
+
+@keyframes nc-gr-movida {
+  0% { background-color: var(--gr-acento-fundo); }
+  100% { background-color: var(--gr-painel); }
+}
+
+/* a borda do título: arrastar muda a largura, dois cliques ajustam ao conteúdo */
+@app .nc-gr-arrasta {
+  position: absolute;
+  top: 6px;
+  right: -5px;
+  bottom: 6px;
+  z-index: 2;
+  width: 10px;
+  cursor: col-resize;
+  touch-action: none;
+}
+
+@app .nc-gr-arrasta::after {
+  content: "";
+  position: absolute;
+  top: 2px;
+  bottom: 2px;
+  left: 4px;
+  width: 2px;
+  border-radius: 1px;
+  background: var(--gr-linha-forte);
+  opacity: .55;
+  transition: opacity .12s ease-out, background-color .12s ease-out;
+}
+
+@app .nc-gr-arrasta:hover::after,
+@app .nc-gr-arrasta:focus-visible::after,
+@app .is-arrastando .nc-gr-arrasta::after {
+  opacity: 1;
+  background: var(--gr-acento);
+}
+
+@app .nc-gr-arrasta:focus-visible {
+  outline: 0;
+}
+
+@app .nc-gr.is-arrastando,
+@app .nc-gr.is-arrastando * {
+  cursor: col-resize;
+  user-select: none;
+}
+
+@app .nc-gr-th {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+  height: 40px;
+  padding: 0 12px;
+  border: 0;
+  background: transparent;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  text-align: left;
+  letter-spacing: .01em;
+  color: var(--gr-cinza);
+  cursor: pointer;
+}
+
+@app .nc-gr-thc:first-child .nc-gr-th {
+  padding-left: 16px;
+}
+
+@app .nc-gr-thc--fim {
+  height: 40px;
+}
+
+@app .nc-gr-th span {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+@app .nc-gr-th .nc-gr-ic {
+  width: 14px;
+  height: 14px;
+  opacity: 0;
+  transition: opacity .12s ease-out;
+}
+
+@app .nc-gr-th:hover {
+  color: var(--gr-tinta);
+}
+
+@app .nc-gr-th:hover .nc-gr-ic,
+@app .nc-gr-th:focus-visible .nc-gr-ic {
+  opacity: .55;
+}
+
+@app .nc-gr-th.is-ordem {
+  color: var(--gr-acento);
+}
+
+@app .nc-gr-th.is-ordem .nc-gr-ic {
+  opacity: 1;
+}
+
+@app .nc-gr-th:focus-visible {
+  outline: 2px solid var(--gr-acento);
+  outline-offset: -2px;
+}
+
+@app .nc-gr-lista {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+@app .nc-gr-l {
+  min-height: 50px;
+  border-bottom: 1px solid #EFECF3;
+  cursor: pointer;
+  transition: background-color .12s ease-out;
+}
+
+@app .nc-gr-l:last-child {
+  border-bottom: 0;
+}
+
+@app .nc-gr-l:hover {
+  background: #FAF8FC;
+}
+
+@app .nc-gr-l:focus-visible {
+  outline: 2px solid var(--gr-acento);
+  outline-offset: -2px;
+}
+
+@app .nc-gr-td {
+  min-width: 0;
+  padding: 8px 12px;
+  align-self: stretch;
+  align-content: center;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-variant-numeric: tabular-nums;
+}
+
+@app .nc-gr-td--tit {
+  padding-left: 16px;
+  font-weight: 700;
+}
+
+/* colunas CONGELADAS (as N primeiras; o JS põe .is-cong e o "left" de cada uma): presas à esquerda
+   ao rolar para o lado; a última delas ganha a sombra */
+@app .nc-gr-thc.is-cong,
+@app .nc-gr-td.is-cong {
+  position: sticky;
+  z-index: 2;
+}
+
+@app .nc-gr-thc.is-cong {
+  z-index: 4;
+  background: var(--gr-painel);
+}
+
+@app .nc-gr-td.is-cong {
+  background: #fff;
+}
+
+@app .nc-gr-l:hover .nc-gr-td.is-cong {
+  background: #FAF8FC;
+}
+
+@app .nc-gr-l.is-mudou .nc-gr-td.is-cong {
+  background: #FBF9FD;
+}
+
+@app .nc-gr-l.is-aberto .nc-gr-td.is-cong {
+  background: var(--gr-acento-fundo);
+}
+
+@app .nc-gr-tab.is-rolado .is-cong-fim {
+  box-shadow: 1px 0 0 var(--gr-linha), 8px 0 10px -8px rgba(30, 21, 48, .22);
+}
+
+@app .nc-gr-td {
+  display: flex;
+  align-items: center;
+}
+
+@app .nc-gr-tx {
+  display: block;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+@app .nc-gr-seta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #A39BB0;
+}
+
+@app .nc-gr-l:hover .nc-gr-seta {
+  color: var(--gr-acento);
+}
+
+@app .nc-gr-l:hover .nc-gr-seta .nc-gr-ic {
+  transform: translateX(2px);
+}
+
+@app .nc-gr-seta .nc-gr-ic {
+  transition: transform .15s ease-out;
+}
+
+/* código de "código - descrição": mais leve, a descrição é o que se lê */
+@app .nc-gr-cod {
+  display: inline-block;
+  margin-right: 6px;
+  padding: 1px 6px;
+  border-radius: 5px;
+  background: #F1EEF5;
+  font-size: 11.5px;
+  font-weight: 700;
+  vertical-align: 1px;
+  color: var(--gr-cinza);
+}
+
+@app .nc-gr-nada {
+  color: #B5AEC0;
+}
+
+/* selos de resultado/situação */
+@app .nc-gr-selo {
+  display: inline-block;
+  max-width: 100%;
+  padding: 2px 9px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  vertical-align: 1px;
+}
+
+@app .nc-gr-selo--bom {
+  background: #E6F4EC;
+  color: #17643F;
+}
+
+@app .nc-gr-selo--ruim {
+  background: #FDECEA;
+  color: #9B1C12;
+}
+
+@app .nc-gr-selo--aviso {
+  background: #FFF3DC;
+  color: #7A4E00;
+}
+
+@app .nc-gr-selo--neutro {
+  background: #EFECF3;
+  color: var(--gr-cinza);
+}
+
+@app .nc-gr-l.is-mudou {
+  background: #FBF9FD;
+}
+
+/* o registro que está aberto na gaveta */
+@app .nc-gr-l.is-aberto,
+@app .nc-gr-l.is-aberto:hover {
+  background: var(--gr-acento-fundo);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--gr-acento) 35%, transparent);
+}
+
+@app .nc-gr-l.is-aberto .nc-gr-td--tit,
+@app .nc-gr-l.is-aberto .nc-gr-seta {
+  color: var(--gr-acento);
+}
+
+/* carregando: linhas de esqueleto que pulsam (estado, não enfeite) */
+@app .nc-gr-l--esq {
+  cursor: default;
+}
+
+@app .nc-gr-l--esq:hover {
+  background: transparent;
+}
+
+@app .nc-gr-l--esq .nc-gr-td i {
+  display: block;
+  width: 70%;
+  height: 10px;
+  border-radius: 5px;
+  background: linear-gradient(90deg, #EFECF3 0%, #F7F5FA 50%, #EFECF3 100%);
+  background-size: 200% 100%;
+  animation: nc-gr-pulso 1.2s ease-in-out infinite;
+}
+
+@app .nc-gr-l--esq .nc-gr-td:first-child i {
+  width: 85%;
+}
+
+@keyframes nc-gr-pulso {
+  0% { background-position: 100% 0; }
+  100% { background-position: -100% 0; }
+}
+
+/* filtros ativos (etiquetas acima da tabela) */
+@app .nc-gr-chips {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 8px;
+  margin: 0 0 10px;
+}
+
+@app .nc-gr-chips[hidden] {
+  display: none;
+}
+
+@app .nc-gr-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  max-width: 100%;
+  min-height: 30px;
+  padding: 0 4px 0 10px;
+  border-radius: 999px;
+  background: var(--gr-acento-fundo);
+  font-size: 13px;
+  color: var(--gr-acento);
+}
+
+@app .nc-gr-chip > span {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  color: var(--gr-tinta);
+}
+
+@app .nc-gr-chip b {
+  color: var(--gr-acento);
+}
+
+@app .nc-gr-chip button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--gr-acento);
+  cursor: pointer;
+}
+
+@app .nc-gr-chip button:hover {
+  background: rgba(81, 28, 118, .12);
+}
+
+/* ═══ [GC3b] O MENU DA COLUNA (painel solto na página) ═════════════════════════════════════ */
+@app .nc-gr-menu {
+  position: fixed;
+  z-index: 1000;
+  display: grid;
+  width: 320px;
+  max-width: calc(100vw - 16px);
+  max-height: calc(100vh - 16px);
+  overflow: auto;
+  padding: 6px 0;
+  border: 1px solid var(--gr-linha);
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 18px 40px -16px rgba(30, 21, 48, .42);
+  font-size: 13.5px;
+  color: var(--gr-tinta);
+}
+
+@app .nc-gr-menu-tit {
+  margin: 4px 14px 2px;
+  font-size: 14px;
+  font-weight: 800;
+}
+
+@app .nc-gr-menu-sec {
+  display: grid;
+  gap: 6px;
+  padding: 8px 14px;
+  border-top: 1px solid #EFECF3;
+}
+
+@app .nc-gr-menu-sec:first-of-type {
+  border-top: 0;
+}
+
+@app .nc-gr-menu-rot {
+  margin: 0;
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--gr-cinza);
+}
+
+@app .nc-gr-seg {
+  display: grid;
+  grid-template-columns: repeat(3, auto);   /* cada opção do tamanho do nome: "Sem ordem" não quebra */
+  gap: 2px;
+  padding: 2px;
+  border-radius: 9px;
+  background: #F0EDF4;
+}
+
+@app .nc-gr-seg button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  min-height: 30px;
+  padding: 0 8px;
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  font: inherit;
+  font-size: 12px;
+  white-space: nowrap;
+  font-weight: 700;
+  color: var(--gr-cinza);
+  cursor: pointer;
+}
+
+@app .nc-gr-seg button[aria-pressed="true"] {
+  background: #fff;
+  color: var(--gr-acento);
+  box-shadow: 0 1px 2px rgba(30, 21, 48, .14);
+}
+
+@app .nc-gr-seg .nc-gr-ic {
+  width: 13px;
+  height: 13px;
+}
+
+@app .nc-gr-menu-busca {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 32px;
+  margin: 0;
+  padding: 0 8px;
+  border: 1px solid var(--gr-linha-forte);
+  border-radius: 8px;
+  color: var(--gr-cinza);
+}
+
+@app .nc-gr-menu-busca input {
+  flex: 1 1 auto;
+  min-width: 0;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  font: inherit;
+  color: var(--gr-tinta);
+  outline: 0;
+}
+
+@app .nc-gr-menu-vals {
+  display: grid;
+  max-height: 220px;
+  overflow: auto;
+  margin: 0 -6px;
+}
+
+@app .nc-gr-menu-val {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 32px;
+  margin: 0;
+  padding: 0 6px;
+  border-radius: 7px;
+  cursor: pointer;
+}
+
+@app .nc-gr-menu-val[hidden] {
+  display: none;
+}
+
+@app .nc-gr-menu-val:hover {
+  background: #F7F5FA;
+}
+
+@app .nc-gr-menu-val input {
+  flex: none;
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  accent-color: var(--gr-acento);
+}
+
+@app .nc-gr-menu-val span {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+@app .nc-gr-menu-val em {
+  flex: none;
+  font-size: 11.5px;
+  font-style: normal;
+  font-variant-numeric: tabular-nums;
+  color: var(--gr-cinza);
+}
+
+@app .nc-gr-menu-acoes {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding-top: 2px;
+}
+
+@app .nc-gr-menu-acoes .nc-gr-bt {
+  min-height: 32px;
+}
+
+@app .nc-gr-menu-nota,
+@app .nc-gr-menu-nada {
+  margin: 0;
+  font-size: 12px;
+  color: var(--gr-cinza);
+}
+
+@app .nc-gr-menu-lista {
+  gap: 0;
+  padding: 6px 6px;
+}
+
+@app .nc-gr-menu-lista button {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 34px;
+  padding: 0 8px;
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  font: inherit;
+  text-align: left;
+  color: var(--gr-tinta);
+  cursor: pointer;
+}
+
+@app .nc-gr-menu-lista button:hover:not(:disabled),
+@app .nc-gr-menu-lista button:focus-visible {
+  background: var(--gr-acento-fundo);
+  outline: 0;
+}
+
+@app .nc-gr-menu-lista button:disabled {
+  cursor: default;
+  opacity: .4;
+}
+
+@app .nc-gr-menu-lista .nc-gr-ic {
+  color: var(--gr-cinza);
+}
+
+@app .nc-gr-menu :is(button, input):focus-visible {
+  outline: 2px solid var(--gr-acento);
+  outline-offset: 1px;
+}
+
+/* a caixa de procurar: o anel vai na moldura, não no campo de dentro (ficava borda dupla) */
+@app .nc-gr-menu .nc-gr-menu-busca input:focus-visible {
+  outline: 0;
+}
+
+@app .nc-gr-menu-busca:focus-within {
+  border-color: var(--gr-acento);
+  box-shadow: 0 0 0 1px var(--gr-acento);
+}
+
+/* ═══ [GC4] VAZIO E RODAPÉ ═════════════════════════════════════════════════════════════════ */
+@app .nc-gr-vazio {
+  display: grid;
+  justify-items: center;
+  gap: 10px;
+  padding: 36px 16px;
+  text-align: center;
+  color: var(--gr-cinza);
+}
+
+@app .nc-gr-vazio > .nc-gr-ic {
+  width: 30px;
+  height: 30px;
+  color: #A39BB0;
+}
+
+@app .nc-gr-vazio p {
+  margin: 0;
+}
+
+@app .nc-gr-rodape {
+  display: flex;
+  justify-content: center;
+  padding: 10px 0 0;
+}
+
+@app .nc-gr-mais {
+  margin: 0;
+  font-size: 12.5px;
+  font-variant-numeric: tabular-nums;
+  color: var(--gr-cinza);
+}
+
+@app .nc-gr-mais:empty {
+  display: none;
+}
+
+@app .nc-gr-sentinela {
+  display: block;
+  height: 1px;
+}
+
+@app .nc-gr-link {
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  color: var(--gr-acento);
+  cursor: pointer;
+}
+
+@app .nc-gr-tag--busca {
+  background: var(--gr-acento-fundo);
+  color: var(--gr-acento);
+}
+
+/* ═══ [GC5] A GAVETA ═══════════════════════════════════════════════════════════════════════ */
+@app .nc-gr-fundo {
+  position: fixed;
+  inset: 0;
+  z-index: 900;
+  background: rgba(30, 21, 48, .32);
+  visibility: hidden;
+  opacity: .0001;
+  transition: opacity .2s ease-out, visibility 0s linear .2s;
+}
+
+@app .nc-gr-fundo.is-aberta {
+  visibility: visible;
+  opacity: 1;
+  transition: opacity .2s ease-out;
+}
+
+@app .nc-gr-gaveta {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 901;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  width: min(560px, 100vw);
+  background: #fff;
+  box-shadow: -18px 0 40px -20px rgba(30, 21, 48, .45);
+  font-size: 14px;
+  color: var(--gr-tinta);
+  visibility: hidden;
+  transform: translateX(24px);
+  opacity: .0001;
+  transition: transform .22s cubic-bezier(.22, 1, .36, 1), opacity .2s ease-out, visibility 0s linear .22s;
+  outline: 0;
+}
+
+@app .nc-gr-gaveta.is-aberta {
+  visibility: visible;
+  transform: none;
+  opacity: 1;
+  transition: transform .22s cubic-bezier(.22, 1, .36, 1), opacity .2s ease-out;
+}
+
+@app .nc-gr-gcab {
+  display: flex;
+  align-items: flex-start;
+  gap: 4px;
+  padding: 14px 12px 12px 20px;
+  border-bottom: 1px solid var(--gr-linha);
+}
+
+@app .nc-gr-gtits {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+@app .nc-gr-gsec {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--gr-cinza);
+}
+
+@app .nc-gr-gcab h2 {
+  margin: 2px 0 0;
+  font-size: 18px;
+  font-weight: 800;
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+}
+
+@app .nc-gr-gpos {
+  margin: 2px 0 0;
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  color: var(--gr-cinza);
+}
+
+@app .nc-gr-ganda {
+  display: flex;
+}
+
+@app .nc-gr-gcorpo {
+  overflow: auto;
+  overscroll-behavior: contain;
+  padding: 6px 20px 20px;
+}
+
+@app .nc-gr-gpe {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+  border-top: 1px solid var(--gr-linha);
+  background: #fff;
+}
+
+@app .nc-gr-gpe .nc-gr-bt--forte {
+  min-width: 130px;
+  min-height: 40px;
+}
+
+@app .nc-gr-gaveta.is-ocupada .nc-gr-gcorpo {
+  pointer-events: none;
+  opacity: .6;
+}
+
+/* ═══ [GC6] O FORMULÁRIO DO GRID DENTRO DA GAVETA ══════════════════════════════════════════
+   A região do grid está dentro da gaveta: só a "vista de um registro" aparece. A RV reescreve
+   as classes dos campos a cada registro, então as regras seguem a ESTRUTURA (u-Form > campo).  */
+@app .nc-gr-gcorpo .t-Region.nc-gr-motor:not(#nc-gr-x):not(#nc-gr-y) {
+  margin: 0;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  background: transparent;
+}
+
+@app .nc-gr-gcorpo .nc-gr-motor > .t-Region-header,
+@app .nc-gr-gcorpo .nc-gr-motor :is(.nc-gr, .nc-gr-volta, .a-IG-header, .js-stickyWidget-placeholder, .a-GV, .a-RV-toolbar, .a-IG-footer, .t-Region-buttons) {
+  display: none;
+}
+
+@app .nc-gr-gcorpo .a-IG.nc-gr-motor,
+@app .nc-gr-gcorpo .nc-gr-motor :is(.t-Region-bodyWrap, .t-Region-body, .a-IG, .a-IG-body, .a-IG-contentContainer, .a-RV, .a-RV-body) {
+  position: static;
+  width: auto;
+  height: auto;
+  min-height: 0;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  box-shadow: none;
+  background: transparent;
+  overflow: visible;
+}
+
+@app .nc-gr-motor .a-RV .u-Form {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 4px 16px;
+  width: 100%;
+}
+
+@app .nc-gr-motor .a-RV .u-Form > * {
+  min-width: 0;
+  margin: 0;
+}
+
+/* campos longos ocupam a linha toda */
+@app .nc-gr-motor .a-RV .u-Form > :has(textarea, .apex-item-group--rc, .a-GV-columnItem--textarea) {
+  grid-column: 1 / -1;
+}
+
+@app .nc-gr-motor .a-RV .u-Form-fieldContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  padding: 6px 0;
+}
+
+@app .nc-gr-motor .a-RV .u-Form-labelContainer {
+  width: auto;
+  min-width: 0;
+  padding: 0 0 4px;
+  text-align: left;
+}
+
+@app .nc-gr-motor .a-RV .u-Form-label {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--gr-cinza);
+}
+
+@app .nc-gr-motor .a-RV .u-Form-inputContainer {
+  width: 100%;
+  padding: 0;
+}
+
+/* o campo e o botão dele (calendário, lista) na mesma linha */
+@app .nc-gr-motor .a-RV .u-Form-inputContainer > .a-GV-columnItem {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  width: 100%;
+}
+
+@app .nc-gr-motor .a-RV .a-GV-columnItem > :is(input, select, textarea, .apex-item-group, .select2) {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+@app .nc-gr-motor .a-RV .a-GV-columnItem > :is(button, .a-Button) {
+  flex: none;
+}
+
+@app .nc-gr-motor .a-RV .u-Form-inputContainer :is(input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]), select, textarea):not(#nc-gr-x):not(#nc-gr-y) {
+  width: 100%;
+  max-width: none;
+  min-height: 38px;
+  padding: 0 10px;
+  border: 1px solid var(--gr-linha-forte);
+  border-radius: 8px;
+  background-color: #fff;
+  box-shadow: none;
+  font: inherit;
+  font-size: 14px;
+  color: var(--gr-tinta);
+}
+
+/* lista de opções: a Skin tira a aparência das listas dentro do grid (appearance: none) e não põe
+   seta — na ficha ela parecia um campo de texto. Vai a mesma seta dupla dos outros selects do
+   sistema (ex.: Sangue, na 2937:6) */
+/* (os :not([…]) só dão peso: a regra geral dos campos tem :is(input:not…) e ganhava o padding) */
+@app .nc-gr-motor .a-RV .u-Form-inputContainer select:not([multiple]):not([data-nc-a]):not([data-nc-b]):not(#nc-gr-x):not(#nc-gr-y) {
+  appearance: none;
+  padding-right: 38px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2377707f' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m7 15 5 5 5-5'/%3E%3Cpath d='m7 9 5-5 5 5'/%3E%3C/svg%3E");
+  background-position: calc(100% - 12px) 50%;
+  background-size: 16px 16px;
+  background-repeat: no-repeat;
+  cursor: pointer;
+}
+
+@app .nc-gr-motor .a-RV .u-Form-inputContainer select:disabled:not(#nc-gr-x):not(#nc-gr-y) {
+  background-image: none;
+  cursor: not-allowed;
+}
+
+@app .nc-gr-motor .a-RV .u-Form-inputContainer textarea:not(#nc-gr-x):not(#nc-gr-y) {
+  padding: 8px 10px;
+}
+
+@app .nc-gr-motor .a-RV .u-Form-inputContainer :is(input, select, textarea):focus:not(#nc-gr-x):not(#nc-gr-y) {
+  border-color: var(--gr-acento);
+  box-shadow: 0 0 0 1px var(--gr-acento);
+  outline: 0;
+}
+
+@app .nc-gr-motor .a-RV .is-error .u-Form-inputContainer :is(input, select, textarea):not(#nc-gr-x):not(#nc-gr-y) {
+  border-color: var(--gr-ruim);
+}
+
+@app .nc-gr-motor .a-RV .u-Form-inputContainer :is(input, select, textarea)[readonly]:not(#nc-gr-x):not(#nc-gr-y),
+@app .nc-gr-motor .a-RV .u-Form-inputContainer :is(input, select, textarea):disabled:not(#nc-gr-x):not(#nc-gr-y) {
+  border-style: dashed;
+  background-color: var(--gr-painel);
+}
+
+/* o botão do campo (calendário, lista de valores) encostado nele, sem a divisória da grade */
+@app .nc-gr-motor .a-RV .u-Form-inputContainer .apex-item-group :is(button, .a-Button):not(#nc-gr-x):not(#nc-gr-y) {
+  width: 38px;
+  min-height: 38px;
+  margin-left: 4px;
+  border: 1px solid var(--gr-linha-forte);
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: none;
+}
+
+@app .nc-gr-motor .a-RV .u-Form-inputContainer .apex-item-group {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+@app .nc-gr-motor .a-RV .a-GV-columnItem > :is(button, .a-Button):not(#nc-gr-x):not(#nc-gr-y) {
+  width: 38px;
+  min-height: 38px;
+  border: 1px solid var(--gr-linha-forte);
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: none;
+}
+
+/* coluna SEM título (ex.: a empresa "700" na 2937:6) só confunde na ficha: sai — mas só se não
+   for um campo para preencher */
+@app .nc-gr-motor .a-RV .u-Form > :has(.u-Form-label:empty):not(:has(input:not([type="hidden"]):not([readonly]):not([disabled]), select:not([disabled]), textarea:not([readonly]))) {
+  display: none;
+}
+
+/* campo só de leitura vira texto */
+@app .nc-gr-motor .a-RV .u-Form-fieldContainer.is-readonly .u-Form-inputContainer {
+  min-height: 24px;
+  font-weight: 600;
+  color: var(--gr-tinta);
+}
+
+@app .nc-gr-gaveta.is-leitura .nc-gr-motor .a-RV .u-Form-inputContainer:not(#nc-gr-x):not(#nc-gr-y) {
+  padding: 6px 10px;
+  border-radius: 8px;
+  background: var(--gr-painel);
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+/* ═══ [GC7] O AVISO ════════════════════════════════════════════════════════════════════════ */
+@app .nc-gr-aviso {
+  position: fixed;
+  left: 50%;
+  bottom: 20px;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  max-width: calc(100vw - 32px);
+  padding: 10px 14px;
+  border-radius: 10px;
+  background: #1E1530;
+  font-size: 14px;
+  font-weight: 600;
+  color: #fff;
+  box-shadow: 0 12px 30px -12px rgba(30, 21, 48, .5);
+  visibility: hidden;
+  transform: translate(-50%, 8px);
+  opacity: .0001;
+  transition: transform .2s ease-out, opacity .2s ease-out, visibility 0s linear .2s;
+}
+
+@app .nc-gr-aviso.is-visivel {
+  visibility: visible;
+  transform: translate(-50%, 0);
+  opacity: 1;
+  transition: transform .2s ease-out, opacity .2s ease-out;
+}
+
+@app .nc-gr-aviso.is-erro {
+  background: var(--gr-ruim);
+}
+
+/* tela larga: a lista continua à vista e clicável ao lado da gaveta (sem escurecer a página);
+   tocar noutra linha troca o registro da gaveta */
+@media (min-width: 761px) {
+  @app .nc-gr-fundo.is-aberta {
+    background: transparent;
+    pointer-events: none;
+  }
+}
+
+/* ═══ [GC8] CELULAR E TELAS ESTREITAS ══════════════════════════════════════════════════════ */
+@media (max-width: 760px) {
+  @app .nc-gr-busca {
+    order: 5;
+    width: 100%;
+  }
+
+  /* celular: cada registro vira um cartão (sem rolagem lateral nem coluna presa) */
+  @app .nc-gr-tab {
+    max-height: none;
+    overflow: visible;
+  }
+
+  @app :is(.nc-gr-cab, .nc-gr-lista) {
+    width: auto;
+  }
+
+  @app :is(.nc-gr-td, .nc-gr-thc).is-cong {
+    position: static;
+    background: transparent;
+  }
+
+  @app .nc-gr-td {
+    display: block;
+  }
+
+  @app .nc-gr-expande span {
+    display: none;
+  }
+
+  @app .nc-gr-tx {
+    white-space: normal;
+  }
+
+  /* celular: cada registro vira um cartão; o nome da coluna aparece antes do valor */
+  @app .nc-gr-cab {
+    display: none;
+  }
+
+  @app .nc-gr-l {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) 24px;
+    gap: 6px 12px;
+    padding: 12px 8px 12px 14px;
+  }
+
+  @app .nc-gr-td {
+    padding: 0;
+    white-space: normal;
+  }
+
+  @app .nc-gr-td:not(.nc-gr-td--tit)::before {
+    content: attr(data-h);
+    display: block;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--gr-cinza);
+  }
+
+  @app .nc-gr-td--tit {
+    grid-column: 1 / 3;
+    padding: 0;
+    font-size: 15px;
+  }
+
+  @app .nc-gr-seta {
+    grid-column: 3;
+    grid-row: 1;
+  }
+
+  @app .nc-gr-vistas {
+    order: 6;
+  }
+
+  @app .nc-gr-bt {
+    min-height: 44px;
+  }
+
+  @app .nc-gr-gaveta {
+    width: 100vw;
+  }
+
+  @app .nc-gr-motor .a-RV .u-Form {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  @app .nc-gr-motor .a-RV .u-Form-inputContainer :is(input:not([type="checkbox"]):not([type="radio"]), select, textarea) {
+    min-height: 44px;
+    font-size: 16px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  @app :is(.nc-gr, .nc-gr-gaveta, .nc-gr-fundo, .nc-gr-aviso) {
+    transition: none;
+  }
+}

@@ -1,0 +1,674 @@
+/* ╔════════════════════════════════════════════════════════════════════════════════════════╗
+   ║  NATCORP · PEDIDO DE LANÇAMENTO DIVERSO (REEMBOLSO)  —  a "roupa" (CSS)                  ║
+   ║  App 2060 (REQ_REEMBOLSO_NATCORP) · Página 11 · Criar/Editar: Lançamentos Diversos       ║
+   ╚════════════════════════════════════════════════════════════════════════════════════════╝
+
+   Primeira vez num arquivo destes? Leia antes o manual: brand/apex/MANUAL-APEX.md (parte 1).
+
+   ── O QUE ESTE ARQUIVO FAZ ────────────────────────────────────────────────────────────────
+   A aparência do que o Natcorp_Lancamento.js monta: o alto, as 3 partes numeradas, o valor
+   que será lançado em destaque, a foto da nota em área grande, "Enviar pedido" na largura
+   toda e quem aprova. Feito PRIMEIRO para o celular (390 px). Sem o JS, nada daqui vale
+   (marca nc-ln-ativo no body).
+
+   ── ONDE ELE ENTRA NO APEX ────────────────────────────────────────────────────────────────
+     Página 11 › CSS › File URLs:   #WORKSPACE_IMAGES#Natcorp_Lancamento.css
+     CUIDADO: este é o arquivo-FONTE (.src.css). O gerador (gerar-app.mjs) cria o .css.
+
+   ── ÍNDICE ────────────────────────────────────────────────────────────────────────────────
+     [C1] As cores                                                PODE MEXER
+     [C2] O alto, sem abas, a região do colaborador
+     [C3] As partes e os campos
+     [C4] O valor que será lançado
+     [C5] A foto da nota
+     [C6] Os botões
+     [C7] Quem aprova
+*/
+
+/* ═══ [C1] AS CORES ═════════════════════════════════════════════════════════════════════════ */
+@app.nc-ln-ativo {
+  --ln-roxo: var(--nc-roxo, #742B7F);
+  --ln-rgb: var(--nc-t-roxo-rgb, 116, 43, 127);
+  --ln-tinta: var(--nc-tinta, #1B1238);
+  --ln-texto: #2E2742;
+  --ln-fraco: #5A526E;
+  --ln-borda: var(--nc-nevoa, #E7E1F0);
+  --ln-lilas: var(--nc-nevoa2, #F3EEF8);
+  --ln-fundo: #F7F5FA;
+  --ln-bom: #1F7A52;
+  --ln-bom-bg: #E7F4ED;
+  --ln-atencao: #8A5300;
+  --ln-atencao-bg: #FFF2DC;
+}
+
+@app.nc-ln-ativo .nc-ln-ic {
+  flex: none;
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.9;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* ═══ [C2] O ALTO, SEM ABAS, A REGIÃO DO COLABORADOR ════════════════════════════════════════ */
+@app.nc-ln-ativo .nc-ln-topo {
+  margin: 0 0 16px;
+}
+
+@app.nc-ln-ativo .nc-ln-topo h2 {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+  font-size: 19px;
+  font-weight: 800;
+  line-height: 1.2;
+  color: var(--ln-tinta);
+}
+
+@app.nc-ln-ativo .nc-ln-topo-ic {
+  width: 22px;
+  height: 22px;
+  color: var(--ln-roxo);
+}
+
+@app.nc-ln-ativo .nc-ln-topo > p {
+  margin: 6px 0 0;
+  font-size: 14px;
+  line-height: 1.4;
+  color: var(--ln-fraco);
+}
+
+@app.nc-ln-ativo .nc-ln-topo-linha {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 12px;
+}
+
+@app.nc-ln-ativo .nc-ln-para {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: var(--ln-fundo);
+  color: var(--ln-texto);
+}
+
+@app.nc-ln-ativo .nc-ln-para .nc-ln-ic {
+  width: 18px;
+  height: 18px;
+  color: var(--ln-roxo);
+}
+
+/* a região Empresa/Colaborador: o alto já diz "Para: …"; os campos ficam na página */
+@app.nc-ln-ativo .nc-ln-quem :is(#P11_COD_EMPRESA_DSP_CONTAINER, #P11_MATRICULA_DSP_CONTAINER):not(#nc-ln-x) {
+  display: none;
+}
+
+@app.nc-ln-ativo .nc-ln-sem-abas .apex-rds,
+@app.nc-ln-ativo .nc-ln-sem-abas > .apex-rds-slider {
+  display: none;
+}
+
+@app.nc-ln-ativo .nc-ln-sit {
+  display: inline-flex;
+  align-items: center;
+  height: 26px;
+  padding: 0 12px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-style: normal;
+  font-weight: 800;
+  line-height: 1;
+  white-space: nowrap;
+  background: #E7EFFB;
+  color: #1E4F9A;
+}
+
+@app.nc-ln-ativo .nc-ln-sit--andamento { background: #DFF3F8; color: #0B6178; }
+@app.nc-ln-ativo .nc-ln-sit--aprovado { background: #E3F4EA; color: #1B6E48; }
+@app.nc-ln-ativo .nc-ln-sit--concluido { background: #1F7A52; color: #FFFFFF; }
+@app.nc-ln-ativo .nc-ln-sit--suspenso { background: #FFF1D6; color: #7E4C00; }
+@app.nc-ln-ativo .nc-ln-sit--reprovado { background: #FCE8EB; color: #A1283A; }
+@app.nc-ln-ativo .nc-ln-sit--cancelado { background: #EEECF2; color: #5F5A6E; }
+
+/* as regiões que só embrulham (Requisição, MENU) não roubam largura no celular */
+@media (max-width: 640px) {
+  @app.nc-ln-ativo .t-Region:has(.nc-ln-lanc):not(.nc-ln-lanc):not(#nc-ln-x) > .t-Region-bodyWrap > .t-Region-body {
+    padding-left: 2px;
+    padding-right: 2px;
+  }
+}
+
+/* "Dados da Requisição" (nº, data, situação): o alto já diz; os campos ficam na página */
+@app.nc-ln-ativo .t-Region.nc-ln-dados:not(#nc-ln-x) {
+  display: none;
+}
+
+/* Aprovadores: o título da lista já diz o que é */
+@app.nc-ln-ativo .t-Region.nc-ln-aprov > .t-Region-header {
+  display: none;
+}
+
+/* ═══ [C3] AS PARTES E OS CAMPOS ════════════════════════════════════════════════════════════
+   A grade do APEX vira "display: contents" e os campos ganham a ordem do JS (style order).
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-ln-ativo .t-Region:is(.nc-ln-lanc, .nc-ln-anexos):not(#nc-ln-x) {
+  border-radius: 18px;
+}
+
+@app.nc-ln-ativo .t-Region:is(.nc-ln-lanc, .nc-ln-anexos) > .t-Region-header {
+  display: none;
+}
+
+@app.nc-ln-ativo .t-Region:is(.nc-ln-lanc, .nc-ln-anexos) .t-Region-body {
+  padding: 18px;
+}
+
+@app.nc-ln-ativo .nc-ln-grade:not(#nc-ln-x) {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2px 12px;
+}
+
+@app.nc-ln-ativo .nc-ln-grade :is(.row, .col):not(#nc-ln-x) {
+  display: contents;
+}
+
+@app.nc-ln-ativo .nc-ln-grade .apex-grid-nbsp {
+  display: none;
+}
+
+@app.nc-ln-ativo .nc-ln-grade > .nc-ln-parte,
+@app.nc-ln-ativo .nc-ln-grade .t-Form-fieldContainer:not(#nc-ln-x) {
+  grid-column: 1 / -1;
+}
+
+@app.nc-ln-ativo .nc-ln-grade .t-Form-fieldContainer.nc-ln-meio:not(#nc-ln-x) {
+  grid-column: auto;
+}
+
+@app.nc-ln-ativo .nc-ln-parte {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin: 0 0 10px;
+}
+
+@app.nc-ln-ativo .nc-ln-parte--mais {
+  margin-top: 18px;
+  padding-top: 18px;
+  border-top: 1px solid var(--ln-borda);
+}
+
+@app.nc-ln-ativo .nc-ln-parte-n {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--ln-roxo);
+  font-size: 14px;
+  font-weight: 800;
+  color: #FFFFFF;
+}
+
+@app.nc-ln-ativo .nc-ln-parte h3 {
+  margin: 3px 0 0;
+  font-size: 16px;
+  font-weight: 800;
+  line-height: 1.25;
+  color: var(--ln-tinta);
+}
+
+@app.nc-ln-ativo .nc-ln-parte p {
+  margin: 4px 0 0;
+  font-size: 13.5px;
+  line-height: 1.4;
+  color: var(--ln-fraco);
+}
+
+@app.nc-ln-ativo :is(.nc-ln-lanc, .nc-ln-anexos) .t-Form-fieldContainer:not(#nc-ln-x):not([style*="none"]) {
+  display: block;
+  width: auto;
+  margin: 0;
+  padding: 6px 0 10px;
+}
+
+@app.nc-ln-ativo :is(.nc-ln-lanc, .nc-ln-anexos) .t-Form-fieldContainer:not(#nc-ln-x) > :is(.t-Form-labelContainer, .t-Form-inputContainer) {
+  display: block;
+  width: 100%;
+  max-width: none;
+  flex: none;
+  padding: 0;
+  text-align: left;
+}
+
+@app.nc-ln-ativo :is(.nc-ln-lanc, .nc-ln-anexos) .t-Form-label {
+  display: block;
+  margin: 0 0 6px;
+  padding: 0;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--ln-tinta);
+}
+
+@app.nc-ln-ativo .nc-ln-lanc :is(input.text_field, input.datepicker, input.popup_lov, input.apex-item-popup-lov, select, textarea):not([type="hidden"]) {
+  min-height: 40px;
+}
+
+/* no celular, 16 px nos campos: abaixo disso o iPhone aumenta a tela ao tocar no campo */
+@media (max-width: 640px) {
+  @app.nc-ln-ativo .nc-ln-lanc :is(input.text_field, input.datepicker, input.popup_lov, input.apex-item-popup-lov, select, textarea):not([type="hidden"]) {
+    font-size: 16px;
+  }
+}
+
+@app.nc-ln-ativo .nc-ln-dica {
+  margin: 5px 2px 0;
+  font-size: 12.5px;
+  line-height: 1.35;
+  color: var(--ln-fraco);
+}
+
+/* o "R$" na frente do valor da nota */
+@app.nc-ln-ativo .t-Form-itemWrapper:has(> .nc-ln-rs) {
+  display: flex;
+  align-items: stretch;
+}
+
+@app.nc-ln-ativo .nc-ln-rs {
+  flex: none;
+  display: flex;
+  align-items: center;
+  margin-right: 6px;
+  padding: 0 12px;
+  border-radius: 12px;
+  background: var(--ln-lilas);
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--ln-roxo);
+}
+
+/* pedido já feito: os campos só de leitura viram texto */
+@app.nc-ln-ativo:not(.nc-ln-novo) .nc-ln-lanc :is(.display_only, .apex-item-display-only) {
+  font-size: 14.5px;
+  font-weight: 700;
+  color: var(--ln-tinta);
+}
+
+/* ═══ [C4] O VALOR QUE SERÁ LANÇADO ═════════════════════════════════════════════════════════ */
+@app.nc-ln-ativo .t-Form-fieldContainer.nc-ln-lancado:not(#nc-ln-x) {
+  margin: 6px 0 4px;
+  padding: 14px 16px;
+  border-radius: 14px;
+  background: var(--ln-bom-bg);
+}
+
+@app.nc-ln-ativo .nc-ln-lancado .t-Form-label {
+  color: var(--ln-bom);
+}
+
+@app.nc-ln-ativo .nc-ln-lancado :is(.display_only, .apex-item-display-only, span) {
+  font-size: 20px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  color: var(--ln-bom);
+}
+
+@app.nc-ln-ativo .nc-ln-ajuste {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  margin: 8px 0 0;
+  font-size: 13px;
+  line-height: 1.35;
+  color: var(--ln-atencao);
+}
+
+@app.nc-ln-ativo .nc-ln-ajuste[hidden] {
+  display: none;
+}
+
+@app.nc-ln-ativo .nc-ln-ajuste .nc-ln-ic {
+  width: 18px;
+  height: 18px;
+}
+
+/* ═══ [C5] A FOTO DA NOTA ═══════════════════════════════════════════════════════════════════ */
+@app.nc-ln-ativo .nc-ln-anexos .t-Form-fieldContainer {
+  padding-top: 4px;
+}
+
+@app.nc-ln-ativo .nc-ln-anexos input[type="file"] {
+  width: 100%;
+  min-height: 56px;
+  font-size: 15px;
+}
+
+/* ═══ [C6] OS BOTÕES ════════════════════════════════════════════════════════════════════════ */
+@app.nc-ln-ativo .t-Button.nc-ln-enviar:not([style*="none"]) {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-width: 160px;
+}
+
+@media (max-width: 640px) {
+  @app.nc-ln-ativo .t-Region-buttons:has(.nc-ln-enviar) :is(.t-Region-buttons-left, .t-Region-buttons-right) {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+  }
+
+  @app.nc-ln-ativo .t-Region-buttons:has(.nc-ln-enviar) {
+    display: flex;
+    flex-direction: column-reverse;
+    gap: 10px;
+  }
+
+  @app.nc-ln-ativo .t-Button:is(.nc-ln-enviar, .nc-ln-voltar):not([style*="none"]) {
+    width: 100%;
+  }
+}
+
+/* ═══ [C7] O CAMINHO DA APROVAÇÃO (o mesmo das outras requisições: Natcorp_Beneficios [C12]) ═══
+   .nc-ln-caminho é a faixa; .nc-ln-ap, cada aprovador: .is-ok aprovou · .is-nao reprovou ·
+   .is-vez aguardando · .is-fila na fila.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-ln-ativo .t-Region.nc-ln-aprov:not(#nc-ln-x) {
+  margin: 0 0 16px;
+  border: 0;
+  border-radius: 16px;
+  background: #FFFFFF;
+  box-shadow: inset 0 0 0 1px var(--nc-nevoa, #E7E1F0), 0 10px 24px -22px rgba(var(--nc-t-azul-rgb, 44, 26, 99), .5);
+}
+
+@app.nc-ln-ativo .t-Region.nc-ln-aprov > .t-Region-header,
+@app.nc-ln-ativo .t-Region.nc-ln-aprov .t-Report,
+@app.nc-ln-ativo .t-Region.nc-ln-aprov > .t-Region-bodyWrap > .t-Region-buttons,
+@app.nc-ln-ativo .t-Region.nc-ln-aprov.nc-ln-aprov--vazio,
+@app.nc-ln-ativo .nc-ln-caminho:empty,
+@app.nc-ln-ativo .nc-ln-caminho-ver {
+  display: none;
+}
+
+@app.nc-ln-ativo .t-Region.nc-ln-aprov > .t-Region-bodyWrap > .t-Region-body {
+  padding: 14px 18px;
+}
+
+@app.nc-ln-ativo .nc-ln-caminho {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px 20px;
+}
+
+@app.nc-ln-ativo .nc-ln-caminho-cab {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+@app.nc-ln-ativo .nc-ln-caminho-cab p {
+  margin: 0;
+}
+
+@app.nc-ln-ativo .nc-ln-caminho-rot {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--nc-grafite, #4A4560);
+}
+
+@app.nc-ln-ativo .nc-ln-caminho-resumo {
+  font-size: 14.5px;
+  color: var(--nc-grafite, #4A4560);
+}
+
+@app.nc-ln-ativo .nc-ln-caminho-resumo b { color: var(--nc-tinta, #1B1238); }
+@app.nc-ln-ativo .nc-ln-caminho--vez .nc-ln-caminho-resumo b:last-child { color: #8A5A00; }
+@app.nc-ln-ativo .nc-ln-caminho--ok .nc-ln-caminho-resumo b { color: var(--nc-bom, #1F7A52); }
+@app.nc-ln-ativo .nc-ln-caminho--nao .nc-ln-caminho-resumo b { color: #A32020; }
+
+@app.nc-ln-ativo .nc-ln-passos-ap {
+  display: flex;
+  grid-column: 1 / -1;
+  min-width: 0;
+  margin: 0;
+  padding: 4px 0 0;
+  overflow-x: auto;
+  list-style: none;
+  scrollbar-width: thin;
+}
+
+@app.nc-ln-ativo .nc-ln-ap {
+  position: relative;
+  display: flex;
+  flex: 1 1 0;
+  flex-direction: column;
+  align-items: center;
+  min-width: 104px;
+  margin: 0;
+  padding: 0 4px;
+  text-align: center;
+}
+
+@app.nc-ln-ativo .nc-ln-ap:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  top: 13px;
+  left: calc(50% + 17px);
+  right: calc(-50% + 17px);
+  height: 2px;
+  border-radius: 2px;
+  background: #E3DDEC;
+}
+
+@app.nc-ln-ativo .nc-ln-ap.is-ok:not(:last-child)::after {
+  background: var(--nc-bom, #1F7A52);
+}
+
+@app.nc-ln-ativo .nc-ln-ap-marca {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  margin: 0 0 6px;
+  border-radius: 50%;
+  background: #FFFFFF;
+  box-shadow: inset 0 0 0 2px #D9D3E3;
+}
+
+@app.nc-ln-ativo .nc-ln-ap-marca svg {
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: #FFFFFF;
+  stroke-width: 2.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+@app.nc-ln-ativo .nc-ln-ap.is-ok .nc-ln-ap-marca { background: var(--nc-bom, #1F7A52); box-shadow: none; }
+@app.nc-ln-ativo .nc-ln-ap.is-nao .nc-ln-ap-marca { background: #C0392B; box-shadow: none; }
+@app.nc-ln-ativo .nc-ln-ap.is-vez .nc-ln-ap-marca { background: #E0A100; box-shadow: 0 0 0 5px rgba(224, 161, 0, .18); }
+
+@app.nc-ln-ativo .nc-ln-ap-texto {
+  display: grid;
+  justify-items: center;
+  gap: 1px;
+  min-width: 0;
+  max-width: 100%;
+}
+
+@app.nc-ln-ativo .nc-ln-ap-nome {
+  max-width: 100%;
+  overflow: hidden;
+  font-size: 13.5px;
+  font-weight: 800;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--nc-tinta, #1B1238);
+}
+
+@app.nc-ln-ativo .nc-ln-ap-estado {
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  color: var(--nc-grafite, #4A4560);
+}
+
+@app.nc-ln-ativo .nc-ln-ap.is-ok .nc-ln-ap-estado { color: var(--nc-bom, #1F7A52); }
+@app.nc-ln-ativo .nc-ln-ap.is-nao .nc-ln-ap-estado { color: #A32020; font-weight: 700; }
+@app.nc-ln-ativo .nc-ln-ap.is-vez .nc-ln-ap-estado { color: #8A5A00; font-weight: 700; }
+@app.nc-ln-ativo .nc-ln-ap.is-fila :is(.nc-ln-ap-nome, .nc-ln-ap-estado) { color: #8A8497; }
+
+@app.nc-ln-ativo .nc-ln-decisao {
+  display: flex;
+  flex-wrap: wrap;
+  grid-column: 1 / -1;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px 16px;
+  padding: 12px 0 0;
+  border-top: 1px solid var(--nc-nevoa2, #F3EEF8);
+}
+
+@app.nc-ln-ativo .nc-ln-decisao-txt {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 700;
+  color: #8A5A00;
+}
+
+@app.nc-ln-ativo .nc-ln-decisao-botoes {
+  display: flex;
+  gap: 8px;
+}
+
+@app.nc-ln-ativo .nc-ln-decisao-botoes .t-Button:not(#nc-ln-x):not([style*="none"]) {
+  width: auto;
+  height: 44px;
+  min-height: 0;
+  margin: 0;
+  padding: 0 22px;
+  border-radius: 12px;
+  font-size: 14.5px;
+}
+
+@app.nc-ln-ativo .nc-ln-decisao-botoes .t-Button.nc-ln-aprovar:not(#nc-ln-x) {
+  border: 0;
+  background: var(--nc-bom, #1F7A52);
+  color: #FFFFFF;
+}
+
+@app.nc-ln-ativo .nc-ln-decisao-botoes .t-Button.nc-ln-reprovar:not(#nc-ln-x) {
+  border: 1.5px solid #E7B7B7;
+  background: #FFFFFF;
+  box-shadow: none;
+  color: #A32020;
+}
+
+@app.nc-ln-ativo .nc-ln-decisao-botoes .t-Button :is(.t-Icon, .t-Button-label) {
+  color: inherit;
+}
+
+@app.nc-ln-ativo .t-Region.nc-ln-aprov:has(.nc-ln-caminho--vez) {
+  box-shadow: inset 0 0 0 1.5px #EBC45A, 0 10px 24px -22px rgba(138, 90, 0, .5);
+}
+
+@app.nc-ln-ativo .nc-ln-ap-justs {
+  display: grid;
+  grid-column: 1 / -1;
+  gap: 6px;
+}
+
+@app.nc-ln-ativo .nc-ln-ap-just {
+  margin: 0;
+  padding: 8px 12px;
+  border: 0;
+  border-radius: 10px;
+  background: var(--nc-quase, #FAF8FC);
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--nc-tinta, #1B1238);
+}
+
+@app.nc-ln-ativo .nc-ln-ap-just.is-nao {
+  background: #FDF0F0;
+}
+
+@media (max-width: 639px) {
+  @app.nc-ln-ativo .t-Region.nc-ln-aprov > .t-Region-bodyWrap > .t-Region-body {
+    padding: 12px 14px;
+  }
+
+  @app.nc-ln-ativo .nc-ln-caminho-cab {
+    grid-column: 1 / -1;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    column-gap: 12px;
+  }
+
+  @app.nc-ln-ativo :is(.nc-ln-caminho-rot, .nc-ln-caminho-resumo) {
+    grid-column: 1;
+  }
+
+  @app.nc-ln-ativo .nc-ln-caminho-ver {
+    display: inline-flex;
+    grid-column: 2;
+    grid-row: 1 / span 2;
+    align-items: center;
+    height: 34px;
+    padding: 0 12px;
+    border: 1px solid var(--nc-nevoa, #E7E1F0);
+    border-radius: 10px;
+    background: #FFFFFF;
+    font: inherit;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--nc-roxo, #742B7F);
+    cursor: pointer;
+  }
+
+  @app.nc-ln-ativo .t-Region.nc-ln-aprov:not(.nc-ln-ap-aberto) .nc-ln-passos-ap {
+    display: none;
+  }
+
+  @app.nc-ln-ativo .nc-ln-decisao-botoes {
+    flex: 1 0 100%;
+  }
+
+  @app.nc-ln-ativo .nc-ln-decisao-botoes .t-Button:not(#nc-ln-x):not([style*="none"]) {
+    flex: 1 1 0;
+    padding: 0 12px;
+  }
+}
+
+/* ═══ [DESK] TELAS DE MESA — gerado por escala-desktop.py (não editar à mão; rode o script) ═══ */
+@media (min-width: 1024px) {
+  @app.nc-ln-ativo .nc-ln-topo h2 {
+    font-size: 16.5px;
+  }
+
+  @app.nc-ln-ativo .nc-ln-parte h3 {
+    font-size: 15px;
+  }
+
+  @app.nc-ln-ativo .nc-ln-lancado :is(.display_only, .apex-item-display-only, span) {
+    font-size: 17.5px;
+  }
+
+  @app.nc-ln-ativo .nc-ln-anexos input[type="file"] {
+    font-size: 14px;
+    min-height: 48px;
+  }
+}
+/* ═══ fim do [DESK] ═══ */

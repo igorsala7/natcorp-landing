@@ -1,0 +1,2551 @@
+/* ╔════════════════════════════════════════════════════════════════════════════════════════╗
+   ║  NATCORP · DEPENDENTES  —  a "roupa" das telas (CSS)                                      ║
+   ║  Um arquivo, TRÊS telas (as mesmas do Natcorp_Dependentes.js):                           ║
+   ║    Requisição de Dependentes ....... app 200 pág. 132 e app 600 pág. 133   [C1] a [C8]    ║
+   ║    Janela da pensão alimentícia .... app 9132 pág. 3                       [C9] a [C14]   ║
+   ║    Lista "Dependentes" do portal ... app 600 pág. 131                      [C15] a [C17]  ║
+   ╚════════════════════════════════════════════════════════════════════════════════════════╝
+
+   Primeira vez num arquivo destes? Leia antes o manual: brand/apex/MANUAL-APEX.md (parte 1).
+
+   ── O QUE ESTE ARQUIVO FAZ ────────────────────────────────────────────────────────────────
+   Dá a aparência das três telas: cores, tamanhos, espaços, bordas, e como elas se arrumam no
+   computador e no celular. Ele NÃO muda nada de lugar: quem muda as coisas de lugar é o
+   arquivo-irmão Natcorp_Dependentes.js. Os dois trabalham juntos:
+     o JS cria os cartões de dependentes  →  este arquivo diz como eles se parecem.
+   Sem o JS, este arquivo não faz nada: as regras dependem das marcas que o JS põe na página
+   (nc-dep na requisição, nc-ben na janela da pensão, nc-dl na lista).
+   Público: colaboradores (e gestores por eles), muitos com pouca leitura, quase sempre no
+   celular. Mesma linguagem da Alteração Cadastral (p136): alvos de 48px, letra de 16px nos
+   campos, uma pergunta por vez, ícone + poucas palavras.
+   Nada aqui vence o "esconder" das ações dinâmicas do APEX: as regras que escondem coisas
+   valem só para as classes nc-dep-*, nc-ben-* e nc-dl-*.
+
+   ── ONDE ELE ENTRA NO APEX ────────────────────────────────────────────────────────────────
+     Nas 4 páginas (200:132, 600:133, 600:131 e 9132:3) › CSS › File URLs:
+         #WORKSPACE_IMAGES#Natcorp_Dependentes.css
+     CUIDADO: este é o arquivo-FONTE (.src.css). O gerador (gerar-app.mjs) cria a partir dele o
+     Natcorp_Dependentes.css que sobe para o APEX (com o @app por extenso e os !important). Edite
+     ESTE arquivo, não o gerado: o gerado é reescrito a cada geração (manual, parte 2).
+
+   ── ÍNDICE: as partes deste arquivo (Ctrl+F pelo código entre colchetes) ──────────────────
+   REQUISIÇÃO DE DEPENDENTES (p132 / p133)
+     [C1]  O que some e o palco do formulário       (o que o JS absorveu sai da tela)
+     [C2]  O alto: "Dependentes de Fulano"          ← montado pelo JS em [J4] e [J5]
+     [C3]  As perguntas 1 e 2                       ← montadas pelo JS em [J4] e [J5]
+     [C4]  As seções e os campos                    ← montadas pelo JS em [J4], mapa em [J2]
+     [C5]  Documentos                               ← levados pelo JS em [J4]
+     [C6]  A barra do rodapé                        ← montada pelo JS em [J7]
+     [C7]  Celular e menos movimento
+     [C8]  p133: o que mudou e a decisão            ← montados pelo JS em [J8] e [J9]
+   JANELA DA PENSÃO (9132 p3)
+     [C9]  O que some e o alto                      ← montado pelo JS em [J14]
+     [C10] As seções e os campos                    ← montadas pelo JS em [J14], mapa em [J12]
+     [C11] A grade de descontos                     ← posta pelo JS em [J14]
+     [C12] Titular da conta e botões do PIX         ← montados pelo JS em [J15]
+     [C13] O rodapé e o Excluir                     ← montados pelo JS em [J15]
+     [C14] Tela larga, celular e menos movimento
+   LISTA "DEPENDENTES" (600 p131)
+     [C15] O alto                                   ← montado pelo JS em [J20]
+     [C16] O botão "Incluir dependente"             ← montado pelo JS em [J20]
+     [C17] Os cartões em dois grupos                ← montados pelo JS em [J21]
+
+   ── RECEITAS RÁPIDAS ──────────────────────────────────────────────────────────────────────
+     Quero mudar uma cor
+       → use uma das cores da marca, pelo nome: var(--nc-roxo), var(--nc-grafite)… A lista
+         completa, com amostras, está no manual (parte 3). Assim a cor acompanha o tema que
+         o usuário escolheu em "Cores". Evite escrever cores soltas, como #511C76.
+     Quero mudar a largura de UM campo            → isso é no JS: [J2] (requisição) ou [J12]
+                                                   (janela da pensão), não aqui.
+     Quero os cartões de dependente menores       → [C3], .nc-dep-pessoa (min-height, padding)
+     Quero mais ou menos espaço                    → padding (espaço por DENTRO da caixa) e
+                                                   margin (espaço por FORA, até a vizinha).
+     Algo ficou bom no computador e ruim no celular → o que está dentro de
+                                                   @media (max-width: 640px) só vale no celular.
+
+   ── COMO LER UM ARQUIVO CSS EM 30 SEGUNDOS ────────────────────────────────────────────────
+     Cada regra tem duas partes:     QUEM { COMO; }
+       @app.nc-dep .nc-dep-pessoa {        ← QUEM: o "seletor", diz em que pedaço da tela vale
+         border-radius: 16px;              ← COMO: propriedade: valor;  (cantos arredondados)
+         background: #fff;                 ←       fundo branco
+       }
+     .nome-com-ponto       uma "classe": uma etiqueta posta num pedaço da tela (pelo APEX ou
+                           pelo JS). .nc-dep-pessoa é cada cartão de dependente.
+     @app                  atalho que dá prioridade às nossas regras sobre as do tema do APEX.
+                           No arquivo que sobe para o APEX ele aparece por extenso, como
+                           html body:is(.t-PageBody…):not(#nc-a1):not(#nc-a2) — é a mesma coisa.
+     :not(#nc-dep-x)…      peso extra, para vencer uma regra do tema. Pode ignorar ao ler.
+     !important            no arquivo que sobe, toda linha ganha um: é o mesmo "vencer o tema".
+     @media (max-width: 640px) { … }   as regras de dentro só valem em telas até 640px (celular).
+     var(--nc-roxo)        uma cor da marca, pelo nome (muda junto com o tema escolhido).
+     px                    pixels, o tamanho de um pontinho da tela. 16px é o texto normal.
+     Toda linha COMO termina em ;   e todo { é fechado por um }. Não apague esses sinais.
+*/
+
+/* ═══ [C1] O QUE SOME E O PALCO DO FORMULÁRIO ═══════════════════════════════════════════════
+   • As regiões que o JS absorveu, as colunas que ficaram vazias, a grade antiga do APEX e os
+     campos que a página escondeu somem. display: none = não aparece.
+   • A lista Dependente e o Excluir do APEX ficam fora da vista, mas continuam no formulário
+     e no leitor de tela (os cartões só escolhem valores neles).
+   • A região "Dados do Dependente" ocupa a linha toda e vira só o "palco": quem tem cara de
+     cartão são as perguntas e as seções.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+/* 04/10: .nc-dep-quem--sem-lista = a página escondeu a lista Dependente → os cartões que a
+   substituem somem junto */
+@app.nc-dep .nc-dep-absorvida:not(#nc-dep-x):not(#nc-dep-y),
+@app.nc-dep .col.nc-dep-col-vazia:not(#nc-dep-x):not(#nc-dep-y),
+@app.nc-dep .nc-dep-grade-velha:not(#nc-dep-x):not(#nc-dep-y),
+@app.nc-dep .nc-dep-campo--fora:not(#nc-dep-x):not(#nc-dep-y),
+@app.nc-dep :is(.nc-dep-acao, .nc-dep-sec, .nc-dep-aviso-sair)[hidden]:not(#nc-dep-x):not(#nc-dep-y),
+@app.nc-dep .nc-dep-quem.nc-dep-quem--sem-lista:not(#nc-dep-x):not(#nc-dep-y) {
+  display: none;
+}
+
+/* a lista Dependente e o Excluir: fora da vista, mas no formulário e no leitor de tela */
+@app.nc-dep .nc-dep-nativo:not(#nc-dep-x):not(#nc-dep-y) {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* o formulário ocupa a linha toda (os documentos desceram) */
+@app.nc-dep .col.nc-dep-col-cheia:not(#nc-dep-x):not(#nc-dep-y) {
+  flex: 0 0 100%;
+  width: 100%;
+  max-width: 100%;
+}
+
+/* a região "Dados do Dependente" vira só o palco: quem tem cara de cartão são as perguntas */
+@app.nc-dep .t-Region.nc-dep-form:not(#nc-dep-x):not(#nc-dep-y) {
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+@app.nc-dep .t-Region.nc-dep-form > .t-Region-header:not(#nc-dep-x):not(#nc-dep-y) {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+}
+
+@app.nc-dep .t-Region.nc-dep-form > .t-Region-bodyWrap > .t-Region-body:not(#nc-dep-x):not(#nc-dep-y) {
+  padding: 0;
+}
+
+/* ═══ [C2] O ALTO: "DEPENDENTES DE FULANO" E O Nº DO PEDIDO ═════════════════════════════════
+   Montado pelo JS em [J4] e [J5]. .nc-dep-topo é o bloco; .nc-dep-topo-tit, o título;
+   .nc-dep-topo-req, a linha "Pedido nº … · feito em …".
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+/* ---------- o alto ---------- */
+@app.nc-dep .nc-dep-topo {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px;
+  margin: 0 0 14px;
+  padding: 16px 22px 16px 16px;
+  border: 1px solid var(--nc-nevoa);
+  border-radius: 18px;
+  background: linear-gradient(135deg, #FBF8FE 0%, #FFFFFF 62%);
+}
+
+@app.nc-dep .nc-dep-topo-ic {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  border-radius: 16px;
+  background: var(--nc-grad);
+  color: #fff;
+  box-shadow: 0 10px 20px -12px rgba(var(--nc-t-roxo-rgb, 81, 28, 118), .7);
+}
+
+@app.nc-dep .nc-dep-topo-ic svg {
+  width: 28px;
+  height: 28px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* o texto ocupa a linha; "N campos alterados" desce para a linha de baixo (antes espremia o
+   título em "Dependentes / de Tony") */
+@app.nc-dep .nc-dep-topo-txt {
+  flex: 1 1 240px;
+  min-width: 0;
+}
+
+@app.nc-dep .nc-dep-topo-tit {
+  margin: 0;
+  font-family: inherit;
+  font-size: 24px;
+  font-weight: 800;
+  line-height: 1.2;
+  letter-spacing: -.015em;
+  color: var(--nc-tinta);
+}
+
+@app.nc-dep .nc-dep-topo-req {
+  margin: 4px 0 0;
+  font-size: 15px;
+  line-height: 1.4;
+  color: var(--nc-grafite);
+}
+
+@app.nc-dep .nc-dep-topo-req b {
+  color: var(--nc-tinta);
+}
+
+/* ═══ [C3] AS PERGUNTAS 1 E 2: CARTÕES DE PESSOAS E AS DUAS ESCOLHAS ════════════════════════
+   Montadas pelo JS em [J4] e [J5]. Peças principais:
+     .nc-dep-pergunta / .nc-dep-passo   o título da pergunta e o número na bolinha
+     .nc-dep-pessoa        cada cartão de dependente     .is-on  o cartão escolhido
+     .nc-dep-pessoa--novo  o cartão "Incluir novo dependente"
+     .nc-dep-quem--fechado pergunta 1 fechada: só o escolhido e "Trocar dependente"
+     .nc-dep-opcao         as duas escolhas da pergunta 2 (Corrigir / Tirar da lista)
+     .nc-dep-aviso-sair    o aviso quando a escolha é "Tirar da lista"
+   Cartões e botões têm no mínimo 48px de altura: fáceis de tocar com o dedo.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+/* ---------- as perguntas e as seções: cartões ---------- */
+@app.nc-dep :is(.nc-dep-quem, .nc-dep-acao, .nc-dep-sec) {
+  margin: 0 0 12px;
+  padding: 20px 22px;
+  border: 1px solid var(--nc-nevoa);
+  border-radius: 18px;
+  background: #fff;
+  box-shadow: 0 14px 30px -26px rgba(var(--nc-t-azul-rgb, 44, 26, 99), .5);
+}
+
+@app.nc-dep .nc-dep-pergunta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+  font-family: inherit;
+  font-size: 20px;
+  font-weight: 800;
+  line-height: 1.25;
+  color: var(--nc-tinta);
+}
+
+@app.nc-dep .nc-dep-passo {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--nc-roxo);
+  font-size: 14px;
+  font-weight: 800;
+  color: #fff;
+}
+
+@app.nc-dep .nc-dep-sub {
+  margin: 6px 0 16px 38px;
+  font-size: 15px;
+  line-height: 1.45;
+  color: var(--nc-grafite);
+}
+
+/* quem é: um cartão por pessoa */
+@app.nc-dep .nc-dep-pessoas {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(232px, 1fr));
+  gap: 10px;
+}
+
+@app.nc-dep .nc-dep-pessoa {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  grid-template-rows: auto auto;
+  align-items: center;
+  gap: 1px 12px;
+  min-height: 72px;
+  padding: 12px 34px 12px 12px;
+  border: 1.5px solid var(--nc-nevoa);
+  border-radius: 16px;
+  background: #fff;
+  font: inherit;
+  text-align: left;
+  color: var(--nc-tinta);
+  cursor: pointer;
+  transition: border-color .15s ease-out, background-color .15s ease-out, transform .15s ease-out;
+}
+
+@app.nc-dep .nc-dep-pessoa:hover:not(:disabled) {
+  border-color: #CDBDE2 /*reserva*/;
+  border-color: oklch(from #CDBDE2 l calc(c * var(--nc-t-croma, 1)) calc(h + var(--nc-t-giro, 0)));
+  background: #FCFAFE;
+}
+
+@app.nc-dep .nc-dep-pessoa:active:not(:disabled) {
+  transform: scale(.985);
+}
+
+@app.nc-dep .nc-dep-pessoa:disabled {
+  cursor: default;
+  opacity: .6;
+}
+
+@app.nc-dep :is(.nc-dep-pessoa, .nc-dep-opcao, .nc-dep-falta, .nc-dep-link):focus-visible {
+  outline: 3px solid var(--nc-roxo);
+  outline-offset: 2px;
+}
+
+@app.nc-dep .nc-dep-avatar {
+  display: grid;
+  grid-row: 1 / span 2;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--nc-nevoa2);
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: .02em;
+  color: var(--nc-roxo);
+}
+
+@app.nc-dep .nc-dep-pessoa--novo .nc-dep-avatar {
+  border: 1.5px dashed #B9A5D6 /*reserva*/;
+  border: 1.5px dashed oklch(from #B9A5D6 l calc(c * var(--nc-t-croma, 1)) calc(h + var(--nc-t-giro, 0)));
+  background: #fff;
+}
+
+@app.nc-dep .nc-dep-avatar svg {
+  width: 22px;
+  height: 22px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.2;
+  stroke-linecap: round;
+}
+
+@app.nc-dep .nc-dep-pessoa-nome {
+  display: -webkit-box;
+  align-self: end;
+  overflow: hidden;
+  font-size: 15.5px;
+  font-weight: 800;
+  line-height: 1.25;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+/* fechada: só o escolhido e o "Trocar dependente" */
+@app.nc-dep .nc-dep-quem--fechado .nc-dep-pessoa:not(.is-on) {
+  display: none;
+}
+
+@app.nc-dep .nc-dep-quem--fechado .nc-dep-pessoas {
+  margin-top: 14px;
+}
+
+@app.nc-dep .nc-dep-trocar {
+  display: none;
+  margin: 10px 0 0;
+  padding: 6px 2px;
+  border: 0;
+  background: none;
+  font: inherit;
+  font-size: 14.5px;
+  font-weight: 700;
+  color: var(--nc-roxo);
+  text-decoration: underline;
+  text-decoration-color: rgba(var(--nc-t-roxo-rgb, 81, 28, 118), .35);
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+
+@app.nc-dep .nc-dep-quem--fechado .nc-dep-trocar {
+  display: inline-block;
+}
+
+@app.nc-dep .nc-dep-trocar:focus-visible {
+  outline: 3px solid var(--nc-roxo);
+  outline-offset: 2px;
+}
+
+@app.nc-dep .nc-dep-sub[hidden] {
+  display: none;
+}
+
+@app.nc-dep .nc-dep-pessoa-sub {
+  align-self: start;
+  font-size: 13px;
+  line-height: 1.3;
+  color: #6E6882;
+}
+
+@app.nc-dep .nc-dep-marca {
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  display: none;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  margin-top: -11px;
+  border-radius: 50%;
+  background: var(--nc-roxo);
+  color: #fff;
+}
+
+@app.nc-dep :is(.nc-dep-marca svg, .nc-dep-ic) {
+  width: 14px;
+  height: 14px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+@app.nc-dep .nc-dep-pessoa.is-on {
+  border-color: var(--nc-roxo);
+  background: #F7F2FC;
+}
+
+@app.nc-dep .nc-dep-pessoa.is-on .nc-dep-avatar {
+  border: 0;
+  background: var(--nc-grad);
+  color: #fff;
+}
+
+@app.nc-dep .nc-dep-pessoa.is-on .nc-dep-marca {
+  display: grid;
+}
+
+/* o que fazer: duas escolhas grandes */
+@app.nc-dep .nc-dep-opcoes {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin: 16px 0 0;
+}
+
+@app.nc-dep .nc-dep-opcao {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  grid-template-rows: auto auto;
+  align-items: center;
+  gap: 2px 12px;
+  min-height: 76px;
+  padding: 14px;
+  border: 1.5px solid var(--nc-nevoa);
+  border-radius: 16px;
+  background: #fff;
+  font: inherit;
+  text-align: left;
+  color: var(--nc-tinta);
+  cursor: pointer;
+  transition: border-color .15s ease-out, background-color .15s ease-out;
+}
+
+@app.nc-dep .nc-dep-opcao:hover {
+  border-color: #CDBDE2 /*reserva*/;
+  border-color: oklch(from #CDBDE2 l calc(c * var(--nc-t-croma, 1)) calc(h + var(--nc-t-giro, 0)));
+}
+
+@app.nc-dep .nc-dep-opcao-ic {
+  display: grid;
+  grid-row: 1 / span 2;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  background: var(--nc-nevoa2);
+  color: var(--nc-roxo);
+}
+
+@app.nc-dep .nc-dep-opcao-ic svg {
+  width: 24px;
+  height: 24px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.9;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+@app.nc-dep .nc-dep-opcao-tit {
+  align-self: end;
+  font-size: 16px;
+  font-weight: 800;
+  line-height: 1.25;
+}
+
+@app.nc-dep .nc-dep-opcao-dica {
+  align-self: start;
+  font-size: 13.5px;
+  line-height: 1.35;
+  color: #6E6882;
+}
+
+@app.nc-dep .nc-dep-opcao.is-on {
+  border-color: var(--nc-roxo);
+  background: #F7F2FC;
+}
+
+@app.nc-dep .nc-dep-opcao.is-on .nc-dep-opcao-ic {
+  background: var(--nc-roxo);
+  color: #fff;
+}
+
+/* tirar da lista: vermelho só quando escolhido (é uma saída, não um erro) */
+@app.nc-dep .nc-dep-opcao--sair.is-on {
+  border-color: var(--nc-ruim);
+  background: #FDF3F4;
+}
+
+@app.nc-dep .nc-dep-opcao--sair.is-on .nc-dep-opcao-ic {
+  background: var(--nc-ruim);
+}
+
+@app.nc-dep .nc-dep-aviso-sair {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin: 12px 0 0;
+  padding: 14px 16px;
+  border-radius: 14px;
+  background: #FDF3F4;
+  font-size: 15px;
+  line-height: 1.45;
+  color: #5E1A22;
+}
+
+@app.nc-dep .nc-dep-aviso-sair p {
+  margin: 0;
+}
+
+@app.nc-dep .nc-dep-aviso-sair p + p {
+  margin-top: 4px;
+}
+
+@app.nc-dep .nc-dep-aviso-ic svg {
+  width: 22px;
+  height: 22px;
+  margin-top: 1px;
+  fill: none;
+  stroke: var(--nc-ruim);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+@app.nc-dep .nc-dep-link {
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  font-weight: 700;
+  color: var(--nc-roxo);
+  text-decoration: underline;
+  text-decoration-color: rgba(var(--nc-t-roxo-rgb, 81, 28, 118), .35);
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+
+/* ═══ [C4] AS SEÇÕES E OS CAMPOS ════════════════════════════════════════════════════════════
+   Montadas pelo JS em [J4] a partir do mapa de [J2]. Peças principais:
+     .nc-dep-sec      cada seção (cartão)         .nc-dep-sec-cab  o cabeçalho com ícone e título
+     .nc-dep-campos   a grade dos campos          .nc-dep-campo    cada campo (célula)
+     .nc-dep-dica     a frase pequena embaixo do campo
+   A largura de cada campo vem do JS (os números de [J2]), entregue em --nc-l (computador,
+   de 12) e --nc-c (celular, de 6). Na tela larga (1280px ou mais), as seções ficam em duas
+   colunas. Campos com letra de 16px: o celular não amplia a tela ao tocar.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+/* ---------- as seções ---------- */
+@app.nc-dep .nc-dep-sec-cab {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0 0 16px;
+}
+
+@app.nc-dep .nc-dep-sec-ic {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: var(--nc-nevoa2);
+  color: var(--nc-roxo);
+}
+
+@app.nc-dep .nc-dep-sec-ic svg {
+  width: 22px;
+  height: 22px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.9;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+@app.nc-dep .nc-dep-sec-cab h3 {
+  margin: 0;
+  font-family: inherit;
+  font-size: 18px;
+  font-weight: 800;
+  line-height: 1.25;
+  color: var(--nc-tinta);
+}
+
+@app.nc-dep .nc-dep-sec-cab p {
+  margin: 2px 0 0;
+  font-size: 14px;
+  line-height: 1.4;
+  color: var(--nc-grafite);
+}
+
+@app.nc-dep .nc-dep-campos {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 16px 16px;
+}
+
+@app.nc-dep .nc-dep-campo {
+  grid-column: span var(--nc-l, 6);
+  min-width: 0;
+}
+
+/* o contêiner do APEX dentro da célula: sem as larguras de coluna do tema */
+@app.nc-dep .nc-dep-campo > .t-Form-fieldContainer:not(#nc-dep-x):not(#nc-dep-y) {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+/* (o modelo de rótulo flutuante do portal, app 600, fica como é: o rótulo mora dentro da caixa) */
+@app.nc-dep .nc-dep-campo > .t-Form-fieldContainer:not(.t-Form-fieldContainer--floatingLabel) > :is(.t-Form-labelContainer, .t-Form-inputContainer):not(#nc-dep-x):not(#nc-dep-y) {
+  width: 100%;
+  max-width: none;
+  padding-left: 0;
+  padding-right: 0;
+  text-align: left;
+}
+
+@app.nc-dep .nc-dep-campo > .t-Form-fieldContainer:not(.t-Form-fieldContainer--floatingLabel) > .t-Form-labelContainer:not(#nc-dep-x):not(#nc-dep-y) {
+  min-height: 0;
+  padding-top: 0;
+  padding-bottom: 6px;
+}
+
+@app.nc-dep #nc-dep-secoes .t-Form-fieldContainer:not(.t-Form-fieldContainer--floatingLabel) .t-Form-label {
+  font-size: 14.5px;
+  font-weight: 700;
+  line-height: 1.3;
+  color: var(--nc-tinta);
+}
+
+/* campos: letra de 16px (o celular não amplia a tela ao tocar) e alvos de 48px */
+@app.nc-dep #nc-dep-secoes :is(input.apex-item-text, input.apex-item-datepicker, select, textarea) {
+  min-height: 48px;
+  border-radius: 12px;
+  font-size: 16px;
+}
+
+/* campo + botão: o padrão geral (Natcorp_Paginas) já os une e estica; aqui só a medida */
+@app.nc-dep #nc-dep-secoes :is(.a-Button--popupLOV, .ui-datepicker-trigger, .a-Button--calendar) {
+  min-width: 48px;
+  border-radius: 0 12px 12px 0;
+}
+
+@app.nc-dep .nc-dep-dica {
+  margin: 6px 0 0;
+  font-size: 13px;
+  line-height: 1.4;
+  color: #6E6882;
+}
+
+/* tela larga: as seções em duas colunas (lidas coluna a coluna), para o gestor no computador
+   não rolar o dobro. Cada seção inteira numa coluna só. */
+@media (min-width: 1280px) {
+  @app.nc-dep #nc-dep-secoes {
+    columns: 2;
+    column-gap: 12px;
+  }
+
+  @app.nc-dep #nc-dep-secoes > .nc-dep-sec {
+    display: block;
+    width: 100%;
+    break-inside: avoid;
+  }
+
+  /* no portal (app 600) a coluna da foto come a largura: uma seção por linha */
+  @app.nc-dep #nc-dep-secoes:has(.t-Form-fieldContainer--floatingLabel) {
+    columns: auto;
+  }
+
+  @app.nc-dep #nc-dep-secoes:has(.t-Form-fieldContainer--floatingLabel) > .nc-dep-sec {
+    margin-bottom: 12px;
+  }
+
+  /* na meia largura, data, lista popup e rótulos longos pedem metade da seção */
+  @app.nc-dep .nc-dep-campo:is([data-item$="_DT_DEPENDENTE"], [data-item$="_DESC_VL_PL_MEDICO"], [data-item$="_DESC_VL_PL_ODONTO"], [data-item$="_IND_AGREGADO"], [data-item$="_INCID_IR"], [data-item$="_INCID_SF"], [data-item$="_CART_VACIN"], [data-item$="_FREQ_ESCOLAR"], [data-item$="_NUM_CPF_CONJUGE_DISPLAY"], [data-item$="_TIPO_CERTIDAO"], [data-item$="_DATA_CERTIDAO"]) {
+    grid-column: span 6;
+  }
+
+  @app.nc-dep .nc-dep-campo:is([data-item$="_NUM_REGISTRO"], [data-item$="_NUM_LIVRO"], [data-item$="_NUM_FOLHA"]) {
+    grid-column: span 4;
+  }
+
+  /* 300:54: CPF em número + dígito (4 + 2); o nome da mãe ganha a linha e o CPF dela desce */
+  @app.nc-dep .nc-dep-campo:is([data-item$="_NUM_CPF_CONJUGE"], [data-item$="_CPF_MAE_DEPEND"]:not([data-item$="_DC_CPF_MAE_DEPEND"])) {
+    grid-column: span 4;
+  }
+
+  @app.nc-dep .nc-dep-campo:is([data-item$="_DC_CPF_CONJUGE"], [data-item$="_DC_CPF_MAE_DEPEND"]) {
+    grid-column: span 2;
+  }
+
+  @app.nc-dep .nc-dep-sec:has([data-item$="_DC_CPF_MAE_DEPEND"]) .nc-dep-campo[data-item$="_MAE_DEPEND"]:not([data-item*="CPF"]) {
+    grid-column: span 12;
+  }
+}
+
+/* ═══ [C5] DOCUMENTOS ═══════════════════════════════════════════════════════════════════════
+   A região de Documentos (nc-dep-anexos), levada pelo JS em [J4] para depois das seções,
+   na largura toda. .nc-dep-anexos-dica é a frase de ajuda (escrita em [J6]).
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+/* ---------- documentos ---------- */
+@app.nc-dep .t-Region.nc-dep-anexos--fluxo:not(#nc-dep-x):not(#nc-dep-y) {
+  margin: 0 0 12px;
+  border-radius: 18px;
+}
+
+@app.nc-dep .nc-dep-anexos-dica {
+  margin: 0;
+  padding: 16px 20px 4px;
+  font-size: 15px;
+  line-height: 1.45;
+  color: var(--nc-grafite);
+}
+
+@app.nc-dep .nc-dep-anexos-dica b {
+  color: var(--nc-tinta);
+}
+
+/* ═══ [C6] A BARRA DO RODAPÉ: Voltar, o que falta, Enviar/Salvar ════════════════════════════
+   Montada pelo JS em [J7]. .nc-dep-acoes é a barra; .nc-dep-falta, cada campo que falta;
+   .nc-dep-apagar, o "Apagar pedido" discreto. .nc-dep-so-largo aparece só em tela larga e
+   .nc-dep-so-celular só no celular.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+/* ---------- a barra do rodapé — Voltar, o que falta, Enviar/Salvar ---------- */
+@app.nc-dep .t-ButtonRegion.nc-dep-acoes:not(.nc-dep-acoes--leitura):not(#nc-dep-x):not(#nc-dep-y) {
+  position: sticky;
+  bottom: 0;
+  z-index: 20;
+  margin: 16px 0 0;
+  padding: 12px 16px;
+  border: 1px solid var(--nc-nevoa);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, .96);
+  box-shadow: 0 -12px 28px -22px rgba(var(--nc-t-azul-rgb, 44, 26, 99), .55);
+}
+
+@app.nc-dep .t-ButtonRegion.nc-dep-acoes .t-ButtonRegion-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 16px;
+}
+
+@app.nc-dep .t-ButtonRegion.nc-dep-acoes .t-ButtonRegion-col--left { order: 1; flex: none; width: auto; }
+@app.nc-dep .t-ButtonRegion.nc-dep-acoes .t-ButtonRegion-col--content { order: 2; flex: 1 1 260px; }
+@app.nc-dep .t-ButtonRegion.nc-dep-acoes .t-ButtonRegion-col--right { order: 3; flex: none; width: auto; }
+
+@app.nc-dep .t-ButtonRegion.nc-dep-acoes .t-ButtonRegion-col--content .t-ButtonRegion-buttons:empty {
+  display: none;
+}
+
+@app.nc-dep .t-ButtonRegion.nc-dep-acoes:not(.nc-dep-acoes--leitura) .t-Button {
+  height: 46px;
+  padding: 0 22px;
+  border-radius: 12px;
+  font-size: 15px;
+}
+
+/* apagar o pedido: existe, mas não compete com o enviar */
+@app.nc-dep .t-ButtonRegion.nc-dep-acoes .t-Button.nc-dep-apagar:not(#nc-dep-x):not(#nc-dep-y) {
+  border-color: transparent;
+  background: transparent;
+  box-shadow: none;
+  color: var(--nc-ruim);
+}
+
+@app.nc-dep .t-ButtonRegion.nc-dep-acoes .t-Button.nc-dep-apagar:hover:not(#nc-dep-x):not(#nc-dep-y) {
+  background: #FDF3F4;
+}
+
+@app.nc-dep .nc-dep-status {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 8px;
+  font-size: 14px;
+  color: var(--nc-grafite);
+}
+
+@app.nc-dep .nc-dep-status-rot {
+  font-weight: 700;
+  color: #6B4700;
+}
+
+@app.nc-dep .nc-dep-falta {
+  padding: 5px 11px;
+  border: 0;
+  border-radius: 999px;
+  background: #FFF4DE;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  color: #6B4700;
+  cursor: pointer;
+}
+
+@app.nc-dep :is(.nc-dep-status-ok, .nc-dep-status-sair) {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 700;
+  color: var(--nc-roxo);
+}
+
+@app.nc-dep .nc-dep-status-sair {
+  color: var(--nc-ruim);
+}
+
+@app.nc-dep .nc-dep-status-sair .nc-dep-ic {
+  width: 16px;
+  height: 16px;
+  stroke-width: 2.2;
+}
+
+@app.nc-dep .nc-dep-so-celular {
+  display: none;
+}
+
+/* ═══ [C7] CELULAR E MENOS MOVIMENTO ════════════════════════════════════════════════════════
+   O que está dentro de  @media (max-width: 640px)  só vale em telas até 640px (celular).
+   No fim, @media (prefers-reduced-motion: reduce): para quem pediu "reduzir movimento" nas
+   configurações (acessibilidade), os cartões mudam sem transição suave.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+/* ---------- celular ---------- */
+@media (max-width: 640px) {
+  @app.nc-dep .nc-dep-topo {
+    gap: 12px;
+    padding: 14px;
+  }
+
+  @app.nc-dep .nc-dep-topo-ic {
+    width: 44px;
+    height: 44px;
+    border-radius: 14px;
+  }
+
+  @app.nc-dep .nc-dep-topo-tit {
+    font-size: 21px;
+  }
+
+  @app.nc-dep :is(.nc-dep-quem, .nc-dep-acao, .nc-dep-sec) {
+    padding: 16px 14px;
+    border-radius: 16px;
+  }
+
+  @app.nc-dep .nc-dep-pergunta {
+    font-size: 18px;
+  }
+
+  @app.nc-dep .nc-dep-sub {
+    margin-left: 0;
+  }
+
+  @app.nc-dep .nc-dep-pessoas {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  @app.nc-dep .nc-dep-pessoa {
+    min-height: 64px;
+  }
+
+  @app.nc-dep .nc-dep-opcoes {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  @app.nc-dep .nc-dep-campos {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 14px 12px;
+  }
+
+  @app.nc-dep .nc-dep-campo {
+    grid-column: span var(--nc-c, 6);
+  }
+
+  @app.nc-dep .nc-dep-anexos-dica {
+    padding: 14px 14px 2px;
+  }
+
+  @app.nc-dep .nc-dep-so-largo {
+    display: none;
+  }
+
+  @app.nc-dep .nc-dep-so-celular {
+    display: inline-block;
+  }
+
+  @app.nc-dep .t-ButtonRegion.nc-dep-acoes:not(.nc-dep-acoes--leitura):not(#nc-dep-x):not(#nc-dep-y) {
+    margin: 12px -4px 0;
+    border-radius: 14px 14px 0 0;
+  }
+
+  @app.nc-dep .t-ButtonRegion.nc-dep-acoes .t-ButtonRegion-col--content {
+    order: 0;
+    flex-basis: 100%;
+  }
+
+  /* Voltar e Apagar numa linha, Enviar/Salvar em outra, largura toda */
+  @app.nc-dep .t-ButtonRegion.nc-dep-acoes .t-ButtonRegion-col--left:not(#nc-dep-x):not(#nc-dep-y) {
+    flex: 1 1 100%;
+    width: 100%;
+  }
+
+  @app.nc-dep .t-ButtonRegion.nc-dep-acoes .t-ButtonRegion-col--left .t-ButtonRegion-buttons {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+  }
+
+  @app.nc-dep .t-ButtonRegion.nc-dep-acoes .t-ButtonRegion-col--right {
+    order: 4;
+    flex: 1 1 100%;
+  }
+
+  @app.nc-dep .t-ButtonRegion.nc-dep-acoes .t-ButtonRegion-col--right .t-Button {
+    width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  @app.nc-dep :is(.nc-dep-pessoa, .nc-dep-opcao) {
+    transition: none;
+  }
+}
+
+
+/* ═══ [C8] PÁGINA 133 (PORTAL): O QUE MUDOU E A DECISÃO DE QUEM APROVA ══════════════════════
+   Montado pelo JS em [J8] e [J9]. Peças principais:
+     .nc-dep-mudou     "N campos alterados neste pedido" e o botão "Ver só o que mudou"
+     .nc-dep-sec-alt   o "N alterados" de cada seção
+     .nc-dep-campo--mudou   campo alterado (o servidor pinta de amarelo)
+     .nc-dep-so-mudou  marca na página quando "Ver só o que mudou" está ligado
+     .nc-dep-decisao   a barra da decisão: .nc-dep-reprovar, .nc-dep-email, .nc-dep-aprovar
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+/* =====================================================================
+   PÁGINA 133 (portal) — o que mudou e a decisão de quem aprova
+   ===================================================================== */
+@app.nc-dep :is(.nc-dep-mudou, .nc-dep-sec-alt)[hidden]:not(#nc-dep-x):not(#nc-dep-y),
+@app.nc-dep .nc-dep-quem--fixo .nc-dep-trocar:not(#nc-dep-x):not(#nc-dep-y),
+@app.nc-dep.nc-dep-so-mudou .nc-dep-campo:not(.nc-dep-campo--mudou):not(#nc-dep-x):not(#nc-dep-y),
+@app.nc-dep.nc-dep-so-mudou .nc-dep-sec.nc-dep-sec--sem-mudanca:not(#nc-dep-x):not(#nc-dep-y) {
+  display: none;
+}
+
+/* o dependente do pedido: um cartão só, sem "Trocar" */
+@app.nc-dep .nc-dep-quem--fixo .nc-dep-pessoa:not(#nc-dep-x):not(#nc-dep-y) {
+  cursor: default;
+}
+
+@app.nc-dep .nc-dep-mudou {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 14px;
+  flex-basis: 100%;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px dashed #E3D9EE;
+}
+
+@app.nc-dep .nc-dep-mudou-n {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 800;
+  color: #6B4E00;
+}
+
+@app.nc-dep .nc-dep-mudou-n i {
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+  background: #FFE98A;
+  box-shadow: inset 0 0 0 1px #E8C84A;
+}
+
+@app.nc-dep .nc-dep-mudou-bt:not(#nc-dep-x):not(#nc-dep-y) {
+  min-height: 36px;
+  margin: 0;
+  padding: 0 14px;
+  border: 1.5px solid var(--nc-roxo);
+  border-radius: 999px;
+  background: #fff;
+  box-shadow: none;
+  font: inherit;
+  font-size: 13.5px;
+  font-weight: 800;
+  color: var(--nc-roxo);
+  cursor: pointer;
+}
+
+@app.nc-dep .nc-dep-mudou-bt[aria-pressed="true"]:not(#nc-dep-x):not(#nc-dep-y) {
+  background: var(--nc-roxo);
+  color: #fff;
+}
+
+@app.nc-dep .nc-dep-mudou-bt:focus-visible {
+  outline: 2px solid var(--nc-roxo);
+  outline-offset: 2px;
+}
+
+@app.nc-dep .nc-dep-sec-alt {
+  align-self: center;
+  margin-left: auto;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: #FFF4C2;
+  font-size: 12.5px;
+  font-weight: 800;
+  white-space: nowrap;
+  color: #6B4E00;
+}
+
+/* a barra da decisão: grudada no pé, com o resumo e os três botões */
+@app.nc-dep .nc-dep-decisao {
+  position: sticky;
+  bottom: 0;
+  z-index: 20;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px 18px;
+  margin: 14px 0 0;
+  padding: 12px 16px;
+  border: 1px solid var(--nc-nevoa);
+  border-radius: 16px 16px 0 0;
+  background: rgba(255, 255, 255, .97);
+  box-shadow: 0 -12px 26px -20px rgba(var(--nc-t-azul-rgb, 44, 26, 99), .45);
+}
+
+@app.nc-dep .nc-dep-decisao-txt {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+  flex: 1 1 260px;
+  font-size: 13.5px;
+  line-height: 1.4;
+  color: var(--nc-grafite);
+}
+
+@app.nc-dep .nc-dep-decisao-txt b {
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--nc-tinta);
+}
+
+@app.nc-dep .nc-dep-decisao-bts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+@app.nc-dep .nc-dep-decisao .t-Button:not(#nc-dep-x):not(#nc-dep-y) {
+  width: auto;
+  min-height: 46px;
+  margin: 0;
+  padding: 0 18px;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 800;
+}
+
+/* Reprovar e e-mail em contorno; Aprovar é o único cheio */
+@app.nc-dep .nc-dep-decisao .t-Button.nc-dep-reprovar:not(#nc-dep-x):not(#nc-dep-y) {
+  border: 1.5px solid #E7B9BF /*reserva*/;
+  border: 1.5px solid oklch(from #E7B9BF l calc(c * var(--nc-t-croma, 1)) calc(h + var(--nc-t-giro, 0)));
+  background: #fff;
+  color: #9B2432;
+}
+
+@app.nc-dep .nc-dep-decisao .t-Button.nc-dep-email:not(#nc-dep-x):not(#nc-dep-y) {
+  border: 1.5px solid #D9CCE8;
+  background: #fff;
+  color: var(--nc-roxo);
+}
+
+@app.nc-dep .nc-dep-decisao .t-Button:is(.nc-dep-reprovar, .nc-dep-email) :is(.t-Button-label, .t-Icon):not(#nc-dep-x):not(#nc-dep-y) {
+  color: inherit;
+}
+
+@app.nc-dep .nc-dep-decisao .t-Button.nc-dep-reprovar:hover:not(#nc-dep-x):not(#nc-dep-y) {
+  background: #FDF0F2;
+}
+
+@app.nc-dep .nc-dep-decisao .t-Button.nc-dep-email:hover:not(#nc-dep-x):not(#nc-dep-y) {
+  background: #F6F0FB;
+}
+
+@media (max-width: 640px) {
+  @app.nc-dep .nc-dep-decisao {
+    padding: 10px 12px;
+  }
+
+  @app.nc-dep .nc-dep-decisao-bts {
+    flex: 1 1 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  @app.nc-dep .nc-dep-decisao .t-Button.nc-dep-aprovar:not(#nc-dep-x):not(#nc-dep-y) {
+    grid-column: 1 / -1;
+    order: -1;
+  }
+
+  @app.nc-dep .nc-dep-decisao .t-Button:not(#nc-dep-x):not(#nc-dep-y) {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* o botão da Pensão (modelo do portal esconde o rótulo no celular): o texto fica */
+@app.nc-dep .nc-dep-pensao .t-Button--mobileHideLabel .t-Button-label:not(#nc-dep-x):not(#nc-dep-y) {
+  display: inline;
+}
+
+
+/* ═══ [C9] JANELA "CADASTRO DE BENEFICIÁRIAS" (app 9132, p3): O QUE SOME E O ALTO ═══════════
+   Daqui até [C14], tudo é da janela da pensão (BLOCO B do JS). Todas as regras começam com
+   .nc-ben, a marca que o JS põe na janela em [J17].
+   Montado pelo JS em [J14]: .nc-ben-topo é o alto ("Pensão para Fulana").
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+/* =====================================================================
+   JANELA "Cadastro de Beneficiárias" (app 9132, página 3) — a pensão alimentícia.
+   Depende de nc-ben, que só o Natcorp_Dependentes.js põe no body (quando acha Nome da
+   pensionista + Chave PIX + Conta). O modelo de rótulo é o flutuante: o rótulo mora na caixa.
+   ===================================================================== */
+@app.nc-ben :is(.t-Region, .t-TabsRegion).nc-ben-absorvida:not(#nc-ben-x):not(#nc-ben-y),
+@app.nc-ben .nc-ben-campo--fora:not(#nc-ben-x):not(#nc-ben-y),
+@app.nc-ben .nc-ben-par-fora:not(#nc-ben-x):not(#nc-ben-y),
+@app.nc-ben .nc-ben-guardado:not(#nc-ben-x):not(#nc-ben-y),
+@app.nc-ben .nc-ben-sem-pix:not(#nc-ben-x):not(#nc-ben-y),
+@app.nc-ben .nc-ben-vazio:not(#nc-ben-x):not(#nc-ben-y),
+@app.nc-ben :is(.nc-ben-sec, .nc-ben-aviso)[hidden]:not(#nc-ben-x):not(#nc-ben-y) {
+  display: none;
+}
+
+/* a lista do tipo de chave PIX: fora da vista, mas no formulário e no leitor de tela */
+@app.nc-ben .nc-ben-nativo-c:not(#nc-ben-x):not(#nc-ben-y) {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+@app.nc-ben .nc-ben-raiz {
+  padding: 4px 0 8px;
+}
+
+/* ---------- o alto ---------- */
+@app.nc-ben .nc-ben-topo {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin: 0 0 14px;
+  padding: 18px 20px;
+  border-radius: 18px;
+  background: linear-gradient(120deg, var(--nc-azul) 0%, var(--nc-roxo) 62%, #7A2D86 100%) /*reserva*/;
+  background: linear-gradient(120deg, var(--nc-azul) 0%, var(--nc-roxo) 62%, oklch(from #7A2D86 l calc(c * var(--nc-t-croma, 1)) calc(h + var(--nc-t-giro, 0))) 100%);
+  color: #fff;
+}
+
+@app.nc-ben .nc-ben-av {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, .16);
+  box-shadow: inset 0 0 0 2px rgba(255, 255, 255, .35);
+  font-size: 19px;
+  font-weight: 800;
+  letter-spacing: .02em;
+  color: #fff;
+}
+
+@app.nc-ben .nc-ben-av svg {
+  width: 26px;
+  height: 26px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.9;
+}
+
+@app.nc-ben .nc-ben-topo-txt {
+  min-width: 0;
+}
+
+@app.nc-ben .nc-ben-tit {
+  margin: 0;
+  font-family: inherit;
+  font-size: 22px;
+  font-weight: 800;
+  line-height: 1.2;
+  color: #fff;
+  overflow-wrap: anywhere;
+}
+
+@app.nc-ben .nc-ben-de {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 10px;
+  margin: 6px 0 0;
+  font-size: 14.5px;
+  line-height: 1.4;
+  color: rgba(255, 255, 255, .86);
+}
+
+@app.nc-ben .nc-ben-de b {
+  font-weight: 700;
+  color: #fff;
+}
+
+@app.nc-ben .nc-ben-chip {
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, .18);
+  font-size: 13px;
+  font-weight: 700;
+  color: #fff;
+}
+
+/* ═══ [C10] JANELA DA PENSÃO: AS SEÇÕES E OS CAMPOS ═════════════════════════════════════════
+   Montadas pelo JS em [J14] a partir do mapa de [J12]. .nc-ben-sec é cada seção;
+   .nc-ben-campo, cada campo; .nc-ben-par, número + dígito numa caixa só (com o traço no meio).
+   A largura vem do JS em --nc-l (computador, de 12) e --nc-c (celular, de 6).
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+/* ---------- seções ---------- */
+@app.nc-ben .nc-ben-sec {
+  margin: 0 0 12px;
+  padding: 20px 22px 22px;
+  border: 1px solid var(--nc-nevoa);
+  border-radius: 18px;
+  background: #fff;
+  box-shadow: 0 14px 30px -26px rgba(var(--nc-t-azul-rgb, 44, 26, 99), .5);
+}
+
+@app.nc-ben .nc-ben-sec-cab {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0 0 16px;
+}
+
+@app.nc-ben .nc-ben-sec-ic {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: var(--nc-nevoa2);
+  color: var(--nc-roxo);
+}
+
+@app.nc-ben :is(.nc-ben-sec-ic svg, .nc-ben-ic) {
+  width: 22px;
+  height: 22px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.9;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+@app.nc-ben .nc-ben-sec-cab h3 {
+  margin: 0;
+  font-family: inherit;
+  font-size: 18px;
+  font-weight: 800;
+  line-height: 1.25;
+  color: var(--nc-tinta);
+}
+
+@app.nc-ben .nc-ben-sec-dica {
+  margin: 2px 0 0;
+  font-size: 14px;
+  line-height: 1.4;
+  color: var(--nc-grafite);
+}
+
+@app.nc-ben .nc-ben-campos {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 14px 14px;
+}
+
+@app.nc-ben .nc-ben-campo {
+  grid-column: span var(--nc-l, 6);
+  min-width: 0;
+}
+
+@app.nc-ben :is(.nc-ben-grupo, .nc-ben-titular, .nc-ben-pix) {
+  grid-column: 1 / -1;
+}
+
+@app.nc-ben .nc-ben-grupo {
+  margin: 8px 0 -4px;
+  padding-top: 14px;
+  border-top: 1px dashed var(--nc-nevoa);
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 800;
+  line-height: 1.3;
+  color: var(--nc-roxo);
+}
+
+@app.nc-ben .nc-ben-campos > .nc-ben-grupo:first-child {
+  margin-top: 0;
+  padding-top: 0;
+  border-top: 0;
+}
+
+/* o contêiner do APEX dentro da célula: sem as larguras de coluna do tema */
+@app.nc-ben .nc-ben-campo .t-Form-fieldContainer:not(#nc-ben-x):not(#nc-ben-y) {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+/* campos: letra de 16px (o celular não amplia a tela ao tocar) */
+@app.nc-ben #nc-ben :is(input.apex-item-text, input.apex-item-datepicker, select, textarea) {
+  font-size: 16px;
+}
+
+/* o texto do ofício cresce com o texto (a altura vem do .js; a Skin travava) */
+@app.nc-ben #nc-ben textarea.apex-item-textarea:not(#nc-ben-x) {
+  height: var(--nc-ben-h, 132px);
+  min-height: 132px;
+  max-height: 420px;
+  resize: vertical;
+  line-height: 1.5;
+}
+
+/* os números alinhados à esquerda, como se escreve (a página os punha à direita) */
+@app.nc-ben #nc-ben input.apex-item-text:not(#nc-ben-x) {
+  text-align: left;
+}
+
+/* número + dígito: uma coisa só, com o traço no meio */
+@app.nc-ben .nc-ben-par-g {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+@app.nc-ben .nc-ben-par-g > .t-Form-fieldContainer:first-child:not(#nc-ben-x):not(#nc-ben-y) {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+@app.nc-ben .nc-ben-par-g > .t-Form-fieldContainer + .nc-ben-traco + .t-Form-fieldContainer:not(#nc-ben-x):not(#nc-ben-y) {
+  flex: 0 0 92px;
+  width: 92px;
+}
+
+/* telefone: o DDD é a parte curta, na frente */
+@app.nc-ben .nc-ben-campo[data-item$="_DDD"] .nc-ben-par-g > .t-Form-fieldContainer:first-child:not(#nc-ben-x):not(#nc-ben-y) {
+  flex: 0 0 84px;
+  width: 84px;
+}
+
+@app.nc-ben .nc-ben-campo[data-item$="_DDD"] .nc-ben-par-g > .t-Form-fieldContainer + .nc-ben-traco + .t-Form-fieldContainer:not(#nc-ben-x):not(#nc-ben-y) {
+  flex: 1 1 auto;
+  width: auto;
+}
+
+@app.nc-ben .nc-ben-campo[data-item$="_DDD"] .nc-ben-traco {
+  visibility: hidden;
+  width: 0;
+  margin-left: -6px;
+}
+
+/* caixa sem botão: o rótulo usa a largura toda (o padrão guarda 60px para o botão, e os
+   rótulos curtos saíam "N…", "O…") */
+@app.nc-ben #nc-ben .t-Form-fieldContainer--floatingLabel:not(:has(.a-Button--popupLOV, .ui-datepicker-trigger, .a-Button--calendar, select)) .t-Form-label:not(#nc-ben-x):not(#nc-ben-y) {
+  right: 12px;
+}
+
+@app.nc-ben #nc-ben .t-Form-fieldContainer--floatingLabel:has(select) .t-Form-label:not(#nc-ben-x):not(#nc-ben-y) {
+  right: 36px;
+}
+
+@app.nc-ben .nc-ben-traco {
+  flex: none;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--nc-cinza);
+}
+
+@app.nc-ben .nc-ben-dica {
+  margin: 6px 2px 0;
+  font-size: 13px;
+  line-height: 1.4;
+  color: #6E6882;
+}
+
+@app.nc-ben .nc-ben-aviso {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  margin: 6px 2px 0;
+  font-size: 13.5px;
+  font-weight: 700;
+  line-height: 1.35;
+  color: #8A3A00;
+}
+
+@app.nc-ben .nc-ben-aviso .nc-ben-ic {
+  flex: none;
+  width: 17px;
+  height: 17px;
+  stroke-width: 2.2;
+}
+
+/* ═══ [C11] JANELA DA PENSÃO: A GRADE DE DESCONTOS (Processo de Pagamento) ══════════════════
+   A grade interativa do APEX, posta pelo JS em [J14] na seção "Quanto é descontado".
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+/* a grade de descontos (Processo de Pagamento): só "Adicionar processo" e "Salvar lista" */
+@app.nc-ben .nc-ben-grade-ig .a-Toolbar :is(.a-Toolbar-group--together, .a-Toolbar-selectList, .a-Toolbar-radioGroup, .a-Toolbar-toggleButton):not(#nc-ben-x):not(#nc-ben-y),
+@app.nc-ben .nc-ben-grade-ig .a-Toolbar [id$="_ig_toolbar_actions_button"]:not(#nc-ben-x):not(#nc-ben-y),
+@app.nc-ben .nc-ben-grade-ig .a-Toolbar-group:has(> [id$="_ig_toolbar_actions_button"]):not(#nc-ben-x):not(#nc-ben-y),
+@app.nc-ben .nc-ben-grade-ig .a-Toolbar [data-action="reset-report"]:not(#nc-ben-x):not(#nc-ben-y) {
+  display: none;
+}
+
+@app.nc-ben .nc-ben-grade-ig .a-Toolbar:not(#nc-ben-x):not(#nc-ben-y) {
+  padding: 8px 10px 10px;
+  border: 0;
+  background: transparent;
+}
+
+@app.nc-ben .nc-ben-grade-ig .a-Toolbar [data-action="selection-add-row"]:not(#nc-ben-x):not(#nc-ben-y) {
+  min-height: 40px;
+  padding: 0 14px;
+  border: 1.5px solid var(--nc-roxo);
+  border-radius: 11px;
+  background: #fff;
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--nc-roxo);
+}
+
+@app.nc-ben .nc-ben-grade-ig .a-Toolbar [data-action="save"]:not(#nc-ben-x):not(#nc-ben-y) {
+  min-height: 40px;
+  padding: 0 14px;
+  border-radius: 11px;
+  font-size: 14px;
+  font-weight: 800;
+}
+
+@app.nc-ben .nc-ben-grade-ig {
+  border: 1px solid var(--nc-nevoa);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+@app.nc-ben .nc-ben-grade .t-IRR-region:not(#nc-ben-x):not(#nc-ben-y) {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  box-shadow: none;
+}
+
+@app.nc-ben .nc-ben-grade-como {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin: 0 0 10px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: #F6F2FA;
+  font-size: 13.5px;
+  line-height: 1.45;
+  color: var(--nc-tinta);
+}
+
+@app.nc-ben .nc-ben-grade-como .nc-ben-ic {
+  flex: none;
+  width: 18px;
+  height: 18px;
+  margin-top: 1px;
+  color: var(--nc-roxo);
+}
+
+@app.nc-ben .nc-ben-so-celular {
+  display: none;
+}
+
+@app.nc-ben .nc-ben-pendente {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  font-weight: 700;
+  color: #8A3A00;
+}
+
+@app.nc-ben .nc-ben-pendente .nc-ben-ic {
+  width: 17px;
+  height: 17px;
+}
+
+/* ═══ [C12] JANELA DA PENSÃO: O TITULAR DA CONTA E OS BOTÕES DO PIX ═════════════════════════
+   Montados pelo JS em [J15]. .nc-ben-titular / .nc-ben-copiar: "A conta é de Fulana? Usar o
+   nome e o CPF". .nc-ben-pix-op: cada botão do tipo de chave; .is-on, o escolhido.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+/* titular: "a conta é de …? usar o nome e o CPF" */
+@app.nc-ben .nc-ben-copiar {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  min-height: 48px;
+  padding: 10px 14px;
+  border: 1.5px dashed #CDBFE0;
+  border-radius: 12px;
+  background: #FBF9FD;
+  font: inherit;
+  font-size: 15px;
+  line-height: 1.35;
+  text-align: left;
+  color: var(--nc-grafite);
+  cursor: pointer;
+}
+
+@app.nc-ben .nc-ben-copiar b {
+  font-weight: 700;
+  color: var(--nc-roxo);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+@app.nc-ben .nc-ben-copiar:hover {
+  border-color: var(--nc-roxo);
+  background: var(--nc-nevoa2);
+}
+
+@app.nc-ben .nc-ben-copiar .nc-ben-ic {
+  flex: none;
+  color: var(--nc-roxo);
+}
+
+@app.nc-ben .nc-ben-titular-ok {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14.5px;
+  font-weight: 700;
+  color: #1E6B45;
+}
+
+@app.nc-ben .nc-ben-titular-ok .nc-ben-ic {
+  width: 20px;
+  height: 20px;
+  stroke-width: 2.4;
+}
+
+/* tipo de chave PIX: botões grandes, um só aceso */
+@app.nc-ben .nc-ben-pix {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(128px, 1fr));
+  gap: 8px;
+}
+
+@app.nc-ben .nc-ben-pix-op {
+  min-height: 48px;
+  padding: 10px 12px;
+  border: 1.5px solid var(--nc-nevoa);
+  border-radius: 12px;
+  background: #fff;
+  font: inherit;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--nc-tinta);
+  cursor: pointer;
+  transition: border-color .15s, background-color .15s;
+}
+
+@app.nc-ben .nc-ben-pix-op:hover {
+  border-color: #BBA9D6 /*reserva*/;
+  border-color: oklch(from #BBA9D6 l calc(c * var(--nc-t-croma, 1)) calc(h + var(--nc-t-giro, 0)));
+}
+
+@app.nc-ben .nc-ben-pix-op.is-on {
+  border-color: var(--nc-roxo);
+  background: var(--nc-roxo);
+  color: #fff;
+}
+
+@app.nc-ben .nc-ben-pix-op--sem:not(.is-on) {
+  border-style: dashed;
+  font-weight: 600;
+  color: var(--nc-grafite);
+}
+
+@app.nc-ben .nc-ben-pix.is-travado .nc-ben-pix-op {
+  cursor: default;
+  opacity: .7;
+}
+
+@app.nc-ben :is(.nc-ben-pix-op, .nc-ben-copiar, .nc-ben-falta):focus-visible {
+  outline: 3px solid var(--nc-rosa);
+  outline-offset: 2px;
+}
+
+/* ═══ [C13] JANELA DA PENSÃO: O RODAPÉ E O EXCLUIR ══════════════════════════════════════════
+   Montados pelo JS em [J15]. .nc-ben-status é o "Falta preencher" do rodapé; .nc-ben-falta,
+   cada campo; .nc-ben-apagar, o "Excluir esta pensão" no fim da janela.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+/* ---------- rodapé da janela: o que falta + os botões ---------- */
+@app.nc-ben .nc-ben-acoes .t-ButtonRegion-wrap:not(#nc-ben-x):not(#nc-ben-y) {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+}
+
+@app.nc-ben .nc-ben-acoes .t-ButtonRegion-col--left:not(#nc-ben-x):not(#nc-ben-y) { order: 1; flex: none; width: auto; }
+@app.nc-ben .nc-ben-acoes .t-ButtonRegion-col--content:not(#nc-ben-x):not(#nc-ben-y) {
+  display: flex;
+  flex: 1 1 320px;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 12px;
+  order: 2;
+}
+@app.nc-ben .nc-ben-acoes .t-ButtonRegion-col--right:not(#nc-ben-x):not(#nc-ben-y) { order: 3; flex: none; width: auto; }
+
+@app.nc-ben .nc-ben-acoes .t-ButtonRegion-col--content > table:not(#nc-ben-x):not(#nc-ben-y) {
+  width: auto;
+  margin-left: auto;
+}
+
+@app.nc-ben .nc-ben-acoes .t-Button:not(#nc-ben-x):not(#nc-ben-y) {
+  min-height: 46px;
+  padding: 0 18px;
+  border-radius: 12px;
+  font-size: 15px;
+}
+
+@app.nc-ben .nc-ben-acoes .t-Button.nc-ben-salvar:not(#nc-ben-x):not(#nc-ben-y) {
+  padding: 0 26px;
+}
+
+/* excluir: no fim da janela, longe do Salvar */
+@app.nc-ben .nc-ben-fim {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 4px 12px;
+  margin: 4px 0 0;
+  padding: 6px 4px;
+  font-size: 14px;
+  color: var(--nc-grafite);
+}
+
+@app.nc-ben .nc-ben-fim p {
+  margin: 0;
+}
+
+@app.nc-ben .nc-ben-fim .t-Button.nc-ben-apagar:not(#nc-ben-x):not(#nc-ben-y) {
+  min-height: 44px;
+  padding: 0 14px;
+  border: 1.5px solid #EBC3C8;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: none;
+  font-size: 14.5px;
+  color: var(--nc-ruim);
+}
+
+@app.nc-ben .nc-ben-fim .t-Button.nc-ben-apagar :is(.t-Button-label, .t-Icon):not(#nc-ben-x):not(#nc-ben-y) {
+  color: inherit;
+}
+
+@app.nc-ben .nc-ben-fim .t-Button.nc-ben-apagar:hover:not(#nc-ben-x):not(#nc-ben-y) {
+  border-color: var(--nc-ruim);
+  background: #FBEAEC;
+}
+
+@app.nc-ben .nc-ben-status {
+  display: flex;
+  flex: 1 1 260px;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 8px;
+  font-size: 14px;
+  color: var(--nc-grafite);
+}
+
+@app.nc-ben .nc-ben-status-rot {
+  font-weight: 700;
+  color: #6B4700;
+}
+
+@app.nc-ben .nc-ben-falta {
+  padding: 5px 11px;
+  border: 0;
+  border-radius: 999px;
+  background: #FFF4DE;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  color: #6B4700;
+  cursor: pointer;
+}
+
+@app.nc-ben .nc-ben-status-ok {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 700;
+  color: #1E6B45;
+}
+
+@app.nc-ben .nc-ben-status-ok .nc-ben-ic {
+  width: 18px;
+  height: 18px;
+  stroke-width: 2.4;
+}
+
+/* ═══ [C14] JANELA DA PENSÃO: TELA LARGA, CELULAR E MENOS MOVIMENTO ═════════════════════════
+   @media (min-width: 1100px)  só em telas a partir de 1100px: duas colunas.
+   @media (max-width: 640px)   só no celular.
+   @media (prefers-reduced-motion: reduce)  para quem pediu "reduzir movimento".
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+/* tela larga: duas colunas (lidas coluna a coluna) e a grade de descontos na largura toda */
+@media (min-width: 1100px) {
+  @app.nc-ben .nc-ben-secoes {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    align-items: start;
+    column-gap: 14px;
+  }
+
+  @app.nc-ben .nc-ben-coluna--toda {
+    grid-column: 1 / -1;
+  }
+}
+
+/* ---------- celular ---------- */
+@media (max-width: 640px) {
+  @app.nc-ben .nc-ben-topo {
+    gap: 12px;
+    padding: 14px;
+    border-radius: 16px;
+  }
+
+  @app.nc-ben .nc-ben-av {
+    width: 46px;
+    height: 46px;
+    font-size: 17px;
+  }
+
+  @app.nc-ben .nc-ben-tit {
+    font-size: 19px;
+  }
+
+  @app.nc-ben .nc-ben-sec {
+    padding: 16px 14px 18px;
+    border-radius: 16px;
+  }
+
+  @app.nc-ben .nc-ben-campos {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 12px 10px;
+  }
+
+  @app.nc-ben .nc-ben-campo {
+    grid-column: span var(--nc-c, 6);
+  }
+
+  @app.nc-ben .nc-ben-pix {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  @app.nc-ben .nc-ben-so-celular {
+    display: inline;
+  }
+
+  /* o que falta em cima; embaixo, Cancelar e Salvar lado a lado (o Salvar ocupa o resto) */
+  @app.nc-ben .nc-ben-acoes .t-ButtonRegion-wrap:not(#nc-ben-x):not(#nc-ben-y) {
+    gap: 8px;
+  }
+
+  @app.nc-ben .nc-ben-acoes .t-ButtonRegion-col--content:not(#nc-ben-x):not(#nc-ben-y) {
+    display: contents;
+  }
+
+  @app.nc-ben .nc-ben-status {
+    flex: 1 1 100%;
+    order: 0;
+    font-size: 13.5px;
+  }
+
+  @app.nc-ben .nc-ben-acoes .t-ButtonRegion-col--left:not(#nc-ben-x):not(#nc-ben-y) {
+    order: 1;
+  }
+
+  @app.nc-ben .nc-ben-acoes .t-ButtonRegion-col--content > table:not(#nc-ben-x):not(#nc-ben-y) {
+    flex: 1 1 0;
+    order: 2;
+    min-width: 0;
+    margin: 0;
+  }
+
+  @app.nc-ben .nc-ben-acoes .t-ButtonRegion-col--content > :is(.t-ButtonRegion-title, .t-ButtonRegion-buttons:empty):not(#nc-ben-x):not(#nc-ben-y) {
+    display: none;
+  }
+
+  @app.nc-ben .nc-ben-acoes .t-Button.nc-ben-salvar:not(#nc-ben-x):not(#nc-ben-y) {
+    width: 100%;
+  }
+
+  @app.nc-ben .nc-ben-fim {
+    justify-content: flex-start;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  @app.nc-ben .nc-ben-pix-op {
+    transition: none;
+  }
+}
+
+
+/* ═══ [C15] LISTA "DEPENDENTES" DO PORTAL (app 600, p131): O ALTO ═══════════════════════════
+   Daqui até o fim, tudo é da lista (BLOCO C do JS). Todas as regras começam com .nc-dl, a
+   marca que o JS põe na página em [J22]. Montado pelo JS em [J20]: .nc-dl-topo é o alto
+   ("Seus dependentes"); .nc-dl-contas, as contas.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+/* =====================================================================
+   LISTA "Dependentes" do portal (app 600, página 131). Depende de nc-dl (posto pelo .js).
+   Nada aqui põe display no "Adicionar" da página: quem some é a vaga dele.
+   ===================================================================== */
+@app.nc-dl .nc-dl-oculto:not(#nc-dl-x):not(#nc-dl-y) {
+  display: none;
+}
+
+@app.nc-dl .nc-dl-ic {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.9;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+@app.nc-dl .nc-dl-topo {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  margin: 0 0 12px;
+  padding: 20px 22px;
+  border-radius: 20px;
+  background:
+    radial-gradient(110% 130% at 100% 0%, rgba(var(--nc-t-rosa-rgb, 201, 87, 136), .36) 0%, rgba(var(--nc-t-rosa-rgb, 201, 87, 136), 0) 55%),
+    linear-gradient(135deg, var(--nc-azul) 0%, var(--nc-roxo) 72%);
+  color: #fff;
+  box-shadow: 0 18px 36px -24px rgba(var(--nc-t-azul-rgb, 44, 26, 99), .75);
+}
+
+@app.nc-dl .nc-dl-topo-ic {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  border-radius: 16px;
+  background: #fff;
+  color: var(--nc-roxo);
+}
+
+@app.nc-dl .nc-dl-topo-ic .nc-dl-ic {
+  width: 28px;
+  height: 28px;
+}
+
+@app.nc-dl .nc-dl-tit {
+  margin: 2px 0 0;
+  font-family: inherit;
+  font-size: 22px;
+  font-weight: 800;
+  line-height: 1.2;
+  color: #fff;
+}
+
+@app.nc-dl .nc-dl-txt {
+  margin: 8px 0 0;
+  max-width: 62ch;
+  font-size: 16px;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, .88);
+}
+
+@app.nc-dl .nc-dl-txt b {
+  font-weight: 800;
+  color: #fff;
+}
+
+@app.nc-dl .nc-dl-contas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 12px 0 0;
+}
+
+@app.nc-dl .nc-dl-conta {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 13px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, .14);
+  font-size: 14.5px;
+  line-height: 1.3;
+  color: rgba(255, 255, 255, .92);
+}
+
+@app.nc-dl .nc-dl-conta b {
+  font-weight: 800;
+  color: #fff;
+}
+
+@app.nc-dl .nc-dl-conta .nc-dl-ic {
+  width: 17px;
+  height: 17px;
+  stroke-width: 2.3;
+}
+
+@app.nc-dl .nc-dl-conta--pedido {
+  background: rgba(255, 214, 140, .22);
+}
+
+/* ═══ [C16] LISTA: O BOTÃO "INCLUIR DEPENDENTE" ═════════════════════════════════════════════
+   Montado pelo JS em [J20]: .nc-dl-add-bt é o "Adicionar" da página, maior.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+/* "Incluir dependente": logo abaixo do alto */
+@app.nc-dl .nc-dl-add {
+  margin: 0 0 14px;
+}
+
+/* 04/10: :not([style*="none"]) — o display abaixo não pode vencer o esconder da página
+   (DA "Permite Alterar = 'N'" esconde o Adicionar) */
+@app.nc-dl .nc-dl-add .t-Button.nc-dl-add-bt:not([style*="none"]):not(#nc-dl-x):not(#nc-dl-y) {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  min-height: 58px;
+  border: 0;
+  border-radius: 16px;
+  background: var(--nc-roxo);
+  box-shadow: 0 14px 26px -18px rgba(var(--nc-t-roxo-rgb, 81, 28, 118), .9);
+  font-size: 17px;
+  font-weight: 800;
+  color: #fff;
+}
+
+@app.nc-dl .nc-dl-add .t-Button.nc-dl-add-bt:hover:not(#nc-dl-x):not(#nc-dl-y) {
+  background: var(--nc-azul);
+}
+
+@app.nc-dl .nc-dl-add .t-Button.nc-dl-add-bt > .t-Icon:not(#nc-dl-x):not(#nc-dl-y) {
+  display: none;
+}
+
+@app.nc-dl .nc-dl-add .t-Button.nc-dl-add-bt :is(.t-Button-label, .nc-dl-ic):not(#nc-dl-x):not(#nc-dl-y) {
+  padding: 0;
+  line-height: 1.2;
+  color: inherit;
+}
+
+@app.nc-dl .nc-dl-add .nc-dl-add-bt .nc-dl-ic {
+  width: 22px;
+  height: 22px;
+  stroke-width: 2.4;
+}
+
+/* ═══ [C17] LISTA: OS CARTÕES EM DOIS GRUPOS, CELULAR E MENOS MOVIMENTO ═════════════════════
+   Montados pelo JS em [J21]. .nc-dl-grupo é o título do grupo ("Esperando o RH" / "Já
+   cadastrados"); .nc-dl-li, cada cartão; .nc-dl-li--pedido e .nc-dl-sit--pedido, o pedido
+   que espera o RH (cor de aviso); .nc-dl-sit--ok, o já cadastrado.
+   No fim: @media (max-width: 640px) só no celular; prefers-reduced-motion, menos movimento.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+/* ---------- a lista em dois grupos ---------- */
+@app.nc-dl .t-MediaList.nc-dl-lista:not(#nc-dl-x):not(#nc-dl-y) {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  box-shadow: none;
+}
+
+@app.nc-dl .t-MediaList .nc-dl-grupo {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin: 18px 2px 10px;
+  list-style: none;
+}
+
+@app.nc-dl .t-MediaList .nc-dl-grupo:first-child {
+  margin-top: 4px;
+}
+
+@app.nc-dl .nc-dl-grupo-tit {
+  font-size: 17px;
+  font-weight: 800;
+  line-height: 1.3;
+  color: var(--nc-tinta);
+}
+
+@app.nc-dl .nc-dl-grupo--pedido .nc-dl-grupo-tit {
+  color: #6B4700;
+}
+
+@app.nc-dl .nc-dl-grupo-dica {
+  font-size: 14.5px;
+  line-height: 1.4;
+  color: var(--nc-grafite);
+}
+
+@app.nc-dl .t-MediaList .t-MediaList-item.nc-dl-li:not(#nc-dl-x):not(#nc-dl-y) {
+  margin: 0 0 10px;
+  padding: 0;
+  border: 0;
+  background: none;
+  box-shadow: none;
+}
+
+@app.nc-dl .nc-dl-item-a > :not(.nc-dl-item):not(#nc-dl-x):not(#nc-dl-y) {
+  display: none;
+}
+
+@app.nc-dl .t-MediaList .nc-dl-item-a:not(#nc-dl-x):not(#nc-dl-y) {
+  display: block;
+  padding: 0;
+  border: 1px solid var(--nc-nevoa);
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: 0 10px 22px -20px rgba(var(--nc-t-azul-rgb, 44, 26, 99), .6);
+  color: inherit;
+  text-decoration: none;
+  transition: border-color .15s, box-shadow .15s;
+}
+
+@app.nc-dl .t-MediaList .nc-dl-li--pedido .nc-dl-item-a:not(#nc-dl-x):not(#nc-dl-y) {
+  border-color: #F1DDB0;
+  background: #FFFCF4;
+}
+
+@app.nc-dl .t-MediaList .nc-dl-item-a:hover:not(#nc-dl-x):not(#nc-dl-y) {
+  border-color: #CDBFE0;
+  box-shadow: 0 14px 26px -20px rgba(var(--nc-t-azul-rgb, 44, 26, 99), .7);
+}
+
+@app.nc-dl .t-MediaList .nc-dl-item-a:focus-visible:not(#nc-dl-x):not(#nc-dl-y) {
+  outline: 3px solid var(--nc-rosa);
+  outline-offset: 2px;
+}
+
+@app.nc-dl .nc-dl-item {
+  display: grid;
+  grid-template-columns: 48px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 4px 14px;
+  min-height: 76px;
+  padding: 14px 16px;
+}
+
+@app.nc-dl .nc-dl-av {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--nc-nevoa2);
+  box-shadow: inset 0 0 0 2px #DCD3EA;
+  font-size: 17px;
+  font-weight: 800;
+  color: var(--nc-roxo);
+}
+
+@app.nc-dl .nc-dl-li--pedido .nc-dl-av {
+  background: #FFF4DE;
+  box-shadow: inset 0 0 0 2px #F1DDB0;
+  color: #6B4700;
+}
+
+@app.nc-dl .nc-dl-item-txt {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 3px;
+  min-width: 0;
+}
+
+@app.nc-dl .nc-dl-nome {
+  font-size: 17px;
+  font-weight: 800;
+  line-height: 1.3;
+  color: var(--nc-tinta);
+  overflow-wrap: anywhere;
+}
+
+@app.nc-dl .nc-dl-sub {
+  font-size: 15px;
+  line-height: 1.35;
+  color: var(--nc-grafite);
+}
+
+@app.nc-dl .nc-dl-sit {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 3px;
+  padding: 3px 10px 3px 8px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 800;
+  line-height: 1.3;
+}
+
+@app.nc-dl .nc-dl-sit .nc-dl-ic {
+  width: 15px;
+  height: 15px;
+  stroke-width: 2.5;
+}
+
+@app.nc-dl .nc-dl-sit--ok {
+  background: #E4F4EA;
+  color: #1E6B45;
+}
+
+@app.nc-dl .nc-dl-sit--pedido {
+  background: #FFF4DE;
+  color: #6B4700;
+}
+
+@app.nc-dl .nc-dl-ver {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 14px;
+  font-weight: 800;
+  white-space: nowrap;
+  color: var(--nc-roxo);
+}
+
+@app.nc-dl .nc-dl-ver .nc-dl-ic {
+  width: 18px;
+  height: 18px;
+  stroke-width: 2.4;
+}
+
+@media (max-width: 640px) {
+  @app.nc-dl .nc-dl-topo {
+    gap: 12px;
+    padding: 16px;
+    border-radius: 18px;
+  }
+
+  @app.nc-dl .nc-dl-topo-ic {
+    width: 44px;
+    height: 44px;
+    border-radius: 13px;
+  }
+
+  @app.nc-dl .nc-dl-tit {
+    font-size: 20px;
+  }
+
+  /* no celular, a palavra sai e fica só a seta (o cartão inteiro é o toque) */
+  @app.nc-dl .nc-dl-item {
+    grid-template-columns: 44px minmax(0, 1fr) 20px;
+    gap: 4px 12px;
+    padding: 12px 12px 12px 14px;
+  }
+
+  @app.nc-dl .nc-dl-av {
+    width: 44px;
+    height: 44px;
+    font-size: 16px;
+  }
+
+  @app.nc-dl .nc-dl-ver {
+    font-size: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  @app.nc-dl .nc-dl-item-a {
+    transition: none;
+  }
+}
+
+/* ═══ FAIXA DA REGIÃO (padrão 03/10) ════════════════════════════════════════════════════════
+   Todo painel com título segue o cabeçalho de região da Skin: o título numa faixa que atravessa
+   o cartão de ponta a ponta, com a linha de 2px na cor de destaque do TEMA (var(--nc-rosa) — a
+   mesma da Skin; muda com os 14 temas). As margens negativas são o recuo de dentro do cartão:
+   mudou o recuo do cartão, mude aqui junto. Guia: brand/apex/MANUAL-APEX.md.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-dep :is(.nc-dep-quem, .nc-dep-acao) > .nc-dep-pergunta:not(#nc-fx1):not(#nc-fx2):not(#nc-fx3) {
+  box-sizing: border-box;
+  width: calc(100% + 44px);
+  margin: -20px -22px 14px;
+  padding: 12px 22px 10px;
+  border-bottom: 2px solid var(--nc-rosa, #C95788);
+}
+@app.nc-dep .nc-dep-sec > .nc-dep-sec-cab:not(#nc-fx1):not(#nc-fx2):not(#nc-fx3) {
+  box-sizing: border-box;
+  width: calc(100% + 44px);
+  margin: -20px -22px 16px;
+  padding: 12px 22px 10px;
+  border-bottom: 2px solid var(--nc-rosa, #C95788);
+}
+@app.nc-dep .nc-ben-sec > .nc-ben-sec-cab:not(#nc-fx1):not(#nc-fx2):not(#nc-fx3) {
+  box-sizing: border-box;
+  width: calc(100% + 44px);
+  margin: -20px -22px 16px;
+  padding: 12px 22px 10px;
+  border-bottom: 2px solid var(--nc-rosa, #C95788);
+}
+
+/* ═══ [C-D] BLOCO D · A FICHA "DADOS DE DEPENDENTES" (app 300, página 22) ═════════════════════
+   Montada pelo JS do bloco D: o cartão do dependente, "O que ele tem" (sinal verde = sim,
+   tracinho = não) e as partes por assunto com os valores em texto. Tamanhos do padrão das
+   requisições (rótulo 13–14 px, valor 15 px, nome 20 px). "Ver todos os campos" devolve as
+   regiões originais (body.nc-dv-todos-on).
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-dv:not(.nc-dv-todos-on) .nc-dv-original:not(#nc-dv-x):not(#nc-dv-y) {
+  display: none;
+}
+
+@app.nc-dv.nc-dv-todos-on .nc-dv-ficha > :not(.nc-dv-cartao):not(.nc-dv-todos) {
+  display: none;
+}
+
+@app.nc-dv .nc-dv-ficha {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin: 0 0 16px;
+  color: var(--nc-tinta, #1B1238);
+}
+
+@app.nc-dv .nc-dv-ic {
+  flex: none;
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.9;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+@app.nc-dv .nc-dv-cartao {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px 16px;
+  padding: 18px 20px;
+  border: 1px solid var(--nc-nevoa, #E7E1F0);
+  border-radius: 16px;
+  background: #FFFFFF;
+  box-shadow: 0 10px 24px -22px rgba(var(--nc-t-azul-rgb, 44, 26, 99), .5);
+}
+
+@app.nc-dv .nc-dv-ini {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: var(--nc-nevoa2, #F3EEF8);
+  font-size: 19px;
+  font-weight: 800;
+  color: var(--nc-roxo, #742B7F);
+}
+
+@app.nc-dv .nc-dv-quem h2 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 800;
+  line-height: 1.2;
+  overflow-wrap: anywhere;
+  color: var(--nc-tinta, #1B1238);
+}
+
+@app.nc-dv .nc-dv-linha {
+  margin: 3px 0 0;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--nc-roxo, #742B7F);
+}
+
+@app.nc-dv .nc-dv-sub {
+  margin: 3px 0 0;
+  font-size: 13.5px;
+  line-height: 1.4;
+  color: var(--nc-grafite, #4A4560);
+}
+
+@app.nc-dv .nc-dv-botoes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+@app.nc-dv .nc-dv-botoes .t-Button:not([style*="none"]) {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+}
+
+@app.nc-dv .nc-dv-botoes .t-Button.nc-dv-voltar:not([style*="none"]) {
+  border: 1px solid var(--nc-borda-botao, rgba(116, 43, 127, .34));
+  background: #FFFFFF;
+  color: var(--nc-roxo, #742B7F);
+}
+
+@app.nc-dv .nc-dv-botoes .t-Button.nc-dv-voltar :is(.t-Button-label, .t-Icon) {
+  color: inherit;
+}
+
+@app.nc-dv .nc-dv-botoes .t-Button .nc-dv-ic {
+  width: 16px;
+  height: 16px;
+}
+
+@app.nc-dv .nc-dv-tem,
+@app.nc-dv .nc-dv-parte {
+  padding: 16px 18px;
+  border: 1px solid var(--nc-nevoa, #E7E1F0);
+  border-radius: 16px;
+  background: #FFFFFF;
+}
+
+@app.nc-dv :is(.nc-dv-tem, .nc-dv-parte) h3 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 12px;
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--nc-tinta, #1B1238);
+}
+
+@app.nc-dv .nc-dv-parte h3 .nc-dv-ic {
+  color: var(--nc-roxo, #742B7F);
+}
+
+@app.nc-dv .nc-dv-tem ul {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+@app.nc-dv .nc-dv-tem li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: var(--nc-quase, #FAF8FC);
+  font-size: 14px;
+  color: var(--nc-grafite, #4A4560);
+}
+
+@app.nc-dv .nc-dv-tem li > span:last-child {
+  display: flex;
+  flex: 1 1 auto;
+  justify-content: space-between;
+  gap: 8px;
+  min-width: 0;
+}
+
+@app.nc-dv .nc-dv-tem li b {
+  font-weight: 800;
+}
+
+@app.nc-dv .nc-dv-tem-sinal {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #E3DDEC;
+  color: #FFFFFF;
+}
+
+@app.nc-dv .nc-dv-tem-sinal .nc-dv-ic {
+  width: 14px;
+  height: 14px;
+  stroke-width: 2.8;
+}
+
+@app.nc-dv .nc-dv-tem-sim {
+  background: #E7F4ED;
+  color: var(--nc-tinta, #1B1238);
+}
+
+@app.nc-dv .nc-dv-tem-sim .nc-dv-tem-sinal {
+  background: var(--nc-bom, #1F7A52);
+}
+
+@app.nc-dv .nc-dv-tem-sim b {
+  color: var(--nc-bom, #1F7A52);
+}
+
+@app.nc-dv .nc-dv-tem-nao .nc-dv-tem-sinal {
+  background: #CFC9D9;
+}
+
+@app.nc-dv .nc-dv-partes {
+  display: grid;
+  gap: 14px;
+}
+
+@app.nc-dv .nc-dv-parte dl {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 12px 20px;
+  margin: 0;
+}
+
+@app.nc-dv .nc-dv-parte dl > div {
+  min-width: 0;
+}
+
+@app.nc-dv .nc-dv-parte dt {
+  margin: 0 0 2px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--nc-grafite, #4A4560);
+}
+
+@app.nc-dv .nc-dv-parte dd {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+  color: var(--nc-tinta, #1B1238);
+}
+
+@app.nc-dv .nc-dv-todos {
+  display: inline-flex;
+  align-items: center;
+  align-self: flex-start;
+  gap: 8px;
+  min-height: 40px;
+  margin: 0;
+  padding: 0 14px;
+  border: 1px solid var(--nc-borda-botao, rgba(116, 43, 127, .34));
+  border-radius: 12px;
+  background: #FFFFFF;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--nc-roxo, #742B7F);
+  cursor: pointer;
+}
+
+@media (min-width: 900px) {
+  @app.nc-dv .nc-dv-partes {
+    grid-template-columns: 1fr 1fr;
+    align-items: start;
+  }
+}
+
+@media (max-width: 640px) {
+  @app.nc-dv .nc-dv-cartao {
+    grid-template-columns: auto minmax(0, 1fr);
+    padding: 16px;
+  }
+
+  @app.nc-dv .nc-dv-botoes {
+    grid-column: 1 / -1;
+    justify-content: stretch;
+  }
+
+  @app.nc-dv .nc-dv-botoes .t-Button:not([style*="none"]) {
+    flex: 1 1 0;
+    justify-content: center;
+    min-height: 44px;
+  }
+
+  @app.nc-dv .nc-dv-tem ul,
+  @app.nc-dv .nc-dv-parte dl {
+    grid-template-columns: 1fr 1fr;
+    gap: 8px 14px;
+  }
+
+  @app.nc-dv .nc-dv-tem ul {
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
+
+  @app.nc-dv .nc-dv-tem li {
+    padding: 8px 12px;
+  }
+}
+
+/* 300:54: o CPF vem em campo de número (o APEX alinha à direita); CPF se lê da esquerda */
+@app.nc-dep .nc-dep-campo:is([data-item$="_NUM_CPF_CONJUGE"], [data-item$="_DC_CPF_CONJUGE"], [data-item$="_CPF_MAE_DEPEND"]) input {
+  text-align: left;
+}

@@ -1,7 +1,7 @@
 /* =====================================================================
    Natcorp_Login.css — login em tela dividida para APEX 19.2 (Universal Theme 42)
    ---------------------------------------------------------------------
-   UM arquivo, sem dependências: a fonte Manrope, o logo e o painel animado
+   UM arquivo, sem dependências: a fonte Inter, o logo e o painel animado
    vêm embutidos. Nada é buscado fora (nem Google Fonts).
 
    INSTALAR
@@ -35,15 +35,84 @@
    (node brand/apex/login/gerar-login.mjs).
    ===================================================================== */
 
-/* Manrope variável (pesos 200–800), subconjunto latino: cobre todo o
-   português. Embutida porque os .woff2 dão 404 no servidor do APEX. */
+/* A FONTE (02/10): Inter — escolhida entre Inter, IBM Plex e Aptos Narrow numa comparação com
+   telas reais. Livre (SIL OFL), embutida aqui em base64 porque os .woff2 soltos dão 404 no
+   servidor do APEX. Variável (pesos 100–900), com o tamanho óptico fixado no de texto (14) para
+   o arquivo ficar menor; latino + latino estendido. Recursos usados: "ss04" (diferencia I, l e
+   1 sem riscar o zero) e, nos campos e relatórios, os números de largura fixa (tnum).
+   Arquivos e licença: brand/apex/fonts/inter-*.woff2 e Inter-OFL.txt. */
 @font-face {
-  font-family: "Manrope";
+  font-family: "Inter NC";
   font-style: normal;
-  font-weight: 200 800;
+  font-weight: 100 900;
   font-display: swap;
   src: @@FONTE@@ format("woff2");
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: "Inter NC";
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: @@FONTE_EXT@@ format("woff2");
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+/* =====================================================================
+   TIPOGRAFIA DO APEX — vale em TODAS as páginas e apps
+   ---------------------------------------------------------------------
+     família   Inter (embutida) → a fonte do aparelho
+     desenho   suavização "antialiased", text-rendering: optimizeLegibility,
+               "ss04" (I, l e 1 diferentes; o zero sem risco)
+     títulos   h1 a h4 com quebra equilibrada; parágrafos "pretty"
+     seleção   roxo Natcorp #511C76, texto branco
+     código    a fonte de código do aparelho
+   A Skin original (acima do divisor do Natcorp_Style_Min.css) pede
+   "Plus Jakarta Sans", que nunca foi carregada. Aqui só a VARIÁVEL --nc-font é
+   redefinida — a Skin não é editada, e as 32 regras dela que usam a variável
+   passam a usar estas fontes. Os ícones continuam nas fontes de ícone.
+   O site institucional continua em Manrope (decisão de 02/10: a troca vale "só no APEX").
+   PODE MEXER: a ordem das fontes em --nc-font (e nas pilhas dos .src.css).
+   ===================================================================== */
+:root {
+  --nc-font: "Inter NC", Inter, ui-sans-serif, system-ui, "Segoe UI", Arial, sans-serif;
+  --nc-fonte-codigo: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+}
+
+html body {
+  font-feature-settings: "ss04" on;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* a TELA DE LOGIN: a Skin força "Manrope" em tudo dela (html body.t-PageBody--login *). Aqui a
+   mesma pilha do resto do APEX, menos nos ícones; o gerador dá a este seletor o peso de dois
+   IDs, que vence a regra da Skin sem editá-la */
+body.t-PageBody--login,
+body.t-PageBody--login *:not(.fa):not([class*=" fa-"]):not([class^="fa-"]):not(.a-Icon):not(.t-Icon):not([class*=" icon-"]):not([class^="icon-"]):not(.ui-icon) {
+  font-family: var(--nc-font);
+}
+
+html body ::selection {
+  background: #511C76;
+  color: #fff;
+}
+
+html body :is(h1, h2, h3, h4) {
+  text-wrap: balance;
+}
+
+html body p {
+  text-wrap: pretty;
+}
+
+/* código: a regra da Skin que força a fonte em tudo pesa vários :not(); os dois IDs que não
+   existem na página dão o peso para o código ficar na fonte de código, como no site */
+html body :is(code, kbd, samp, pre):not(#nc-tp1):not(#nc-tp2),
+html body :is(code, kbd, samp, pre):not(#nc-tp1):not(#nc-tp2) * {
+  font-family: var(--nc-fonte-codigo);
 }
 
 /* Os tokens ficam na raiz: html::after (a frase de apoio) não herda do body.
@@ -53,7 +122,6 @@
 :where(:root:has(body.t-PageBody--login), body.t-PageBody--login) {
   --nc-roxo: #511C76;
   --nc-azul: #2C1A63;
-  --nc-ameixa: #9A408A;
   --nc-rosa: #C95788;
   --nc-tinta: #1B1238;
   --nc-grafite: #4A4460;
@@ -74,7 +142,7 @@
 
 body.t-PageBody--login {
   background: #fff !important;        /* vence o style="" inline */
-  font-family: Manrope, "Segoe UI", system-ui, sans-serif;
+  font-family: "Inter NC", Inter, ui-sans-serif, system-ui, "Segoe UI", Arial, sans-serif;
   color: var(--nc-tinta);
   -webkit-font-smoothing: antialiased;
 }
@@ -99,9 +167,9 @@ body.t-PageBody--login::before {
   inset: 0 0 0 calc(100% - var(--nc-painel));
   background:
     @@PAINEL_ANIMADO@@ center / cover no-repeat,
-    radial-gradient(60% 80% at 85% 50%, rgba(160, 105, 205, .55), transparent 70%),
+    radial-gradient(60% 80% at 85% 50%, rgba(201, 87, 136, .30), transparent 70%),
     radial-gradient(45% 60% at 100% 100%, rgba(201, 87, 136, .4), transparent 70%),
-    linear-gradient(180deg, #2C1A63 0%, #3A1A66 60%, #4A1B72 100%);
+    linear-gradient(180deg, #2C1A63 0%, #511C76 100%);
   z-index: 0;
   pointer-events: none;                 /* decorativo: se o formulário encostar no
                                            painel (outro tema, zoom), o clique passa */
@@ -111,9 +179,9 @@ body.t-PageBody--login::before {
   body.t-PageBody--login::before {
     background-image:
       @@PAINEL_PARADO@@,
-      radial-gradient(60% 80% at 85% 50%, rgba(160, 105, 205, .55), transparent 70%),
+      radial-gradient(60% 80% at 85% 50%, rgba(201, 87, 136, .30), transparent 70%),
       radial-gradient(45% 60% at 100% 100%, rgba(201, 87, 136, .4), transparent 70%),
-      linear-gradient(180deg, #2C1A63 0%, #3A1A66 60%, #4A1B72 100%);
+      linear-gradient(180deg, #2C1A63 0%, #511C76 100%);
   }
 }
 
@@ -126,7 +194,7 @@ body.t-PageBody--login #wwvFlowForm::before {
   left: calc(100% - var(--nc-painel));
   right: 0;
   padding: 0 var(--nc-pad);
-  font: 800 var(--nc-fs)/1.02 Manrope, system-ui, sans-serif;
+  font: 800 var(--nc-fs)/1.02 "Inter NC", Inter, ui-sans-serif, system-ui, "Segoe UI", Arial, sans-serif;
   letter-spacing: -.02em;
   z-index: 1;
   pointer-events: none;
@@ -163,7 +231,7 @@ html:has(body.t-PageBody--login)::after {       /* a frase de apoio */
   right: 0;
   bottom: clamp(32px, 6vh, 56px);
   padding: 0 var(--nc-pad);
-  font: 500 15px/1.5 Manrope, system-ui, sans-serif;
+  font: 500 15px/1.5 "Inter NC", Inter, ui-sans-serif, system-ui, "Segoe UI", Arial, sans-serif;
   color: rgba(255, 255, 255, .75);
   z-index: 1;
   pointer-events: none;
@@ -266,7 +334,7 @@ body.t-PageBody--login .t-Login-logo {
 }
 
 body.t-PageBody--login .t-Login-title {
-  font: 700 32px/1.15 Manrope, system-ui, sans-serif !important;
+  font: 700 32px/1.15 "Inter NC", Inter, ui-sans-serif, system-ui, "Segoe UI", Arial, sans-serif !important;
   font-size: 32px !important;
   letter-spacing: -.02em;
   color: var(--nc-tinta);
@@ -277,7 +345,7 @@ body.t-PageBody--login .t-Login-title {
 body.t-PageBody--login .t-Login-header::after {
   content: var(--nc-login-subtitulo);
   display: block;
-  font: 500 15px/1.5 Manrope, system-ui, sans-serif;
+  font: 500 15px/1.5 "Inter NC", Inter, ui-sans-serif, system-ui, "Segoe UI", Arial, sans-serif;
   color: var(--nc-grafite);
 }
 
@@ -290,6 +358,28 @@ body.t-PageBody--login:has(#P900_EMAIL) .t-Login-header::after {
 body.t-PageBody--login .t-Login-body {
   margin-top: 32px;
   padding: 0;
+}
+
+/* A aplicação que já escreve o PRÓPRIO subtítulo (Chamados, app 118: "Entre com sua
+   empresa, usuário e senha para acessar o sistema.") mostrava os dois, um embaixo do
+   outro. Vale o dela — é o que sabe que ali também se informa a empresa —, no lugar e no
+   desenho do nosso: logo abaixo do título, e o formulário 32 px depois. */
+body.t-PageBody--login:has(.t-Login-subtitle:not(:empty)) .t-Login-header::after {
+  content: none;
+  display: none;
+}
+
+body.t-PageBody--login .t-Login-body:has(> .t-Login-subtitle:not(:empty)) {
+  margin-top: 0;
+}
+
+body.t-PageBody--login .t-Login-subtitle {
+  margin: 0 0 32px;
+  padding: 0;
+  font: 500 15px/1.5 "Inter NC", Inter, ui-sans-serif, system-ui, "Segoe UI", Arial, sans-serif;
+  color: var(--nc-grafite);
+  text-align: left;
+  text-wrap: pretty;                   /* sem "sistema." sozinho na segunda linha */
 }
 
 /* Campos */
@@ -308,7 +398,7 @@ body.t-PageBody--login .t-Form-inputContainer {
 body.t-PageBody--login .t-Form-label {
   display: block;
   padding: 0 0 6px;
-  font: 600 13px/1.4 Manrope, system-ui, sans-serif;
+  font: 600 13px/1.4 "Inter NC", Inter, ui-sans-serif, system-ui, "Segoe UI", Arial, sans-serif;
   color: var(--nc-grafite);
 }
 
@@ -324,7 +414,7 @@ body.t-PageBody--login .t-Login-body input.apex-item-text {
   border: 1px solid var(--nc-nevoa);
   border-radius: 12px;
   background: #fff;
-  font: 500 15px Manrope, system-ui, sans-serif;
+  font: 500 15px "Inter NC", Inter, ui-sans-serif, system-ui, "Segoe UI", Arial, sans-serif;
   color: var(--nc-tinta);
   box-shadow: 0 1px 2px rgba(27, 18, 56, .04);
   transition: border-color .15s, box-shadow .15s;
@@ -419,15 +509,15 @@ body.t-PageBody--login .t-Login-buttons .t-Button--hot {
   margin: 0;
   border: 0;
   border-radius: 12px;
-  background: linear-gradient(135deg, var(--nc-roxo), var(--nc-ameixa));
+  background: var(--nc-roxo);          /* Roxo sólido, como o botão principal do site */
   box-shadow: 0 10px 24px -10px rgba(81, 28, 118, .55);
-  font: 700 15px Manrope, system-ui, sans-serif;
+  font: 700 15px "Inter NC", Inter, ui-sans-serif, system-ui, "Segoe UI", Arial, sans-serif;
   color: #fff;
   transition: box-shadow .15s, filter .15s;
 }
 
 body.t-PageBody--login .t-Login-buttons .t-Button--hot:hover {
-  filter: brightness(1.08);
+  background: var(--nc-azul);           /* hover no Azul da marca, igual às páginas internas */
   box-shadow: 0 14px 28px -10px rgba(81, 28, 118, .6);
 }
 
@@ -492,6 +582,20 @@ body.t-PageBody--login .t-Login-buttons .t-Button--hot.t-Button--simple:hover {
   box-shadow: none;
 }
 
+/* O logo da Microsoft antes de "Entrar SSO" (o SSO é a conta Microsoft da empresa): os quatro
+   quadrados nas cores oficiais, desenhados aqui mesmo (SVG embutido, sem arquivo de imagem).
+   Fica no ::before do RÓTULO, porque o ::before/::after do próprio botão já são usados pelo
+   tema. O SVG não pode ter ponto e vírgula: o gerador separa as declarações por ele. */
+body.t-PageBody--login .t-Login-buttons .t-Button--hot.t-Button--simple .t-Button-label::before {
+  content: "";
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  margin-right: 10px;
+  vertical-align: -3px;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 21 21'%3E%3Cpath fill='%23F25022' d='M0 0h10v10H0z'/%3E%3Cpath fill='%237FBA00' d='M11 0h10v10H11z'/%3E%3Cpath fill='%2300A4EF' d='M0 11h10v10H0z'/%3E%3Cpath fill='%23FFB900' d='M11 11h10v10H11z'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+
 body.t-PageBody--login .t-Login-buttons .t-Button:not(.t-Button--hot) {
   flex: 0 0 auto;
   width: auto;                          /* tema e Natcorp_Style_Min fixam 100% */
@@ -501,7 +605,7 @@ body.t-PageBody--login .t-Login-buttons .t-Button:not(.t-Button--hot) {
   border-radius: 4px;
   background: none;
   box-shadow: none;
-  font: 600 14px/1.4 Manrope, system-ui, sans-serif;
+  font: 600 14px/1.4 "Inter NC", Inter, ui-sans-serif, system-ui, "Segoe UI", Arial, sans-serif;
   color: var(--nc-roxo);
 }
 

@@ -1,0 +1,1208 @@
+/* ╔════════════════════════════════════════════════════════════════════════════════════════╗
+   ║  NATCORP · MANUTENÇÃO DE ATESTADOS  —  a "roupa" da tela (CSS)                           ║
+   ║  App 2937 (Medicina Ocupacional) · Página 12 · Manutenção de Atestados Médicos           ║
+   ╚════════════════════════════════════════════════════════════════════════════════════════╝
+
+   Primeira vez num arquivo destes? Leia antes o manual: brand/apex/MANUAL-APEX.md (parte 1).
+
+   ── O QUE ESTE ARQUIVO FAZ ────────────────────────────────────────────────────────────────
+   A aparência do que o Natcorp_ManutencaoAtestados.js monta: o colaborador (no alto), o resumo,
+   os atestados em cartões, a gaveta de lançar e corrigir e a tabela original (em "Tabela").
+   Sem o JS, nada daqui vale (tudo depende da marca nc-ma-ativo). Mesma linguagem das outras
+   telas da Medicina Ocupacional (2937:6, :19, :74).
+
+   ── ONDE ELE ENTRA NO APEX ────────────────────────────────────────────────────────────────
+     Página 12 › CSS › File URLs:   #WORKSPACE_IMAGES#Natcorp_ManutencaoAtestados.css
+     CUIDADO: este é o arquivo-FONTE (.src.css). O gerador (gerar-app.mjs) cria o
+     Natcorp_ManutencaoAtestados.css que sobe para o APEX. Edite ESTE arquivo.
+     CUIDADO: o gerador põe !important em todo ";" — ícone em url("data:…") vai SEM
+     ";charset=utf-8".
+
+   ── ÍNDICE ────────────────────────────────────────────────────────────────────────────────
+     [C1] As cores                                                 PODE MEXER
+     [C2] O que sai da vista
+     [C3] O colaborador (a busca e o cartão)
+     [C4] O alto da lista e o resumo
+     [C5] Os cartões dos atestados
+     [C6] Botões, tabela e aviso
+     [C7] A gaveta de lançar e corrigir (a ficha da grade)          CUIDADO
+     [C8] Celular e tablet
+*/
+
+/* ═══ [C1] AS CORES ═════════════════════════════════════════════════════════════════════════
+   PODE MEXER (prefira as da marca: --nc-roxo, --nc-azul, --nc-rosa, --nc-bom, --nc-ruim).
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-ma-ativo {
+  --nc-ma-borda: var(--nc-nevoa, #E9E5F1);
+  --nc-ma-fundo: var(--nc-off, #F7F5FA);
+  --nc-ma-texto: var(--nc-tinta, #1B1238);
+  --nc-ma-fraco: var(--nc-grafite, #4A4460);
+  --nc-ma-bom: var(--nc-bom, #1F7A52);
+  --nc-ma-ruim: var(--nc-ruim, #B8323F);
+  --nc-ma-atencao: #8A5300;
+  --nc-ma-info: #2F5DA8;
+  --nc-ma-acento: var(--nc-ameixa, #9A408A);
+}
+
+@app.nc-ma-ativo .nc-ma ::selection,
+@app.nc-ma-ativo .nc-ma-busca ::selection,
+@app.nc-ma-ativo .nc-ma-gaveta ::selection {
+  background: color-mix(in srgb, var(--nc-roxo, #511C76) 18%, #fff);
+}
+
+/* ═══ [C2] O QUE SAI DA VISTA ═══════════════════════════════════════════════════════════════
+   Os 10 campos de leitura da busca (viraram o cartão) e, nos cartões, a grade (em "Tabela").
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-ma-ativo .nc-ma-guardado:not(#nc-ma-x),
+@app.nc-ma-ativo [hidden]:not(#nc-ma-x),
+@app.nc-ma-ativo:not(.nc-ma-tabela):not(.nc-ma-editando) .nc-ma-grade:not(#nc-ma-x),
+@app.nc-ma-ativo.nc-ma-tabela .nc-ma-resumo:not(#nc-ma-x),
+@app.nc-ma-ativo.nc-ma-tabela .nc-ma-lista:not(#nc-ma-x),
+@app.nc-ma-ativo.nc-ma-tabela .nc-ma-busca-lista:not(#nc-ma-x) {
+  display: none;
+}
+
+@app.nc-ma-ativo .nc-ma-so-leitor {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+/* ═══ [C3] O COLABORADOR (A BUSCA E O CARTÃO) ═══════════════════════════════════════════════ */
+@app.nc-ma-ativo .nc-ma-busca .t-Region-headerItems--buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+/* Empresa e Matrícula dividem a linha (Idade e Situação, ao lado, foram para o cartão) */
+@app.nc-ma-ativo .nc-ma-busca .row:has(#P12_MATRICULA_CONTAINER) > .col:not(.nc-ma-guardado) {
+  flex: 1 1 0;
+  max-width: none;
+}
+
+/* os cadastros saem do roxo cheio: a ação principal da página é "Lançar atestado" */
+@app.nc-ma-ativo .nc-ma-busca .t-Button.nc-ma-bt-cadastro:not(#nc-ma-x),
+@app.nc-ma-ativo .nc-ma-busca .t-Button.nc-ma-bt-cancelar:not(#nc-ma-x) {
+  height: 38px;
+  margin: 0;
+  padding: 0 14px;
+  border: 1px solid var(--nc-borda-botao);
+  border-radius: 10px;
+  background: #fff;
+  box-shadow: none;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--nc-roxo, #511C76);
+}
+
+@app.nc-ma-ativo .nc-ma-busca .t-Button.nc-ma-bt-cancelar:not(#nc-ma-x) {
+  border-color: transparent;
+  color: var(--nc-ma-fraco);
+}
+
+@app.nc-ma-ativo .nc-ma-busca .t-Button:is(.nc-ma-bt-cadastro, .nc-ma-bt-cancelar) .t-Button-label:not(#nc-ma-x) {
+  color: inherit;
+}
+
+@app.nc-ma-ativo .nc-ma-busca .t-Button.nc-ma-bt-cadastro:hover,
+@app.nc-ma-ativo .nc-ma-busca .t-Button.nc-ma-bt-cancelar:hover {
+  background: color-mix(in srgb, var(--nc-roxo, #511C76) 5%, #fff);
+}
+
+@app.nc-ma-ativo .nc-ma-quem {
+  margin: 4px 0 0;
+}
+
+@app.nc-ma-ativo .nc-ma-pessoa {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 16px 18px;
+  border-radius: 14px;
+  background: var(--nc-ma-fundo);
+}
+
+@app.nc-ma-ativo .nc-ma-avatar {
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 1px 2px rgba(27, 18, 56, .08);
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--nc-roxo, #511C76);
+}
+
+@app.nc-ma-ativo .nc-ma-pessoa-txt {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+@app.nc-ma-ativo .nc-ma-nome {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 10px;
+  margin: 0;
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1.25;
+  letter-spacing: -.01em;
+  color: var(--nc-ma-texto);
+}
+
+@app.nc-ma-ativo .nc-ma-num {
+  margin-right: -6px;
+  font-weight: 500;
+  color: var(--nc-ma-fraco);
+  font-variant-numeric: tabular-nums;
+}
+
+@app.nc-ma-ativo .nc-ma-sit {
+  display: inline-flex;
+  align-items: center;
+  height: 24px;
+  padding: 0 10px;
+  border-radius: 999px;
+  font-size: 12.5px;
+  font-weight: 700;
+  letter-spacing: 0;
+}
+
+@app.nc-ma-ativo .nc-ma-sit[data-tom="bom"] {
+  background: color-mix(in srgb, var(--nc-ma-bom) 12%, #fff);
+  color: var(--nc-ma-bom);
+}
+
+@app.nc-ma-ativo .nc-ma-sit[data-tom="ruim"] {
+  background: var(--nc-ma-ruim);
+  color: #fff;
+}
+
+@app.nc-ma-ativo .nc-ma-dados {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 22px;
+  margin: 8px 0 0;
+  padding: 0;
+}
+
+@app.nc-ma-ativo .nc-ma-dados > div {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
+@app.nc-ma-ativo .nc-ma-dados dt {
+  margin: 0;
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--nc-ma-fraco);
+}
+
+@app.nc-ma-ativo .nc-ma-dados dd {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--nc-ma-texto);
+}
+
+@app.nc-ma-ativo .nc-ma-vazio-quem {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 18px 20px;
+  border: 1px dashed #D9D3E5;
+  border-radius: 14px;
+  color: var(--nc-ma-fraco);
+}
+
+@app.nc-ma-ativo .nc-ma-vazio-quem .nc-ma-ic {
+  flex: 0 0 auto;
+  width: 28px;
+  height: 28px;
+  color: var(--nc-roxo, #511C76);
+}
+
+@app.nc-ma-ativo .nc-ma-vazio-quem b {
+  display: block;
+  font-size: 15px;
+  color: var(--nc-ma-texto);
+}
+
+@app.nc-ma-ativo .nc-ma-vazio-quem span {
+  display: block;
+  margin-top: 2px;
+  font-size: 14px;
+}
+
+/* ═══ [C4] O ALTO DA LISTA E O RESUMO ═══════════════════════════════════════════════════════ */
+@app.nc-ma-ativo .nc-ma {
+  margin: 4px 0 24px;
+  color: var(--nc-ma-texto);
+}
+
+@app.nc-ma-ativo .nc-ma-topo {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px 16px;
+  margin: 0 0 14px;
+}
+
+@app.nc-ma-ativo .nc-ma-h2 {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -.01em;
+  color: var(--nc-ma-texto);
+}
+
+@app.nc-ma-ativo .nc-ma-conta {
+  margin: 2px 0 0;
+  font-size: 14px;
+  color: var(--nc-ma-fraco);
+}
+
+@app.nc-ma-ativo .nc-ma-acoes {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+@app.nc-ma-ativo .nc-ma-vistas {
+  display: inline-flex;
+  gap: 3px;
+  padding: 3px;
+  border-radius: 12px;
+  background: var(--nc-ma-fundo);
+}
+
+@app.nc-ma-ativo .nc-ma-vistas button {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  height: 38px;
+  margin: 0;
+  padding: 0 14px;
+  border: 0;
+  border-radius: 9px;
+  background: transparent;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--nc-ma-fraco);
+  cursor: pointer;
+}
+
+@app.nc-ma-ativo .nc-ma-vistas button[aria-selected="true"] {
+  background: #fff;
+  color: var(--nc-roxo, #511C76);
+  box-shadow: 0 1px 2px rgba(27, 18, 56, .1);
+}
+
+/* o resumo: uma faixa só, três fatos */
+@app.nc-ma-ativo .nc-ma-resumo {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin: 0 0 14px;
+  border: 1px solid var(--nc-ma-borda);
+  border-radius: 14px;
+  background: #fff;
+  overflow: hidden;
+}
+
+@app.nc-ma-ativo .nc-ma-fato {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 14px 18px;
+}
+
+@app.nc-ma-ativo .nc-ma-fato + .nc-ma-fato {
+  border-left: 1px solid var(--nc-ma-borda);
+}
+
+@app.nc-ma-ativo .nc-ma-fato span {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--nc-ma-fraco);
+}
+
+@app.nc-ma-ativo .nc-ma-fato b {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--nc-ma-texto);
+  font-variant-numeric: tabular-nums;
+}
+
+@app.nc-ma-ativo .nc-ma-fato[data-tom="bom"] b {
+  color: var(--nc-ma-bom);
+}
+
+@app.nc-ma-ativo .nc-ma-fato[data-tom="ruim"] {
+  background: color-mix(in srgb, var(--nc-ma-ruim) 6%, #fff);
+}
+
+@app.nc-ma-ativo .nc-ma-fato[data-tom="ruim"] b {
+  color: var(--nc-ma-ruim);
+}
+
+@app.nc-ma-ativo .nc-ma-busca-lista {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: min(380px, 100%);
+  margin: 0 0 12px;
+}
+
+@app.nc-ma-ativo .nc-ma-busca-lista .nc-ma-ic {
+  position: absolute;
+  left: 12px;
+  color: var(--nc-ma-fraco);
+  pointer-events: none;
+}
+
+@app.nc-ma-ativo .nc-ma-busca-lista input {
+  width: 100%;
+  height: 42px;
+  margin: 0;
+  padding: 0 12px 0 38px;
+  border: 1px solid #D9D3E5;
+  border-radius: 10px;
+  background-color: #fff;
+  font-size: 14.5px;
+  color: var(--nc-ma-texto);
+}
+
+@app.nc-ma-ativo .nc-ma-busca-lista input:focus {
+  border-color: var(--nc-roxo, #511C76);
+  outline: 0;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--nc-roxo, #511C76) 16%, transparent);
+}
+
+/* ═══ [C5] OS CARTÕES DOS ATESTADOS ═════════════════════════════════════════════════════════ */
+@app.nc-ma-ativo .nc-ma-ano {
+  margin: 18px 0 8px;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: .04em;
+  color: var(--nc-ma-fraco);
+  font-variant-numeric: tabular-nums;
+}
+
+@app.nc-ma-ativo .nc-ma-ano:first-child {
+  margin-top: 4px;
+}
+
+@app.nc-ma-ativo .nc-ma-itens {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+@app.nc-ma-ativo .nc-ma-itens > li {
+  margin: 0;
+  padding: 0;
+}
+
+@app.nc-ma-ativo .nc-ma-cartao {
+  display: grid;
+  grid-template-columns: 58px minmax(0, 1fr) auto;
+  align-items: start;
+  gap: 16px;
+  width: 100%;
+  margin: 0;
+  padding: 16px 18px;
+  border: 1px solid var(--nc-ma-borda);
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: 0 1px 2px rgba(27, 18, 56, .04);
+  font: inherit;
+  text-align: left;
+  color: inherit;
+  cursor: pointer;
+  transition: border-color .15s, box-shadow .15s;
+}
+
+@app.nc-ma-ativo .nc-ma-cartao:hover {
+  border-color: color-mix(in srgb, var(--nc-roxo, #511C76) 32%, #fff);
+  box-shadow: 0 6px 18px -10px rgba(27, 18, 56, .28);
+}
+
+@app.nc-ma-ativo .nc-ma-cartao:focus-visible {
+  outline: 2px solid var(--nc-roxo, #511C76);
+  outline-offset: 2px;
+}
+
+@app.nc-ma-ativo .nc-ma-cartao.is-vigor {
+  border-color: color-mix(in srgb, var(--nc-ma-ruim) 30%, #fff);
+  background: color-mix(in srgb, var(--nc-ma-ruim) 3%, #fff);
+}
+
+@app.nc-ma-ativo .nc-ma-quando {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 58px;
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--nc-ma-acento) 9%, #fff);
+  color: var(--nc-ma-acento);
+}
+
+@app.nc-ma-ativo .nc-ma-quando b {
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+@app.nc-ma-ativo .nc-ma-quando span {
+  margin-top: 3px;
+  font-size: 12.5px;
+  font-weight: 600;
+  text-transform: lowercase;
+}
+
+@app.nc-ma-ativo .nc-ma-corpo {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+@app.nc-ma-ativo .nc-ma-tit {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 8px;
+  font-size: 16.5px;
+  font-weight: 700;
+  line-height: 1.3;
+  color: var(--nc-ma-texto);
+}
+
+@app.nc-ma-ativo .nc-ma-marca {
+  display: inline-flex;
+  align-items: center;
+  height: 22px;
+  padding: 0 9px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+@app.nc-ma-ativo .nc-ma-marca[data-tom="ruim"] {
+  background: var(--nc-ma-ruim);
+  color: #fff;
+}
+
+@app.nc-ma-ativo .nc-ma-marca[data-tom="atencao"] {
+  background: #FDF1DD;
+  color: var(--nc-ma-atencao);
+}
+
+@app.nc-ma-ativo .nc-ma-marca[data-tom="info"] {
+  background: color-mix(in srgb, var(--nc-ma-info) 10%, #fff);
+  color: var(--nc-ma-info);
+}
+
+@app.nc-ma-ativo .nc-ma-periodo {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--nc-ma-texto);
+  font-variant-numeric: tabular-nums;
+}
+
+@app.nc-ma-ativo .nc-ma-periodo .nc-ma-ic {
+  flex: 0 0 auto;
+  width: 17px;
+  height: 17px;
+  color: var(--nc-ma-acento);
+}
+
+@app.nc-ma-ativo .nc-ma-linha {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 18px;
+  font-size: 14px;
+  color: var(--nc-ma-texto);
+}
+
+@app.nc-ma-ativo .nc-ma-linha > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+
+@app.nc-ma-ativo .nc-ma-linha i {
+  font-style: normal;
+  font-weight: 500;
+  color: var(--nc-ma-fraco);
+}
+
+@app.nc-ma-ativo .nc-ma-fraco {
+  color: var(--nc-ma-fraco);
+}
+
+@app.nc-ma-ativo .nc-ma-linha .nc-ma-ic {
+  flex: 0 0 auto;
+  width: 16px;
+  height: 16px;
+  color: var(--nc-ma-fraco);
+}
+
+@app.nc-ma-ativo .nc-ma-obs {
+  margin-top: 2px;
+  padding: 8px 12px;
+  border-radius: 10px;
+  background: var(--nc-ma-fundo);
+  font-size: 14px;
+  line-height: 1.45;
+  color: var(--nc-ma-texto);
+}
+
+@app.nc-ma-ativo .nc-ma-ir {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 38px;
+  padding: 0 12px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--nc-roxo, #511C76);
+  transition: background .15s;
+}
+
+@app.nc-ma-ativo .nc-ma-cartao:hover .nc-ma-ir {
+  background: color-mix(in srgb, var(--nc-roxo, #511C76) 7%, #fff);
+}
+
+@app.nc-ma-ativo .nc-ma-vazio {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 36px 20px;
+  border: 1px dashed #D9D3E5;
+  border-radius: 14px;
+  text-align: center;
+  color: var(--nc-ma-fraco);
+}
+
+@app.nc-ma-ativo .nc-ma-vazio .nc-ma-ic {
+  width: 30px;
+  height: 30px;
+  margin-bottom: 4px;
+  color: var(--nc-ma-acento);
+}
+
+@app.nc-ma-ativo .nc-ma-vazio b {
+  font-size: 15.5px;
+  color: var(--nc-ma-texto);
+}
+
+/* ═══ [C6] BOTÕES, TABELA E AVISO ═══════════════════════════════════════════════════════════ */
+@app.nc-ma-ativo .nc-ma-ic {
+  flex: 0 0 auto;
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+@app.nc-ma-ativo .nc-ma-bt {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  height: 40px;
+  margin: 0;
+  padding: 0 16px;
+  border: 1px solid var(--nc-borda-botao);
+  border-radius: 10px;
+  background: #fff;
+  box-shadow: none;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--nc-ma-texto);
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+@app.nc-ma-ativo .nc-ma-bt:hover {
+  border-color: color-mix(in srgb, var(--nc-roxo, #511C76) 35%, #fff);
+  background: color-mix(in srgb, var(--nc-roxo, #511C76) 4%, #fff);
+}
+
+@app.nc-ma-ativo .nc-ma-bt:focus-visible,
+@app.nc-ma-ativo .nc-ma-vistas button:focus-visible {
+  outline: 2px solid var(--nc-roxo, #511C76);
+  outline-offset: 2px;
+}
+
+@app.nc-ma-ativo .nc-ma-bt--primario {
+  border-color: var(--nc-roxo, #511C76);
+  background: var(--nc-roxo, #511C76);
+  color: #fff;
+}
+
+@app.nc-ma-ativo .nc-ma-bt--primario:hover {
+  border-color: var(--nc-azul, #2C1A63);
+  background: var(--nc-azul, #2C1A63);
+}
+
+@app.nc-ma-ativo .nc-ma-novo {
+  height: 46px;
+  padding: 0 20px;
+  font-size: 15px;
+  box-shadow: 0 6px 16px -8px rgba(var(--nc-t-roxo-rgb, 81, 28, 118), .55);
+}
+
+@app.nc-ma-ativo .nc-ma-novo .nc-ma-ic {
+  width: 20px;
+  height: 20px;
+  stroke-width: 2.2;
+}
+
+@app.nc-ma-ativo .nc-ma-bt--icone {
+  width: 40px;
+  padding: 0;
+  border-color: transparent;
+}
+
+@app.nc-ma-ativo .nc-ma-bt--perigo {
+  border-color: color-mix(in srgb, var(--nc-ma-ruim) 35%, #fff);
+  color: var(--nc-ma-ruim);
+}
+
+@app.nc-ma-ativo .nc-ma-bt--perigo:hover {
+  border-color: var(--nc-ma-ruim);
+  background: color-mix(in srgb, var(--nc-ma-ruim) 6%, #fff);
+}
+
+@app.nc-ma-ativo .nc-ma-bt:disabled {
+  opacity: .55;
+  cursor: progress;
+}
+
+/* em "Tabela" a grade é só para consultar: lançar e corrigir é na gaveta */
+@app.nc-ma-ativo .nc-ma-grade .a-IG-header :is([data-action="edit"], [data-action="save"], [data-action="selection-add-row"]):not(#nc-ma-x) {
+  display: none;
+}
+
+/* a barra, os títulos e o rodapé "grudentos" da grade se perdem com a rolagem dentro do portal
+   (já acontecia na página original: ficavam soltos por cima das linhas). Aqui eles ficam no lugar. */
+@app.nc-ma-ativo .nc-ma-grade .js-stickyWidget-toggle:not(#nc-ma-x) {
+  position: static;
+  top: auto;
+  width: auto;
+}
+
+@app.nc-ma-ativo .nc-ma-grade .js-stickyWidget-placeholder:not(#nc-ma-x) {
+  display: none;
+}
+
+/* o aviso de salvo (embaixo, no centro) */
+@app.nc-ma-ativo .nc-ma-aviso {
+  position: fixed;
+  left: 50%;
+  bottom: 32px;
+  z-index: 950;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  max-width: calc(100vw - 32px);
+  padding: 12px 18px;
+  border-radius: 12px;
+  background: var(--nc-ma-texto);
+  box-shadow: 0 10px 30px -12px rgba(27, 18, 56, .5);
+  font-size: 14.5px;
+  font-weight: 600;
+  color: #fff;
+  transform: translate(-50%, 16px);
+  visibility: hidden;
+  opacity: .01;
+  transition: transform .2s, opacity .2s, visibility 0s .2s;
+}
+
+@app.nc-ma-ativo .nc-ma-aviso.is-visivel {
+  transform: translate(-50%, 0);
+  visibility: visible;
+  opacity: 1;
+  transition: transform .2s, opacity .2s;
+}
+
+@app.nc-ma-ativo .nc-ma-aviso.is-erro {
+  background: var(--nc-ma-ruim);
+}
+
+@app.nc-ma-ativo .nc-ma-aviso .nc-ma-ic {
+  color: #8EE0B5;
+}
+
+/* ═══ [C7] A GAVETA DE LANÇAR E CORRIGIR (A FICHA DA GRADE) ═════════════════════════════════
+   O JS põe a região da grade dentro da gaveta enquanto ela está aberta (.nc-ma-motor) e mostra
+   a "vista de um registro" do próprio grid: some tudo da grade que não é campo e os campos que
+   não estão na FICHA. Os campos ganham cara de campo.
+   CUIDADO: o grid escreve largura em px na ficha (style="width:…"): o width:auto daqui vence.
+   CUIDADO: dentro do IG moram medidores de tamanho com 1000–1800 px: o .a-IG leva overflow: clip,
+   senão a ficha rola para o lado.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-ma-ativo .nc-ma-gfundo,
+@app.nc-ma-ativo .nc-ma-gaveta {
+  display: none;
+}
+
+@app.nc-ma-ativo.nc-ma-editando .nc-ma-gfundo {
+  position: fixed;
+  inset: 0;
+  z-index: 900;
+  display: block;
+  background: rgba(27, 18, 56, .4);
+  animation: nc-ma-aparece .18s ease-out both;
+}
+
+@app.nc-ma-ativo.nc-ma-editando .nc-ma-gaveta {
+  position: fixed;
+  inset: 0 0 0 auto;
+  z-index: 901;
+  display: flex;
+  flex-direction: column;
+  width: min(600px, 100vw);
+  background: #fff;
+  box-shadow: -24px 0 60px -30px rgba(27, 18, 56, .5);
+  animation: nc-ma-entra .22s cubic-bezier(.2, .8, .2, 1) both;
+}
+
+@keyframes nc-ma-aparece {
+  from { opacity: .01; }
+}
+
+@keyframes nc-ma-entra {
+  from { transform: translateX(32px); opacity: .01; }
+}
+
+@app.nc-ma-ativo .nc-ma-gcab {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 20px 16px 16px 26px;
+  border-bottom: 1px solid var(--nc-ma-borda);
+}
+
+@app.nc-ma-ativo .nc-ma-gcab > div {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+@app.nc-ma-ativo .nc-ma-gcab h2 {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1.25;
+  color: var(--nc-ma-texto);
+}
+
+@app.nc-ma-ativo .nc-ma-gsub {
+  margin: 3px 0 0;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--nc-ma-acento);
+}
+
+@app.nc-ma-ativo .nc-ma-gmeta {
+  margin: 2px 0 0;
+  font-size: 13px;
+  color: var(--nc-ma-fraco);
+}
+
+@app.nc-ma-ativo .nc-ma-gcorpo {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+@app.nc-ma-ativo .nc-ma-gpe {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 88px calc(14px + env(safe-area-inset-bottom, 0px)) 26px;   /* 88: o balão de ajuda do portal */
+  border-top: 1px solid var(--nc-ma-borda);
+  background: #fff;
+}
+
+@app.nc-ma-ativo .nc-ma-gpe [data-gsalvar] {
+  min-width: 150px;
+  height: 46px;
+  font-size: 15px;
+}
+
+@app.nc-ma-ativo .nc-ma-gpe-espaco {
+  flex: 1 1 auto;
+}
+
+@app.nc-ma-ativo .nc-ma-gaveta.is-ocupada .nc-ma-gcorpo {
+  opacity: .6;
+  pointer-events: none;
+}
+
+/* a região da grade, dentro da gaveta: só a ficha */
+@app.nc-ma-ativo .nc-ma-motor:not(#nc-ma-x) {
+  display: block;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+@app.nc-ma-ativo .nc-ma-motor :is(.t-Region-header, .a-IG-header, .js-stickyWidget-placeholder, .a-RV-toolbar, .a-RV-header, .a-RV-footer, .a-GV, .a-IG-footer):not(#nc-ma-x) {
+  display: none;
+}
+
+@app.nc-ma-ativo .nc-ma-motor:not(#nc-ma-x) :is(.t-Region-bodyWrap, .t-Region-body, .a-IG, .a-IG-body, .a-IG-contentContainer, .a-RV, .a-RV-w-scroll, .a-RV-body):not(#nc-ma-y) {
+  width: auto;
+  height: auto;
+  min-height: 0;
+  margin: 0;
+  padding: 0;
+  overflow: visible;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+@app.nc-ma-ativo .nc-ma-motor:not(#nc-ma-x) .a-IG:not(#nc-ma-y):not(#nc-ma-z) {
+  overflow: hidden;
+  overflow: clip;
+}
+
+@app.nc-ma-ativo .nc-ma-motor .a-RV .u-Form:not(#nc-ma-x) {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px 14px;
+  padding: 22px 26px 30px;
+}
+
+@app.nc-ma-ativo .nc-ma-motor .a-RV .u-Form > :not(.nc-ma-gsec):not(#nc-ma-x) {
+  display: none;
+}
+
+@app.nc-ma-ativo .nc-ma-motor .nc-ma-gsec {
+  grid-column: 1 / -1;
+  margin: 10px 0 -4px;
+  padding-top: 18px;
+  border-top: 1px solid var(--nc-ma-borda);
+}
+
+@app.nc-ma-ativo .nc-ma-motor .u-Form > .nc-ma-gsec[style*="order: 0"] {
+  margin-top: 0;
+  padding-top: 0;
+  border-top: 0;
+}
+
+@app.nc-ma-ativo .nc-ma-motor .nc-ma-gsec p {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--nc-ma-texto);
+}
+
+@app.nc-ma-ativo .nc-ma-motor .nc-ma-gsec span {
+  display: block;
+  margin-top: 4px;
+  font-size: 13.5px;
+  line-height: 1.45;
+  color: var(--nc-ma-fraco);
+}
+
+/* quais campos aparecem, em que ordem e largura: a folha #nc-ma-ficha que o JS monta pelo ID */
+@app.nc-ma-ativo .nc-ma-motor .a-RV .u-Form > .u-Form-fieldContainer {
+  flex-direction: column;
+  align-items: stretch;
+  align-self: start;
+  gap: 6px;
+  min-width: 0;
+  width: auto;
+  margin: 0;
+  padding: 0;
+}
+
+@app.nc-ma-ativo .nc-ma-motor .a-RV .u-Form > .u-Form-fieldContainer .u-Form-labelContainer {
+  width: auto;
+  padding: 0;
+  text-align: left;
+}
+
+@app.nc-ma-ativo .nc-ma-motor .a-RV .u-Form > .u-Form-fieldContainer .u-Form-label {
+  font-size: 14.5px;
+  font-weight: 600;
+  color: var(--nc-ma-texto);
+}
+
+@app.nc-ma-ativo .nc-ma-motor .a-RV .u-Form > .u-Form-fieldContainer.is-required .u-Form-label::after {
+  content: " *";
+  color: var(--nc-ma-ruim);
+}
+
+@app.nc-ma-ativo .nc-ma-motor .a-RV .u-Form > .u-Form-fieldContainer .u-Form-inputContainer {
+  width: 100%;
+  min-height: 46px;
+  padding: 0;
+  border: 1px solid #D9D3E5;
+  border-radius: 10px;
+  background: #fff;
+  transition: border-color .15s, box-shadow .15s;
+}
+
+@app.nc-ma-ativo .nc-ma-motor .a-RV .u-Form > .u-Form-fieldContainer .u-Form-inputContainer:hover {
+  border-color: color-mix(in srgb, var(--nc-roxo, #511C76) 40%, #fff);
+}
+
+@app.nc-ma-ativo .nc-ma-motor .a-RV .u-Form > .u-Form-fieldContainer .u-Form-inputContainer:focus-within {
+  border-color: var(--nc-roxo, #511C76);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--nc-roxo, #511C76) 16%, transparent);
+}
+
+@app.nc-ma-ativo .nc-ma-motor .a-RV .u-Form > .u-Form-fieldContainer.is-error .u-Form-inputContainer {
+  border-color: var(--nc-ma-ruim);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--nc-ma-ruim) 14%, transparent);
+}
+
+/* campo que não muda depois de gravado (tipo, motivo, início…): texto, sem cara de campo */
+@app.nc-ma-ativo .nc-ma-motor .a-RV .u-Form > .u-Form-fieldContainer.is-readonly .u-Form-inputContainer,
+@app.nc-ma-ativo .nc-ma-motor .a-RV .u-Form > .u-Form-fieldContainer.is-disabled .u-Form-inputContainer {
+  border-color: transparent;
+  background: var(--nc-ma-fundo);
+  box-shadow: none;
+}
+
+/* travado, o APEX escreve o valor como texto puro dentro do contêiner do campo */
+@app.nc-ma-ativo .nc-ma-motor .a-RV .u-Form > .u-Form-fieldContainer.is-readonly .u-Form-inputContainer {
+  display: flex;
+  align-items: center;
+  padding: 0 12px;
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--nc-ma-texto);
+}
+
+@app.nc-ma-ativo .nc-ma-motor .a-RV .u-Form > .u-Form-fieldContainer.is-readonly .u-Form-label::after {
+  content: "";
+}
+
+@app.nc-ma-ativo .nc-ma-motor .a-RV .u-Form > .u-Form-fieldContainer.is-readonly :is(.a-RV-fieldValue, .u-Form-inputContainer > span, .display_only),
+@app.nc-ma-ativo .nc-ma-motor .a-RV .u-Form > .u-Form-fieldContainer .u-Form-inputContainer > .a-RV-fieldValue {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 12px;
+  font-size: 15px;
+  color: var(--nc-ma-texto);
+}
+
+@app.nc-ma-ativo .nc-ma-motor .a-RV .u-Form > .u-Form-fieldContainer .a-GV-columnItem:not(#nc-ma-x) {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  min-width: 0;
+  height: 44px;
+}
+
+@app.nc-ma-ativo .nc-ma-motor .a-RV .u-Form > .u-Form-fieldContainer :is(select, input[type="text"], textarea):not(#nc-ma-x) {
+  flex: 1 1 auto;
+  width: 100%;
+  min-width: 0;
+  height: 44px;
+  min-height: 44px;
+  margin: 0;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 10px;
+  outline: 0;
+  box-shadow: none;
+  background-color: transparent;
+  font-size: 15px;
+  color: var(--nc-ma-texto);
+}
+
+@app.nc-ma-ativo .nc-ma-motor .a-RV .u-Form > .u-Form-fieldContainer :is(input, select):disabled {
+  color: var(--nc-ma-fraco);
+  cursor: not-allowed;
+}
+
+/* a lista de opções com a mesma seta dupla dos outros selects do sistema */
+@app.nc-ma-ativo .nc-ma-motor .a-RV .u-Form > .u-Form-fieldContainer select:not(#nc-ma-x) {
+  appearance: none;
+  padding-right: 38px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2377707f' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m7 15 5 5 5-5'/%3E%3Cpath d='m7 9 5-5 5 5'/%3E%3C/svg%3E");
+  background-position: calc(100% - 12px) 50%;
+  background-size: 16px 16px;
+  background-repeat: no-repeat;
+  cursor: pointer;
+}
+
+/* o botão do calendário: ícone dentro do campo, à direita */
+@app.nc-ma-ativo .nc-ma-motor .a-RV .u-Form > .u-Form-fieldContainer .ui-datepicker-trigger:not(#nc-ma-x) {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  margin: 0 3px 0 0;
+  padding: 0;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  box-shadow: none;
+  color: var(--nc-roxo, #511C76);
+}
+
+@app.nc-ma-ativo .nc-ma-motor .a-RV .u-Form > .u-Form-fieldContainer .ui-datepicker-trigger:hover {
+  background: color-mix(in srgb, var(--nc-roxo, #511C76) 8%, #fff);
+}
+
+/* hora: máscara 00:00 (JS); inválida = borda vermelha e aviso embaixo */
+@app.nc-ma-ativo .nc-ma-motor .a-RV .u-Form > .u-Form-fieldContainer.nc-hora-ruim .u-Form-inputContainer {
+  border-color: var(--nc-ma-ruim);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--nc-ma-ruim) 14%, transparent);
+}
+
+@app.nc-ma-ativo .nc-ma-motor .nc-hora-aviso {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--nc-ma-ruim);
+}
+
+@app.nc-ma-ativo .nc-ma-motor input[data-nc-hora] {
+  font-variant-numeric: tabular-nums;
+  letter-spacing: .02em;
+}
+
+@app.nc-ma-ativo .nc-ma-motor .nc-ma-dica {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.4;
+  color: var(--nc-ma-fraco);
+}
+
+@app.nc-ma-ativo .nc-ma-motor .u-Form > .is-readonly .nc-ma-dica {
+  display: none;
+}
+
+/* ═══ [C8] CELULAR E TABLET ═════════════════════════════════════════════════════════════════ */
+@media (max-width: 760px) {
+  @app.nc-ma-ativo .nc-ma-resumo {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  @app.nc-ma-ativo .nc-ma-fato {
+    flex-direction: row;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 11px 14px;
+  }
+
+  @app.nc-ma-ativo .nc-ma-fato + .nc-ma-fato {
+    border-top: 1px solid var(--nc-ma-borda);
+    border-left: 0;
+  }
+
+  @app.nc-ma-ativo .nc-ma-fato b {
+    font-size: 15px;
+    text-align: right;
+  }
+
+  @app.nc-ma-ativo .nc-ma-acoes {
+    width: 100%;
+  }
+
+  @app.nc-ma-ativo .nc-ma-novo {
+    flex: 1 1 auto;
+    order: -1;
+    width: 100%;
+  }
+
+  @app.nc-ma-ativo .nc-ma-vistas {
+    display: none;
+  }
+
+  @app.nc-ma-ativo .nc-ma-cartao {
+    grid-template-columns: 48px minmax(0, 1fr);
+    gap: 12px;
+    padding: 14px;
+  }
+
+  @app.nc-ma-ativo .nc-ma-quando {
+    height: 50px;
+  }
+
+  @app.nc-ma-ativo .nc-ma-ir {
+    grid-column: 2;
+    justify-self: start;
+    height: 34px;
+    margin: -2px 0 0 -12px;
+  }
+
+  @app.nc-ma-ativo .nc-ma-pessoa {
+    padding: 14px;
+  }
+
+  @app.nc-ma-ativo .nc-ma-nome {
+    font-size: 18px;
+  }
+
+  @app.nc-ma-ativo .nc-ma-motor .a-RV .u-Form:not(#nc-ma-x) {
+    padding: 18px 16px 24px;
+  }
+
+  @app.nc-ma-ativo .nc-ma-gcab {
+    padding: 14px 8px 12px 16px;
+  }
+
+  @app.nc-ma-ativo .nc-ma-gpe {
+    padding: 12px 80px calc(12px + env(safe-area-inset-bottom, 0px)) 16px;
+  }
+
+  @app.nc-ma-ativo .nc-ma-gpe [data-gsalvar] {
+    min-width: 0;
+    flex: 1 1 auto;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  @app.nc-ma-ativo .nc-ma *,
+  @app.nc-ma-ativo .nc-ma-gaveta,
+  @app.nc-ma-ativo .nc-ma-gfundo {
+    transition: none;
+    animation: none;
+  }
+}

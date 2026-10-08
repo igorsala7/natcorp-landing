@@ -1,0 +1,1053 @@
+/* ╔════════════════════════════════════════════════════════════════════════════════════════╗
+   ║  NATCORP · FOLHA DE PAGAMENTO DO MÊS  —  o desenho da página (CSS)                       ║
+   ║  App 300 (Portal do Colaborador) · Página 74 · Folha do Mês                              ║
+   ╚════════════════════════════════════════════════════════════════════════════════════════╝
+
+   Feito PRIMEIRO para o celular (~70% de quem abre). Na mesa (≥1024 px) o bloco [DESK], no fim,
+   é gerado pelo escala-desktop.py: não edite à mão. Depois de mexer: node gerar-app.mjs.
+   Guia: FOLHA-MANUTENCAO.md. O que cada parte é: Natcorp_Folha.src.js.
+
+   CORES  ganho = --nc-bom (verde), desconto = --nc-ruim (vermelho), o que a pessoa recebe =
+          --nc-roxo (a cor do tema). Nunca cor fixa no lugar delas: os temas trocam o roxo.
+
+   ── ÍNDICE ────────────────────────────────────────────────────────────────────────────────
+     [C1] O que sai da vista (o relatório e o aviso fixo)
+     [C2] O mês no alto
+     [C3] O recibo: a conta, a barra e a frase
+     [C4] Ganhos e descontos: as listas
+     [C5] Bases de cálculo (recolhidas)
+     [C6] Estados: buscando, sem mês, bloqueado, erro
+     [C7] O pé: "Ver tabela completa"
+     [C8] Celular e movimento reduzido
+     [C9] Modo ocorrências (300:104): a frase do resumo e as faixas dos meses
+*/
+
+/* ═══ [C1] O QUE SAI DA VISTA ══════════════════════════════════════════════════════════════
+   O relatório fica na página (o APEX continua mandando nele) e volta com "Ver tabela
+   completa". O aviso fixo "o relatório não está disponível" dá lugar ao motivo do servidor. */
+@app.nc-fo:not(.nc-fo-tabela) .nc-fo-ir {
+  display: none;
+}
+
+@app.nc-fo .nc-fo-aviso {
+  display: none;
+}
+
+/* a lista original do mês, tirada da região do colaborador (o JS a guarda aqui) */
+@app .nc-fo-guarda {
+  display: none;
+}
+
+@app.nc-fo .nc-fo-raiz {
+  margin: 0 0 16px;
+  font-variant-numeric: tabular-nums;
+}
+
+@app.nc-fo .nc-fo-ic {
+  width: 20px;
+  height: 20px;
+  flex: none;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* ═══ [C2] O MÊS NO ALTO ═══════════════════════════════════════════════════════════════════ */
+@app.nc-fo .nc-fo-mes {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin: 0 0 14px;
+}
+
+@app.nc-fo .nc-fo-mes-seta {
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  flex: none;
+  padding: 0;
+  border: 1px solid var(--nc-borda-botao);
+  border-radius: 50%;
+  background: #fff;
+  color: var(--nc-roxo);
+  cursor: pointer;
+  transition: background-color .15s, border-color .15s;
+}
+
+@app.nc-fo .nc-fo-mes-seta:hover:not(:disabled) {
+  border-color: var(--nc-roxo);
+  background: var(--nc-nevoa2);
+}
+
+@app.nc-fo .nc-fo-mes-seta:disabled {
+  border-color: var(--nc-nevoa);
+  color: var(--nc-nevoa);
+  cursor: default;
+}
+
+@app.nc-fo .nc-fo-mes-seta:focus-visible,
+@app.nc-fo .nc-fo-mes-atual:focus-within {
+  outline: 2px solid var(--nc-roxo);
+  outline-offset: 2px;
+}
+
+/* o nome do mês com a lista NATIVA por cima, transparente: no celular abre o seletor do
+   próprio aparelho */
+@app.nc-fo .nc-fo-mes-atual {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-width: 0;
+  min-height: 46px;
+  margin: 0;
+  padding: 0 18px;
+  border: 1px solid var(--nc-nevoa);
+  border-radius: 999px;
+  background: #fff;
+  box-shadow: 0 2px 6px -3px rgba(var(--nc-t-roxo-rgb, 81, 28, 118), .25);
+}
+
+@app.nc-fo .nc-fo-mes-nome {
+  font-size: 19px;
+  font-weight: 800;
+  line-height: 1.2;
+  letter-spacing: -.01em;
+  color: var(--nc-tinta);
+  white-space: nowrap;
+}
+
+@app.nc-fo .nc-fo-mes-dica {
+  display: inline-flex;
+  color: var(--nc-roxo);
+}
+
+@app.nc-fo .nc-fo-mes-sel {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  border: 0;
+  opacity: 0;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+/* ═══ [C3] O RECIBO ════════════════════════════════════════════════════════════════════════
+   A conta em três linhas, como o holerite em papel resume no rodapé — só que no alto, em
+   palavras: Você ganhou − Foi descontado = Você recebe. */
+@app.nc-fo .nc-fo-recibo {
+  margin: 0 0 16px;
+  padding: 20px 22px 18px;
+  border: 1px solid var(--nc-nevoa);
+  border-radius: 20px;
+  background: #fff;
+  box-shadow: 0 10px 28px -18px rgba(var(--nc-t-roxo-rgb, 81, 28, 118), .45);
+}
+
+@app.nc-fo .nc-fo-recibo-cab {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 0 0 14px;
+}
+
+@app.nc-fo .nc-fo-recibo-tit {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 800;
+  line-height: 1.25;
+  letter-spacing: -.012em;
+  color: var(--nc-tinta);
+  text-wrap: balance;
+}
+
+@app.nc-fo .nc-fo-recibo-periodo {
+  margin: 4px 0 0;
+  font-size: 14px;
+  color: var(--nc-grafite);
+}
+
+@app.nc-fo .nc-fo-ouvir {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex: none;
+  min-height: 40px;
+  padding: 0 14px;
+  border: 1px solid var(--nc-borda-botao);
+  border-radius: 999px;
+  background: #fff;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--nc-roxo);
+  cursor: pointer;
+}
+
+@app.nc-fo .nc-fo-ouvir[aria-pressed="true"] {
+  border-color: var(--nc-roxo);
+  background: var(--nc-roxo);
+  color: #fff;
+}
+
+@app.nc-fo .nc-fo-ouvir:focus-visible {
+  outline: 2px solid var(--nc-roxo);
+  outline-offset: 2px;
+}
+
+@app.nc-fo .nc-fo-conta {
+  margin: 0;
+}
+
+@app.nc-fo .nc-fo-conta-linha {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px dashed var(--nc-nevoa);
+}
+
+@app.nc-fo .nc-fo-conta-linha dt {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--nc-grafite);
+}
+
+@app.nc-fo .nc-fo-conta-linha dd {
+  margin: 0;
+  font-size: 19px;
+  font-weight: 700;
+  color: var(--nc-tinta);
+  white-space: nowrap;
+}
+
+@app.nc-fo .nc-fo-conta-sinal {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  flex: none;
+  border-radius: 50%;
+}
+
+@app.nc-fo .nc-fo-conta-sinal .nc-fo-ic {
+  width: 16px;
+  height: 16px;
+  stroke-width: 2.6;
+}
+
+@app.nc-fo .nc-fo-conta-linha--ganho .nc-fo-conta-sinal {
+  background: color-mix(in srgb, var(--nc-bom) 13%, #fff);
+  color: var(--nc-bom);
+}
+
+@app.nc-fo .nc-fo-conta-linha--ganho dd {
+  color: var(--nc-bom);
+}
+
+@app.nc-fo .nc-fo-conta-linha--desc .nc-fo-conta-sinal {
+  background: color-mix(in srgb, var(--nc-ruim) 12%, #fff);
+  color: var(--nc-ruim);
+}
+
+@app.nc-fo .nc-fo-conta-linha--desc dd {
+  color: var(--nc-ruim);
+}
+
+/* a linha do resultado: o fio de soma (duplo, como no papel) e o valor grande */
+@app.nc-fo .nc-fo-conta-linha--liq {
+  margin-top: 2px;
+  padding: 14px 0 6px;
+  border-top: 3px double var(--nc-grafite);
+  border-bottom: 0;
+}
+
+@app.nc-fo .nc-fo-conta-linha--liq dt {
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--nc-tinta);
+}
+
+@app.nc-fo .nc-fo-conta-linha--liq dd {
+  font-size: 30px;
+  font-weight: 800;
+  letter-spacing: -.02em;
+  color: var(--nc-roxo);
+}
+
+@app.nc-fo .nc-fo-conta-linha--liq .nc-fo-conta-sinal {
+  background: var(--nc-roxo);
+  color: #fff;
+}
+
+@app.nc-fo .nc-fo-conta-linha--liq.is-negativo dd {
+  color: var(--nc-ruim);
+}
+
+@app.nc-fo .nc-fo-barra {
+  display: flex;
+  height: 12px;
+  margin: 14px 0 8px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: var(--nc-nevoa);
+}
+
+@app.nc-fo .nc-fo-barra-fica {
+  background: var(--nc-roxo);
+}
+
+@app.nc-fo .nc-fo-barra-desc {
+  background: var(--nc-ruim);
+  box-shadow: inset 2px 0 0 #fff;
+}
+
+@app.nc-fo .nc-fo-barra-leg {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 13.5px;
+  color: var(--nc-grafite);
+}
+
+@app.nc-fo .nc-fo-barra-leg b {
+  color: var(--nc-tinta);
+}
+
+@app.nc-fo .nc-fo-barra-leg-fica::before,
+@app.nc-fo .nc-fo-barra-leg-desc::before {
+  content: "";
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  margin-right: 6px;
+  border-radius: 3px;
+  vertical-align: -1px;
+  background: var(--nc-roxo);
+}
+
+@app.nc-fo .nc-fo-barra-leg-desc::before {
+  background: var(--nc-ruim);
+}
+
+@app.nc-fo .nc-fo-recibo-frase {
+  margin: 12px 0 0;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: var(--nc-nevoa2);
+  font-size: 15px;
+  line-height: 1.45;
+  color: var(--nc-grafite);
+}
+
+@app.nc-fo .nc-fo-recibo-frase b {
+  color: var(--nc-tinta);
+}
+
+/* ═══ [C4] GANHOS E DESCONTOS ══════════════════════════════════════════════════════════════
+   Lado a lado na mesa, um embaixo do outro no celular. A maior verba primeiro. */
+@app.nc-fo .nc-fo-grupos {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 380px), 1fr));
+  align-items: start;
+  gap: 16px;
+  margin: 0 0 16px;
+}
+
+@app.nc-fo .nc-fo-grupo {
+  overflow: hidden;
+  border: 1px solid var(--nc-nevoa);
+  border-radius: 18px;
+  background: #fff;
+}
+
+@app.nc-fo .nc-fo-grupo-cab {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 16px;
+  border-bottom: 2px solid var(--nc-rosa);
+}
+
+@app.nc-fo .nc-fo-grupo-sinal {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  flex: none;
+  border-radius: 10px;
+}
+
+@app.nc-fo .nc-fo-grupo--ganho .nc-fo-grupo-sinal {
+  background: color-mix(in srgb, var(--nc-bom) 13%, #fff);
+  color: var(--nc-bom);
+}
+
+@app.nc-fo .nc-fo-grupo--desc .nc-fo-grupo-sinal {
+  background: color-mix(in srgb, var(--nc-ruim) 12%, #fff);
+  color: var(--nc-ruim);
+}
+
+@app.nc-fo .nc-fo-grupo-sinal .nc-fo-ic {
+  stroke-width: 2.6;
+}
+
+@app.nc-fo .nc-fo-grupo-tit {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-width: 0;
+  margin: 0;
+  font-size: 17px;
+  font-weight: 800;
+  line-height: 1.25;
+  color: var(--nc-tinta);
+}
+
+@app.nc-fo .nc-fo-grupo-n {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--nc-cinza);
+}
+
+@app.nc-fo .nc-fo-grupo-total {
+  font-size: 17px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+@app.nc-fo .nc-fo-grupo--ganho .nc-fo-grupo-total {
+  color: var(--nc-bom);
+}
+
+@app.nc-fo .nc-fo-grupo--desc .nc-fo-grupo-total {
+  color: var(--nc-ruim);
+}
+
+@app.nc-fo .nc-fo-grupo-vazio {
+  margin: 0;
+  padding: 16px;
+  font-size: 15px;
+  color: var(--nc-grafite);
+}
+
+@app.nc-fo .nc-fo-lista {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+@app.nc-fo .nc-fo-item + .nc-fo-item {
+  border-top: 1px solid var(--nc-nevoa);
+}
+
+@app.nc-fo .nc-fo-item-linha {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  min-height: 58px;
+  margin: 0;
+  padding: 10px 16px;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  font: inherit;
+  text-align: left;
+  color: inherit;
+}
+
+@app.nc-fo button.nc-fo-item-linha {
+  cursor: pointer;
+  transition: background-color .15s;
+}
+
+@app.nc-fo button.nc-fo-item-linha:hover {
+  background: var(--nc-nevoa2);
+}
+
+@app.nc-fo button.nc-fo-item-linha:focus-visible {
+  outline: 2px solid var(--nc-roxo);
+  outline-offset: -2px;
+}
+
+@app.nc-fo .nc-fo-item-txt {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+@app.nc-fo .nc-fo-item-nome {
+  font-size: 15.5px;
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--nc-tinta);
+  overflow-wrap: anywhere;
+}
+
+@app.nc-fo .nc-fo-item-meta {
+  font-size: 12.5px;
+  line-height: 1.3;
+  color: var(--nc-cinza);
+}
+
+@app.nc-fo :is(.nc-fo-item-ref, .nc-fo-item-cod),
+@app.nc-fo .nc-fo-grupo-n {
+  white-space: nowrap;
+}
+
+@app.nc-fo .nc-fo-item-valor {
+  flex: none;
+  font-size: 16px;
+  font-weight: 700;
+  white-space: nowrap;
+  color: var(--nc-tinta);
+}
+
+@app.nc-fo .nc-fo-grupo--ganho .nc-fo-item-valor {
+  color: var(--nc-bom);
+}
+
+@app.nc-fo .nc-fo-grupo--desc .nc-fo-item-valor {
+  color: var(--nc-ruim);
+}
+
+@app.nc-fo .nc-fo-item-mais {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  flex: none;
+  border-radius: 50%;
+  background: var(--nc-nevoa2);
+  color: var(--nc-roxo);
+  transition: transform .2s;
+}
+
+@app.nc-fo .nc-fo-item-mais .nc-fo-ic {
+  width: 16px;
+  height: 16px;
+}
+
+@app.nc-fo .nc-fo-item.is-aberto .nc-fo-item-mais {
+  transform: rotate(180deg);
+}
+
+@app.nc-fo .nc-fo-item-explica {
+  margin: 0 16px 12px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: var(--nc-nevoa2);
+  font-size: 14.5px;
+  line-height: 1.5;
+  color: var(--nc-grafite);
+}
+
+@app.nc-fo .nc-fo-item-explica-tit {
+  display: block;
+  margin: 0 0 2px;
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--nc-roxo);
+}
+
+/* ═══ [C5] BASES DE CÁLCULO ════════════════════════════════════════════════════════════════
+   Recolhidas: são números para o cálculo, não dinheiro. Cinza, para não competir. */
+@app.nc-fo .nc-fo-bases {
+  margin: 0 0 16px;
+  overflow: hidden;
+  border: 1px solid var(--nc-nevoa);
+  border-radius: 18px;
+  background: #fff;
+}
+
+@app.nc-fo .nc-fo-bases > summary {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 56px;
+  padding: 10px 16px;
+  cursor: pointer;
+  list-style: none;
+}
+
+@app.nc-fo .nc-fo-bases > summary::-webkit-details-marker {
+  display: none;
+}
+
+@app.nc-fo .nc-fo-bases > summary:focus-visible {
+  outline: 2px solid var(--nc-roxo);
+  outline-offset: -2px;
+}
+
+@app.nc-fo .nc-fo-bases-tit {
+  flex: 1 1 auto;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--nc-grafite);
+}
+
+@app.nc-fo .nc-fo-bases-seta {
+  color: var(--nc-roxo);
+  transition: transform .2s;
+}
+
+@app.nc-fo .nc-fo-bases[open] .nc-fo-bases-seta {
+  transform: rotate(180deg);
+}
+
+@app.nc-fo .nc-fo-bases-dica {
+  margin: 0 16px 10px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--nc-grafite);
+}
+
+@app.nc-fo .nc-fo-bases .nc-fo-lista {
+  border-top: 1px solid var(--nc-nevoa);
+}
+
+@app.nc-fo .nc-fo-bases .nc-fo-item-nome,
+@app.nc-fo .nc-fo-bases .nc-fo-item-valor {
+  font-weight: 500;
+  color: var(--nc-grafite);
+}
+
+/* ═══ [C6] ESTADOS ═════════════════════════════════════════════════════════════════════════ */
+@app.nc-fo .nc-fo-estado {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  min-height: 120px;
+  margin: 0 0 16px;
+  padding: 20px;
+  border: 1px solid var(--nc-nevoa);
+  border-radius: 18px;
+  background: #fff;
+  font-size: 16px;
+  line-height: 1.45;
+  color: var(--nc-grafite);
+}
+
+@app.nc-fo .nc-fo-estado p {
+  margin: 0;
+}
+
+@app.nc-fo .nc-fo-estado-ic {
+  width: 32px;
+  height: 32px;
+  flex: none;
+  fill: none;
+  stroke: var(--nc-roxo);
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+@app.nc-fo .nc-fo-estado--aviso {
+  justify-content: flex-start;
+  border-color: color-mix(in srgb, var(--nc-alerta) 55%, #fff);
+  background: color-mix(in srgb, var(--nc-alerta) 9%, #fff);
+}
+
+@app.nc-fo .nc-fo-estado--aviso .nc-fo-estado-ic {
+  stroke: var(--nc-alerta-texto);
+}
+
+@app.nc-fo .nc-fo-estado-tit {
+  font-weight: 800;
+  color: var(--nc-tinta);
+}
+
+@app.nc-fo .nc-fo-giro {
+  width: 22px;
+  height: 22px;
+  flex: none;
+  border: 3px solid var(--nc-nevoa);
+  border-top-color: var(--nc-roxo);
+  border-radius: 50%;
+  animation: nc-fo-giro .8s linear infinite;
+}
+
+@keyframes nc-fo-giro {
+  to { transform: rotate(360deg); }
+}
+
+/* ═══ [C7] O PÉ ════════════════════════════════════════════════════════════════════════════ */
+@app.nc-fo .nc-fo-pe {
+  display: flex;
+  justify-content: center;
+  margin: 0 0 8px;
+}
+
+@app.nc-fo.nc-fo-bloqueado .nc-fo-pe {
+  display: none;
+}
+
+@app.nc-fo .nc-fo-tabela-bt {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 0 18px;
+  border: 1px solid var(--nc-borda-botao);
+  border-radius: 999px;
+  background: #fff;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--nc-roxo);
+  cursor: pointer;
+}
+
+@app.nc-fo .nc-fo-tabela-bt:hover {
+  border-color: var(--nc-roxo);
+  background: var(--nc-nevoa2);
+}
+
+@app.nc-fo .nc-fo-tabela-bt:focus-visible {
+  outline: 2px solid var(--nc-roxo);
+  outline-offset: 2px;
+}
+
+/* ═══ [C9] MODO OCORRÊNCIAS (300:104) ═════════════════════════════════════════════════════
+   O resumo dos lançamentos (sem a linha "Você recebe") e, em "Todos os meses", uma faixa por
+   mês: o nome à esquerda, os totais à direita (verde ganha, vermelho desconta). As listas do
+   mês aberto vêm logo ABAIXO da faixa — a faixa não é uma caixa em volta delas. */
+@app.nc-fo .nc-fo-sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+@app.nc-fo .nc-fo-recibo--ocorr .nc-fo-conta-linha:last-child {
+  border-bottom: 0;
+}
+
+@app.nc-fo .nc-fo-ocorr-dica {
+  max-width: 64ch;
+  margin: 12px 0 0;
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--nc-grafite);
+  text-wrap: pretty;
+}
+
+@app.nc-fo .nc-fo-recibo-cab + .nc-fo-ocorr-dica {
+  margin-top: -4px;
+}
+
+@app.nc-fo .nc-fo-ocorr-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  font-weight: 700;
+  color: var(--nc-roxo);
+  white-space: nowrap;
+  text-decoration: underline;
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 3px;
+}
+
+@app.nc-fo .nc-fo-ocorr-link .nc-fo-ic {
+  width: 16px;
+  height: 16px;
+  stroke-width: 2.4;
+}
+
+@app.nc-fo .nc-fo-ocorr-link:hover {
+  text-decoration-thickness: 2.5px;
+}
+
+@app.nc-fo .nc-fo-ocorr-link:focus-visible {
+  border-radius: 4px;
+  outline: 2px solid var(--nc-roxo);
+  outline-offset: 2px;
+}
+
+@app.nc-fo .nc-fo-meses {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 0 0 16px;
+}
+
+@app.nc-fo .nc-fo-mesbloco > summary {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-height: 64px;
+  padding: 10px 16px;
+  border: 1px solid var(--nc-nevoa);
+  border-radius: 16px;
+  background: #fff;
+  cursor: pointer;
+  list-style: none;
+  transition: border-color .2s, box-shadow .2s;
+}
+
+@app.nc-fo .nc-fo-mesbloco > summary::-webkit-details-marker {
+  display: none;
+}
+
+@app.nc-fo .nc-fo-mesbloco > summary:hover {
+  border-color: color-mix(in srgb, var(--nc-roxo) 30%, var(--nc-nevoa));
+}
+
+@app.nc-fo .nc-fo-mesbloco > summary:focus-visible {
+  outline: 2px solid var(--nc-roxo);
+  outline-offset: 2px;
+}
+
+@app.nc-fo .nc-fo-mesbloco[open] > summary {
+  border-color: color-mix(in srgb, var(--nc-roxo) 40%, var(--nc-nevoa));
+  box-shadow: 0 8px 20px -16px rgba(var(--nc-t-roxo-rgb, 81, 28, 118), .5);
+}
+
+@app.nc-fo .nc-fo-mesbloco-tit {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+@app.nc-fo .nc-fo-mesbloco-nome {
+  font-size: 17px;
+  font-weight: 800;
+  line-height: 1.25;
+  color: var(--nc-tinta);
+}
+
+@app.nc-fo .nc-fo-mesbloco-nums {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 2px 16px;
+}
+
+@app.nc-fo .nc-fo-mini {
+  font-size: 16px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+@app.nc-fo .nc-fo-mini--g {
+  color: var(--nc-bom);
+}
+
+@app.nc-fo .nc-fo-mini--d {
+  color: var(--nc-ruim);
+}
+
+@app.nc-fo .nc-fo-mini--b {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--nc-cinza);
+}
+
+@app.nc-fo .nc-fo-mesbloco-seta {
+  color: var(--nc-roxo);
+  transition: transform .2s;
+}
+
+@app.nc-fo .nc-fo-mesbloco[open] .nc-fo-mesbloco-seta {
+  transform: rotate(180deg);
+}
+
+@app.nc-fo .nc-fo-mesbloco-corpo {
+  padding: 12px 0 4px;
+}
+
+@app.nc-fo .nc-fo-mesbloco-corpo .nc-fo-grupos,
+@app.nc-fo .nc-fo-mesbloco-corpo .nc-fo-bases {
+  margin-bottom: 12px;
+}
+
+/* ═══ [C8] CELULAR E MOVIMENTO REDUZIDO ════════════════════════════════════════════════════ */
+@media (max-width: 640px) {
+  @app.nc-fo .nc-fo-recibo {
+    padding: 16px 16px 14px;
+    border-radius: 18px;
+  }
+
+  @app.nc-fo .nc-fo-recibo-cab {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  @app.nc-fo .nc-fo-conta-linha--liq dd {
+    font-size: 27px;
+  }
+
+  @app.nc-fo .nc-fo-mes-nome {
+    font-size: 18px;
+  }
+
+  @app.nc-fo .nc-fo-item-linha {
+    padding: 10px 14px;
+  }
+
+  /* o total do grupo desce para baixo do título: lado a lado, "O que foi descontado" partia
+     em duas linhas */
+  @app.nc-fo .nc-fo-grupo-cab {
+    flex-wrap: wrap;
+    row-gap: 2px;
+  }
+
+  @app.nc-fo .nc-fo-grupo-total {
+    flex-basis: 100%;
+    padding-left: 42px;
+    font-size: 18px;
+  }
+
+  /* a faixa do mês: os totais descem para baixo do nome */
+  @app.nc-fo .nc-fo-mesbloco > summary {
+    flex-wrap: wrap;
+    row-gap: 4px;
+    padding: 12px 14px;
+  }
+
+  @app.nc-fo .nc-fo-mesbloco-tit {
+    flex: 1 1 calc(100% - 40px);
+  }
+
+  @app.nc-fo .nc-fo-mesbloco-seta {
+    order: 2;
+  }
+
+  @app.nc-fo .nc-fo-mesbloco-nums {
+    order: 3;
+    flex-basis: 100%;
+    justify-content: flex-start;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  @app.nc-fo .nc-fo-item-mais,
+  @app.nc-fo .nc-fo-bases-seta,
+  @app.nc-fo .nc-fo-mes-seta,
+  @app.nc-fo button.nc-fo-item-linha,
+  @app.nc-fo .nc-fo-mesbloco-seta,
+  @app.nc-fo .nc-fo-mesbloco > summary {
+    transition: none;
+  }
+
+  @app.nc-fo .nc-fo-giro {
+    animation-duration: 2.4s;
+  }
+}
+
+/* ═══ [DESK] TELAS DE MESA — gerado por escala-desktop.py (não editar à mão; rode o script) ═══ */
+@media (min-width: 1024px) {
+  @app.nc-fo .nc-fo-mes-atual {
+    min-height: 40px;
+  }
+
+  @app.nc-fo .nc-fo-mes-nome {
+    font-size: 16.5px;
+  }
+
+  @app.nc-fo .nc-fo-mes-sel {
+    font-size: 15px;
+  }
+
+  @app.nc-fo .nc-fo-recibo-tit {
+    font-size: 17.5px;
+  }
+
+  @app.nc-fo .nc-fo-conta-linha dt {
+    font-size: 15px;
+  }
+
+  @app.nc-fo .nc-fo-conta-linha dd {
+    font-size: 16.5px;
+  }
+
+  @app.nc-fo .nc-fo-conta-linha--liq dt {
+    font-size: 16px;
+  }
+
+  @app.nc-fo .nc-fo-conta-linha--liq dd {
+    font-size: 25px;
+  }
+
+  @app.nc-fo .nc-fo-recibo-frase {
+    font-size: 14px;
+  }
+
+  @app.nc-fo .nc-fo-grupo-tit {
+    font-size: 16px;
+  }
+
+  @app.nc-fo .nc-fo-grupo-total {
+    font-size: 16px;
+  }
+
+  @app.nc-fo .nc-fo-grupo-vazio {
+    font-size: 14px;
+  }
+
+  @app.nc-fo .nc-fo-item-linha {
+    min-height: 50px;
+  }
+
+  @app.nc-fo .nc-fo-item-nome {
+    font-size: 14.5px;
+  }
+
+  @app.nc-fo .nc-fo-item-valor {
+    font-size: 15px;
+  }
+
+  @app.nc-fo .nc-fo-bases > summary {
+    min-height: 48px;
+  }
+
+  @app.nc-fo .nc-fo-bases-tit {
+    font-size: 15px;
+  }
+
+  @app.nc-fo .nc-fo-estado {
+    font-size: 15px;
+    min-height: 103px;
+  }
+
+  @app.nc-fo .nc-fo-tabela-bt {
+    font-size: 14px;
+    min-height: 38px;
+  }
+
+  @app.nc-fo .nc-fo-ocorr-dica {
+    font-size: 14px;
+  }
+
+  @app.nc-fo .nc-fo-mesbloco > summary {
+    min-height: 55px;
+  }
+
+  @app.nc-fo .nc-fo-mesbloco-nome {
+    font-size: 16px;
+  }
+
+  @app.nc-fo .nc-fo-mini {
+    font-size: 15px;
+  }
+}
+/* ═══ fim do [DESK] ═══ */

@@ -1,0 +1,15 @@
+/Users/igor_sala/instalacoes/Projetos/natcorp-landing/brand/apex/ilustracoes/geradas/esocial-v1.png 1135716 bytes
+{
+ "input_tokens": 2067,
+ "input_tokens_details": {
+  "image_tokens": 1521,
+  "text_tokens": 546
+ },
+ "output_tokens": 7024,
+ "output_tokens_details": {
+  "image_tokens": 7024,
+  "text_tokens": 0
+ },
+ "total_tokens": 9091
+}
+ilustra-esocial.png (1000, 926) 183 KB

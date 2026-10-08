@@ -1,0 +1,1003 @@
+/* ╔════════════════════════════════════════════════════════════════════════════════════════╗
+   ║  NATCORP · ELEIÇÃO DA CIPA  —  a "roupa" das duas telas (CSS)                            ║
+   ║  App 2942 (Segurança do Trabalho - CIPA) · Página 34 (lista) · Página 35 (confirmação)   ║
+   ╚════════════════════════════════════════════════════════════════════════════════════════╝
+
+   Primeira vez num arquivo destes? Leia antes o manual: brand/apex/MANUAL-APEX.md (parte 1).
+
+   ── O QUE ESTE ARQUIVO FAZ ────────────────────────────────────────────────────────────────
+   A aparência do que o Natcorp_Cipa.js monta. Pensado PRIMEIRO para o celular (390 px) e
+   para quem lê pouco: letra de 16 px para cima, alvos de toque de 48 px, um botão por cartão,
+   ícones junto das palavras. As cores vêm do tema (--nc-*), com reserva.
+   Sem o JS, nada daqui vale (tudo depende da marca nc-cp-ativo no body).
+
+   ── ONDE ELE ENTRA NO APEX ────────────────────────────────────────────────────────────────
+     Páginas 34 e 35 › CSS › File URLs:   #WORKSPACE_IMAGES#Natcorp_Cipa.css
+     CUIDADO: este é o arquivo-FONTE (.src.css). O gerador (gerar-app.mjs) cria o .css.
+
+   ── ÍNDICE ────────────────────────────────────────────────────────────────────────────────
+     [C1] As cores                                               PODE MEXER
+     [C2] O que sai da vista e peças comuns
+     [C3] Página 34 · o alto (a eleição e como votar)
+     [C4] Página 34 · a inscrição
+     [C5] Página 34 · os candidatos
+     [C6] Página 34 · depois de votar, lista vazia, paginação
+     [C7] Página 35 · a confirmação
+     [C8] Telas largas
+*/
+
+/* ═══ [C1] AS CORES ═════════════════════════════════════════════════════════════════════════ */
+@app.nc-cp-ativo {
+  --cp-roxo: var(--nc-roxo, #511C76);
+  --cp-rosa: var(--nc-rosa, #C95788);
+  --cp-tinta: var(--nc-tinta, #1B1238);
+  --cp-fraco: #5A526E;
+  --cp-borda: var(--nc-nevoa, #E7E1F0);
+  --cp-fundo: var(--nc-off, #F7F5FA);
+  --cp-lilas: var(--nc-nevoa2, #F3EEF8);
+  --cp-bom: #1F7A52;
+  --cp-bom-bg: #E7F4ED;
+  --cp-alerta: #7A4B00;
+  --cp-alerta-bg: #FFF5E3;
+  --cp-sombra: 0 10px 28px -18px rgba(27, 18, 56, .45);
+}
+
+/* ═══ [C2] O QUE SAI DA VISTA E PEÇAS COMUNS ════════════════════════════════════════════════ */
+@app.nc-cp-ativo .nc-cp-guardado {
+  display: none;
+}
+
+@app.nc-cp-ativo .nc-cp-so-leitor {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+@app.nc-cp-ativo .nc-cp-ic {
+  flex: none;
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.9;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+@app.nc-cp-ativo ::selection {
+  background: rgba(var(--nc-t-roxo-rgb, 81, 28, 118), .18);
+  color: inherit;
+}
+
+/* as iniciais no círculo (a cor vem do nome: --av-bg / --av-tx, postas pelo JS) */
+@app.nc-cp-ativo .nc-cp-avatar {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: var(--av-bg, var(--cp-lilas));
+  font-size: 19px;
+  font-weight: 800;
+  letter-spacing: .02em;
+  color: var(--av-tx, var(--cp-roxo));
+}
+
+@app.nc-cp-ativo .nc-cp-apelido {
+  display: block;
+  font-size: 15px;
+  line-height: 1.4;
+  color: var(--cp-fraco);
+}
+
+@app.nc-cp-ativo :is(.nc-cp-cargo, .nc-cp-onde) {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  line-height: 1.4;
+}
+
+@app.nc-cp-ativo :is(.nc-cp-cargo, .nc-cp-onde) .nc-cp-ic {
+  width: 18px;
+  height: 18px;
+  margin-top: 1px;
+  color: var(--cp-rosa);
+}
+
+@app.nc-cp-ativo .nc-cp-cargo {
+  margin-top: 8px;
+  font-size: 15.5px;
+  font-weight: 600;
+  color: var(--cp-tinta);
+}
+
+@app.nc-cp-ativo .nc-cp-onde {
+  margin-top: 4px;
+  font-size: 14.5px;
+  color: var(--cp-fraco);
+}
+
+/* ═══ [C3] PÁGINA 34 · O ALTO ═══════════════════════════════════════════════════════════════
+   A região Hero original fica (só o conteúdo dela sai); o nosso quadro entra dentro dela.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-cp-p34 .t-HeroRegion.nc-cp-hero {
+  margin: 0 0 16px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+@app.nc-cp-p34 .nc-cp-topo {
+  padding: 22px 20px 20px;
+  border: 1px solid var(--cp-borda);
+  border-radius: 20px;
+  background:
+    radial-gradient(120% 90% at 100% 0%, rgba(var(--nc-t-rosa-rgb, 201, 87, 136), .10) 0%, rgba(var(--nc-t-rosa-rgb, 201, 87, 136), 0) 60%),
+    linear-gradient(180deg, #FFFFFF 0%, #FBF9FD 100%);
+  box-shadow: var(--cp-sombra);
+  color: var(--cp-tinta);
+}
+
+@app.nc-cp-p34 .nc-cp-topo-cab {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+@app.nc-cp-p34 .nc-cp-selo {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
+  background-color: var(--cp-roxo);
+  background-image: var(--nc-icone-fundo, linear-gradient(135deg, var(--nc-roxo, #511C76) 0%, var(--nc-rosa, #C95788) 100%));
+  color: #FFFFFF;
+  box-shadow: 0 8px 18px -10px rgba(var(--nc-t-roxo-rgb, 81, 28, 118), .7);
+}
+
+@app.nc-cp-p34 .nc-cp-selo .nc-cp-ic {
+  width: 30px;
+  height: 30px;
+  stroke-width: 1.7;
+}
+
+@app.nc-cp-p34 .nc-cp-topo h1 {
+  margin: 2px 0 6px;
+  font-family: "Inter NC", Inter, ui-sans-serif, system-ui, "Segoe UI", Arial, sans-serif;
+  font-size: 24px;
+  font-weight: 800;
+  line-height: 1.2;
+  letter-spacing: -.02em;
+  text-wrap: balance;
+  color: var(--cp-tinta);
+}
+
+@app.nc-cp-p34 .nc-cp-topo-cab p {
+  max-width: 62ch;
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.5;
+  color: var(--cp-fraco);
+}
+
+/* os 3 passos: um debaixo do outro no celular, lado a lado no largo [C8] */
+@app.nc-cp-p34 .nc-cp-passos {
+  display: grid;
+  gap: 10px;
+  margin: 20px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+@app.nc-cp-p34 .nc-cp-passos li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: var(--cp-lilas);
+  font-size: 15px;
+  line-height: 1.35;
+  color: var(--cp-fraco);
+}
+
+@app.nc-cp-p34 .nc-cp-passos li b {
+  display: block;
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--cp-tinta);
+}
+
+@app.nc-cp-p34 .nc-cp-passo-n {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: #FFFFFF;
+  font-size: 16px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  color: var(--cp-roxo);
+  box-shadow: inset 0 0 0 2px rgba(var(--nc-t-roxo-rgb, 81, 28, 118), .18);
+}
+
+@app.nc-cp-p34 .nc-cp-umavez {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 14px 0 0;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--cp-alerta);
+}
+
+/* ═══ [C4] PÁGINA 34 · A INSCRIÇÃO (só quando o botão original está na página) ════════════ */
+@app.nc-cp-p34 .nc-cp-inscricao {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: 12px 14px;
+  margin: 18px 0 0;
+  padding: 16px;
+  border: 1px solid rgba(var(--nc-t-rosa-rgb, 201, 87, 136), .30);
+  border-radius: 16px;
+  background: #FDF3F7;
+}
+
+@app.nc-cp-p34 .nc-cp-inscricao-ic {
+  display: flex;
+  color: var(--cp-rosa);
+}
+
+@app.nc-cp-p34 .nc-cp-inscricao-ic .nc-cp-ic {
+  width: 28px;
+  height: 28px;
+}
+
+@app.nc-cp-p34 .nc-cp-inscricao-txt {
+  font-size: 15px;
+  line-height: 1.4;
+  color: var(--cp-fraco);
+}
+
+@app.nc-cp-p34 .nc-cp-inscricao-txt b {
+  display: block;
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--cp-tinta);
+}
+
+@app.nc-cp-p34 .nc-cp-inscricao .t-Button.nc-cp-bt-inscrever {
+  grid-column: 1 / -1;
+  justify-content: center;
+  width: 100%;
+  min-height: 48px;
+  margin: 0;
+  padding: 0 20px;
+  border: 0;
+  border-radius: 12px;
+  background: var(--cp-rosa);
+  font-size: 16px;
+  font-weight: 800;
+  color: #FFFFFF;
+  box-shadow: none;
+}
+
+@app.nc-cp-p34 .nc-cp-inscricao .t-Button.nc-cp-bt-inscrever:hover {
+  filter: brightness(.94);
+}
+
+/* ═══ [C5] PÁGINA 34 · OS CANDIDATOS ════════════════════════════════════════════════════════
+   A região original fica; o cabeçalho dela sai (o nosso tem título, contagem e o que fazer).
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-cp-p34 .t-Region.nc-cp-regiao-lista {
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+@app.nc-cp-p34 .t-Region.nc-cp-regiao-lista > .t-Region-header {
+  display: none;
+}
+
+@app.nc-cp-p34 .t-Region.nc-cp-regiao-lista > .t-Region-bodyWrap > .t-Region-body {
+  padding: 0;
+  overflow: visible;
+}
+
+@app.nc-cp-p34 .nc-cp-lista-cab {
+  margin: 8px 2px 14px;
+}
+
+@app.nc-cp-p34 .nc-cp-lista-cab h2 {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+  font-size: 21px;
+  font-weight: 800;
+  letter-spacing: -.01em;
+  color: var(--cp-tinta);
+}
+
+@app.nc-cp-p34 .nc-cp-conta {
+  min-width: 30px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: var(--cp-lilas);
+  font-size: 14px;
+  font-weight: 800;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+  color: var(--cp-roxo);
+}
+
+@app.nc-cp-p34 .nc-cp-lista-cab p {
+  margin: 4px 0 0;
+  font-size: 16px;
+  color: var(--cp-fraco);
+}
+
+/* a busca (com mais de 6 candidatos) */
+@app.nc-cp-p34 .nc-cp-busca {
+  position: relative;
+  display: block;
+  margin: 0 0 14px;
+}
+
+@app.nc-cp-p34 .nc-cp-busca .nc-cp-ic {
+  position: absolute;
+  top: 50%;
+  left: 14px;
+  color: var(--cp-fraco);
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+@app.nc-cp-p34 .nc-cp-busca input {
+  width: 100%;
+  height: 50px;
+  padding: 0 14px 0 44px;
+  border: 1px solid #D9D2E4;
+  border-radius: 14px;
+  background: #FFFFFF;
+  font-size: 16px;
+  color: var(--cp-tinta);
+  caret-color: var(--cp-roxo);
+}
+
+@app.nc-cp-p34 .nc-cp-busca input::placeholder {
+  color: #6E6882;
+}
+
+@app.nc-cp-p34 .nc-cp-busca input:focus {
+  border-color: var(--cp-roxo);
+  outline: 3px solid rgba(var(--nc-t-roxo-rgb, 81, 28, 118), .18);
+  outline-offset: 0;
+}
+
+@app.nc-cp-p34 .nc-cp-cards {
+  display: grid;
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+@app.nc-cp-p34 .nc-cp-cards > li {
+  margin: 0;
+}
+
+@app.nc-cp-p34 .nc-cp-cards > li[hidden] {
+  display: none;
+}
+
+/* o cartão: um BOTÃO inteiro (o toque em qualquer ponto vota) */
+@app.nc-cp-p34 .nc-cp-card {
+  display: grid;
+  grid-template-columns: 56px minmax(0, 1fr);
+  grid-template-areas:
+    "av info"
+    "votar votar";
+  align-items: start;
+  gap: 14px;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 16px;
+  border: 1px solid var(--cp-borda);
+  border-radius: 18px;
+  background: #FFFFFF;
+  font: inherit;
+  text-align: left;
+  color: var(--cp-tinta);
+  cursor: pointer;
+  box-shadow: 0 1px 2px rgba(27, 18, 56, .04);
+  transition: border-color .2s, box-shadow .25s cubic-bezier(.22, 1, .36, 1), transform .25s cubic-bezier(.22, 1, .36, 1);
+  -webkit-tap-highlight-color: transparent;
+}
+
+@app.nc-cp-p34 .nc-cp-card:hover {
+  border-color: rgba(var(--nc-t-roxo-rgb, 81, 28, 118), .35);
+  box-shadow: var(--cp-sombra);
+  transform: translateY(-1px);
+}
+
+@app.nc-cp-p34 .nc-cp-card:active {
+  transform: scale(.99);
+}
+
+@app.nc-cp-p34 .nc-cp-card:focus-visible {
+  outline: 3px solid var(--cp-roxo);
+  outline-offset: 2px;
+}
+
+@app.nc-cp-p34 .nc-cp-card .nc-cp-avatar {
+  grid-area: av;
+}
+
+@app.nc-cp-p34 .nc-cp-info {
+  grid-area: info;
+  display: block;
+  min-width: 0;
+  padding-top: 2px;
+}
+
+@app.nc-cp-p34 .nc-cp-nome {
+  display: block;
+  font-size: 18px;
+  font-weight: 800;
+  line-height: 1.3;
+  letter-spacing: -.01em;
+  overflow-wrap: anywhere;
+  color: var(--cp-tinta);
+}
+
+@app.nc-cp-p34 .nc-cp-votar {
+  grid-area: votar;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 48px;
+  padding: 0 20px;
+  border-radius: 12px;
+  background: var(--cp-roxo);
+  font-size: 16px;
+  font-weight: 800;
+  color: #FFFFFF;
+  transition: background-color .2s;
+}
+
+@app.nc-cp-p34 .nc-cp-card:hover .nc-cp-votar {
+  background: var(--nc-roxo-hover, #3F1460) /*reserva*/;
+  background: var(--nc-roxo-hover, oklch(from #3F1460 l calc(c * var(--nc-t-croma, 1)) calc(h + var(--nc-t-giro, 0))));
+}
+
+/* o cartão em quem a pessoa acabou de votar */
+@app.nc-cp-p34 .nc-cp-card--meu {
+  border-color: rgba(31, 122, 82, .45);
+  background: #F6FBF8;
+}
+
+@app.nc-cp-p34 .nc-cp-selo-voto {
+  grid-area: votar;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 48px;
+  padding: 0 20px;
+  border-radius: 12px;
+  background: var(--cp-bom-bg);
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--cp-bom);
+}
+
+@app.nc-cp-p34 .nc-cp-sem-busca {
+  margin: 8px 2px 0;
+  font-size: 16px;
+  color: var(--cp-fraco);
+}
+
+/* ═══ [C6] PÁGINA 34 · DEPOIS DE VOTAR, LISTA VAZIA, PAGINAÇÃO ═════════════════════════════ */
+@app.nc-cp-p34 .nc-cp-votou {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin: 0 0 14px;
+  padding: 14px 16px;
+  border-radius: 16px;
+  background: var(--cp-bom-bg);
+  font-size: 15px;
+  line-height: 1.4;
+  color: #1B5C3E;
+  animation: nc-cp-chega .45s cubic-bezier(.22, 1, .36, 1) both;
+}
+
+@app.nc-cp-p34 .nc-cp-votou .nc-cp-ic {
+  width: 24px;
+  height: 24px;
+  padding: 3px;
+  border-radius: 50%;
+  background: var(--cp-bom);
+  color: #FFFFFF;
+  stroke-width: 2.6;
+}
+
+@app.nc-cp-p34 .nc-cp-votou b {
+  display: block;
+  font-size: 16px;
+  font-weight: 800;
+  color: #164A32;
+}
+
+@keyframes nc-cp-chega {
+  from { transform: translateY(-6px); }
+  to { transform: none; }
+}
+
+@app.nc-cp-p34 .nc-cp-vazio {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 32px 20px;
+  border: 1.5px dashed #D9D2E4;
+  border-radius: 18px;
+  background: #FFFFFF;
+  text-align: center;
+  font-size: 15.5px;
+  line-height: 1.45;
+  color: var(--cp-fraco);
+}
+
+@app.nc-cp-p34 .nc-cp-vazio .nc-cp-ic {
+  width: 52px;
+  height: 52px;
+  margin-bottom: 6px;
+  padding: 12px;
+  border-radius: 50%;
+  background: var(--cp-lilas);
+  color: var(--cp-roxo);
+  stroke-width: 1.6;
+}
+
+@app.nc-cp-p34 .nc-cp-vazio b {
+  font-size: 17px;
+  font-weight: 800;
+  color: var(--cp-tinta);
+}
+
+/* paginação original (15 por página): links grandes, para o dedo */
+@app.nc-cp-p34 .nc-cp-regiao-lista :is(.t-Report-pagination, .t-Report-paginationText) {
+  margin: 14px 0 0;
+  font-size: 15px;
+  color: var(--cp-fraco);
+}
+
+@app.nc-cp-p34 .nc-cp-regiao-lista :is(.t-Report-pagination, .t-Report-paginationText) a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 48px;
+  min-height: 44px;
+  padding: 0 14px;
+  border: 1px solid var(--nc-borda-botao, rgba(var(--nc-t-roxo-rgb, 81, 28, 118), .34));
+  border-radius: 12px;
+  background: #FFFFFF;
+  font-weight: 700;
+  text-decoration: none;
+  color: var(--cp-roxo);
+}
+
+/* ═══ [C7] PÁGINA 35 · A CONFIRMAÇÃO ════════════════════════════════════════════════════════ */
+@app.nc-cp-p35 .t-Region.nc-cp-regiao-conf {
+  margin: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+@app.nc-cp-p35 .t-Region.nc-cp-regiao-conf > .t-Region-bodyWrap > .t-Region-body {
+  padding: 4px 0 0;
+}
+
+/* os botões saíram de lá para o nosso rodapé: as faixas vazias somem */
+@app.nc-cp-p35 .t-Region.nc-cp-regiao-conf > .t-Region-bodyWrap > .t-Region-buttons,
+@app.nc-cp-p35 .t-Region.nc-cp-regiao-conf > .t-Region-header {
+  display: none;
+}
+
+@app.nc-cp-p35 .nc-cp-conf {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 520px;
+  margin: 0 auto;
+  padding: 8px 4px 4px;
+  text-align: center;
+  color: var(--cp-tinta);
+}
+
+@app.nc-cp-p35 .nc-cp-conf-pessoa {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  padding: 20px 18px 18px;
+  border: 1px solid var(--cp-borda);
+  border-radius: 20px;
+  background: linear-gradient(180deg, #FBF9FD 0%, #FFFFFF 70%);
+}
+
+@app.nc-cp-p35 .nc-cp-avatar--g {
+  width: 80px;
+  height: 80px;
+  font-size: 27px;
+  box-shadow: 0 0 0 6px #FFFFFF, 0 0 0 7px var(--cp-borda);
+}
+
+@app.nc-cp-p35 .nc-cp-conf-nome {
+  margin: 16px 0 0;
+  font-size: 22px;
+  font-weight: 800;
+  line-height: 1.25;
+  letter-spacing: -.015em;
+  text-wrap: balance;
+  overflow-wrap: anywhere;
+  color: var(--cp-tinta);
+}
+
+@app.nc-cp-p35 .nc-cp-conf-det {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+@app.nc-cp-p35 .nc-cp-conf-det :is(.nc-cp-cargo, .nc-cp-onde) {
+  justify-content: center;
+  text-align: left;
+}
+
+@app.nc-cp-p35 .nc-cp-conf-det .nc-cp-apelido {
+  margin-top: 2px;
+}
+
+@app.nc-cp-p35 .nc-cp-pergunta {
+  margin: 22px 0 0;
+  font-size: 19px;
+  font-weight: 800;
+  line-height: 1.3;
+  color: var(--cp-tinta);
+}
+
+@app.nc-cp-p35 .nc-cp-aviso {
+  display: inline-flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin: 10px 0 0;
+  padding: 10px 14px;
+  border-radius: 12px;
+  background: var(--cp-alerta-bg);
+  font-size: 15px;
+  line-height: 1.4;
+  text-align: left;
+  color: var(--cp-alerta);
+}
+
+@app.nc-cp-p35 .nc-cp-estado-ic {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 72px;
+  height: 72px;
+  margin: 8px 0 14px;
+  border-radius: 50%;
+  background: var(--cp-lilas);
+  color: var(--cp-roxo);
+}
+
+@app.nc-cp-p35 .nc-cp-estado-ic .nc-cp-ic {
+  width: 34px;
+  height: 34px;
+}
+
+@app.nc-cp-p35 .nc-cp-estado-ic--bom {
+  background: var(--cp-bom-bg);
+  color: var(--cp-bom);
+  box-shadow: 0 0 0 8px rgba(31, 122, 82, .07);
+}
+
+@app.nc-cp-p35 .nc-cp-estado-ic--bom .nc-cp-ic {
+  stroke-width: 2.6;
+}
+
+@app.nc-cp-p35 .nc-cp-conf > h2 {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 800;
+  line-height: 1.25;
+  color: var(--cp-tinta);
+}
+
+@app.nc-cp-p35 .nc-cp-conf > p:not([class]) {
+  max-width: 40ch;
+  margin: 8px 0 0;
+  font-size: 16px;
+  line-height: 1.5;
+  color: var(--cp-fraco);
+}
+
+@app.nc-cp-p35 .nc-cp-conf > p:not([class]) b {
+  font-weight: 800;
+  color: var(--cp-tinta);
+}
+
+@app.nc-cp-p35 .nc-cp-conf-texto {
+  margin: 8px 0 0;
+  font-size: 17px;
+  line-height: 1.5;
+}
+
+/* o rodapé: os botões ORIGINAIS, grandes, um embaixo do outro (o principal em cima) */
+@app.nc-cp-p35 .nc-cp-acoes {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+  margin: 22px 0 0;
+}
+
+@app.nc-cp-p35 .nc-cp-acoes .t-Button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  min-height: 52px;
+  margin: 0;
+  padding: 0 20px;
+  border-radius: 14px;
+  font-size: 16.5px;
+  font-weight: 800;
+  white-space: normal;
+  box-shadow: none;
+}
+
+@app.nc-cp-p35 .nc-cp-acoes .t-Button .t-Icon {
+  display: none;
+}
+
+@app.nc-cp-p35 .nc-cp-acoes .t-Button.nc-cp-bt-sim {
+  border: 0;
+  background: var(--cp-bom);
+  color: #FFFFFF;
+}
+
+@app.nc-cp-p35 .nc-cp-acoes .t-Button.nc-cp-bt-sim:hover {
+  background: #186443;
+}
+
+@app.nc-cp-p35 .nc-cp-acoes .t-Button.nc-cp-bt-sim.nc-cp-enviando {
+  opacity: .75;
+  cursor: progress;
+}
+
+@app.nc-cp-p35 .nc-cp-acoes .t-Button.nc-cp-bt-nao {
+  border: 1px solid var(--nc-borda-botao, rgba(var(--nc-t-roxo-rgb, 81, 28, 118), .34));
+  background: #FFFFFF;
+  color: var(--cp-roxo);
+}
+
+@app.nc-cp-p35 .nc-cp-acoes .t-Button.nc-cp-bt-nao:hover {
+  background: var(--cp-lilas);
+}
+
+@app.nc-cp-p35 .nc-cp-acoes .t-Button:focus-visible {
+  outline: 3px solid var(--cp-roxo);
+  outline-offset: 2px;
+}
+
+/* ═══ [C8] TELAS LARGAS ═════════════════════════════════════════════════════════════════════ */
+@media (min-width: 760px) {
+  @app.nc-cp-p34 .nc-cp-topo {
+    padding: 28px 28px 24px;
+  }
+
+  @app.nc-cp-p34 .nc-cp-topo h1 {
+    font-size: 28px;
+  }
+
+  @app.nc-cp-p34 .nc-cp-passos {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  @app.nc-cp-p34 .nc-cp-inscricao {
+    grid-template-columns: auto minmax(0, 1fr) auto;
+  }
+
+  @app.nc-cp-p34 .nc-cp-inscricao .t-Button.nc-cp-bt-inscrever {
+    grid-column: auto;
+    width: auto;
+  }
+
+  @app.nc-cp-p34 .nc-cp-cards {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  @app.nc-cp-p34 .nc-cp-card {
+    grid-template-columns: 56px minmax(0, 1fr);
+  }
+}
+
+@media (min-width: 560px) {
+  @app.nc-cp-p35 .nc-cp-acoes {
+    flex-direction: row-reverse;
+  }
+
+  @app.nc-cp-p35 .nc-cp-acoes .t-Button {
+    flex: 1 1 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  @app.nc-cp-ativo :is(.nc-cp-card, .nc-cp-votou) {
+    transition: none;
+    animation: none;
+  }
+}
+
+/* ═══ [DESK] TELAS DE MESA — gerado por escala-desktop.py (não editar à mão; rode o script) ═══ */
+@media (min-width: 1024px) {
+  @app.nc-cp-ativo .nc-cp-avatar {
+    font-size: 16.5px;
+  }
+
+  @app.nc-cp-ativo .nc-cp-apelido {
+    font-size: 14px;
+  }
+
+  @app.nc-cp-ativo .nc-cp-cargo {
+    font-size: 14.5px;
+  }
+
+  @app.nc-cp-p34 .nc-cp-topo h1 {
+    font-size: 23.5px;
+  }
+
+  @app.nc-cp-p34 .nc-cp-topo-cab p {
+    font-size: 15px;
+  }
+
+  @app.nc-cp-p34 .nc-cp-passos li {
+    font-size: 14px;
+  }
+
+  @app.nc-cp-p34 .nc-cp-passos li b {
+    font-size: 15px;
+  }
+
+  @app.nc-cp-p34 .nc-cp-passo-n {
+    font-size: 15px;
+  }
+
+  @app.nc-cp-p34 .nc-cp-umavez {
+    font-size: 14px;
+  }
+
+  @app.nc-cp-p34 .nc-cp-inscricao-txt {
+    font-size: 14px;
+  }
+
+  @app.nc-cp-p34 .nc-cp-inscricao-txt b {
+    font-size: 15px;
+  }
+
+  @app.nc-cp-p34 .nc-cp-inscricao .t-Button.nc-cp-bt-inscrever {
+    font-size: 15px;
+    min-height: 41px;
+  }
+
+  @app.nc-cp-p34 .nc-cp-lista-cab h2 {
+    font-size: 18.5px;
+  }
+
+  @app.nc-cp-p34 .nc-cp-lista-cab p {
+    font-size: 15px;
+  }
+
+  @app.nc-cp-p34 .nc-cp-busca input {
+    font-size: 15px;
+  }
+
+  @app.nc-cp-p34 .nc-cp-nome {
+    font-size: 16px;
+  }
+
+  @app.nc-cp-p34 .nc-cp-votar {
+    font-size: 15px;
+    min-height: 41px;
+  }
+
+  @app.nc-cp-p34 .nc-cp-selo-voto {
+    font-size: 15px;
+    min-height: 41px;
+  }
+
+  @app.nc-cp-p34 .nc-cp-sem-busca {
+    font-size: 15px;
+  }
+
+  @app.nc-cp-p34 .nc-cp-votou {
+    font-size: 14px;
+  }
+
+  @app.nc-cp-p34 .nc-cp-votou b {
+    font-size: 15px;
+  }
+
+  @app.nc-cp-p34 .nc-cp-vazio {
+    font-size: 14.5px;
+  }
+
+  @app.nc-cp-p34 .nc-cp-vazio b {
+    font-size: 16px;
+  }
+
+  @app.nc-cp-p34 .nc-cp-regiao-lista :is(.t-Report-pagination, .t-Report-paginationText) {
+    font-size: 14px;
+  }
+
+  @app.nc-cp-p34 .nc-cp-regiao-lista :is(.t-Report-pagination, .t-Report-paginationText) a {
+    min-height: 38px;
+  }
+
+  @app.nc-cp-p35 .nc-cp-avatar--g {
+    font-size: 22.5px;
+  }
+
+  @app.nc-cp-p35 .nc-cp-conf-nome {
+    font-size: 19.5px;
+  }
+
+  @app.nc-cp-p35 .nc-cp-pergunta {
+    font-size: 16.5px;
+  }
+
+  @app.nc-cp-p35 .nc-cp-aviso {
+    font-size: 14px;
+  }
+
+  @app.nc-cp-p35 .nc-cp-conf > h2 {
+    font-size: 19.5px;
+  }
+
+  @app.nc-cp-p35 .nc-cp-conf > p:not([class]) {
+    font-size: 15px;
+  }
+
+  @app.nc-cp-p35 .nc-cp-conf-texto {
+    font-size: 16px;
+  }
+
+  @app.nc-cp-p35 .nc-cp-acoes .t-Button {
+    font-size: 15.5px;
+    min-height: 45px;
+  }
+}
+/* ═══ fim do [DESK] ═══ */

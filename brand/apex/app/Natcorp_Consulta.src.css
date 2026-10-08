@@ -1,0 +1,916 @@
+/* ╔════════════════════════════════════════════════════════════════════════════════════════╗
+   ║  NATCORP · CONSULTAS DO PORTAL  —  a "roupa" das listas de pedidos (CSS)                 ║
+   ║  App 300 (Portal do Colaborador) · páginas de consulta com relatório interativo          ║
+   ╚════════════════════════════════════════════════════════════════════════════════════════╝
+
+   Primeira vez num arquivo destes? Leia antes o manual: brand/apex/MANUAL-APEX.md (parte 1).
+
+   ── O QUE ESTE ARQUIVO FAZ ────────────────────────────────────────────────────────────────
+   A aparência do que o Natcorp_Consulta.js monta (mesmo visual da consulta de Férias, 300:77).
+   Feito PRIMEIRO para o celular (390 px). As cores da situação são as do sistema
+   (Natcorp_Paginas › STATUS DAS REQUISIÇÕES, pelo data-nc-status). Sem o JS, nada daqui vale.
+
+   ── ONDE ELE ENTRA NO APEX ────────────────────────────────────────────────────────────────
+     Página › CSS › File URLs:   #WORKSPACE_IMAGES#Natcorp_Consulta.css
+     CUIDADO: este é o arquivo-FONTE (.src.css). O gerador (gerar-app.mjs) cria o .css.
+
+   ── ÍNDICE ────────────────────────────────────────────────────────────────────────────────
+     [C1] As cores                                               PODE MEXER
+     [C2] Peças comuns e o relatório em modo cartões
+     [C3] O colaborador
+     [C4] O alto: criar, título, filtro
+     [C5] Os cartões
+     [C6] Vazio
+     [C7] Telas largas
+*/
+
+/* ═══ [C1] AS CORES ═════════════════════════════════════════════════════════════════════════ */
+@app.nc-cq-ativo {
+  --cq-roxo: var(--nc-roxo, #511C76);
+  --cq-rosa: var(--nc-rosa, #C95788);
+  --cq-tinta: var(--nc-tinta, #1B1238);
+  --cq-texto: #2E2742;
+  --cq-fraco: #5A526E;
+  --cq-borda: var(--nc-nevoa, #E7E1F0);
+  --cq-lilas: var(--nc-nevoa2, #F3EEF8);
+  --cq-bom: #1F7A52;
+  --cq-bom-bg: #E7F4ED;
+  --cq-andamento: #1F5A8C;
+  --cq-andamento-bg: #E6F0FA;
+  --cq-atencao: #8A5300;
+  --cq-atencao-bg: #FFF2DC;
+  --cq-ruim: #A1283A;
+  --cq-ruim-bg: #FCE9EC;
+  --cq-apagado: #6E6882;
+  --cq-apagado-bg: #F0EEF4;
+  --cq-sol: #E8A21C;
+}
+
+/* ═══ [C2] PEÇAS COMUNS E O RELATÓRIO EM MODO CARTÕES ═══════════════════════════════════════ */
+@app.nc-cq-ativo .nc-cq-ic {
+  flex: none;
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.9;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+@app.nc-cq-ativo .nc-cq :is(a, button):focus-visible,
+@app.nc-cq-ativo .nc-cq-modo:focus-visible {
+  outline: 3px solid var(--cq-roxo);
+  outline-offset: 2px;
+}
+
+/* em cartões: o relatório fica (pagina e é a fonte), só sem a barra e sem a tabela à vista */
+@app.nc-cq-ativo:not(.nc-cq-tabela) .a-IRR-toolbar,
+@app.nc-cq-ativo:not(.nc-cq-tabela) .a-IRR-tableContainer,
+@app.nc-cq-ativo:not(.nc-cq-tabela) .a-IRR-reportSummary,
+@app.nc-cq-ativo:not(.nc-cq-tabela) .a-IRR-controlsContainer,
+@app.nc-cq-ativo:not(.nc-cq-tabela) .a-IRR-noDataMsg,
+@app.nc-cq-ativo:not(.nc-cq-tabela) .nc-sticky-header-clone:not(#nc-cq-x):not(#nc-cq-y) {
+  display: none;
+}
+
+/* (a linha acima: a cópia "grudenta" do cabeçalho, feita pelo Natcorp_Allow_Unload_Iframes.js da
+   equipe, ficava no alto da tela por cima da trilha mesmo com a tabela escondida — 04/10) */
+
+@app.nc-cq-ativo:not(.nc-cq-tabela) .a-IRR {
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+@app.nc-cq-ativo:not(.nc-cq-tabela) :is(.t-IRR-region, .t-Region):has(.a-IRR) {
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+@app.nc-cq-ativo.nc-cq-tabela .nc-cq-conteudo {
+  display: none;
+}
+
+@app.nc-cq-ativo .nc-cq [hidden],
+@app.nc-cq-ativo .nc-cq-modo[hidden] {
+  display: none;
+}
+
+@app.nc-cq-ativo .nc-cq {
+  max-width: 900px;
+  margin: 0 auto 8px;
+}
+
+/* ═══ [C3] O COLABORADOR ════════════════════════════════════════════════════════════════════ */
+@app.nc-cq-ativo .t-Region.nc-cq-colab-reg > .t-Region-header,
+@app.nc-cq-ativo .t-Region.nc-cq-colab-reg .t-Region-body > :not(.nc-cq-colab):not(.nc-cq-colab-campos) {
+  display: none;
+}
+
+/* campo de escolher que estava na região (ex.: "Data de Referência"): à vista, abaixo do cartão */
+@app.nc-cq-ativo .nc-cq-colab-campos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 16px;
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid var(--cq-borda);
+}
+
+@app.nc-cq-ativo .nc-cq-colab-campos .t-Form-fieldContainer {
+  flex: 1 1 220px;
+  max-width: 360px;
+  margin: 0;
+  padding: 0;
+}
+
+@app.nc-cq-ativo .t-Region.nc-cq-colab-reg {
+  max-width: 900px;
+  margin: 0 auto 14px;
+}
+
+@app.nc-cq-ativo .t-Region.nc-cq-colab-reg .t-Region-body {
+  padding: 14px 16px;
+}
+
+@app.nc-cq-ativo .nc-cq-colab {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+@app.nc-cq-ativo .nc-cq-colab-foto {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: var(--cq-lilas);
+  color: var(--cq-roxo);
+  box-shadow: 0 0 0 2px #FFFFFF, 0 0 0 3.5px var(--cq-borda);
+}
+
+@app.nc-cq-ativo .nc-cq-colab-txt {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-size: 14.5px;
+  line-height: 1.35;
+  color: var(--cq-fraco);
+}
+
+@app.nc-cq-ativo .nc-cq-colab-txt b {
+  display: block;
+  font-size: 17px;
+  font-weight: 800;
+  overflow-wrap: anywhere;
+  color: var(--cq-tinta);
+}
+
+@app.nc-cq-ativo .nc-cq-colab-txt span {
+  display: block;
+}
+
+@app.nc-cq-ativo .nc-cq-colab .nc-cq-colab-bt {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  margin: 0;
+  padding: 0;
+  border-radius: 12px;
+}
+
+/* ═══ [C4] O ALTO ═══════════════════════════════════════════════════════════════════════════ */
+@app.nc-cq-ativo .nc-cq-topo {
+  margin: 0 0 14px;
+}
+
+@app.nc-cq-ativo .nc-cq-topo:empty {
+  display: none;
+}
+
+@app.nc-cq-ativo .nc-cq-topo .t-Button.nc-cq-criar:not([style*="none"]) {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  min-height: 56px;
+  margin: 0;
+  padding: 0 22px;
+  border: 0;
+  border-radius: 16px;
+  background: var(--cq-roxo);
+  font-size: 17px;
+  font-weight: 800;
+  color: #FFFFFF;
+  box-shadow: 0 10px 24px -14px rgba(var(--nc-t-roxo-rgb, 81, 28, 118), .8);
+}
+
+@app.nc-cq-ativo .nc-cq-topo .t-Button.nc-cq-criar:hover {
+  background: var(--nc-roxo-hover, #3F1460) /*reserva*/;
+  background: var(--nc-roxo-hover, oklch(from #3F1460 l calc(c * var(--nc-t-croma, 1)) calc(h + var(--nc-t-giro, 0))));
+}
+
+@app.nc-cq-ativo .nc-cq-topo .t-Button.nc-cq-criar .t-Icon {
+  order: -1;
+  margin: 0;
+}
+
+/* título da lista + "Ver como tabela" */
+@app.nc-cq-ativo .nc-cq-lista-cab {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 12px;
+  margin: 4px 2px 12px;
+}
+
+@app.nc-cq-ativo .nc-cq-lista-cab h2 {
+  margin: 0;
+  font-size: 21px;
+  font-weight: 800;
+  letter-spacing: -.01em;
+  color: var(--cq-tinta);
+}
+
+@app.nc-cq-ativo .nc-cq-modo {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 40px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  font: inherit;
+  font-size: 14.5px;
+  font-weight: 700;
+  color: var(--cq-roxo);
+  cursor: pointer;
+}
+
+@app.nc-cq-ativo .nc-cq-modo:hover {
+  background: var(--cq-lilas);
+}
+
+@app.nc-cq-ativo .nc-cq-volta-cartoes {
+  margin: 0 0 10px;
+  border: 1px solid var(--nc-borda-botao, rgba(var(--nc-t-roxo-rgb, 81, 28, 118), .34));
+  background: #FFFFFF;
+}
+
+/* a situação em botões (rola para o lado dentro da faixa, nunca a página) */
+@app.nc-cq-ativo .nc-cq-filtro {
+  display: flex;
+  gap: 8px;
+  margin: 0 -2px 14px;
+  padding: 2px 2px 6px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+@app.nc-cq-ativo .nc-cq-filtro::-webkit-scrollbar {
+  display: none;
+}
+
+@app.nc-cq-ativo .nc-cq-filtro button {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 44px;
+  padding: 0 14px;
+  border: 1px solid var(--cq-borda);
+  border-radius: 999px;
+  background: #FFFFFF;
+  font: inherit;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--cq-texto);
+  cursor: pointer;
+}
+
+@app.nc-cq-ativo .nc-cq-filtro button b {
+  min-width: 22px;
+  padding: 1px 7px;
+  border-radius: 999px;
+  background: var(--cq-lilas);
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+}
+
+@app.nc-cq-ativo .nc-cq-filtro button[aria-checked="true"] {
+  border-color: var(--cq-roxo);
+  background: var(--cq-roxo);
+  color: #FFFFFF;
+}
+
+@app.nc-cq-ativo .nc-cq-filtro button[aria-checked="true"] b {
+  background: rgba(255, 255, 255, .22);
+  color: #FFFFFF;
+}
+
+/* ═══ [C5] OS CARTÕES ═══════════════════════════════════════════════════════════════════════ */
+@app.nc-cq-ativo .nc-cq-cartoes {
+  display: grid;
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+@app.nc-cq-ativo .nc-cq-item {
+  margin: 0;
+}
+
+@app.nc-cq-ativo .nc-cq-item[hidden] {
+  display: none;
+}
+
+@app.nc-cq-ativo .nc-cq-cartao {
+  height: 100%;
+  padding: 16px 16px 12px;
+  border: 1px solid var(--cq-borda);
+  border-radius: 20px;
+  background: #FFFFFF;
+  cursor: pointer;
+  transition: border-color .2s, box-shadow .25s cubic-bezier(.22, 1, .36, 1);
+}
+
+@app.nc-cq-ativo .nc-cq-cartao:hover {
+  border-color: rgba(var(--nc-t-roxo-rgb, 81, 28, 118), .3);
+  box-shadow: 0 12px 28px -20px rgba(27, 18, 56, .5);
+}
+
+@app.nc-cq-ativo .nc-cq-cartao.is-encerrada {
+  background: #FCFBFD;
+}
+
+@app.nc-cq-ativo .nc-cq-cab {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 8px 12px;
+}
+
+/* a pessoa: a foto ou as iniciais (cor fixa pelo nome) */
+@app.nc-cq-ativo .nc-cq-foto {
+  flex: none;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: var(--cq-lilas);
+}
+
+@app.nc-cq-ativo .nc-cq-foto--ini {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--av-bg, var(--cq-lilas));
+  font-size: 17px;
+  font-weight: 800;
+  color: var(--av-tx, var(--cq-roxo));
+}
+
+@app.nc-cq-ativo .nc-cq-cab-txt .nc-cq-sub {
+  margin: 2px 0 0;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--cq-texto);
+}
+
+/* o valor grande, à direita (folha, empréstimo, nota…) */
+@app.nc-cq-ativo .nc-cq-valor {
+  justify-self: end;
+  text-align: right;
+  font-size: 19px;
+  font-weight: 800;
+  line-height: 1.15;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  color: var(--cq-tinta);
+}
+
+@app.nc-cq-ativo .nc-cq-valor small {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--cq-fraco);
+}
+
+/* dado com link (o nome que abre a ficha, a batida…): continua clicável */
+@app.nc-cq-ativo .nc-cq-link {
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  font-weight: 700;
+  text-align: left;
+  text-decoration: underline;
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 3px;
+  color: var(--cq-roxo);
+  cursor: pointer;
+}
+
+@app.nc-cq-ativo .nc-cq-conta {
+  display: inline-block;
+  min-width: 28px;
+  margin-left: 6px;
+  padding: 2px 9px;
+  border-radius: 999px;
+  background: var(--cq-lilas);
+  font-size: 14px;
+  font-weight: 800;
+  text-align: center;
+  vertical-align: middle;
+  font-variant-numeric: tabular-nums;
+  color: var(--cq-roxo);
+}
+
+/* a busca (mais de 8 cartões) */
+@app.nc-cq-ativo .nc-cq-busca {
+  position: relative;
+  display: block;
+  margin: 0 0 12px;
+}
+
+@app.nc-cq-ativo .nc-cq-busca .nc-cq-ic {
+  position: absolute;
+  top: 50%;
+  left: 14px;
+  color: var(--cq-fraco);
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+@app.nc-cq-ativo .nc-cq-busca input {
+  width: 100%;
+  height: 48px;
+  padding: 0 14px 0 44px;
+  border: 1px solid #D9D2E4;
+  border-radius: 14px;
+  background: #FFFFFF;
+  font-size: 16px;
+  color: var(--cq-tinta);
+}
+
+@app.nc-cq-ativo .nc-cq-busca input:focus {
+  border-color: var(--cq-roxo);
+  outline: 3px solid rgba(var(--nc-t-roxo-rgb, 81, 28, 118), .18);
+}
+
+@app.nc-cq-ativo .nc-cq-so-leitor {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+/* os outros botões da barra do relatório (Abono, Atualizar…), em contorno */
+@app.nc-cq-ativo .nc-cq-topo .t-Button.nc-cq-outro:not([style*="none"]) {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 46px;
+  margin: 0;
+  padding: 0 18px;
+  border: 1px solid var(--nc-borda-botao, rgba(var(--nc-t-roxo-rgb, 81, 28, 118), .34));
+  border-radius: 14px;
+  background: #FFFFFF;
+  font-size: 15.5px;
+  font-weight: 700;
+  color: var(--cq-roxo);
+  box-shadow: none;
+}
+
+@app.nc-cq-ativo .nc-cq-cartao:not(.is-clicavel) {
+  cursor: default;
+}
+
+@app.nc-cq-ativo .nc-cq-ic-pedido {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  background: var(--cq-lilas);
+  color: var(--cq-roxo);
+}
+
+@app.nc-cq-ativo .nc-cq-ic-pedido .nc-cq-ic {
+  width: 24px;
+  height: 24px;
+  stroke-width: 1.7;
+}
+
+@app.nc-cq-ativo .nc-cq-cab-txt h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 800;
+  line-height: 1.25;
+  font-variant-numeric: tabular-nums;
+  color: var(--cq-tinta);
+}
+
+@app.nc-cq-ativo .nc-cq-cab-txt p {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin: 2px 0 0;
+  font-size: 14.5px;
+  color: var(--cq-fraco);
+}
+
+@app.nc-cq-ativo .nc-cq-cab-txt p .nc-cq-ic {
+  width: 15px;
+  height: 15px;
+}
+
+/* a situação: a cor é a do sistema (data-nc-status); aqui só a forma */
+@app.nc-cq-ativo .nc-cq-sit {
+  grid-column: 1 / -1;
+  grid-row: 2;
+  justify-self: start;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 12px 5px 9px;
+  border-radius: 999px;
+  background: var(--cq-apagado-bg);
+  font-size: 14.5px;
+  font-weight: 800;
+  color: var(--cq-apagado);
+}
+
+@app.nc-cq-ativo .nc-cq-sit .nc-cq-ic {
+  width: 16px;
+  height: 16px;
+  stroke-width: 2.4;
+}
+
+@app.nc-cq-ativo .nc-cq-dados {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px 14px;
+  margin: 14px 0 0;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: var(--cq-lilas);
+}
+
+@app.nc-cq-ativo .nc-cq-dados > div {
+  min-width: 0;
+}
+
+@app.nc-cq-ativo .nc-cq-dados dt {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--cq-fraco);
+}
+
+@app.nc-cq-ativo .nc-cq-dados dd {
+  margin: 2px 0 0;
+  font-size: 15.5px;
+  font-weight: 700;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+  color: var(--cq-tinta);
+}
+
+@app.nc-cq-ativo .nc-cq-mais {
+  margin: 10px 0 0;
+}
+
+@app.nc-cq-ativo .nc-cq-mais summary {
+  min-height: 40px;
+  padding: 8px 4px;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--cq-roxo);
+  cursor: pointer;
+}
+
+@app.nc-cq-ativo .nc-cq-acoes {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin: 12px 0 0;
+  padding: 10px 0 0;
+  border-top: 1px solid var(--cq-borda);
+}
+
+@app.nc-cq-ativo .nc-cq-bt {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 44px;
+  padding: 0 16px;
+  border: 1px solid var(--nc-borda-botao, rgba(var(--nc-t-roxo-rgb, 81, 28, 118), .34));
+  border-radius: 999px;
+  background: #FFFFFF;
+  font: inherit;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--cq-roxo);
+  cursor: pointer;
+}
+
+@app.nc-cq-ativo .nc-cq-bt--ver {
+  border-color: var(--cq-roxo);
+  background: var(--cq-roxo);
+  color: #FFFFFF;
+}
+
+@app.nc-cq-ativo .nc-cq-bt--ver:hover {
+  background: var(--nc-roxo-hover, #3F1460) /*reserva*/;
+  background: var(--nc-roxo-hover, oklch(from #3F1460 l calc(c * var(--nc-t-croma, 1)) calc(h + var(--nc-t-giro, 0))));
+}
+
+/* o aviso de "um pedido por vez" */
+@app.nc-cq-ativo .nc-cq-aviso {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin: 0 0 12px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: #E6F0FA;
+  font-size: 15px;
+  line-height: 1.4;
+  color: #1E4F9A;
+}
+
+@app.nc-cq-ativo .nc-cq-aviso .nc-cq-ic {
+  margin-top: 1px;
+}
+
+/* com um pedido aberto: "Ver meu pedido" é o principal e o criar fica discreto */
+@app.nc-cq-ativo .nc-cq-topo {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+@app.nc-cq-ativo .nc-cq-vermeu {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  min-height: 56px;
+  padding: 0 22px;
+  border: 0;
+  border-radius: 16px;
+  background: var(--cq-roxo);
+  font: inherit;
+  font-size: 17px;
+  font-weight: 800;
+  color: #FFFFFF;
+  cursor: pointer;
+  box-shadow: 0 10px 24px -14px rgba(var(--nc-t-roxo-rgb, 81, 28, 118), .8);
+}
+
+@app.nc-cq-ativo .nc-cq-vermeu:hover {
+  background: var(--nc-roxo-hover, #3F1460) /*reserva*/;
+  background: var(--nc-roxo-hover, oklch(from #3F1460 l calc(c * var(--nc-t-croma, 1)) calc(h + var(--nc-t-giro, 0))));
+}
+
+@app.nc-cq-ativo .nc-cq--tem-aberto .nc-cq-topo .t-Button.nc-cq-criar:not([style*="none"]) {
+  min-height: 48px;
+  border: 1px solid var(--nc-borda-botao, rgba(var(--nc-t-roxo-rgb, 81, 28, 118), .34));
+  background: #FFFFFF;
+  font-size: 15.5px;
+  color: var(--cq-roxo);
+  box-shadow: none;
+}
+
+@app.nc-cq-ativo .nc-cq-ponto {
+  flex: none;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #B9B3C6;
+}
+
+@app.nc-cq-ativo .nc-cq-ponto[data-ponto="aberto"] { background: #2F6FD0; }
+@app.nc-cq-ativo .nc-cq-ponto[data-ponto="andamento"] { background: #1592B0; }
+@app.nc-cq-ativo .nc-cq-ponto[data-ponto="aprovado"] { background: #22A06B; }
+@app.nc-cq-ativo .nc-cq-ponto[data-ponto="concluido"] { background: #1F7A52; }
+@app.nc-cq-ativo .nc-cq-ponto[data-ponto="suspenso"] { background: #E3A008; }
+@app.nc-cq-ativo .nc-cq-ponto[data-ponto="reprovado"] { background: #D64560; }
+@app.nc-cq-ativo .nc-cq-ponto[data-ponto="cancelado"] { background: #8E889E; }
+
+/* o título da lista com a frase de explicação */
+@app.nc-cq-ativo .nc-cq-lista-cab p {
+  margin: 2px 0 0;
+  font-size: 15px;
+  color: var(--cq-fraco);
+}
+
+/* ═══ [C6] VAZIO ════════════════════════════════════════════════════════════════════════════ */
+@app.nc-cq-ativo .nc-cq-vazio {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 36px 20px;
+  border: 1.5px dashed #D9D2E4;
+  border-radius: 20px;
+  background: #FFFFFF;
+  text-align: center;
+  font-size: 16px;
+  line-height: 1.45;
+  color: var(--cq-fraco);
+}
+
+@app.nc-cq-ativo .nc-cq-vazio .nc-cq-ic {
+  width: 56px;
+  height: 56px;
+  margin: 0 0 6px;
+  padding: 13px;
+  border-radius: 50%;
+  background: #FFF1D6;
+  color: #B9770E;
+  stroke-width: 1.6;
+}
+
+@app.nc-cq-ativo .nc-cq-vazio b {
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--cq-tinta);
+}
+
+@app.nc-cq-ativo .nc-cq-encerrados {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  min-height: 52px;
+  margin: 12px 0 0;
+  padding: 0 16px;
+  border: 1.5px dashed #D9D2E4;
+  border-radius: 16px;
+  background: #FFFFFF;
+  font: inherit;
+  font-size: 15.5px;
+  font-weight: 700;
+  color: var(--cq-roxo);
+  cursor: pointer;
+}
+
+@app.nc-cq-ativo .nc-cq-encerrados:hover {
+  border-color: rgba(var(--nc-t-roxo-rgb, 81, 28, 118), .4);
+  background: var(--cq-lilas);
+}
+
+@app.nc-cq-ativo .nc-cq-nenhum {
+  margin: 4px 2px 0;
+  font-size: 15.5px;
+  color: var(--cq-fraco);
+}
+
+/* ═══ [C7] TELAS LARGAS ═════════════════════════════════════════════════════════════════════ */
+@media (min-width: 760px) {
+  @app.nc-cq-ativo .nc-cq-topo {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+
+  @app.nc-cq-ativo .nc-cq-vermeu {
+    width: auto;
+  }
+
+  @app.nc-cq-ativo .nc-cq-topo .t-Button.nc-cq-criar:not([style*="none"]) {
+    width: auto;
+  }
+
+  @app.nc-cq-ativo .nc-cq-cartoes {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* receita com filtrosDepois (ex.: 2060:2): no celular, a coluna dos Filtros vai para depois da lista */
+@media (max-width: 640px) {
+  @app.nc-cq-ativo .row:has(> .nc-cq-col-depois) {
+    display: flex;
+    flex-direction: column;
+  }
+
+  @app.nc-cq-ativo .nc-cq-col-depois {
+    order: 9;
+  }
+}
+
+/* ═══ [DESK] TELAS DE MESA — gerado por escala-desktop.py (não editar à mão; rode o script) ═══ */
+@media (min-width: 1024px) {
+  @app.nc-cq-ativo .nc-cq-colab-txt b {
+    font-size: 16px;
+  }
+
+  @app.nc-cq-ativo .nc-cq-topo .t-Button.nc-cq-criar:not([style*="none"]) {
+    font-size: 16px;
+    min-height: 48px;
+  }
+
+  @app.nc-cq-ativo .nc-cq-lista-cab h2 {
+    font-size: 18.5px;
+  }
+
+  @app.nc-cq-ativo .nc-cq-filtro button {
+    font-size: 14px;
+    min-height: 38px;
+  }
+
+  @app.nc-cq-ativo .nc-cq-foto--ini {
+    font-size: 16px;
+  }
+
+  @app.nc-cq-ativo .nc-cq-cab-txt .nc-cq-sub {
+    font-size: 14px;
+  }
+
+  @app.nc-cq-ativo .nc-cq-valor {
+    font-size: 16.5px;
+  }
+
+  @app.nc-cq-ativo .nc-cq-busca input {
+    font-size: 15px;
+  }
+
+  @app.nc-cq-ativo .nc-cq-topo .t-Button.nc-cq-outro:not([style*="none"]) {
+    font-size: 14.5px;
+    min-height: 40px;
+  }
+
+  @app.nc-cq-ativo .nc-cq-cab-txt h3 {
+    font-size: 16px;
+  }
+
+  @app.nc-cq-ativo .nc-cq-dados dd {
+    font-size: 14.5px;
+  }
+
+  @app.nc-cq-ativo .nc-cq-mais summary {
+    font-size: 14px;
+  }
+
+  @app.nc-cq-ativo .nc-cq-bt {
+    font-size: 14px;
+    min-height: 38px;
+  }
+
+  @app.nc-cq-ativo .nc-cq-aviso {
+    font-size: 14px;
+  }
+
+  @app.nc-cq-ativo .nc-cq-vermeu {
+    font-size: 16px;
+    min-height: 48px;
+  }
+
+  @app.nc-cq-ativo .nc-cq--tem-aberto .nc-cq-topo .t-Button.nc-cq-criar:not([style*="none"]) {
+    font-size: 14.5px;
+    min-height: 41px;
+  }
+
+  @app.nc-cq-ativo .nc-cq-lista-cab p {
+    font-size: 14px;
+  }
+
+  @app.nc-cq-ativo .nc-cq-vazio {
+    font-size: 15px;
+  }
+
+  @app.nc-cq-ativo .nc-cq-vazio b {
+    font-size: 16px;
+  }
+
+  @app.nc-cq-ativo .nc-cq-encerrados {
+    font-size: 14.5px;
+    min-height: 45px;
+  }
+
+  @app.nc-cq-ativo .nc-cq-nenhum {
+    font-size: 14.5px;
+  }
+}
+/* ═══ fim do [DESK] ═══ */

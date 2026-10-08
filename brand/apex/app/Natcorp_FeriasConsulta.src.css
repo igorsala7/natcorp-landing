@@ -1,0 +1,749 @@
+/* ╔════════════════════════════════════════════════════════════════════════════════════════╗
+   ║  NATCORP · CONSULTA DE FÉRIAS  —  a "roupa" da página (CSS)                              ║
+   ║  App 300 (Portal do Colaborador) · Página 77 · Requisição de Férias (a consulta)         ║
+   ╚════════════════════════════════════════════════════════════════════════════════════════╝
+
+   Primeira vez num arquivo destes? Leia antes o manual: brand/apex/MANUAL-APEX.md (parte 1).
+
+   ── O QUE ESTE ARQUIVO FAZ ────────────────────────────────────────────────────────────────
+   A aparência do que o Natcorp_FeriasConsulta.js monta. Feito PRIMEIRO para o celular (390
+   px): datas grandes, alvos de 44–48 px, nada que role para o lado. As cores vêm do tema.
+   Sem o JS, nada daqui vale (marca nc-fc-ativo no body).
+
+   ── ONDE ELE ENTRA NO APEX ────────────────────────────────────────────────────────────────
+     Página 77 › CSS › File URLs:   #WORKSPACE_IMAGES#Natcorp_FeriasConsulta.css
+     CUIDADO: este é o arquivo-FONTE (.src.css). O gerador (gerar-app.mjs) cria o .css.
+
+   ── ÍNDICE ────────────────────────────────────────────────────────────────────────────────
+     [C1] As cores                                               PODE MEXER
+     [C2] Peças comuns e o relatório em modo cartões
+     [C3] O colaborador
+     [C4] O alto: Pedir férias, próximas férias, filtro
+     [C5] Os cartões
+     [C6] Vazio, modo tabela
+     [C7] Telas largas
+*/
+
+/* ═══ [C1] AS CORES ═════════════════════════════════════════════════════════════════════════ */
+@app.nc-fc-ativo {
+  --fc-roxo: var(--nc-roxo, #511C76);
+  --fc-rosa: var(--nc-rosa, #C95788);
+  --fc-tinta: var(--nc-tinta, #1B1238);
+  --fc-texto: #2E2742;
+  --fc-fraco: #5A526E;
+  --fc-borda: var(--nc-nevoa, #E7E1F0);
+  --fc-lilas: var(--nc-nevoa2, #F3EEF8);
+  --fc-bom: #1F7A52;
+  --fc-bom-bg: #E7F4ED;
+  --fc-andamento: #1F5A8C;
+  --fc-andamento-bg: #E6F0FA;
+  --fc-atencao: #8A5300;
+  --fc-atencao-bg: #FFF2DC;
+  --fc-ruim: #A1283A;
+  --fc-ruim-bg: #FCE9EC;
+  --fc-apagado: #6E6882;
+  --fc-apagado-bg: #F0EEF4;
+  --fc-sol: #E8A21C;
+}
+
+/* ═══ [C2] PEÇAS COMUNS E O RELATÓRIO EM MODO CARTÕES ═══════════════════════════════════════ */
+@app.nc-fc-ativo .nc-fc-ic {
+  flex: none;
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.9;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+@app.nc-fc-ativo .nc-fc :is(a, button):focus-visible,
+@app.nc-fc-ativo .nc-fc-modo:focus-visible {
+  outline: 3px solid var(--fc-roxo);
+  outline-offset: 2px;
+}
+
+/* em cartões: o relatório fica (pagina e é a fonte), só sem a barra e sem a tabela à vista */
+@app.nc-fc-ativo:not(.nc-fc-tabela) .a-IRR-toolbar,
+@app.nc-fc-ativo:not(.nc-fc-tabela) .a-IRR-tableContainer,
+@app.nc-fc-ativo:not(.nc-fc-tabela) .a-IRR-reportSummary,
+@app.nc-fc-ativo:not(.nc-fc-tabela) .a-IRR-controlsContainer,
+@app.nc-fc-ativo:not(.nc-fc-tabela) .a-IRR-noDataMsg,
+@app.nc-fc-ativo:not(.nc-fc-tabela) .nc-sticky-header-clone:not(#nc-fc-x):not(#nc-fc-y) {
+  display: none;
+}
+
+/* (a linha acima: a cópia "grudenta" do cabeçalho, feita pelo Natcorp_Allow_Unload_Iframes.js da
+   equipe, ficava no alto da tela por cima da trilha mesmo com a tabela escondida — 04/10) */
+
+@app.nc-fc-ativo:not(.nc-fc-tabela) .a-IRR {
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+@app.nc-fc-ativo:not(.nc-fc-tabela) :is(.t-IRR-region, .t-Region):has(.a-IRR) {
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+@app.nc-fc-ativo.nc-fc-tabela .nc-fc-conteudo {
+  display: none;
+}
+
+@app.nc-fc-ativo .nc-fc [hidden],
+@app.nc-fc-ativo .nc-fc-modo[hidden] {
+  display: none;
+}
+
+@app.nc-fc-ativo .nc-fc {
+  max-width: 900px;
+  margin: 0 auto 8px;
+}
+
+/* ═══ [C3] O COLABORADOR ════════════════════════════════════════════════════════════════════ */
+@app.nc-fc-ativo .t-Region.nc-fc-colab-reg > .t-Region-header,
+@app.nc-fc-ativo .t-Region.nc-fc-colab-reg .t-Region-body > :not(.nc-fc-colab) {
+  display: none;
+}
+
+@app.nc-fc-ativo .t-Region.nc-fc-colab-reg {
+  max-width: 900px;
+  margin: 0 auto 14px;
+}
+
+@app.nc-fc-ativo .t-Region.nc-fc-colab-reg .t-Region-body {
+  padding: 14px 16px;
+}
+
+@app.nc-fc-ativo .nc-fc-colab {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+@app.nc-fc-ativo .nc-fc-colab-foto {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: var(--fc-lilas);
+  color: var(--fc-roxo);
+  box-shadow: 0 0 0 2px #FFFFFF, 0 0 0 3.5px var(--fc-borda);
+}
+
+@app.nc-fc-ativo .nc-fc-colab-txt {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-size: 14.5px;
+  line-height: 1.35;
+  color: var(--fc-fraco);
+}
+
+@app.nc-fc-ativo .nc-fc-colab-txt b {
+  display: block;
+  font-size: 17px;
+  font-weight: 800;
+  overflow-wrap: anywhere;
+  color: var(--fc-tinta);
+}
+
+@app.nc-fc-ativo .nc-fc-colab-txt span {
+  display: block;
+}
+
+@app.nc-fc-ativo .nc-fc-colab .nc-fc-colab-bt {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  margin: 0;
+  padding: 0;
+  border-radius: 12px;
+}
+
+/* ═══ [C4] O ALTO ═══════════════════════════════════════════════════════════════════════════ */
+@app.nc-fc-ativo .nc-fc-topo {
+  margin: 0 0 14px;
+}
+
+@app.nc-fc-ativo .nc-fc-topo .t-Button.nc-fc-pedir:not([style*="none"]) {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  min-height: 56px;
+  margin: 0;
+  padding: 0 22px;
+  border: 0;
+  border-radius: 16px;
+  background: var(--fc-roxo);
+  font-size: 17px;
+  font-weight: 800;
+  color: #FFFFFF;
+  box-shadow: 0 10px 24px -14px rgba(var(--nc-t-roxo-rgb, 81, 28, 118), .8);
+}
+
+@app.nc-fc-ativo .nc-fc-topo .t-Button.nc-fc-pedir:hover {
+  background: var(--nc-roxo-hover, #3F1460) /*reserva*/;
+  background: var(--nc-roxo-hover, oklch(from #3F1460 l calc(c * var(--nc-t-croma, 1)) calc(h + var(--nc-t-giro, 0))));
+}
+
+@app.nc-fc-ativo .nc-fc-topo .t-Button.nc-fc-pedir .t-Icon {
+  order: -1;
+  margin: 0;
+}
+
+/* próximas férias */
+@app.nc-fc-ativo .nc-fc-proximas {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin: 0 0 18px;
+  padding: 18px;
+  border: 1px solid #F3D9A6;
+  border-radius: 20px;
+  background: linear-gradient(135deg, #FFF8EA 0%, #FFFFFF 70%);
+}
+
+@app.nc-fc-ativo .nc-fc-proximas-ic {
+  width: 52px;
+  height: 52px;
+  padding: 10px;
+  border-radius: 16px;
+  background: #FFEBC2;
+  color: #B9770E;
+  stroke-width: 1.7;
+}
+
+@app.nc-fc-ativo .nc-fc-proximas p {
+  margin: 0;
+}
+
+@app.nc-fc-ativo .nc-fc-proximas-tit {
+  font-size: 14.5px;
+  font-weight: 700;
+  color: var(--fc-atencao);
+}
+
+@app.nc-fc-ativo .nc-fc-proximas-data {
+  font-size: 21px;
+  font-weight: 800;
+  line-height: 1.25;
+  color: var(--fc-tinta);
+}
+
+@app.nc-fc-ativo .nc-fc-proximas-falta {
+  font-size: 15px;
+  color: var(--fc-fraco);
+}
+
+/* título da lista + "Ver como tabela" */
+@app.nc-fc-ativo .nc-fc-lista-cab {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 12px;
+  margin: 4px 2px 12px;
+}
+
+@app.nc-fc-ativo .nc-fc-lista-cab h2 {
+  margin: 0;
+  font-size: 21px;
+  font-weight: 800;
+  letter-spacing: -.01em;
+  color: var(--fc-tinta);
+}
+
+@app.nc-fc-ativo .nc-fc-modo {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 40px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  font: inherit;
+  font-size: 14.5px;
+  font-weight: 700;
+  color: var(--fc-roxo);
+  cursor: pointer;
+}
+
+@app.nc-fc-ativo .nc-fc-modo:hover {
+  background: var(--fc-lilas);
+}
+
+@app.nc-fc-ativo .nc-fc-volta-cartoes {
+  margin: 0 0 10px;
+  border: 1px solid var(--nc-borda-botao, rgba(var(--nc-t-roxo-rgb, 81, 28, 118), .34));
+  background: #FFFFFF;
+}
+
+/* a situação em botões (rola para o lado dentro da faixa, nunca a página) */
+@app.nc-fc-ativo .nc-fc-filtro {
+  display: flex;
+  gap: 8px;
+  margin: 0 -2px 14px;
+  padding: 2px 2px 6px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+@app.nc-fc-ativo .nc-fc-filtro::-webkit-scrollbar {
+  display: none;
+}
+
+@app.nc-fc-ativo .nc-fc-filtro button {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 44px;
+  padding: 0 14px;
+  border: 1px solid var(--fc-borda);
+  border-radius: 999px;
+  background: #FFFFFF;
+  font: inherit;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--fc-texto);
+  cursor: pointer;
+}
+
+@app.nc-fc-ativo .nc-fc-filtro button b {
+  min-width: 22px;
+  padding: 1px 7px;
+  border-radius: 999px;
+  background: var(--fc-lilas);
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+}
+
+@app.nc-fc-ativo .nc-fc-filtro button[aria-checked="true"] {
+  border-color: var(--fc-roxo);
+  background: var(--fc-roxo);
+  color: #FFFFFF;
+}
+
+@app.nc-fc-ativo .nc-fc-filtro button[aria-checked="true"] b {
+  background: rgba(255, 255, 255, .22);
+  color: #FFFFFF;
+}
+
+/* ═══ [C5] OS CARTÕES ═══════════════════════════════════════════════════════════════════════ */
+@app.nc-fc-ativo .nc-fc-cartoes {
+  display: grid;
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+@app.nc-fc-ativo .nc-fc-item {
+  margin: 0;
+}
+
+@app.nc-fc-ativo .nc-fc-item[hidden] {
+  display: none;
+}
+
+@app.nc-fc-ativo .nc-fc-cartao {
+  height: 100%;
+  padding: 16px 16px 12px;
+  border: 1px solid var(--fc-borda);
+  border-radius: 20px;
+  background: #FFFFFF;
+  cursor: pointer;
+  transition: border-color .2s, box-shadow .25s cubic-bezier(.22, 1, .36, 1);
+}
+
+@app.nc-fc-ativo .nc-fc-cartao:hover {
+  border-color: rgba(var(--nc-t-roxo-rgb, 81, 28, 118), .3);
+  box-shadow: 0 12px 28px -20px rgba(27, 18, 56, .5);
+}
+
+/* cancelado / reprovado: o mesmo cartão, mais discreto */
+@app.nc-fc-ativo .nc-fc-cartao.is-encerrada {
+  background: #FCFBFD;
+}
+
+@app.nc-fc-ativo .nc-fc-cartao.is-encerrada :is(.nc-fc-data b, .nc-fc-chip) {
+  color: var(--fc-apagado);
+}
+
+
+@app.nc-fc-ativo .nc-fc-cab {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 10px;
+  margin: 0 0 12px;
+}
+
+@app.nc-fc-ativo .nc-fc-sit {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 11px 4px 8px;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 800;
+}
+
+@app.nc-fc-ativo .nc-fc-sit .nc-fc-ic {
+  width: 16px;
+  height: 16px;
+  stroke-width: 2.4;
+}
+
+/* as cores dos 7 status vêm do sistema (Natcorp_Paginas › STATUS DAS REQUISIÇÕES, pelo
+   data-nc-status); aqui só o neutro, para situação fora da lista */
+@app.nc-fc-ativo .nc-fc-sit--neutro { background: var(--fc-apagado-bg); color: var(--fc-apagado); }
+
+/* a bolinha da cor do status nos botões de situação */
+@app.nc-fc-ativo .nc-fc-ponto {
+  flex: none;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #B9B3C6;
+}
+
+@app.nc-fc-ativo .nc-fc-ponto--aberto { background: #2F6FD0; }
+@app.nc-fc-ativo .nc-fc-ponto--andamento { background: #1592B0; }
+@app.nc-fc-ativo .nc-fc-ponto--aprovado { background: #22A06B; }
+@app.nc-fc-ativo .nc-fc-ponto--concluido { background: #1F7A52; }
+@app.nc-fc-ativo .nc-fc-ponto--suspenso { background: #E3A008; }
+@app.nc-fc-ativo .nc-fc-ponto--reprovado { background: #D64560; }
+@app.nc-fc-ativo .nc-fc-ponto--cancelado { background: #8E889E; }
+
+@app.nc-fc-ativo .nc-fc-filtro button[aria-checked="true"] .nc-fc-ponto {
+  box-shadow: 0 0 0 2px #FFFFFF;
+}
+
+@app.nc-fc-ativo .nc-fc-num {
+  font-size: 14px;
+  color: var(--fc-fraco);
+  font-variant-numeric: tabular-nums;
+}
+
+/* as partes das férias: as datas são o principal */
+@app.nc-fc-ativo .nc-fc-partes {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+@app.nc-fc-ativo .nc-fc-parte {
+  margin: 0;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: var(--fc-lilas);
+}
+
+@app.nc-fc-ativo .nc-fc-parte-n {
+  display: block;
+  margin: 0 0 4px;
+  font-size: 13.5px;
+  font-weight: 800;
+  color: var(--fc-roxo);
+}
+
+@app.nc-fc-ativo .nc-fc-datas {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+@app.nc-fc-ativo .nc-fc-data small {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--fc-fraco);
+}
+
+@app.nc-fc-ativo .nc-fc-data b {
+  font-size: 19px;
+  font-weight: 800;
+  line-height: 1.2;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  color: var(--fc-tinta);
+}
+
+@app.nc-fc-ativo .nc-fc-flecha {
+  display: flex;
+  color: var(--fc-rosa);
+}
+
+@app.nc-fc-ativo .nc-fc-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 10px 0 0;
+}
+
+@app.nc-fc-ativo .nc-fc-chips:empty {
+  display: none;
+}
+
+@app.nc-fc-ativo .nc-fc-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px 4px 8px;
+  border-radius: 999px;
+  background: #FFFFFF;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--fc-texto);
+}
+
+@app.nc-fc-ativo .nc-fc-chip .nc-fc-ic {
+  width: 16px;
+  height: 16px;
+  color: var(--fc-rosa);
+}
+
+@app.nc-fc-ativo .nc-fc-chip--dias .nc-fc-ic {
+  color: var(--fc-sol);
+}
+
+@app.nc-fc-ativo .nc-fc-semdatas {
+  margin: 0;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: var(--fc-lilas);
+  font-size: 15px;
+  color: var(--fc-fraco);
+}
+
+@app.nc-fc-ativo .nc-fc-info {
+  display: grid;
+  gap: 6px;
+  margin: 12px 0 0;
+}
+
+@app.nc-fc-ativo .nc-fc-info > div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px 8px;
+  font-size: 14.5px;
+  line-height: 1.4;
+}
+
+@app.nc-fc-ativo .nc-fc-info dt {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 600;
+  color: var(--fc-fraco);
+}
+
+@app.nc-fc-ativo .nc-fc-info dt .nc-fc-ic {
+  width: 16px;
+  height: 16px;
+}
+
+@app.nc-fc-ativo .nc-fc-info dd {
+  margin: 0;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--fc-texto);
+}
+
+@app.nc-fc-ativo .nc-fc-acoes {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+  margin: 12px 0 0;
+  padding: 10px 0 0;
+  border-top: 1px solid var(--fc-borda);
+}
+
+@app.nc-fc-ativo .nc-fc-bt {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 44px;
+  padding: 0 14px;
+  border: 1px solid var(--nc-borda-botao, rgba(var(--nc-t-roxo-rgb, 81, 28, 118), .34));
+  border-radius: 999px;
+  background: #FFFFFF;
+  font: inherit;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--fc-roxo);
+  cursor: pointer;
+}
+
+@app.nc-fc-ativo .nc-fc-bt:hover {
+  background: var(--fc-lilas);
+}
+
+@app.nc-fc-ativo .nc-fc-bt--ver {
+  border-color: var(--fc-roxo);
+  background: var(--fc-roxo);
+  color: #FFFFFF;
+}
+
+@app.nc-fc-ativo .nc-fc-bt--ver:hover {
+  background: var(--nc-roxo-hover, #3F1460) /*reserva*/;
+  background: var(--nc-roxo-hover, oklch(from #3F1460 l calc(c * var(--nc-t-croma, 1)) calc(h + var(--nc-t-giro, 0))));
+}
+
+/* ═══ [C6] VAZIO ════════════════════════════════════════════════════════════════════════════ */
+@app.nc-fc-ativo .nc-fc-vazio {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 36px 20px;
+  border: 1.5px dashed #D9D2E4;
+  border-radius: 20px;
+  background: #FFFFFF;
+  text-align: center;
+  font-size: 16px;
+  line-height: 1.45;
+  color: var(--fc-fraco);
+}
+
+@app.nc-fc-ativo .nc-fc-vazio .nc-fc-ic {
+  width: 56px;
+  height: 56px;
+  margin: 0 0 6px;
+  padding: 13px;
+  border-radius: 50%;
+  background: #FFF1D6;
+  color: #B9770E;
+  stroke-width: 1.6;
+}
+
+@app.nc-fc-ativo .nc-fc-vazio b {
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--fc-tinta);
+}
+
+@app.nc-fc-ativo .nc-fc-encerrados {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  min-height: 52px;
+  margin: 12px 0 0;
+  padding: 0 16px;
+  border: 1.5px dashed #D9D2E4;
+  border-radius: 16px;
+  background: #FFFFFF;
+  font: inherit;
+  font-size: 15.5px;
+  font-weight: 700;
+  color: var(--fc-roxo);
+  cursor: pointer;
+}
+
+@app.nc-fc-ativo .nc-fc-encerrados:hover {
+  border-color: rgba(var(--nc-t-roxo-rgb, 81, 28, 118), .4);
+  background: var(--fc-lilas);
+}
+
+@app.nc-fc-ativo .nc-fc-nenhum {
+  margin: 4px 2px 0;
+  font-size: 15.5px;
+  color: var(--fc-fraco);
+}
+
+/* ═══ [C7] TELAS LARGAS ═════════════════════════════════════════════════════════════════════ */
+@media (min-width: 760px) {
+  @app.nc-fc-ativo .nc-fc-topo {
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  @app.nc-fc-ativo .nc-fc-topo .t-Button.nc-fc-pedir:not([style*="none"]) {
+    width: auto;
+  }
+
+  @app.nc-fc-ativo .nc-fc-cartoes {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* ═══ [DESK] TELAS DE MESA — gerado por escala-desktop.py (não editar à mão; rode o script) ═══ */
+@media (min-width: 1024px) {
+  @app.nc-fc-ativo .nc-fc-colab-txt b {
+    font-size: 16px;
+  }
+
+  @app.nc-fc-ativo .nc-fc-topo .t-Button.nc-fc-pedir:not([style*="none"]) {
+    font-size: 16px;
+    min-height: 48px;
+  }
+
+  @app.nc-fc-ativo .nc-fc-proximas-data {
+    font-size: 18.5px;
+  }
+
+  @app.nc-fc-ativo .nc-fc-proximas-falta {
+    font-size: 14px;
+  }
+
+  @app.nc-fc-ativo .nc-fc-lista-cab h2 {
+    font-size: 18.5px;
+  }
+
+  @app.nc-fc-ativo .nc-fc-filtro button {
+    font-size: 14px;
+    min-height: 38px;
+  }
+
+  @app.nc-fc-ativo .nc-fc-data b {
+    font-size: 16.5px;
+  }
+
+  @app.nc-fc-ativo .nc-fc-semdatas {
+    font-size: 14px;
+  }
+
+  @app.nc-fc-ativo .nc-fc-bt {
+    font-size: 14px;
+    min-height: 38px;
+  }
+
+  @app.nc-fc-ativo .nc-fc-vazio {
+    font-size: 15px;
+  }
+
+  @app.nc-fc-ativo .nc-fc-vazio b {
+    font-size: 16px;
+  }
+
+  @app.nc-fc-ativo .nc-fc-encerrados {
+    font-size: 14.5px;
+    min-height: 45px;
+  }
+
+  @app.nc-fc-ativo .nc-fc-nenhum {
+    font-size: 14.5px;
+  }
+}
+/* ═══ fim do [DESK] ═══ */

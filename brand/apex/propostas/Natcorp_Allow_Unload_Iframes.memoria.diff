@@ -1,0 +1,139 @@
+--- propostas/Natcorp_Allow_Unload_Iframes.antes-0710.js	2026-10-07 16:41:38
++++ login/Natcorp_Allow_Unload_Iframes.js	2026-10-07 16:41:38
+@@ -1,7 +1,7 @@
+ (function () {
+     "use strict";
+ 
+-    var DEBUG = true;
++    var DEBUG = false;   // true só para investigar: o log manda os iframes ao console, que os segura na memória
+     var MARCA = "data-natcorp-unload-enabled";
+ 
+     function log() {
+@@ -1451,6 +1451,26 @@
+     return { body: document.body, doc: document, win: root };
+   }
+ 
++  // [memória] região maximizada vive no body da página de CIMA; se a página do iframe sair com ela
++  // aberta (troca de página na casca), ela ficava lá — por cima de tudo e segurando o iframe morto
++  // na memória. Ao sair (pagehide), sai também da página de cima, com o Esc e a classe do body.
++  var MAXIMIZADAS = [];
++  root.addEventListener("pagehide", function () {
++    MAXIMIZADAS.slice().forEach(function (el) {
++      try {
++        var $r = $(el), alvo = $r.data("ncMaximizeAlvo"), aoTeclar = $r.data("ncMaximizeEscHandler");
++        if (alvo) {
++          $(alvo.body).removeClass("nc-fake-maximize-open");
++          if (aoTeclar) alvo.doc.removeEventListener("keydown", aoTeclar);
++        }
++        if (el.parentNode) el.parentNode.removeChild(el);
++      } catch (e) {
++        // página de cima inacessível
++      }
++    });
++    MAXIMIZADAS.length = 0;
++  });
++
+   function abrirMaximizado($regiao, $botao) {
+     // Só uma região maximizada por vez — fecha qualquer outra antes.
+     $(".t-IRR-region.nc-fake-maximized").each(function () {
+@@ -1477,6 +1497,7 @@
+       $regiao.data("ncOrigMarker", marcador);
+     }
+     alvo.body.appendChild($regiao[0]);
++    if (MAXIMIZADAS.indexOf($regiao[0]) < 0) MAXIMIZADAS.push($regiao[0]);
+ 
+     // HISTÓRICO: chegamos a mover aqui também a barra de rolagem
+     // horizontal flutuante (outra funcionalidade, mais abaixo no
+@@ -1535,6 +1556,8 @@
+ 
+   function fecharMaximizado($regiao, $botao) {
+     $regiao.removeClass("nc-fake-maximized");
++    var posMax = MAXIMIZADAS.indexOf($regiao[0]);
++    if (posMax >= 0) MAXIMIZADAS.splice(posMax, 1);
+ 
+     var alvo = $regiao.data("ncMaximizeAlvo");
+     if (alvo) {
+@@ -1642,6 +1665,25 @@
+     return { body: document.body, win: root, remoto: false };
+   })();
+ 
++  // [memória] O que este iframe põe na página de CIMA (a barra / o cabeçalho clonado e os
++  // ouvintes de rolagem) prende o documento inteiro do iframe lá em cima. Ao sair da página
++  // (pagehide), tudo isso é removido — senão cada página aberta na casca fica na memória.
++  var CRIADOS_NA_TELA = [];
++  if (CONTEXTO_TELA.remoto) {
++    root.addEventListener("pagehide", function () {
++      CRIADOS_NA_TELA.forEach(function (el) {
++        if (el && el.parentNode) el.parentNode.removeChild(el);
++      });
++      CRIADOS_NA_TELA.length = 0;
++      try {
++        root.top.document.removeEventListener("scroll", atualizarComDebounce, true);
++        root.top.removeEventListener("resize", atualizarComDebounce);
++      } catch (e) {
++        // página de cima inacessível
++      }
++    });
++  }
++
+   // Como a barra passa a viver na página de CIMA mas a região continua
+   // (fora do modo maximizado) dentro do iframe, a posição/tamanho da
+   // região precisa ser traduzida das coordenadas do iframe pras
+@@ -1745,6 +1787,7 @@
+       "</div>"
+     );
+     CONTEXTO_TELA.body.appendChild($barra[0]);
++    CRIADOS_NA_TELA.push($barra[0]);
+     $regiao.data("ncHscrollBar", $barra);
+ 
+     // A barra flutuante ouve a SI MESMA de forma fixa (isso nunca
+@@ -1939,6 +1982,7 @@
+   }
+ 
+   function atualizarTudo() {
++    if (document.hidden) return;   // aba em segundo plano: nada a medir
+     regioesMarcadas().each(function () {
+       var $regiao = $(this);
+       var $barra = $regiao.data("ncHscrollBar");
+@@ -2050,6 +2094,25 @@
+     return { body: document.body, win: root, remoto: false };
+   })();
+ 
++  // [memória] O que este iframe põe na página de CIMA (a barra / o cabeçalho clonado e os
++  // ouvintes de rolagem) prende o documento inteiro do iframe lá em cima. Ao sair da página
++  // (pagehide), tudo isso é removido — senão cada página aberta na casca fica na memória.
++  var CRIADOS_NA_TELA = [];
++  if (CONTEXTO_TELA.remoto) {
++    root.addEventListener("pagehide", function () {
++      CRIADOS_NA_TELA.forEach(function (el) {
++        if (el && el.parentNode) el.parentNode.removeChild(el);
++      });
++      CRIADOS_NA_TELA.length = 0;
++      try {
++        root.top.document.removeEventListener("scroll", atualizarComDebounce, true);
++        root.top.removeEventListener("resize", atualizarComDebounce);
++      } catch (e) {
++        // página de cima inacessível
++      }
++    });
++  }
++
+   function retanguloNaTela(el) {
+     var rect = el.getBoundingClientRect();
+     if (!CONTEXTO_TELA.remoto) return rect;
+@@ -2186,6 +2249,7 @@
+     $inner.append($tableClone);
+     $wrapper.append($inner);
+     CONTEXTO_TELA.body.appendChild($wrapper[0]);
++    CRIADOS_NA_TELA.push($wrapper[0]);
+     $wrapper.css("visibility", "hidden");
+ 
+     $regiao.data("ncStickyClone", $wrapper);
+@@ -2371,6 +2435,7 @@
+   }
+ 
+   function atualizarTudo() {
++    if (document.hidden) return;   // aba em segundo plano: nada a medir
+     limparCabecalhosFlutuantesOrfaos();
+     $(".t-IRR-region[" + MARCA + "]").each(function () {
+       var $regiao = $(this);

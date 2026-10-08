@@ -1,0 +1,909 @@
+/* ╔════════════════════════════════════════════════════════════════════════════════════════╗
+   ║  NATCORP · AJUSTAR VÁRIOS DIAS  —  a "roupa" da página 715 (CSS)                          ║
+   ║  App 9503 · Página 715 (janela aberta pelo botão "Ajustar vários dias" da 203)            ║
+   ╚════════════════════════════════════════════════════════════════════════════════════════╝
+
+   Guia: LOTE-MANUTENCAO.md. Quem monta a tela é o Natcorp_Lote.js; aqui é só a aparência.
+   Edite ESTE arquivo (a fonte) e gere o que sobe com  node brand/apex/app/gerar-app.mjs
+   (troca @app pelo prefixo longo e põe !important em toda linha).
+
+   A IDEIA (08/10, 2ª versão): uma FOLHA DE PONTO. Uma linha por dia (~40 px), as posições em
+   colunas alinhadas (lê-se a coluna de cima a baixo e o buraco salta), o previsto em cinza dentro
+   da caixa vazia, a barra e o cabeçalho das colunas presos no alto. Na janela de 1100×640 cabem
+   ~10 dias de uma vez (a 1ª versão, em cartões, mostrava 4).
+
+   CORES  neutros para quase tudo; o roxo do tema (--lt-acento) só no que VAI virar pedido e na
+          ação principal · vermelho = problema/erro (o mesmo da grade da 203) · verde = criado ·
+          cinza tracejado = já tem pedido aberto (travado).
+   CELULAR a mesma folha, mais justa: caixas de 44 px para o dedo, barra de cima solta (rola junto),
+          observação atrás de um toque.
+
+   ÍNDICE  [L1] a moldura e as cores · [L2] a barra de cima · [L3] filtros, dica e aviso
+           [L4] a folha (linhas e colunas) · [L5] as caixas e seus estados · [L6] as ações do dia
+           [L7] o rodapé · [L8] celular
+   ════════════════════════════════════════════════════════════════════════════════════════ */
+
+/* ═══ [L1] A MOLDURA E AS CORES ════════════════════════════════════════════════════════════ */
+@app .nc-lote {
+  --lt-acento: var(--nc-roxo, #511C76);
+  --lt-acento-fundo: #F3EEF8;
+  --lt-tinta: var(--nc-tinta, #1E1530);
+  --lt-cinza: #5E566C;
+  --lt-fraco: #6E6680;
+  --lt-linha: #E6E1EC;
+  --lt-linha-forte: #CFC7DA;
+  --lt-painel: #F8F6FA;
+  --lt-ruim: #B42318;
+  --lt-ruim-fundo: #FEF1F0;
+  --lt-aviso-fundo: #FFF8E6;
+  --lt-bom: #1F7A4D;
+  --lt-bom-fundo: #ECF7F1;
+  --lt-linha-h: 40px;
+  position: relative;
+  font-size: 14px;
+  line-height: 1.35;
+  color: var(--lt-tinta);
+}
+
+@app .nc-lote :is(*, *::before, *::after) {
+  box-sizing: border-box;
+}
+
+@app .nc-lote .nc-lt-ic {
+  width: 16px;
+  height: 16px;
+  flex: none;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.9;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+@app .nc-lote button {
+  font: inherit;
+  cursor: pointer;
+}
+
+@app .nc-lote ::selection {
+  background: #DCCDEB;
+  color: var(--lt-tinta);
+}
+
+@app .nc-lote .nc-lt-vis {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+@app .nc-lote .nc-lote-espera {
+  padding: 32px 8px;
+  text-align: center;
+  color: var(--lt-cinza);
+}
+
+@app .nc-lote :is(button, select, input):focus-visible {
+  outline: 2px solid var(--lt-acento);
+  outline-offset: 1px;
+}
+
+/* ═══ [L2] A BARRA DE CIMA ═════════════════════════════════════════════════════════════════ */
+@app .nc-lote .nc-lt-cab {
+  position: sticky;
+  top: 0;
+  z-index: 6;
+  display: grid;
+  gap: 8px;
+  margin: 0 -4px;
+  padding: 2px 4px 8px;
+  background: #fff;
+}
+
+@app .nc-lote .nc-lt-quem {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 2px 10px;
+}
+
+@app .nc-lote .nc-lt-quem h2 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 800;
+  line-height: 1.25;
+}
+
+@app .nc-lote .nc-lt-quem span {
+  color: var(--lt-cinza);
+  font-variant-numeric: tabular-nums;
+}
+
+@app .nc-lote .nc-lt-ferr {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+@app .nc-lote .nc-lt-bt {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 36px;
+  padding: 0 12px;
+  border: 1px solid var(--nc-borda-botao, rgba(81, 28, 118, .34));
+  border-radius: 9px;
+  background: #fff;
+  font-weight: 700;
+  white-space: nowrap;
+  color: var(--lt-acento);
+  transition: background-color .15s ease-out, border-color .15s ease-out;
+}
+
+@app .nc-lote .nc-lt-bt:hover {
+  background: var(--lt-acento-fundo);
+}
+
+@app .nc-lote .nc-lt-bt--forte {
+  border-color: var(--lt-acento);
+  background: var(--lt-acento);
+  color: #fff;
+}
+
+@app .nc-lote .nc-lt-bt--forte:hover {
+  background: color-mix(in srgb, var(--lt-acento) 86%, #000);
+}
+
+@app .nc-lote .nc-lt-bt--sem {
+  border-color: transparent;
+  background: transparent;
+}
+
+@app .nc-lote .nc-lt-bt:disabled {
+  cursor: not-allowed;
+  border-color: #DDD8E4;
+  background: #EFECF3;
+  color: #857D93;
+}
+
+@app .nc-lote .nc-lt-split {
+  position: relative;
+  display: inline-flex;
+}
+
+@app .nc-lote .nc-lt-split > .nc-lt-bt:first-child {
+  border-radius: 9px 0 0 9px;
+}
+
+@app .nc-lote .nc-lt-split-seta {
+  width: 34px;
+  padding: 0;
+  border-left-color: rgba(255, 255, 255, .35);
+  border-radius: 0 9px 9px 0;
+}
+
+@app .nc-lote .nc-lt-menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  z-index: 20;
+  display: grid;
+  width: 340px;
+  max-width: calc(100vw - 32px);
+  padding: 5px;
+  border: 1px solid var(--lt-linha);
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 16px 36px -14px rgba(30, 21, 48, .38);
+}
+
+@app .nc-lote .nc-lt-menu[hidden] {
+  display: none;
+}
+
+@app .nc-lote .nc-lt-menu button {
+  display: grid;
+  gap: 1px;
+  padding: 8px 10px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  text-align: left;
+  color: var(--lt-tinta);
+}
+
+@app .nc-lote .nc-lt-menu button:is(:hover, :focus-visible) {
+  background: var(--lt-acento-fundo);
+  outline: 0;
+}
+
+@app .nc-lote .nc-lt-menu small {
+  font-size: 12px;
+  color: var(--lt-cinza);
+}
+
+@app .nc-lote .nc-lt-f {
+  display: inline-flex;
+  align-items: center;
+  margin: 0;
+  border: 1px solid var(--lt-linha-forte);
+  border-radius: 9px;
+  background: #fff;
+  overflow: hidden;
+}
+
+@app .nc-lote .nc-lt-f > span {
+  align-self: stretch;
+  display: flex;
+  align-items: center;
+  padding: 0 9px;
+  border-right: 1px solid var(--lt-linha);
+  background: var(--lt-painel);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--lt-cinza);
+}
+
+@app .nc-lote .nc-lt-f :is(select, input) {
+  min-width: 0;
+  height: 34px;
+  padding: 0 8px;
+  border: 0;
+  background: transparent;
+  font: inherit;
+  color: var(--lt-tinta);
+}
+
+@app .nc-lote .nc-lt-f :is(select, input):focus-visible {
+  outline: 0;
+}
+
+@app .nc-lote .nc-lt-f:focus-within {
+  border-color: var(--lt-acento);
+  box-shadow: 0 0 0 1px var(--lt-acento);
+}
+
+@app .nc-lote .nc-lt-f--motivo {
+  flex: 0 1 300px;
+}
+
+@app .nc-lote .nc-lt-f--motivo select {
+  flex: 1 1 auto;
+  width: 100%;
+}
+
+@app .nc-lote .nc-lt-f--obs {
+  flex: 1 1 200px;
+}
+
+@app .nc-lote .nc-lt-f--obs input {
+  flex: 1 1 auto;
+  width: 100%;
+}
+
+@app .nc-lote .nc-lt-f--obs input::placeholder {
+  color: var(--lt-fraco);
+}
+
+@app .nc-lote .nc-lt-obs-abre {
+  display: none;
+}
+
+/* ═══ [L3] FILTROS, DICA E AVISO ═══════════════════════════════════════════════════════════ */
+@app .nc-lote .nc-lt-l3 {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px 12px;
+}
+
+@app .nc-lote .nc-lt-filtros {
+  display: inline-flex;
+  padding: 2px;
+  border-radius: 10px;
+  background: #F0EDF4;
+}
+
+@app .nc-lote .nc-lt-filtros button {
+  min-height: 30px;
+  padding: 0 11px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--lt-cinza);
+}
+
+@app .nc-lote .nc-lt-filtros button[aria-selected="true"] {
+  background: #fff;
+  color: var(--lt-tinta);
+  box-shadow: 0 1px 2px rgba(30, 21, 48, .16);
+}
+
+@app .nc-lote .nc-lt-filtros button[hidden] {
+  display: none;
+}
+
+@app .nc-lote .nc-lt-filtros b {
+  margin-left: 2px;
+  font-variant-numeric: tabular-nums;
+  color: var(--lt-acento);
+}
+
+@app .nc-lote .nc-lt-dica {
+  margin: 0;
+  font-size: 12px;
+  color: var(--lt-fraco);
+}
+
+@app .nc-lote kbd {
+  display: inline-block;
+  min-width: 18px;
+  margin: 0 1px;
+  padding: 0 4px;
+  border: 1px solid var(--lt-linha-forte);
+  border-bottom-width: 2px;
+  border-radius: 4px;
+  background: #fff;
+  font: inherit;
+  font-size: 11px;
+  font-weight: 700;
+  text-align: center;
+  color: var(--lt-cinza);
+}
+
+@app .nc-lote .nc-lt-aviso {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin: 0 0 8px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  background: var(--lt-painel);
+  font-size: 13px;
+}
+
+@app .nc-lote .nc-lt-aviso[hidden] {
+  display: none;
+}
+
+@app .nc-lote .nc-lt-aviso .nc-lt-ic {
+  margin-top: 1px;
+}
+
+@app .nc-lote .nc-lt-aviso.is-ok {
+  background: var(--lt-bom-fundo);
+  color: #14532D;
+}
+
+@app .nc-lote .nc-lt-aviso.is-alerta {
+  background: var(--lt-ruim-fundo);
+  color: #7A1C14;
+}
+
+/* ═══ [L4] A FOLHA: LINHAS E COLUNAS ═══════════════════════════════════════════════════════ */
+@app .nc-lote .nc-lt-folha {
+  border: 1px solid var(--lt-linha);
+  border-radius: 12px;
+  background: #fff;
+}
+
+@app .nc-lote .nc-lt-grade {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-variant-numeric: tabular-nums;
+}
+
+@app .nc-lote .nc-lt-grade thead th {
+  position: sticky;
+  top: var(--lt-topo, 0);
+  z-index: 4;
+  height: 30px;
+  padding: 0 6px;
+  border-bottom: 1px solid var(--lt-linha-forte);
+  background: var(--lt-painel);
+  font-size: 12px;
+  font-weight: 800;
+  text-align: center;
+  color: var(--lt-cinza);
+}
+
+@app .nc-lote .nc-lt-grade thead th:first-child {
+  border-top-left-radius: 11px;
+  text-align: left;
+  padding-left: 12px;
+}
+
+@app .nc-lote .nc-lt-grade thead th:last-child {
+  border-top-right-radius: 11px;
+}
+
+@app .nc-lote .nc-lt-th-dia {
+  width: 112px;
+}
+
+@app .nc-lote .nc-lt-th-pos {
+  width: 92px;
+}
+
+@app .nc-lote .nc-lt-th-acoes {
+  width: auto;
+}
+
+@app .nc-lote .nc-lt-l > * {
+  height: var(--lt-linha-h);
+  padding: 3px 4px;
+  border-bottom: 1px solid var(--lt-linha);
+  vertical-align: middle;
+}
+
+@app .nc-lote .nc-lt-l:hover > * {
+  background-color: #FCFBFD;
+}
+
+@app .nc-lote .nc-lt-l.is-semana > * {
+  border-top: 1px solid var(--lt-linha-forte);
+}
+
+@app .nc-lote .nc-lt-dia {
+  padding-left: 12px;
+  text-align: left;
+  font-weight: 400;
+  white-space: nowrap;
+}
+
+@app .nc-lote .nc-lt-sem {
+  display: inline-block;
+  width: 26px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--lt-cinza);
+}
+
+@app .nc-lote .nc-lt-dt {
+  font-weight: 800;
+}
+
+@app .nc-lote .nc-lt-ponto {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  margin-left: 6px;
+  border-radius: 50%;
+  background: var(--lt-ruim);
+  vertical-align: 2px;
+}
+
+@app .nc-lote .nc-lt-dia em {
+  margin-left: 6px;
+  font-size: 11px;
+  font-style: normal;
+  font-weight: 700;
+  color: var(--lt-cinza);
+}
+
+@app .nc-lote .nc-lt-msg td {
+  padding: 4px 12px 8px 124px;
+  border-bottom: 1px solid var(--lt-linha);
+  background: var(--lt-ruim-fundo);
+}
+
+@app .nc-lote .nc-lt-msg ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 12.5px;
+  color: #7A1C14;
+}
+
+@app .nc-lote .nc-lt-msg b {
+  margin-right: 4px;
+}
+
+@app .nc-lote .nc-lt-vazio td {
+  padding: 28px 12px;
+  text-align: center;
+  color: var(--lt-cinza);
+}
+
+/* ═══ [L5] AS CAIXAS E SEUS ESTADOS ════════════════════════════════════════════════════════ */
+@app .nc-lote .nc-lt-c {
+  position: relative;
+  text-align: center;
+}
+
+@app .nc-lote .nc-lt-h {
+  display: block;
+  margin: 0 auto;
+  width: 100%;
+  max-width: 84px;
+  height: 32px;
+  padding: 0 4px;
+  border: 1px solid transparent;
+  border-radius: 7px;
+  background: transparent;
+  font: inherit;
+  font-size: 15px;
+  font-weight: 700;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+  color: var(--lt-tinta);
+  caret-color: var(--lt-acento);
+  transition: background-color .12s ease-out, border-color .12s ease-out;
+}
+
+@app .nc-lote .nc-lt-h::placeholder {
+  font-weight: 500;
+  font-style: italic;
+  color: var(--lt-fraco);
+  opacity: 1;
+}
+
+@app .nc-lote .nc-lt-h:hover {
+  border-color: var(--lt-linha-forte);
+  background: #fff;
+}
+
+@app .nc-lote .nc-lt-h:focus {
+  border-color: var(--lt-acento);
+  background: #fff;
+  box-shadow: 0 0 0 1px var(--lt-acento);
+  outline: 0;
+}
+
+@app .nc-lote .nc-lt-c.is-danger .nc-lt-h {
+  background: var(--lt-ruim-fundo);
+}
+
+@app .nc-lote .nc-lt-c.is-warning .nc-lt-h {
+  background: var(--lt-aviso-fundo);
+}
+
+@app .nc-lote .nc-lt-c.is-mudou .nc-lt-h {
+  border-color: color-mix(in srgb, var(--lt-acento) 45%, #fff);
+  background: var(--lt-acento-fundo);
+  color: var(--lt-acento);
+}
+
+/* a pontinha no canto: "este vai virar pedido" */
+@app .nc-lote .nc-lt-c.is-mudou::after {
+  content: "";
+  position: absolute;
+  top: 5px;
+  right: max(6px, calc(50% - 40px));
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--lt-acento);
+  pointer-events: none;
+}
+
+@app .nc-lote .nc-lt-c.is-abono .nc-lt-h {
+  text-decoration: underline dotted var(--lt-fraco);
+  text-underline-offset: 3px;
+}
+
+@app .nc-lote .nc-lt-c.is-invalido .nc-lt-h,
+@app .nc-lote .nc-lt-c.is-erro .nc-lt-h {
+  border-color: var(--lt-ruim);
+  background: var(--lt-ruim-fundo);
+  color: var(--lt-ruim);
+}
+
+@app .nc-lote .nc-lt-c.is-criado .nc-lt-h {
+  background: var(--lt-bom-fundo);
+  color: var(--lt-bom);
+}
+
+@app .nc-lote .nc-lt-c.is-trava .nc-lt-h {
+  border: 1px dashed var(--lt-linha-forte);
+  color: var(--lt-fraco);
+  cursor: not-allowed;
+}
+
+@app .nc-lote .nc-lt-c > .nc-lt-ic {
+  position: absolute;
+  top: 50%;
+  right: max(4px, calc(50% - 40px));
+  width: 13px;
+  height: 13px;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+@app .nc-lote .nc-lt-c.is-criado > .nc-lt-ic {
+  color: var(--lt-bom);
+  stroke-width: 2.4;
+}
+
+@app .nc-lote .nc-lt-c.is-erro > .nc-lt-ic {
+  color: var(--lt-ruim);
+}
+
+@app .nc-lote .nc-lt-c.is-trava > .nc-lt-ic {
+  color: var(--lt-fraco);
+}
+
+@app .nc-lote .nc-lt-c.is-nada {
+  color: #B5AEC0;
+}
+
+/* ═══ [L6] AS AÇÕES DO DIA ═════════════════════════════════════════════════════════════════ */
+@app .nc-lote .nc-lt-acoes {
+  padding-right: 8px;
+  padding-left: 10px;
+  white-space: nowrap;
+  text-align: left;
+}
+
+@app .nc-lote .nc-lt-ib {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  margin-left: 2px;
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  vertical-align: middle;
+  color: var(--lt-cinza);
+}
+
+@app .nc-lote .nc-lt-ib:hover {
+  background: var(--lt-acento-fundo);
+  color: var(--lt-acento);
+}
+
+/* o "preencher o dia" só aparece na linha em uso (mouse em cima ou caixa em foco) */
+@app .nc-lote .nc-lt-l:not(:hover):not(:focus-within) [data-prev-dia] {
+  opacity: .0001;
+}
+
+@app .nc-lote .nc-lt-motivo-dia {
+  max-width: 220px;
+  height: 30px;
+  margin-left: 4px;
+  padding: 0 6px;
+  border: 1px solid var(--lt-acento);
+  border-radius: 7px;
+  background: #fff;
+  font: inherit;
+  font-size: 12.5px;
+  vertical-align: middle;
+  color: var(--lt-tinta);
+}
+
+/* ═══ [L7] O RODAPÉ ════════════════════════════════════════════════════════════════════════ */
+@app .nc-lote .nc-lt-pe {
+  position: sticky;
+  bottom: 0;
+  z-index: 6;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 12px;
+  margin: 8px -4px 0;
+  padding: 8px 4px;
+  border-top: 1px solid var(--lt-linha);
+  background: #fff;
+}
+
+@app .nc-lote .nc-lt-barra {
+  position: absolute;
+  top: -1px;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--lt-linha);
+}
+
+@app .nc-lote .nc-lt-barra[hidden] {
+  display: none;
+}
+
+@app .nc-lote .nc-lt-barra i {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: var(--lt-acento);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform .25s ease-out;
+}
+
+@app .nc-lote .nc-lt-resumo {
+  margin: 0;
+  font-size: 13.5px;
+}
+
+@app .nc-lote .nc-lt-fraco {
+  color: var(--lt-cinza);
+}
+
+@app .nc-lote .nc-lt-falta {
+  font-weight: 700;
+  color: var(--lt-ruim);
+}
+
+@app .nc-lote .nc-lt-pe-bts {
+  display: flex;
+  gap: 6px;
+}
+
+@app .nc-lote .nc-lt-bt--salvar {
+  min-width: 180px;
+  min-height: 40px;
+  border-color: var(--lt-acento);
+  background: var(--lt-acento);
+  color: #fff;
+}
+
+@app .nc-lote .nc-lt-bt--salvar:hover {
+  background: color-mix(in srgb, var(--lt-acento) 86%, #000);
+}
+
+@app .nc-lote .nc-lt-bt--concluir {
+  border-color: var(--lt-bom);
+  background: var(--lt-bom);
+  color: #fff;
+}
+
+@app .nc-lote .nc-lt-bt--concluir:hover {
+  background: color-mix(in srgb, var(--lt-bom) 86%, #000);
+}
+
+/* ═══ [L8] CELULAR ═════════════════════════════════════════════════════════════════════════ */
+@media (max-width: 719px) {
+  @app .nc-lote {
+    --lt-linha-h: 48px;
+  }
+
+  @app .nc-lote .nc-lt-cab {
+    position: static;
+  }
+
+  @app .nc-lote .nc-lt-grade thead th {
+    top: 0;
+  }
+
+  @app .nc-lote .nc-lt-split {
+    flex: 1 1 auto;
+  }
+
+  @app .nc-lote .nc-lt-split > .nc-lt-bt:first-child {
+    flex: 1 1 auto;
+    min-height: 44px;
+  }
+
+  @app .nc-lote .nc-lt-split-seta {
+    width: 44px;
+    min-height: 44px;
+  }
+
+  @app .nc-lote .nc-lt-f--motivo {
+    flex: 1 1 100%;
+  }
+
+  @app .nc-lote .nc-lt-f :is(select, input) {
+    height: 42px;
+    font-size: 16px;
+  }
+
+  @app .nc-lote:not(.nc-lt-com-obs) .nc-lt-f--obs {
+    display: none;
+  }
+
+  @app .nc-lote.nc-lt-com-obs .nc-lt-f--obs {
+    flex: 1 1 100%;
+  }
+
+  @app .nc-lote:not(.nc-lt-com-obs) .nc-lt-obs-abre {
+    display: inline-flex;
+  }
+
+  @app .nc-lote .nc-lt-dica {
+    display: none;
+  }
+
+  @app .nc-lote .nc-lt-filtros {
+    display: flex;
+    width: 100%;
+  }
+
+  @app .nc-lote .nc-lt-filtros button {
+    flex: 1 1 0;
+    min-height: 36px;
+    padding: 0 4px;
+  }
+
+  @app .nc-lote .nc-lt-folha {
+    margin: 0 -4px;
+    overflow-x: auto;
+  }
+
+  @app .nc-lote .nc-lt-th-dia {
+    width: 58px;
+  }
+
+  @app .nc-lote .nc-lt-th-pos {
+    width: auto;
+    min-width: 62px;
+  }
+
+  @app .nc-lote .nc-lt-grade thead th:first-child,
+  @app .nc-lote .nc-lt-dia {
+    padding-left: 8px;
+  }
+
+  @app .nc-lote .nc-lt-sem {
+    display: block;
+    width: auto;
+    font-size: 11px;
+    line-height: 1.1;
+  }
+
+  @app .nc-lote .nc-lt-ponto {
+    margin-left: 3px;
+  }
+
+  @app .nc-lote .nc-lt-h {
+    height: 40px;
+    max-width: none;
+    border-color: var(--lt-linha);
+    font-size: 16px;
+  }
+
+  @app .nc-lote .nc-lt-l:not(:hover):not(:focus-within) [data-prev-dia] {
+    opacity: 1;
+  }
+
+  @app .nc-lote .nc-lt-ib {
+    width: 36px;
+    height: 40px;
+  }
+
+  @app .nc-lote .nc-lt-acoes {
+    padding-right: 4px;
+  }
+
+  @app .nc-lote .nc-lt-motivo-dia {
+    max-width: 120px;
+  }
+
+  @app .nc-lote .nc-lt-msg td {
+    padding-left: 10px;
+  }
+
+  @app .nc-lote .nc-lt-pe {
+    margin-top: 6px;
+  }
+
+  @app .nc-lote .nc-lt-resumo {
+    flex: 1 1 100%;
+  }
+
+  @app .nc-lote .nc-lt-pe-bts {
+    flex: 1 1 100%;
+  }
+
+  @app .nc-lote .nc-lt-bt--salvar {
+    flex: 1 1 auto;
+    min-width: 0;
+    min-height: 46px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  @app .nc-lote * {
+    transition: none;
+  }
+}

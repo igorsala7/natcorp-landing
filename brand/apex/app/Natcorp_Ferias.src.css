@@ -1,0 +1,1476 @@
+/* ╔════════════════════════════════════════════════════════════════════════════════════════╗
+   ║  NATCORP · REQUISIÇÃO DE FÉRIAS  —  a "roupa" da tela (CSS)                               ║
+   ║  App 200 · Página 78                                                                     ║
+   ╚════════════════════════════════════════════════════════════════════════════════════════╝
+
+   Primeira vez num arquivo destes? Leia antes o manual: brand/apex/MANUAL-APEX.md (parte 1).
+   O guia desta página: FERIAS-MANUTENCAO.md.
+
+   ── O QUE ESTE ARQUIVO FAZ ────────────────────────────────────────────────────────────────
+   Dá a aparência da página 78: cores, tamanhos, espaços, bordas, e como a tela se arruma no
+   computador e no celular (90% do uso é no celular: letra de 16px ou mais, botões de 48px ou
+   mais). Ele NÃO muda nada de lugar: a POSIÇÃO das regiões e dos itens é a do Page Designer —
+   nada aqui muda ordem nem coluna. Cada regra vale para uma classe posta no APEX (ver o
+   comentário da página 78 e FERIAS-MANUTENCAO.md), e tudo depende da marca nc-fer, que só o
+   arquivo-irmão Natcorp_Ferias.js põe na página. Os dois trabalham juntos:
+     o JS monta "Confira suas férias"  →  este arquivo diz como essa lista se parece.
+
+   ── ONDE ELE ENTRA NO APEX ────────────────────────────────────────────────────────────────
+     Página 78 › CSS › File URLs:   #WORKSPACE_IMAGES#Natcorp_Ferias.css
+     As cores (var(--nc-…)) vêm do Natcorp_Style_Min.css, que toda página carrega.
+     Este é o arquivo-FONTE (Natcorp_Ferias.src.css). O arquivo que sobe (Natcorp_Ferias.css) é
+     gerado a partir dele pelo gerar-app.mjs, que escreve o @app por extenso e põe os
+     !important: edite ESTE arquivo, não o gerado (o caminho completo está no manual, parte 2).
+
+   ── ÍNDICE: as partes deste arquivo (Ctrl+F pelo código entre colchetes) ──────────────────
+     [C1] As listas de verdade, fora da vista   (os botões ficam no lugar delas)
+     [C2] "Suas férias" no alto                 ← montado pelo JS em [J2]
+     [C3] Os campos do período                  (quadros compactos, só leitura)
+     [C4] Como tirar: uma pergunta por vez      ← montado pelo JS em [J3]
+     [C5] Não/Sim e dias: botões grandes        ← montados pelo JS em [J4]
+     [C6] Cada parte                            (as regiões nc-fer-parte e nc-fer-programada)
+     [C7] "Confira suas férias"                 ← montado pelo JS em [J7]
+     [C8] Os botões e o que falta               ← montado pelo JS em [J8]
+     [C9] Celular e "menos movimento"           (ajustes para telas pequenas)
+     [C10] Rótulo à esquerda                    (itens redesenhados: o rótulo vai para cima)
+
+   ── RECEITAS RÁPIDAS ──────────────────────────────────────────────────────────────────────
+     Quero mudar uma cor
+       → use uma das cores da marca, pelo nome: var(--nc-roxo), var(--nc-grafite)… A lista
+         completa, com amostras, está no manual (parte 3). Assim a cor acompanha o tema que
+         o usuário escolheu em "Cores". Evite escrever cores soltas, como #511C76.
+     Quero mudar a ordem ou a coluna de algo     → é no APEX, não aqui.
+     Quero aumentar ou diminuir um texto        → procure font-size na parte certa.
+     Quero mais ou menos espaço                  → padding (espaço por DENTRO da caixa) e
+                                                   margin (espaço por FORA, até a vizinha).
+     Algo ficou bom no computador e ruim no celular → [C9]. Aqui também há @media (min-width…),
+                                                   que vale A PARTIR daquela largura (telas maiores).
+
+   ── COMO LER UM ARQUIVO CSS EM 30 SEGUNDOS ────────────────────────────────────────────────
+     Cada regra tem duas partes:     QUEM { COMO; }
+       @app.nc-fer .nc-fer-resumo {
+         display: grid;     ← arruma as peças em colunas
+         gap: 4px 16px;     ← espaço entre elas: 4px entre linhas, 16px entre colunas
+       }
+       (a primeira linha é o QUEM: o "seletor", diz em que pedaço da tela a regra vale;
+        as de dentro são o COMO:  propriedade: valor;)
+     .nome-com-ponto       uma "classe": uma etiqueta posta num pedaço da tela (pelo APEX ou
+                           pelo JS). .nc-fer-resumo é o bloco das duas frases no alto.
+     @app                  atalho que dá prioridade às nossas regras sobre as do tema do APEX.
+                           No arquivo que sobe para o APEX ele aparece por extenso, como
+                           html body:is(.t-PageBody…):not(#nc-a1):not(#nc-a2) — é a mesma coisa.
+     :not(#nc-…-x)…        peso extra, para vencer uma regra do tema. Pode ignorar ao ler.
+     !important            no arquivo que sobe, toda linha ganha um: é o mesmo "vencer o tema".
+     @media (max-width: 639px) { … }   as regras de dentro só valem em telas até 639px (celular).
+     var(--nc-roxo)        uma cor da marca, pelo nome (muda junto com o tema escolhido).
+     px                    pixels, o tamanho de um pontinho da tela. 16px é o texto normal.
+     Toda linha COMO termina em ;   e todo { é fechado por um }. Não apague esses sinais.
+*/
+
+/* ═══ [C1] AS LISTAS DE VERDADE, FORA DA VISTA ══════════════════════════════════════════════
+   As listas do APEX que viram botões/cartões continuam na página (são o item de verdade), mas
+   saem da vista — no lugar, sem ocupar espaço. O rótulo do APEX fica.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+/* a LISTA real dos itens desenhados como botões/cartões: fora da vista, no lugar (o rótulo
+   do APEX fica); e o campo de retorno, que vira frase */
+@app.nc-fer :is(.nc-fer-opcao, .nc-fer-simnao, .nc-fer-dias) select,
+@app.nc-fer select:is(.nc-fer-opcao, .nc-fer-simnao, .nc-fer-dias),
+@app.nc-fer .nc-fer-retorno .t-Form-itemWrapper {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+@app.nc-fer .nc-fer-ctrl {
+  width: 100%;
+  align-self: stretch;
+  margin: 2px 0 4px;
+}
+
+/* ═══ [C2] "SUAS FÉRIAS" NO ALTO ════════════════════════════════════════════════════════════
+   Montado pelo JS em [J2]: .nc-fer-resumo (as duas frases, a ilustração e o botão
+   "Ver os detalhes"). Os detalhes do período só aparecem quando a pessoa pede
+   (classe nc-fer-detalhes-aberto, que o JS põe na página).
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+/* ---------- "Suas férias": duas frases no alto ----------
+   Desenhado primeiro para o celular (90% do uso) e para quem lê pouco: letra grande, uma
+   ideia por linha, alvos de toque de 48px. */
+@app.nc-fer .nc-fer-resumo {
+  display: grid;
+  grid-template-columns: 72px minmax(0, 1fr);
+  align-items: start;
+  gap: 4px 16px;
+  margin: 0 0 16px;
+  padding: 18px 16px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, #F7F2FB 0%, #FCF7FA 100%);
+  box-shadow: inset 0 0 0 1px var(--nc-nevoa);
+}
+
+@app.nc-fer .nc-fer-resumo[hidden] {
+  display: none;
+}
+
+@app.nc-fer .nc-fer-ilu {
+  width: 72px;
+  height: 72px;
+  background-position: center;
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+@app.nc-fer .nc-fer-resumo-titulo {
+  margin: 4px 0 0;
+  font: 700 22px/1.2 "Inter NC", Inter, ui-sans-serif, system-ui, "Segoe UI", Arial, sans-serif;
+  letter-spacing: -.01em;
+  text-wrap: balance;
+  color: var(--nc-tinta);
+}
+
+@app.nc-fer .nc-fer-resumo b {
+  white-space: nowrap;
+}
+
+@app.nc-fer .nc-fer-resumo-titulo b {
+  font-weight: 800;
+  color: var(--nc-roxo);
+}
+
+@app.nc-fer .nc-fer-resumo-prazo {
+  margin: 8px 0 0;
+  font-size: 16px;
+  line-height: 1.45;
+  color: var(--nc-tinta);
+}
+
+@app.nc-fer .nc-fer-ver-detalhes {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 44px;
+  margin: 6px 0 -8px -2px;
+  padding: 0 2px;
+  border: 0;
+  background: none;
+  font: 700 15px/1.2 "Inter NC", Inter, ui-sans-serif, system-ui, "Segoe UI", Arial, sans-serif;
+  color: var(--nc-roxo);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+
+@app.nc-fer .nc-fer-ver-detalhes::after {
+  content: "";
+  width: 8px;
+  height: 8px;
+  margin-top: -4px;
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  transform: rotate(45deg);
+  transition: transform .2s;
+}
+
+@app.nc-fer .nc-fer-ver-detalhes[aria-expanded="true"]::after {
+  margin-top: 4px;
+  transform: rotate(-135deg);
+}
+
+@app.nc-fer .nc-fer-ver-detalhes:focus-visible {
+  outline: 2px solid var(--nc-roxo);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* os detalhes do período só aparecem quando a pessoa pede */
+@app.nc-fer:not(.nc-fer-detalhes-aberto) .t-Region.nc-fer-detalhes {
+  display: none;
+}
+
+@media (min-width: 640px) {
+  @app.nc-fer .nc-fer-resumo {
+    grid-template-columns: 104px minmax(0, 1fr);
+    gap: 4px 24px;
+    padding: 20px 22px;
+  }
+
+  @app.nc-fer .nc-fer-ilu {
+    width: 104px;
+    height: 104px;
+  }
+
+  @app.nc-fer .nc-fer-resumo-titulo {
+    font-size: 26px;
+  }
+}
+
+/* ═══ [C3] OS CAMPOS DO PERÍODO: QUADROS COMPACTOS ══════════════════════════════════════════
+   As regiões nc-fer-detalhes, quando abertas: cada campo vira um quadro pequeno, só leitura.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+/* ---------- os campos do período: quadros compactos, só leitura ----------
+   A grade é a do corpo da região; o .container e as linhas do APEX "somem" (display:
+   contents) para cada campo virar um quadro: rótulo pequeno em cima, valor embaixo. */
+@app.nc-fer .t-Region.nc-fer-detalhes > .t-Region-bodyWrap > .t-Region-body {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 0;
+  padding: 4px 0;
+}
+
+@app.nc-fer .t-Region.nc-fer-detalhes .t-Region-body > .container,
+@app.nc-fer .t-Region.nc-fer-detalhes .t-Region-body > .container > .row {
+  display: contents;
+}
+
+/* o clearfix do tema (::before/::after com content) no .container e no .row: com
+   display:contents eles viram células da grade e empurram os campos para a direita */
+@app.nc-fer .t-Region.nc-fer-detalhes .t-Region-body > .container::before,
+@app.nc-fer .t-Region.nc-fer-detalhes .t-Region-body > .container::after,
+@app.nc-fer .t-Region.nc-fer-detalhes .t-Region-body > .container > .row::before,
+@app.nc-fer .t-Region.nc-fer-detalhes .t-Region-body > .container > .row::after {
+  display: none;
+}
+
+/* a coluna do APEX também some: quem entra na grade é o campo. Assim um campo que uma
+   ação dinâmica esconde (display:none no contêiner) não deixa um buraco na grade */
+@app.nc-fer .t-Region.nc-fer-detalhes .t-Region-body > .container > .row > .col {
+  display: contents;
+}
+
+/* 04/10: :not([style*="none"]) — o campo que uma ação dinâmica esconde continua escondido
+   (o display daqui ganha !important e vencia o style="display:none" da página) */
+@app.nc-fer .t-Region.nc-fer-detalhes .t-Form-fieldContainer:not([style*="none"]) {
+  display: flex;
+}
+@app.nc-fer .t-Region.nc-fer-detalhes .t-Form-fieldContainer {
+  flex-direction: column;
+  gap: 2px;
+  margin: 0;
+  padding: 8px 12px;
+}
+
+@app.nc-fer .t-Region.nc-fer-detalhes .t-Form-labelContainer,
+@app.nc-fer .t-Region.nc-fer-detalhes .t-Form-inputContainer {
+  width: auto;
+  max-width: none;
+  padding: 0;
+  text-align: left;
+}
+
+@app.nc-fer .t-Region.nc-fer-detalhes .t-Form-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--nc-cinza);
+}
+
+@app.nc-fer .t-Region.nc-fer-detalhes input.apex-item-text {
+  height: auto;
+  min-height: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  font-size: 15px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--nc-tinta);
+}
+
+/* ═══ [C4] COMO TIRAR: UMA PERGUNTA DE CADA VEZ ═════════════════════════════════════════════
+   Montado pelo JS em [J3]: as perguntas (.nc-fer-pergunta), os cartões das opções
+   (.nc-fer-cartao-opcao; aria-checked="true" = escolhido), a faixa colorida das partes
+   (.nc-fer-faixa) e o sinal de marcado (.nc-fer-marca-check).
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-fer .nc-fer-opcoes-ctrl {
+  display: grid;
+  gap: 22px;
+}
+
+@app.nc-fer .nc-fer-passo {
+  display: grid;
+  gap: 10px;
+}
+
+@app.nc-fer .nc-fer-pergunta {
+  margin: 0;
+  font: 700 18px/1.3 "Inter NC", Inter, ui-sans-serif, system-ui, "Segoe UI", Arial, sans-serif;
+  text-wrap: balance;
+  color: var(--nc-tinta);
+}
+
+@app.nc-fer .nc-fer-dica {
+  margin: -4px 0 2px;
+  font-size: 15px;
+  line-height: 1.45;
+  color: var(--nc-grafite);
+}
+
+@app.nc-fer .nc-fer-opcoes {
+  display: grid;
+  gap: 10px;
+}
+
+@media (min-width: 900px) {
+  @app.nc-fer .nc-fer-opcoes {
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  }
+}
+
+@app.nc-fer .nc-fer-cartao-opcao {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  min-height: 64px;
+  margin: 0;
+  padding: 14px 16px;
+  border: 1.5px solid var(--nc-nevoa);
+  border-radius: 14px;
+  background: #fff;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color .2s, box-shadow .25s, background-color .2s;
+}
+
+@app.nc-fer .nc-fer-cartao-opcao:hover {
+  border-color: var(--nc-realce);
+}
+
+@app.nc-fer .nc-fer-cartao-opcao[aria-checked="true"] {
+  border-color: var(--nc-roxo);
+  background: var(--nc-nevoa2);
+  box-shadow: var(--nc-anel);
+}
+
+@app.nc-fer .nc-fer-cartao-texto {
+  display: grid;
+  flex: 1;
+  gap: 3px;
+  min-width: 0;
+}
+
+@app.nc-fer .nc-fer-cartao-nome {
+  font: 800 17px/1.25 "Inter NC", Inter, ui-sans-serif, system-ui, "Segoe UI", Arial, sans-serif;
+  color: var(--nc-tinta);
+}
+
+@app.nc-fer .nc-fer-cartao-opcao[aria-checked="true"] .nc-fer-cartao-nome {
+  color: var(--nc-roxo);
+}
+
+@app.nc-fer .nc-fer-cartao-conta {
+  font-size: 15px;
+  line-height: 1.4;
+  color: var(--nc-grafite);
+  font-variant-numeric: tabular-nums;
+}
+
+/* o sinal de marcado: um círculo vazio que se preenche — visível sem depender da cor */
+@app.nc-fer .nc-fer-marca-check {
+  flex: none;
+  width: 28px;
+  height: 28px;
+}
+
+@app.nc-fer .nc-fer-marca-check circle {
+  fill: #fff;
+  stroke: #C9C2D6;
+  stroke-width: 1.5;
+}
+
+@app.nc-fer .nc-fer-marca-check path {
+  fill: none;
+  stroke: transparent;
+  stroke-width: 2.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+@app.nc-fer [aria-checked="true"] > .nc-fer-marca-check circle {
+  fill: var(--nc-roxo);
+  stroke: var(--nc-roxo);
+}
+
+@app.nc-fer [aria-checked="true"] > .nc-fer-marca-check path {
+  stroke: #fff;
+}
+
+@app.nc-fer .nc-fer-faixa {
+  display: flex;
+  gap: 3px;
+  height: 18px;
+  margin-top: 6px;
+}
+
+@app.nc-fer .nc-fer-seg {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  border-radius: 5px;
+  font-size: 11px;
+  font-weight: 800;
+  color: #fff;
+}
+
+@app.nc-fer .nc-fer-seg--0 { background: var(--nc-roxo); }
+@app.nc-fer .nc-fer-seg--1 { background: var(--nc-ameixa, #9A408A); }
+@app.nc-fer .nc-fer-seg--2 { background: #544884 /*reserva*/;
+  background: oklch(from #544884 l calc(c * var(--nc-t-croma, 1)) calc(h + var(--nc-t-giro, 0))); }
+
+@app.nc-fer :is(.nc-fer-cartao-opcao, .nc-fer-simnao-ctrl button, .nc-fer-dias-ctrl button):focus-visible {
+  outline: 2px solid var(--nc-roxo);
+  outline-offset: 2px;
+}
+
+/* a pergunta vem desenhada dentro do item (com o texto do rótulo do APEX): o rótulo original
+   fica só para o leitor de tela. Vale também para a volta (a frase já diz) e para os dias
+   que viraram frase. */
+@app.nc-fer .nc-fer-rotulo-dentro > .t-Form-labelContainer {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+/* pergunta sem escolha ("vender: nenhum" como única resposta): nem aparece */
+@app.nc-fer .t-Form-fieldContainer.nc-fer-sem-pergunta {
+  display: none;
+}
+
+@app.nc-fer .nc-fer-fato {
+  font-size: 16px;
+  line-height: 1.45;
+  color: var(--nc-tinta);
+}
+
+/* ═══ [C5] NÃO/SIM E DIAS: BOTÕES GRANDES ═══════════════════════════════════════════════════
+   Montados pelo JS em [J4]: .nc-fer-simnao-ctrl e .nc-fer-dias-ctrl; e a frase quando há uma
+   opção só (.nc-fer-fato).
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-fer :is(.nc-fer-simnao-ctrl, .nc-fer-dias-ctrl) {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+@app.nc-fer :is(.nc-fer-simnao-ctrl, .nc-fer-dias-ctrl) button {
+  flex: 1 1 0;
+  min-width: 96px;
+  max-width: 260px;
+  min-height: 52px;
+  margin: 0;
+  padding: 8px 18px;
+  border: 1.5px solid var(--nc-nevoa);
+  border-radius: 12px;
+  background: #fff;
+  font: 700 16px/1.2 "Inter NC", Inter, ui-sans-serif, system-ui, "Segoe UI", Arial, sans-serif;
+  color: var(--nc-tinta);
+  cursor: pointer;
+  transition: border-color .2s, background-color .2s;
+}
+
+@app.nc-fer :is(.nc-fer-simnao-ctrl, .nc-fer-dias-ctrl) button:hover {
+  border-color: var(--nc-realce);
+}
+
+@app.nc-fer :is(.nc-fer-simnao-ctrl, .nc-fer-dias-ctrl) button[aria-checked="true"] {
+  border-color: var(--nc-roxo);
+  background: var(--nc-roxo);
+  box-shadow: var(--nc-anel);
+  color: #fff;
+}
+
+/* ---------- pedido já feito: só a resposta, sem clique ----------
+   O APEX trava os campos (cancelado, em aprovação…); o JS põe .nc-fer-leitura na caixa e
+   desliga os botões. Fica à vista só a resposta escolhida, com a cor de "escolhido". */
+@app.nc-fer .nc-fer-leitura button[aria-checked="false"] {
+  display: none;
+}
+
+@app.nc-fer .nc-fer-leitura button,
+@app.nc-fer .nc-fer-leitura button:hover {
+  opacity: 1;
+  cursor: default;
+}
+
+@app.nc-fer .nc-fer-leitura :is(.nc-fer-cartao-opcao, button) {
+  max-width: 360px;
+}
+
+/* ═══ [C6] CADA PARTE ═══════════════════════════════════════════════════════════════════════
+   As regiões nc-fer-parte (1ª, 2ª, 3ª parte) e nc-fer-programada (já programada, só leitura,
+   com o selo).
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-fer .t-Region.nc-fer-parte > .t-Region-header .t-Region-title,
+@app.nc-fer .t-Region.nc-fer-programada > .t-Region-header .t-Region-title {
+  font-size: 18px;
+  font-weight: 800;
+}
+
+/* o MESMO rótulo em todas as partes: as novas e as já programadas */
+@app.nc-fer :is(.nc-fer-parte, .nc-fer-programada, .nc-fer-opcao, .nc-fer-simnao) .t-Form-label:not(#nc-fer-x):not(#nc-fer-y) {
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.35;
+  color: var(--nc-tinta);
+}
+
+/* o dia de começar, grande — também na parte já programada (lá ele é um campo de texto) */
+@app.nc-fer .nc-fer-parte input.apex-item-datepicker,
+@app.nc-fer .nc-fer-programada input[id^="P78_DT_SAIDA_PARC"]:not(#nc-fer-x):not(#nc-fer-y) {
+  height: 52px;
+  font-size: 17px;
+  font-weight: 700;
+}
+
+@app.nc-fer .nc-fer-parte .ui-datepicker-trigger,
+@app.nc-fer .nc-fer-parte .a-Button--calendar {
+  min-width: 52px;
+  height: 52px;
+}
+
+@app.nc-fer .nc-fer-retorno-frase {
+  padding: 14px 16px;
+  border-radius: 12px;
+  background: #EEF7F2;
+  font-size: 16px;
+  line-height: 1.45;
+  color: var(--nc-tinta);
+}
+
+@app.nc-fer .nc-fer-retorno-frase b {
+  color: var(--nc-tinta);
+}
+
+@app.nc-fer .nc-fer-retorno-frase:has(.nc-fer-sutil) {
+  background: var(--nc-quase);
+}
+
+@app.nc-fer .nc-fer-sutil {
+  color: var(--nc-grafite);
+}
+
+/* parte já programada (oficial): leitura, com o selo */
+@app.nc-fer .t-Region.nc-fer-programada {
+  background: var(--nc-quase);
+}
+
+@app.nc-fer .t-Region.nc-fer-programada > .t-Region-header .t-Region-title::after {
+  content: "Já programada";
+  display: inline-flex;
+  align-items: center;
+  height: 22px;
+  margin-left: 10px;
+  padding: 0 9px;
+  border-radius: 999px;
+  background: #E8F4EE;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--nc-bom);
+  vertical-align: 2px;
+}
+
+/* os campos dela são desativados no APEX: ficam com o MESMO desenho de todo campo desativado
+   (Natcorp_Paginas.css), como na 1ª parte — sem estilo próprio aqui */
+
+/* ═══ [C7] "CONFIRA SUAS FÉRIAS" ════════════════════════════════════════════════════════════
+   Montado pelo JS em [J7]: .nc-fer-lista (as partes em frases); .nc-fer-item--atencao e
+   .nc-fer-aviso para as partes com problema.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+/* a região é vazia no APEX (o JS desenha): se o JS não carregou, ela não aparece vazia */
+@app:not(.nc-fer) .t-Region.nc-fer-linha {
+  display: none;
+}
+
+@app.nc-fer .nc-fer-lista {
+  display: grid;
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+@app.nc-fer .nc-fer-item {
+  display: grid;
+  gap: 4px;
+  padding: 14px 16px;
+  border-radius: 12px;
+  background: var(--nc-quase);
+  font-size: 16px;
+  line-height: 1.45;
+  color: var(--nc-tinta);
+}
+
+@app.nc-fer .nc-fer-item p {
+  margin: 0;
+}
+
+@app.nc-fer .nc-fer-item p > span {
+  display: block;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--nc-grafite);
+}
+
+@app.nc-fer .nc-fer-item-titulo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px !important;
+  font-weight: 800;
+}
+
+@app.nc-fer .nc-fer-item-titulo i {
+  width: 12px;
+  height: 12px;
+  border-radius: 4px;
+}
+
+@app.nc-fer .nc-fer-item--0 .nc-fer-item-titulo i { background: var(--nc-roxo); }
+@app.nc-fer .nc-fer-item--1 .nc-fer-item-titulo i { background: var(--nc-ameixa, #9A408A); }
+@app.nc-fer .nc-fer-item--2 .nc-fer-item-titulo i { background: #544884 /*reserva*/;
+  background: oklch(from #544884 l calc(c * var(--nc-t-croma, 1)) calc(h + var(--nc-t-giro, 0))); }
+@app.nc-fer .nc-fer-item--programada .nc-fer-item-titulo i { background: #B9B3CC; }
+
+@app.nc-fer .nc-fer-item--atencao {
+  background: #FFF6DE;
+}
+
+@app.nc-fer .nc-fer-aviso {
+  margin-top: 6px !important;
+  font-weight: 700;
+  color: #7A5200;
+}
+
+@app.nc-fer .nc-fer-vazio {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.45;
+  color: var(--nc-grafite);
+}
+
+@media (min-width: 900px) {
+  @app.nc-fer .nc-fer-lista {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  }
+}
+
+/* ═══ [C8] OS BOTÕES E O QUE FALTA ══════════════════════════════════════════════════════════
+   A região nc-fer-acoes e a frase montada pelo JS em [J8] (.nc-fer-resumo-acoes;
+   .nc-fer-resumo-pronto quando está tudo escolhido).
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+/* o último cartão da página: o que falta e o botão de enviar. Não gruda no pé da tela — no
+   APEX a região fica dentro de uma coluna do tamanho dela, e no celular uma barra fixa
+   comeria a tela */
+@app.nc-fer .t-ButtonRegion.nc-fer-acoes {
+  margin: 20px 0 0;
+  padding: 16px;
+  border: 1px solid var(--nc-nevoa);
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: 0 10px 24px -18px rgba(var(--nc-t-azul-rgb, 44, 26, 99), .4);
+}
+
+@app.nc-fer .t-ButtonRegion.nc-fer-acoes .t-ButtonRegion-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 16px;
+}
+
+@app.nc-fer .t-ButtonRegion.nc-fer-acoes .t-ButtonRegion-col--content {
+  flex: 1 1 280px;
+  order: 1;
+}
+
+/* os blocos dos botões não encolhem (o resumo cresce) */
+@app.nc-fer .t-ButtonRegion.nc-fer-acoes .t-ButtonRegion-col--left {
+  flex: none;
+  width: auto;
+  order: 2;
+}
+
+@app.nc-fer .t-ButtonRegion.nc-fer-acoes .t-ButtonRegion-col--right {
+  flex: none;
+  width: auto;
+  order: 3;
+}
+
+@app.nc-fer .t-ButtonRegion.nc-fer-acoes .t-ButtonRegion-col--content .t-ButtonRegion-buttons:empty {
+  display: none;
+}
+
+@app.nc-fer .t-ButtonRegion.nc-fer-acoes .t-Button {
+  height: 52px;
+  padding: 0 22px;
+  border-radius: 12px;
+  font-size: 16px;
+}
+
+@app.nc-fer .t-ButtonRegion.nc-fer-acoes .t-Button--hot {
+  min-width: 200px;
+}
+
+@app.nc-fer .nc-fer-resumo-acoes {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.4;
+  color: var(--nc-grafite);
+  font-variant-numeric: tabular-nums;
+}
+
+@app.nc-fer .nc-fer-resumo-acoes[hidden] {
+  display: none;
+}
+
+@app.nc-fer .nc-fer-resumo-acoes b {
+  color: var(--nc-tinta);
+}
+
+@app.nc-fer .nc-fer-resumo-acoes.nc-fer-resumo-pronto b {
+  color: var(--nc-bom);
+}
+
+/* ═══ [C9] CELULAR E "MENOS MOVIMENTO" ══════════════════════════════════════════════════════
+   O que está dentro de  @media (max-width: 639px)  só vale em telas até 639px (celular).
+   @media (prefers-reduced-motion: reduce) desliga as animações para quem pediu "reduzir
+   movimento" nas configurações do aparelho (acessibilidade).
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@media (max-width: 639px) {
+  @app.nc-fer .t-ButtonRegion.nc-fer-acoes .t-ButtonRegion-col--right {
+    flex: 1;
+  }
+
+  @app.nc-fer .t-ButtonRegion.nc-fer-acoes .t-Button--hot {
+    width: 100%;
+    min-width: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  @app.nc-fer :is(.nc-fer-cartao-opcao, .nc-fer-ver-detalhes::after) {
+    transition: none;
+  }
+}
+
+/* ═══ [C10] RÓTULO À ESQUERDA ═══════════════════════════════════════════════════════════════
+   Itens cujo modelo no APEX põe o rótulo à esquerda: nos redesenhados, o rótulo vai para cima.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+/* rótulo à esquerda (modelo "rel-col"): o rótulo leva as colunas e o campo fica com uma só;
+   os botões não cabem ali. Nos itens redesenhados o rótulo vai para cima, como uma pergunta,
+   e as respostas ocupam a largura toda. Dentro das partes o modelo já é rótulo em cima. */
+/* 04/10: :not([style*="none"]) — P78_OPCAO_FERIAS(_1), escondida por ação dinâmica no pedido
+   já feito, voltava à vista (o display daqui vencia o style="display:none" da página) */
+@app.nc-fer .t-Form-fieldContainer.rel-col:is(.nc-fer-opcao, .nc-fer-simnao, .nc-fer-dias):not(:is(.nc-fer-parte, .nc-fer-programada) *):not([style*="none"]) {
+  display: flex;
+}
+@app.nc-fer .t-Form-fieldContainer.rel-col:is(.nc-fer-opcao, .nc-fer-simnao, .nc-fer-dias):not(:is(.nc-fer-parte, .nc-fer-programada) *) {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 8px;
+  margin-left: 0;
+  margin-right: 0;
+  padding-left: 8px;
+  padding-right: 8px;
+}
+
+@app.nc-fer .t-Form-fieldContainer.rel-col:is(.nc-fer-opcao, .nc-fer-simnao, .nc-fer-dias):not(:is(.nc-fer-parte, .nc-fer-programada) *) > :is(.t-Form-labelContainer, .t-Form-inputContainer) {
+  width: 100%;
+  max-width: none;
+  flex: none;
+  padding-left: 0;
+  padding-right: 0;
+  overflow: visible;
+  text-align: left;
+}
+
+@app.nc-fer .t-Form-fieldContainer.rel-col:is(.nc-fer-opcao, .nc-fer-simnao, .nc-fer-dias):not(:is(.nc-fer-parte, .nc-fer-programada) *) .t-Form-label {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--nc-tinta);
+}
+
+/* ═══ [C11] O PEDIDO: NÚMERO, SITUAÇÃO E QUEM PEDIU ═════════════════════════════════════════
+   Montado pelo JS em [J10]. .nc-fer-pedido é o cartão claro (como na Indicação de
+   Movimentação e na Requisição de Exames: sem fundo roxo); .nc-fer-sit, a etiqueta da
+   situação: --espera amarelo · --bom verde · --ruim vermelho · --neutro cinza.
+   A região some como moldura: o cartão é a moldura. Os campos que o cartão já diz saem da
+   vista (.nc-fer-dito); a Situação fica quando o APEX deixa trocar.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-fer .t-Region.nc-fer-pedido-reg > .t-Region-header {
+  display: none;
+}
+
+@app.nc-fer .t-Region.nc-fer-pedido-reg:not(#nc-fer-x):not(#nc-fer-y) {
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+@app.nc-fer .t-Region.nc-fer-pedido-reg > .t-Region-bodyWrap > .t-Region-body:not(#nc-fer-x):not(#nc-fer-y) {
+  padding: 0;
+}
+
+@app.nc-fer .nc-fer-dito:not(#nc-fer-x):not(#nc-fer-y) {
+  display: none;
+}
+
+@app.nc-fer .nc-fer-pedido {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 4px 16px;
+  margin: 0;
+  padding: 16px 20px;
+  border: 1px solid var(--nc-nevoa);
+  border-radius: 18px;
+  background: #fff;
+  box-shadow: 0 10px 24px -22px rgba(var(--nc-t-azul-rgb, 44, 26, 99), .5);
+}
+
+@app.nc-fer .nc-fer-pedido-ic {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  background: var(--nc-nevoa2);
+  color: var(--nc-roxo);
+}
+
+@app.nc-fer .nc-fer-pedido-ic svg {
+  width: 24px;
+  height: 24px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+@app.nc-fer .nc-fer-pedido-texto {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+
+@app.nc-fer .nc-fer-pedido-topo {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 12px;
+}
+
+@app.nc-fer .nc-fer-pedido-n {
+  margin: 0;
+  font: 700 19px/1.25 "Inter NC", Inter, ui-sans-serif, system-ui, "Segoe UI", Arial, sans-serif;
+  letter-spacing: -.01em;
+  color: var(--nc-tinta);
+}
+
+@app.nc-fer .nc-fer-pedido-n b {
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+
+@app.nc-fer .nc-fer-pedido-quem {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.45;
+  color: var(--nc-grafite);
+}
+
+@app.nc-fer .nc-fer-pedido-quem b {
+  color: var(--nc-tinta);
+}
+
+@app.nc-fer .nc-fer-sutil {
+  font-weight: 500;
+  color: var(--nc-cinza);
+}
+
+/* o mesmo esquema da Marcação - Abono e da Tratativa de Abono: em andamento âmbar, aprovada /
+   concluída verde, cancelada / reprovada vermelho — com o ícone (relógio, certo, x) */
+@app.nc-fer .nc-fer-sit {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 13px 5px 9px;
+  border-radius: 999px;
+  background: #FFF4DE;
+  font-size: 14px;
+  font-weight: 800;
+  color: #6B4700;
+}
+
+@app.nc-fer .nc-fer-sit svg,
+@app.nc-fer .nc-fer-caminho-faixa > svg,
+@app.nc-fer .nc-fer-ap-marca svg {
+  flex: none;
+  width: 17px;
+  height: 17px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+@app.nc-fer .nc-fer-sit--ok { background: #E4F4EA; color: #1E6B45; }
+@app.nc-fer .nc-fer-sit--nao { background: #FBEAEC; color: #9B2230; }
+
+/* o botão de ver quem pediu (o do APEX), dentro do cartão */
+@app.nc-fer .nc-fer-pedido .nc-fer-pedido-ver:not(#nc-fer-x):not(#nc-fer-y) {
+  width: 44px;
+  height: 44px;
+  min-height: 0;
+  margin: 0;
+  padding: 0;
+  border: 1px solid var(--nc-nevoa);
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: none;
+  color: var(--nc-roxo);
+}
+
+@app.nc-fer .nc-fer-pedido .nc-fer-pedido-ver:hover:not(#nc-fer-x):not(#nc-fer-y) {
+  border-color: var(--nc-realce);
+  background: var(--nc-quase);
+}
+
+@app.nc-fer .nc-fer-pedido .nc-fer-pedido-ver .t-Icon {
+  color: inherit;
+}
+
+/* a coluna que ficou sem nada à vista some; a vizinha ocupa a linha toda */
+@app.nc-fer .col.nc-fer-col-vazia:not(#nc-fer-x):not(#nc-fer-y) {
+  display: none;
+}
+
+@app.nc-fer .row > .col.nc-fer-col-cheia:not(#nc-fer-x):not(#nc-fer-y) {
+  flex: 0 0 100%;
+  width: 100%;
+  max-width: 100%;
+}
+
+/* ═══ [C12] O CAMINHO DA APROVAÇÃO (o mesmo das outras requisições) ════════════════════════
+   Montado pelo JS em [J11]. .nc-fer-caminho é a faixa; .nc-fer-ap, cada aprovador:
+   .is-ok aprovou · .is-nao reprovou · .is-vez aguardando · .is-fila na fila.
+   A tabela do APEX continua na região, fora da vista.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-fer .t-Region.nc-fer-aprov:not(#nc-fer-x):not(#nc-fer-y) {
+  margin: 0 0 16px;
+  border: 0;
+  border-radius: 18px;
+  background: #fff;
+  box-shadow: inset 0 0 0 1px var(--nc-nevoa), 0 10px 24px -22px rgba(var(--nc-t-azul-rgb, 44, 26, 99), .5);
+}
+
+@app.nc-fer .t-Region.nc-fer-aprov > .t-Region-header,
+@app.nc-fer .t-Region.nc-fer-aprov .t-Report,
+@app.nc-fer .t-Region.nc-fer-aprov > .t-Region-bodyWrap > .t-Region-buttons,
+@app.nc-fer .t-Region.nc-fer-aprov.nc-fer-aprov--vazio {
+  display: none;
+}
+
+@app.nc-fer .t-Region.nc-fer-aprov > .t-Region-bodyWrap > .t-Region-body:not(#nc-fer-x):not(#nc-fer-y) {
+  padding: 16px 20px;
+}
+
+@app.nc-fer .nc-fer-caminho {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 14px 20px;
+}
+
+@app.nc-fer .nc-fer-caminho:empty {
+  display: none;
+}
+
+@app.nc-fer .nc-fer-caminho-cab {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+@app.nc-fer .nc-fer-caminho-cab p {
+  margin: 0;
+}
+
+@app.nc-fer .nc-fer-caminho-rot {
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--nc-tinta);
+}
+
+/* o resumo numa faixa com a cor do andamento (como a "faixa da aprovação" da Marcação - Abono) */
+@app.nc-fer .nc-fer-caminho-faixa {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 4px 0 0;
+  padding: 9px 14px 9px 11px;
+  border-radius: 12px;
+  background: #FFF4DE;
+  font-size: 14.5px;
+  line-height: 1.4;
+  color: #6B4700;
+}
+
+@app.nc-fer .nc-fer-caminho-faixa b {
+  color: inherit;
+}
+
+@app.nc-fer .nc-fer-caminho--ok .nc-fer-caminho-faixa { background: #E4F4EA; color: #1E6B45; }
+@app.nc-fer .nc-fer-caminho--nao .nc-fer-caminho-faixa { background: #FBEAEC; color: #9B2230; }
+
+@app.nc-fer .nc-fer-caminho-ver {
+  display: none;
+}
+
+@app.nc-fer .nc-fer-passos-ap {
+  display: flex;
+  grid-column: 1 / -1;
+  min-width: 0;
+  margin: 0;
+  padding: 4px 0 2px;
+  overflow-x: auto;
+  list-style: none;
+  scrollbar-width: thin;
+}
+
+@app.nc-fer .nc-fer-ap {
+  position: relative;
+  display: flex;
+  flex: 1 1 0;
+  flex-direction: column;
+  align-items: center;
+  min-width: 112px;
+  padding: 0 4px;
+  text-align: center;
+}
+
+/* o fio entre um aprovador e o próximo (verde depois de quem já aprovou) */
+@app.nc-fer .nc-fer-ap:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  top: 17px;
+  left: calc(50% + 22px);
+  right: calc(-50% + 22px);
+  height: 2px;
+  border-radius: 2px;
+  background: var(--nc-nevoa);
+}
+
+@app.nc-fer .nc-fer-ap.is-ok:not(:last-child)::after {
+  background: #BFE3CD;
+}
+
+@app.nc-fer .nc-fer-ap-marca {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  margin: 0 0 6px;
+  border-radius: 50%;
+  background: var(--nc-off, #F4F2F8);
+  color: var(--nc-cinza);
+}
+
+@app.nc-fer .nc-fer-ap.is-ok .nc-fer-ap-marca { background: #E4F4EA; color: #1E6B45; }
+@app.nc-fer .nc-fer-ap.is-nao .nc-fer-ap-marca { background: #FBEAEC; color: #9B2230; }
+@app.nc-fer .nc-fer-ap.is-vez .nc-fer-ap-marca { background: #FFF4DE; color: #6B4700; box-shadow: 0 0 0 4px rgba(255, 244, 222, .7); }
+
+@app.nc-fer .nc-fer-ap-texto {
+  display: grid;
+  justify-items: center;
+  gap: 1px;
+  min-width: 0;
+  max-width: 100%;
+}
+
+@app.nc-fer .nc-fer-ap-nome:not(#nc-fer-x):not(#nc-fer-y) {
+  max-width: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  border: 0;
+  background: none;
+  font: 800 13.5px/1.3 "Inter NC", Inter, ui-sans-serif, system-ui, "Segoe UI", Arial, sans-serif;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--nc-tinta);
+}
+
+/* o nome que abre os Dados do Colaborador (a lupa do relatório) */
+@app.nc-fer button.nc-fer-ap-nome:not(#nc-fer-x):not(#nc-fer-y) {
+  cursor: pointer;
+  text-decoration: underline;
+  text-decoration-color: var(--nc-nevoa);
+  text-underline-offset: 3px;
+}
+
+@app.nc-fer button.nc-fer-ap-nome:hover:not(#nc-fer-x):not(#nc-fer-y) {
+  color: var(--nc-roxo);
+  text-decoration-color: currentColor;
+}
+
+@app.nc-fer button.nc-fer-ap-nome:focus-visible {
+  outline: 2px solid var(--nc-roxo);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+@app.nc-fer .nc-fer-ap-estado {
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  color: var(--nc-grafite);
+}
+
+@app.nc-fer .nc-fer-ap.is-ok .nc-fer-ap-estado { color: #1E6B45; font-weight: 700; }
+@app.nc-fer .nc-fer-ap.is-nao .nc-fer-ap-estado { color: #9B2230; font-weight: 700; }
+@app.nc-fer .nc-fer-ap.is-vez .nc-fer-ap-estado { color: #6B4700; font-weight: 700; }
+@app.nc-fer .nc-fer-ap.is-fila :is(.nc-fer-ap-nome, .nc-fer-ap-estado):not(#nc-fer-x):not(#nc-fer-y) { color: #77718A; }
+
+
+@app.nc-fer .nc-fer-decisao {
+  display: flex;
+  flex-wrap: wrap;
+  grid-column: 1 / -1;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px 16px;
+  padding: 12px 0 0;
+  border-top: 1px solid var(--nc-nevoa2);
+}
+
+@app.nc-fer .nc-fer-decisao-txt {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 700;
+  color: #8A5A00;
+}
+
+@app.nc-fer .nc-fer-decisao-botoes {
+  display: flex;
+  gap: 8px;
+}
+
+@app.nc-fer .nc-fer-decisao-botoes .t-Button:not(#nc-fer-x):not(#nc-fer-y) {
+  width: auto;
+  height: 44px;
+  min-height: 0;
+  margin: 0;
+  padding: 0 22px;
+  border-radius: 12px;
+  font-size: 14.5px;
+}
+
+@app.nc-fer .nc-fer-decisao-botoes .t-Button.nc-fer-aprovar:not(#nc-fer-x):not(#nc-fer-y) {
+  border: 0;
+  background: var(--nc-bom);
+  color: #fff;
+}
+
+@app.nc-fer .nc-fer-decisao-botoes .t-Button.nc-fer-reprovar:not(#nc-fer-x):not(#nc-fer-y) {
+  border: 1.5px solid #E7B7B7;
+  background: #fff;
+  box-shadow: none;
+  color: #A32020;
+}
+
+@app.nc-fer .nc-fer-decisao-botoes .t-Button :is(.t-Icon, .t-Button-label) {
+  color: inherit;
+}
+
+@app.nc-fer .t-Region.nc-fer-aprov:has(.nc-fer-caminho.is-sua-vez):not(#nc-fer-x):not(#nc-fer-y) {
+  box-shadow: inset 0 0 0 1.5px #EBC45A, 0 10px 24px -22px rgba(138, 90, 0, .5);
+}
+
+@app.nc-fer .nc-fer-ap-justs {
+  display: grid;
+  grid-column: 1 / -1;
+  gap: 6px;
+}
+
+@app.nc-fer .nc-fer-ap-just {
+  margin: 0;
+  padding: 8px 12px;
+  border: 0;
+  border-radius: 10px;
+  background: var(--nc-quase);
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--nc-tinta);
+}
+
+@app.nc-fer .nc-fer-ap-just.is-nao {
+  background: #FDF0F0;
+}
+
+/* ═══ [C13] O CARTÃO DO COLABORADOR ═════════════════════════════════════════════════════════
+   Montado pelo JS em [J12] (o mesmo cartão da Requisição de Benefícios). Peças:
+     .nc-fer-perfil  o cartão          .nc-fer-avatar  a foto ou as iniciais
+     .nc-fer-nome    o nome            .nc-fer-meta    matrícula · empresa
+     .nc-fer-fatos   Filial / Situação / Na empresa desde
+   .nc-fer-fora é o que o cartão substitui (Colab Foto, Colab Info e, no pedido já feito, a
+   escolha do colaborador): sai da vista, mas continua na página.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-fer .nc-fer-com-perfil .nc-fer-fora:not(#nc-fer-x):not(#nc-fer-y) {
+  display: none;
+}
+
+@app.nc-fer .nc-fer-perfil {
+  display: grid;
+  grid-template-columns: auto minmax(220px, 1fr) minmax(0, auto);
+  align-items: center;
+  gap: 16px 28px;
+  padding: 4px 2px;
+}
+
+@app.nc-fer .nc-fer-com-perfil .container:not(.nc-fer-fora) + .nc-fer-perfil {
+  margin-top: 12px;
+  padding-top: 16px;
+  border-top: 1px solid var(--nc-nevoa2);
+}
+
+@app.nc-fer .nc-fer-avatar {
+  display: grid;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+  border-radius: 20px;
+  overflow: hidden;
+  background-image: var(--nc-icone-fundo);
+  background-color: #7a3a8a /*reserva*/;
+  background-color: oklch(from #7A3A8A l calc(c * var(--nc-t-croma, 1)) calc(h + var(--nc-t-giro, 0)));
+  box-shadow: 0 12px 24px -14px rgba(var(--nc-t-rosa-rgb, 201, 87, 136), .9);
+  color: #fff;
+  font: 800 22px/1 "Inter NC", Inter, ui-sans-serif, system-ui, "Segoe UI", Arial, sans-serif;
+  letter-spacing: .02em;
+}
+
+@app.nc-fer .nc-fer-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+@app.nc-fer .nc-fer-nome {
+  margin: 0;
+  font: 800 21px/1.2 "Inter NC", Inter, ui-sans-serif, system-ui, "Segoe UI", Arial, sans-serif;
+  letter-spacing: -.02em;
+  color: var(--nc-tinta);
+}
+
+@app.nc-fer .nc-fer-meta {
+  margin: 4px 0 0;
+  font-size: 13.5px;
+  color: var(--nc-grafite);
+}
+
+@app.nc-fer .nc-fer-fatos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 28px;
+  margin: 0;
+}
+
+@app.nc-fer .nc-fer-fatos dt {
+  margin: 0 0 3px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--nc-cinza);
+}
+
+@app.nc-fer .nc-fer-fatos dd {
+  max-width: 32ch;
+  margin: 0;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--nc-tinta);
+}
+
+@app.nc-fer .nc-fer-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 24px;
+  padding: 0 10px;
+  border-radius: 999px;
+  background: var(--nc-nevoa2);
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--nc-grafite);
+}
+
+@app.nc-fer .nc-fer-chip--ok {
+  background: #E8F4EE;
+  color: var(--nc-bom);
+}
+
+@app.nc-fer .nc-fer-chip--ok::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+/* ---------- celular: o pedido e o cartão empilham; o caminho abre por "Ver o caminho" ---------- */
+@media (max-width: 899px) {
+  @app.nc-fer .nc-fer-perfil {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+
+  @app.nc-fer .nc-fer-fatos {
+    grid-column: 1 / -1;
+    gap: 10px 20px;
+  }
+}
+
+@media (max-width: 639px) {
+  @app.nc-fer .nc-fer-pedido {
+    grid-template-columns: minmax(0, 1fr) auto;
+    padding: 14px 16px;
+  }
+
+  @app.nc-fer .nc-fer-pedido-ic {
+    display: none;
+  }
+
+  @app.nc-fer .nc-fer-pedido-n {
+    font-size: 17px;
+  }
+
+  @app.nc-fer .t-Region.nc-fer-aprov > .t-Region-bodyWrap > .t-Region-body:not(#nc-fer-x):not(#nc-fer-y) {
+    padding: 12px 14px;
+  }
+
+  @app.nc-fer .nc-fer-caminho-cab {
+    grid-column: 1 / -1;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    column-gap: 12px;
+  }
+
+  @app.nc-fer .nc-fer-caminho-rot,
+  @app.nc-fer .nc-fer-caminho-faixa {
+    grid-column: 1;
+  }
+
+  @app.nc-fer .nc-fer-caminho-ver {
+    display: inline-flex;
+    grid-column: 2;
+    grid-row: 1 / span 2;
+    align-items: center;
+    height: 40px;
+    padding: 0 14px;
+    border: 1px solid var(--nc-nevoa);
+    border-radius: 10px;
+    background: #fff;
+    font: inherit;
+    font-size: 13.5px;
+    font-weight: 700;
+    color: var(--nc-roxo);
+    cursor: pointer;
+  }
+
+  @app.nc-fer .t-Region.nc-fer-aprov:not(.nc-fer-ap-aberto) .nc-fer-passos-ap {
+    display: none;
+  }
+
+  /* aberto, no celular: um aprovador por linha, de cima para baixo */
+  @app.nc-fer .nc-fer-passos-ap {
+    flex-direction: column;
+    gap: 10px;
+    overflow: visible;
+  }
+
+  @app.nc-fer .nc-fer-ap {
+    flex-direction: row;
+    gap: 12px;
+    min-width: 0;
+    text-align: left;
+  }
+
+  @app.nc-fer .nc-fer-ap:not(:last-child)::after {
+    top: 38px;
+    bottom: -10px;
+    left: 17px;
+    right: auto;
+    width: 2px;
+    height: auto;
+  }
+
+  @app.nc-fer .nc-fer-ap-marca {
+    flex: none;
+    margin: 0;
+  }
+
+  @app.nc-fer .nc-fer-ap-texto {
+    justify-items: start;
+  }
+
+  @app.nc-fer .nc-fer-decisao-botoes {
+    flex: 1 0 100%;
+  }
+
+  @app.nc-fer .nc-fer-decisao-botoes .t-Button:not(#nc-fer-x):not(#nc-fer-y) {
+    flex: 1 1 0;
+    padding: 0 12px;
+  }
+
+  @app.nc-fer .nc-fer-avatar {
+    width: 56px;
+    height: 56px;
+    border-radius: 18px;
+  }
+
+  @app.nc-fer .nc-fer-nome {
+    font-size: 19px;
+  }
+}
+
+/* ═══ FAIXA DA REGIÃO (padrão 03/10) ════════════════════════════════════════════════════════
+   Todo painel com título segue o cabeçalho de região da Skin: o título numa faixa que atravessa
+   o cartão de ponta a ponta, com a linha de 2px na cor de destaque do TEMA (var(--nc-rosa) — a
+   mesma da Skin; muda com os 14 temas). As margens negativas são o recuo de dentro do cartão:
+   mudou o recuo do cartão, mude aqui junto. Guia: brand/apex/MANUAL-APEX.md.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-fer .nc-fer-caminho > .nc-fer-caminho-rot:not(#nc-fx1):not(#nc-fx2):not(#nc-fx3) {
+  box-sizing: border-box;
+  width: calc(100% + 40px);
+  margin: -16px -20px 2px;
+  padding: 12px 20px 10px;
+  border-bottom: 2px solid var(--nc-rosa, #C95788);
+  grid-column: 1 / -1;
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.3;
+}
+@media (max-width: 639px) {
+  @app.nc-fer .nc-fer-caminho > .nc-fer-caminho-rot:not(#nc-fx1):not(#nc-fx2):not(#nc-fx3) {
+    box-sizing: border-box;
+    width: calc(100% + 28px);
+    margin: -12px -14px 2px;
+    padding: 12px 14px 10px;
+    border-bottom: 2px solid var(--nc-rosa, #C95788);
+    grid-column: 1 / -1;
+    font-size: 15px;
+    font-weight: 700;
+    line-height: 1.3;
+  }
+}

@@ -1,0 +1,774 @@
+/* ╔════════════════════════════════════════════════════════════════════════════════════════╗
+   ║  NATCORP · REQUISIÇÃO DE APURAÇÃO  —  a "roupa" da tela (CSS)                             ║
+   ║  App 9503 · Página 181 · trocar um evento que a apuração gerou num dia por outro          ║
+   ╚════════════════════════════════════════════════════════════════════════════════════════╝
+
+   Primeira vez num arquivo destes? Leia antes o manual: brand/apex/MANUAL-APEX.md (parte 1).
+
+   ── O QUE ESTE ARQUIVO FAZ ────────────────────────────────────────────────────────────────
+   Dá a aparência da janela: cores, tamanhos, espaços, bordas, e como ela se arruma no
+   computador e no celular. Ele NÃO muda nada de lugar: quem muda as coisas de lugar é o
+   arquivo-irmão Natcorp_Apuracao.js. Os dois trabalham juntos:
+     o JS monta "o cartão do evento deste dia"  →  este arquivo diz como o cartão se parece.
+   Sem o JS, este arquivo não faz nada (todas as regras dependem da marca nc-ap-ativo que o JS
+   põe na página). É o mesmo desenho da janela "Marcação - Abono" (Natcorp_Abono): uma coluna,
+   perguntas, escolhas em botões, a frase do pedido no pé.
+
+   ── ONDE ELE ENTRA NO APEX ────────────────────────────────────────────────────────────────
+     Página 181 › CSS › File URLs:   #WORKSPACE_IMAGES#Natcorp_Apuracao.css
+     ATENÇÃO: esta página não tem exportação no projeto — a URL é posta À MÃO no Page Designer.
+     Este é o arquivo-FONTE (Natcorp_Apuracao.src.css). O arquivo que sobe (Natcorp_Apuracao.css)
+     é gerado a partir dele pelo gerar-app.mjs, que escreve o @app por extenso e põe os
+     !important: edite ESTE arquivo, não o gerado (o caminho completo está no manual, parte 2).
+
+   ── ÍNDICE: as partes deste arquivo (Ctrl+F pelo código entre colchetes) ──────────────────
+     [C1] Peças gerais                          (ícones; o que o JS esconde)
+     [C2] Uma coluna só                         (o evento em cima, "Trocar por" embaixo)
+     [C3] O cartão do evento deste dia          ← montado pelo JS em [J7]
+     [C4] As perguntas                          ← montadas pelo JS em [J3] e [J7]
+     [C5] O pé e "Enviar pedido"                ← montados pelo JS em [J3], [J4] e [J7]
+     [C6] Celular, "menos movimento" e ajustes  (telas pequenas; botões do pé)
+     [C7] O pedido existente (quem aprova)      ← montado pelo JS em [J5]
+     [C8] Aprovar / Reprovar                    ← botões marcados pelo JS em [J4]
+
+   ── RECEITAS RÁPIDAS ──────────────────────────────────────────────────────────────────────
+     Quero mudar uma cor
+       → use uma das cores da marca, pelo nome: var(--nc-roxo), var(--nc-grafite)… A lista
+         completa, com amostras, está no manual (parte 3). Assim a cor acompanha o tema que
+         o usuário escolheu em "Cores". Evite escrever cores soltas, como #511C76.
+     Quero mudar a cor de "soma" (verde) e "desconta" (vermelho)  → [C3], nc-ap--soma / --desconta
+     Quero mudar a altura da lista de eventos   → [C4], "qual evento", procure max-height.
+     Quero aumentar ou diminuir um texto        → procure font-size na parte certa.
+     Quero mais ou menos espaço                  → padding (espaço por DENTRO da caixa) e
+                                                   margin (espaço por FORA, até a vizinha).
+     Algo ficou bom no computador e ruim no celular → [C6]: o que está dentro de
+                                                   @media (max-width: 640px) só vale no celular.
+
+   ── COMO LER UM ARQUIVO CSS EM 30 SEGUNDOS ────────────────────────────────────────────────
+     Cada regra tem duas partes:     QUEM { COMO; }
+       @app.nc-ap-ativo .nc-ap-pe {
+         margin: 14px 0 0;    ← espaço por fora: 14px em cima
+         border-radius: 16px;   ← cantos arredondados
+       }
+       (a primeira linha é o QUEM: o "seletor", diz em que pedaço da tela a regra vale;
+        as de dentro são o COMO:  propriedade: valor;)
+     .nome-com-ponto       uma "classe": uma etiqueta posta num pedaço da tela (pelo APEX ou
+                           pelo JS). .nc-ap-pe é o pé com a frase do pedido.
+     @app                  atalho que dá prioridade às nossas regras sobre as do tema do APEX.
+                           No arquivo que sobe para o APEX ele aparece por extenso, como
+                           html body:is(.t-PageBody…):not(#nc-a1):not(#nc-a2) — é a mesma coisa.
+     :not(#nc-…-x)…        peso extra, para vencer uma regra do tema. Pode ignorar ao ler.
+     !important            no arquivo que sobe, toda linha ganha um: é o mesmo "vencer o tema".
+     @media (max-width: 640px) { … }   as regras de dentro só valem em telas até 640px (celular).
+     var(--nc-roxo)        uma cor da marca, pelo nome (muda junto com o tema escolhido).
+     px                    pixels, o tamanho de um pontinho da tela. 16px é o texto normal.
+     Toda linha COMO termina em ;   e todo { é fechado por um }. Não apague esses sinais.
+*/
+
+/* ═══ [C1] PEÇAS GERAIS ═════════════════════════════════════════════════════════════════════
+   O tamanho e o traço dos ícones (.nc-ap-ic) e o que o JS esconde: os campos substituídos
+   (.nc-ap-oculto) e os blocos fechados ([hidden]). display: none = não aparece.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-ap-ativo .nc-ap-ic {
+  flex: none;
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+@app.nc-ap-ativo .nc-ap-oculto:not(#nc-ap-x):not(#nc-ap-y),
+@app.nc-ap-ativo :is(.nc-ap-bloco, .nc-ap-escolha, .nc-ap-escolhido)[hidden]:not(#nc-ap-x):not(#nc-ap-y) {
+  display: none;
+}
+
+/* ═══ [C2] UMA COLUNA SÓ ════════════════════════════════════════════════════════════════════
+   As regiões do evento deste dia, de "Trocar por" e da observação ficam uma embaixo da outra.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+/* ---------- uma coluna: o evento deste dia em cima, "trocar por" embaixo ---------- */
+@app.nc-ap-ativo .row:has(> .col > .nc-ap-reg):not(#nc-ap-x):not(#nc-ap-y) {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+@app.nc-ap-ativo .row:has(> .col > .nc-ap-reg) > .col:not(#nc-ap-x):not(#nc-ap-y) {
+  width: 100%;
+  max-width: none;
+  flex: none;
+}
+
+@app.nc-ap-ativo .t-Region.nc-ap-reg > .t-Region-header .t-Region-title:not(#nc-ap-x):not(#nc-ap-y) {
+  font-size: 17px;
+  font-weight: 800;
+  color: var(--nc-tinta);
+}
+
+
+@app.nc-ap-ativo .nc-ap-quem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 8px;
+  font-size: 15px;
+  color: var(--nc-grafite);
+}
+
+@app.nc-ap-ativo .nc-ap-quem b {
+  font-weight: 800;
+  color: var(--nc-tinta);
+}
+
+@app.nc-ap-ativo .nc-ap-quem .nc-ap-ic {
+  color: var(--nc-roxo);
+}
+
+/* ═══ [C3] O CARTÃO DO EVENTO DESTE DIA ═════════════════════════════════════════════════════
+   Montado pelo JS em [J7]: .nc-ap-evento é o cartão; .nc-ap-evento-h, as horas grandes.
+   Cores do sentido: .nc-ap--soma (verde) · .nc-ap--desconta (vermelho) · .nc-ap--neutro.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-ap-ativo .nc-ap-evento {
+  padding: 14px 16px;
+  border-radius: 16px;
+  background: #F6F1FA;
+}
+
+@app.nc-ap-ativo .nc-ap-evento-topo {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+@app.nc-ap-ativo .nc-ap-evento-nome {
+  font-size: 19px;
+  font-weight: 800;
+  line-height: 1.25;
+  color: var(--nc-tinta);
+}
+
+@app.nc-ap-ativo .nc-ap-evento-h {
+  font-size: 26px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  color: var(--nc-tinta);
+}
+
+@app.nc-ap-ativo .nc-ap--soma { color: #1E6B45; }
+@app.nc-ap-ativo .nc-ap--desconta { color: #9B2230; }
+
+@app.nc-ap-ativo .nc-ap-evento-sub {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 14px;
+  margin: 6px 0 0;
+  font-size: 14px;
+  color: #5E586E;
+}
+
+@app.nc-ap-ativo .nc-ap-evento-sub > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+@app.nc-ap-ativo .nc-ap-evento-sub .nc-ap-ic {
+  width: 15px;
+  height: 15px;
+}
+
+@app.nc-ap-ativo .nc-ap-sentido {
+  padding: 2px 10px;
+  border-radius: 999px;
+  font-weight: 800;
+  background: #fff;
+}
+
+@app.nc-ap-ativo .nc-ap-evento-nota {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  margin: 8px 0 0;
+  font-size: 14px;
+  color: var(--nc-grafite);
+}
+
+@app.nc-ap-ativo .nc-ap-evento-nota--aviso {
+  color: #6B4700;
+}
+
+@app.nc-ap-ativo .nc-ap-evento-nota .nc-ap-ic {
+  width: 16px;
+  height: 16px;
+  margin-top: 2px;
+}
+
+/* ═══ [C4] AS PERGUNTAS ═════════════════════════════════════════════════════════════════════
+   Montadas pelo JS em [J3] e [J7]: a pergunta (.nc-ap-perg), os cartões "Vai para onde?"
+   (.nc-ap-cartao), as opções (.nc-ap-opc), a busca e a lista de eventos (.nc-ap-ev;
+   .is-on = escolhido, .is-raro = pouco usado), o campo das horas e os atalhos (.nc-ap-chip).
+   A animação nc-ap-pisca faz a pergunta piscar quando a pessoa toca num item do "Falta".
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-ap-ativo .nc-ap-perguntas {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+@app.nc-ap-ativo .nc-ap-perg {
+  margin: 0 0 8px;
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--nc-tinta);
+}
+
+@app.nc-ap-ativo .nc-ap-cartoes {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+@app.nc-ap-ativo .nc-ap-cartao {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  min-height: 76px;
+  padding: 14px;
+  border: 1.5px solid var(--nc-nevoa);
+  border-radius: 14px;
+  background: #fff;
+  font: inherit;
+  text-align: left;
+  color: var(--nc-tinta);
+  cursor: pointer;
+  transition: border-color .15s, background-color .15s, box-shadow .15s;
+}
+
+@app.nc-ap-ativo .nc-ap-cartao .nc-ap-ic {
+  width: 22px;
+  height: 22px;
+  color: var(--nc-roxo);
+}
+
+@app.nc-ap-ativo .nc-ap-cartao span {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+@app.nc-ap-ativo .nc-ap-cartao b {
+  font-size: 15px;
+  font-weight: 800;
+}
+
+@app.nc-ap-ativo .nc-ap-cartao small {
+  font-size: 13px;
+  line-height: 1.35;
+  color: #5E586E;
+}
+
+@app.nc-ap-ativo .nc-ap-cartao:hover:not(:disabled) {
+  border-color: var(--nc-roxo);
+}
+
+@app.nc-ap-ativo .nc-ap-cartao.is-on {
+  border-color: var(--nc-roxo);
+  background: #F6F1FA;
+  box-shadow: 0 0 0 1px var(--nc-roxo);
+}
+
+@app.nc-ap-ativo .nc-ap-opcs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+@app.nc-ap-ativo .nc-ap-opc {
+  min-height: 46px;
+  padding: 0 18px;
+  border: 1.5px solid var(--nc-nevoa);
+  border-radius: 12px;
+  background: #fff;
+  font: inherit;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--nc-tinta);
+  cursor: pointer;
+}
+
+@app.nc-ap-ativo .nc-ap-opc:hover:not(:disabled) {
+  border-color: var(--nc-roxo);
+}
+
+@app.nc-ap-ativo .nc-ap-opc.is-on {
+  border-color: var(--nc-roxo);
+  background: var(--nc-roxo);
+  color: #fff;
+}
+
+@app.nc-ap-ativo .nc-ap-saldo > .t-Form-fieldContainer:not(#nc-ap-x):not(#nc-ap-y) {
+  margin: 8px 0 0;
+  padding: 0;
+}
+
+/* qual evento: busca + lista com altura */
+@app.nc-ap-ativo .nc-ap-busca {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 8px;
+  padding: 0 12px;
+  border: 1.5px solid var(--nc-nevoa);
+  border-radius: 12px;
+  background: #fff;
+  color: #5E586E;
+}
+
+@app.nc-ap-ativo .nc-ap-busca input {
+  flex: 1 1 auto;
+  min-width: 0;
+  height: 44px;
+  border: 0;
+  outline: 0;
+  background: none;
+  font: inherit;
+  font-size: 15px;
+  color: var(--nc-tinta);
+}
+
+@app.nc-ap-ativo .nc-ap-eventos {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px;
+  max-height: 330px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 2px;
+  scrollbar-width: thin;
+}
+
+@app.nc-ap-ativo .nc-ap-ev {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 46px;
+  padding: 8px 12px;
+  border: 1.5px solid var(--nc-nevoa);
+  border-radius: 12px;
+  background: #fff;
+  font: inherit;
+  font-size: 14.5px;
+  font-weight: 600;
+  line-height: 1.3;
+  text-align: left;
+  color: var(--nc-tinta);
+  cursor: pointer;
+}
+
+@app.nc-ap-ativo .nc-ap-ev em {
+  margin-left: auto;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 800;
+  color: #5E586E;
+}
+
+@app.nc-ap-ativo .nc-ap-ev:hover:not(:disabled) {
+  border-color: var(--nc-roxo);
+}
+
+@app.nc-ap-ativo .nc-ap-ev.is-on {
+  border-color: var(--nc-roxo);
+  background: var(--nc-roxo);
+  color: #fff;
+}
+
+@app.nc-ap-ativo .nc-ap-ev.is-on em {
+  color: #F2D8EA;
+}
+
+@app.nc-ap-ativo .nc-ap-ev.is-raro {
+  border-style: dashed;
+  color: #5E586E;
+}
+
+@app.nc-ap-ativo .nc-ap-ev:disabled {
+  cursor: not-allowed;
+  opacity: .5;
+}
+
+@app.nc-ap-ativo .nc-ap-mais {
+  grid-column: 1 / -1;
+  justify-self: start;
+}
+
+@app.nc-ap-ativo .nc-ap-escolhido {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 14px;
+}
+
+@app.nc-ap-ativo .nc-ap-escolhido .nc-ap-ev {
+  cursor: default;
+}
+
+/* quantas horas */
+@app.nc-ap-ativo .nc-ap-horas-linha > .t-Form-fieldContainer:not(#nc-ap-x):not(#nc-ap-y) {
+  max-width: 220px;
+  margin: 0;
+  padding: 0;
+}
+
+@app.nc-ap-ativo .nc-ap-horas-linha .t-Form-labelContainer:not(#nc-ap-x):not(#nc-ap-y) {
+  display: none;
+}
+
+@app.nc-ap-ativo input.nc-ap-horas:not(#nc-ap-x):not(#nc-ap-y) {
+  width: 100%;
+  height: 56px;
+  min-height: 56px;
+  padding: 0 14px;
+  border: 1.5px solid var(--nc-nevoa);
+  border-radius: 12px;
+  background: #fff;
+  font-size: 24px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: .02em;
+  color: var(--nc-tinta);
+}
+
+@app.nc-ap-ativo input.nc-ap-horas:focus:not(#nc-ap-x):not(#nc-ap-y) {
+  border-color: var(--nc-roxo);
+  box-shadow: 0 0 0 3px rgba(var(--nc-t-roxo-rgb, 81, 28, 118), .15);
+}
+
+@app.nc-ap-ativo :is(.nc-ap-atalhos, .nc-ap-comecos) {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+@app.nc-ap-ativo .nc-ap-comecos {
+  margin: 0 0 8px;
+}
+
+@app.nc-ap-ativo .nc-ap-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 38px;
+  padding: 0 13px;
+  border: 1.5px solid var(--nc-nevoa);
+  border-radius: 999px;
+  background: #fff;
+  font: inherit;
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--nc-roxo);
+  cursor: pointer;
+}
+
+@app.nc-ap-ativo .nc-ap-chip:hover {
+  border-color: var(--nc-roxo);
+  background: #F6F1FA;
+}
+
+@app.nc-ap-ativo .nc-ap-chip .nc-ap-ic {
+  width: 15px;
+  height: 15px;
+}
+
+@app.nc-ap-ativo .nc-ap-aviso {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  width: 100%;
+  margin: 2px 0 0;
+  font-size: 14px;
+  color: #6B4700;
+}
+
+@app.nc-ap-ativo .nc-ap-aviso .nc-ap-ic {
+  width: 16px;
+  height: 16px;
+  margin-top: 2px;
+}
+
+@app.nc-ap-ativo .nc-ap-nota {
+  margin: 4px 0;
+  font-size: 14px;
+  color: #5E586E;
+}
+
+@app.nc-ap-ativo .nc-ap-link {
+  padding: 4px 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 800;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  color: var(--nc-roxo);
+  cursor: pointer;
+}
+
+@app.nc-ap-ativo :is(.nc-ap-cartao, .nc-ap-opc, .nc-ap-ev, .nc-ap-chip, .nc-ap-link):focus-visible {
+  outline: 3px solid var(--nc-rosa);
+  outline-offset: 2px;
+}
+
+@app.nc-ap-ativo .nc-ap-pisca {
+  animation: nc-ap-pisca 1.6s cubic-bezier(.16, 1, .3, 1);
+}
+
+@keyframes nc-ap-pisca {
+  0%, 30% { box-shadow: 0 0 0 4px rgba(var(--nc-t-rosa-rgb, 201, 87, 136), .4); border-radius: 14px; }
+  100% { box-shadow: 0 0 0 4px rgba(var(--nc-t-rosa-rgb, 201, 87, 136), 0); border-radius: 14px; }
+}
+
+/* ═══ [C5] O PÉ E "ENVIAR PEDIDO" ═══════════════════════════════════════════════════════════
+   Montado pelo JS em [J3] e [J7]: a frase do pedido (.nc-ap-frase-o), o "Falta"
+   (.nc-ap-falta; .is-pronto quando não falta nada) e os botões renomeados em [J4]
+   (.nc-ap-enviar, .nc-ap-secundario).
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-ap-ativo .nc-ap-pe {
+  margin: 14px 0 0;
+  padding: 14px 16px;
+  border-radius: 16px;
+  background: #F6F1FA;
+}
+
+@app.nc-ap-ativo .nc-ap-frase-o {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.4;
+  color: var(--nc-tinta);
+}
+
+@app.nc-ap-ativo .nc-ap-frase-o b {
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  color: var(--nc-roxo);
+}
+
+@app.nc-ap-ativo .nc-ap-frase-sub {
+  margin: 4px 0 0;
+  font-size: 13.5px;
+  color: #5E586E;
+}
+
+@app.nc-ap-ativo .nc-ap-frase-sub:empty {
+  display: none;
+}
+
+@app.nc-ap-ativo .nc-ap-falta {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin: 10px 0 0;
+  font-size: 14px;
+  color: #6B4700;
+}
+
+@app.nc-ap-ativo .nc-ap-frase:empty + .nc-ap-falta {
+  margin-top: 0;
+}
+
+@app.nc-ap-ativo .nc-ap-falta .nc-ap-ic {
+  margin-top: 2px;
+}
+
+@app.nc-ap-ativo .nc-ap-falta .nc-ap-link {
+  padding: 0;
+  color: #6B4700;
+}
+
+@app.nc-ap-ativo .nc-ap-falta.is-pronto {
+  font-weight: 700;
+  color: #1E6B45;
+}
+
+@app.nc-ap-ativo .t-Button.nc-ap-enviar:not(#nc-ap-x):not(#nc-ap-y) {
+  min-height: 46px;
+  padding: 0 22px;
+  font-size: 15px;
+  font-weight: 800;
+}
+
+@app.nc-ap-ativo .t-Button.nc-ap-secundario:not(#nc-ap-x):not(#nc-ap-y) {
+  border: 1.5px solid var(--nc-nevoa);
+  background: #fff;
+  box-shadow: none;
+  color: var(--nc-roxo);
+}
+
+@app.nc-ap-ativo .t-Button.nc-ap-secundario :is(.t-Button-label, .t-Icon):not(#nc-ap-x):not(#nc-ap-y) {
+  color: inherit;
+}
+
+/* ═══ [C6] CELULAR, "MENOS MOVIMENTO" E AJUSTES ═════════════════════════════════════════════
+   O que está dentro de  @media (max-width: 640px)  só vale no celular. Os botões do pé moram
+   numa tabela antiga do tema: no celular, "Enviar pedido" vai para cima, na largura toda.
+   @media (prefers-reduced-motion: reduce) desliga as animações para quem pediu "reduzir
+   movimento" nas configurações do aparelho (acessibilidade).
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@media (max-width: 640px) {
+  @app.nc-ap-ativo :is(.nc-ap-cartoes, .nc-ap-eventos) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  @app.nc-ap-ativo .nc-ap-cartao {
+    min-height: 64px;
+    padding: 12px;
+  }
+
+  @app.nc-ap-ativo .nc-ap-opc {
+    flex: 1 1 40%;
+  }
+
+  @app.nc-ap-ativo .nc-ap-horas-linha > .t-Form-fieldContainer:not(#nc-ap-x):not(#nc-ap-y) {
+    max-width: none;
+  }
+
+  @app.nc-ap-ativo .nc-ap-evento-nome {
+    font-size: 17px;
+  }
+
+  @app.nc-ap-ativo .nc-ap-evento-h {
+    font-size: 22px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  @app.nc-ap-ativo :is(.nc-ap-cartao, .nc-ap-ev) {
+    transition: none;
+  }
+
+  @app.nc-ap-ativo .nc-ap-pisca {
+    animation: none;
+  }
+}
+
+/* os botões do pé (Voltar · Só justificar · Enviar pedido) moram numa tabela antiga do tema, que
+   não quebra linha: no celular, "Enviar pedido" em cima, largura toda; os outros embaixo */
+@media (max-width: 640px) {
+  @app.nc-ap-ativo .t-ButtonRegion-col:not(#nc-ap-x):not(#nc-ap-y) {
+    display: block;
+    width: 100%;
+  }
+
+  @app.nc-ap-ativo .t-ButtonRegion-col :is(table, tbody, tr):not(#nc-ap-x):not(#nc-ap-y) {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    width: 100%;
+  }
+
+  @app.nc-ap-ativo .t-ButtonRegion-col td:not(#nc-ap-x):not(#nc-ap-y) {
+    display: block;
+    flex: 1 1 auto;
+    padding: 0;
+  }
+
+  @app.nc-ap-ativo .t-ButtonRegion-col td:has(.nc-ap-enviar):not(#nc-ap-x):not(#nc-ap-y) {
+    order: -1;
+    flex-basis: 100%;
+  }
+
+  @app.nc-ap-ativo .t-ButtonRegion-col td .t-Button:not(#nc-ap-x):not(#nc-ap-y) {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* entre "Trocar por" e "Observação" sobravam 66 px de respiro das duas regiões */
+@app.nc-ap-ativo .t-Region.nc-ap-reg > .t-Region-bodyWrap > .t-Region-body:not(#nc-ap-x):not(#nc-ap-y) {
+  padding-bottom: 4px;
+}
+
+/* ═══ [C7] O PEDIDO EXISTENTE (QUEM APROVA) ═════════════════════════════════════════════════
+   Montado pelo JS em [J5]. .nc-ap-resumo é o bloco; .nc-ap-sit, o selo da situação:
+   --ok (verde) · --nao (vermelho) · --anda (em andamento).
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-ap-ativo .nc-ap-resumo {
+  margin: 0 0 12px;
+  padding: 14px 16px;
+  border: 1.5px solid #E2D6EE;
+  border-radius: 16px;
+  background: #fff;
+}
+
+@app.nc-ap-ativo .nc-ap-resumo-topo {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 6px;
+}
+
+@app.nc-ap-ativo .nc-ap-resumo-n {
+  font-size: 13.5px;
+  font-weight: 800;
+  color: #5E586E;
+}
+
+@app.nc-ap-ativo .nc-ap-sit {
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 12.5px;
+  font-weight: 800;
+  background: #FFF4DE;
+  color: #6B4700;
+}
+
+@app.nc-ap-ativo .nc-ap-sit--ok { background: #E4F4EA; color: #1E6B45; }
+@app.nc-ap-ativo .nc-ap-sit--nao { background: #FBEAEC; color: #9B2230; }
+
+@app.nc-ap-ativo .nc-ap-resumo .nc-ap-sentido {
+  font-size: 12.5px;
+  background: #F6F1FA;
+}
+
+@app.nc-ap-ativo .nc-ap-vertodos {
+  margin: 0 0 12px;
+}
+
+@app.nc-ap-ativo:not(.nc-ap-campos) .nc-ap-campo-ped:not(#nc-ap-x):not(#nc-ap-y) {
+  display: none;
+}
+
+/* ═══ [C8] APROVAR / REPROVAR ═══════════════════════════════════════════════════════════════
+   Os botões marcados pelo JS em [J4]: .nc-ap-aprovar (verde, cheio) e .nc-ap-reprovar
+   (contornado).
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+/* Aprovar / Reprovar: a decisão em cor e palavra */
+@app.nc-ap-ativo .t-Button.nc-ap-aprovar:not(#nc-ap-x):not(#nc-ap-y) {
+  min-height: 46px;
+  padding: 0 22px;
+  border-color: #1E6B45;
+  background: #1E6B45;
+  font-weight: 800;
+  color: #fff;
+}
+
+@app.nc-ap-ativo .t-Button.nc-ap-reprovar:not(#nc-ap-x):not(#nc-ap-y) {
+  min-height: 46px;
+  padding: 0 18px;
+  border: 1.5px solid #B8323F;
+  background: #fff;
+  box-shadow: none;
+  font-weight: 800;
+  color: #9B2230;
+}
+
+@app.nc-ap-ativo .t-Button:is(.nc-ap-aprovar, .nc-ap-reprovar) :is(.t-Button-label, .t-Icon):not(#nc-ap-x):not(#nc-ap-y) {
+  color: inherit;
+}

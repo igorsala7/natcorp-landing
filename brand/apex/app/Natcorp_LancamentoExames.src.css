@@ -1,0 +1,1221 @@
+/* ╔════════════════════════════════════════════════════════════════════════════════════════╗
+   ║  NATCORP · LANÇAMENTO DE EXAMES  —  a "roupa" da tela (CSS)                              ║
+   ║  App 2937 (Medicina Ocupacional) · Página 11 · Manutenção de Exames Médicos (modal)      ║
+   ╚════════════════════════════════════════════════════════════════════════════════════════╝
+
+   Primeira vez num arquivo destes? Leia antes o manual: brand/apex/MANUAL-APEX.md (parte 1).
+
+   ── O QUE ESTE ARQUIVO FAZ ────────────────────────────────────────────────────────────────
+   A aparência do que o Natcorp_LancamentoExames.js monta: o paciente no alto, a situação de
+   cada exame, o histórico e a gaveta de lançar/editar. Sem o JS, nada daqui vale (tudo
+   depende da marca nc-lx-ativo). Mesma linguagem do Exame Médico Ocupacional (2937:19).
+
+   ── ONDE ELE ENTRA NO APEX ────────────────────────────────────────────────────────────────
+     Página 11 › CSS › File URLs:   #WORKSPACE_IMAGES#Natcorp_LancamentoExames.css
+     CUIDADO: este é o arquivo-FONTE (.src.css). O gerador (gerar-app.mjs) cria a partir dele o
+     Natcorp_LancamentoExames.css que sobe para o APEX. Edite ESTE arquivo, não o gerado.
+
+   ── ÍNDICE ────────────────────────────────────────────────────────────────────────────────
+     [C1] As cores (resultado, situação)                       PODE MEXER
+     [C2] O que sai da vista (o grid, a pesquisa)
+     [C3] A janela: o paciente no alto
+     [C4] O alto do histórico: título, busca, Lançar exame
+     [C5] A situação de cada exame
+     [C6] O histórico
+     [C7] A gaveta (a ficha do grid)
+     [C8] Botões, filtros e aviso
+     [C9] Celular e tablet
+*/
+
+/* ═══ [C1] AS CORES ═════════════════════════════════════════════════════════════════════════
+   PODE MEXER (prefira as da marca: --nc-roxo, --nc-bom, --nc-ruim…).
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-lx-ativo {
+  --nc-lx-borda: var(--nc-nevoa, #E9E5F1);
+  --nc-lx-fundo: var(--nc-off, #F7F5FA);
+  --nc-lx-texto: var(--nc-tinta, #1B1238);
+  --nc-lx-fraco: var(--nc-grafite, #4A4460);
+  --nc-lx-bom: var(--nc-bom, #1F7A52);
+  --nc-lx-ruim: var(--nc-ruim, #B8323F);
+  --nc-lx-atencao: #8A5300;
+}
+
+@app.nc-lx-ativo [data-tom="bom"],
+@app.nc-lx-ativo [data-tom="emdia"] { --nc-lx-c: var(--nc-lx-bom); }
+@app.nc-lx-ativo [data-tom="atencao"],
+@app.nc-lx-ativo [data-tom="vencido"] { --nc-lx-c: var(--nc-lx-ruim); }
+@app.nc-lx-ativo [data-tom="perto"] { --nc-lx-c: var(--nc-lx-atencao); }
+@app.nc-lx-ativo [data-tom="neutro"],
+@app.nc-lx-ativo [data-tom="vazio"] { --nc-lx-c: var(--nc-lx-fraco); }
+
+/* ═══ [C2] O QUE SAI DA VISTA ═══════════════════════════════════════════════════════════════
+   O grid continua na página (é o motor), fora da tela — escondido com display:none ele deixa
+   de se desenhar. A pesquisa (empresa, matrícula) aparece em "Trocar paciente"; os campos de
+   mostrar dela (cargo, setor…) já estão no alto.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-lx-ativo .nc-lx-motor:not(#nc-lx-x) {
+  position: absolute;
+  top: 0;
+  left: -20000px;
+  width: 1200px;
+  height: 1px;
+  overflow: hidden;
+  visibility: hidden;
+}
+
+@app.nc-lx-ativo .nc-lx-pesquisa:not(#nc-lx-x) {
+  display: none;
+}
+
+@app.nc-lx-ativo.nc-lx-trocando .nc-lx-pesquisa:not(#nc-lx-x) {
+  display: block;
+  margin: 0 0 16px;
+  border: 1px solid color-mix(in srgb, var(--nc-roxo, #511C76) 25%, #fff);
+  border-radius: 14px;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--nc-roxo, #511C76) 10%, transparent);
+}
+
+@app.nc-lx-ativo .nc-lx-pesquisa > .t-Region-header,
+@app.nc-lx-ativo .nc-lx-pesquisa .t-Form-fieldContainer:not(:has(#P11_COD_EMPRESA, #P11_MATRICULA)) {
+  display: none;
+}
+
+@app.nc-lx-ativo .nc-lx-pesquisa .t-Region-body {
+  padding: 14px 16px 4px;
+}
+
+@app.nc-lx-ativo .nc-lx-so-leitor,
+@app.nc-lx-ativo .nc-lx-pac-acoes .t-Button .t-Icon {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+@app.nc-lx-ativo [hidden] {
+  display: none;
+}
+
+/* ═══ [C3] A JANELA: O PACIENTE NO ALTO ═════════════════════════════════════════════════════ */
+@app.nc-lx-ativo.nc-lx-cab-fixo .t-Dialog-header {
+  display: block;
+  height: auto;
+  padding: 14px 24px 12px;
+  border-bottom: 1px solid var(--nc-lx-borda);
+  background: #fff;
+}
+
+@app.nc-lx-ativo .nc-lx-paciente {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px 24px;
+  color: var(--nc-lx-texto);
+}
+
+@app.nc-lx-ativo .nc-lx > .nc-lx-paciente {
+  margin: 0 0 16px;
+  padding: 14px 16px;
+  border: 1px solid var(--nc-lx-borda);
+  border-radius: 14px;
+  background: #fff;
+}
+
+@app.nc-lx-ativo .nc-lx-pac-id {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  flex: 1 1 520px;
+  min-width: 0;
+}
+
+@app.nc-lx-ativo .nc-lx-avatar {
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--nc-roxo, #511C76) 10%, #fff);
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--nc-roxo, #511C76);
+}
+
+@app.nc-lx-ativo .nc-lx-avatar .nc-lx-ic {
+  width: 22px;
+  height: 22px;
+}
+
+@app.nc-lx-ativo .nc-lx-pac-nome {
+  min-width: 0;
+}
+
+@app.nc-lx-ativo .nc-lx-pac-nome h1 {
+  margin: 0;
+  font-size: 19px;
+  font-weight: 700;
+  line-height: 1.25;
+  letter-spacing: -.01em;
+  color: var(--nc-lx-texto);
+}
+
+@app.nc-lx-ativo .nc-lx-cod {
+  font-weight: 500;
+  color: var(--nc-lx-fraco);
+  font-variant-numeric: tabular-nums;
+}
+
+@app.nc-lx-ativo .nc-lx-pac-dados {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 20px;
+  margin: 6px 0 0;
+  padding: 0;
+}
+
+@app.nc-lx-ativo .nc-lx-pac-dados > div {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
+@app.nc-lx-ativo .nc-lx-pac-dados dt {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--nc-lx-fraco);
+}
+
+@app.nc-lx-ativo .nc-lx-pac-dados dd {
+  margin: 0;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--nc-lx-texto);
+}
+
+@app.nc-lx-ativo .nc-lx-fraco {
+  margin: 4px 0 0;
+  font-size: 13.5px;
+  color: var(--nc-lx-fraco);
+}
+
+@app.nc-lx-ativo .nc-lx-pac-acoes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+/* ═══ [C4] O ALTO DO HISTÓRICO: TÍTULO, BUSCA, LANÇAR EXAME ═════════════════════════════════ */
+@app.nc-lx-ativo .t-Dialog-body:has(.nc-lx) {
+  padding: 18px 24px 28px;
+}
+
+@app.nc-lx-ativo .nc-lx {
+  color: var(--nc-lx-texto);
+  font-variant-numeric: tabular-nums;
+}
+
+@app.nc-lx-ativo .nc-lx-cab {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 16px;
+  margin: 0 0 14px;
+}
+
+@app.nc-lx-ativo .nc-lx-cab-tit {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin-right: auto;
+}
+
+@app.nc-lx-ativo .nc-lx-cab-tit h2 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--nc-lx-texto);
+}
+
+@app.nc-lx-ativo .nc-lx-total {
+  font-size: 13px;
+  color: var(--nc-lx-fraco);
+}
+
+@app.nc-lx-ativo .nc-lx-busca {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: min(360px, 100%);
+  margin: 0;
+}
+
+@app.nc-lx-ativo .nc-lx-busca .nc-lx-ic {
+  position: absolute;
+  left: 12px;
+  color: var(--nc-lx-fraco);
+  pointer-events: none;
+}
+
+@app.nc-lx-ativo .nc-lx-busca input {
+  width: 100%;
+  height: 42px;
+  margin: 0;
+  padding: 0 12px 0 38px;
+  border: 1px solid #D9D3E5;
+  border-radius: 10px;
+  background-color: #fff;
+  font-size: 14.5px;
+  color: var(--nc-lx-texto);
+  box-shadow: none;
+}
+
+@app.nc-lx-ativo .nc-lx-busca input:focus {
+  border-color: var(--nc-roxo, #511C76);
+  outline: 0;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--nc-roxo, #511C76) 16%, transparent);
+}
+
+@app.nc-lx-ativo .nc-lx-busca input::placeholder {
+  color: #8A839E;
+}
+
+/* ═══ [C5] A SITUAÇÃO DE CADA EXAME ═════════════════════════════════════════════════════════ */
+@app.nc-lx-ativo .nc-lx-situacao {
+  margin: 0 0 18px;
+}
+
+@app.nc-lx-ativo .nc-lx-sit-tit {
+  margin: 0 0 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--nc-lx-fraco);
+}
+
+@app.nc-lx-ativo .nc-lx-sit-lista {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+@app.nc-lx-ativo .nc-lx-sit {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+  padding: 12px 12px 12px 14px;
+  border: 1px solid var(--nc-lx-borda);
+  border-radius: 12px;
+  background: #fff;
+}
+
+@app.nc-lx-ativo .nc-lx-sit[data-tom="vencido"] {
+  border-color: color-mix(in srgb, var(--nc-lx-ruim) 30%, #fff);
+  background: color-mix(in srgb, var(--nc-lx-ruim) 4%, #fff);
+}
+
+@app.nc-lx-ativo .nc-lx-sit[data-tom="perto"] {
+  border-color: #F0D9A8;
+  background: #FFF8EA;
+}
+
+@app.nc-lx-ativo .nc-lx-sit-txt {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  flex: 1 1 auto;
+  min-width: 0;
+  gap: 2px 10px;
+}
+
+@app.nc-lx-ativo .nc-lx-sit-txt b {
+  flex: 1 1 100%;
+}
+
+@app.nc-lx-ativo .nc-lx-sit-txt b {
+  overflow: hidden;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--nc-lx-texto);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+@app.nc-lx-ativo .nc-lx-sit-estado {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--nc-lx-c);
+}
+
+@app.nc-lx-ativo .nc-lx-sit-estado::before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+@app.nc-lx-ativo .nc-lx-sit-quando {
+  font-size: 12.5px;
+  color: var(--nc-lx-fraco);
+}
+
+/* ═══ [C6] O HISTÓRICO ══════════════════════════════════════════════════════════════════════
+   Uma linha por exame, do mais novo ao mais antigo. A linha inteira abre a ficha.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-lx-ativo .nc-lx-filtros {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0 0 10px;
+}
+
+@app.nc-lx-ativo .nc-lx-lista {
+  margin: 0;
+  padding: 0;
+  border: 1px solid var(--nc-lx-borda);
+  border-radius: 14px;
+  background: #fff;
+  list-style: none;
+  overflow: hidden;
+}
+
+@app.nc-lx-ativo .nc-lx-item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  margin: 0;
+  border-top: 1px solid var(--nc-lx-borda);
+}
+
+@app.nc-lx-ativo .nc-lx-item:first-child {
+  border-top: 0;
+}
+
+@app.nc-lx-ativo .nc-lx-item.is-pendente {
+  background: #FFFBF2;
+}
+
+@app.nc-lx-ativo .nc-lx-linha {
+  display: grid;
+  grid-template-columns: 64px minmax(0, 1fr) 150px 150px minmax(0, 210px);
+  align-items: center;
+  gap: 16px;
+  flex: 1 1 auto;
+  min-width: 0;
+  margin: 0;
+  padding: 14px 8px 14px 18px;
+  border: 0;
+  background: transparent;
+  font: inherit;
+  text-align: left;
+  color: inherit;
+  cursor: pointer;
+  transition: background .12s;
+}
+
+@app.nc-lx-ativo .nc-lx-linha:hover {
+  background: color-mix(in srgb, var(--nc-roxo, #511C76) 3%, #fff);
+}
+
+@app.nc-lx-ativo .nc-lx-linha:focus-visible {
+  outline: 2px solid var(--nc-roxo, #511C76);
+  outline-offset: -2px;
+}
+
+@app.nc-lx-ativo .nc-lx-data {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  line-height: 1.1;
+}
+
+@app.nc-lx-ativo .nc-lx-data b {
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -.02em;
+  color: var(--nc-lx-texto);
+}
+
+@app.nc-lx-ativo .nc-lx-data span {
+  font-size: 12px;
+  color: var(--nc-lx-fraco);
+}
+
+@app.nc-lx-ativo .nc-lx-principal {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  min-width: 0;
+}
+
+@app.nc-lx-ativo .nc-lx-exame {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  min-width: 0;
+  overflow: hidden;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--nc-lx-texto);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+@app.nc-lx-ativo .nc-lx-codex {
+  flex: 0 0 auto;
+  padding: 1px 7px;
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--nc-roxo, #511C76) 9%, #fff);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--nc-roxo, #511C76);
+}
+
+@app.nc-lx-ativo .nc-lx-tags {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 6px;
+  min-width: 0;
+}
+
+@app.nc-lx-ativo .nc-lx-tag {
+  padding: 1px 8px;
+  border-radius: 999px;
+  background: var(--nc-lx-fundo);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--nc-lx-fraco);
+}
+
+@app.nc-lx-ativo .nc-lx-proc {
+  min-width: 0;
+  overflow: hidden;
+  font-size: 12.5px;
+  color: var(--nc-lx-fraco);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+@app.nc-lx-ativo .nc-lx-res {
+  display: inline-flex;
+  align-items: center;
+  justify-self: start;
+  gap: 6px;
+  max-width: 100%;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--nc-lx-c) 10%, #fff);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--nc-lx-c);
+  white-space: nowrap;
+}
+
+@app.nc-lx-ativo .nc-lx-res[data-tom="vazio"] {
+  background: transparent;
+  font-weight: 500;
+}
+
+@app.nc-lx-ativo .nc-lx-prox,
+@app.nc-lx-ativo .nc-lx-med {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+  font-size: 13.5px;
+  color: var(--nc-lx-texto);
+}
+
+@app.nc-lx-ativo .nc-lx-med {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+@app.nc-lx-ativo .nc-lx-prox b {
+  font-weight: 600;
+}
+
+@app.nc-lx-ativo .nc-lx-rot {
+  font-size: 11.5px;
+  font-weight: 500;
+  color: var(--nc-lx-fraco);
+}
+
+@app.nc-lx-ativo .nc-lx-venc {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--nc-lx-c);
+}
+
+@app.nc-lx-ativo .nc-lx-pend {
+  position: absolute;
+  top: 8px;
+  right: 96px;
+  padding: 1px 8px;
+  border-radius: 999px;
+  background: #FFF0CC;
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--nc-lx-atencao);
+}
+
+@app.nc-lx-ativo .nc-lx-item-acoes {
+  display: flex;
+  gap: 4px;
+  padding: 0 12px 0 4px;
+}
+
+@app.nc-lx-ativo .nc-lx-vazio {
+  margin: 0;
+  padding: 36px 20px;
+  text-align: center;
+  font-size: 14.5px;
+  color: var(--nc-lx-fraco);
+}
+
+@app.nc-lx-ativo .nc-lx-vazio b {
+  color: var(--nc-lx-texto);
+}
+
+/* ═══ [C7] A GAVETA (A FICHA DO GRID) ═══════════════════════════════════════════════════════
+   A região do grid sai de fora da tela e vira uma gaveta à direita (no celular, a tela toda),
+   com a vista de um registro do próprio grid em quatro partes.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-lx-ativo.nc-lx-editando .nc-lx-motor:not(#nc-lx-x) {
+  position: fixed;
+  inset: 0 0 0 auto;
+  left: auto;
+  z-index: 1001;
+  display: flex;
+  flex-direction: column;
+  width: min(560px, 100vw);
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+  background: #fff;
+  box-shadow: -24px 0 60px -30px rgba(27, 18, 56, .5);
+  visibility: visible;
+}
+
+@app.nc-lx-ativo.nc-lx-editando .nc-lx-motor .a-IG-header:not(#nc-lx-x),
+@app.nc-lx-ativo.nc-lx-editando .nc-lx-motor .a-RV-toolbar:not(#nc-lx-x),
+@app.nc-lx-ativo.nc-lx-editando .nc-lx-motor .a-RV-header,
+@app.nc-lx-ativo.nc-lx-editando .nc-lx-motor .a-RV-footer,
+@app.nc-lx-ativo.nc-lx-editando .nc-lx-motor .a-IG-footer {
+  display: none;
+}
+
+@app.nc-lx-ativo.nc-lx-editando .nc-lx-motor > .a-IG,
+@app.nc-lx-ativo.nc-lx-editando .nc-lx-motor > div:not(.nc-lx-gcab):not(.nc-lx-gpe) {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+/* tudo do grid entre a gaveta e a ficha na largura da gaveta (sem rolar para o lado) */
+@app.nc-lx-ativo.nc-lx-editando .nc-lx-motor :is(.a-IG, .a-IG-body, .a-IG-contentContainer, .a-RV, .a-RV-w-scroll, .a-RV-body) {
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  height: auto;
+  max-height: none;
+  margin: 0;
+  overflow: visible;
+  border: 0;
+  transform: none;
+}
+
+/* o campo de data: o calendário ao lado do campo, não embaixo */
+@app.nc-lx-ativo.nc-lx-editando .nc-lx-motor .a-RV .a-GV-columnItem:has(.apex-item-datepicker),
+@app.nc-lx-ativo.nc-lx-editando .nc-lx-motor .a-RV .a-GV-columnItem:has(.apex-item-popup-lov) {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+@app.nc-lx-ativo.nc-lx-editando .nc-lx-motor .a-RV .a-GV-columnItem .apex-item-datepicker {
+  flex: 1 1 auto;
+  min-width: 0;
+  border: 0;
+}
+
+@app.nc-lx-ativo.nc-lx-editando .nc-lx-motor .a-RV .a-GV-columnItem .ui-datepicker-trigger {
+  flex: 0 0 42px;
+  height: 42px;
+  margin: 0;
+  border: 0;
+  border-left: 1px solid var(--nc-lx-borda);
+  border-radius: 0 9px 9px 0;
+  background: var(--nc-lx-fundo);
+}
+
+/* a coluna Audiometria é um link: na ficha não serve (o ícone fica no histórico) */
+@app.nc-lx-ativo.nc-lx-editando .nc-lx-motor .a-RV .u-Form-fieldContainer[data-col="AUDIOMETRIA"] {
+  display: none;
+}
+
+@app.nc-lx-ativo.nc-lx-editando .nc-lx-motor .a-RV .u-Form {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px 14px;
+  padding: 6px 22px 22px;
+}
+
+@app.nc-lx-ativo.nc-lx-editando .nc-lx-motor .a-RV .nc-lx-parte {
+  grid-column: 1 / -1;
+  margin: 14px 0 -4px;
+  padding-top: 14px;
+  border-top: 1px solid var(--nc-lx-borda);
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--nc-lx-texto);
+}
+
+@app.nc-lx-ativo.nc-lx-editando .nc-lx-motor .a-RV .nc-lx-parte:first-child {
+  margin-top: 8px;
+  padding-top: 0;
+  border-top: 0;
+}
+
+/* os campos longos (exame, resultado, médico, entidade, procedimento) ocupam a linha toda */
+@app.nc-lx-ativo.nc-lx-editando .nc-lx-motor .a-RV .u-Form-fieldContainer:is([data-col="COD_EXAME"], [data-col="COD_RESULTADO"], [data-col="COD_PREST_SERV"], [data-col="COD_PREST_SERV_ORIGEM"], [data-col="COD_ENTIDADE_LOV"], [data-col="COD_PROCEDIMENTO"], [data-col="OBS_PROCEDIMENTO"], [data-col="DT_PROX_EXAME_PERIOD"], :not([data-col])) {
+  grid-column: 1 / -1;
+}
+
+@app.nc-lx-ativo.nc-lx-editando .nc-lx-motor .a-RV .u-Form-fieldContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 6px;
+  width: auto;
+  margin: 0;
+  padding: 0;
+}
+
+@app.nc-lx-ativo.nc-lx-editando .nc-lx-motor .a-RV .u-Form-labelContainer {
+  width: auto;
+  padding: 0;
+  text-align: left;
+}
+
+@app.nc-lx-ativo.nc-lx-editando .nc-lx-motor .a-RV .u-Form-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--nc-lx-fraco);
+}
+
+@app.nc-lx-ativo.nc-lx-editando .nc-lx-motor .a-RV .u-Form-inputContainer {
+  width: 100%;
+  min-height: 44px;
+  padding: 0;
+  border: 1px solid #D9D3E5;
+  border-radius: 10px;
+  background-color: #fff;
+  transition: border-color .15s, box-shadow .15s;
+}
+
+@app.nc-lx-ativo.nc-lx-editando .nc-lx-motor .a-RV .u-Form-inputContainer:hover {
+  border-color: #BDB4CF;
+}
+
+@app.nc-lx-ativo.nc-lx-editando .nc-lx-motor .a-RV .u-Form-inputContainer:focus-within {
+  border-color: var(--nc-roxo, #511C76);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--nc-roxo, #511C76) 16%, transparent);
+}
+
+@app.nc-lx-ativo.nc-lx-editando .nc-lx-motor .a-RV :is(select, input[type="text"], textarea) {
+  width: 100%;
+  min-height: 42px;
+  font-size: 15px;
+}
+
+@app.nc-lx-ativo.nc-lx-editando .nc-lx-motor .a-RV .is-error .u-Form-inputContainer {
+  border-color: var(--nc-lx-ruim);
+}
+
+@app.nc-lx-ativo .nc-lx-prazos {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin-top: 2px;
+  font-size: 12.5px;
+  color: var(--nc-lx-fraco);
+}
+
+@app.nc-lx-ativo .nc-lx-nota {
+  margin: 2px 0 0;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--nc-lx-atencao);
+}
+
+@app.nc-lx-ativo .nc-lx-gcab {
+  display: none;
+}
+
+@app.nc-lx-ativo.nc-lx-editando .nc-lx-gcab {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 20px 18px 14px 22px;
+  border-bottom: 1px solid var(--nc-lx-borda);
+}
+
+@app.nc-lx-ativo .nc-lx-gcab > div {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+@app.nc-lx-ativo .nc-lx-gtitulo {
+  margin: 0;
+  font-size: 19px;
+  font-weight: 700;
+  color: var(--nc-lx-texto);
+}
+
+@app.nc-lx-ativo .nc-lx-gsub {
+  margin: 4px 0 0;
+  font-size: 13.5px;
+  color: var(--nc-lx-fraco);
+}
+
+@app.nc-lx-ativo .nc-lx-gpe {
+  display: none;
+}
+
+@app.nc-lx-ativo.nc-lx-editando .nc-lx-gpe {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 22px calc(12px + env(safe-area-inset-bottom, 0px));
+  border-top: 1px solid var(--nc-lx-borda);
+  background: #fff;
+}
+
+@app.nc-lx-ativo .nc-lx-gpe.is-ocupado {
+  cursor: progress;
+}
+
+@app.nc-lx-ativo .nc-lx-gconf {
+  flex: 1 1 100%;
+  margin: 0 0 4px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--nc-lx-texto);
+}
+
+@app.nc-lx-ativo .nc-lx-bt--excluir {
+  margin-left: auto;
+  color: var(--nc-lx-ruim);
+}
+
+@app.nc-lx-ativo .nc-lx-fundo {
+  display: none;
+}
+
+/* enquanto a ficha é posta no exame certo, nada dela aparece (nunca pisca outro exame) */
+@app.nc-lx-ativo.nc-lx-abrindo .nc-lx-motor > :not(.nc-lx-gcab):not(.nc-lx-gpe) {
+  visibility: hidden;
+}
+
+@app.nc-lx-ativo.nc-lx-vendo .nc-lx-fundo,
+@app.nc-lx-ativo.nc-lx-editando .nc-lx-fundo {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: block;
+  background: rgba(27, 18, 56, .38);
+}
+
+/* o resumo (só leitura): a mesma gaveta, desenhada daqui */
+@app.nc-lx-ativo .nc-lx-resumo {
+  display: none;
+}
+
+@app.nc-lx-ativo.nc-lx-vendo .nc-lx-resumo {
+  position: fixed;
+  inset: 0 0 0 auto;
+  z-index: 1001;
+  display: flex;
+  flex-direction: column;
+  width: min(520px, 100vw);
+  background: #fff;
+  box-shadow: -24px 0 60px -30px rgba(27, 18, 56, .5);
+  color: var(--nc-lx-texto);
+  animation: nc-lx-entra .22s cubic-bezier(.2, .8, .2, 1);
+}
+
+@keyframes nc-lx-entra {
+  from { transform: translateX(24px); }
+  to { transform: none; }
+}
+
+@app.nc-lx-ativo .nc-lx-rcab {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 20px 18px 14px 22px;
+  border-bottom: 1px solid var(--nc-lx-borda);
+}
+
+@app.nc-lx-ativo .nc-lx-rcab > div {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+@app.nc-lx-ativo .nc-lx-rcab .nc-lx-gtitulo {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+@app.nc-lx-ativo .nc-lx-rcorpo {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: auto;
+  padding: 16px 22px 22px;
+}
+
+@app.nc-lx-ativo .nc-lx-rdestaque {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 16px;
+  margin: 0 0 6px;
+}
+
+@app.nc-lx-ativo .nc-lx-rdestaque .nc-lx-res {
+  padding: 6px 14px;
+  font-size: 15px;
+}
+
+@app.nc-lx-ativo .nc-lx-rprox {
+  font-size: 14px;
+  color: var(--nc-lx-fraco);
+}
+
+@app.nc-lx-ativo .nc-lx-rprox b {
+  font-weight: 700;
+  color: var(--nc-lx-texto);
+}
+
+@app.nc-lx-ativo .nc-lx-rcorpo section {
+  margin-top: 18px;
+  padding-top: 14px;
+  border-top: 1px solid var(--nc-lx-borda);
+}
+
+@app.nc-lx-ativo .nc-lx-rcorpo h3 {
+  margin: 0 0 10px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--nc-lx-texto);
+}
+
+@app.nc-lx-ativo .nc-lx-rcorpo dl {
+  display: grid;
+  grid-template-columns: 150px minmax(0, 1fr);
+  gap: 7px 14px;
+  margin: 0;
+}
+
+@app.nc-lx-ativo .nc-lx-rcorpo dl > div {
+  display: contents;
+}
+
+@app.nc-lx-ativo .nc-lx-rcorpo dt {
+  margin: 0;
+  font-size: 13px;
+  color: var(--nc-lx-fraco);
+}
+
+@app.nc-lx-ativo .nc-lx-rcorpo dd {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--nc-lx-texto);
+}
+
+@app.nc-lx-ativo .nc-lx-rpe {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 22px calc(12px + env(safe-area-inset-bottom, 0px));
+  border-top: 1px solid var(--nc-lx-borda);
+}
+
+/* ═══ [C8] BOTÕES, FILTROS E AVISO ══════════════════════════════════════════════════════════ */
+@app.nc-lx-ativo .nc-lx-bt {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 40px;
+  margin: 0;
+  padding: 0 14px;
+  border: 1px solid var(--nc-borda-botao);
+  border-radius: 10px;
+  background: #fff;
+  box-shadow: none;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--nc-lx-texto);
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background .15s, border-color .15s;
+}
+
+@app.nc-lx-ativo .nc-lx-bt .t-Button-label {
+  padding: 0;
+  font: inherit;
+  color: inherit;
+}
+
+@app.nc-lx-ativo .nc-lx-bt:hover:not(:disabled) {
+  border-color: color-mix(in srgb, var(--nc-roxo, #511C76) 35%, #fff);
+  background: color-mix(in srgb, var(--nc-roxo, #511C76) 4%, #fff);
+}
+
+@app.nc-lx-ativo .nc-lx-bt:focus-visible,
+@app.nc-lx-ativo .nc-lx-chip:focus-visible {
+  outline: 2px solid var(--nc-roxo, #511C76);
+  outline-offset: 2px;
+}
+
+@app.nc-lx-ativo .nc-lx-bt:disabled {
+  opacity: .55;
+  cursor: progress;
+}
+
+@app.nc-lx-ativo .nc-lx-bt--leve {
+  border-color: transparent;
+  background: transparent;
+  color: var(--nc-lx-fraco);
+}
+
+@app.nc-lx-ativo .nc-lx-bt--primario {
+  height: 42px;
+  border-color: var(--nc-roxo, #511C76);
+  background: var(--nc-roxo, #511C76);
+  color: #fff;
+}
+
+@app.nc-lx-ativo .nc-lx-bt--primario:hover:not(:disabled) {
+  border-color: var(--nc-azul, #2C1A63);
+  background: var(--nc-azul, #2C1A63);
+}
+
+@app.nc-lx-ativo .nc-lx-bt--largo {
+  flex: 1 1 auto;
+  height: 46px;
+  font-size: 15px;
+}
+
+@app.nc-lx-ativo .nc-lx-bt--perigo {
+  border-color: var(--nc-lx-ruim);
+  background: var(--nc-lx-ruim);
+  color: #fff;
+}
+
+@app.nc-lx-ativo .nc-lx-bt--icone {
+  width: 38px;
+  height: 38px;
+  padding: 0;
+  border-color: transparent;
+  background: transparent;
+  color: var(--nc-lx-fraco);
+}
+
+@app.nc-lx-ativo .nc-lx-bt--icone:hover:not(:disabled) {
+  color: var(--nc-roxo, #511C76);
+}
+
+@app.nc-lx-ativo .nc-lx-bt--mini {
+  height: 32px;
+  padding: 0 10px;
+  font-size: 12.5px;
+}
+
+@app.nc-lx-ativo .nc-lx-ic {
+  flex: 0 0 auto;
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+@app.nc-lx-ativo .nc-lx-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 32px;
+  margin: 0;
+  padding: 0 12px;
+  border: 1px solid var(--nc-lx-borda);
+  border-radius: 999px;
+  background: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--nc-lx-fraco);
+  cursor: pointer;
+}
+
+@app.nc-lx-ativo .nc-lx-chip span {
+  font-weight: 500;
+  color: #8A839E;
+}
+
+@app.nc-lx-ativo .nc-lx-chip[aria-pressed="true"] {
+  border-color: var(--nc-roxo, #511C76);
+  background: var(--nc-roxo, #511C76);
+  color: #fff;
+}
+
+@app.nc-lx-ativo .nc-lx-chip[aria-pressed="true"] span {
+  color: rgba(255, 255, 255, .75);
+}
+
+@app.nc-lx-ativo .nc-lx-aviso {
+  position: fixed;
+  left: 50%;
+  bottom: calc(20px + env(safe-area-inset-bottom, 0px));
+  z-index: 1100;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 11px 16px;
+  border-radius: 12px;
+  background: var(--nc-lx-texto);
+  box-shadow: 0 12px 30px -12px rgba(27, 18, 56, .55);
+  font-size: 14px;
+  font-weight: 600;
+  color: #fff;
+  opacity: 0;
+  transform: translate(-50%, 12px);
+  pointer-events: none;
+  transition: opacity .2s, transform .25s cubic-bezier(.2, .8, .2, 1);
+}
+
+@app.nc-lx-ativo .nc-lx-aviso.is-visivel {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+@app.nc-lx-ativo .nc-lx-aviso.is-erro {
+  background: var(--nc-lx-ruim);
+}
+
+/* ═══ [C9] CELULAR E TABLET ═════════════════════════════════════════════════════════════════ */
+@media (max-width: 1080px) {
+  @app.nc-lx-ativo .nc-lx-linha {
+    grid-template-columns: 56px minmax(0, 1fr) 140px 140px;
+  }
+
+  @app.nc-lx-ativo .nc-lx-med {
+    display: none;
+  }
+}
+
+@media (max-width: 720px) {
+  @app.nc-lx-ativo .t-Dialog-body:has(.nc-lx) {
+    padding: 12px 12px 24px;
+  }
+
+  @app.nc-lx-ativo .nc-lx-pac-dados > div:is([data-k="empresa"], [data-k="prédio"], [data-k="andar"], [data-k="sala"], [data-k="local"]) {
+    display: none;
+  }
+
+  @app.nc-lx-ativo .nc-lx-pac-nome h1 {
+    font-size: 17px;
+  }
+
+  @app.nc-lx-ativo .nc-lx-busca {
+    order: 3;
+    width: 100%;
+  }
+
+  @app.nc-lx-ativo .nc-lx-linha {
+    grid-template-columns: 52px minmax(0, 1fr);
+    gap: 6px 12px;
+    padding: 12px 4px 12px 14px;
+  }
+
+  @app.nc-lx-ativo .nc-lx-res,
+  @app.nc-lx-ativo .nc-lx-prox {
+    grid-column: 2;
+  }
+
+  @app.nc-lx-ativo .nc-lx-prox {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 2px 6px;
+    align-items: baseline;
+  }
+
+  @app.nc-lx-ativo .nc-lx-data {
+    grid-row: span 3;
+    align-self: start;
+  }
+
+  @app.nc-lx-ativo .nc-lx-exame {
+    white-space: normal;
+  }
+
+  @app.nc-lx-ativo .nc-lx-item-acoes {
+    flex-direction: column;
+    align-self: flex-start;
+    padding: 8px 6px 0 0;
+  }
+
+  @app.nc-lx-ativo .nc-lx-pend {
+    position: static;
+    grid-column: 2;
+    justify-self: start;
+  }
+
+  @app.nc-lx-ativo.nc-lx-editando .nc-lx-motor .a-RV .u-Form {
+    grid-template-columns: minmax(0, 1fr);
+    padding: 4px 16px 20px;
+  }
+
+  @app.nc-lx-ativo .nc-lx-rcorpo dl {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 2px;
+  }
+
+  @app.nc-lx-ativo .nc-lx-rcorpo dd {
+    margin-bottom: 8px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  @app.nc-lx-ativo .nc-lx *,
+  @app.nc-lx-ativo .nc-lx-aviso {
+    transition: none;
+  }
+
+  @app.nc-lx-ativo.nc-lx-vendo .nc-lx-resumo {
+    animation: none;
+  }
+}

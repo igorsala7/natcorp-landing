@@ -1,0 +1,1265 @@
+/* ╔════════════════════════════════════════════════════════════════════════════════════════╗
+   ║  NATCORP · EXAME MÉDICO OCUPACIONAL  —  a "roupa" da tela (CSS)                          ║
+   ║  App 2937 (Medicina Ocupacional) · Página 19 · Exame Médico Ocupacional (modal)          ║
+   ╚════════════════════════════════════════════════════════════════════════════════════════╝
+
+   Primeira vez num arquivo destes? Leia antes o manual: brand/apex/MANUAL-APEX.md (parte 1).
+
+   ── O QUE ESTE ARQUIVO FAZ ────────────────────────────────────────────────────────────────
+   A aparência da ficha que o Natcorp_ExameMedico.js monta: o paciente no alto da janela, o
+   exame à esquerda (sinais vitais, exames complementares), o parecer à direita e o rodapé com
+   o Salvar. Sem o JS, nada daqui vale (tudo depende da marca nc-em-ativo que ele põe na
+   página). Feita para quem passa o dia nela: letra legível, campos grandes, pouca cor — a cor
+   aparece só onde decide (Apto / Inapto, um aviso de referência, o "não salvo").
+
+   ── ONDE ELE ENTRA NO APEX ────────────────────────────────────────────────────────────────
+     Página 19 › CSS › File URLs:   #WORKSPACE_IMAGES#Natcorp_ExameMedico.css
+     CUIDADO: este é o arquivo-FONTE (.src.css). O gerador (gerar-app.mjs) cria a partir dele o
+     Natcorp_ExameMedico.css que sobe para o APEX. Edite ESTE arquivo, não o gerado.
+
+   ── ÍNDICE ────────────────────────────────────────────────────────────────────────────────
+     [C1] As cores (tipos de exame, Apto/Inapto, avisos)       PODE MEXER
+     [C2] O que sai da vista (abas, grid antigo, listas originais)
+     [C3] A janela: o paciente no alto e o rodapé embaixo
+     [C4] A ficha: exame à esquerda, parecer à direita
+     [C5] As partes e os campos
+     [C6] A acuidade visual (a tabela)
+     [C7] O parecer: Apto / Inapto e os botões de escolha
+     [C8] Os botões do rodapé
+     [C9] Pré-atendimento (a ficha travada)
+     [C10] Celular e tablet
+*/
+
+/* ═══ [C1] AS CORES ═════════════════════════════════════════════════════════════════════════
+   --nc-em-c: a cor do tipo de exame (a pílula do alto).
+   PODE MEXER as cores (prefira as da marca: --nc-roxo, --nc-bom, --nc-ruim, --nc-rosa…).
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-em-ativo {
+  --nc-em-borda: var(--nc-nevoa, #E9E5F1);
+  --nc-em-fundo: var(--nc-off, #F7F5FA);
+  --nc-em-texto: var(--nc-tinta, #1B1238);
+  --nc-em-fraco: var(--nc-grafite, #4A4460);
+  --nc-em-apto: var(--nc-bom, #1F7A52);
+  --nc-em-inapto: var(--nc-ruim, #B8323F);
+  --nc-em-atencao: #8A5300;
+  --nc-em-atencao-fundo: #FFF4E0;
+}
+
+@app.nc-em-ativo .nc-em-tipo { --nc-em-c: var(--nc-grafite, #4A4460); }
+@app.nc-em-ativo .nc-em-tipo[data-tom="admissional"] { --nc-em-c: var(--nc-bom, #1F7A52); }
+@app.nc-em-ativo .nc-em-tipo[data-tom="demissional"] { --nc-em-c: #A63F6E; }
+@app.nc-em-ativo .nc-em-tipo[data-tom="periodico"] { --nc-em-c: var(--nc-roxo, #511C76); }
+@app.nc-em-ativo .nc-em-tipo[data-tom="mudanca"] { --nc-em-c: #9A408A; }
+@app.nc-em-ativo .nc-em-tipo[data-tom="retorno"] { --nc-em-c: var(--nc-azul, #2C1A63); }
+
+/* ═══ [C2] O QUE SAI DA VISTA ═══════════════════════════════════════════════════════════════
+   Tudo continua na página (vai para o banco no Salvar); só não aparece:
+   • a região de cadastro (o paciente é desenhado no alto) e as abas, já vazias;
+   • o grid antigo de cada região (as linhas e colunas que ficaram sem campo);
+   • o cabeçalho de região da Skin (o desenho põe o seu);
+   • a lista original de Resultado, Validade e "Feito na empresa" (no lugar, os botões);
+   • CRM, endereço, bairro e CEP do coordenador (aparecem numa linha, embaixo dele).
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-em-ativo .nc-em-guardada,
+@app.nc-em-ativo .nc-em-vazio,
+@app.nc-em-ativo .nc-em-guardados,
+@app.nc-em-ativo .nc-em-sec > .t-Region-header,
+@app.nc-em-ativo .nc-em .nc-em-campo.nc-em-campo--escolha:not(.nc-em-fora-da-lista) .t-Form-itemWrapper,
+@app.nc-em-ativo .nc-em-sec .t-Region-buttons:empty,
+@app.nc-em-ativo .nc-em-sec .t-Region-buttons:not(:has(button)) {
+  display: none;
+}
+
+@app.nc-em-ativo .nc-em-campo--escolha.nc-em-fora-da-lista .nc-em-escolha {
+  display: none;
+}
+
+@app.nc-em-ativo [hidden] {
+  display: none;
+}
+
+@app.nc-em-ativo .nc-em-so-leitor {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+/* ═══ [C3] A JANELA: O PACIENTE NO ALTO E O RODAPÉ EMBAIXO ══════════════════════════════════ */
+@app.nc-em-ativo .nc-em ::selection,
+@app.nc-em-ativo .nc-em-paciente ::selection {
+  background: color-mix(in srgb, var(--nc-roxo, #511C76) 18%, #fff);
+}
+
+@app.nc-em-ativo.nc-em-cab-fixo .t-Dialog-header {
+  display: block;
+  height: auto;
+  padding: 14px 24px 12px;
+  border-bottom: 1px solid var(--nc-em-borda);
+  background: #fff;
+}
+
+@app.nc-em-ativo .nc-em-paciente {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px 24px;
+  margin: 0;
+  color: var(--nc-em-texto);
+}
+
+@app.nc-em-ativo .nc-em > .nc-em-paciente {
+  margin: 0 0 16px;
+  padding: 14px 16px;
+  border: 1px solid var(--nc-em-borda);
+  border-radius: 14px;
+  background: #fff;
+}
+
+@app.nc-em-ativo .nc-em-pac-id {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  min-width: 0;
+  flex: 1 1 520px;
+}
+
+@app.nc-em-ativo .nc-em-avatar {
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--nc-roxo, #511C76) 10%, #fff);
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: .02em;
+  color: var(--nc-roxo, #511C76);
+}
+
+@app.nc-em-ativo .nc-em-pac-nome {
+  min-width: 0;
+}
+
+@app.nc-em-ativo .nc-em-pac-nome h1 {
+  margin: 0;
+  font-size: 19px;
+  font-weight: 700;
+  line-height: 1.25;
+  letter-spacing: -.01em;
+  color: var(--nc-em-texto);
+  text-wrap: balance;
+}
+
+@app.nc-em-ativo .nc-em-cod {
+  font-weight: 500;
+  color: var(--nc-em-fraco);
+  font-variant-numeric: tabular-nums;
+}
+
+@app.nc-em-ativo .nc-em-pac-dados {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 20px;
+  margin: 6px 0 0;
+  padding: 0;
+}
+
+@app.nc-em-ativo .nc-em-pac-dados > div {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  min-width: 0;
+}
+
+@app.nc-em-ativo .nc-em-pac-dados dt {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--nc-em-fraco);
+}
+
+@app.nc-em-ativo .nc-em-pac-dados dd {
+  margin: 0;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--nc-em-texto);
+}
+
+@app.nc-em-ativo .nc-em-fraco {
+  font-weight: 400;
+  color: var(--nc-em-fraco);
+}
+
+@app.nc-em-ativo .nc-em-pac-exame {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+  flex: 0 0 auto;
+}
+
+@app.nc-em-ativo .nc-em-tipo {
+  display: inline-flex;
+  align-items: center;
+  padding: 5px 12px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--nc-em-c) 11%, #fff);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--nc-em-c);
+}
+
+@app.nc-em-ativo .nc-em-data {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--nc-em-fraco);
+  font-variant-numeric: tabular-nums;
+}
+
+@app.nc-em-ativo .nc-em-ic {
+  flex: 0 0 auto;
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+@app.nc-em-ativo .nc-em-data .nc-em-ic {
+  width: 16px;
+  height: 16px;
+}
+
+/* o rodapé da janela */
+@app.nc-em-ativo .t-Dialog-footer:has(.nc-em-rodape) {
+  display: block;
+  height: auto;
+  padding: 10px 24px;
+  border-top: 1px solid var(--nc-em-borda);
+  background: #fff;
+}
+
+@app.nc-em-ativo .nc-em-rodape {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+@app.nc-em-ativo .nc-em-rodape--solto {
+  position: sticky;
+  bottom: 0;
+  z-index: 5;
+  margin-top: 16px;
+  padding: 10px 0;
+  background: #fff;
+}
+
+@app.nc-em-ativo .nc-em-rodape-esq,
+@app.nc-em-ativo .nc-em-rodape-dir {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+@app.nc-em-ativo .nc-em-rodape-meio {
+  flex: 1 1 auto;
+  min-width: 0;
+  text-align: right;
+}
+
+@app.nc-em-ativo .nc-em-estado {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--nc-em-atencao);
+}
+
+@app.nc-em-ativo .nc-em-estado .nc-em-dica {
+  font-weight: 400;
+  color: var(--nc-em-fraco);
+}
+
+@app.nc-em-ativo .nc-em-falta {
+  margin: 0;
+  font-size: 12.5px;
+  color: var(--nc-em-fraco);
+}
+
+@app.nc-em-ativo .nc-em-falta:empty {
+  display: none;
+}
+
+/* o que o Salvar exige ganha o "obrigatório" no rótulo */
+@app.nc-em-ativo .nc-em .nc-em-exigido .t-Form-label::after {
+  content: " · obrigatório";
+  font-weight: 500;
+  color: #8A839E;
+}
+
+@app.nc-em-ativo .nc-em-ponto {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #D68A00;
+}
+
+/* ═══ [C4] A FICHA: EXAME À ESQUERDA, PARECER À DIREITA ═════════════════════════════════════ */
+@app.nc-em-ativo .t-Dialog-body:has(.nc-em) {
+  padding: 18px 24px 24px;
+}
+
+@app.nc-em-ativo .nc-em {
+  color: var(--nc-em-texto);
+  font-variant-numeric: tabular-nums;
+}
+
+@app.nc-em-ativo .nc-em-corpo {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(340px, 1fr);
+  align-items: start;
+  gap: 18px;
+}
+
+@app.nc-em-ativo .nc-em-exame,
+@app.nc-em-ativo .nc-em-lado {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  min-width: 0;
+}
+
+/* ═══ [C5] AS PARTES E OS CAMPOS ════════════════════════════════════════════════════════════
+   Cada parte (Sinais vitais, Exames complementares, Parecer) é a própria região do APEX, com
+   o cabeçalho do desenho: título à esquerda, "3 de 5" (campos preenchidos) à direita.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-em-ativo .nc-em-sec {
+  margin: 0;
+  padding: 0;
+  border: 1px solid var(--nc-em-borda);
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: 0 1px 2px rgba(27, 18, 56, .04);
+  overflow: visible;
+}
+
+@app.nc-em-ativo .nc-em-sec .t-Region-bodyWrap,
+@app.nc-em-ativo .nc-em-sec .t-Region-body {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  overflow: visible;
+}
+
+@app.nc-em-ativo .nc-em-sec .t-Region-body {
+  padding: 16px 18px 18px;
+}
+
+@app.nc-em-ativo .nc-em-mudanca {
+  padding: 16px 18px 18px;
+  border-color: color-mix(in srgb, var(--nc-ameixa, #9A408A) 28%, #fff);
+}
+
+@app.nc-em-ativo .nc-em-sec-cab {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin: -16px -18px 14px;
+  padding: 12px 18px 10px;
+  border-bottom: 2px solid var(--nc-rosa, #C95788);   /* a faixa da região (padrão da Skin, cor do tema) */
+}
+
+@app.nc-em-ativo .nc-em-sec-tit {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.3;
+  letter-spacing: -.005em;
+  color: var(--nc-em-texto);
+}
+
+@app.nc-em-ativo .nc-em-conta {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--nc-em-fraco);
+  white-space: nowrap;
+}
+
+@app.nc-em-ativo .nc-em-conta[data-completo="sim"] {
+  color: var(--nc-em-apto);
+}
+
+@app.nc-em-ativo .nc-em-hoje {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: -6px 0 12px;
+  font-size: 13.5px;
+  color: var(--nc-em-fraco);
+}
+
+@app.nc-em-ativo .nc-em-hoje b {
+  font-weight: 600;
+  color: var(--nc-em-texto);
+}
+
+@app.nc-em-ativo .nc-em-grade {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px 14px;
+}
+
+@app.nc-em-ativo .nc-em-grade--vitais,
+@app.nc-em-ativo .nc-em-grade--3 {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+@app.nc-em-ativo .nc-em-grade--4 {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+/* 04/10: o style="display:none" que a ação dinâmica escreve (AD_PROPOSTOS esconde cargo, função,
+   filial e local fora do tipo M) vale — com !important, o display: flex abaixo o venceria */
+@app.nc-em-ativo .nc-em .nc-em-campo[style*="none"] {
+  display: none;
+}
+
+/* o contêiner do campo do APEX (rótulo em cima, campo embaixo) */
+@app.nc-em-ativo .nc-em .nc-em-campo {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: auto;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+@app.nc-em-ativo .nc-em .nc-em-campo .t-Form-labelContainer,
+@app.nc-em-ativo .nc-em .nc-em-campo .t-Form-inputContainer {
+  display: block;
+  flex: none;
+  width: auto;
+  max-width: none;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  text-align: left;
+}
+
+@app.nc-em-ativo .nc-em .nc-em-campo .t-Form-label {
+  display: block;
+  margin: 0;
+  padding: 0;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--nc-em-fraco);
+  white-space: normal;
+}
+
+@app.nc-em-ativo .nc-em .nc-em-campo .t-Form-itemWrapper {
+  position: relative;
+  display: flex;
+  align-items: stretch;
+  width: 100%;
+}
+
+@app.nc-em-ativo .nc-em .nc-em-campo input.apex-item-text,
+@app.nc-em-ativo .nc-em .nc-em-campo select.apex-item-select,
+@app.nc-em-ativo .nc-em .nc-em-campo textarea {
+  width: 100%;
+  min-width: 0;
+  height: 42px;
+  margin: 0;
+  padding: 0 12px;
+  border: 1px solid #D9D3E5;
+  border-radius: 10px;
+  background-color: #fff;
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 1.3;
+  color: var(--nc-em-texto);
+  box-shadow: none;
+  transition: border-color .15s, box-shadow .15s;
+}
+
+@app.nc-em-ativo .nc-em .nc-em-campo textarea {
+  height: auto;
+  min-height: 96px;
+  padding: 10px 12px;
+  line-height: 1.45;
+  resize: vertical;
+}
+
+@app.nc-em-ativo .nc-em .nc-em-campo .apex-item-group--textarea {
+  display: block;
+  width: 100%;
+}
+
+@app.nc-em-ativo .nc-em .nc-em-campo input::placeholder,
+@app.nc-em-ativo .nc-em .nc-em-campo textarea::placeholder {
+  font-weight: 400;
+  color: #8A839E;
+}
+
+/* ficha travada (pré-atendimento): o exemplo cinza some (não pode ser lido como valor) */
+@app.nc-em-ativo .nc-em .apex_disabled input::placeholder {
+  color: transparent;
+}
+
+@app.nc-em-ativo .nc-em .nc-em-campo input.apex-item-text:hover:not([readonly]),
+@app.nc-em-ativo .nc-em .nc-em-campo select.apex-item-select:hover,
+@app.nc-em-ativo .nc-em .nc-em-campo textarea:hover {
+  border-color: #BDB4CF;
+}
+
+@app.nc-em-ativo .nc-em .nc-em-campo input.apex-item-text:focus,
+@app.nc-em-ativo .nc-em .nc-em-campo select.apex-item-select:focus,
+@app.nc-em-ativo .nc-em .nc-em-campo textarea:focus {
+  border-color: var(--nc-roxo, #511C76);
+  outline: 0;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--nc-roxo, #511C76) 16%, transparent);
+  caret-color: var(--nc-roxo, #511C76);
+}
+
+/* o campo com a lista de busca (Popup LOV) e o calendário: o botão encostado no campo */
+@app.nc-em-ativo .nc-em .nc-em-campo .apex-item-group--popup-lov {
+  display: flex;
+  width: 100%;
+}
+
+@app.nc-em-ativo .nc-em .nc-em-campo .apex-item-datepicker {
+  flex: 1 1 auto;
+  width: auto;
+}
+
+@app.nc-em-ativo .nc-em .nc-em-campo .apex-item-group--popup-lov input.apex-item-text,
+@app.nc-em-ativo .nc-em .nc-em-campo .apex-item-datepicker {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+@app.nc-em-ativo .nc-em .nc-em-campo .a-Button--popupLOV,
+@app.nc-em-ativo .nc-em .nc-em-campo .ui-datepicker-trigger {
+  flex: 0 0 42px;
+  width: 42px;
+  height: 42px;
+  margin: 0 0 0 -1px;
+  border: 1px solid #D9D3E5;
+  border-radius: 0 10px 10px 0;
+  background: var(--nc-em-fundo);
+  color: var(--nc-em-fraco);
+  box-shadow: none;
+}
+
+@app.nc-em-ativo .nc-em .nc-em-campo .a-Button--popupLOV:hover,
+@app.nc-em-ativo .nc-em .nc-em-campo .ui-datepicker-trigger:hover {
+  background: color-mix(in srgb, var(--nc-roxo, #511C76) 8%, #fff);
+  color: var(--nc-roxo, #511C76);
+}
+
+/* a lista de busca é só leitura: o campo inteiro abre a lista */
+@app.nc-em-ativo .nc-em .nc-em-campo .apex-item-popup-lov {
+  cursor: pointer;
+}
+
+/* a unidade dentro do campo (kg, m, mmHg…) */
+@app.nc-em-ativo .nc-em .nc-em-com-un input.apex-item-text {
+  padding-right: 52px;
+}
+
+@app.nc-em-ativo .nc-em .nc-em-un {
+  position: absolute;
+  top: 0;
+  right: 12px;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--nc-em-fraco);
+  pointer-events: none;
+}
+
+/* o IMC (calculado no banco): número grande, sem cara de campo */
+@app.nc-em-ativo .nc-em .nc-em-imc .t-Form-itemWrapper {
+  align-items: center;
+  min-height: 42px;
+  padding: 0 12px;
+  border-radius: 10px;
+  background: var(--nc-em-fundo);
+}
+
+@app.nc-em-ativo .nc-em .nc-em-imc .display_only {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--nc-em-texto);
+}
+
+@app.nc-em-ativo .nc-em .nc-em-imc .display_only:empty::before {
+  content: "Peso e altura";
+  font-size: 13.5px;
+  font-weight: 400;
+  color: #8A839E;
+}
+
+/* a nota embaixo do campo: referência, formato */
+@app.nc-em-ativo .nc-em .nc-em-nota {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 6px 0 0;
+  font-size: 12.5px;
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--nc-em-fraco);
+}
+
+@app.nc-em-ativo .nc-em .nc-em-nota::before {
+  content: "";
+  flex: 0 0 auto;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+@app.nc-em-ativo .nc-em [data-ref="bom"] .nc-em-nota {
+  color: var(--nc-em-apto);
+}
+
+@app.nc-em-ativo .nc-em [data-ref="atencao"] .nc-em-nota,
+@app.nc-em-ativo .nc-em [data-ref="aviso"] .nc-em-nota {
+  color: var(--nc-em-atencao);
+}
+
+@app.nc-em-ativo .nc-em [data-ref="atencao"] input.apex-item-text:not(:focus) {
+  border-color: #E3B04B;
+  background: var(--nc-em-atencao-fundo);
+}
+
+/* o contador do texto livre */
+@app.nc-em-ativo .nc-em .nc-em-limite {
+  display: block;
+  margin: 4px 2px 0 0;
+  font-size: 12px;
+  color: var(--nc-em-fraco);
+  text-align: right;
+}
+
+@app.nc-em-ativo .nc-em .nc-em-limite[data-perto="sim"] {
+  font-weight: 600;
+  color: var(--nc-em-atencao);
+}
+
+/* o erro do APEX (validação): continua no lugar de sempre, embaixo do campo */
+@app.nc-em-ativo .nc-em .nc-em-campo .a-Form-error:not(:empty) {
+  display: block;
+  margin: 4px 0 0;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--nc-em-inapto);
+}
+
+@app.nc-em-ativo .nc-em .nc-em-campo.is-error input.apex-item-text,
+@app.nc-em-ativo .nc-em .nc-em-campo.is-error select.apex-item-select {
+  border-color: var(--nc-em-inapto);
+}
+
+/* os blocos dentro dos Exames complementares (Acuidade visual, Audiometria…) */
+@app.nc-em-ativo .nc-em-compl-corpo,
+@app.nc-em-ativo .nc-em-parecer-corpo {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+@app.nc-em-ativo .nc-em-par {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+  gap: 18px;
+  padding-top: 16px;
+  border-top: 1px solid var(--nc-em-borda);
+}
+
+@app.nc-em-ativo .nc-em-par:has(.nc-em-campo--texto) {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+@app.nc-em-ativo .nc-em-bloco {
+  min-width: 0;
+  margin: 0;
+}
+
+@app.nc-em-ativo .nc-em-bloco-tit {
+  margin: 0 0 10px;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.3;
+  color: var(--nc-em-texto);
+}
+
+/* ═══ [C6] A ACUIDADE VISUAL ════════════════════════════════════════════════════════════════
+   Olho (linhas) × sem/com óculos, perto/longe (colunas). Cada célula é o campo original.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-em-ativo .nc-em-visao-rola {
+  overflow-x: auto;
+}
+
+@app.nc-em-ativo .nc-em-visao {
+  width: 100%;
+  min-width: 460px;
+  border-collapse: separate;
+  border-spacing: 8px 6px;
+  margin: -6px -8px;
+  table-layout: fixed;
+}
+
+@app.nc-em-ativo .nc-em-visao thead th {
+  padding: 0 2px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--nc-em-fraco);
+  text-align: left;
+}
+
+@app.nc-em-ativo .nc-em-visao thead tr:first-child th {
+  padding-bottom: 2px;
+  border-bottom: 1px solid var(--nc-em-borda);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--nc-em-texto);
+}
+
+@app.nc-em-ativo .nc-em-visao thead td,
+@app.nc-em-ativo .nc-em-visao tbody th {
+  width: 158px;
+}
+
+@app.nc-em-ativo .nc-em-visao tbody th {
+  padding: 0;
+  font-size: 13.5px;
+  font-weight: 600;
+  text-align: left;
+  white-space: nowrap;
+  color: var(--nc-em-texto);
+}
+
+@app.nc-em-ativo .nc-em-visao abbr {
+  display: inline-block;
+  min-width: 28px;
+  margin-right: 8px;
+  font-weight: 700;
+  text-decoration: none;
+  color: var(--nc-roxo, #511C76);
+}
+
+@app.nc-em-ativo .nc-em-visao .nc-em-olho {
+  font-weight: 500;
+  color: var(--nc-em-fraco);
+}
+
+@app.nc-em-ativo .nc-em-visao td {
+  padding: 0;
+}
+
+@app.nc-em-ativo .nc-em-visao .nc-em-visao-co {
+  padding-left: 10px;
+}
+
+@app.nc-em-ativo .nc-em .nc-em-campo--celula .t-Form-labelContainer {
+  display: none;
+}
+
+@app.nc-em-ativo .nc-em .nc-em-campo--celula input.apex-item-text {
+  text-align: center;
+}
+
+/* ═══ [C7] O PARECER: APTO / INAPTO E OS BOTÕES DE ESCOLHA ══════════════════════════════════ */
+@app.nc-em-ativo .nc-em-linha {
+  display: grid;
+  gap: 12px 14px;
+}
+
+@app.nc-em-ativo .nc-em-linha--2 {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+@app.nc-em-ativo .nc-em-escolha {
+  display: flex;
+  gap: 4px;
+  padding: 3px;
+  border-radius: 12px;
+  background: var(--nc-em-fundo);
+}
+
+@app.nc-em-ativo .nc-em-opcao {
+  display: inline-flex;
+  flex: 1 1 0;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-width: 0;
+  height: 36px;
+  margin: 0;
+  padding: 0 10px;
+  border: 0;
+  border-radius: 9px;
+  background: transparent;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--nc-em-fraco);
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background .15s, color .15s, box-shadow .15s;
+}
+
+@app.nc-em-ativo .nc-em-opcao:hover {
+  background: rgba(255, 255, 255, .7);
+  color: var(--nc-em-texto);
+}
+
+@app.nc-em-ativo .nc-em-opcao[aria-checked="true"] {
+  background: #fff;
+  color: var(--nc-roxo, #511C76);
+  box-shadow: 0 1px 2px rgba(27, 18, 56, .1), 0 2px 8px -4px rgba(27, 18, 56, .2);
+}
+
+@app.nc-em-ativo .nc-em-opcao:focus-visible {
+  outline: 2px solid var(--nc-roxo, #511C76);
+  outline-offset: 1px;
+}
+
+/* Apto / Inapto: o que decide o exame, grande e com cor */
+@app.nc-em-ativo .nc-em-escolha--grande {
+  gap: 10px;
+  padding: 0;
+  background: transparent;
+}
+
+@app.nc-em-ativo .nc-em-escolha--grande .nc-em-opcao {
+  height: 56px;
+  border: 1.5px solid #D9D3E5;
+  border-radius: 12px;
+  background: #fff;
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--nc-em-texto);
+}
+
+@app.nc-em-ativo .nc-em-escolha--grande .nc-em-opcao .nc-em-ic {
+  width: 22px;
+  height: 22px;
+  stroke-width: 2.2;
+}
+
+@app.nc-em-ativo .nc-em-escolha--grande .nc-em-opcao[data-tom="apto"]:hover:not([aria-checked="true"]) {
+  border-color: var(--nc-em-apto);
+  color: var(--nc-em-apto);
+}
+
+@app.nc-em-ativo .nc-em-escolha--grande .nc-em-opcao[data-tom="inapto"]:hover:not([aria-checked="true"]) {
+  border-color: var(--nc-em-inapto);
+  color: var(--nc-em-inapto);
+}
+
+@app.nc-em-ativo .nc-em-escolha--grande .nc-em-opcao[data-tom="apto"][aria-checked="true"] {
+  border-color: var(--nc-em-apto);
+  background: var(--nc-em-apto);
+  color: #fff;
+  box-shadow: 0 6px 16px -10px var(--nc-em-apto);
+}
+
+@app.nc-em-ativo .nc-em-escolha--grande .nc-em-opcao[data-tom="inapto"][aria-checked="true"] {
+  border-color: var(--nc-em-inapto);
+  background: var(--nc-em-inapto);
+  color: #fff;
+  box-shadow: 0 6px 16px -10px var(--nc-em-inapto);
+}
+
+@app.nc-em-ativo .nc-em-escolha--grande .nc-em-opcao,
+@app.nc-em-ativo .nc-em-escolha--grande .nc-em-opcao:hover {
+  opacity: 1;
+  filter: none;
+}
+
+@app.nc-em-ativo .nc-em-escolha--grande .nc-em-opcao:active {
+  transform: translateY(1px);
+}
+
+@app.nc-em-ativo .nc-em .nc-em-campo--resultado .t-Form-label {
+  font-size: 14px;
+  color: var(--nc-em-texto);
+}
+
+/* "vale até", "diferente da data do exame", o coordenador */
+@app.nc-em-ativo .nc-em .nc-em-vale,
+@app.nc-em-ativo .nc-em .nc-em-difere,
+@app.nc-em-ativo .nc-em .nc-em-coord {
+  margin: 6px 0 0;
+  font-size: 12.5px;
+  line-height: 1.4;
+  color: var(--nc-em-fraco);
+}
+
+@app.nc-em-ativo .nc-em .nc-em-vale b {
+  font-weight: 700;
+  color: var(--nc-em-texto);
+}
+
+@app.nc-em-ativo .nc-em .nc-em-vale[data-vencido="sim"] b {
+  color: var(--nc-em-inapto);
+}
+
+@app.nc-em-ativo .nc-em .nc-em-difere {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 8px;
+  font-weight: 600;
+  color: var(--nc-em-atencao);
+}
+
+@app.nc-em-ativo .nc-em .nc-em-usar {
+  height: 26px;
+  margin: 0;
+  padding: 0 10px;
+  border: 1px solid color-mix(in srgb, var(--nc-roxo, #511C76) 30%, #fff);
+  border-radius: 8px;
+  background: #fff;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--nc-roxo, #511C76);
+  cursor: pointer;
+}
+
+@app.nc-em-ativo .nc-em .nc-em-usar:hover {
+  background: color-mix(in srgb, var(--nc-roxo, #511C76) 7%, #fff);
+}
+
+@app.nc-em-ativo .nc-em .nc-em-coord {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px 10px;
+}
+
+@app.nc-em-ativo .nc-em .nc-em-coord b {
+  font-weight: 600;
+  color: var(--nc-em-texto);
+}
+
+@app.nc-em-ativo .nc-em-bloco--medicos .nc-em-linha--2 {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+@app.nc-em-ativo .nc-em-bloco--medicos {
+  padding-top: 16px;
+  border-top: 1px solid var(--nc-em-borda);
+}
+
+/* ═══ [C8] OS BOTÕES DO RODAPÉ (os originais do APEX, de roupa nova) ═══════════════════════ */
+@app.nc-em-ativo .nc-em-bt {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 42px;
+  margin: 0;
+  padding: 0 16px;
+  border: 1px solid var(--nc-borda-botao);
+  border-radius: 10px;
+  background: #fff;
+  box-shadow: none;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--nc-em-texto);
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background .15s, border-color .15s;
+}
+
+@app.nc-em-ativo .nc-em-bt .t-Button-label {
+  padding: 0;
+  font: inherit;
+  color: inherit;
+}
+
+@app.nc-em-ativo .nc-em-bt:hover:not(:disabled) {
+  border-color: color-mix(in srgb, var(--nc-roxo, #511C76) 35%, #fff);
+  background: color-mix(in srgb, var(--nc-roxo, #511C76) 4%, #fff);
+}
+
+@app.nc-em-ativo .nc-em-bt:focus-visible {
+  outline: 2px solid var(--nc-roxo, #511C76);
+  outline-offset: 2px;
+}
+
+@app.nc-em-ativo .nc-em-bt--salvar {
+  min-width: 168px;
+  border-color: var(--nc-roxo, #511C76);
+  background: var(--nc-roxo, #511C76);
+  color: #fff;
+}
+
+@app.nc-em-ativo .nc-em-bt--salvar:hover:not(:disabled) {
+  border-color: var(--nc-azul, #2C1A63);
+  background: var(--nc-azul, #2C1A63);
+}
+
+@app.nc-em-ativo .nc-em-bt:disabled,
+@app.nc-em-ativo .nc-em-bt.apex_disabled {
+  opacity: .5;
+  cursor: not-allowed;
+}
+
+/* ═══ [C9] PRÉ-ATENDIMENTO (A FICHA TRAVADA) ════════════════════════════════════════════════
+   A trava da página põe apex_disabled nas regiões até o "Iniciar atendimento" (o APEX já
+   impede o clique). O desenho mostra o aviso no alto, com o botão, e os campos em "só leitura".
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-em-ativo .nc-em-aviso {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 14px;
+  margin: 0 0 16px;
+  padding: 14px 16px;
+  border: 1px solid color-mix(in srgb, var(--nc-roxo, #511C76) 22%, #fff);
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--nc-roxo, #511C76) 5%, #fff);
+  font-size: 14px;
+  color: var(--nc-em-texto);
+}
+
+@app.nc-em-ativo .nc-em-aviso-txt {
+  flex: 1 1 260px;
+  min-width: 0;
+}
+
+@app.nc-em-ativo .nc-em-aviso-txt p + p {
+  margin-top: 2px;
+  color: var(--nc-em-fraco);
+}
+
+@app.nc-em-ativo .nc-em-aviso > .nc-em-ic {
+  width: 22px;
+  height: 22px;
+  color: var(--nc-roxo, #511C76);
+}
+
+@app.nc-em-ativo .nc-em-bt--iniciar {
+  height: 46px;
+  padding: 0 20px;
+  border-color: var(--nc-roxo, #511C76);
+  background: var(--nc-roxo, #511C76);
+  font-size: 15px;
+  color: #fff;
+}
+
+@app.nc-em-ativo .nc-em-bt--iniciar:hover:not(:disabled) {
+  border-color: var(--nc-azul, #2C1A63);
+  background: var(--nc-azul, #2C1A63);
+}
+
+@app.nc-em-ativo .nc-em-bt--iniciar .nc-em-ic {
+  fill: currentColor;
+  stroke-width: 1.4;
+}
+
+@app.nc-em-ativo .nc-em-aviso[hidden] {
+  display: none;
+}
+
+@app.nc-em-ativo .nc-em-aviso p {
+  flex: 1 1 auto;
+  margin: 0;
+}
+
+
+@app.nc-em-ativo .nc-em-sec.apex_disabled {
+  opacity: 1;
+}
+
+@app.nc-em-ativo .nc-em-sec.apex_disabled input.apex-item-text,
+@app.nc-em-ativo .nc-em-sec.apex_disabled select.apex-item-select,
+@app.nc-em-ativo .nc-em-sec.apex_disabled textarea {
+  border-color: transparent;
+  background-color: var(--nc-em-fundo);
+}
+
+@app.nc-em-ativo .nc-em-sec.apex_disabled .nc-em-escolha--grande .nc-em-opcao:not([aria-checked="true"]) {
+  opacity: .45;
+}
+
+@app.nc-em-ativo .nc-em-sec.apex_disabled .a-Button--popupLOV,
+@app.nc-em-ativo .nc-em-sec.apex_disabled .ui-datepicker-trigger,
+@app.nc-em-ativo .nc-em-sec.apex_disabled .nc-em-usar {
+  display: none;
+}
+
+/* ═══ [C10] CELULAR E TABLET ════════════════════════════════════════════════════════════════
+   Uma coluna: o paciente rola com a ficha (o JS o põe dentro dela), o rodapé fica fixo.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@media (max-width: 1080px) {
+  @app.nc-em-ativo .nc-em-corpo {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  @app.nc-em-ativo .nc-em-grade--4 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 720px) {
+  @app.nc-em-ativo .t-Dialog-body:has(.nc-em) {
+    padding: 12px 12px 20px;
+  }
+
+  @app.nc-em-ativo .t-Dialog-footer:has(.nc-em-rodape) {
+    padding: 8px 12px calc(8px + env(safe-area-inset-bottom, 0px));
+  }
+
+  @app.nc-em-ativo .nc-em-pac-exame {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 12px;
+  }
+
+  /* no celular, o essencial do paciente: idade, função, setor e depto (o resto está no ASO) */
+  @app.nc-em-ativo .nc-em-pac-dados {
+    gap: 2px 14px;
+  }
+
+  @app.nc-em-ativo .nc-em-pac-dados > div:is([data-k="empresa"], [data-k="admissão"], [data-k="rg"], [data-k="ctps"]) {
+    display: none;
+  }
+
+  @app.nc-em-ativo .nc-em-pac-nome h1 {
+    font-size: 17px;
+  }
+
+  @app.nc-em-ativo .nc-em-avatar {
+    width: 38px;
+    height: 38px;
+    font-size: 13px;
+  }
+
+  @app.nc-em-ativo .nc-em-grade--vitais,
+  @app.nc-em-ativo .nc-em-grade--3 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  @app.nc-em-ativo .nc-em-par,
+  @app.nc-em-ativo .nc-em-par:has(.nc-em-campo--texto),
+  @app.nc-em-ativo .nc-em-linha--2,
+  @app.nc-em-ativo .nc-em-grade--4 {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  @app.nc-em-ativo .nc-em-visao {
+    min-width: 0;
+    border-spacing: 4px 6px;
+    margin: -6px -4px;
+  }
+
+  @app.nc-em-ativo .nc-em-visao thead td,
+  @app.nc-em-ativo .nc-em-visao tbody th {
+    width: 44px;
+  }
+
+  @app.nc-em-ativo .nc-em-visao .nc-em-olho {
+    display: none;
+  }
+
+  @app.nc-em-ativo .nc-em-visao .nc-em-visao-co {
+    padding-left: 4px;
+  }
+
+  @app.nc-em-ativo .nc-em .nc-em-campo--celula input.apex-item-text {
+    padding: 0 4px;
+  }
+
+  @app.nc-em-ativo .nc-em-rodape {
+    gap: 8px;
+  }
+
+  @app.nc-em-ativo .nc-em-rodape-meio:has(.nc-em-estado:empty):has(.nc-em-falta:empty) {
+    display: none;
+  }
+
+  @app.nc-em-ativo .nc-em-estado .nc-em-dica {
+    display: none;
+  }
+
+  @app.nc-em-ativo .nc-em-rodape-dir {
+    flex: 1 1 auto;
+  }
+
+  @app.nc-em-ativo .nc-em-bt--salvar {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  /* Exames e Relatório ASO viram só o ícone (o nome continua para o leitor de tela e no
+     toque longo), e os três botões cabem numa linha */
+  @app.nc-em-ativo .nc-em-rodape {
+    flex-wrap: wrap;
+  }
+
+  @app.nc-em-ativo .nc-em-rodape-meio {
+    order: -1;
+    flex: 1 1 100%;
+    text-align: left;
+  }
+
+  @app.nc-em-ativo .nc-em-estado {
+    font-size: 12.5px;
+  }
+
+  @app.nc-em-ativo .nc-em-rodape-esq .nc-em-bt {
+    width: 46px;
+    height: 46px;
+    padding: 0;
+  }
+
+  @app.nc-em-ativo .nc-em-rodape-esq .nc-em-bt .t-Button-label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+
+  @app.nc-em-ativo .nc-em-bt--salvar {
+    height: 46px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  @app.nc-em-ativo .nc-em *,
+  @app.nc-em-ativo .nc-em-rodape * {
+    transition: none;
+  }
+}

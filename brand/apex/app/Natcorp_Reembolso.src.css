@@ -1,0 +1,891 @@
+/* ╔════════════════════════════════════════════════════════════════════════════════════════╗
+   ║  NATCORP · REEMBOLSOS / LANÇAMENTOS DIVERSOS EM LOTE  —  a "roupa" da tela (CSS)       ║
+   ║  App 2060 · Página 7 (aberta pela aba "Requisição de Reembolsos" do Painel)            ║
+   ╚════════════════════════════════════════════════════════════════════════════════════════╝
+
+   Primeira vez num arquivo destes? Leia antes o manual: brand/apex/MANUAL-APEX.md (parte 1).
+
+   ── O QUE ESTE ARQUIVO FAZ ──────────────────────────────────────────────────────────────────
+   Dá a aparência da página de lançamentos em lote: cores, tamanhos, espaços, bordas, e como a
+   tela se arruma no computador e no celular. Ele NÃO muda nada de lugar: quem muda as coisas de
+   lugar é o arquivo-irmão Natcorp_Reembolso.js. Os dois trabalham juntos:
+     o JS monta "os três passos"  →  este arquivo diz como os passos se parecem.
+   Sem o JS, este arquivo não faz nada: todas as regras dependem da marca nc-re que só o
+   Natcorp_Reembolso.js põe no corpo da página.
+   Público: gestores, muitos com pouca intimidade com sistemas.
+
+   ── ONDE ELE ENTRA NO APEX ──────────────────────────────────────────────────────────────────
+     App 2060 › Página 7 › CSS › File URLs:   #WORKSPACE_IMAGES#Natcorp_Reembolso.css
+     Este é o arquivo-FONTE (.src.css). O arquivo que sobe (o .css de mesmo nome, sem ".src") é
+     gerado a partir dele pelo gerar-app.mjs, que escreve o @app por extenso e põe os !important:
+     edite ESTE arquivo, não o .css (manual, parte 2).
+
+   ── ÍNDICE: as partes deste arquivo (Ctrl+F pelo código entre colchetes) ────────────────────
+     [C1]  O que sai de cena                        (o que o JS esconde)
+     [C2]  O cabeçalho: os três passos              ← montado pelo JS em [J3]
+     [C3]  O título de cada passo e as sub-regiões  ← [J3] e [J5]
+     [C4]  Passo 1: quem vai receber                ← [J4]
+     [C5]  Passo 2: o que lançar                    ← [J5]
+     [C6]  Passo 3: conferir quem vai receber       ← [J6]
+     [C7]  A barra do pé                            ← [J7]
+     [C8]  Pedido gravado                           ← [J8]
+     [C9]  O caminho da aprovação                   ← [J9]
+     [C10] Celular                                  (ajustes para telas pequenas)
+
+   ── RECEITAS RÁPIDAS ────────────────────────────────────────────────────────────────────────
+     Quero mudar uma cor
+       → use uma das cores da marca, pelo nome: var(--nc-roxo), var(--nc-grafite)… A lista
+         completa, com amostras, está no manual (parte 3). Assim a cor acompanha o tema que
+         o usuário escolheu em "Cores". Evite escrever cores soltas, como #511C76.
+     Quero aumentar ou diminuir um texto        → procure font-size na parte certa.
+     Quero mais ou menos espaço                  → padding (espaço por DENTRO da caixa) e
+                                                   margin (espaço por FORA, até a vizinha).
+     Algo ficou bom no computador e ruim no celular → [C10]: o que está dentro de
+                                                   @media (max-width: 639px) só vale no celular.
+
+   ── COMO LER UM ARQUIVO CSS EM 30 SEGUNDOS ──────────────────────────────────────────────────
+     Cada regra tem duas partes:     QUEM { COMO; }
+       @app.nc-re .nc-re-topo {           ← QUEM: o "seletor", diz em que pedaço da tela vale
+         display: flex;                   ← COMO: propriedade: valor;  (põe as peças lado a lado)
+         gap: 16px 28px;                  ←       o espaço entre as peças
+       }
+     .nome-com-ponto       uma "classe": uma etiqueta posta num pedaço da tela (pelo APEX ou
+                           pelo JS).
+     @app                  atalho que dá prioridade às nossas regras sobre as do tema do APEX.
+                           No arquivo que sobe para o APEX ele aparece por extenso, como
+                           html body:is(.t-PageBody…):not(#nc-a1):not(#nc-a2) — é a mesma coisa.
+     :not(#nc-…-x)…        peso extra, para vencer uma regra do tema. Pode ignorar ao ler.
+     !important            no arquivo que sobe, toda linha ganha um: é o mesmo "vencer o tema".
+     @media (max-width: 767px) { … }   as regras de dentro só valem em telas até 767px (celular).
+     var(--nc-roxo)        uma cor da marca, pelo nome (muda junto com o tema escolhido).
+     px                    pixels, o tamanho de um pontinho da tela. 16px é o texto normal.
+     Toda linha COMO termina em ;   e todo { é fechado por um }. Não apague esses sinais.
+*/
+
+/* ═══ [C1] O QUE SAI DE CENA ═══════════════════════════════════════════════════════════════
+   O que o JS manda esconder: .nc-re-fora (campos), .nc-re-col-vazia (colunas sem dado),
+   .nc-re-col-sai (a coluna que ficou vazia). display: none = não aparece.
+   ════════════════════════════════════════════════════════════════════════════════════════ */
+/* ---------- o que sai de cena ---------- */
+@app.nc-re .nc-re-fora:not(#nc-re-x):not(#nc-re-y),
+@app.nc-re .nc-re-col-vazia:not(#nc-re-x):not(#nc-re-y),
+@app.nc-re .col.nc-re-col-sai:not(#nc-re-x):not(#nc-re-y),
+@app.nc-re :is(.nc-re-busca-resumo, .nc-re-frase-datas)[hidden]:not(#nc-re-x):not(#nc-re-y),
+@app.nc-re .nc-re-busca:not(.nc-re-filtros-abertos) .nc-re-filtro:not(#nc-re-x):not(#nc-re-y),
+@app.nc-re .nc-re-busca.nc-re-fechado > .t-Region-bodyWrap > .t-Region-body > :not(.nc-re-busca-resumo):not(#nc-re-x):not(#nc-re-y),
+@app.nc-re .nc-re-busca.nc-re-fechado > .t-Region-bodyWrap > .t-Region-buttons:not(#nc-re-x):not(#nc-re-y),
+@app.nc-re .nc-re-pedido > .t-Region-bodyWrap > .t-Region-body > :not(.nc-re-hero):not(#nc-re-x):not(#nc-re-y),
+@app.nc-re .nc-re-pedido > .t-Region-header:not(#nc-re-x):not(#nc-re-y),
+@app.nc-re .nc-re-acoes .t-ButtonRegion-title:not(#nc-re-x):not(#nc-re-y) {
+  display: none;
+}
+
+@app.nc-re .nc-re-ic {
+  flex: none;
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.9;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* ═══ [C2] O CABEÇALHO: OS TRÊS PASSOS ═════════════════════════════════════════════════════
+   Montado pelo JS em [J3]. .nc-re-topo é o cabeçalho; .nc-re-passo, cada passo:
+   .is-feito (já feito, com ✓) · .is-agora (o atual) · .is-depois (ainda não).
+   ════════════════════════════════════════════════════════════════════════════════════════ */
+/* ---------- o cabeçalho: os três passos ---------- */
+@app.nc-re .nc-re-topo {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px 28px;
+  margin: 0 0 16px;
+  padding: 20px 24px;
+  border-radius: 18px;
+  background:
+    radial-gradient(110% 130% at 100% 0%, rgba(var(--nc-t-rosa-rgb, 201, 87, 136), .32) 0%, rgba(var(--nc-t-rosa-rgb, 201, 87, 136), 0) 55%),
+    linear-gradient(135deg, var(--nc-azul) 0%, var(--nc-roxo) 72%);
+  color: #fff;
+}
+
+@app.nc-re .nc-re-topo-tit {
+  margin: 0 0 4px;
+  font-size: 22px;
+  font-weight: 800;
+  line-height: 1.2;
+  letter-spacing: -.01em;
+  color: #fff;
+}
+
+@app.nc-re .nc-re-topo-txt p {
+  margin: 0;
+  font-size: 14.5px;
+  color: rgba(255, 255, 255, .86);
+}
+
+@app.nc-re .nc-re-passos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+@app.nc-re .nc-re-passo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px 6px 6px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, .12);
+  font-size: 13.5px;
+  font-weight: 700;
+  color: rgba(255, 255, 255, .8);
+}
+
+@app.nc-re .nc-re-passo-n {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, .18);
+  font-size: 13px;
+  font-weight: 800;
+}
+
+@app.nc-re .nc-re-passo-n .nc-re-ic {
+  width: 15px;
+  height: 15px;
+  stroke-width: 2.6;
+}
+
+@app.nc-re .nc-re-passo.is-agora {
+  background: #fff;
+  color: var(--nc-roxo);
+}
+
+@app.nc-re .nc-re-passo.is-agora .nc-re-passo-n {
+  background: var(--nc-roxo);
+  color: #fff;
+}
+
+@app.nc-re .nc-re-passo.is-feito .nc-re-passo-n {
+  background: var(--nc-bom);
+  color: #fff;
+}
+
+/* ═══ [C3] O TÍTULO DE CADA PASSO E AS SUB-REGIÕES ═════════════════════════════════════════
+   .nc-re-reg-n é o número no título da região; .nc-re-reg-sub, a explicação embaixo.
+   .nc-re-sub são as sub-regiões de "O que lançar" (O que é · Quanto · Quando · Explicação).
+   ════════════════════════════════════════════════════════════════════════════════════════ */
+/* ---------- o título de cada passo ---------- */
+@app.nc-re .nc-re-passo-reg > .t-Region-header .t-Region-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 17px;
+  font-weight: 800;
+}
+
+@app.nc-re .nc-re-reg-n {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: var(--nc-roxo);
+  font-size: 14px;
+  font-weight: 800;
+  color: #fff;
+}
+
+@app.nc-re .nc-re-reg-sub {
+  margin: 0 0 14px;
+  font-size: 14px;
+  line-height: 1.45;
+  color: var(--nc-grafite);
+}
+
+/* as sub-regiões de "O que lançar" (O que é · Quanto · Quando · Explicação): mais leves */
+@app.nc-re .t-Region.nc-re-sub > .t-Region-header .t-Region-headerIcon {
+  display: none;
+}
+
+@app.nc-re .t-Region.nc-re-sub > .t-Region-header .t-Region-title {
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--nc-tinta);
+}
+
+@app.nc-re .nc-re-dica {
+  margin: 4px 0 0;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: var(--nc-quase);
+  font-size: 13.5px;
+  line-height: 1.45;
+  color: var(--nc-grafite);
+}
+
+@app.nc-re .nc-re-dica b {
+  color: var(--nc-tinta);
+}
+
+/* ═══ [C4] PASSO 1: QUEM VAI RECEBER ═══════════════════════════════════════════════════════
+   Montado pelo JS em [J4]. .nc-re-filtrar é o botão "Filtrar mais"; .nc-re-filtro, cada filtro
+   (escondido até abrir: .nc-re-filtros-abertos); .nc-re-busca-resumo e .nc-re-chips, o resumo
+   depois da busca; .nc-re-fechado, a região já fechada no resumo.
+   ════════════════════════════════════════════════════════════════════════════════════════ */
+/* ---------- 1. quem vai receber ---------- */
+@app.nc-re .nc-re-filtrar {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 4px 0 8px;
+  padding: 8px 14px;
+  border: 1px dashed rgba(var(--nc-t-roxo-rgb, 81, 28, 118), .35);
+  border-radius: 12px;
+  background: #fff;
+  font: inherit;
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--nc-roxo);
+  cursor: pointer;
+}
+
+@app.nc-re .nc-re-em-uso {
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--nc-roxo);
+  font-size: 12px;
+  font-weight: 800;
+  color: #fff;
+}
+
+@app.nc-re .nc-re-filtrar:hover {
+  border-style: solid;
+  background: var(--nc-nevoa2);
+}
+
+@app.nc-re .nc-re-filtrar:focus-visible {
+  outline: none;
+  box-shadow: var(--nc-anel);
+}
+
+@app.nc-re .nc-re-busca-resumo {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 16px;
+}
+
+@app.nc-re .nc-re-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+@app.nc-re .nc-re-chips li {
+  display: inline-flex;
+  flex-direction: column;
+  padding: 6px 12px;
+  border-radius: 10px;
+  background: var(--nc-nevoa2);
+  line-height: 1.25;
+}
+
+@app.nc-re .nc-re-chips span {
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--nc-grafite);
+}
+
+@app.nc-re .nc-re-chips b {
+  font-size: 13.5px;
+  font-weight: 800;
+  color: var(--nc-tinta);
+}
+
+@app.nc-re .nc-re-achadas {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: #E6F4EC;
+  font-size: 14px;
+  color: var(--nc-bom);
+}
+
+@app.nc-re .nc-re-mudar {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: auto;
+  padding: 8px 14px;
+  border: 1px solid var(--nc-nevoa);
+  border-radius: 10px;
+  background: #fff;
+  font: inherit;
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--nc-roxo);
+  cursor: pointer;
+}
+
+@app.nc-re .nc-re-mudar:hover {
+  background: var(--nc-nevoa2);
+}
+
+/* ═══ [C5] PASSO 2: O QUE LANÇAR ═══════════════════════════════════════════════════════════
+   Montado pelo JS em [J5]. .nc-re-dica são as dicas; .nc-re-frase-datas, a frase das datas.
+   ════════════════════════════════════════════════════════════════════════════════════════ */
+/* ---------- 2. o que lançar ---------- */
+@app.nc-re .nc-re-frase-datas {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin: 0 0 12px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: var(--nc-nevoa2);
+  font-size: 14.5px;
+  line-height: 1.45;
+  color: var(--nc-tinta);
+}
+
+@app.nc-re .nc-re-frase-datas .nc-re-ic {
+  margin-top: 1px;
+  color: var(--nc-roxo);
+}
+
+@app.nc-re [id$="_VALOR"].apex-item-text {
+  font-size: 17px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ═══ [C6] PASSO 3: CONFERIR QUEM VAI RECEBER ══════════════════════════════════════════════
+   Montado pelo JS em [J6]. .nc-re-matr é a lista de pessoas; .nc-re-conta, "N de N marcadas" e os
+   botões Marcar/Desmarcar todas (.is-nenhuma quando ninguém está marcado).
+   ════════════════════════════════════════════════════════════════════════════════════════ */
+/* ---------- 3. conferir quem vai receber ---------- */
+@app.nc-re .nc-re-conta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px 16px;
+  margin: 0 0 12px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: #E6F4EC;
+}
+
+@app.nc-re .nc-re-conta.is-nenhuma {
+  background: #FDECEE;
+}
+
+@app.nc-re .nc-re-conta-n {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  font-size: 14.5px;
+  color: var(--nc-tinta);
+}
+
+@app.nc-re .nc-re-conta-n .nc-re-ic {
+  color: var(--nc-bom);
+}
+
+@app.nc-re .nc-re-conta.is-nenhuma .nc-re-conta-n .nc-re-ic {
+  color: var(--nc-ruim);
+}
+
+@app.nc-re .nc-re-conta-bts {
+  display: flex;
+  gap: 6px;
+}
+
+@app.nc-re .nc-re-conta-bts button {
+  min-height: 36px;
+  padding: 0 14px;
+  border: 1px solid var(--nc-borda-botao);
+  border-radius: 10px;
+  background: #fff;
+  font: inherit;
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--nc-roxo);
+  cursor: pointer;
+}
+
+@app.nc-re .nc-re-conta-bts button:disabled {
+  opacity: .45;
+  cursor: default;
+}
+
+@app.nc-re .nc-re-matr input[type="checkbox"][name="f01"] {
+  width: 20px;
+  height: 20px;
+  accent-color: var(--nc-roxo);
+  cursor: pointer;
+}
+
+@app.nc-re .nc-re-matr .a-IRR-table td {
+  font-size: 13.5px;
+}
+
+@app.nc-re .nc-re-matr .a-IRR-table td[headers] a .fa {
+  font-size: 18px;
+  color: var(--nc-roxo);
+}
+
+/* ═══ [C7] A BARRA DO PÉ ═══════════════════════════════════════════════════════════════════
+   Montada pelo JS em [J7]. .nc-re-acoes é a região dos botões; .nc-re-barra, a frase do
+   lançamento e o "Falta:"; .is-pronto, o botão Enviar quando nada falta.
+   ════════════════════════════════════════════════════════════════════════════════════════ */
+/* ---------- a barra do pé ---------- */
+@app.nc-re .t-ButtonRegion.nc-re-acoes--envia {
+  position: sticky;
+  bottom: 10px;
+  z-index: 20;
+  margin: 18px 0 0;
+  padding: 10px 12px;
+  border: 1px solid var(--nc-nevoa);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, .97);
+  box-shadow: 0 18px 40px -18px rgba(var(--nc-t-azul-rgb, 44, 26, 99), .45);
+}
+
+@app.nc-re .nc-re-acoes--envia .t-ButtonRegion-col--content {
+  width: 100%;
+}
+
+@app.nc-re .nc-re-barra {
+  flex: 1 1 auto;
+  min-width: 0;
+  padding: 0 12px;
+  text-align: left;
+}
+
+@app.nc-re .nc-re-barra p {
+  margin: 0;
+}
+
+@app.nc-re .nc-re-barra-frase {
+  font-size: 14.5px;
+  line-height: 1.4;
+  color: var(--nc-tinta);
+}
+
+@app.nc-re .nc-re-total {
+  font-weight: 700;
+  color: var(--nc-grafite);
+}
+
+@app.nc-re .nc-re-barra-falta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin-top: 4px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--nc-grafite);
+}
+
+@app.nc-re .nc-re-barra-falta button {
+  min-height: 28px;
+  padding: 0 10px;
+  border: 1px solid rgba(184, 50, 63, .3);
+  border-radius: 999px;
+  background: #FBECEE;
+  font: inherit;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--nc-ruim);
+  cursor: pointer;
+}
+
+@app.nc-re .nc-re-barra-ok {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 4px;
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--nc-bom);
+}
+
+/* o "Criar Requisicao" está numa tabela no meio da barra: ela ocupa o espaço que sobra */
+@app.nc-re .nc-re-acoes--envia .t-ButtonRegion-col--content > table {
+  width: auto;
+}
+
+@app.nc-re .nc-re-acoes--envia .t-ButtonRegion-col--content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+@app.nc-re .nc-re-acoes .t-Button {
+  min-height: 44px;
+  border-radius: 12px;
+  font-size: 14.5px;
+}
+
+/* ═══ [C8] PEDIDO GRAVADO ══════════════════════════════════════════════════════════════════
+   Montado pelo JS em [J8]. .nc-re-hero é o cabeçalho; .nc-re-sit, a situação:
+   --bom (verde), --ruim (vermelho), --neutro (cinza), --espera (em andamento).
+   ════════════════════════════════════════════════════════════════════════════════════════ */
+/* ---------- pedido gravado ---------- */
+@app.nc-re .t-Region.nc-re-pedido:not(#nc-re-x):not(#nc-re-y) {
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+@app.nc-re .t-Region.nc-re-pedido > .t-Region-bodyWrap > .t-Region-body:not(#nc-re-x):not(#nc-re-y) {
+  padding: 0;
+}
+
+@app.nc-re .nc-re-hero {
+  padding: 18px 22px;
+  border-radius: 18px;
+  background:
+    radial-gradient(110% 130% at 100% 0%, rgba(var(--nc-t-rosa-rgb, 201, 87, 136), .28) 0%, rgba(var(--nc-t-rosa-rgb, 201, 87, 136), 0) 55%),
+    linear-gradient(135deg, var(--nc-azul) 0%, var(--nc-roxo) 72%);
+  color: #fff;
+}
+
+@app.nc-re .nc-re-hero-topo {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+}
+
+@app.nc-re .nc-re-hero-n {
+  margin: 0;
+  font-size: 19px;
+  font-weight: 700;
+  color: #fff;
+}
+
+@app.nc-re .nc-re-hero-quem {
+  margin: 6px 0 0;
+  font-size: 14px;
+  color: rgba(255, 255, 255, .86);
+}
+
+@app.nc-re .nc-re-hero-quem b {
+  color: #fff;
+}
+
+@app.nc-re .nc-re-sit {
+  display: inline-flex;
+  align-items: center;
+  height: 26px;
+  padding: 0 12px;
+  border-radius: 999px;
+  background: #fff;
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--nc-grafite);
+}
+
+@app.nc-re .nc-re-sit--espera { background: var(--nc-alerta); color: #3D2A00; }
+@app.nc-re .nc-re-sit--bom { color: var(--nc-bom); }
+@app.nc-re .nc-re-sit--ruim { color: var(--nc-ruim); }
+
+/* ═══ [C9] O CAMINHO DA APROVAÇÃO ══════════════════════════════════════════════════════════
+   Montado pelo JS em [J9]. .nc-re-caminho é a faixa; .nc-re-ap, cada aprovador:
+   .is-ok aprovou · .is-nao reprovou · .is-vez a vez · .is-fila na fila.
+   ════════════════════════════════════════════════════════════════════════════════════════ */
+/* ---------- o caminho da aprovação ---------- */
+@app.nc-re .t-Region.nc-re-aprov {
+  margin: 16px 0;
+  border: 0;
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: inset 0 0 0 1px var(--nc-nevoa), 0 10px 24px -22px rgba(var(--nc-t-azul-rgb, 44, 26, 99), .5);
+}
+
+@app.nc-re .t-Region.nc-re-aprov > .t-Region-header,
+@app.nc-re .t-Region.nc-re-aprov .t-Report,
+@app.nc-re .t-Region.nc-re-aprov.nc-re-aprov--vazio {
+  display: none;
+}
+
+@app.nc-re .t-Region.nc-re-aprov > .t-Region-bodyWrap > .t-Region-body {
+  padding: 14px 18px;
+}
+
+@app.nc-re .nc-re-caminho {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px 20px;
+}
+
+@app.nc-re .nc-re-caminho:empty,
+@app.nc-re .nc-re-caminho-ver {
+  display: none;
+}
+
+@app.nc-re .nc-re-caminho-cab {
+  display: grid;
+  gap: 2px;
+}
+
+@app.nc-re .nc-re-caminho-cab p {
+  margin: 0;
+}
+
+@app.nc-re .nc-re-caminho-rot {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--nc-grafite);
+}
+
+@app.nc-re .nc-re-caminho-resumo {
+  font-size: 14.5px;
+  color: var(--nc-grafite);
+}
+
+@app.nc-re .nc-re-caminho-resumo b { color: var(--nc-tinta); }
+@app.nc-re .nc-re-caminho--vez .nc-re-caminho-resumo b:last-child { color: #8A5A00; }
+@app.nc-re .nc-re-caminho--ok .nc-re-caminho-resumo b { color: var(--nc-bom); }
+@app.nc-re .nc-re-caminho--nao .nc-re-caminho-resumo b { color: #A32020; }
+
+@app.nc-re .nc-re-passos-ap {
+  display: flex;
+  grid-column: 1 / -1;
+  margin: 0;
+  padding: 4px 0 0;
+  overflow-x: auto;
+  list-style: none;
+}
+
+@app.nc-re .nc-re-ap {
+  position: relative;
+  display: flex;
+  flex: 1 1 0;
+  flex-direction: column;
+  align-items: center;
+  min-width: 104px;
+  padding: 0 4px;
+  text-align: center;
+}
+
+@app.nc-re .nc-re-ap:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  top: 13px;
+  left: calc(50% + 17px);
+  right: calc(-50% + 17px);
+  height: 2px;
+  border-radius: 2px;
+  background: #E3DDEC;
+}
+
+@app.nc-re .nc-re-ap.is-ok:not(:last-child)::after { background: var(--nc-bom); }
+
+@app.nc-re .nc-re-ap-marca {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  margin: 0 0 6px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: inset 0 0 0 2px #D9D3E3;
+}
+
+@app.nc-re .nc-re-ap-marca svg {
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: #fff;
+  stroke-width: 2.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+@app.nc-re .nc-re-ap.is-ok .nc-re-ap-marca { background: var(--nc-bom); box-shadow: none; }
+@app.nc-re .nc-re-ap.is-nao .nc-re-ap-marca { background: #C0392B; box-shadow: none; }
+@app.nc-re .nc-re-ap.is-vez .nc-re-ap-marca { background: #E0A100; box-shadow: 0 0 0 5px rgba(224, 161, 0, .18); }
+
+@app.nc-re .nc-re-ap-texto {
+  display: grid;
+  justify-items: center;
+  gap: 1px;
+  max-width: 100%;
+}
+
+@app.nc-re .nc-re-ap-nome {
+  max-width: 100%;
+  overflow: hidden;
+  font-size: 13.5px;
+  font-weight: 800;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--nc-tinta);
+}
+
+@app.nc-re .nc-re-ap-estado {
+  font-size: 12px;
+  color: var(--nc-grafite);
+}
+
+@app.nc-re .nc-re-ap.is-ok .nc-re-ap-estado { color: var(--nc-bom); }
+@app.nc-re .nc-re-ap.is-nao .nc-re-ap-estado { color: #A32020; font-weight: 700; }
+@app.nc-re .nc-re-ap.is-vez .nc-re-ap-estado { color: #8A5A00; font-weight: 700; }
+@app.nc-re .nc-re-ap.is-fila :is(.nc-re-ap-nome, .nc-re-ap-estado) { color: #8A8497; }
+
+@app.nc-re .nc-re-decisao {
+  display: flex;
+  flex-wrap: wrap;
+  grid-column: 1 / -1;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px 16px;
+  padding: 12px 0 0;
+  border-top: 1px solid var(--nc-nevoa2);
+}
+
+@app.nc-re .nc-re-decisao-txt {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 700;
+  color: #8A5A00;
+}
+
+@app.nc-re .nc-re-decisao-botoes {
+  display: flex;
+  gap: 8px;
+}
+
+@app.nc-re .nc-re-decisao-botoes .t-Button.nc-re-aprovar:not(#nc-re-x):not(#nc-re-y) { border: 0; background: var(--nc-bom); color: #fff; }
+@app.nc-re .nc-re-decisao-botoes .t-Button.nc-re-reprovar:not(#nc-re-x):not(#nc-re-y) { border: 1.5px solid #E7B7B7; background: #fff; box-shadow: none; color: #A32020; }
+
+@app.nc-re .nc-re-ap-justs {
+  display: grid;
+  grid-column: 1 / -1;
+  gap: 6px;
+}
+
+@app.nc-re .nc-re-ap-just {
+  margin: 0;
+  padding: 8px 12px;
+  border: 0;
+  border-radius: 10px;
+  background: var(--nc-quase);
+  font-size: 14px;
+}
+
+@app.nc-re .nc-re-ap-just.is-nao { background: #FDF0F0; }
+
+/* ═══ [C10] CELULAR ════════════════════════════════════════════════════════════════════════
+   As regras de dentro do  @media (max-width: 639px)  só valem em telas de até 639px (celular).
+   Em geral: o que era lado a lado passa a ficar um embaixo do outro.
+   ════════════════════════════════════════════════════════════════════════════════════════ */
+/* ---------- celular ---------- */
+@media (max-width: 639px) {
+  @app.nc-re .nc-re-topo {
+    padding: 16px;
+  }
+
+  @app.nc-re .nc-re-topo-tit {
+    font-size: 19px;
+  }
+
+  @app.nc-re .nc-re-passo-t {
+    font-size: 12.5px;
+  }
+
+  @app.nc-re .nc-re-mudar {
+    margin-left: 0;
+  }
+
+  /* o tema monta a região como tabela: no celular a frase ganha a linha de cima e os botões descem */
+  @app.nc-re .nc-re-acoes--envia .t-ButtonRegion-wrap {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+  }
+
+  @app.nc-re .nc-re-acoes--envia .t-ButtonRegion-col {
+    display: block;
+    width: auto;
+  }
+
+  @app.nc-re .nc-re-acoes--envia .t-ButtonRegion-col--content {
+    display: flex;
+    flex: 1 0 100%;
+    flex-wrap: wrap;
+    order: -1;
+    justify-content: flex-end;
+  }
+
+  @app.nc-re .nc-re-acoes--envia .t-ButtonRegion-col--left {
+    order: 1;
+  }
+
+  @app.nc-re .nc-re-barra {
+    flex: 1 0 100%;
+    padding: 0 4px 8px;
+  }
+
+  @app.nc-re .nc-re-caminho-ver {
+    display: inline-flex;
+    grid-column: 2;
+    grid-row: 1;
+    align-items: center;
+    height: 34px;
+    padding: 0 12px;
+    border: 1px solid var(--nc-nevoa);
+    border-radius: 10px;
+    background: #fff;
+    font: inherit;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--nc-roxo);
+  }
+
+  @app.nc-re .t-Region.nc-re-aprov:not(.nc-re-ap-aberto) .nc-re-passos-ap {
+    display: none;
+  }
+}
+
+/* ═══ FAIXA DA REGIÃO (padrão 03/10) ════════════════════════════════════════════════════════
+   Todo painel com título segue o cabeçalho de região da Skin: o título numa faixa que atravessa
+   o cartão de ponta a ponta, com a linha de 2px na cor de destaque do TEMA (var(--nc-rosa) — a
+   mesma da Skin; muda com os 14 temas). As margens negativas são o recuo de dentro do cartão:
+   mudou o recuo do cartão, mude aqui junto. Guia: brand/apex/MANUAL-APEX.md.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-re .nc-re-caminho > .nc-re-caminho-rot:not(#nc-fx1):not(#nc-fx2):not(#nc-fx3) {
+  box-sizing: border-box;
+  width: calc(100% + 36px);
+  margin: -14px -18px 2px;
+  padding: 12px 18px 10px;
+  border-bottom: 2px solid var(--nc-rosa, #C95788);
+  grid-column: 1 / -1;
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.3;
+}

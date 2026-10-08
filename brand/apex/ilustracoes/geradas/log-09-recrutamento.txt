@@ -1,0 +1,15 @@
+/Users/igor_sala/instalacoes/Projetos/natcorp-landing/brand/apex/ilustracoes/geradas/recrutamento-v1.png 1177497 bytes
+{
+ "input_tokens": 2072,
+ "input_tokens_details": {
+  "image_tokens": 1521,
+  "text_tokens": 551
+ },
+ "output_tokens": 7024,
+ "output_tokens_details": {
+  "image_tokens": 7024,
+  "text_tokens": 0
+ },
+ "total_tokens": 9096
+}
+ilustra-recrutamento.png (1005, 987)

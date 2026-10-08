@@ -1,0 +1,1257 @@
+/* ╔════════════════════════════════════════════════════════════════════════════════════════╗
+   ║  NATCORP · HISTÓRICO DO COLABORADOR  —  a "roupa" da tela (CSS)                          ║
+   ║  App 2937 (Medicina Ocupacional) · Página 6 · Dados de Funcionário (modal)               ║
+   ╚════════════════════════════════════════════════════════════════════════════════════════╝
+
+   Primeira vez num arquivo destes? Leia antes o manual: brand/apex/MANUAL-APEX.md (parte 1).
+
+   ── O QUE ESTE ARQUIVO FAZ ────────────────────────────────────────────────────────────────
+   A aparência do que o Natcorp_HistoricoColaborador.js monta: quem é (no alto), o resumo de
+   atenção (à esquerda), a linha do tempo (à direita), a gaveta de lançar e corrigir e as
+   tabelas originais (em "Tabelas").
+   Sem o JS, nada daqui vale (tudo depende da marca nc-hc-ativo). Mesma linguagem das outras
+   janelas da Medicina Ocupacional (2937:19, :11, :40).
+
+   ── ONDE ELE ENTRA NO APEX ────────────────────────────────────────────────────────────────
+     Página 6 › CSS › File URLs:   #WORKSPACE_IMAGES#Natcorp_HistoricoColaborador.css
+     CUIDADO: este é o arquivo-FONTE (.src.css). O gerador (gerar-app.mjs) cria o
+     Natcorp_HistoricoColaborador.css que sobe para o APEX. Edite ESTE arquivo.
+
+   ── ÍNDICE ────────────────────────────────────────────────────────────────────────────────
+     [C1] As cores (uma por tipo de registro)                     PODE MEXER
+     [C2] O que sai da vista
+     [C3] Quem é (o alto)
+     [C4] O corpo: resumo à esquerda, linha do tempo à direita
+     [C5] O resumo (Atenção, Sangue, Função)
+     [C6] A linha do tempo
+     [C7] Tabelas, botões, rodapé
+     [C8] A gaveta de lançar e corrigir (a ficha da grade)       CUIDADO
+     [C9] Celular e tablet
+*/
+
+/* ═══ [C1] AS CORES ═════════════════════════════════════════════════════════════════════════
+   --nc-hc-c: a cor do tipo (o marcador redondo da linha do tempo e o filtro).
+   PODE MEXER (prefira as da marca: --nc-roxo, --nc-azul, --nc-rosa, --nc-bom, --nc-ruim).
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-hc-ativo {
+  --nc-hc-borda: var(--nc-nevoa, #E9E5F1);
+  --nc-hc-fundo: var(--nc-off, #F7F5FA);
+  --nc-hc-texto: var(--nc-tinta, #1B1238);
+  --nc-hc-fraco: var(--nc-grafite, #4A4460);
+  --nc-hc-bom: var(--nc-bom, #1F7A52);
+  --nc-hc-ruim: var(--nc-ruim, #B8323F);
+  --nc-hc-atencao: #8A5300;
+}
+
+@app.nc-hc-ativo [data-tipo="consulta"] { --nc-hc-c: var(--nc-roxo, #511C76); }
+@app.nc-hc-ativo [data-tipo="exame"] { --nc-hc-c: #2F5DA8; }
+@app.nc-hc-ativo [data-tipo="atestado"] { --nc-hc-c: #9A408A; }
+@app.nc-hc-ativo [data-tipo="doenca"] { --nc-hc-c: #B8323F; }
+@app.nc-hc-ativo [data-tipo="vacina"] { --nc-hc-c: #1F7A52; }
+@app.nc-hc-ativo [data-tipo="cmo"] { --nc-hc-c: #4A4460; }
+@app.nc-hc-ativo [data-tipo="acidente"] { --nc-hc-c: #B5650D; }
+
+/* ═══ [C2] O QUE SAI DA VISTA ═══════════════════════════════════════════════════════════════
+   O título grande da página, a região de dados (o alto já mostra; o tipo sanguíneo e o fator
+   RH foram para o resumo) e, na linha do tempo, as abas (aparecem em "Tabelas").
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-hc-ativo .nc-hc-guardada:not(#nc-hc-x),
+@app.nc-hc-ativo [hidden]:not(#nc-hc-x),
+@app.nc-hc-ativo:not(.nc-hc-tabelas) .nc-hc-abas:not(#nc-hc-x),
+@app.nc-hc-ativo.nc-hc-tabelas .nc-hc-tempo:not(#nc-hc-x),
+@app.nc-hc-ativo.nc-hc-tabelas .nc-hc-busca:not(#nc-hc-x) {
+  display: none;
+}
+
+@app.nc-hc-ativo .nc-hc-so-leitor {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+/* ═══ [C3] QUEM É (O ALTO) ══════════════════════════════════════════════════════════════════ */
+@app.nc-hc-ativo .nc-hc ::selection,
+@app.nc-hc-ativo .nc-hc-paciente ::selection {
+  background: color-mix(in srgb, var(--nc-roxo, #511C76) 18%, #fff);
+}
+
+@app.nc-hc-ativo.nc-hc-cab-fixo .t-Dialog-header {
+  display: block;
+  height: auto;
+  padding: 14px 24px 12px;
+  border-bottom: 1px solid var(--nc-hc-borda);
+  background: #fff;
+}
+
+@app.nc-hc-ativo .nc-hc-paciente {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  color: var(--nc-hc-texto);
+}
+
+@app.nc-hc-ativo .nc-hc > .nc-hc-paciente {
+  margin: 0 0 14px;
+  padding: 14px 16px;
+  border: 1px solid var(--nc-hc-borda);
+  border-radius: 14px;
+  background: #fff;
+}
+
+@app.nc-hc-ativo .nc-hc-avatar {
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--nc-roxo, #511C76) 10%, #fff);
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--nc-roxo, #511C76);
+}
+
+@app.nc-hc-ativo .nc-hc-pac-nome {
+  min-width: 0;
+}
+
+@app.nc-hc-ativo .nc-hc-pac-nome h1 {
+  margin: 0;
+  font-size: 19px;
+  font-weight: 700;
+  line-height: 1.25;
+  letter-spacing: -.01em;
+  color: var(--nc-hc-texto);
+}
+
+@app.nc-hc-ativo .nc-hc-cod {
+  font-weight: 500;
+  color: var(--nc-hc-fraco);
+  font-variant-numeric: tabular-nums;
+}
+
+@app.nc-hc-ativo .nc-hc-pac-dados {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 20px;
+  margin: 6px 0 0;
+  padding: 0;
+}
+
+@app.nc-hc-ativo .nc-hc-pac-dados > div {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
+@app.nc-hc-ativo .nc-hc-pac-dados dt {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--nc-hc-fraco);
+}
+
+@app.nc-hc-ativo .nc-hc-pac-dados dd {
+  margin: 0;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--nc-hc-texto);
+}
+
+/* ═══ [C4] O CORPO ══════════════════════════════════════════════════════════════════════════ */
+@app.nc-hc-ativo .t-Dialog-body:has(.nc-hc) {
+  padding: 18px 24px 28px;
+}
+
+@app.nc-hc-ativo .nc-hc {
+  color: var(--nc-hc-texto);
+  font-variant-numeric: tabular-nums;
+}
+
+@app.nc-hc-ativo .nc-hc-corpo {
+  display: grid;
+  grid-template-columns: 300px minmax(0, 1fr);
+  align-items: start;
+  gap: 20px;
+}
+
+@app.nc-hc-ativo .nc-hc-lado {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+@app.nc-hc-ativo .nc-hc-principal {
+  min-width: 0;
+}
+
+/* ═══ [C5] O RESUMO ═════════════════════════════════════════════════════════════════════════ */
+@app.nc-hc-ativo .nc-hc-caixa {
+  padding: 14px 16px 16px;
+  border: 1px solid var(--nc-hc-borda);
+  border-radius: 14px;
+  background: #fff;
+}
+
+@app.nc-hc-ativo .nc-hc-caixa h2 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: -14px -16px 12px;
+  padding: 12px 16px 10px;
+  border-bottom: 2px solid var(--nc-rosa, #C95788);   /* a faixa da região (padrão da Skin, cor do tema) */
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--nc-hc-texto);
+}
+
+@app.nc-hc-ativo .nc-hc-caixa h2 .nc-hc-ic {
+  color: var(--nc-hc-ruim);
+}
+
+@app.nc-hc-ativo .nc-hc-atencao ul {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+@app.nc-hc-ativo .nc-hc-atencao li {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin: 0;
+  padding: 9px 12px 10px 26px;
+  border-radius: 10px;
+  background: var(--nc-hc-fundo);
+}
+
+@app.nc-hc-ativo .nc-hc-atencao li::before {
+  content: "";
+  position: absolute;
+  top: 15px;
+  left: 11px;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--nc-hc-atencao);
+}
+
+@app.nc-hc-ativo .nc-hc-atencao li[data-tom="ruim"] {
+  background: color-mix(in srgb, var(--nc-hc-ruim) 6%, #fff);
+}
+
+@app.nc-hc-ativo .nc-hc-atencao li[data-tom="ruim"]::before {
+  background: var(--nc-hc-ruim);
+}
+
+@app.nc-hc-ativo .nc-hc-atencao li[data-tom="atencao"] {
+  background: #FFF8EA;
+}
+
+@app.nc-hc-ativo .nc-hc-atencao b {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--nc-hc-texto);
+}
+
+@app.nc-hc-ativo .nc-hc-atencao span {
+  font-size: 13px;
+  line-height: 1.4;
+  white-space: pre-line;
+  color: var(--nc-hc-fraco);
+}
+
+@app.nc-hc-ativo .nc-hc-ok {
+  margin: 0;
+  font-size: 13.5px;
+  line-height: 1.45;
+  color: var(--nc-hc-bom);
+}
+
+@app.nc-hc-ativo .nc-hc-sangue-campos {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+@app.nc-hc-ativo .nc-hc .nc-hc-campo {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: auto;
+  margin: 0;
+  padding: 0;
+}
+
+@app.nc-hc-ativo .nc-hc .nc-hc-campo .t-Form-labelContainer,
+@app.nc-hc-ativo .nc-hc .nc-hc-campo .t-Form-inputContainer {
+  width: auto;
+  padding: 0;
+  text-align: left;
+}
+
+@app.nc-hc-ativo .nc-hc .nc-hc-campo .t-Form-label {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--nc-hc-fraco);
+}
+
+@app.nc-hc-ativo .nc-hc .nc-hc-campo select {
+  width: 100%;
+  min-height: 40px;
+  border: 1px solid #D9D3E5;
+  border-radius: 10px;
+  background-color: #fff;
+  font-size: 14.5px;
+}
+
+@app.nc-hc-ativo .nc-hc-funcao p {
+  margin: 0;
+  font-size: 13.5px;
+  line-height: 1.55;
+  white-space: pre-line;
+  color: var(--nc-hc-fraco);
+}
+
+@app.nc-hc-ativo .nc-hc-link {
+  display: inline-flex;
+  align-items: center;
+  align-self: flex-start;
+  gap: 5px;
+  margin: 4px 0 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--nc-roxo, #511C76);
+  cursor: pointer;
+}
+
+@app.nc-hc-ativo .nc-hc-link .nc-hc-ic {
+  width: 15px;
+  height: 15px;
+}
+
+/* ═══ [C6] A LINHA DO TEMPO ═════════════════════════════════════════════════════════════════ */
+@app.nc-hc-ativo .nc-hc-topo {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px 14px;
+  margin: 0 0 12px;
+}
+
+@app.nc-hc-ativo .nc-hc-vistas {
+  display: inline-flex;
+  gap: 3px;
+  padding: 3px;
+  border-radius: 12px;
+  background: var(--nc-hc-fundo);
+}
+
+@app.nc-hc-ativo .nc-hc-vistas button {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  height: 36px;
+  margin: 0;
+  padding: 0 14px;
+  border: 0;
+  border-radius: 9px;
+  background: transparent;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--nc-hc-fraco);
+  cursor: pointer;
+}
+
+@app.nc-hc-ativo .nc-hc-vistas button[aria-selected="true"] {
+  background: #fff;
+  color: var(--nc-roxo, #511C76);
+  box-shadow: 0 1px 2px rgba(27, 18, 56, .1);
+}
+
+@app.nc-hc-ativo .nc-hc-busca {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: min(340px, 100%);
+  margin: 0;
+}
+
+@app.nc-hc-ativo .nc-hc-busca .nc-hc-ic {
+  position: absolute;
+  left: 12px;
+  color: var(--nc-hc-fraco);
+  pointer-events: none;
+}
+
+@app.nc-hc-ativo .nc-hc-busca input {
+  width: 100%;
+  height: 40px;
+  margin: 0;
+  padding: 0 12px 0 38px;
+  border: 1px solid #D9D3E5;
+  border-radius: 10px;
+  background-color: #fff;
+  font-size: 14px;
+  color: var(--nc-hc-texto);
+}
+
+@app.nc-hc-ativo .nc-hc-busca input:focus {
+  border-color: var(--nc-roxo, #511C76);
+  outline: 0;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--nc-roxo, #511C76) 16%, transparent);
+}
+
+@app.nc-hc-ativo .nc-hc-filtros {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0 0 12px;
+}
+
+@app.nc-hc-ativo .nc-hc-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 32px;
+  margin: 0;
+  padding: 0 12px;
+  border: 1px solid var(--nc-hc-borda);
+  border-radius: 999px;
+  background: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--nc-hc-fraco);
+  cursor: pointer;
+}
+
+@app.nc-hc-ativo .nc-hc-chip .nc-hc-ic {
+  width: 15px;
+  height: 15px;
+  color: var(--nc-hc-c, var(--nc-hc-fraco));
+}
+
+@app.nc-hc-ativo .nc-hc-chip span {
+  font-weight: 500;
+  color: #8A839E;
+}
+
+@app.nc-hc-ativo .nc-hc-chip[aria-pressed="true"] {
+  border-color: var(--nc-hc-c, var(--nc-roxo, #511C76));
+  background: var(--nc-hc-c, var(--nc-roxo, #511C76));
+  color: #fff;
+}
+
+@app.nc-hc-ativo .nc-hc-chip[aria-pressed="true"] .nc-hc-ic,
+@app.nc-hc-ativo .nc-hc-chip[aria-pressed="true"] span {
+  color: rgba(255, 255, 255, .85);
+}
+
+@app.nc-hc-ativo .nc-hc-nota {
+  margin: 0 0 12px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  background: #FFF8EA;
+  font-size: 13.5px;
+  color: var(--nc-hc-atencao);
+}
+
+@app.nc-hc-ativo .nc-hc-nota .nc-hc-link {
+  margin: 0 0 0 6px;
+}
+
+@app.nc-hc-ativo .nc-hc-ano {
+  margin: 18px 0 8px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--nc-hc-fraco);
+  font-variant-numeric: tabular-nums;
+}
+
+@app.nc-hc-ativo .nc-hc-ano:first-child {
+  margin-top: 0;
+}
+
+@app.nc-hc-ativo .nc-hc-itens {
+  margin: 0;
+  padding: 0;
+  border: 1px solid var(--nc-hc-borda);
+  border-radius: 14px;
+  background: #fff;
+  list-style: none;
+  overflow: hidden;
+}
+
+@app.nc-hc-ativo .nc-hc-item {
+  margin: 0;
+  border-top: 1px solid var(--nc-hc-borda);
+}
+
+@app.nc-hc-ativo .nc-hc-item:first-child {
+  border-top: 0;
+}
+
+@app.nc-hc-ativo .nc-hc-linha-bt {
+  display: grid;
+  grid-template-columns: 62px 34px minmax(0, 1fr) 18px;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  margin: 0;
+  padding: 12px 16px 12px 14px;
+  border: 0;
+  background: transparent;
+  font: inherit;
+  text-align: left;
+  color: inherit;
+  cursor: pointer;
+  transition: background .12s;
+}
+
+@app.nc-hc-ativo .nc-hc-linha-bt:hover {
+  background: color-mix(in srgb, var(--nc-roxo, #511C76) 3%, #fff);
+}
+
+@app.nc-hc-ativo .nc-hc-linha-bt:focus-visible {
+  outline: 2px solid var(--nc-roxo, #511C76);
+  outline-offset: -2px;
+}
+
+@app.nc-hc-ativo .nc-hc-linha-bt > .nc-hc-ic:last-child {
+  color: #A9A2BC;
+  transition: transform .15s;
+}
+
+@app.nc-hc-ativo .nc-hc-linha-bt[aria-expanded="true"] > .nc-hc-ic:last-child {
+  transform: rotate(90deg);
+}
+
+@app.nc-hc-ativo .nc-hc-quando {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+}
+
+@app.nc-hc-ativo .nc-hc-quando b {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--nc-hc-texto);
+}
+
+@app.nc-hc-ativo .nc-hc-quando span {
+  font-size: 12px;
+  color: var(--nc-hc-fraco);
+}
+
+@app.nc-hc-ativo .nc-hc-marcador {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--nc-hc-c) 11%, #fff);
+  color: var(--nc-hc-c);
+}
+
+@app.nc-hc-ativo .nc-hc-txt {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+@app.nc-hc-ativo .nc-hc-tipo {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--nc-hc-c);
+}
+
+@app.nc-hc-ativo .nc-hc-tit {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 8px;
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.3;
+  color: var(--nc-hc-texto);
+}
+
+@app.nc-hc-ativo .nc-hc-sub {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px 14px;
+  font-size: 13px;
+  color: var(--nc-hc-fraco);
+}
+
+@app.nc-hc-ativo .nc-hc-res,
+@app.nc-hc-ativo .nc-hc-marca {
+  padding: 2px 9px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+@app.nc-hc-ativo .nc-hc-res[data-tom="bom"] {
+  background: color-mix(in srgb, var(--nc-hc-bom) 11%, #fff);
+  color: var(--nc-hc-bom);
+}
+
+@app.nc-hc-ativo .nc-hc-res[data-tom="ruim"],
+@app.nc-hc-ativo .nc-hc-marca[data-tom="ruim"] {
+  background: color-mix(in srgb, var(--nc-hc-ruim) 10%, #fff);
+  color: var(--nc-hc-ruim);
+}
+
+@app.nc-hc-ativo .nc-hc-res[data-tom="neutro"] {
+  background: var(--nc-hc-fundo);
+  color: var(--nc-hc-fraco);
+}
+
+@app.nc-hc-ativo .nc-hc-marca[data-tom="atencao"] {
+  background: #FFF0CC;
+  color: var(--nc-hc-atencao);
+}
+
+/* os detalhes de um item aberto */
+@app.nc-hc-ativo .nc-hc-det {
+  padding: 2px 16px 14px 136px;
+}
+
+@app.nc-hc-ativo .nc-hc-det dl {
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr);
+  gap: 5px 16px;
+  margin: 0;
+}
+
+@app.nc-hc-ativo .nc-hc-det dl > div {
+  display: contents;
+}
+
+@app.nc-hc-ativo .nc-hc-det dt {
+  margin: 0;
+  font-size: 13px;
+  color: var(--nc-hc-fraco);
+}
+
+@app.nc-hc-ativo .nc-hc-det dd {
+  margin: 0;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--nc-hc-texto);
+  white-space: pre-line;
+}
+
+@app.nc-hc-ativo .nc-hc-det-acoes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+@app.nc-hc-ativo .nc-hc-vazio {
+  margin: 0;
+  padding: 32px 16px;
+  border: 1px dashed var(--nc-hc-borda);
+  border-radius: 14px;
+  text-align: center;
+  font-size: 14px;
+  color: var(--nc-hc-fraco);
+}
+
+@app.nc-hc-ativo .nc-hc-ic {
+  flex: 0 0 auto;
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* ═══ [C7] TABELAS, BOTÕES, RODAPÉ ══════════════════════════════════════════════════════════ */
+@app.nc-hc-ativo .nc-hc-abas {
+  margin: 0;
+}
+
+@app.nc-hc-ativo .nc-hc-bt {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  height: 38px;
+  margin: 0;
+  padding: 0 14px;
+  border: 1px solid var(--nc-borda-botao);
+  border-radius: 10px;
+  background: #fff;
+  box-shadow: none;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--nc-hc-texto);
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+@app.nc-hc-ativo .nc-hc-bt .t-Button-label {
+  padding: 0;
+  font: inherit;
+  color: inherit;
+}
+
+@app.nc-hc-ativo .nc-hc-bt:hover {
+  border-color: color-mix(in srgb, var(--nc-roxo, #511C76) 35%, #fff);
+  background: color-mix(in srgb, var(--nc-roxo, #511C76) 4%, #fff);
+}
+
+@app.nc-hc-ativo .nc-hc-bt:focus-visible,
+@app.nc-hc-ativo .nc-hc-chip:focus-visible,
+@app.nc-hc-ativo .nc-hc-vistas button:focus-visible,
+@app.nc-hc-ativo .nc-hc-link:focus-visible {
+  outline: 2px solid var(--nc-roxo, #511C76);
+  outline-offset: 2px;
+}
+
+@app.nc-hc-ativo .nc-hc-bt--leve {
+  border-color: transparent;
+  background: transparent;
+  color: var(--nc-hc-fraco);
+}
+
+@app.nc-hc-ativo .nc-hc-bt--primario {
+  height: 42px;
+  min-width: 140px;
+  border-color: var(--nc-roxo, #511C76);
+  background: var(--nc-roxo, #511C76);
+  color: #fff;
+}
+
+@app.nc-hc-ativo .nc-hc-bt--primario:hover {
+  border-color: var(--nc-azul, #2C1A63);
+  background: var(--nc-azul, #2C1A63);
+}
+
+@app.nc-hc-ativo .t-Dialog-footer.nc-hc-rodape {
+  display: block;
+  height: auto;
+  padding: 10px 24px;
+  border-top: 1px solid var(--nc-hc-borda);
+  background: #fff;
+}
+
+@app.nc-hc-ativo .nc-hc-pe {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+@app.nc-hc-ativo .nc-hc-pe-esq,
+@app.nc-hc-ativo .nc-hc-pe-dir {
+  display: flex;
+  gap: 8px;
+}
+
+/* em "Tabelas" as grades são só para consultar: lançar e corrigir é na gaveta */
+@app.nc-hc-ativo .nc-hc-abas .a-IG-header :is([data-action="edit"], [data-action="save"], [data-action="selection-add-row"]):not(#nc-hc-x) {
+  display: none;
+}
+
+@app.nc-hc-ativo .nc-hc-novos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-right: auto;
+}
+
+@app.nc-hc-ativo .nc-hc-novo {
+  border-style: dashed;
+  color: var(--nc-roxo, #511C76);
+}
+
+@app.nc-hc-ativo .nc-hc-novo .nc-hc-ic {
+  color: var(--nc-hc-c, var(--nc-roxo, #511C76));
+}
+
+@app.nc-hc-ativo .nc-hc-bt--icone {
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border-color: transparent;
+}
+
+@app.nc-hc-ativo .nc-hc-bt--perigo {
+  border-color: color-mix(in srgb, var(--nc-hc-ruim) 35%, #fff);
+  color: var(--nc-hc-ruim);
+}
+
+@app.nc-hc-ativo .nc-hc-bt--perigo:hover {
+  border-color: var(--nc-hc-ruim);
+  background: color-mix(in srgb, var(--nc-hc-ruim) 6%, #fff);
+}
+
+@app.nc-hc-ativo .nc-hc-bt:disabled {
+  opacity: .55;
+  cursor: progress;
+}
+
+/* ═══ [C8] A GAVETA DE LANÇAR E CORRIGIR (A FICHA DA GRADE) ═════════════════════════════════
+   O JS põe a região da grade dentro da gaveta enquanto ela está aberta (.nc-hc-motor) e mostra
+   a "vista de um registro" do próprio grid: aqui some tudo da grade que não é campo (título,
+   barra de ferramentas, navegação) e os campos que não estão em FICHAS. Os campos ganham cara
+   de campo (a ficha do grid desenha sem borda até ser tocada).
+   CUIDADO: o grid escreve largura em px na ficha (style="width:…"): o width:auto daqui vence.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-hc-ativo .nc-hc-gfundo,
+@app.nc-hc-ativo .nc-hc-gaveta {
+  display: none;
+}
+
+@app.nc-hc-ativo.nc-hc-editando .nc-hc-gfundo {
+  position: fixed;
+  inset: 0;
+  z-index: 900;
+  display: block;
+  background: rgba(27, 18, 56, .38);
+  animation: nc-hc-aparece .18s ease-out both;
+}
+
+@app.nc-hc-ativo.nc-hc-editando .nc-hc-gaveta {
+  position: fixed;
+  inset: 0 0 0 auto;
+  z-index: 901;
+  display: flex;
+  flex-direction: column;
+  width: min(560px, 100vw);
+  background: #fff;
+  box-shadow: -24px 0 60px -30px rgba(27, 18, 56, .5);
+  animation: nc-hc-entra .22s cubic-bezier(.2, .8, .2, 1) both;
+}
+
+@keyframes nc-hc-aparece {
+  from { opacity: .01; }
+}
+
+@keyframes nc-hc-entra {
+  from { transform: translateX(32px); opacity: .01; }
+}
+
+@app.nc-hc-ativo .nc-hc-gcab {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 18px 14px 14px 24px;
+  border-bottom: 1px solid var(--nc-hc-borda);
+}
+
+@app.nc-hc-ativo .nc-hc-gcab > div {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+@app.nc-hc-ativo .nc-hc-gtipo {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0 0 2px;
+  font-size: 12.5px;
+  font-weight: 700;
+  letter-spacing: .02em;
+  color: var(--nc-hc-c);
+}
+
+@app.nc-hc-ativo .nc-hc-gtipo .nc-hc-ic {
+  width: 16px;
+  height: 16px;
+}
+
+@app.nc-hc-ativo .nc-hc-gcab h2 {
+  margin: 0;
+  font-size: 21px;
+  font-weight: 700;
+  line-height: 1.25;
+  color: var(--nc-hc-texto);
+}
+
+@app.nc-hc-ativo .nc-hc-gsub {
+  margin: 3px 0 0;
+  font-size: 14px;
+  color: var(--nc-hc-fraco);
+}
+
+/* overflow-x: a grade guarda, escondidos dentro da região, os campos de edição de cada coluna
+   e um medidor de tamanho com a largura da grade inteira (1000–1800 px): sem cortar, a gaveta
+   rolava para o lado */
+@app.nc-hc-ativo .nc-hc-gcorpo {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+@app.nc-hc-ativo .nc-hc-gpe {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 24px calc(14px + env(safe-area-inset-bottom, 0px));
+  border-top: 1px solid var(--nc-hc-borda);
+  background: #fff;
+}
+
+@app.nc-hc-ativo .nc-hc-gpe-espaco {
+  flex: 1 1 auto;
+}
+
+@app.nc-hc-ativo .nc-hc-gaveta.is-ocupada .nc-hc-gcorpo {
+  opacity: .6;
+  pointer-events: none;
+}
+
+/* a região da grade, dentro da gaveta: só a ficha */
+@app.nc-hc-ativo .nc-hc-motor:not(#nc-hc-x) {
+  display: block;
+  margin: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+@app.nc-hc-ativo .nc-hc-motor :is(.t-Region-header, .a-IG-header, .js-stickyWidget-placeholder, .a-RV-toolbar, .a-RV-header, .a-RV-footer, .a-GV, .a-IG-footer):not(#nc-hc-x) {
+  display: none;
+}
+
+@app.nc-hc-ativo .nc-hc-motor:not(#nc-hc-x) :is(.t-Region-bodyWrap, .t-Region-body, .a-IG, .a-IG-body, .a-IG-contentContainer, .a-RV, .a-RV-w-scroll, .a-RV-body):not(#nc-hc-y) {
+  width: auto;
+  height: auto;
+  min-height: 0;
+  margin: 0;
+  padding: 0;
+  overflow: visible;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+/* dentro do IG moram dois medidores de tamanho (200% e a largura da grade toda) e o contêiner
+   escondido dos campos de edição (1000+ px): clip corta e, ao contrário de hidden, não deixa nem
+   o foco num campo rolar a ficha para o lado */
+@app.nc-hc-ativo .nc-hc-motor:not(#nc-hc-x) .a-IG:not(#nc-hc-y):not(#nc-hc-z) {
+  overflow: hidden;
+  overflow: clip;
+}
+
+@app.nc-hc-ativo .nc-hc-motor .a-RV .u-Form:not(#nc-hc-x) {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px 14px;
+  padding: 20px 24px 28px;
+}
+
+@app.nc-hc-ativo .nc-hc-motor .a-RV .u-Form > :not(.nc-hc-gsec):not(#nc-hc-x) {
+  display: none;
+}
+
+@app.nc-hc-ativo .nc-hc-motor .nc-hc-gsec {
+  grid-column: 1 / -1;
+  margin: 10px 0 -4px;
+  padding-top: 14px;
+  border-top: 1px solid var(--nc-hc-borda);
+  font-size: 12.5px;
+  font-weight: 700;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  color: var(--nc-hc-fraco);
+}
+
+@app.nc-hc-ativo .nc-hc-motor .nc-hc-gsec:first-child,
+@app.nc-hc-ativo .nc-hc-motor .u-Form > .nc-hc-gsec[style*="order: 0"] {
+  margin-top: 0;
+  padding-top: 0;
+  border-top: 0;
+}
+
+/* quais campos aparecem, em que ordem e largura: a folha #nc-hc-ficha-… que o JS monta pelo ID */
+@app.nc-hc-ativo .nc-hc-motor .a-RV .u-Form > .u-Form-fieldContainer {
+  flex-direction: column;
+  align-items: stretch;
+  align-self: start;
+  min-width: 0;
+  gap: 6px;
+  width: auto;
+  margin: 0;
+  padding: 0;
+}
+
+@app.nc-hc-ativo .nc-hc-motor .a-RV .u-Form > .u-Form-fieldContainer .u-Form-labelContainer {
+  width: auto;
+  padding: 0;
+  text-align: left;
+}
+
+@app.nc-hc-ativo .nc-hc-motor .a-RV .u-Form > .u-Form-fieldContainer .u-Form-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--nc-hc-texto);
+}
+
+@app.nc-hc-ativo .nc-hc-motor .a-RV .u-Form > .u-Form-fieldContainer.is-required .u-Form-label::after {
+  content: " *";
+  color: var(--nc-hc-ruim);
+}
+
+@app.nc-hc-ativo .nc-hc-motor .a-RV .u-Form > .u-Form-fieldContainer .u-Form-inputContainer {
+  width: 100%;
+  min-height: 46px;
+  padding: 0;
+  border: 1px solid #D9D3E5;
+  border-radius: 10px;
+  background: #fff;
+  transition: border-color .15s, box-shadow .15s;
+}
+
+@app.nc-hc-ativo .nc-hc-motor .a-RV .u-Form > .u-Form-fieldContainer .u-Form-inputContainer:hover {
+  border-color: color-mix(in srgb, var(--nc-roxo, #511C76) 40%, #fff);
+}
+
+@app.nc-hc-ativo .nc-hc-motor .a-RV .u-Form > .u-Form-fieldContainer .u-Form-inputContainer:focus-within {
+  border-color: var(--nc-roxo, #511C76);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--nc-roxo, #511C76) 16%, transparent);
+}
+
+@app.nc-hc-ativo .nc-hc-motor .a-RV .u-Form > .u-Form-fieldContainer.is-error .u-Form-inputContainer {
+  border-color: var(--nc-hc-ruim);
+}
+
+/* o campo da grade: entrada + botão (calendário, lista) numa linha só, sempre com 44 px */
+@app.nc-hc-ativo .nc-hc-motor .a-RV .u-Form > .u-Form-fieldContainer .a-GV-columnItem:not(#nc-hc-x) {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  min-width: 0;
+  height: 44px;
+}
+
+@app.nc-hc-ativo .nc-hc-motor .a-RV .u-Form > .u-Form-fieldContainer :is(select, input[type="text"], textarea):not(#nc-hc-x) {
+  flex: 1 1 auto;
+  width: 100%;
+  min-width: 0;
+  height: 44px;
+  min-height: 44px;
+  margin: 0;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 10px;
+  outline: 0;
+  box-shadow: none;
+  background-color: transparent;
+  font-size: 15px;
+  color: var(--nc-hc-texto);
+}
+
+/* a lista de opções com a mesma seta dupla dos outros selects do sistema (Sangue, ao lado) */
+@app.nc-hc-ativo .nc-hc-motor .a-RV .u-Form > .u-Form-fieldContainer select:not(#nc-hc-x) {
+  appearance: none;
+  padding-right: 38px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2377707f' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m7 15 5 5 5-5'/%3E%3Cpath d='m7 9 5-5 5 5'/%3E%3C/svg%3E");
+  background-position: calc(100% - 12px) 50%;
+  background-size: 16px 16px;
+  background-repeat: no-repeat;
+  cursor: pointer;
+}
+
+/* o botão do calendário: ícone dentro do campo, à direita (não desce para a linha de baixo) */
+@app.nc-hc-ativo .nc-hc-motor .a-RV .u-Form > .u-Form-fieldContainer .ui-datepicker-trigger:not(#nc-hc-x) {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  margin: 0 3px 0 0;
+  padding: 0;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  box-shadow: none;
+  color: var(--nc-roxo, #511C76);
+}
+
+@app.nc-hc-ativo .nc-hc-motor .a-RV .u-Form > .u-Form-fieldContainer .ui-datepicker-trigger:hover {
+  background: color-mix(in srgb, var(--nc-roxo, #511C76) 8%, #fff);
+}
+
+@app.nc-hc-ativo .nc-hc-motor .a-RV .u-Form > .u-Form-fieldContainer .a-RV-fieldValue {
+  padding: 12px;
+  font-size: 15px;
+}
+
+/* hora: máscara 00:00 (JS); inválida = borda vermelha e aviso embaixo */
+@app.nc-hc-ativo .nc-hc-motor .a-RV .u-Form > .u-Form-fieldContainer.nc-hora-ruim .u-Form-inputContainer {
+  border-color: var(--nc-hc-ruim);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--nc-hc-ruim) 14%, transparent);
+}
+
+@app.nc-hc-ativo .nc-hc-motor .nc-hora-aviso {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--nc-hc-ruim);
+}
+
+@app.nc-hc-ativo .nc-hc-motor input[data-nc-hora] {
+  font-variant-numeric: tabular-nums;
+  letter-spacing: .02em;
+}
+
+/* o aviso de salvo (embaixo, no centro) */
+@app.nc-hc-ativo .nc-hc-aviso {
+  position: fixed;
+  left: 50%;
+  bottom: 84px;
+  z-index: 950;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  max-width: calc(100vw - 32px);
+  padding: 12px 18px;
+  border-radius: 12px;
+  background: var(--nc-hc-texto);
+  box-shadow: 0 10px 30px -12px rgba(27, 18, 56, .5);
+  font-size: 14px;
+  font-weight: 600;
+  color: #fff;
+  transform: translate(-50%, 16px);
+  visibility: hidden;
+  opacity: .01;
+  transition: transform .2s, opacity .2s, visibility 0s .2s;
+}
+
+@app.nc-hc-ativo .nc-hc-aviso.is-visivel {
+  transform: translate(-50%, 0);
+  visibility: visible;
+  opacity: 1;
+  transition: transform .2s, opacity .2s;
+}
+
+@app.nc-hc-ativo .nc-hc-aviso.is-erro {
+  background: var(--nc-hc-ruim);
+}
+
+@app.nc-hc-ativo .nc-hc-aviso .nc-hc-ic {
+  color: #8EE0B5;
+}
+
+/* ═══ [C9] CELULAR E TABLET ═════════════════════════════════════════════════════════════════ */
+/* uma coluna: Atenção, depois a linha do tempo, e por último Sangue e Função */
+@media (max-width: 1000px) {
+  @app.nc-hc-ativo .nc-hc-corpo {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  @app.nc-hc-ativo .nc-hc-lado {
+    display: contents;
+  }
+
+  @app.nc-hc-ativo .nc-hc-atencao {
+    order: 1;
+  }
+
+  @app.nc-hc-ativo .nc-hc-principal {
+    order: 2;
+  }
+
+  @app.nc-hc-ativo .nc-hc-sangue {
+    order: 3;
+  }
+
+  @app.nc-hc-ativo .nc-hc-funcao {
+    order: 4;
+  }
+}
+
+@media (max-width: 760px) {
+  @app.nc-hc-ativo .t-Dialog-body:has(.nc-hc) {
+    padding: 12px 12px 24px;
+  }
+
+  @app.nc-hc-ativo .nc-hc-pac-dados > div:is([data-k="filial"], [data-k="empresa"], [data-k="local"]) {
+    display: none;
+  }
+
+  @app.nc-hc-ativo .nc-hc-busca {
+    width: 100%;
+  }
+
+  @app.nc-hc-ativo .nc-hc-linha-bt {
+    grid-template-columns: 50px minmax(0, 1fr) 16px;
+    gap: 10px;
+    padding: 12px 12px;
+  }
+
+  @app.nc-hc-ativo .nc-hc-marcador {
+    display: none;
+  }
+
+  @app.nc-hc-ativo .nc-hc-det {
+    padding: 2px 14px 14px;
+  }
+
+  @app.nc-hc-ativo .nc-hc-det dl {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1px;
+  }
+
+  @app.nc-hc-ativo .nc-hc-det dd {
+    margin-bottom: 6px;
+  }
+
+  @app.nc-hc-ativo .t-Dialog-footer.nc-hc-rodape {
+    padding: 8px 12px calc(8px + env(safe-area-inset-bottom, 0px));
+  }
+
+  @app.nc-hc-ativo .nc-hc-novos {
+    order: 3;
+    width: 100%;
+  }
+
+  @app.nc-hc-ativo .nc-hc-novo {
+    flex: 1 1 0;
+  }
+
+  @app.nc-hc-ativo .nc-hc-motor .a-RV .u-Form:not(#nc-hc-x) {
+    padding: 16px 16px 24px;
+  }
+
+  @app.nc-hc-ativo .nc-hc-gcab {
+    padding: 14px 8px 12px 16px;
+  }
+
+  @app.nc-hc-ativo .nc-hc-gpe {
+    padding: 12px 16px calc(12px + env(safe-area-inset-bottom, 0px));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  @app.nc-hc-ativo .nc-hc * {
+    transition: none;
+  }
+}

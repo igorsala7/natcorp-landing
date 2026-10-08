@@ -1,0 +1,637 @@
+/* ╔════════════════════════════════════════════════════════════════════════════════════════╗
+   ║  NATCORP · CHAMADA DE PACIENTES  —  a "roupa" do painel da TV (CSS)                      ║
+   ║  App 2936 (Medicina Ocupacional - Chamada de Pacientes) · Página 1 ("Painel")            ║
+   ╚════════════════════════════════════════════════════════════════════════════════════════╝
+
+   Primeira vez num arquivo destes? Leia antes o manual: brand/apex/MANUAL-APEX.md (parte 1).
+
+   ── O QUE ESTE ARQUIVO FAZ ────────────────────────────────────────────────────────────────
+   O painel da sala de espera, para ser lido de longe: CLARO por padrão (fundo lavanda claro,
+   painéis brancos; o escuro é opção nos Ajustes da TV), senha em tamanho de placa, números de largura
+   fixa (a senha não "dança"), as duas filas lado a lado. A chamada abre em tela cheia.
+   TUDO é medido em --u (1% da altura de uma tela 16:9): o mesmo desenho numa TV de 1366×768
+   ou de 4K. O app 2936 não carrega o Natcorp_Style_Min.css: as cores e a letra estão aqui.
+
+   ── ONDE ELE ENTRA NO APEX ────────────────────────────────────────────────────────────────
+     Página 1 › CSS › File URLs:   #WORKSPACE_IMAGES#Natcorp_Chamada.css
+     CUIDADO: este é o arquivo-FONTE (.src.css). O gerador (gerar-app.mjs) cria o .css.
+
+   ── ÍNDICE ────────────────────────────────────────────────────────────────────────────────
+     [C1] As cores, a letra e a medida                           PODE MEXER
+     [C2] O que sai da vista (a página antiga)
+     [C3] O alto (logo, título, relógio)
+     [C4] As filas: "chamando agora" e as anteriores
+     [C5] A chamada em tela cheia
+     [C6] O pé, a faixa "ligar o som" e os ajustes
+     [C7] Movimento reduzido
+*/
+
+/* ═══ [C1] AS CORES, A LETRA E A MEDIDA ═════════════════════════════════════════════════════
+   PODE MEXER  as cores. PADRÃO = CLARO (pedido de 04/10): fundo lavanda bem claro, painéis
+   brancos, texto tinta, o roxo e o rosa da marca nos destaques. O ESCURO (.is-escuro, ligado
+   nos Ajustes da TV) troca só estas variáveis. A chamada em tela cheia é roxa nos dois.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ch-ativo {
+  --ch-u: min(1vh, 0.5625vw);
+  --ch-ease: cubic-bezier(.16, 1, .3, 1);
+  overflow: hidden !important;
+  background: #F4F1F9 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ch-ativo .nc-ch {
+  --ch-fundo: #F4F1F9;
+  --ch-fundo-luz1: rgba(81, 28, 118, .07);
+  --ch-fundo-luz2: rgba(201, 87, 136, .06);
+  --ch-painel: #FFFFFF;
+  --ch-painel2: #FFFFFF;
+  --ch-sombra: 0 1px 2px rgba(27, 18, 56, .05), 0 calc(var(--ch-u) * 1.4) calc(var(--ch-u) * 4) calc(var(--ch-u) * -1.6) rgba(27, 18, 56, .14);
+  --ch-linha: #E6E0F0;
+  --ch-texto: #1B1238;
+  --ch-fraco: #5F5774;
+  --ch-forte: #511C76;
+  --ch-ant: #4A4263;
+  --ch-rosa: #B83C74;
+  --ch-agora-bg: #F6F2FB;
+  --ch-novo-bg: #FCEEF4;
+  --ch-novo-anel: rgba(184, 60, 116, .55);
+  --ch-novo-anel-forte: rgba(184, 60, 116, .95);
+  --ch-vazio-borda: #DCD3EA;
+  --ch-logo: #511C76;
+  --ch-ligar-bg: #FFE1B3;
+  --ch-ligar-texto: #3B2300;
+  --ch-offline: #B45309;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ch-ativo .nc-ch.is-escuro {
+  --ch-fundo: #120A26;
+  --ch-fundo-luz1: rgba(110, 52, 168, .30);
+  --ch-fundo-luz2: rgba(226, 123, 170, .10);
+  --ch-painel: #1B1236;
+  --ch-painel2: #23184A;
+  --ch-sombra: none;
+  --ch-linha: rgba(201, 182, 236, .14);
+  --ch-texto: #F7F4FC;
+  --ch-fraco: #B8AED3;
+  --ch-forte: #F7F4FC;
+  --ch-ant: #D9D1EA;
+  --ch-rosa: #E27BAA;
+  --ch-agora-bg: rgba(255, 255, 255, .035);
+  --ch-novo-bg: rgba(226, 123, 170, .10);
+  --ch-novo-anel: rgba(226, 123, 170, .55);
+  --ch-novo-anel-forte: rgba(226, 123, 170, .95);
+  --ch-vazio-borda: rgba(201, 182, 236, .14);
+  --ch-logo: #FFFFFF;
+  --ch-ligar-bg: #FFC27A;
+  --ch-ligar-texto: #2A1150;
+  --ch-offline: #FFC27A;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ch-ativo .nc-ch {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 1000 !important;
+  display: grid !important;
+  grid-template-rows: auto 1fr auto !important;
+  gap: calc(var(--ch-u) * 3) !important;
+  padding: calc(var(--ch-u) * 3) calc(var(--ch-u) * 3.6) calc(var(--ch-u) * 4.2) !important;
+  background:
+    radial-gradient(120% 80% at 100% 0%, var(--ch-fundo-luz1), transparent 60%),
+    radial-gradient(90% 70% at 0% 100%, var(--ch-fundo-luz2), transparent 60%),
+    var(--ch-fundo) !important;
+  font-family: Inter, "Segoe UI", Roboto, system-ui, -apple-system, sans-serif !important;
+  font-size: calc(var(--ch-u) * 2) !important;
+  line-height: 1.2 !important;
+  color: var(--ch-texto) !important;
+  cursor: none !important;
+  -webkit-font-smoothing: antialiased !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ch-ativo .nc-ch.is-mexendo {
+  cursor: default !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ch-ativo .nc-ch-ic {
+  flex: none !important;
+  width: 1em !important;
+  height: 1em !important;
+  fill: none !important;
+  stroke: currentColor !important;
+  stroke-width: 1.8 !important;
+  stroke-linecap: round !important;
+  stroke-linejoin: round !important;
+}
+
+/* zera margens dos textos com peso ZERO (:where): qualquer classe abaixo vence (as pílulas da
+   chamada são <p> e perdiam o recuo com ".nc-ch p") */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ch-ativo :where(.nc-ch) :where(p, h1, h2, h3, ol) {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* ═══ [C2] O QUE SAI DA VISTA ═══════════════════════════════════════════════════════════════
+   A página antiga continua por baixo (é dela que o modo reserva lê): só sai da vista.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ch-ativo .t-Body,
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ch-ativo .t-Header,
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ch-ativo .t-Footer,
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ch-ativo #apexDevToolbar {
+  visibility: hidden !important;
+}
+
+/* ═══ [C3] O ALTO ═══════════════════════════════════════════════════════════════════════════ */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ch-ativo .nc-ch-topo {
+  display: flex !important;
+  align-items: center !important;
+  gap: calc(var(--ch-u) * 2.6) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ch-ativo .nc-ch-logo {
+  flex: none !important;
+  width: calc(var(--ch-u) * 17) !important;
+  height: calc(var(--ch-u) * 5) !important;
+  background: var(--ch-logo) !important;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 31.596 8' fill='%23fff'%3E%3Cpath d='M4.322 0.322L5.573 1.573A0.456 0.456 0 0 1 5.573 2.218L4.322 3.469A0.456 0.456 0 0 1 3.678 3.469L2.427 2.218A0.456 0.456 0 0 1 2.427 1.573L3.678 0.322A0.456 0.456 0 0 1 4.322 0.322Z'/%3E%3Cpath d='M6.427 2.427L7.678 3.678A0.456 0.456 0 0 1 7.678 4.322L6.427 5.573A0.456 0.456 0 0 1 5.782 5.573L4.531 4.322A0.456 0.456 0 0 1 4.531 3.678L5.782 2.427A0.456 0.456 0 0 1 6.427 2.427Z'/%3E%3Cpath d='M2.218 2.427L3.469 3.678A0.456 0.456 0 0 1 3.469 4.322L2.218 5.573A0.456 0.456 0 0 1 1.573 5.573L0.322 4.322A0.456 0.456 0 0 1 0.322 3.678L1.573 2.427A0.456 0.456 0 0 1 2.218 2.427Z'/%3E%3Cpath d='M4.322 4.531L5.573 5.782A0.456 0.456 0 0 1 5.573 6.427L4.322 7.678A0.456 0.456 0 0 1 3.678 7.678L2.427 6.427A0.456 0.456 0 0 1 2.427 5.782L3.678 4.531A0.456 0.456 0 0 1 4.322 4.531Z'/%3E%3Cpath d='M11.61 5.69V4.04Q11.61 3.86 11.58 3.66Q11.55 3.46 11.47 3.28Q11.38 3.10 11.22 2.99Q11.05 2.87 10.78 2.87Q10.62 2.87 10.47 2.93Q10.32 2.98 10.21 3.10Q10.09 3.23 10.02 3.43Q9.95 3.64 9.95 3.94L9.53 3.77Q9.53 3.32 9.70 2.97Q9.87 2.62 10.19 2.42Q10.52 2.22 10.98 2.22Q11.34 2.22 11.58 2.34Q11.82 2.45 11.97 2.64Q12.11 2.83 12.19 3.05Q12.26 3.26 12.29 3.46Q12.31 3.67 12.31 3.81V5.69ZM9.25 5.69V2.31H9.87V3.32H9.95V5.69Z'/%3E%3Cpath d='M13.95 5.78Q13.58 5.78 13.32 5.64Q13.07 5.50 12.94 5.27Q12.81 5.04 12.81 4.77Q12.81 4.52 12.90 4.32Q12.99 4.13 13.16 3.99Q13.33 3.85 13.60 3.76Q13.81 3.70 14.09 3.65Q14.37 3.59 14.69 3.55Q15.00 3.51 15.33 3.46L15.08 3.60Q15.09 3.22 14.92 3.04Q14.75 2.86 14.35 2.86Q14.10 2.86 13.88 2.97Q13.66 3.09 13.57 3.36L12.93 3.17Q13.06 2.73 13.41 2.48Q13.76 2.22 14.35 2.22Q14.80 2.22 15.14 2.37Q15.48 2.52 15.64 2.86Q15.72 3.03 15.74 3.21Q15.76 3.40 15.76 3.61V5.69H15.15V4.93L15.26 5.04Q15.05 5.42 14.73 5.60Q14.41 5.78 13.95 5.78ZM14.08 5.22Q14.35 5.22 14.54 5.13Q14.73 5.03 14.85 4.89Q14.96 4.74 15.00 4.60Q15.06 4.45 15.06 4.26Q15.07 4.07 15.07 3.96L15.29 4.04Q14.97 4.09 14.72 4.12Q14.47 4.16 14.28 4.20Q14.09 4.23 13.94 4.28Q13.80 4.33 13.71 4.39Q13.61 4.46 13.55 4.55Q13.49 4.64 13.49 4.76Q13.49 4.89 13.56 4.99Q13.62 5.10 13.75 5.16Q13.88 5.22 14.08 5.22Z'/%3E%3Cpath d='M18.40 5.69Q18.07 5.75 17.76 5.74Q17.45 5.73 17.20 5.62Q16.96 5.51 16.83 5.28Q16.72 5.06 16.71 4.84Q16.71 4.62 16.71 4.34V1.38H17.40V4.30Q17.40 4.51 17.40 4.66Q17.41 4.81 17.47 4.91Q17.58 5.10 17.83 5.12Q18.07 5.15 18.40 5.10ZM16.07 2.86V2.31H18.40V2.86Z'/%3E%3Cpath d='M20.44 5.78Q19.92 5.78 19.56 5.55Q19.19 5.32 19.00 4.91Q18.80 4.51 18.80 4.00Q18.80 3.48 19.00 3.08Q19.20 2.68 19.57 2.45Q19.94 2.22 20.45 2.22Q21.01 2.22 21.41 2.50Q21.80 2.78 21.93 3.27L21.24 3.46Q21.14 3.18 20.93 3.03Q20.71 2.87 20.44 2.87Q20.13 2.87 19.93 3.02Q19.73 3.16 19.63 3.42Q19.54 3.67 19.54 4.00Q19.54 4.51 19.77 4.82Q19.99 5.13 20.44 5.13Q20.75 5.13 20.94 4.99Q21.12 4.84 21.22 4.58L21.93 4.74Q21.76 5.24 21.38 5.51Q20.99 5.78 20.44 5.78Z'/%3E%3Cpath d='M23.91 5.78Q23.40 5.78 23.03 5.55Q22.66 5.33 22.45 4.92Q22.25 4.52 22.25 4.00Q22.25 3.47 22.46 3.07Q22.67 2.67 23.04 2.44Q23.41 2.22 23.91 2.22Q24.42 2.22 24.79 2.45Q25.17 2.67 25.37 3.08Q25.58 3.48 25.58 4.00Q25.58 4.53 25.37 4.93Q25.17 5.33 24.79 5.56Q24.42 5.78 23.91 5.78ZM23.91 5.13Q24.38 5.13 24.61 4.81Q24.84 4.50 24.84 4.00Q24.84 3.48 24.61 3.18Q24.38 2.87 23.91 2.87Q23.59 2.87 23.39 3.01Q23.18 3.16 23.08 3.41Q22.98 3.66 22.98 4.00Q22.98 4.51 23.22 4.82Q23.45 5.13 23.91 5.13Z'/%3E%3Cpath d='M26.14 5.69V2.31H26.76V3.13L26.68 3.03Q26.74 2.86 26.84 2.72Q26.94 2.59 27.08 2.50Q27.21 2.41 27.36 2.36Q27.52 2.31 27.68 2.30Q27.84 2.29 28.00 2.31V2.96Q27.84 2.92 27.64 2.93Q27.44 2.95 27.27 3.06Q27.12 3.15 27.02 3.29Q26.93 3.43 26.88 3.61Q26.84 3.78 26.84 3.98V5.69Z'/%3E%3Cpath d='M30.06 5.78Q29.58 5.78 29.24 5.55Q28.91 5.31 28.75 4.91Q28.58 4.50 28.58 4.00Q28.58 3.49 28.74 3.09Q28.91 2.69 29.24 2.45Q29.57 2.22 30.04 2.22Q30.52 2.22 30.87 2.45Q31.22 2.68 31.41 3.09Q31.60 3.49 31.60 4.00Q31.60 4.50 31.41 4.91Q31.22 5.31 30.88 5.55Q30.53 5.78 30.06 5.78ZM28.46 7.19V2.31H29.07V4.72H29.16V7.19ZM29.96 5.16Q30.27 5.16 30.47 5.00Q30.67 4.85 30.76 4.59Q30.86 4.32 30.86 4.00Q30.86 3.68 30.76 3.42Q30.66 3.15 30.46 3.00Q30.26 2.84 29.94 2.84Q29.64 2.84 29.45 2.99Q29.26 3.13 29.17 3.40Q29.07 3.66 29.07 4.00Q29.07 4.34 29.17 4.60Q29.26 4.86 29.45 5.01Q29.65 5.16 29.96 5.16Z'/%3E%3C/svg%3E") left center / contain no-repeat !important;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 31.596 8' fill='%23fff'%3E%3Cpath d='M4.322 0.322L5.573 1.573A0.456 0.456 0 0 1 5.573 2.218L4.322 3.469A0.456 0.456 0 0 1 3.678 3.469L2.427 2.218A0.456 0.456 0 0 1 2.427 1.573L3.678 0.322A0.456 0.456 0 0 1 4.322 0.322Z'/%3E%3Cpath d='M6.427 2.427L7.678 3.678A0.456 0.456 0 0 1 7.678 4.322L6.427 5.573A0.456 0.456 0 0 1 5.782 5.573L4.531 4.322A0.456 0.456 0 0 1 4.531 3.678L5.782 2.427A0.456 0.456 0 0 1 6.427 2.427Z'/%3E%3Cpath d='M2.218 2.427L3.469 3.678A0.456 0.456 0 0 1 3.469 4.322L2.218 5.573A0.456 0.456 0 0 1 1.573 5.573L0.322 4.322A0.456 0.456 0 0 1 0.322 3.678L1.573 2.427A0.456 0.456 0 0 1 2.218 2.427Z'/%3E%3Cpath d='M4.322 4.531L5.573 5.782A0.456 0.456 0 0 1 5.573 6.427L4.322 7.678A0.456 0.456 0 0 1 3.678 7.678L2.427 6.427A0.456 0.456 0 0 1 2.427 5.782L3.678 4.531A0.456 0.456 0 0 1 4.322 4.531Z'/%3E%3Cpath d='M11.61 5.69V4.04Q11.61 3.86 11.58 3.66Q11.55 3.46 11.47 3.28Q11.38 3.10 11.22 2.99Q11.05 2.87 10.78 2.87Q10.62 2.87 10.47 2.93Q10.32 2.98 10.21 3.10Q10.09 3.23 10.02 3.43Q9.95 3.64 9.95 3.94L9.53 3.77Q9.53 3.32 9.70 2.97Q9.87 2.62 10.19 2.42Q10.52 2.22 10.98 2.22Q11.34 2.22 11.58 2.34Q11.82 2.45 11.97 2.64Q12.11 2.83 12.19 3.05Q12.26 3.26 12.29 3.46Q12.31 3.67 12.31 3.81V5.69ZM9.25 5.69V2.31H9.87V3.32H9.95V5.69Z'/%3E%3Cpath d='M13.95 5.78Q13.58 5.78 13.32 5.64Q13.07 5.50 12.94 5.27Q12.81 5.04 12.81 4.77Q12.81 4.52 12.90 4.32Q12.99 4.13 13.16 3.99Q13.33 3.85 13.60 3.76Q13.81 3.70 14.09 3.65Q14.37 3.59 14.69 3.55Q15.00 3.51 15.33 3.46L15.08 3.60Q15.09 3.22 14.92 3.04Q14.75 2.86 14.35 2.86Q14.10 2.86 13.88 2.97Q13.66 3.09 13.57 3.36L12.93 3.17Q13.06 2.73 13.41 2.48Q13.76 2.22 14.35 2.22Q14.80 2.22 15.14 2.37Q15.48 2.52 15.64 2.86Q15.72 3.03 15.74 3.21Q15.76 3.40 15.76 3.61V5.69H15.15V4.93L15.26 5.04Q15.05 5.42 14.73 5.60Q14.41 5.78 13.95 5.78ZM14.08 5.22Q14.35 5.22 14.54 5.13Q14.73 5.03 14.85 4.89Q14.96 4.74 15.00 4.60Q15.06 4.45 15.06 4.26Q15.07 4.07 15.07 3.96L15.29 4.04Q14.97 4.09 14.72 4.12Q14.47 4.16 14.28 4.20Q14.09 4.23 13.94 4.28Q13.80 4.33 13.71 4.39Q13.61 4.46 13.55 4.55Q13.49 4.64 13.49 4.76Q13.49 4.89 13.56 4.99Q13.62 5.10 13.75 5.16Q13.88 5.22 14.08 5.22Z'/%3E%3Cpath d='M18.40 5.69Q18.07 5.75 17.76 5.74Q17.45 5.73 17.20 5.62Q16.96 5.51 16.83 5.28Q16.72 5.06 16.71 4.84Q16.71 4.62 16.71 4.34V1.38H17.40V4.30Q17.40 4.51 17.40 4.66Q17.41 4.81 17.47 4.91Q17.58 5.10 17.83 5.12Q18.07 5.15 18.40 5.10ZM16.07 2.86V2.31H18.40V2.86Z'/%3E%3Cpath d='M20.44 5.78Q19.92 5.78 19.56 5.55Q19.19 5.32 19.00 4.91Q18.80 4.51 18.80 4.00Q18.80 3.48 19.00 3.08Q19.20 2.68 19.57 2.45Q19.94 2.22 20.45 2.22Q21.01 2.22 21.41 2.50Q21.80 2.78 21.93 3.27L21.24 3.46Q21.14 3.18 20.93 3.03Q20.71 2.87 20.44 2.87Q20.13 2.87 19.93 3.02Q19.73 3.16 19.63 3.42Q19.54 3.67 19.54 4.00Q19.54 4.51 19.77 4.82Q19.99 5.13 20.44 5.13Q20.75 5.13 20.94 4.99Q21.12 4.84 21.22 4.58L21.93 4.74Q21.76 5.24 21.38 5.51Q20.99 5.78 20.44 5.78Z'/%3E%3Cpath d='M23.91 5.78Q23.40 5.78 23.03 5.55Q22.66 5.33 22.45 4.92Q22.25 4.52 22.25 4.00Q22.25 3.47 22.46 3.07Q22.67 2.67 23.04 2.44Q23.41 2.22 23.91 2.22Q24.42 2.22 24.79 2.45Q25.17 2.67 25.37 3.08Q25.58 3.48 25.58 4.00Q25.58 4.53 25.37 4.93Q25.17 5.33 24.79 5.56Q24.42 5.78 23.91 5.78ZM23.91 5.13Q24.38 5.13 24.61 4.81Q24.84 4.50 24.84 4.00Q24.84 3.48 24.61 3.18Q24.38 2.87 23.91 2.87Q23.59 2.87 23.39 3.01Q23.18 3.16 23.08 3.41Q22.98 3.66 22.98 4.00Q22.98 4.51 23.22 4.82Q23.45 5.13 23.91 5.13Z'/%3E%3Cpath d='M26.14 5.69V2.31H26.76V3.13L26.68 3.03Q26.74 2.86 26.84 2.72Q26.94 2.59 27.08 2.50Q27.21 2.41 27.36 2.36Q27.52 2.31 27.68 2.30Q27.84 2.29 28.00 2.31V2.96Q27.84 2.92 27.64 2.93Q27.44 2.95 27.27 3.06Q27.12 3.15 27.02 3.29Q26.93 3.43 26.88 3.61Q26.84 3.78 26.84 3.98V5.69Z'/%3E%3Cpath d='M30.06 5.78Q29.58 5.78 29.24 5.55Q28.91 5.31 28.75 4.91Q28.58 4.50 28.58 4.00Q28.58 3.49 28.74 3.09Q28.91 2.69 29.24 2.45Q29.57 2.22 30.04 2.22Q30.52 2.22 30.87 2.45Q31.22 2.68 31.41 3.09Q31.60 3.49 31.60 4.00Q31.60 4.50 31.41 4.91Q31.22 5.31 30.88 5.55Q30.53 5.78 30.06 5.78ZM28.46 7.19V2.31H29.07V4.72H29.16V7.19ZM29.96 5.16Q30.27 5.16 30.47 5.00Q30.67 4.85 30.76 4.59Q30.86 4.32 30.86 4.00Q30.86 3.68 30.76 3.42Q30.66 3.15 30.46 3.00Q30.26 2.84 29.94 2.84Q29.64 2.84 29.45 2.99Q29.26 3.13 29.17 3.40Q29.07 3.66 29.07 4.00Q29.07 4.34 29.17 4.60Q29.26 4.86 29.45 5.01Q29.65 5.16 29.96 5.16Z'/%3E%3C/svg%3E") left center / contain no-repeat !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ch-ativo .nc-ch-topo h1 {
+  flex: 1 !important;
+  padding-left: calc(var(--ch-u) * 2.6) !important;
+  border-left: 1px solid var(--ch-linha) !important;
+  font-size: calc(var(--ch-u) * 3.4) !important;
+  font-weight: 600 !important;
+  letter-spacing: -.01em !important;
+  color: var(--ch-fraco) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ch-ativo .nc-ch-relogio {
+  display: grid !important;
+  justify-items: end !important;
+  gap: calc(var(--ch-u) * .4) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ch-ativo .nc-ch-hora {
+  font-size: calc(var(--ch-u) * 6.4) !important;
+  font-weight: 700 !important;
+  font-variant-numeric: tabular-nums !important;
+  letter-spacing: -.02em !important;
+  line-height: 1 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ch-ativo .nc-ch-data {
+  font-size: calc(var(--ch-u) * 2.1) !important;
+  color: var(--ch-fraco) !important;
+}
+
+/* ═══ [C4] AS FILAS ═════════════════════════════════════════════════════════════════════════
+   Duas colunas iguais. Em cada uma: o nome da fila, o "chamando agora" (a senha em tamanho de
+   placa e para onde ir) e as anteriores. Senha recém-chamada: borda rosa que respira por 30 s.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ch-ativo .nc-ch-filas {
+  display: grid !important;
+  grid-template-columns: 1fr 1fr !important;
+  gap: calc(var(--ch-u) * 2.6) !important;
+  min-height: 0 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ch-ativo .nc-ch-fila {
+  display: grid !important;
+  grid-template-rows: auto 1fr auto !important;
+  gap: calc(var(--ch-u) * 2) !important;
+  min-height: 0 !important;
+  padding: calc(var(--ch-u) * 2.8) calc(var(--ch-u) * 3.2) calc(var(--ch-u) * 3.6) !important;
+  border: 1px solid var(--ch-linha) !important;
+  border-radius: calc(var(--ch-u) * 3) !important;
+  background: linear-gradient(180deg, var(--ch-painel2), var(--ch-painel)) !important;
+  box-shadow: var(--ch-sombra) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ch-ativo .nc-ch-fila-cab {
+  display: flex !important;
+  align-items: center !important;
+  gap: calc(var(--ch-u) * 1.4) !important;
+  font-size: calc(var(--ch-u) * 3.6) !important;
+  color: var(--ch-rosa) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ch-ativo .nc-ch-fila-cab h2 {
+  font-size: 1em !important;
+  font-weight: 700 !important;
+  letter-spacing: -.01em !important;
+  color: var(--ch-texto) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ch-ativo .nc-ch-agora {
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+  align-items: center !important;
+  gap: calc(var(--ch-u) * 1) !important;
+  min-height: 0 !important;
+  padding: calc(var(--ch-u) * 2) calc(var(--ch-u) * 2) !important;
+  border-radius: calc(var(--ch-u) * 2.4) !important;
+  background: var(--ch-agora-bg) !important;
+  text-align: center !important;
+  transition: background-color .6s var(--ch-ease), box-shadow .6s var(--ch-ease) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ch-ativo .nc-ch-rot {
+  font-size: calc(var(--ch-u) * 2.3) !important;
+  font-weight: 600 !important;
+  color: var(--ch-fraco) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ch-ativo .nc-ch-senha {
+  font-size: calc(var(--ch-u) * 17) !important;
+  font-weight: 800 !important;
+  font-variant-numeric: tabular-nums !important;
+  letter-spacing: -.035em !important;
+  line-height: .95 !important;
+  color: var(--ch-texto) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ch-ativo .nc-ch-local {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: calc(var(--ch-u) * 1.4) !important;
+  font-size: calc(var(--ch-u) * 5.4) !important;
+  font-weight: 500 !important;
+  color: var(--ch-fraco) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ch-ativo .nc-ch-local b {
+  font-weight: 800 !important;
+  font-variant-numeric: tabular-nums !important;
+  color: var(--ch-forte) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ch-ativo .nc-ch-local .nc-ch-ic {
+  color: var(--ch-rosa) !important;
+  stroke-width: 2.2 !important;
+}
+
+/* recém-chamada: a borda rosa respira (devagar, sem piscar), por 30 s */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ch-ativo .nc-ch-agora.is-novo {
+  background: var(--ch-novo-bg) !important;
+  animation: nc-ch-respira 2.4s ease-in-out infinite !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ch-ativo .nc-ch-agora.is-novo .nc-ch-rot {
+  color: var(--ch-rosa) !important;
+}
+
+@keyframes nc-ch-respira {
+  0%, 100% { box-shadow: inset 0 0 0 3px var(--ch-novo-anel); }
+  50% { box-shadow: inset 0 0 0 3px var(--ch-novo-anel-forte), 0 0 calc(var(--ch-u) * 3) 0 var(--ch-novo-bg); }
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ch-ativo .nc-ch-agora.is-vazio {
+  background: none !important;
+  border: 2px dashed var(--ch-vazio-borda) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ch-ativo .nc-ch-espera {
+  font-size: calc(var(--ch-u) * 4.6) !important;
+  font-weight: 700 !important;
+  color: var(--ch-texto) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ch-ativo .nc-ch-espera-sub {
+  font-size: calc(var(--ch-u) * 2.4) !important;
+  color: var(--ch-fraco) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ch-ativo .nc-ch-ant h3 {
+  margin-bottom: calc(var(--ch-u) * 1) !important;
+  font-size: calc(var(--ch-u) * 2.2) !important;
+  font-weight: 600 !important;
+  color: var(--ch-fraco) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ch-ativo .nc-ch-lista {
+  list-style: none !important;
+  display: grid !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ch-ativo .nc-ch-lista li {
+  display: grid !important;
+  grid-template-columns: 1fr auto auto !important;
+  align-items: baseline !important;
+  gap: calc(var(--ch-u) * 2.4) !important;
+  padding: calc(var(--ch-u) * 1.1) 0 !important;
+  border-top: 1px solid var(--ch-linha) !important;
+}
+
+/* as anteriores um tom abaixo da chamada de agora (a hierarquia se lê de longe) */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ch-ativo .nc-ch-lista-senha {
+  font-size: calc(var(--ch-u) * 4.6) !important;
+  font-weight: 650 !important;
+  color: var(--ch-ant) !important;
+  font-variant-numeric: tabular-nums !important;
+  letter-spacing: -.02em !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ch-ativo .nc-ch-lista-local {
+  font-size: calc(var(--ch-u) * 3) !important;
+  color: var(--ch-fraco) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ch-ativo .nc-ch-lista-local b {
+  font-weight: 700 !important;
+  font-variant-numeric: tabular-nums !important;
+  color: var(--ch-texto) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ch-ativo .nc-ch-lista-hora {
+  min-width: 3.2em !important;
+  font-size: calc(var(--ch-u) * 2.2) !important;
+  font-variant-numeric: tabular-nums !important;
+  text-align: right !important;
+  color: var(--ch-fraco) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ch-ativo .nc-ch-lista-vazia {
+  padding: calc(var(--ch-u) * 1.2) 0 !important;
+  border-top: 1px solid var(--ch-linha) !important;
+  font-size: calc(var(--ch-u) * 2.4) !important;
+  color: var(--ch-fraco) !important;
+}
+
+/* ═══ [C5] A CHAMADA EM TELA CHEIA ══════════════════════════════════════════════════════════
+   A cor da marca abre do centro (círculo que cresce), a senha sobe e entra em foco. Ao sair,
+   a tela some num esmaecido curto. Só aqui há movimento grande: é o momento que importa.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ch-ativo .nc-ch-chamada {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 1010 !important;
+  display: none !important;
+  place-items: center !important;
+  background:
+    radial-gradient(80% 90% at 50% 40%, rgba(226, 123, 170, .28), transparent 70%),
+    linear-gradient(160deg, #4A1F7A 0%, #2A1150 55%, #170A30 100%) /*reserva*/ !important;
+  background:
+    radial-gradient(80% 90% at 50% 40%, rgba(226, 123, 170, .28), transparent 70%),
+    linear-gradient(160deg, oklch(from #4A1F7A l calc(c * var(--nc-t-croma, 1)) calc(h + var(--nc-t-giro, 0))) 0%, oklch(from #2A1150 l calc(c * var(--nc-t-croma, 1)) calc(h + var(--nc-t-giro, 0))) 55%, #170A30 100%) !important;
+}
+
+/* CUIDADO  o gerador põe !important em tudo, e !important vence animação: o ponto de partida
+            (círculo fechado) mora SÓ no @keyframes, com "both" — nunca na regra de base */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ch-ativo .nc-ch-chamada.is-aberta {
+  display: grid !important;
+  animation: nc-ch-abre .9s var(--ch-ease) both !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ch-ativo .nc-ch-chamada.is-saindo {
+  animation: nc-ch-sai .6s ease-in both !important;
+}
+
+@keyframes nc-ch-abre {
+  from { clip-path: circle(0% at 50% 50%); }
+  to { clip-path: circle(150% at 50% 50%); }
+}
+
+@keyframes nc-ch-sai {
+  from { clip-path: circle(150% at 50% 50%); opacity: 1; }
+  to { clip-path: circle(150% at 50% 50%); opacity: 0; }
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ch-ativo .nc-ch-chamada-in {
+  display: grid !important;
+  justify-items: center !important;
+  gap: calc(var(--ch-u) * 1.6) !important;
+  text-align: center !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ch-ativo .nc-ch-chamada-in > * {
+  animation: nc-ch-sobe .9s var(--ch-ease) both !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ch-ativo .nc-ch-chamada-rot { animation-delay: .18s !important; }
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ch-ativo .nc-ch-chamada-senha { animation-delay: .28s !important; }
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ch-ativo .nc-ch-chamada-local { animation-delay: .42s !important; }
+
+@keyframes nc-ch-sobe {
+  from { transform: translateY(calc(var(--ch-u) * 4)); filter: blur(10px); }
+  to { transform: none; filter: none; }
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ch-ativo .nc-ch-chamada-fila {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: calc(var(--ch-u) * 1.4) !important;
+  padding: calc(var(--ch-u) * 1) calc(var(--ch-u) * 2.8) !important;
+  border: 1px solid rgba(255, 255, 255, .25) !important;
+  white-space: nowrap !important;
+  border-radius: 999px !important;
+  font-size: calc(var(--ch-u) * 3.6) !important;
+  font-weight: 600 !important;
+  color: #fff !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ch-ativo .nc-ch-chamada-rot {
+  margin-top: calc(var(--ch-u) * 2) !important;
+  font-size: calc(var(--ch-u) * 4.4) !important;
+  font-weight: 600 !important;
+  color: rgba(255, 255, 255, .78) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ch-ativo .nc-ch-chamada-senha {
+  font-size: calc(var(--ch-u) * 30) !important;
+  font-weight: 800 !important;
+  font-variant-numeric: tabular-nums !important;
+  letter-spacing: -.04em !important;
+  line-height: .9 !important;
+  color: #fff !important;
+  text-shadow: 0 calc(var(--ch-u) * 1) calc(var(--ch-u) * 6) rgba(10, 4, 24, .45) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ch-ativo .nc-ch-chamada-local {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: calc(var(--ch-u) * 2) !important;
+  margin-top: calc(var(--ch-u) * 2) !important;
+  padding: calc(var(--ch-u) * 1.6) calc(var(--ch-u) * 4.8) !important;
+  border-radius: 999px !important;
+  background: #fff !important;
+  white-space: nowrap !important;
+  font-size: calc(var(--ch-u) * 8) !important;
+  font-weight: 600 !important;
+  color: #2A1150 /*reserva*/ !important;
+  color: oklch(from #2A1150 l calc(c * var(--nc-t-croma, 1)) calc(h + var(--nc-t-giro, 0))) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ch-ativo .nc-ch-chamada-local b {
+  font-weight: 800 !important;
+  font-variant-numeric: tabular-nums !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ch-ativo .nc-ch-chamada-local .nc-ch-ic {
+  color: #C14F86 /*reserva*/ !important;
+  color: oklch(from #C14F86 l calc(c * var(--nc-t-croma, 1)) calc(h + var(--nc-t-giro, 0))) !important;
+  stroke-width: 2.4 !important;
+}
+
+/* ═══ [C6] O PÉ, A FAIXA "LIGAR O SOM" E OS AJUSTES ═════════════════════════════════════════ */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ch-ativo .nc-ch-pe {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: calc(var(--ch-u) * 2) !important;
+  font-size: calc(var(--ch-u) * 2.4) !important;
+  color: var(--ch-fraco) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ch-ativo .nc-ch-pe-status {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: calc(var(--ch-u) * 1.6) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ch-ativo .nc-ch-pe-status .nc-ch-ic {
+  font-size: calc(var(--ch-u) * 3) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ch-ativo .nc-ch-sem-rede {
+  display: none !important;
+  align-items: center !important;
+  gap: calc(var(--ch-u) * .8) !important;
+  color: var(--ch-offline) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ch-ativo .nc-ch.is-offline .nc-ch-sem-rede {
+  display: inline-flex !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ch-ativo .nc-ch-bt-ajustes {
+  display: grid !important;
+  place-items: center !important;
+  width: calc(var(--ch-u) * 5) !important;
+  height: calc(var(--ch-u) * 5) !important;
+  padding: 0 !important;
+  border: 1px solid var(--ch-linha) !important;
+  border-radius: 50% !important;
+  background: none !important;
+  color: var(--ch-fraco) !important;
+  font-size: calc(var(--ch-u) * 2.6) !important;
+  cursor: pointer !important;
+  opacity: 0 !important;
+  transition: opacity .3s ease !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ch-ativo .nc-ch.is-mexendo .nc-ch-bt-ajustes {
+  opacity: 1 !important;
+}
+
+/* no pé da página (no lugar da frase de orientação, que sai enquanto a faixa estiver lá):
+   não cobre senha nenhuma */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ch-ativo .nc-ch:has(.nc-ch-ligar:not([hidden])) .nc-ch-pe > p {
+  visibility: hidden !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ch-ativo .nc-ch-ligar {
+  position: fixed !important;
+  left: 50% !important;
+  bottom: calc(var(--ch-u) * 3.5) !important;   /* centrada na linha do pé */
+  z-index: 1005 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: calc(var(--ch-u) * 1.4) !important;
+  padding: calc(var(--ch-u) * 1.6) calc(var(--ch-u) * 3) !important;
+  border: 0 !important;
+  border-radius: 999px !important;
+  background: var(--ch-ligar-bg) !important;
+  color: var(--ch-ligar-texto) !important;
+  font-family: inherit !important;
+  font-size: calc(var(--ch-u) * 2.6) !important;
+  font-weight: 700 !important;
+  transform: translateX(-50%) !important;
+  box-shadow: 0 calc(var(--ch-u) * .8) calc(var(--ch-u) * 3) rgba(0, 0, 0, .35) !important;
+  cursor: pointer !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ch-ativo .nc-ch-ligar[hidden],
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ch-ativo .nc-ch-ajustes[hidden] {
+  display: none !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ch-ativo .nc-ch-ajustes {
+  position: fixed !important;
+  right: calc(var(--ch-u) * 3.6) !important;
+  bottom: calc(var(--ch-u) * 9) !important;
+  z-index: 1006 !important;
+  display: grid !important;
+  gap: calc(var(--ch-u) * 1.4) !important;
+  min-width: calc(var(--ch-u) * 40) !important;
+  padding: calc(var(--ch-u) * 2.4) !important;
+  border: 1px solid var(--ch-linha) !important;
+  border-radius: calc(var(--ch-u) * 2) !important;
+  background: var(--ch-painel2) !important;
+  box-shadow: 0 calc(var(--ch-u) * 1) calc(var(--ch-u) * 4) rgba(0, 0, 0, .45) !important;
+  font-size: calc(var(--ch-u) * 2.2) !important;
+  color: var(--ch-texto) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ch-ativo .nc-ch-ajustes h2 {
+  font-size: calc(var(--ch-u) * 2.4) !important;
+  font-weight: 700 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ch-ativo .nc-ch-ajustes label {
+  display: flex !important;
+  align-items: center !important;
+  gap: calc(var(--ch-u) * 1.2) !important;
+  cursor: pointer !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ch-ativo .nc-ch-ajustes input[type="checkbox"] {
+  width: calc(var(--ch-u) * 2.4) !important;
+  height: calc(var(--ch-u) * 2.4) !important;
+  accent-color: var(--ch-rosa) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ch-ativo .nc-ch-vol input {
+  flex: 1 !important;
+  accent-color: var(--ch-rosa) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ch-ativo .nc-ch-ajustes-bt {
+  display: flex !important;
+  gap: calc(var(--ch-u) * 1) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ch-ativo .nc-ch-ajustes-bt button {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: calc(var(--ch-u) * .8) !important;
+  flex: 1 !important;
+  padding: calc(var(--ch-u) * 1.2) !important;
+  border: 1px solid var(--ch-linha) !important;
+  border-radius: calc(var(--ch-u) * 1.2) !important;
+  background: var(--ch-agora-bg) !important;
+  color: var(--ch-texto) !important;
+  font-family: inherit !important;
+  font-size: calc(var(--ch-u) * 2) !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ch-ativo .nc-ch button:focus-visible,
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ch-ativo .nc-ch input:focus-visible {
+  outline: 3px solid var(--ch-rosa) !important;
+  outline-offset: 2px !important;
+}
+
+/* ═══ [C7] MOVIMENTO REDUZIDO ═══════════════════════════════════════════════════════════════
+   Sem as aberturas e sem a borda que respira: a chamada aparece e some de uma vez.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@media (prefers-reduced-motion: reduce) {
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ch-ativo .nc-ch-chamada.is-aberta,
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ch-ativo .nc-ch-chamada.is-saindo,
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ch-ativo .nc-ch-chamada-in > *,
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ch-ativo .nc-ch-agora.is-novo {
+    animation: none !important;
+    clip-path: none !important;
+  }
+}

@@ -1,0 +1,655 @@
+/* ╔════════════════════════════════════════════════════════════════════════════════════════╗
+   ║  NATCORP · JANELAS DO PROCESSO SELETIVO  —  a "roupa" das janelas (CSS)                   ║
+   ║  App 9113 (Recrutamento e Seleção) · Páginas 38, 10, 13, 3 e 35                          ║
+   ╚════════════════════════════════════════════════════════════════════════════════════════╝
+
+   Primeira vez num arquivo destes? Leia antes o manual: brand/apex/MANUAL-APEX.md (parte 1).
+
+   ── O QUE ESTE ARQUIVO FAZ ────────────────────────────────────────────────────────────────
+   A aparência do que o Natcorp_ProcessoJanelas.js monta. Tudo depende da marca nc-pj-ativo
+   (e nc-pj-38, nc-pj-10, nc-pj-13, nc-pj-3, nc-pj-35) no body.
+
+   ── ONDE ELE ENTRA NO APEX ────────────────────────────────────────────────────────────────
+     Páginas 38, 10, 13, 3 e 35 › CSS › File URLs:   #WORKSPACE_IMAGES#Natcorp_ProcessoJanelas.css
+     CUIDADO: este é o arquivo-FONTE (.src.css). O gerador (gerar-app.mjs) cria o .css.
+
+   ── ÍNDICE ────────────────────────────────────────────────────────────────────────────────
+     [C1] Cores e comuns                                        PODE MEXER
+     [C2] Campo só de leitura como texto
+     [C3] 38 Detalhes da vaga
+     [C4] 10 Anotações das fases
+     [C5] 13 Processo seletivo
+     [C6] 3  Aprovar candidato
+     [C7] 35 Enviar e-mail
+*/
+
+/* ═══ [C1] CORES E COMUNS ═══════════════════════════════════════════════════════════════════ */
+@app.nc-pj-ativo {
+  --nc-pj-borda: var(--nc-nevoa, #E9E5F1);
+  --nc-pj-fundo: var(--nc-off, #F7F5FA);
+  --nc-pj-texto: var(--nc-tinta, #1B1238);
+  --nc-pj-fraco: #77708C;
+}
+
+@app.nc-pj-ativo .nc-pj-guardado:not(#nc-pj-x),
+@app.nc-pj-ativo .nc-pj-leitura.nc-pj-vazio:not(#nc-pj-x):not(#nc-pj-y),
+@app.nc-pj-ativo .nc-pj-na-ficha:not(#nc-pj-x) {
+  display: none;
+}
+
+@app.nc-pj-ativo .nc-pj-ic {
+  flex: 0 0 auto;
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.9;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+@app.nc-pj-ativo .nc-pj-fraco {
+  color: var(--nc-pj-fraco);
+}
+
+@app.nc-pj-ativo .nc-pj-rot {
+  margin: 0 0 6px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--nc-pj-fraco);
+}
+
+@app.nc-pj-ativo .nc-pj-rot--secao {
+  margin: 18px 0 8px;
+  padding-bottom: 6px;
+  border-bottom: 2px solid var(--nc-rosa, #C95788);
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--nc-pj-texto);
+}
+
+@app.nc-pj-ativo .nc-pj-bt {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 34px;
+  margin: 0;
+  padding: 0 12px;
+  border: 1px solid var(--nc-borda-botao);
+  border-radius: 9px;
+  background: #fff;
+  box-shadow: none;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+  text-decoration: none;
+  color: var(--nc-roxo, #511C76);
+  cursor: pointer;
+}
+
+@app.nc-pj-ativo .nc-pj-bt:hover {
+  background: color-mix(in srgb, var(--nc-roxo, #511C76) 5%, #fff);
+}
+
+@app.nc-pj-ativo .nc-pj-bt.is-copiado {
+  border-color: var(--nc-bom, #1F7A52);
+  color: var(--nc-bom, #1F7A52);
+}
+
+@app.nc-pj-ativo .nc-pj-nada {
+  margin: 4px 0;
+  font-size: 13px;
+  color: var(--nc-pj-fraco);
+}
+
+/* ═══ [C2] CAMPO SÓ DE LEITURA COMO TEXTO ═══════════════════════════════════════════════════
+   Sem caixa, sem fundo cinza, sem ícone: rótulo pequeno em cima, valor em texto.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-pj-ativo .nc-pj-leitura:not(#nc-pj-x) {
+  display: flex;
+  flex-direction: column;     /* o modelo põe rótulo e campo lado a lado e o rótulo ficava com 0 px */
+  align-items: stretch;
+  padding: 4px 0 4px 8px;     /* a linha do grid tem margem de -8 px e a região corta a sobra */
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+@app.nc-pj-ativo .nc-pj-leitura:not(#nc-pj-x):not(#nc-pj-y) :is(input, textarea, .display_only) {
+  height: auto;
+  text-indent: 0;
+  min-height: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  font-size: 14.5px;
+  font-weight: 600;
+  color: var(--nc-pj-texto);
+  pointer-events: none;
+}
+
+@app.nc-pj-ativo .nc-pj-leitura:not(#nc-pj-x) .t-Form-itemWrapper,
+@app.nc-pj-ativo .nc-pj-leitura:not(#nc-pj-x) .t-Form-inputContainer {
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+@app.nc-pj-ativo .nc-pj-leitura:not(#nc-pj-x) .t-Form-itemWrapper > .apex-item-icon,
+@app.nc-pj-ativo .nc-pj-leitura:not(#nc-pj-x) .apex-item-icon {
+  display: none;
+}
+
+/* no modelo "floating label" a caixa do rótulo tem altura 0 (o rótulo flutua por cima do campo) */
+@app.nc-pj-ativo .nc-pj-leitura:not(#nc-pj-x) .t-Form-labelContainer {
+  position: static;
+  width: auto;
+  height: auto;
+  min-height: 0;
+  padding: 0;
+  overflow: visible;
+}
+
+@app.nc-pj-ativo .nc-pj-leitura:not(#nc-pj-x):not(#nc-pj-y) .t-Form-label {
+  top: auto;
+  left: auto;
+  text-indent: 0;
+  white-space: normal;
+  position: static;
+  transform: none;
+  margin: 0 0 2px;
+  padding: 0;
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: none;
+  letter-spacing: 0;
+  color: var(--nc-pj-fraco);
+}
+
+/* ═══ [C3] 38 DETALHES DA VAGA ══════════════════════════════════════════════════════════════ */
+@app.nc-pj-38 .nc-pj-link {
+  margin: 0 0 4px;
+  padding: 14px 16px;
+  border: 1px solid var(--nc-pj-borda);
+  border-radius: 12px;
+  background: var(--nc-pj-fundo);
+}
+
+@app.nc-pj-38 .nc-pj-link-linha {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 10px;
+}
+
+@app.nc-pj-38 .nc-pj-link-linha > a:first-child {
+  flex: 1 1 260px;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--nc-roxo, #511C76);
+}
+
+@app.nc-pj-38 .nc-pj-texto:not(#nc-pj-x) .display_only {
+  font-size: 14.5px;
+  font-weight: 400;
+  line-height: 1.6;
+  color: var(--nc-pj-texto);
+}
+
+@app.nc-pj-38 .nc-pj-texto:not(#nc-pj-x) .display_only b {
+  font-weight: 700;
+}
+
+@app.nc-pj-38 .nc-pj-texto:not(#nc-pj-x) .t-Form-labelContainer {
+  display: none;
+}
+
+/* ═══ [C4] 10 ANOTAÇÕES DAS FASES ═══════════════════════════════════════════════════════════ */
+@app.nc-pj-10 .nc-pj-bt-mais:not(#nc-pj-x) {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  width: auto;
+  padding: 0 14px;
+}
+
+/* 04/10: a página esconde "Adicionar" sem processo escolhido (ação Hide_ADD_HISTORICO): o
+   inline-flex acima, com !important, vencia o style="display:none" — continua escondido */
+@app.nc-pj-10 .nc-pj-bt-mais:not(#nc-pj-x)[style*="none"] {
+  display: none;
+}
+
+@app.nc-pj-10 .nc-pj-bt-mais:not(#nc-pj-x) .t-Button-label {
+  color: inherit;
+}
+
+@app.nc-pj-10 .nc-pj-anot .a-ListView {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 4px 0;
+}
+
+@app.nc-pj-10 .nc-pj-anot .a-ListView-item:not(.apex-no-data-found) {
+  padding: 12px 14px;
+  border: 1px solid var(--nc-pj-borda);
+  border-radius: 10px;
+  background: #fff;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--nc-pj-texto);
+}
+
+@app.nc-pj-10 .nc-pj-sem {
+  padding: 28px 16px;
+  border: 0;
+  background: transparent;
+  text-align: center;
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--nc-pj-fraco);
+}
+
+@app.nc-pj-10 .nc-pj-sem b {
+  color: var(--nc-pj-texto);
+}
+
+/* ═══ [C5] 13 PROCESSO SELETIVO ═════════════════════════════════════════════════════════════ */
+@app.nc-pj-13 .nc-pj-ficha {
+  margin: 0 0 6px;
+  border: 1px solid var(--nc-pj-borda);
+  border-radius: 14px;
+  background: #fff;
+}
+
+@app.nc-pj-13 .nc-pj-ficha header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+  padding: 12px 16px 10px;
+  border-bottom: 2px solid var(--nc-rosa, #C95788);
+}
+
+@app.nc-pj-13 .nc-pj-ficha h2 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--nc-pj-texto);
+}
+
+@app.nc-pj-13 .nc-pj-selo {
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--nc-pj-s) 11%, #fff);
+  font-size: 12.5px;
+  font-weight: 650;
+  color: var(--nc-pj-s);
+  --nc-pj-s: var(--nc-roxo, #511C76);
+}
+
+@app.nc-pj-13 .nc-pj-selo[data-st="f"] { --nc-pj-s: var(--nc-bom, #1F7A52); }
+@app.nc-pj-13 .nc-pj-selo[data-st="c"] { --nc-pj-s: var(--nc-ruim, #B8323F); }
+
+@app.nc-pj-13 .nc-pj-ficha dl {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 10px 20px;
+  margin: 0;
+  padding: 12px 16px 14px;
+}
+
+@app.nc-pj-13 .nc-pj-ficha dt {
+  margin: 0 0 2px;
+  font-size: 12px;
+  color: var(--nc-pj-fraco);
+}
+
+@app.nc-pj-13 .nc-pj-ficha dd {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--nc-pj-texto);
+  overflow-wrap: anywhere;
+}
+
+/* as colunas que só tinham campos da ficha somem (a linha se ajusta) */
+@app.nc-pj-13 .col:has(> .nc-pj-na-ficha):not(:has(> .t-Form-fieldContainer:not(.nc-pj-na-ficha))) {
+  display: none;
+}
+
+@app.nc-pj-13 .row:has(> .col > .nc-pj-na-ficha) {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+@app.nc-pj-13 .row:has(> .col > .nc-pj-na-ficha) > .col {
+  flex: 1 1 220px;
+  width: auto;
+  max-width: none;
+}
+
+/* ═══ [C6] 3 APROVAR CANDIDATO ══════════════════════════════════════════════════════════════ */
+@app.nc-pj-3 .nc-pj-aviso,
+@app.nc-pj-ativo .nc-pj-para {
+  margin: 0 0 12px;
+  padding: 14px 16px;
+  border-radius: 12px;
+  background: var(--nc-pj-fundo);
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--nc-pj-texto);
+}
+
+@app.nc-pj-3 .nc-pj-aviso p,
+@app.nc-pj-ativo .nc-pj-para p {
+  margin: 0;
+}
+
+@app.nc-pj-3 .nc-pj-aviso p + p {
+  margin-top: 2px;
+  color: var(--nc-grafite, #4A4460);
+}
+
+@app.nc-pj-3 .nc-pj-aviso.is-erro {
+  display: flex;
+  gap: 10px;
+  border: 1px solid #F1C6CC;
+  background: #FDF0F2;
+  color: #8E1F2C;
+}
+
+@app.nc-pj-3 .nc-pj-aviso.is-erro .nc-pj-ic {
+  width: 20px;
+  height: 20px;
+  margin-top: 1px;
+}
+
+@app.nc-pj-3 .nc-pj-aviso.is-erro p + p {
+  color: #8E1F2C;
+}
+
+@app.nc-pj-3 .nc-pj-destaque:not(#nc-pj-x) {
+  border-color: var(--nc-roxo, #511C76);
+  background: color-mix(in srgb, var(--nc-roxo, #511C76) 3%, #fff);
+}
+
+/* ═══ [C7] 35 ENVIAR E-MAIL — "nova mensagem", como no Mail do macOS ════════════════════════
+   Barra no alto (título, assunto em cinza, Fechar e Enviar); linhas finas de cabeçalho com o rótulo
+   cinza à esquerda (Para, Modelo, Assunto) e campos SEM caixa; o corpo ocupa o resto, sem moldura.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-pj-35.nc-pj-mail-ativo .t-Dialog-footer:not(:has(.t-Button:not(.nc-pj-neutro):not(.nc-pj-enviar))):not(#nc-pj-x) {
+  display: none;
+}
+
+@app.nc-pj-35 .nc-pj-mail {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  border: 1px solid var(--nc-pj-borda);
+  border-radius: 14px;
+  background: #fff;
+  overflow: hidden;
+  color: var(--nc-pj-texto);
+}
+
+@app.nc-pj-35 .nc-pj-mail-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px 10px 16px;
+  border-bottom: 1px solid var(--nc-pj-borda);
+  background: var(--nc-pj-fundo);
+}
+
+@app.nc-pj-35 .nc-pj-mail-tit {
+  display: grid;
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+@app.nc-pj-35 .nc-pj-mail-tit b {
+  font-size: 14px;
+  font-weight: 700;
+}
+
+@app.nc-pj-35 .nc-pj-mail-tit span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 12.5px;
+  color: var(--nc-pj-fraco);
+}
+
+@app.nc-pj-35 .nc-pj-mail-botoes {
+  display: flex;
+  flex: 0 0 auto;
+  gap: 8px;
+}
+
+@app.nc-pj-35 .nc-pj-mail-botoes .t-Button:not(#nc-pj-x) {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  width: auto;
+  height: 34px;
+  margin: 0;
+  padding: 0 14px;
+  border-radius: 9px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+/* 04/10: botão que a página esconder continua escondido (o inline-flex acima vence o style) */
+@app.nc-pj-35 .nc-pj-mail-botoes .t-Button:not(#nc-pj-x)[style*="none"] {
+  display: none;
+}
+
+@app.nc-pj-35 .nc-pj-mail-botoes .nc-pj-enviar:not(#nc-pj-x) {
+  border: 1px solid var(--nc-roxo, #511C76);
+  background: var(--nc-roxo, #511C76);
+  color: #fff;
+}
+
+@app.nc-pj-35 .nc-pj-mail-botoes .nc-pj-enviar:not(#nc-pj-x) :is(.t-Button-label, .t-Icon) {
+  color: inherit;
+}
+
+@app.nc-pj-35 .nc-pj-mail-botoes .nc-pj-enviar:not(#nc-pj-x) .t-Icon--left {
+  display: none;
+}
+
+@app.nc-pj-35 .nc-pj-neutro:not(#nc-pj-x) {
+  border: 1px solid var(--nc-pj-borda);
+  background: #fff;
+  color: var(--nc-pj-texto);
+}
+
+@app.nc-pj-35 .nc-pj-neutro:not(#nc-pj-x) :is(.t-Button-label, .t-Icon) {
+  color: inherit;
+}
+
+@app.nc-pj-35 .nc-pj-neutro:not(#nc-pj-x) .t-Icon {
+  display: none;
+}
+
+/* as linhas do cabeçalho */
+@app.nc-pj-35 .nc-pj-mail-linha {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 10px;
+  min-height: 44px;
+  margin: 0 16px;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--nc-pj-borda);
+  font-size: 14px;
+}
+
+@app.nc-pj-35 .nc-pj-mail-rot {
+  flex: 0 0 64px;
+  margin: 0;
+  padding: 0;
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--nc-pj-fraco);
+}
+
+@app.nc-pj-35 .nc-pj-mail-dest {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  padding: 3px 12px 3px 3px;
+  border-radius: 16px;
+  background: color-mix(in srgb, var(--nc-roxo, #511C76) 7%, #fff);
+}
+
+@app.nc-pj-35 .nc-pj-mail-av {
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--nc-roxo, #511C76);
+  font-size: 11px;
+  font-weight: 700;
+  color: #fff;
+}
+
+@app.nc-pj-35 .nc-pj-mail-end {
+  color: var(--nc-grafite, #4A4460);
+}
+
+@app.nc-pj-35 .nc-pj-mail-ctx {
+  margin-left: auto;
+  font-size: 12.5px;
+  color: var(--nc-pj-fraco);
+}
+
+@app.nc-pj-35 .nc-pj-erro {
+  font-weight: 600;
+  color: var(--nc-ruim, #B8323F);
+}
+
+@app.nc-pj-35 .nc-pj-mail-campo {
+  flex: 1 1 220px;
+  min-width: 0;
+}
+
+@app.nc-pj-35 .nc-pj-mail-dica {
+  font-size: 12px;
+  color: var(--nc-pj-fraco);
+}
+
+/* os campos movidos: sem rótulo (a linha já diz), sem caixa — o texto na própria linha */
+@app.nc-pj-35 .nc-pj-mail .t-Form-fieldContainer:not(#nc-pj-x) {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+@app.nc-pj-35 .nc-pj-mail-campo .t-Form-labelContainer:not(#nc-pj-x),
+@app.nc-pj-35 .nc-pj-mail-corpo .t-Form-labelContainer:not(#nc-pj-x) {
+  display: none;
+}
+
+@app.nc-pj-35 .nc-pj-mail-campo :is(.t-Form-inputContainer, .t-Form-itemWrapper):not(#nc-pj-x) {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+@app.nc-pj-35 .nc-pj-mail-campo :is(input, select):not(#nc-pj-x) {
+  width: 100%;
+  height: 32px;
+  min-height: 0;
+  margin: 0;
+  padding: 0 4px;
+  border: 0;
+  border-radius: 6px;
+  background-color: transparent;
+  box-shadow: none;
+  font-size: 14.5px;
+  font-weight: 500;
+  color: var(--nc-pj-texto);
+}
+
+@app.nc-pj-35 .nc-pj-mail-campo select:not(#nc-pj-x) {
+  width: auto;
+  max-width: 100%;
+  padding-right: 26px;
+  cursor: pointer;
+}
+
+@app.nc-pj-35 .nc-pj-mail-campo :is(input, select):not(#nc-pj-x):focus {
+  outline: 2px solid color-mix(in srgb, var(--nc-roxo, #511C76) 35%, transparent);
+  outline-offset: 1px;
+}
+
+/* o corpo: o editor sem moldura, colado nas linhas de cima, na largura TODA (o contêiner do item
+   vinha em colunas do grid, com a do rótulo vazia) */
+@app.nc-pj-35 .nc-pj-mail-corpo {
+  min-height: 0;
+}
+
+@app.nc-pj-35 .nc-pj-mail-corpo .t-Form-fieldContainer:not(#nc-pj-x) {
+  display: block;
+}
+
+@app.nc-pj-35 .nc-pj-mail-corpo :is(.t-Form-inputContainer, .t-Form-itemWrapper):not(#nc-pj-x) {
+  display: block;
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  padding: 0;
+  flex: none;
+}
+
+@app.nc-pj-35 .nc-pj-mail-corpo .cke:not(#nc-pj-x) {
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+@app.nc-pj-35 .nc-pj-mail-corpo .cke_top:not(#nc-pj-x) {
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+@app.nc-pj-35 .nc-pj-mail-corpo .cke_bottom:not(#nc-pj-x) {
+  display: none;
+}
+
+@app.nc-pj-35 .t-Dialog-body .t-Region:not(#nc-pj-x) {
+  margin-top: 0;
+}
+
+@media (max-width: 640px) {
+  @app.nc-pj-35 .nc-pj-mail-linha {
+    margin: 0 12px;
+  }
+
+  @app.nc-pj-35 .nc-pj-mail-ctx {
+    flex-basis: 100%;
+    margin-left: 74px;
+  }
+
+  @app.nc-pj-35 .nc-pj-mail-dica {
+    display: none;
+  }
+
+  @app.nc-pj-35 .nc-pj-mail-tit span {
+    display: none;
+  }
+}

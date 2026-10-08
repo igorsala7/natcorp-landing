@@ -1,0 +1,301 @@
+/* ╔════════════════════════════════════════════════════════════════════════════════════════╗
+   ║  NATCORP · LISTA DE ESCOLHA (POPUP LOV)  —  a "roupa" (CSS) — SISTEMA TODO                ║
+   ║  Item "Popup LOV" do APEX 19.2, em qualquer aplicação                                     ║
+   ╚════════════════════════════════════════════════════════════════════════════════════════╝
+
+   Primeira vez num arquivo destes? Leia antes o manual: brand/apex/MANUAL-APEX.md (parte 1).
+   Guia: LOV-MANUTENCAO.md.
+
+   ── O QUE ESTE ARQUIVO FAZ ────────────────────────────────────────────────────────────────
+   [C1–C2] valem para TODA janela de Popup LOV (busca maior, foco claro, "deixar em branco"
+   discreto, linhas da grade mais legíveis). [C3–C5] valem quando o Natcorp_Lov.js transforma a
+   lista de várias colunas em CARTÕES (marca nc-lov na janela; nc-lov-tabela = grade original).
+
+   ── ONDE ELE ENTRA NO APEX ────────────────────────────────────────────────────────────────
+     Dentro do Natcorp_Style_Min.css (folha geral) — lista FOLHAS do gerar-app.mjs.
+     CUIDADO: a janela do Popup LOV é criada no <body> da janela PRINCIPAL; @app cobre isso.
+
+   ── ÍNDICE ────────────────────────────────────────────────────────────────────────────────
+     [C1] A busca e o "deixar em branco" (toda janela)
+     [C2] A grade original (toda janela e o modo Tabela)
+     [C3] A barra: quantos resultados e Cartões | Tabela
+     [C4] Os cartões
+     [C5] Celular
+*/
+
+/* ═══ [C1] A BUSCA E O "DEIXAR EM BRANCO" ═══════════════════════════════════════════════════ */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .a-PopupLOV-dialog .a-PopupLOV-searchBar {
+  position: relative !important;
+  margin: 12px 16px 8px !important;
+  padding: 0 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .a-PopupLOV-dialog .a-PopupLOV-search {
+  box-sizing: border-box !important;
+  width: 100% !important;
+  height: 44px !important;
+  padding: 0 14px 0 42px !important;
+  border: 1px solid var(--nc-nevoa, #E9E5F1) !important;
+  border-radius: 12px !important;
+  background: var(--nc-off, #F7F5FA) !important;
+  font-size: 15px !important;
+  color: var(--nc-tinta, #1B1238) !important;
+  box-shadow: none !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .a-PopupLOV-dialog .a-PopupLOV-search:focus {
+  border-color: var(--nc-roxo, #511C76) !important;
+  background: #fff !important;
+  outline: 0 !important;
+  box-shadow: 0 0 0 3px rgba(var(--nc-t-roxo-rgb, 81, 28, 118), .14) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .a-PopupLOV-dialog .a-PopupLOV-searchBar .a-Icon {
+  position: absolute !important;
+  top: 50% !important;
+  left: 14px !important;
+  margin: 0 !important;
+  transform: translateY(-50%) !important;
+  color: #8E88A3 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .a-PopupLOV-dialog .a-PopupLOV-clear {
+  margin: 0 16px 4px !important;
+  text-align: left !important;
+  padding: 0 !important;
+  border: 0 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .a-PopupLOV-dialog .a-PopupLOV-clearButton {
+  width: auto !important;
+  height: auto !important;
+  margin: 0 !important;
+  padding: 4px 2px !important;
+  border: 0 !important;
+  background: none !important;
+  box-shadow: none !important;
+  font-size: 12.5px !important;
+  font-weight: 600 !important;
+  text-align: left !important;
+  text-decoration: underline !important;
+  text-underline-offset: 3px !important;
+  color: var(--nc-grafite, #4A4460) !important;
+  cursor: pointer !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .a-PopupLOV-dialog .a-PopupLOV-clearButton:hover {
+  color: var(--nc-roxo, #511C76) !important;
+}
+
+/* ═══ [C2] A GRADE ORIGINAL (toda janela de Popup LOV e o modo Tabela) ══════════════════════ */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .a-PopupLOV-dialog .a-GV-cell,
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .a-PopupLOV-dialog .a-GV-header {
+  padding: 8px 10px !important;
+  font-size: 13px !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .a-PopupLOV-dialog .a-GV-row:hover .a-GV-cell {
+  background: var(--nc-off, #F7F5FA) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .a-PopupLOV-dialog .a-GV-row.is-focused .a-GV-cell,
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .a-PopupLOV-dialog .a-GV-row.is-selected .a-GV-cell {
+  background: rgba(var(--nc-t-roxo-rgb, 81, 28, 118), .08) !important;
+}
+
+/* CUIDADO  nada de table-layout ou largura nas tabelas da grade: o cabeçalho fixo e as linhas são
+            DUAS tabelas, alinhadas pelas larguras que o APEX põe nos <col>. "table-layout: auto"
+            (até 03/10) fazia cada uma medir o próprio conteúdo e os títulos saíam do lugar. */
+
+/* ═══ [C3] A BARRA: QUANTOS RESULTADOS E CARTÕES | TABELA ═══════════════════════════════════ */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-lov .nc-lov-barra {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  align-items: center !important;
+  gap: 6px 12px !important;
+  margin: 0 16px !important;
+  padding: 0 0 10px !important;
+  border-bottom: 1px solid var(--nc-nevoa, #E9E5F1) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-lov .nc-lov-conta {
+  flex: 1 1 auto !important;
+  font-size: 12.5px !important;
+  color: #77708C !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-lov .nc-lov-visao {
+  display: inline-flex !important;
+  gap: 2px !important;
+  padding: 3px !important;
+  border-radius: 9px !important;
+  background: var(--nc-off, #F7F5FA) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-lov .nc-lov-visao button {
+  height: 28px !important;
+  margin: 0 !important;
+  padding: 0 12px !important;
+  border: 0 !important;
+  border-radius: 7px !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  font: inherit !important;
+  font-size: 12.5px !important;
+  font-weight: 600 !important;
+  color: var(--nc-grafite, #4A4460) !important;
+  cursor: pointer !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-lov .nc-lov-visao button[aria-pressed="true"] {
+  background: #fff !important;
+  box-shadow: 0 1px 2px rgba(27, 18, 56, .1) !important;
+  color: var(--nc-roxo, #511C76) !important;
+}
+
+/* ═══ [C4] OS CARTÕES ═══════════════════════════════════════════════════════════════════════
+   No modo Cartões a grade some (cabeçalho e tabela) mas continua no lugar — a rolagem, o
+   "carregar mais" e a escolha são dela.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+/* CUIDADO  a grade NÃO pode ficar display: none — o APEX não desenha (nem deixa escolher) linhas
+            de grade "invisível": a busca não atualizava e o toque não escolhia. Ela fica à vista
+            para o navegador, mas encolhida a 1 px e fora da leitura. */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-lov:not(.nc-lov-tabela) .a-PopupLOV-results :is(.a-GV-hdr, .a-GV-w-scroll > table) {
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 1px !important;
+  min-width: 0 !important;                /* a Tabela deixa min-width (largura total) no style: aqui não vale */
+  max-width: 1px !important;
+  height: 1px !important;
+  overflow: hidden !important;
+  clip-path: inset(50%) !important;
+  pointer-events: none !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-lov.nc-lov-tabela .nc-lov-lista {
+  display: none !important;
+}
+
+/* a grade escreve a SUA largura e altura em px (700 × 189) ao abrir; nos Cartões a lista ocupa
+   o espaço todo da janela (a rolagem continua sendo a da grade, .a-GV-w-scroll) */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-lov:not(.nc-lov-tabela) .a-PopupLOV-results .a-GV-bdy {
+  display: flex !important;
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  height: auto !important;
+  width: 100% !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-lov:not(.nc-lov-tabela) .a-PopupLOV-results .a-GV-w-scroll {
+  position: relative !important;
+  overflow-x: hidden !important;
+  display: block !important;
+  flex: 1 1 auto !important;
+  width: 100% !important;
+  height: auto !important;
+  min-height: 0 !important;
+  overflow-y: auto !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-lov .a-PopupLOV-results {
+  min-height: 0 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-lov .nc-lov-lista {
+  display: grid !important;
+  gap: 8px !important;
+  margin: 0 !important;
+  padding: 10px 16px 14px !important;
+  list-style: none !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-lov .nc-lov-item {
+  margin: 0 !important;
+  padding: 12px 14px !important;
+  border: 1px solid var(--nc-nevoa, #E9E5F1) !important;
+  border-radius: 12px !important;
+  background: #fff !important;
+  cursor: pointer !important;
+  transition: border-color .12s, background-color .12s, box-shadow .12s !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-lov .nc-lov-item:hover {
+  border-color: rgba(var(--nc-t-roxo-rgb, 81, 28, 118), .4) !important;
+  background: var(--nc-off, #F7F5FA) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-lov .nc-lov-item:focus,
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-lov .nc-lov-item:focus-visible {
+  border-color: var(--nc-roxo, #511C76) !important;
+  outline: 0 !important;
+  box-shadow: 0 0 0 3px rgba(var(--nc-t-roxo-rgb, 81, 28, 118), .16) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-lov .nc-lov-item.is-atual {
+  border-color: rgba(var(--nc-t-roxo-rgb, 81, 28, 118), .45) !important;
+  background: rgba(var(--nc-t-roxo-rgb, 81, 28, 118), .05) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-lov .nc-lov-tit {
+  margin: 0 0 4px !important;
+  font-size: 15px !important;
+  font-weight: 700 !important;
+  line-height: 1.35 !important;
+  color: var(--nc-tinta, #1B1238) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-lov .nc-lov-selo {
+  margin-left: 6px !important;
+  padding: 1px 8px !important;
+  border-radius: 999px !important;
+  background: var(--nc-roxo, #511C76) !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  vertical-align: 2px !important;
+  color: #fff !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-lov .nc-lov-fatos {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 3px 16px !important;
+  margin: 0 !important;
+  font-size: 13px !important;
+  line-height: 1.5 !important;
+  color: var(--nc-tinta, #1B1238) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-lov .nc-lov-fato {
+  white-space: nowrap !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-lov .nc-lov-fato i {
+  font-style: normal !important;
+  font-size: 12px !important;
+  color: #8E88A3 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-lov mark {
+  padding: 0 1px !important;
+  border-radius: 3px !important;
+  background: rgba(var(--nc-t-rosa-rgb, 201, 87, 136), .22) !important;
+  color: inherit !important;
+}
+
+/* ═══ [C5] CELULAR ══════════════════════════════════════════════════════════════════════════ */
+@media (max-width: 640px) {
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-lov .nc-lov-fato {
+    white-space: normal !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-lov .nc-lov-lista {
+    padding: 8px 10px 12px !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .a-PopupLOV-dialog .a-PopupLOV-searchBar,
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-lov .nc-lov-barra {
+    margin-left: 10px !important;
+    margin-right: 10px !important;
+  }
+}

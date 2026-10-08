@@ -1,0 +1,15 @@
+/Users/igor_sala/instalacoes/Projetos/natcorp-landing/brand/apex/ilustracoes/geradas/seguranca-v1.png 1165693 bytes
+{
+ "input_tokens": 2069,
+ "input_tokens_details": {
+  "image_tokens": 1521,
+  "text_tokens": 548
+ },
+ "output_tokens": 7024,
+ "output_tokens_details": {
+  "image_tokens": 7024,
+  "text_tokens": 0
+ },
+ "total_tokens": 9093
+}
+ilustra-seguranca.png (1013, 976)

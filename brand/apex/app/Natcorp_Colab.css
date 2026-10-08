@@ -1,0 +1,245 @@
+/* ╔════════════════════════════════════════════════════════════════════════════════════════╗
+   ║  NATCORP · COLABORADOR E FILTROS  —  peça GLOBAL (CSS)                                   ║
+   ║  Entra no Natcorp_Style_Min.css (gerar-app.mjs, lista FOLHAS)                            ║
+   ╚════════════════════════════════════════════════════════════════════════════════════════╝
+
+   A aparência do que o Natcorp_Colab.js monta: o cartão curto do colaborador (e a região
+   escondida quando os campos vêm vazios) e os filtros de escolha múltipla (Select2).
+   Sem o JS, nada daqui vale (as classes nc-colab-* e nc-filtro* são postas por ele).
+
+   ── ÍNDICE ────────────────────────────────────────────────────────────────────────────────
+     [C1] A região Colaborador
+     [C2] Os filtros de escolha múltipla
+*/
+
+/* ═══ [C1] A REGIÃO COLABORADOR ═════════════════════════════════════════════════════════════ */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .t-Region.nc-colab-reg.nc-colab-vazio:not(#nc-cb-x):not(#nc-cb-y) {
+  display: none !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .t-Region.nc-colab-reg:not(#nc-cb-x) > .t-Region-header,
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .t-Region.nc-colab-reg:not(#nc-cb-x) .t-Region-body > :not(.nc-colab) {
+  display: none !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .t-Region.nc-colab-reg:not(#nc-cb-x) .t-Region-body {
+  padding: 14px 16px !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-colab {
+  display: flex !important;
+  align-items: center !important;
+  gap: 14px !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-colab[hidden] {
+  display: none !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-colab-foto {
+  flex: none !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 56px !important;
+  height: 56px !important;
+  border-radius: 50% !important;
+  object-fit: cover !important;
+  background: var(--nc-nevoa2, #F3EEF8) !important;
+  box-shadow: 0 0 0 2px #FFFFFF, 0 0 0 3.5px var(--nc-nevoa, #E7E1F0) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-colab-foto--ini svg {
+  width: 26px !important;
+  height: 26px !important;
+  fill: none !important;
+  stroke: var(--nc-roxo, #511C76) !important;
+  stroke-width: 1.8 !important;
+  stroke-linecap: round !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-colab-txt {
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+  font-size: 14.5px !important;
+  line-height: 1.35 !important;
+  color: #5A526E !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-colab-txt b {
+  display: block !important;
+  font-size: 17px !important;
+  font-weight: 800 !important;
+  overflow-wrap: anywhere !important;
+  color: var(--nc-tinta, #1B1238) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-colab-txt span {
+  display: block !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-colab .t-Button.nc-colab-bt:not([style*="none"]) {
+  flex: none !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 44px !important;
+  height: 44px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border-radius: 12px !important;
+}
+
+/* ═══ [C2] OS FILTROS DE ESCOLHA MÚLTIPLA ═══════════════════════════════════════════════════
+   Rótulo em cima; o campo e o botão Filtrar na mesma linha; a dica embaixo.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .t-Form-fieldContainer.nc-filtro:not(#nc-cb-x):not([style*="none"]) {
+  display: block !important;
+  width: 100% !important;
+  max-width: 760px !important;
+  margin: 0 0 12px !important;
+  padding: 0 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .t-Form-fieldContainer.nc-filtro:not(#nc-cb-x) > .t-Form-labelContainer,
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .t-Form-fieldContainer.nc-filtro:not(#nc-cb-x) > .t-Form-inputContainer {
+  display: block !important;
+  width: 100% !important;
+  max-width: none !important;
+  flex: none !important;
+  padding: 0 !important;
+  text-align: left !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .t-Form-fieldContainer.nc-filtro:not(#nc-cb-x) .t-Form-label {
+  display: block !important;
+  margin: 0 0 6px !important;
+  padding: 0 !important;
+  font-size: 15px !important;
+  font-weight: 700 !important;
+  color: var(--nc-tinta, #1B1238) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-filtro .t-Form-itemWrapper {
+  display: flex !important;
+  align-items: stretch !important;
+  gap: 8px !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-filtro .select2-container {
+  flex: 1 1 auto !important;
+  width: auto !important;
+  min-width: 0 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-filtro .select2-container-multi .select2-choices {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  align-items: center !important;
+  gap: 6px !important;
+  min-height: 46px !important;
+  padding: 5px 8px !important;
+  border: 1px solid #D9D2E4 !important;
+  border-radius: 12px !important;
+  background: #FFFFFF !important;
+  background-image: none !important;
+  box-shadow: none !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-filtro .select2-container-multi.select2-container-active .select2-choices {
+  border-color: var(--nc-roxo, #511C76) !important;
+  box-shadow: 0 0 0 3px rgba(var(--nc-t-roxo-rgb, 81, 28, 118), .15) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-filtro .select2-container-multi .select2-choices .select2-search-choice {
+  display: inline-flex !important;
+  align-items: center !important;
+  margin: 0 !important;
+  padding: 5px 26px 5px 10px !important;
+  border: 0 !important;
+  border-radius: 999px !important;
+  background: var(--nc-nevoa2, #F3EEF8) !important;
+  background-image: none !important;
+  box-shadow: none !important;
+  font-size: 14px !important;
+  font-weight: 700 !important;
+  line-height: 1.2 !important;
+  color: var(--nc-roxo, #511C76) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-filtro .select2-container-multi .select2-search-choice-close {
+  top: 50% !important;
+  left: auto !important;
+  right: 8px !important;
+  transform: translateY(-50%) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-filtro .select2-container-multi .select2-choices .select2-search-field input {
+  min-height: 32px !important;
+  padding: 0 6px !important;
+  font-size: 15px !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-filtro .t-Button.nc-filtro-bt:not(#nc-cb-x):not(#nc-cb-y) {
+  width: auto !important;
+  min-width: 0 !important;
+  max-width: none !important;
+  height: auto !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-filtro .t-Button.nc-filtro-bt .t-Icon {
+  margin: 0 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-filtro .t-Button.nc-filtro-bt:not([style*="none"]) {
+  flex: none !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  min-height: 46px !important;
+  margin: 0 !important;
+  padding: 0 16px !important;
+  border-radius: 12px !important;
+  font-size: 15px !important;
+  font-weight: 700 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-filtro .nc-filtro-ic {
+  width: 18px !important;
+  height: 18px !important;
+  fill: none !important;
+  stroke: currentColor !important;
+  stroke-width: 1.9 !important;
+  stroke-linejoin: round !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-filtro-dica {
+  margin: 6px 2px 0 !important;
+  font-size: 13.5px !important;
+  color: #6E6882 !important;
+}
+
+/* ═══ [DESK] TELAS DE MESA — gerado por escala-desktop.py (não editar à mão; rode o script) ═══ */
+@media (min-width: 1024px) {
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-colab-txt b {
+    font-size: 16px !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .t-Form-fieldContainer.nc-filtro:not(#nc-cb-x) .t-Form-label {
+    font-size: 14px !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-filtro .select2-container-multi .select2-choices {
+    min-height: 40px !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-filtro .select2-container-multi .select2-choices .select2-search-field input {
+    font-size: 14px !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-filtro .t-Button.nc-filtro-bt:not([style*="none"]) {
+    font-size: 14px !important;
+    min-height: 40px !important;
+  }
+}
+/* ═══ fim do [DESK] ═══ */

@@ -1,0 +1,14 @@
+/Users/igor_sala/instalacoes/Projetos/natcorp-landing/brand/apex/ilustracoes/geradas/ben_carro-v1.png 943451 bytes
+{
+ "input_tokens": 1915,
+ "input_tokens_details": {
+  "image_tokens": 1521,
+  "text_tokens": 394
+ },
+ "output_tokens": 7024,
+ "output_tokens_details": {
+  "image_tokens": 7024,
+  "text_tokens": 0
+ },
+ "total_tokens": 8939
+}

@@ -1,0 +1,544 @@
+
+/* ╔════════════════════════════════════════════════════════════════════════════════════════╗
+   ║  NATCORP · CORES DO SISTEMA  —  a "roupa" da janela de cores e do simulador (CSS)        ║
+   ╚════════════════════════════════════════════════════════════════════════════════════════╝
+   Manual: brand/apex/MANUAL-APEX.md (parte 1 explica CSS do zero; parte 3, as cores).
+
+   O QUE FAZ   A aparência da janela "Cores do sistema" (os cartões com a miniatura do sistema)
+               e da moldura do simulador de aparelho. Quem cria e abre as duas é o
+               Natcorp_Temas.js; as cores de CADA TEMA não estão aqui (são geradas pelo
+               gerar-temas.py, logo acima deste trecho, no Natcorp_Temas.src.css).
+   ONDE ENTRA  Este arquivo NÃO sobe sozinho: o gerar-temas.py o junta ao Natcorp_Temas.src.css,
+               que entra no Natcorp_Style_Min.css (a folha que TODA página carrega).
+               Depois de mudar aqui: python3 gerar-temas.py, depois node gerar-app.mjs,
+               e suba o Natcorp_Style_Min.css.
+   ÍNDICE      [C1] A janela: fundo, caixa e cabeçalho    ← criada pelo JS em [J3]
+               [C2] Os cartões e a miniatura               ← criados pelo JS em [J3]
+               [C3] O pé: "Agora: …", Voltar ao Padrão, Pronto
+               [C4] Celular e menos movimento
+               [C5] Menu do usuário e a moldura do aparelho ← JS em [J4] e [J5]
+   LEITURA     Cada regra é  QUEM, e entre chaves, propriedade: valor;  — ex.: na regra de
+               .nc-tm-grade, "gap: 12px" é o espaço entre os cartões. @app dá prioridade sobre
+               o tema do APEX (aparece por extenso no arquivo que sobe). Estas regras não
+               dependem de marca posta pelo JS: valem em qualquer página, mas as peças só
+               existem quando a janela ou a moldura estão abertas.
+               var(--nc-roxo) é uma cor da marca pelo nome: acompanha o tema escolhido.
+               Toda linha termina em ; e toda chave aberta é fechada.
+   ════════════════════════════════════════════════════════════════════════════════════════ */
+
+/* ═══ [C1] A JANELA: FUNDO, CAIXA E CABEÇALHO ═══════════════════════════════════════════════
+   .nc-tm-fundo é o fundo escuro que cobre a tela; .nc-tm, a caixa; .nc-tm-cab, o título e a
+   frase; .nc-tm-x, o botão de fechar.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+/* ---------- a janela "Cores do sistema" (Natcorp_Temas.js) ----------
+   Cada cartão é uma MINIATURA do próprio sistema nas cores do tema — barra de cima, menu
+   lateral, uma região com o ícone e a linha, um botão: quem lê pouco escolhe pelo que vê.
+   A troca é na hora (atrás da janela o sistema já muda); "Pronto" só fecha. */
+@app .nc-tm-fundo {
+  position: fixed;
+  inset: 0;
+  z-index: 1000000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 16px;
+  background: rgba(27, 18, 56, .5);
+  backdrop-filter: blur(3px);
+  animation: nc-tm-entra .18s cubic-bezier(.16, 1, .3, 1);
+}
+
+@keyframes nc-tm-entra {
+  from { background: rgba(27, 18, 56, 0); }
+}
+
+@app .nc-tm {
+  display: flex;
+  flex-direction: column;
+  width: min(940px, 100%);
+  max-height: min(760px, 100%);
+  overflow: hidden;
+  border-radius: 20px;
+  background: #fff;
+  box-shadow: 0 30px 70px -24px rgba(27, 18, 56, .55);
+  font-family: "Inter NC", Inter, ui-sans-serif, system-ui, "Segoe UI", Arial, sans-serif;
+  color: #1B1238;
+}
+
+@app .nc-tm-cab {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 20px 22px 14px;
+  border-bottom: 1px solid #ECE7F3;
+}
+
+@app .nc-tm-cab h2 {
+  margin: 0;
+  font-family: inherit;
+  font-size: 20px;
+  font-weight: 800;
+  line-height: 1.25;
+  color: #1B1238;
+}
+
+@app .nc-tm-cab p {
+  margin: 4px 0 0;
+  font-size: 14px;
+  line-height: 1.45;
+  color: #5E586E;
+}
+
+@app .nc-tm-x {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: 1.5px solid #E2DCEC;
+  border-radius: 12px;
+  background: #fff;
+  color: #4A4460;
+  cursor: pointer;
+}
+
+@app .nc-tm-x:hover {
+  background: #F6F3FA;
+}
+
+@app .nc-tm-x svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* ═══ [C2] OS CARTÕES E A MINIATURA ════════════════════════════════════════════════════════
+   .nc-tm-grade é a grade de cartões; .nc-tm-cartao, cada tema (.is-on = o escolhido);
+   .nc-tm-mini, a miniatura do sistema. As cores da miniatura chegam do JS, em cada cartão:
+   --a (azul), --r (roxo), --m (ameixa, hoje sem uso aqui) e --s (rosa) daquele tema.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@app .nc-tm-grade {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 12px;
+  padding: 16px 22px 18px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+}
+
+@app .nc-tm-cartao {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 10px 10px 12px;
+  border: 1.5px solid #E2DCEC;
+  border-radius: 16px;
+  background: #fff;
+  font: inherit;
+  text-align: left;
+  color: inherit;
+  cursor: pointer;
+  transition: border-color .15s, box-shadow .15s, transform .15s;
+}
+
+@app .nc-tm-cartao:hover {
+  border-color: #BFB2D3;
+  transform: translateY(-1px);
+}
+
+@app .nc-tm-cartao.is-on {
+  border-color: var(--r);
+  box-shadow: 0 0 0 2px var(--r), 0 14px 28px -18px var(--r);
+}
+
+@app .nc-tm-cartao:focus-visible {
+  outline: 3px solid var(--s);
+  outline-offset: 3px;
+}
+
+/* a miniatura: cabeçalho, menu, uma região com ícone + linha, um botão */
+@app .nc-tm-mini {
+  position: relative;
+  display: grid;
+  grid-template-columns: 22% 1fr;
+  grid-template-rows: 16px 1fr;
+  height: 92px;
+  overflow: hidden;
+  border-radius: 10px;
+  background: #F7F5FA;
+  box-shadow: inset 0 0 0 1px rgba(27, 18, 56, .06);
+}
+
+@app .nc-tm-mini-topo {
+  grid-column: 1 / -1;
+  background:
+    radial-gradient(40% 260% at 88% 0%, color-mix(in srgb, var(--s) 45%, transparent), transparent 70%),
+    linear-gradient(90deg, var(--a), var(--r));
+}
+
+@app .nc-tm-mini-lado {
+  background:
+    radial-gradient(90% 40% at 0% 0%, color-mix(in srgb, var(--s) 35%, transparent), transparent 70%),
+    linear-gradient(180deg, var(--a), var(--r));
+}
+
+@app .nc-tm-mini-lado::before {
+  content: "";
+  display: block;
+  width: 60%;
+  height: 4px;
+  margin: 8px auto 0;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, .35);
+  box-shadow: 0 8px 0 rgba(255, 255, 255, .2), 0 16px 0 rgba(255, 255, 255, .2);
+}
+
+@app .nc-tm-mini-area {
+  padding: 8px;
+}
+
+@app .nc-tm-mini-reg {
+  height: 100%;
+  border-radius: 7px;
+  background: #fff;
+  box-shadow: 0 1px 2px rgba(27, 18, 56, .08);
+}
+
+@app .nc-tm-mini-reg-cab {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 6px 4px;
+  border-bottom: 2px solid var(--s);
+}
+
+@app .nc-tm-mini-ic {
+  width: 11px;
+  height: 11px;
+  border-radius: 3px;
+  background:
+    linear-gradient(var(--r), transparent),
+    linear-gradient(to left top, var(--s), transparent),
+    linear-gradient(to right bottom, var(--a), transparent);
+}
+
+@app .nc-tm-mini-tit {
+  width: 46%;
+  height: 4px;
+  border-radius: 2px;
+  background: #CFC8DA;
+}
+
+@app .nc-tm-mini-bt {
+  display: block;
+  width: 42%;
+  height: 12px;
+  margin: 9px 0 0 6px;
+  border-radius: 4px;
+  background: var(--r);
+}
+
+@app .nc-tm-cartao.is-on .nc-tm-mini::after {
+  content: "";
+  position: absolute;
+  top: 22px;
+  right: 6px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--r) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 12.5l4 4 8-9'/%3E%3C/svg%3E") center / 14px no-repeat;
+  box-shadow: 0 0 0 2px #fff;
+}
+
+@app .nc-tm-nome {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  font-size: 15px;
+  font-weight: 800;
+  line-height: 1.25;
+}
+
+@app .nc-tm-nome small {
+  padding: 1px 8px;
+  border-radius: 999px;
+  background: #F1ECF7;
+  font-size: 11.5px;
+  font-weight: 800;
+  color: #5E586E;
+}
+
+@app .nc-tm-desc {
+  margin: -4px 0 0;
+  font-size: 13px;
+  line-height: 1.4;
+  color: #5E586E;
+}
+
+@app .nc-tm-cores {
+  display: flex;
+  gap: 4px;
+}
+
+@app .nc-tm-cores i {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .08);
+}
+
+/* ═══ [C3] O PÉ: "AGORA: …", VOLTAR AO PADRÃO, PRONTO ═══════════════════════════════════════ */
+@app .nc-tm-pe {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px 16px;
+  padding: 14px 22px 18px;
+  border-top: 1px solid #ECE7F3;
+}
+
+@app .nc-tm-pe p {
+  margin: 0;
+  font-size: 13.5px;
+  color: #5E586E;
+}
+
+@app .nc-tm-pe p b {
+  color: #1B1238;
+}
+
+@app .nc-tm-pe-acoes {
+  display: flex;
+  gap: 8px;
+  margin-left: auto;
+}
+
+@app .nc-tm-padrao {
+  min-height: 42px;
+  padding: 0 14px;
+  border: 1.5px solid #E2DCEC;
+  border-radius: 12px;
+  background: #fff;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  color: #4A4460;
+  cursor: pointer;
+}
+
+@app .nc-tm-padrao:hover {
+  background: #F6F3FA;
+}
+
+@app .nc-tm-pronto {
+  min-height: 42px;
+  padding: 0 22px;
+  border: 0;
+  border-radius: 12px;
+  background: var(--nc-roxo);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 800;
+  color: #fff;
+  cursor: pointer;
+}
+
+@app .nc-tm-pronto:hover {
+  background: var(--nc-roxo-hover);
+}
+
+@app :is(.nc-tm-x, .nc-tm-padrao, .nc-tm-pronto):focus-visible {
+  outline: 3px solid var(--nc-rosa);
+  outline-offset: 2px;
+}
+
+/* ═══ [C4] CELULAR E MENOS MOVIMENTO ═══════════════════════════════════════════════════════
+   @media (max-width: 640px) só vale no celular; prefers-reduced-motion, para quem pediu
+   "reduzir movimento" nas configurações do aparelho (acessibilidade).
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@media (max-width: 640px) {
+  @app .nc-tm-fundo {
+    align-items: flex-end;
+    padding: 0;
+  }
+
+  @app .nc-tm {
+    max-height: 92vh;
+    border-radius: 20px 20px 0 0;
+  }
+
+  @app .nc-tm-cab,
+  @app .nc-tm-grade,
+  @app .nc-tm-pe {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  @app .nc-tm-grade {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  @app .nc-tm-mini {
+    height: 72px;
+  }
+
+  @app .nc-tm-desc {
+    display: none;
+  }
+
+  @app .nc-tm-pe-acoes {
+    width: 100%;
+  }
+
+  @app .nc-tm-pe-acoes > * {
+    flex: 1 1 auto;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  @app .nc-tm-fundo {
+    animation: none;
+  }
+
+  @app .nc-tm-cartao {
+    transition: none;
+  }
+
+  @app .nc-tm-cartao:hover {
+    transform: none;
+  }
+}
+
+/* ═══ [C5] MENU DO USUÁRIO E A MOLDURA DO APARELHO ══════════════════════════════════════════
+   Primeiro: os botões do time saem da barra de cima (os itens foram para o menu do usuário,
+   JS [J4]). Depois: .nc-sim é a moldura do simulador (JS [J5]); .nc-sim-aparelho, o
+   "aparelho"; .nc-sim-tela, a tela de dentro.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+/* Cores e os dispositivos foram para o menu do usuário (Natcorp_Temas.js): os botões do time
+   saem da barra de cima — só quando o menu já tem os itens (classe posta pelo .js) */
+@app.nc-tm-no-menu .t-Header-navBar :is(.nc-theme-navitem, .nc-preview-navitem) {
+  display: none;
+}
+
+/* ---------- a moldura do aparelho (Smartphone / Tablet) ----------
+   A página de verdade num iframe da largura do aparelho: o tema e as páginas respondem como
+   no celular. O aparelho é reduzido (transform) para caber; a largura de dentro não muda. */
+@app .nc-sim {
+  position: fixed;
+  inset: 0;
+  z-index: 999990;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 24px 24px;
+  background:
+    radial-gradient(60% 50% at 50% 0%, rgba(var(--nc-t-rosa-rgb, 201, 87, 136), .18), transparent 70%),
+    #16112A;
+}
+
+@app .nc-sim-barra {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 10px 16px;
+  font-family: "Inter NC", Inter, ui-sans-serif, system-ui, "Segoe UI", Arial, sans-serif;
+}
+
+@app .nc-sim-modos {
+  display: inline-flex;
+  padding: 4px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, .08);
+}
+
+@app .nc-sim-modos button {
+  min-height: 36px;
+  padding: 0 14px;
+  border: 0;
+  border-radius: 9px;
+  background: none;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  color: rgba(255, 255, 255, .78);
+  cursor: pointer;
+}
+
+@app .nc-sim-modos button.is-on {
+  background: #fff;
+  color: #1B1238;
+}
+
+@app .nc-sim-medida {
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+  color: rgba(255, 255, 255, .62);
+}
+
+@app .nc-sim-sair {
+  min-height: 38px;
+  padding: 0 16px;
+  border: 1.5px solid rgba(255, 255, 255, .3);
+  border-radius: 12px;
+  background: none;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 800;
+  color: #fff;
+  cursor: pointer;
+}
+
+@app .nc-sim-sair:hover {
+  background: rgba(255, 255, 255, .1);
+}
+
+@app :is(.nc-sim-modos button, .nc-sim-sair):focus-visible {
+  outline: 3px solid var(--nc-rosa);
+  outline-offset: 2px;
+}
+
+@app .nc-sim-palco {
+  position: relative;
+  flex: none;
+}
+
+@app .nc-sim-aparelho {
+  position: absolute;
+  top: 0;
+  left: 0;
+  box-sizing: border-box;
+  padding: 14px;
+  border-radius: 46px;
+  background: #0B0816;
+  box-shadow: 0 0 0 2px #3A3350, 0 40px 80px -30px rgba(0, 0, 0, .7);
+  transform-origin: 0 0;
+}
+
+@app .nc-sim[data-modo="tablet"] .nc-sim-aparelho {
+  border-radius: 34px;
+}
+
+@app .nc-sim-tela {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  border-radius: 34px;
+  background: #fff;
+}
+
+@app .nc-sim[data-modo="tablet"] .nc-sim-tela {
+  border-radius: 22px;
+}
+
+/* com a moldura aberta, a página de trás não rola */
+@app.nc-sim-aberto {
+  overflow: hidden;
+}

@@ -1,0 +1,573 @@
+/* ╔════════════════════════════════════════════════════════════════════════════════════════╗
+   ║  NATCORP · CURSOS E FORMAÇÕES  —  a "roupa" da tela (CSS)                                 ║
+   ║  App 600 · Página 5 · portal Conhecendo Você                                              ║
+   ╚════════════════════════════════════════════════════════════════════════════════════════╝
+
+   Primeira vez num arquivo destes? Leia antes o manual: brand/apex/MANUAL-APEX.md (parte 1).
+
+   ── O QUE ESTE ARQUIVO FAZ ────────────────────────────────────────────────────────────────
+   Dá a aparência da página 5: o alto com os atalhos dos quatro assuntos, os cartões de cada
+   item, o botão "Adicionar …" grande no fim de cada lista e a caixa "Mais informações".
+   Ele NÃO muda nada de lugar e não troca textos: quem faz isso é o arquivo-irmão
+   Natcorp_Formacao.js. Os dois trabalham juntos:
+     o JS transforma cada item da lista num cartão  →  este arquivo diz como o cartão se parece.
+   Sem o JS, este arquivo não faz nada (todas as regras dependem da marca nc-fo que o JS põe
+   na página).
+   Público: colaborador e candidato, 9 em cada 10 no celular, muitos com pouca leitura.
+   CUIDADO: nada aqui esconde o "Adicionar" da página (a ação dinâmica o esconde para quem só
+   consulta). Quem some é a VAGA onde ele mora, pela classe que o JS põe.
+
+   ── ONDE ELE ENTRA NO APEX ────────────────────────────────────────────────────────────────
+     Página 5 › CSS › File URLs:   #WORKSPACE_IMAGES#Natcorp_Formacao.css
+     CUIDADO: edite ESTE arquivo (Natcorp_Formacao.src.css, a fonte) e gere o arquivo que sobe com
+     node brand/apex/app/gerar-app.mjs  — o gerador troca @app pelo prefixo longo e põe
+     !important em toda linha. O Natcorp_Formacao.css da pasta login/ é refeito a cada geração:
+     o que for mudado só nele se perde. (Manual, parte 2.)
+
+   ── ÍNDICE: as partes deste arquivo (Ctrl+F pelo código entre colchetes) ──────────────────
+     [C1] O que fica escondido e os ícones           (botões do APEX que não servem aqui)
+     [C2] O alto: título e atalhos dos assuntos       ← montado pelo JS em [J3]
+     [C3] Cada lista: título e dica                   ← montado pelo JS em [J3]
+     [C4] Os cartões dos itens e a lista vazia        ← montados pelo JS em [J4] e [J5]
+     [C5] "Adicionar …" e "Mais informações"          ← arrumados pelo JS em [J3] e [J5]
+     [C6] Celular                                     (ajustes para telas pequenas)
+     [C7] Menos movimento                             (para quem pediu "reduzir movimento")
+
+   ── RECEITAS RÁPIDAS ──────────────────────────────────────────────────────────────────────
+     Quero mudar uma cor
+       → use uma das cores da marca, pelo nome: var(--nc-roxo), var(--nc-nevoa)… A lista
+         completa, com amostras, está no manual (parte 3). Assim a cor acompanha o tema que
+         o usuário escolheu em "Cores". Evite escrever cores soltas, como #511C76.
+     Quero mudar as cores da situação (Concluído verde, Não concluído amarelo)
+                                                → [C4], as regras .nc-fo-sit--ok, --meio…
+     Quero o botão "Adicionar …" de outro jeito → [C5], a regra com .nc-fo-add-bt.
+     Algo ficou bom no computador e ruim no celular → [C6]: o que está dentro de
+                                                   @media (max-width: 640px) só vale no celular.
+
+   ── COMO LER UM ARQUIVO CSS EM 30 SEGUNDOS ────────────────────────────────────────────────
+     Cada regra tem duas partes:     QUEM { COMO; }
+       @app.nc-fo .nc-fo-dica {            ← QUEM: o "seletor", diz em que pedaço da tela vale
+         font-size: 14.5px;                ← COMO: propriedade: valor;  (tamanho da letra)
+         color: var(--nc-grafite);         ←       a cor: o cinza-escuro da marca
+       }
+     .nome-com-ponto       uma "classe": uma etiqueta posta num pedaço da tela (pelo APEX ou
+                           pelo JS). .nc-fo-dica é a frase de exemplo sob o título da lista.
+     @app                  atalho que dá prioridade às nossas regras sobre as do tema do APEX.
+                           No arquivo que sobe para o APEX ele aparece por extenso, como
+                           html body:is(.t-PageBody…):not(#nc-a1):not(#nc-a2) — é a mesma coisa.
+     :not(#nc-fo-x)…       peso extra, para vencer uma regra do tema. Pode ignorar ao ler.
+     !important            no arquivo que sobe, toda linha ganha um: é o mesmo "vencer o tema".
+     @media (max-width: 640px) { … }   as regras de dentro só valem em telas até 640px (celular).
+     var(--nc-roxo)        uma cor da marca, pelo nome (muda junto com o tema escolhido).
+     px                    pixels, o tamanho de um pontinho da tela. 16px é o texto normal.
+     Toda linha COMO termina em ;   e todo { é fechado por um }. Não apague esses sinais.
+*/
+
+/* ═══ [C1] O QUE FICA ESCONDIDO E OS ÍCONES ══════════════════════════════════════════════════
+   display: none = não aparece. Somem: o que o JS marcou como oculto/velho, a vaga do
+   "Adicionar" quando a página esconde o botão, e a frase de vazio / o link "Escrever mais"
+   quando o JS os deixa de lado ([hidden]).
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-fo :is(.nc-fo-oculto, .nc-fo-velho, .nc-fo-add--fora):not(#nc-fo-x):not(#nc-fo-y),
+@app.nc-fo :is(.nc-fo-vazio, .nc-fo-abre)[hidden]:not(#nc-fo-x):not(#nc-fo-y) {
+  display: none;
+}
+
+/* o "maximizar" da sub-região Observações não serve a uma caixa de texto */
+@app.nc-fo .nc-fo-obs-reg .js-maximizeButtonContainer:not(#nc-fo-x):not(#nc-fo-y) {
+  display: none;
+}
+
+@app.nc-fo :is(.nc-fo-ic) {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.9;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* ═══ [C2] O ALTO: TÍTULO E ATALHOS DOS ASSUNTOS ═══════════════════════════════════════════
+   Montado pelo JS em [J3] (montarTopo). .nc-fo-topo é o bloco; .nc-fo-atalho, cada atalho
+   (com .is-vazio quando o assunto ainda não tem item).
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-fo .nc-fo-topo {
+  margin: 0 0 16px;
+  padding: 22px 24px 20px;
+  border-radius: 22px;
+  background:
+    radial-gradient(110% 130% at 100% 0%, rgba(var(--nc-t-rosa-rgb, 201, 87, 136), .36) 0%, rgba(var(--nc-t-rosa-rgb, 201, 87, 136), 0) 55%),
+    linear-gradient(135deg, var(--nc-azul) 0%, var(--nc-roxo) 72%);
+  color: #fff;
+  box-shadow: 0 18px 36px -24px rgba(var(--nc-t-azul-rgb, 44, 26, 99), .75);
+}
+
+@app.nc-fo .nc-fo-topo-tit {
+  margin: 0;
+  font-family: inherit;
+  font-size: 24px;
+  font-weight: 800;
+  line-height: 1.2;
+  letter-spacing: -.01em;
+  color: #fff;
+}
+
+@app.nc-fo .nc-fo-topo-txt {
+  margin: 8px 0 0;
+  max-width: 60ch;
+  font-size: 16px;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, .88);
+}
+
+@app.nc-fo .nc-fo-topo-txt b {
+  font-weight: 800;
+  color: #fff;
+}
+
+@app.nc-fo .nc-fo-atalhos {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+  margin: 16px 0 0;
+}
+
+@app.nc-fo .nc-fo-atalho {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 58px;
+  padding: 8px 12px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, .12);
+  color: #fff;
+  text-decoration: none;
+  transition: background-color .15s;
+}
+
+@app.nc-fo .nc-fo-atalho:hover {
+  background: rgba(255, 255, 255, .22);
+  color: #fff;
+  text-decoration: none;
+}
+
+@app.nc-fo .nc-fo-atalho:focus-visible {
+  outline: 3px solid #F2B8D0 /*reserva*/;
+  outline: 3px solid oklch(from #F2B8D0 l calc(c * var(--nc-t-croma, 1)) calc(h + var(--nc-t-giro, 0)));
+  outline-offset: 2px;
+}
+
+@app.nc-fo .nc-fo-atalho-ic {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 11px;
+  background: #fff;
+  color: var(--nc-roxo);
+}
+
+@app.nc-fo .nc-fo-atalho-ic .nc-fo-ic {
+  width: 20px;
+  height: 20px;
+}
+
+@app.nc-fo .nc-fo-atalho-txt {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+@app.nc-fo .nc-fo-atalho-nome {
+  font-size: 15px;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+@app.nc-fo .nc-fo-atalho-n {
+  font-size: 13px;
+  line-height: 1.3;
+  color: rgba(255, 255, 255, .8);
+}
+
+@app.nc-fo .nc-fo-atalho.is-vazio .nc-fo-atalho-ic {
+  background: rgba(255, 255, 255, .22);
+  color: #fff;
+}
+
+/* ═══ [C3] CADA LISTA: TÍTULO E DICA ═══════════════════════════════════════════════════════
+   Montado pelo JS em [J3]. .nc-fo-reg é a região da lista; .nc-fo-dica, a frase de exemplo.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-fo .t-Region.nc-fo-reg > .t-Region-header .t-Region-headerItems--title {
+  flex-wrap: wrap;
+}
+
+@app.nc-fo .nc-fo-dica {
+  flex-basis: 100%;
+  margin: 2px 0 0;
+  padding-left: 46px;
+  font-size: 14.5px;
+  font-weight: 500;
+  line-height: 1.4;
+  color: var(--nc-grafite);
+}
+
+/* ═══ [C4] OS CARTÕES DOS ITENS E A LISTA VAZIA ════════════════════════════════════════════
+   Montados pelo JS em [J4] e [J5]. Peças principais:
+     .nc-fo-item        o cartão               .nc-fo-item-nome   o nome
+     .nc-fo-item-nivel  o nível (roxo)         .nc-fo-pontos      os 4 pontos do idioma
+     .nc-fo-sit--ok / --meio / --andando / --neutro   as cores da situação
+     .nc-fo-editar      a palavra "Editar"     .nc-fo-vazio       a frase da lista vazia
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+/* o item: um cartão legível, e o cartão inteiro é o toque de editar */
+@app.nc-fo .nc-fo-item-a > :not(.nc-fo-item):not(#nc-fo-x):not(#nc-fo-y) {
+  display: none;
+}
+
+@app.nc-fo .t-MediaList .t-MediaList-item:has(.nc-fo-item):not(#nc-fo-x):not(#nc-fo-y) {
+  margin: 0 0 10px;
+  padding: 0;
+  border: 0;
+  background: none;
+  box-shadow: none;
+}
+
+@app.nc-fo .t-MediaList .nc-fo-item-a:not(#nc-fo-x):not(#nc-fo-y) {
+  display: block;
+  padding: 0;
+  border: 1px solid var(--nc-nevoa);
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: 0 10px 22px -20px rgba(var(--nc-t-azul-rgb, 44, 26, 99), .6);
+  color: inherit;
+  text-decoration: none;
+  transition: border-color .15s, box-shadow .15s;
+}
+
+@app.nc-fo .t-MediaList .nc-fo-item-a:hover:not(#nc-fo-x):not(#nc-fo-y) {
+  border-color: #CDBFE0;
+  box-shadow: 0 14px 26px -20px rgba(var(--nc-t-azul-rgb, 44, 26, 99), .7);
+}
+
+@app.nc-fo .t-MediaList .nc-fo-item-a:focus-visible:not(#nc-fo-x):not(#nc-fo-y) {
+  outline: 3px solid var(--nc-rosa);
+  outline-offset: 2px;
+}
+
+@app.nc-fo .nc-fo-item {
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr) auto;
+  align-items: start;
+  gap: 4px 14px;
+  padding: 16px 18px;
+}
+
+@app.nc-fo .nc-fo-item-ic {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 13px;
+  background: var(--nc-nevoa2);
+  color: var(--nc-roxo);
+}
+
+@app.nc-fo .nc-fo-item-ic .nc-fo-ic {
+  width: 23px;
+  height: 23px;
+}
+
+@app.nc-fo .nc-fo-item-txt {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+@app.nc-fo .nc-fo-item-nome {
+  font-size: 17px;
+  font-weight: 800;
+  line-height: 1.3;
+  color: var(--nc-tinta);
+  overflow-wrap: anywhere;
+}
+
+@app.nc-fo .nc-fo-item-nivel {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.3;
+  color: var(--nc-roxo);
+}
+
+@app.nc-fo .nc-fo-pontos {
+  display: inline-flex;
+  gap: 4px;
+}
+
+@app.nc-fo .nc-fo-pontos i {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--nc-nevoa);
+}
+
+@app.nc-fo .nc-fo-pontos i.is-on {
+  background: var(--nc-roxo);
+}
+
+@app.nc-fo .nc-fo-item-det {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px 16px;
+  font-size: 14.5px;
+  line-height: 1.45;
+  color: var(--nc-tinta);
+}
+
+@app.nc-fo .nc-fo-rot {
+  color: #6E6882;
+}
+
+@app.nc-fo .nc-fo-item-lado {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 10px;
+}
+
+@app.nc-fo .nc-fo-sit {
+  padding: 4px 11px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 800;
+  line-height: 1.3;
+  white-space: nowrap;
+}
+
+@app.nc-fo .nc-fo-sit--ok {
+  background: #E4F4EA;
+  color: #1E6B45;
+}
+
+@app.nc-fo .nc-fo-sit--meio {
+  background: #FFF4DE;
+  color: #6B4700;
+}
+
+@app.nc-fo .nc-fo-sit--andando {
+  background: var(--nc-nevoa2);
+  color: var(--nc-roxo);
+}
+
+@app.nc-fo .nc-fo-sit--neutro {
+  background: var(--nc-nevoa2);
+  color: var(--nc-grafite);
+}
+
+@app.nc-fo .nc-fo-editar {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--nc-roxo);
+}
+
+@app.nc-fo .nc-fo-editar .nc-fo-ic {
+  width: 17px;
+  height: 17px;
+  stroke-width: 2.1;
+}
+
+/* lista vazia: diz o que fazer */
+@app.nc-fo .nc-fo-vazio {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin: 0 0 12px;
+  padding: 16px 18px;
+  border-radius: 16px;
+  background: var(--nc-nevoa2);
+}
+
+@app.nc-fo .nc-fo-vazio-ic {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 13px;
+  background: #fff;
+  color: #9A8FB3 /*reserva*/;
+  color: oklch(from #9A8FB3 l calc(c * var(--nc-t-croma, 1)) calc(h + var(--nc-t-giro, 0)));
+}
+
+@app.nc-fo .nc-fo-vazio-ic .nc-fo-ic {
+  width: 22px;
+  height: 22px;
+}
+
+@app.nc-fo .nc-fo-vazio p {
+  margin: 0;
+  font-size: 15.5px;
+  line-height: 1.45;
+  color: var(--nc-grafite);
+}
+
+@app.nc-fo .nc-fo-vazio b {
+  font-weight: 800;
+  color: var(--nc-tinta);
+}
+
+/* ═══ [C5] "ADICIONAR …" E "MAIS INFORMAÇÕES" ══════════════════════════════════════════════
+   Arrumados pelo JS em [J3] e [J5]. .nc-fo-add-bt é o botão "Adicionar …" da página;
+   .nc-fo-abre é o link "Escrever mais sobre isso"; .nc-fo-obs-reg, a caixa do texto.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+/* o "Adicionar …": grande, no fim da lista */
+@app.nc-fo .nc-fo-add {
+  margin: 0 0 14px;
+}
+
+@app.nc-fo .nc-fo-add .t-Button.nc-fo-add-bt:not(#nc-fo-x):not(#nc-fo-y) {
+  width: 100%;
+  min-height: 56px;
+  justify-content: center;
+  gap: 10px;
+  border: 2px dashed #BBA9D6 /*reserva*/;
+  border: 2px dashed oklch(from #BBA9D6 l calc(c * var(--nc-t-croma, 1)) calc(h + var(--nc-t-giro, 0)));
+  border-radius: 16px;
+  background: #FBF9FD;
+  box-shadow: none;
+  font-size: 16.5px;
+  font-weight: 800;
+  color: var(--nc-roxo);
+}
+
+/* o ícone que o botão da página já trazia (à direita) sai: fica o "+" na frente */
+@app.nc-fo .nc-fo-add .t-Button.nc-fo-add-bt > .t-Icon:not(#nc-fo-x):not(#nc-fo-y) {
+  display: none;
+}
+
+/* 04/10: :not([style*="none"]) — o "Permite Alterar = N" da página esconde os Adicionar (display:none
+   inline); o display daqui (que vira !important) não pode vencer esse esconder */
+@app.nc-fo .nc-fo-add .t-Button.nc-fo-add-bt:not([style*="none"]):not(#nc-fo-x):not(#nc-fo-y) {
+  display: inline-flex;
+  align-items: center;
+}
+
+@app.nc-fo .nc-fo-add .t-Button.nc-fo-add-bt .t-Button-label:not(#nc-fo-x):not(#nc-fo-y) {
+  padding: 0;
+  line-height: 1.2;
+}
+
+@app.nc-fo .nc-fo-add .t-Button.nc-fo-add-bt:hover:not(#nc-fo-x):not(#nc-fo-y) {
+  border-color: var(--nc-roxo);
+  background: var(--nc-nevoa2);
+}
+
+@app.nc-fo .nc-fo-add .t-Button.nc-fo-add-bt :is(.t-Button-label, .nc-fo-ic):not(#nc-fo-x):not(#nc-fo-y) {
+  color: inherit;
+}
+
+@app.nc-fo .nc-fo-add .nc-fo-add-bt .nc-fo-ic {
+  width: 22px;
+  height: 22px;
+  stroke-width: 2.4;
+}
+
+/* "Mais informações" recolhido */
+@app.nc-fo .nc-fo-abre {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  margin: 0 0 4px;
+  padding: 0 4px;
+  border: 0;
+  background: none;
+  font: inherit;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--nc-roxo);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  cursor: pointer;
+}
+
+@app.nc-fo .nc-fo-abre .nc-fo-ic {
+  width: 19px;
+  height: 19px;
+}
+
+@app.nc-fo .nc-fo-abre:focus-visible {
+  outline: 3px solid var(--nc-rosa);
+  outline-offset: 2px;
+}
+
+@app.nc-fo .nc-fo-obs-reg textarea.apex-item-textarea:not(#nc-fo-x) {
+  height: var(--nc-fo-h, 96px);
+  min-height: 96px;
+  resize: vertical;
+  line-height: 1.5;
+}
+
+/* ═══ [C6] CELULAR ═════════════════════════════════════════════════════════════════════════
+   O que está dentro de  @media (max-width: 640px)  só vale em telas até 640px (celular).
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@media (max-width: 640px) {
+  @app.nc-fo .nc-fo-topo {
+    padding: 18px 16px;
+    border-radius: 18px;
+  }
+
+  @app.nc-fo .nc-fo-topo-tit {
+    font-size: 21px;
+  }
+
+  @app.nc-fo .nc-fo-atalhos {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  @app.nc-fo .nc-fo-dica {
+    padding-left: 0;
+  }
+
+  /* situação e "Editar" descem para baixo do texto, alinhados com ele */
+  @app.nc-fo .nc-fo-item {
+    grid-template-columns: 40px minmax(0, 1fr);
+    gap: 4px 12px;
+    padding: 14px;
+  }
+
+  @app.nc-fo .nc-fo-item-ic {
+    width: 40px;
+    height: 40px;
+  }
+
+  @app.nc-fo .nc-fo-item-lado {
+    grid-column: 2;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 6px;
+  }
+
+  @app.nc-fo .nc-fo-item-nome {
+    font-size: 16.5px;
+  }
+}
+
+/* ═══ [C7] MENOS MOVIMENTO ═════════════════════════════════════════════════════════════════
+   Para quem pediu "reduzir movimento" nas configurações do computador ou celular
+   (acessibilidade): sem transições.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@media (prefers-reduced-motion: reduce) {
+  @app.nc-fo :is(.nc-fo-atalho, .nc-fo-item-a) {
+    transition: none;
+  }
+}

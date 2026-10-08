@@ -1,0 +1,1275 @@
+/* ╔════════════════════════════════════════════════════════════════════════════════════════╗
+   ║  NATCORP · PROCESSO SELETIVO (DETALHE)  —  a "roupa" da tela (CSS)                       ║
+   ║  App 9113 (Recrutamento e Seleção) · Página 29 ("Descrição da Vaga")                     ║
+   ╚════════════════════════════════════════════════════════════════════════════════════════╝
+
+   Primeira vez num arquivo destes? Leia antes o manual: brand/apex/MANUAL-APEX.md (parte 1).
+
+   ── O QUE ESTE ARQUIVO FAZ ────────────────────────────────────────────────────────────────
+   A aparência do que o Natcorp_ProcessoDetalhe.js monta: a ficha da vaga, o funil das etapas,
+   a lista de candidatos (uma linha por candidato) e a barra de seleção. Sem o JS, nada daqui
+   vale (tudo depende da marca nc-pd-ativo no body).
+
+   ── ONDE ELE ENTRA NO APEX ────────────────────────────────────────────────────────────────
+     Página 29 › CSS › File URLs:   #WORKSPACE_IMAGES#Natcorp_ProcessoDetalhe.css
+     CUIDADO: este é o arquivo-FONTE (.src.css). O gerador (gerar-app.mjs) cria o
+     Natcorp_ProcessoDetalhe.css que sobe para o APEX. Edite ESTE arquivo.
+
+   ── ÍNDICE ────────────────────────────────────────────────────────────────────────────────
+     [C1] As cores                                              PODE MEXER
+     [C2] O que sai da vista (e a coluna lateral)
+     [C3] As duas colunas; a vaga na coluna da esquerda
+     [C4] O painel dos candidatos e o funil (em pé, na coluna da esquerda)
+     [C5] As linhas dos candidatos                              (colunas: --nc-pd-colunas)
+     [C6] A barra de seleção e os botões
+     [C7] Celular
+     [C8] Sinais que filtram, ordenar e "mais sobre o candidato"
+     [C9] O pé da janela "Mudança de fase"
+*/
+
+/* ═══ [C1] AS CORES ═════════════════════════════════════════════════════════════════════════ */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo {
+  --nc-pd-borda: var(--nc-nevoa, #E9E5F1);
+  --nc-pd-fundo: var(--nc-off, #F7F5FA);
+  --nc-pd-texto: var(--nc-tinta, #1B1238);
+  --nc-pd-fraco: var(--nc-grafite, #4A4460);
+  --nc-pd-bom: var(--nc-bom, #1F7A52);
+  --nc-pd-ruim: var(--nc-ruim, #B8323F);
+  --nc-pd-atencao: #8A5A00;
+  /* a coluna dos atalhos tem largura FIXA (4 atalhos + abrir): assim a Etapa fica alinhada em toda linha */
+  --nc-pd-colunas: 34px 40px minmax(0, 1fr) minmax(170px, 230px) 232px;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo [data-sit] { --nc-pd-s: #6E6884; }
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo [data-sit="prevista"] { --nc-pd-s: #2E6CB5; }
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo [data-sit="aberta"] { --nc-pd-s: #8A5A00; }
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo [data-sit="publicada"] { --nc-pd-s: var(--nc-roxo, #511C76); }
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo [data-sit="fechada"] { --nc-pd-s: var(--nc-bom, #1F7A52); }
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo [data-sit="cancelada"],
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo [data-sit="reprovada"] { --nc-pd-s: var(--nc-ruim, #B8323F); }
+
+/* ═══ [C2] O QUE SAI DA VISTA ═══════════════════════════════════════════════════════════════
+   A região "Descrição da Vaga" (lida para a ficha), os cartões de etapa (lidos para o funil) e,
+   na Lista, a tabela do relatório. A coluna lateral sai: a página usa a largura toda.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-guardado:not(#nc-pd-x),
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd [hidden]:not(#nc-pd-x),
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd[hidden]:not(#nc-pd-x),
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo.nc-pd-sem-lado .t-Body-side:not(#nc-pd-x) {
+  display: none !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo.nc-pd-sem-lado .t-Body-main:not(#nc-pd-x),
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo.nc-pd-sem-lado .t-Body-content:not(#nc-pd-x) {
+  margin-left: 0 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo:not(.nc-pd-tabela) .nc-pd-reg #partnersIRR .a-IRR-tableContainer:not(#nc-pd-x),
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo:not(.nc-pd-tabela) .nc-pd-reg #partnersIRR .a-IRR-table:not(#nc-pd-x) {
+  display: none !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo.nc-pd-tabela .nc-pd-resto .nc-pd-titulos,
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo.nc-pd-tabela .nc-pd-resto .nc-pd-lista,
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo.nc-pd-tabela .nc-pd-resto .nc-pd-mais {
+  display: none !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-ic {
+  flex: 0 0 auto !important;
+  width: 16px !important;
+  height: 16px !important;
+  fill: none !important;
+  stroke: currentColor !important;
+  stroke-width: 1.9 !important;
+  stroke-linecap: round !important;
+  stroke-linejoin: round !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .t-HeroRegion-title .nc-pd-num {
+  font-weight: 500 !important;
+  color: var(--nc-pd-fraco) !important;
+}
+
+/* ═══ [C3] AS DUAS COLUNAS E A COLUNA DA ESQUERDA (a vaga, as etapas, os sinais) ═══════════════
+   À direita só os candidatos — é a visão principal do selecionador. À esquerda, o que situa e
+   filtra. A coluna acompanha a rolagem (top = altura do cabeçalho fixo, medida pelo JS em
+   --nc-pd-topo) e rola sozinha se for mais alta que a tela.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-layout {
+  display: grid !important;
+  grid-template-columns: 284px minmax(0, 1fr) !important;
+  align-items: start !important;
+  gap: 18px !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-principal {
+  min-width: 0 !important;
+}
+
+/* CUIDADO  o tema põe overflow: hidden em .t-Body, .t-Body-main, .t-Body-content e .container — isso
+   faz deles caixas de rolagem e o sticky da coluna para de funcionar (ela subia com a página e
+   nascia 140 px abaixo). clip corta igual, mas não vira caixa de rolagem. Só nesta página. */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo :is(.t-Body, .t-Body-main, .t-Body-content, .container:has(.nc-pd-layout)):not(#nc-pd-x) {
+  overflow: clip !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-principal > .t-Region {
+  margin: 0 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-lado {
+  position: sticky !important;
+  top: var(--nc-pd-topo, 12px) !important;
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) !important;
+  min-width: 0 !important;
+  gap: 12px !important;
+  max-height: calc(100vh - var(--nc-pd-topo, 12px) - 12px) !important;
+  overflow-y: auto !important;
+  scrollbar-width: thin !important;
+  color: var(--nc-pd-texto) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-lado > * {
+  min-width: 0 !important;               /* o funil deitado (celular) rola de lado em vez de alargar a coluna */
+  margin: 0 !important;
+  border: 1px solid var(--nc-pd-borda) !important;
+  border-radius: 14px !important;
+  background: #fff !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-lado-tit {
+  margin: 0 !important;
+  padding: 12px 14px 8px !important;
+  border-bottom: 2px solid var(--nc-rosa, #C95788) !important;
+  font-size: 13.5px !important;
+  font-weight: 700 !important;
+  color: var(--nc-pd-texto) !important;
+}
+
+/* a vaga */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-ficha-cab {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  align-items: center !important;
+  gap: 6px 10px !important;
+  padding: 12px 14px 9px !important;
+  border-bottom: 2px solid var(--nc-rosa, #C95788) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-ficha-cab h2,
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-cab h2 {
+  margin: 0 !important;
+  font-size: 16px !important;
+  font-weight: 700 !important;
+  color: var(--nc-pd-texto) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-ficha-cab h2 {
+  font-size: 14.5px !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-situacao {
+  padding: 3px 10px !important;
+  border-radius: 999px !important;
+  background: color-mix(in srgb, var(--nc-pd-s) 11%, #fff) !important;
+  font-size: 12px !important;
+  font-weight: 650 !important;
+  color: var(--nc-pd-s) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-prazo {
+  display: grid !important;
+  gap: 1px !important;
+  margin: 0 !important;
+  padding: 10px 14px 4px !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-prazo span {
+  font-size: 11.5px !important;
+  color: #77708C !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-prazo b {
+  font-size: 15px !important;
+  font-weight: 700 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-prazo small {
+  font-size: 12px !important;
+  font-weight: 650 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-prazo small[data-tom="vencido"] { color: var(--nc-pd-ruim) !important; }
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-prazo small[data-tom="perto"] { color: var(--nc-pd-atencao) !important; }
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-prazo small[data-tom="ok"] { color: var(--nc-pd-bom) !important; }
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-ficha-mais {
+  margin: 0 !important;
+  padding: 2px 14px 6px !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-ficha-mais summary {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  padding: 8px 0 !important;
+  font-size: 12.5px !important;
+  font-weight: 650 !important;
+  color: var(--nc-roxo, #511C76) !important;
+  list-style: none !important;
+  cursor: pointer !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-ficha-mais summary::-webkit-details-marker {
+  display: none !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-ficha-mais summary::after {
+  content: "" !important;
+  width: 7px !important;
+  height: 7px !important;
+  margin-right: 3px !important;
+  border-right: 1.8px solid currentColor !important;
+  border-bottom: 1.8px solid currentColor !important;
+  transform: rotate(45deg) translateY(-2px) !important;
+  transition: transform .15s !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-ficha-mais[open] summary::after {
+  transform: rotate(-135deg) translateY(-2px) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-ficha dl {
+  display: grid !important;
+  gap: 8px !important;
+  margin: 0 0 6px !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-ficha dt {
+  margin: 0 !important;
+  font-size: 11.5px !important;
+  color: #77708C !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-ficha dd {
+  margin: 0 !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  line-height: 1.35 !important;
+  color: var(--nc-pd-texto) !important;
+  overflow-wrap: anywhere !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-acoes {
+  display: grid !important;
+  grid-template-columns: 1fr 1fr !important;
+  gap: 6px !important;
+  padding: 10px 14px 14px !important;
+  border-top: 1px solid var(--nc-pd-borda) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-acoes .nc-pd-bt:not(#nc-pd-x) {
+  justify-content: flex-start !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  height: auto !important;
+  min-height: 34px !important;
+  padding: 6px 9px !important;
+  font-size: 12px !important;
+  line-height: 1.25 !important;
+  white-space: normal !important;
+  text-align: left !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-acoes .nc-pd-bt:not(#nc-pd-x) .t-Icon {
+  flex: 0 0 auto !important;
+}
+
+/* ═══ [C4] O PAINEL DOS CANDIDATOS E O FUNIL ════════════════════════════════════════════════
+   O título original da região sai; o nosso ("Candidatos") leva a faixa da região.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-reg:not(#nc-pd-x) > .t-Region-header {
+  display: none !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd {
+  color: var(--nc-pd-texto) !important;
+  font-variant-numeric: tabular-nums !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-cab {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  align-items: center !important;
+  gap: 8px 10px !important;
+  padding: 10px 14px 10px 18px !important;
+  border-bottom: 2px solid var(--nc-rosa, #C95788) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-cab-acoes {
+  margin-left: 0 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-grupo {
+  display: inline-flex !important;
+  gap: 2px !important;
+  padding: 3px !important;
+  border-radius: 10px !important;
+  background: var(--nc-pd-fundo) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-grupo button {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  min-height: 32px !important;
+  margin: 0 !important;
+  padding: 0 12px !important;
+  border: 0 !important;
+  border-radius: 8px !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  font: inherit !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  color: var(--nc-pd-fraco) !important;
+  cursor: pointer !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-grupo button[aria-pressed="true"] {
+  background: #fff !important;
+  box-shadow: 0 1px 2px rgba(27, 18, 56, .1), 0 1px 1px rgba(27, 18, 56, .04) !important;
+  color: var(--nc-roxo, #511C76) !important;
+}
+
+/* o funil (coluna da esquerda): uma etapa por linha, com quantos e uma barra do tamanho dessa
+   parte no total (--nc-pd-parte, posto pelo JS); a escolhida fica marcada */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-funil ul,
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-filtros-lista {
+  display: grid !important;
+  gap: 2px !important;
+  margin: 0 !important;
+  padding: 6px !important;
+  list-style: none !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-funil li,
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-filtros-lista li {
+  margin: 0 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-funil button,
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-filtro {
+  position: relative !important;
+  display: grid !important;
+  grid-template-columns: 24px minmax(0, 1fr) auto !important;
+  align-items: center !important;
+  gap: 8px !important;
+  width: 100% !important;
+  min-height: 38px !important;
+  margin: 0 !important;
+  padding: 6px 8px 9px !important;
+  border: 0 !important;
+  border-radius: 9px !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  font: inherit !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  text-align: left !important;
+  color: var(--nc-pd-texto) !important;
+  cursor: pointer !important;
+}
+
+/* a barra da parte, rente ao pé da linha */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-funil button::after {
+  content: "" !important;
+  position: absolute !important;
+  left: 40px !important;
+  bottom: 4px !important;
+  width: calc(100% - 52px) !important;
+  height: 3px !important;
+  border-radius: 3px !important;
+  background: linear-gradient(to right, color-mix(in srgb, var(--nc-roxo, #511C76) 55%, #fff) var(--nc-pd-parte, 0%), var(--nc-pd-borda) var(--nc-pd-parte, 0%)) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-funil button i {
+  display: grid !important;
+  place-items: center !important;
+  width: 24px !important;
+  height: 24px !important;
+  border-radius: 50% !important;
+  background: var(--nc-pd-fundo) !important;
+  font-style: normal !important;
+  font-size: 11.5px !important;
+  font-weight: 700 !important;
+  color: var(--nc-roxo, #511C76) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-funil button i .nc-pd-ic {
+  width: 14px !important;
+  height: 14px !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-funil button span,
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-filtro span {
+  min-width: 0 !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-funil button b,
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-filtro b {
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  color: var(--nc-pd-fraco) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-funil button[data-zero] {
+  color: #8E88A3 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-funil button:hover,
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-filtro:hover {
+  background: var(--nc-pd-fundo) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-funil button[aria-pressed="true"] {
+  background: color-mix(in srgb, var(--nc-roxo, #511C76) 8%, #fff) !important;
+  color: var(--nc-roxo, #511C76) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-funil button[aria-pressed="true"] i {
+  background: var(--nc-roxo, #511C76) !important;
+  color: #fff !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-funil button[aria-pressed="true"] b {
+  color: var(--nc-roxo, #511C76) !important;
+}
+
+/* ═══ [C5] AS LINHAS DOS CANDIDATOS ═════════════════════════════════════════════════════════ */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-titulos {
+  display: grid !important;
+  grid-template-columns: var(--nc-pd-colunas) !important;
+  align-items: center !important;
+  gap: 12px !important;
+  padding: 10px 18px 8px !important;
+  border-bottom: 1px solid var(--nc-pd-borda) !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  color: #77708C !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-lista {
+  margin: 0 !important;
+  padding: 0 !important;
+  list-style: none !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-cand {
+  display: grid !important;
+  grid-template-columns: var(--nc-pd-colunas) !important;
+  align-items: center !important;
+  gap: 12px !important;
+  margin: 0 !important;
+  padding: 12px 18px !important;
+  border-bottom: 1px solid var(--nc-pd-borda) !important;
+  transition: background-color .12s !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-cand:hover {
+  background: color-mix(in srgb, var(--nc-roxo, #511C76) 2.5%, #fff) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-cand[data-tom="bom"] {
+  background: color-mix(in srgb, var(--nc-pd-bom) 6%, #fff) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-cand[data-tom="ruim"] {
+  background: color-mix(in srgb, var(--nc-pd-ruim) 5%, #fff) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-caixa {
+  display: grid !important;
+  place-items: center !important;
+  width: 34px !important;
+  height: 34px !important;
+  margin: 0 !important;
+  cursor: pointer !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-caixa input {
+  width: 18px !important;
+  height: 18px !important;
+  margin: 0 !important;
+  accent-color: var(--nc-roxo, #511C76) !important;
+  cursor: pointer !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-caixa input:disabled {
+  cursor: not-allowed !important;
+  opacity: .4 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-avatar {
+  display: grid !important;
+  place-items: center !important;
+  width: 40px !important;
+  height: 40px !important;
+  border-radius: 50% !important;
+  background: color-mix(in srgb, var(--nc-roxo, #511C76) 10%, #fff) !important;
+  font-size: 13.5px !important;
+  font-weight: 700 !important;
+  color: var(--nc-roxo, #511C76) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-quem {
+  min-width: 0 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-quem p {
+  margin: 0 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-nome {
+  font-size: 15px !important;
+  font-weight: 650 !important;
+  line-height: 1.35 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-nome a {
+  color: var(--nc-pd-texto) !important;
+  text-decoration: none !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-nome a:hover {
+  color: var(--nc-roxo, #511C76) !important;
+  text-decoration: underline !important;
+  text-underline-offset: 3px !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-semnome {
+  font-style: italic !important;
+  font-weight: 500 !important;
+  color: #77708C !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-cod {
+  font-size: 12.5px !important;
+  font-weight: 500 !important;
+  color: #77708C !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-tipo {
+  margin-left: 4px !important;
+  padding: 1px 7px !important;
+  border-radius: 999px !important;
+  background: var(--nc-pd-fundo) !important;
+  font-size: 11.5px !important;
+  font-weight: 600 !important;
+  color: var(--nc-pd-fraco) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-meta {
+  margin-top: 2px !important;
+  font-size: 13px !important;
+  color: var(--nc-pd-fraco) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-fraco {
+  color: #77708C !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-sinais {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 4px 6px !important;
+  margin-top: 6px !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-sinal {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+  padding: 2px 8px 2px 6px !important;
+  border-radius: 999px !important;
+  background: color-mix(in srgb, var(--nc-pd-t) 10%, #fff) !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  color: var(--nc-pd-t) !important;
+  --nc-pd-t: var(--nc-pd-fraco);
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-sinal .nc-pd-ic {
+  width: 13px !important;
+  height: 13px !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-sinal[data-tom="bom"] { --nc-pd-t: var(--nc-pd-bom); }
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-sinal[data-tom="ruim"] { --nc-pd-t: var(--nc-pd-ruim); }
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-sinal[data-tom="atencao"] { --nc-pd-t: var(--nc-pd-atencao); }
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-sinal[data-tom="info"] { --nc-pd-t: #2E6CB5; }
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-etapa {
+  display: grid !important;
+  justify-items: start !important;
+  gap: 4px !important;
+  min-width: 0 !important;
+  font-size: 12px !important;
+  color: #77708C !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-fase {
+  display: inline-flex !important;
+  align-items: flex-start !important;
+  gap: 6px !important;
+  max-width: 100% !important;
+  padding: 3px 10px 3px 4px !important;
+  border-radius: 12px !important;
+  background: var(--nc-pd-fundo) !important;
+  font-size: 12.5px !important;
+  font-weight: 600 !important;
+  line-height: 20px !important;
+  color: var(--nc-pd-texto) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-fase i {
+  display: grid !important;
+  place-items: center !important;
+  flex: 0 0 auto !important;
+  min-width: 20px !important;
+  height: 20px !important;
+  border-radius: 999px !important;
+  background: #fff !important;
+  font-style: normal !important;
+  font-size: 11.5px !important;
+  font-weight: 700 !important;
+  color: var(--nc-roxo, #511C76) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-nota {
+  display: inline-flex !important;
+  gap: 1px !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-estrela {
+  width: 14px !important;
+  height: 14px !important;
+  fill: #E2DCEB !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-estrela.is-cheia {
+  fill: var(--nc-rosa, #C95788) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-atalhos {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-end !important;
+  gap: 4px !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-atalho,
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-abrir {
+  display: grid !important;
+  place-items: center !important;
+  width: 34px !important;
+  height: 34px !important;
+  border: 1px solid var(--nc-borda-botao) !important;
+  border-radius: 9px !important;
+  background: #fff !important;
+  color: var(--nc-roxo, #511C76) !important;
+  text-decoration: none !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-atalho:hover,
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-abrir:hover {
+  border-color: color-mix(in srgb, var(--nc-roxo, #511C76) 40%, #fff) !important;
+  background: color-mix(in srgb, var(--nc-roxo, #511C76) 5%, #fff) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-abrir {
+  margin-left: 4px !important;
+  border-color: transparent !important;
+  background: transparent !important;
+  color: #8E88A3 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-cand a:focus-visible,
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd button:focus-visible,
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-caixa input:focus-visible {
+  outline: 2px solid var(--nc-roxo, #511C76) !important;
+  outline-offset: 2px !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-vazio {
+  padding: 32px 20px !important;
+  border-bottom: 1px solid var(--nc-pd-borda) !important;
+  text-align: center !important;
+  font-size: 14px !important;
+  color: var(--nc-pd-fraco) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-vazio p {
+  margin: 0 0 6px !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-mais {
+  margin: 0 !important;
+  padding: 10px 18px !important;
+  font-size: 13px !important;
+  color: var(--nc-pd-fraco) !important;
+}
+
+/* ═══ [C8] SINAIS QUE FILTRAM, ORDENAR E "MAIS SOBRE O CANDIDATO" ═══════════════════════════ */
+/* os sinais (coluna da esquerda): bolinha da cor do sinal, nome e quantos */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-filtro {
+  grid-template-columns: 24px minmax(0, 1fr) auto !important;
+  padding: 6px 8px !important;
+  --nc-pd-t: var(--nc-pd-fraco);
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-filtro[data-tom="bom"] { --nc-pd-t: var(--nc-pd-bom); }
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-filtro[data-tom="ruim"] { --nc-pd-t: var(--nc-pd-ruim); }
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-filtro[data-tom="atencao"] { --nc-pd-t: var(--nc-pd-atencao); }
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-filtro[data-tom="info"] { --nc-pd-t: #2E6CB5; }
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-filtro i {
+  justify-self: center !important;
+  width: 10px !important;
+  height: 10px !important;
+  border-radius: 50% !important;
+  background: var(--nc-pd-t) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-filtro[aria-pressed="true"] {
+  background: color-mix(in srgb, var(--nc-pd-t) 10%, #fff) !important;
+  color: var(--nc-pd-t) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-filtro[aria-pressed="true"] b {
+  color: var(--nc-pd-t) !important;
+}
+
+/* a barra dos candidatos numa linha: título e quantos · busca · ordem · Lista|Tabela · Incluir */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-conta {
+  margin-left: 4px !important;
+  padding: 1px 8px !important;
+  border-radius: 999px !important;
+  background: var(--nc-pd-fundo) !important;
+  font-size: 12.5px !important;
+  font-weight: 700 !important;
+  font-variant-numeric: tabular-nums !important;
+  vertical-align: 2px !important;
+  color: var(--nc-roxo, #511C76) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-conta:empty {
+  display: none !important;
+}
+
+/* "50 nesta página": a lista só cobre a página do relatório à vista (o número da pílula é o total) */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-conta-pag {
+  margin-left: 8px !important;
+  font-size: 12.5px !important;
+  font-weight: 500 !important;
+  font-variant-numeric: tabular-nums !important;
+  vertical-align: 2px !important;
+  white-space: nowrap !important;
+  color: var(--nc-pd-fraco) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-conta-pag[hidden] {
+  display: none !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-busca {
+  position: relative !important;
+  display: flex !important;
+  align-items: center !important;
+  flex: 1 1 260px !important;
+  min-width: 0 !important;
+  max-width: 460px !important;
+  margin: 0 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-busca .nc-pd-ic {
+  position: absolute !important;
+  left: 11px !important;
+  color: #8E88A3 !important;
+  pointer-events: none !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-busca input:not(#nc-pd-x) {
+  width: 100% !important;
+  height: 36px !important;
+  margin: 0 !important;
+  padding: 0 12px 0 34px !important;
+  border: 1px solid var(--nc-pd-borda) !important;
+  border-radius: 10px !important;
+  background: var(--nc-pd-fundo) !important;
+  box-shadow: none !important;
+  font: inherit !important;
+  font-size: 13.5px !important;
+  color: var(--nc-pd-texto) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-busca input:not(#nc-pd-x):focus {
+  border-color: var(--nc-roxo, #511C76) !important;
+  background: #fff !important;
+  outline: 0 !important;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--nc-roxo, #511C76) 14%, transparent) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-ordem {
+  position: relative !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  margin: 0 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-ordem .nc-pd-ic {
+  position: absolute !important;
+  left: 10px !important;
+  color: #8E88A3 !important;
+  pointer-events: none !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-ordem select:not(#nc-pd-x) {
+  width: auto !important;
+  height: 36px !important;
+  margin: 0 !important;
+  padding: 0 28px 0 32px !important;
+  border: 1px solid var(--nc-pd-borda) !important;
+  border-radius: 10px !important;
+  background-color: #fff !important;
+  font: inherit !important;
+  font-size: 13px !important;
+  color: var(--nc-pd-texto) !important;
+}
+
+/* na Lista, a barra do relatório (lupa, Ir, Ações) sai: a busca e a ordem da nossa barra fazem o
+   trabalho. Na Tabela ela volta inteira (Ações, filtros, baixar…) */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo:not(.nc-pd-tabela) #partnersIRR .a-IRR-toolbar:not(#nc-pd-x) {
+  display: none !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-cand {
+  cursor: pointer !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-cand.is-aberta {
+  background: color-mix(in srgb, var(--nc-roxo, #511C76) 3%, #fff) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-detalhe-bt {
+  margin: 0 !important;
+  padding: 0 !important;
+  box-shadow: none !important;
+  cursor: pointer !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-detalhe-bt .nc-pd-ic {
+  transition: transform .15s !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-detalhe-bt[aria-expanded="true"] .nc-pd-ic {
+  transform: rotate(180deg) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-info {
+  grid-column: 1 / -1 !important;
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: 14px 24px !important;
+  margin: 4px 0 2px 86px !important;
+  padding: 14px 16px !important;
+  border: 1px solid var(--nc-pd-borda) !important;
+  border-radius: 12px !important;
+  background: #fff !important;
+  cursor: auto !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-info h3 {
+  margin: 0 0 8px !important;
+  font-size: 12.5px !important;
+  font-weight: 700 !important;
+  color: var(--nc-roxo, #511C76) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-info dl {
+  display: grid !important;
+  gap: 6px !important;
+  margin: 0 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-info dl > div {
+  display: grid !important;
+  grid-template-columns: 128px minmax(0, 1fr) !important;
+  gap: 8px !important;
+  align-items: baseline !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-info dt {
+  margin: 0 !important;
+  font-size: 12.5px !important;
+  color: #77708C !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-info dd {
+  margin: 0 !important;
+  font-size: 13.5px !important;
+  font-weight: 600 !important;
+  color: var(--nc-pd-texto) !important;
+  overflow-wrap: anywhere !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-info dd a {
+  color: var(--nc-roxo, #511C76) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-info footer {
+  grid-column: 1 / -1 !important;
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 8px !important;
+  padding-top: 12px !important;
+  border-top: 1px solid var(--nc-pd-borda) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo a.nc-pd-bt:not(#nc-pd-x) {
+  text-decoration: none !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-copiar {
+  display: inline-grid !important;
+  place-items: center !important;
+  width: 26px !important;
+  height: 26px !important;
+  margin: -4px 0 -4px 2px !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 7px !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  vertical-align: middle !important;
+  color: #8E88A3 !important;
+  cursor: pointer !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-copiar:hover {
+  background: var(--nc-pd-fundo) !important;
+  color: var(--nc-roxo, #511C76) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-copiar.is-copiado {
+  color: var(--nc-pd-bom) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-copiar .nc-pd-ic {
+  width: 15px !important;
+  height: 15px !important;
+}
+
+/* as janelas da página (Mudança de fase, Incluir candidato): quem vai mudar, no alto */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-quem-muda {
+  margin: 0 0 12px !important;
+  padding: 12px 14px !important;
+  border-radius: 12px !important;
+  background: var(--nc-pd-fundo, #F7F5FA) !important;
+  font-size: 13.5px !important;
+  line-height: 1.45 !important;
+  color: var(--nc-pd-texto, #1B1238) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-quem-muda p {
+  margin: 0 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-quem-muda p + ul,
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-quem-muda ul + p {
+  margin-top: 6px !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-quem-muda ul {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 6px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  list-style: none !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-quem-muda li {
+  padding: 3px 10px !important;
+  border: 1px solid var(--nc-pd-borda, #E9E5F1) !important;
+  border-radius: 999px !important;
+  background: #fff !important;
+  font-weight: 600 !important;
+}
+
+/* ═══ [C6] A BARRA DE SELEÇÃO E OS BOTÕES ═══════════════════════════════════════════════════ */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-barra {
+  position: sticky !important;
+  bottom: 12px !important;
+  z-index: 5 !important;
+  display: flex !important;
+  flex-wrap: wrap !important;
+  align-items: center !important;
+  gap: 10px 16px !important;
+  margin: 12px 18px !important;
+  padding: 10px 12px 10px 16px !important;
+  border-radius: 12px !important;
+  background: var(--nc-tinta, #1B1238) !important;
+  box-shadow: 0 12px 30px -12px rgba(27, 18, 56, .5) !important;
+  color: #fff !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-barra-n {
+  font-size: 14px !important;
+  font-weight: 650 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-barra-acoes {
+  display: flex !important;
+  gap: 8px !important;
+  margin-left: auto !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-barra .nc-pd-link {
+  color: #fff !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-link {
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  background: none !important;
+  box-shadow: none !important;
+  font: inherit !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  text-decoration: underline !important;
+  text-underline-offset: 3px !important;
+  cursor: pointer !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-bt:not(#nc-pd-x) {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  width: auto !important;
+  height: 36px !important;
+  margin: 0 !important;
+  padding: 0 14px !important;
+  border: 1px solid var(--nc-borda-botao) !important;
+  border-radius: 10px !important;
+  background: #fff !important;
+  box-shadow: none !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  color: var(--nc-pd-texto) !important;
+  white-space: nowrap !important;
+}
+
+/* 04/10: botão que a página esconde (as ações escondem "Mudar Fase" sem selecionados) continua
+   escondido — o inline-flex acima, com !important, vencia o style="display:none" */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-bt:not(#nc-pd-x)[style*="none"] {
+  display: none !important;
+}
+
+/* o botão "hot" do tema pinta o rótulo de branco: aqui o rótulo segue a cor do nosso botão */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-bt:not(#nc-pd-x) .t-Button-label,
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-bt:not(#nc-pd-x) .t-Icon {
+  color: inherit !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-bt:not(#nc-pd-x) .t-Icon--right {
+  display: none !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-bt:not(#nc-pd-x):hover {
+  border-color: color-mix(in srgb, var(--nc-roxo, #511C76) 35%, #fff) !important;
+  background: color-mix(in srgb, var(--nc-roxo, #511C76) 4%, #fff) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-bt.nc-pd-bt--primario:not(#nc-pd-x) {
+  border-color: var(--nc-roxo, #511C76) !important;
+  background: var(--nc-roxo, #511C76) !important;
+  color: #fff !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-bt.nc-pd-bt--perigo:not(#nc-pd-x) {
+  color: var(--nc-pd-ruim) !important;
+}
+
+/* ═══ [C7] CELULAR (e telas estreitas) ══════════════════════════════════════════════════════
+   Até 1000 px: uma coluna só. A vaga vem recolhida; etapas e sinais deitados, rolando de lado.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+@media (max-width: 1000px) {
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-layout {
+    grid-template-columns: minmax(0, 1fr) !important;
+    gap: 12px !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-lado {
+    position: static !important;
+    max-height: none !important;
+    overflow: visible !important;
+    gap: 10px !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-funil ul,
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-filtros-lista {
+    display: flex !important;
+    gap: 6px !important;
+    overflow-x: auto !important;
+    scrollbar-width: thin !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-funil li,
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-filtros-lista li {
+    flex: 0 0 auto !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-funil button,
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-filtro {
+    width: auto !important;
+    border: 1px solid var(--nc-pd-borda) !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-funil button span,
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-filtro span {
+    overflow: visible !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-acoes {
+    grid-template-columns: 1fr 1fr !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-busca {
+    flex-basis: 100% !important;
+    max-width: none !important;
+    order: 5 !important;
+  }
+}
+
+/* ═══ [C7b] CELULAR ═════════════════════════════════════════════════════════════════════════ */
+@media (max-width: 860px) {
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-titulos span {
+    display: none !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-titulos {
+    grid-template-columns: 34px 1fr !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-cand {
+    grid-template-columns: 34px minmax(0, 1fr) !important;
+    gap: 8px 10px !important;
+    padding: 12px 14px !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-avatar {
+    display: none !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-etapa,
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-atalhos {
+    grid-column: 2 !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-etapa {
+    grid-auto-flow: column !important;
+    justify-content: start !important;
+    align-items: center !important;
+    gap: 8px !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-atalhos {
+    justify-content: flex-start !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-acoes,
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-cab-acoes {
+    margin-left: 0 !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-barra {
+    margin: 10px !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-info {
+    grid-template-columns: 1fr !important;
+    margin-left: 0 !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-info dl > div {
+    grid-template-columns: 112px minmax(0, 1fr) !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-ordem {
+    margin-left: 0 !important;
+  }
+
+  /* a ficha em duas colunas: os fatos são curtos e uma coluna só alongava demais a tela */
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-ficha dl {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 10px 14px !important;
+    padding: 12px 14px 14px !important;
+  }
+}
+
+/* ═══ [C9] O PÉ DA JANELA "MUDANÇA DE FASE" ═════════════════════════════════════════════════
+   Os botões vinham em duas linhas (Voltar sozinho; Aprovar no meio, esticado). O JS junta
+   tudo na região "fase botoes" e marca com nc-pd-janela-pe.
+   ════════════════════════════════════════════════════════════════════════════════════════════ */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-janela-pe:not(#nc-pd-x) {
+  margin-top: 8px !important;
+  padding: 14px 0 0 !important;
+  border-top: 1px solid var(--nc-pd-borda, #E9E5F1) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-janela-pe:not(#nc-pd-x) .t-ButtonRegion-wrap {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+}
+
+/* a coluna do meio (vazia) ocupava a largura toda e espremia as laterais a 0 px */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-janela-pe:not(#nc-pd-x) .t-ButtonRegion-col--content:not(:has(.t-Button)) {
+  display: none !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-janela-pe:not(#nc-pd-x) :is(.t-ButtonRegion-col--left, .t-ButtonRegion-col--right) {
+  flex: 0 0 auto !important;
+  width: auto !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-janela-pe:not(#nc-pd-x) .t-ButtonRegion-col--right {
+  margin-left: auto !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-janela-pe:not(#nc-pd-x) .t-ButtonRegion-buttons {
+  padding: 0 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-janela-pe:not(#nc-pd-x) .t-ButtonRegion-buttons {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  justify-content: flex-end !important;
+  gap: 8px !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-janela-pe:not(#nc-pd-x) .t-Button {
+  width: auto !important;
+  margin: 0 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-pd-ativo .nc-pd-janela-pe:not(#nc-pd-x) .nc-pd-aprovar .t-Icon--left {
+  display: none !important;
+}

@@ -1,0 +1,601 @@
+/* ╔════════════════════════════════════════════════════════════════════════════════════════╗
+   ║  NATCORP · MARCAÇÕES DE PONTO  —  a "roupa" das páginas (CSS)                            ║
+   ║  App 300 (Portal do Colaborador) · Página 28 (os dias) + Página 9998 (o mapa, janela)    ║
+   ╚════════════════════════════════════════════════════════════════════════════════════════╝
+
+   Primeira vez num arquivo destes? Leia antes o manual: brand/apex/MANUAL-APEX.md (parte 1).
+
+   ── O QUE ESTE ARQUIVO FAZ ────────────────────────────────────────────────────────────────
+   A aparência do que o Natcorp_Marcacoes.js monta. Feito PRIMEIRO para o celular (390 px):
+   a data grande à esquerda, os horários como botões de tocar (44 px), a bolinha da situação
+   (verde dentro do raio, laranja fora). Sem o JS, nada daqui vale (nc-mc-ativo / nc-mc-janela).
+
+   ── ONDE ELE ENTRA NO APEX ────────────────────────────────────────────────────────────────
+     Páginas 28 e 9998 › CSS › File URLs:   #WORKSPACE_IMAGES#Natcorp_Marcacoes.css
+     CUIDADO: este é o arquivo-FONTE (.src.css). O gerador (gerar-app.mjs) cria o .css.
+
+   ── ÍNDICE ────────────────────────────────────────────────────────────────────────────────
+     [C1] As cores (a bolinha da situação)                        PODE MEXER
+     [C2] O relatório por trás, o modo tabela, os filtros da página
+     [C3] O alto: título, período, horário, dica
+     [C4] Os botões de filtro
+     [C5] Os meses e os dias
+     [C6] 9998 · a janela do mapa
+     [C7] Telas largas
+*/
+
+/* ═══ [C1] AS CORES ═════════════════════════════════════════════════════════════════════════ */
+@app:is(.nc-mc-ativo, .nc-mc-janela) {
+  --mc-roxo: var(--nc-roxo, #742B7F);
+  --mc-rgb: var(--nc-t-roxo-rgb, 116, 43, 127);
+  --mc-tinta: var(--nc-tinta, #1B1238);
+  --mc-texto: #2E2742;
+  --mc-fraco: #5A526E;
+  --mc-borda: var(--nc-nevoa, #E7E1F0);
+  --mc-lilas: var(--nc-nevoa2, #F3EEF8);
+  --mc-fundo: #F7F5FA;
+  --mc-dentro: #1F8A5B;
+  --mc-dentro-bg: #E7F4ED;
+  --mc-fora: #C46A00;
+  --mc-fora-bg: #FFF1DD;
+  --mc-nada: #A9A3B8;
+}
+
+@app:is(.nc-mc-ativo, .nc-mc-janela) .nc-mc-ic {
+  flex: none;
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.9;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+@app:is(.nc-mc-ativo, .nc-mc-janela) .nc-mc-ponto {
+  flex: none;
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--mc-nada);
+}
+
+@app:is(.nc-mc-ativo, .nc-mc-janela) :is(.nc-mc-pos--dentro .nc-mc-ponto, .nc-mc-ponto--dentro) {
+  background: var(--mc-dentro);
+}
+
+@app:is(.nc-mc-ativo, .nc-mc-janela) :is(.nc-mc-pos--fora .nc-mc-ponto, .nc-mc-ponto--fora) {
+  background: var(--mc-fora);
+}
+
+@app:is(.nc-mc-ativo, .nc-mc-janela) .nc-mc-pos--ponto .nc-mc-ponto {
+  background: var(--mc-roxo);
+}
+
+/* ═══ [C2] O RELATÓRIO POR TRÁS, O MODO TABELA ══════════════════════════════════════════════ */
+@app.nc-mc-ativo:not(.nc-mc-tabela) :is(.t-IRR-region, .t-Region):has(.a-IRR):not(#nc-mc-x):not(#nc-mc-y),
+@app.nc-mc-ativo:not(.nc-mc-tabela) .nc-sticky-header-clone:not(#nc-mc-x):not(#nc-mc-y),
+@app.nc-mc-ativo .nc-reg-modos,
+@app.nc-mc-ativo .nc-reg-cartoes,
+@app.nc-mc-ativo.nc-mc-tabela .nc-mc :is(.nc-mc-filtros, .nc-mc-dias, .nc-mc-dica),
+@app.nc-mc-ativo.nc-mc-tabela .nc-mc > .nc-mc-modo,
+@app.nc-mc-ativo .nc-mc-modo[hidden],
+@app.nc-mc-ativo .nc-mc-filtros[hidden] {
+  display: none;
+}
+
+@app.nc-mc-ativo .nc-mc {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin: 0 0 16px;
+  color: var(--mc-texto);
+}
+
+@app.nc-mc-ativo .nc-mc-modo {
+  display: inline-flex;
+  align-items: center;
+  align-self: flex-start;
+  gap: 8px;
+  min-height: 44px;
+  margin: 0;
+  padding: 0 14px;
+  border: 1px solid var(--nc-borda-botao, rgba(116, 43, 127, .34));
+  border-radius: 12px;
+  background: #FFFFFF;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--mc-roxo);
+  cursor: pointer;
+}
+
+@app.nc-mc-ativo .nc-mc-modo--volta {
+  margin: 0 0 12px;
+}
+
+/* ═══ [C3] O ALTO ═══════════════════════════════════════════════════════════════════════════ */
+@app.nc-mc-ativo .nc-mc-topo {
+  padding: 18px 20px;
+  border: 1px solid var(--mc-borda);
+  border-radius: 18px;
+  background: #FFFFFF;
+  box-shadow: 0 2px 10px rgba(27, 18, 56, .05);
+}
+
+@app.nc-mc-ativo .nc-mc-h1 {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+  font-size: 24px;
+  font-weight: 800;
+  line-height: 1.2;
+  letter-spacing: -.01em;
+  color: var(--mc-tinta);
+}
+
+@app.nc-mc-ativo .nc-mc-h1-ic {
+  width: 26px;
+  height: 26px;
+  color: var(--mc-roxo);
+}
+
+@app.nc-mc-ativo .nc-mc-periodo {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin: 10px 0 0;
+  font-size: 15.5px;
+  color: var(--mc-texto);
+}
+
+@app.nc-mc-ativo .nc-mc-periodo .nc-mc-ic {
+  margin-top: 1px;
+  color: var(--mc-roxo);
+}
+
+@app.nc-mc-ativo .nc-mc-horario {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin: 12px 0 0;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: var(--mc-lilas);
+}
+
+@app.nc-mc-ativo .nc-mc-horario span {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--mc-fraco);
+}
+
+@app.nc-mc-ativo .nc-mc-horario b {
+  font-size: 17px;
+  font-weight: 800;
+  line-height: 1.3;
+  color: var(--mc-tinta);
+}
+
+@app.nc-mc-ativo .nc-mc-horario em {
+  font-size: 14px;
+  font-style: normal;
+  color: var(--mc-fraco);
+}
+
+@app.nc-mc-ativo .nc-mc-dica {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin: 12px 0 0;
+  font-size: 14.5px;
+  line-height: 1.35;
+  color: var(--mc-fraco);
+}
+
+@app.nc-mc-ativo .nc-mc-dica .nc-mc-ic {
+  width: 18px;
+  height: 18px;
+  color: var(--mc-roxo);
+}
+
+/* ═══ [C4] OS BOTÕES DE FILTRO ══════════════════════════════════════════════════════════════ */
+@app.nc-mc-ativo .nc-mc-filtros {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 2px 2px 6px;
+  scrollbar-width: none;
+}
+
+@app.nc-mc-ativo .nc-mc-filtros button {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  margin: 0;
+  padding: 0 14px;
+  border: 1px solid var(--mc-borda);
+  border-radius: 999px;
+  background: #FFFFFF;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--mc-texto);
+  cursor: pointer;
+}
+
+@app.nc-mc-ativo .nc-mc-filtros button b {
+  padding: 1px 8px;
+  border-radius: 999px;
+  background: var(--mc-fundo);
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+}
+
+@app.nc-mc-ativo .nc-mc-filtros button[aria-checked="true"] {
+  border-color: var(--mc-roxo);
+  background: var(--mc-roxo);
+  color: #FFFFFF;
+}
+
+@app.nc-mc-ativo .nc-mc-filtros button[aria-checked="true"] b {
+  background: rgba(255, 255, 255, .22);
+}
+
+/* ═══ [C5] OS MESES E OS DIAS ═══════════════════════════════════════════════════════════════ */
+@app.nc-mc-ativo .nc-mc-dias {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+@app.nc-mc-ativo .nc-mc-mes h3 {
+  margin: 0 4px 10px;
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--mc-tinta);
+}
+
+@app.nc-mc-ativo .nc-mc-lista {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  border: 1px solid var(--mc-borda);
+  border-radius: 18px;
+  background: #FFFFFF;
+  list-style: none;
+}
+
+@app.nc-mc-ativo .nc-mc-dia {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  margin: 0;
+  padding: 14px 14px 14px 12px;
+}
+
+@app.nc-mc-ativo .nc-mc-dia + .nc-mc-dia {
+  border-top: 1px solid var(--mc-borda);
+}
+
+@app.nc-mc-ativo .nc-mc-dia--fds {
+  background: #FBFAFD;
+}
+
+@app.nc-mc-ativo .nc-mc-data {
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 54px;
+  height: 58px;
+  border-radius: 14px;
+  background: var(--mc-lilas);
+  color: var(--mc-roxo);
+}
+
+@app.nc-mc-ativo .nc-mc-data b {
+  font-size: 22px;
+  font-weight: 800;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+@app.nc-mc-ativo .nc-mc-data span {
+  margin-top: 3px;
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: lowercase;
+}
+
+@app.nc-mc-ativo .nc-mc-dia--sem .nc-mc-data {
+  background: var(--mc-fundo);
+  color: var(--mc-fraco);
+}
+
+@app.nc-mc-ativo .nc-mc-dia-corpo {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+@app.nc-mc-ativo .nc-mc-dia-nome {
+  margin: 0 0 8px;
+  font-size: 15.5px;
+  font-weight: 700;
+  color: var(--mc-tinta);
+}
+
+@app.nc-mc-ativo .nc-mc-posicoes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+@app.nc-mc-ativo .nc-mc-posicoes li {
+  margin: 0;
+}
+
+@app.nc-mc-ativo .nc-mc-pos {
+  display: grid;
+  grid-template-columns: auto auto;
+  grid-template-rows: auto auto;
+  align-items: center;
+  column-gap: 8px;
+  min-width: 96px;
+  min-height: 52px;
+  margin: 0;
+  padding: 6px 12px;
+  border: 1px solid var(--mc-borda);
+  border-radius: 12px;
+  background: #FFFFFF;
+  text-align: left;
+  color: var(--mc-tinta);
+  cursor: pointer;
+  transition: border-color .15s ease-out, background-color .15s ease-out;
+}
+
+@app.nc-mc-ativo .nc-mc-pos:hover {
+  border-color: rgba(var(--mc-rgb), .5);
+  background: #FBFAFD;
+}
+
+@app.nc-mc-ativo .nc-mc-pos:focus-visible {
+  outline: 3px solid rgba(var(--mc-rgb), .4);
+  outline-offset: 1px;
+}
+
+@app.nc-mc-ativo .nc-mc-pos:disabled {
+  cursor: default;
+}
+
+@app.nc-mc-ativo .nc-mc-pos-n {
+  grid-column: 1 / -1;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--mc-fraco);
+}
+
+@app.nc-mc-ativo .nc-mc-pos b {
+  font-size: 19px;
+  font-weight: 800;
+  line-height: 1.15;
+  font-variant-numeric: tabular-nums;
+}
+
+@app.nc-mc-ativo .nc-mc-pos--fora {
+  border-color: rgba(196, 106, 0, .45);
+  background: var(--mc-fora-bg);
+}
+
+@app.nc-mc-ativo .nc-mc-semmarc {
+  margin: 0;
+  font-size: 15px;
+  color: var(--mc-fraco);
+}
+
+@app.nc-mc-ativo .nc-mc-obs {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 10px;
+  margin: 10px 0 0;
+  font-size: 14px;
+  color: var(--mc-texto);
+}
+
+@app.nc-mc-ativo .nc-mc-obs > span:not(.nc-mc-etq) {
+  display: inline-flex;
+  align-items: flex-start;
+  gap: 6px;
+}
+
+@app.nc-mc-ativo .nc-mc-obs .nc-mc-ic {
+  width: 17px;
+  height: 17px;
+  color: var(--mc-fraco);
+}
+
+@app.nc-mc-ativo .nc-mc-etq {
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: var(--mc-lilas);
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--mc-roxo);
+}
+
+@app.nc-mc-ativo :is(.nc-mc-vazio, .nc-mc-carregando) {
+  margin: 0;
+  padding: 22px 18px;
+  border: 1px dashed var(--mc-borda);
+  border-radius: 16px;
+  background: #FFFFFF;
+  font-size: 16px;
+  text-align: center;
+  color: var(--mc-fraco);
+}
+
+/* ═══ [C6] 9998 · A JANELA DO MAPA ══════════════════════════════════════════════════════════ */
+@app.nc-mc-janela .nc-mc-mapa-cab {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 12px;
+  margin: 0 0 12px;
+}
+
+@app.nc-mc-janela .nc-mc-mapa-pos {
+  flex: 1 1 100%;
+  margin: 0;
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--mc-tinta);
+}
+
+@app.nc-mc-janela .nc-mc-mapa-pos b {
+  color: var(--mc-roxo);
+  font-variant-numeric: tabular-nums;
+}
+
+@app.nc-mc-janela .nc-mc-mapa-dia {
+  flex: 1 1 100%;
+  margin: 0;
+  font-size: 15px;
+  color: var(--mc-fraco);
+}
+
+@app.nc-mc-janela .nc-mc-mapa-st {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 14.5px;
+  font-weight: 800;
+}
+
+@app.nc-mc-janela .nc-mc-mapa-st--dentro {
+  background: var(--mc-dentro-bg);
+  color: var(--mc-dentro);
+}
+
+@app.nc-mc-janela .nc-mc-mapa-st--fora {
+  background: var(--mc-fora-bg);
+  color: var(--mc-fora);
+}
+
+@app.nc-mc-janela .nc-mc-mapa-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  margin-left: auto;
+  padding: 0 14px;
+  border: 1px solid var(--nc-borda-botao, rgba(116, 43, 127, .34));
+  border-radius: 12px;
+  background: #FFFFFF;
+  font-size: 15px;
+  font-weight: 700;
+  text-decoration: none;
+  color: var(--mc-roxo);
+}
+
+@app.nc-mc-janela .nc-mc-mapa-sem {
+  margin: 0;
+  font-size: 14.5px;
+  color: var(--mc-fraco);
+}
+
+@app.nc-mc-janela.nc-mc-com-situacao #P9998_STATUS_CONTAINER {
+  display: none;
+}
+
+@app.nc-mc-janela .nc-mc-mapa-reg:not(#nc-mc-x) {
+  overflow: hidden;
+  border-radius: 16px;
+}
+
+/* ═══ [C7] TELAS LARGAS ═════════════════════════════════════════════════════════════════════ */
+@media (min-width: 900px) {
+  @app.nc-mc-ativo .nc-mc-topo {
+    padding: 22px 26px;
+  }
+
+  @app.nc-mc-ativo .nc-mc-h1 {
+    font-size: 28px;
+  }
+}
+
+/* ═══ [DESK] TELAS DE MESA — gerado por escala-desktop.py (não editar à mão; rode o script) ═══ */
+@media (min-width: 1024px) {
+  @app.nc-mc-ativo .nc-mc-modo {
+    font-size: 14px;
+    min-height: 38px;
+  }
+
+  @app.nc-mc-ativo .nc-mc-h1 {
+    font-size: 23.5px;
+  }
+
+  @app.nc-mc-ativo .nc-mc-periodo {
+    font-size: 14.5px;
+  }
+
+  @app.nc-mc-ativo .nc-mc-horario b {
+    font-size: 16px;
+  }
+
+  @app.nc-mc-ativo .nc-mc-filtros button {
+    font-size: 14px;
+    min-height: 38px;
+  }
+
+  @app.nc-mc-ativo .nc-mc-mes h3 {
+    font-size: 16px;
+  }
+
+  @app.nc-mc-ativo .nc-mc-data b {
+    font-size: 19.5px;
+  }
+
+  @app.nc-mc-ativo .nc-mc-dia-nome {
+    font-size: 14.5px;
+  }
+
+  @app.nc-mc-ativo .nc-mc-pos {
+    min-height: 45px;
+  }
+
+  @app.nc-mc-ativo .nc-mc-pos b {
+    font-size: 16.5px;
+  }
+
+  @app.nc-mc-ativo .nc-mc-semmarc {
+    font-size: 14px;
+  }
+
+  @app.nc-mc-ativo :is(.nc-mc-vazio, .nc-mc-carregando) {
+    font-size: 15px;
+  }
+
+  @app.nc-mc-janela .nc-mc-mapa-pos {
+    font-size: 17.5px;
+  }
+
+  @app.nc-mc-janela .nc-mc-mapa-dia {
+    font-size: 14px;
+  }
+
+  @app.nc-mc-janela .nc-mc-mapa-link {
+    font-size: 14px;
+    min-height: 38px;
+  }
+}
+/* ═══ fim do [DESK] ═══ */
