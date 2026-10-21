@@ -1,0 +1,418 @@
+/* ==========================================================================
+   Documento técnico Natcorp · sistema visual para impressão A4
+   Identidade visual Natcorp (Manual de Identidade, v1.2, setembro de 2026):
+   Manrope em tudo; Roxo Natcorp predomina, Azul Profundo dá profundidade,
+   Rosa Natcorp é acento pontual; branco e off-white fazem parte da marca.
+   Fontes locais (pasta fonts/), nada é baixado em tempo de execução.
+   ========================================================================== */
+
+/* ---------- Fonte (OFL, via @fontsource-variable/manrope) ---------- */
+@font-face {
+  font-family: 'Manrope Variable';
+  font-style: normal; font-display: block; font-weight: 200 800;
+  src: url(fonts/manrope-latin-wght-normal.woff2) format('woff2-variations');
+  unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;
+}
+@font-face {
+  font-family: 'Manrope Variable';
+  font-style: normal; font-display: block; font-weight: 200 800;
+  src: url(fonts/manrope-latin-ext-wght-normal.woff2) format('woff2-variations');
+  unicode-range: U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF;
+}
+
+/* ---------- Tokens ---------- */
+:root {
+  /* paleta oficial Natcorp */
+  --marca: #511C76;      /* Roxo Natcorp: cor primária */
+  --marca-2: #2C1A63;    /* Azul Profundo: profundidade e fundos escuros */
+  --rosa: #C95788;       /* Rosa Natcorp: acento, nunca em área grande nem em texto corrido */
+  --rosa-texto: #9A408A; /* Ameixa (Roxo 40 / Rosa 60): acento em texto pequeno */
+  --tinta: #1B1238;      /* Tinta */
+  --tinta-2: #4A4460;    /* Grafite */
+  --cinza: #8E88A3;      /* Cinza */
+  --papel: #F4F2F7;      /* Off-white */
+  --card: #ffffff;
+  /* estados */
+  --ok: #2E7D32;
+  --atencao: #A15C00;
+  --erro: #C62828;
+  --info: #1F5FAD;
+  /* tons: roxo e rosa sobre branco, misturas da paleta */
+  --marca-050: #F4F2F7;
+  --marca-100: #E9E5F1;
+  --marca-200: #D4C6DD;
+  --marca-300: #A88EBA;
+  --rosa-050: #FBF2F6;
+  --rosa-100: #F5E1EA;
+  --rosa-200: #ECC4D6;
+  --ok-050: #E9F4EA;
+  --atencao-050: #FFF4E2;
+  --atencao-100: #FCE3BC;
+  --erro-050: #FDECEC;
+  --info-050: #E8F0FA;
+  --linha: #E9E5F1;      /* Névoa */
+
+  /* tipografia: Manrope em toda a peça */
+  --f-titulo: 'Manrope Variable', 'Manrope', Arial, sans-serif;
+  --f-texto: 'Manrope Variable', 'Manrope', Arial, sans-serif;
+  --f-mono: 'Manrope Variable', 'Manrope', Arial, sans-serif;
+
+  /* ritmo (múltiplos de 4 pt) */
+  --e-1: 4pt; --e-2: 8pt; --e-3: 12pt; --e-4: 16pt; --e-5: 24pt; --e-6: 32pt;
+  --raio: 3mm;
+}
+
+/* ---------- Página ---------- */
+@page {
+  size: A4;
+  margin: 18mm 18mm 20mm 18mm;
+  @bottom-left {
+    content: "NATCORP";
+    font-family: 'Manrope Variable', Arial, sans-serif; font-size: 6.6pt; font-weight: 600; letter-spacing: .12em;
+    color: #8E88A3; vertical-align: top; padding-top: 5mm;
+  }
+  @bottom-right {
+    content: counter(page, decimal-leading-zero);
+    font-family: 'Manrope Variable', Arial, sans-serif; font-size: 7pt; font-weight: 600; letter-spacing: .08em;
+    color: #511C76; vertical-align: top; padding-top: 5mm;
+  }
+}
+@page capa {
+  margin: 0;
+  @bottom-left { content: none; }
+  @bottom-right { content: none; }
+}
+
+* { box-sizing: border-box; }
+html {
+  -webkit-print-color-adjust: exact; print-color-adjust: exact;
+  background: var(--card);
+}
+body {
+  margin: 0;
+  font-family: var(--f-texto);
+  font-size: 10pt;
+  line-height: 1.55;
+  color: var(--tinta);
+  font-variant-numeric: lining-nums;
+  hyphens: manual;
+  orphans: 3; widows: 3;
+}
+
+/* ---------- Tipografia ---------- */
+h1, h2, h3, h4 { font-family: var(--f-titulo); color: var(--marca); line-height: 1.15; letter-spacing: -.02em; margin: 0; break-after: avoid; hyphens: manual; }
+h2 { font-size: 16pt; font-weight: 700; margin: var(--e-5) 0 var(--e-2); letter-spacing: -.01em; }
+h3 { font-size: 12pt; font-weight: 650; margin: var(--e-4) 0 var(--e-1); }
+h4 { font-size: 10pt; font-weight: 700; margin: var(--e-3) 0 var(--e-1); color: var(--tinta); }
+p { margin: 0 0 var(--e-2); }
+p, li, dd, figcaption, .lead { text-wrap: pretty; }
+.lead { font-size: 12pt; line-height: 1.5; color: var(--tinta); font-weight: 450; }
+.olho, .eyebrow {
+  font-family: var(--f-mono); font-size: 7.5pt; font-weight: 500; letter-spacing: .12em;
+  text-transform: uppercase; color: var(--rosa-texto);
+}
+strong { font-weight: 650; }
+small, .nota { font-size: 8.5pt; color: var(--tinta-2); }
+a { color: var(--marca); }
+ul, ol { margin: 0 0 var(--e-2); padding-left: 1.2em; }
+li { margin-bottom: 2pt; }
+li::marker { color: var(--rosa); }
+
+/* ---------- Quebras de página ---------- */
+.capitulo { break-before: page; }
+.quebra { break-before: page; }
+.junto, figure, .card, .callout, .confirmar, .tabela tr, .glossario > div, .passos > li { break-inside: avoid; }
+
+/* ==========================================================================
+   CAPA (manual, p. 21: branca, marca colorida, contorno no canto,
+   promessa em ExtraBold e filete roxo na base)
+   ========================================================================== */
+.capa, .contracapa {
+  page: capa;
+  position: relative;
+  width: 210mm; height: 297mm;
+  overflow: hidden;
+  display: flex; flex-direction: column;
+  break-after: page;
+}
+.capa { background: #fff; color: var(--tinta); padding: 20mm 20mm 0; }
+.capa__logo { width: 54mm; height: auto; display: block; position: relative; }
+.contorno { position: absolute; pointer-events: none; }
+.contorno svg { width: 100%; height: 100%; display: block; overflow: visible; }
+.capa .contorno { width: 214mm; height: 214mm; right: -78mm; top: -58mm; }
+.capa__app { width: 26mm; height: auto; display: block; margin-top: 52mm; position: relative; }
+.capa__olho {
+  margin-top: 8mm; position: relative;
+  font-family: var(--f-texto); font-size: 8pt; font-weight: 700; letter-spacing: .14em; text-transform: uppercase;
+  color: var(--rosa-texto);
+}
+.capa__titulo {
+  margin-top: 5mm; position: relative;
+  font-family: var(--f-titulo); font-weight: 800; font-size: 54pt; line-height: 1; letter-spacing: -.02em;
+  color: var(--tinta);
+}
+.capa__titulo em { font-style: normal; color: var(--marca); display: block; }
+.capa__sub {
+  margin-top: 7mm; max-width: 128mm; position: relative;
+  font-size: 13pt; line-height: 1.45; color: var(--tinta-2); font-weight: 500;
+}
+.capa .trilha { margin-top: 9mm; }
+.capa__rodape {
+  margin-top: auto; position: relative;
+  display: flex; justify-content: space-between; align-items: flex-end;
+  padding-bottom: 12mm;
+  font-size: 8.5pt; font-weight: 600; color: var(--tinta-2);
+}
+.capa__rodape b { color: var(--marca); font-weight: 700; }
+.capa::after { /* filete roxo na base */
+  content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 4mm; background: var(--marca);
+}
+
+/* contracapa: assinatura negativa sobre Azul Profundo (manual, p. 8) */
+.contracapa { background: var(--marca-2); color: #fff; padding: 0 20mm; justify-content: center; }
+.contracapa .contorno { width: 230mm; height: 230mm; right: -96mm; top: -70mm; }
+.contracapa__logo { width: 70mm; height: auto; display: block; position: relative; }
+.contracapa__frase {
+  margin-top: 12mm; position: relative;
+  font-family: var(--f-titulo); font-weight: 800; font-size: 26pt; line-height: 1.12; letter-spacing: -.02em;
+}
+.contracapa__nota {
+  position: absolute; left: 20mm; right: 20mm; bottom: 16mm;
+  display: flex; justify-content: space-between; gap: 10mm; align-items: flex-end;
+  font-size: 8pt; line-height: 1.5; color: #D4C6DD;
+}
+.contracapa__nota b { color: #fff; font-weight: 700; font-size: 9pt; }
+
+/* trilha de módulos: o símbolo esmaece em cinco passos, sempre à esquerda */
+.trilha { display: flex; gap: 2.2mm; align-items: center; position: relative; }
+.trilha svg { width: 4.2mm; height: 4.2mm; display: block; }
+
+/* ==========================================================================
+   ABERTURA DE CAPÍTULO
+   ========================================================================== */
+.abertura {
+  position: relative;
+  display: grid; grid-template-columns: 52mm 1fr; column-gap: 8mm;
+  padding: 5mm 0 8mm;
+  margin-bottom: var(--e-4);
+}
+.abertura > .trilha { grid-column: 1 / -1; margin-top: 5mm; }
+.abertura__num {
+  position: relative;
+  font-family: var(--f-titulo); font-weight: 800;
+  font-size: 104pt; line-height: .8; letter-spacing: -.04em;
+  color: var(--marca);
+  padding-top: 3mm;
+}
+.abertura__olho { margin-bottom: 3mm; }
+.abertura__olho b { color: var(--marca); font-weight: 700; }
+.abertura__titulo {
+  font-family: var(--f-titulo); font-weight: 800;
+  font-size: 30pt; line-height: 1.05; letter-spacing: -.02em; color: var(--tinta);
+}
+.abertura__sub { margin-top: 3mm; font-size: 12.5pt; line-height: 1.4; color: var(--tinta-2); }
+.abertura__nesta {
+  margin-top: 5mm; display: flex; flex-wrap: wrap; gap: 2mm;
+  font-size: 8.5pt;
+}
+.abertura__nesta span {
+  border: .6pt solid var(--linha); border-radius: 99px; padding: .6mm 2.6mm; color: var(--marca);
+  background: var(--papel); font-weight: 600;
+}
+
+/* ==========================================================================
+   CARDS
+   ========================================================================== */
+.cards { display: grid; grid-template-columns: repeat(2, 1fr); gap: 4mm; margin: var(--e-3) 0 var(--e-4); }
+.cards--3 { grid-template-columns: repeat(3, 1fr); }
+.card {
+  background: var(--card);
+  border: .7pt solid var(--linha);
+  border-radius: var(--raio);
+  padding: 4.5mm 5mm 4mm;
+  position: relative;
+}
+.card__icone {
+  width: 9mm; height: 9mm; border-radius: 50%; background: var(--marca-050);
+  display: grid; place-items: center; margin-bottom: 2.5mm;
+}
+.card__icone svg { width: 5mm; height: 5mm; stroke: var(--marca); fill: none; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+.card__titulo { font-family: var(--f-titulo); font-size: 11.5pt; font-weight: 700; color: var(--marca); margin: 0 0 1.5mm; line-height: 1.15; }
+.card p { font-size: 9.2pt; line-height: 1.5; margin: 0; color: var(--tinta); }
+.card__rotulo { font-family: var(--f-mono); font-size: 7pt; letter-spacing: .12em; text-transform: uppercase; color: var(--tinta-2); margin-bottom: 1.5mm; }
+
+.card--destaque {
+  background: var(--marca); border-color: var(--marca); color: #fff;
+  padding: 6mm 6mm 5mm;
+  overflow: hidden;
+}
+.card--destaque::before { /* aba rosa de "cartão" */
+  content: ""; position: absolute; top: 0; right: 10mm; width: 14mm; height: 3mm;
+  background: var(--rosa); border-radius: 0 0 1.5mm 1.5mm;
+}
+.card--destaque .card__titulo { color: #fff; font-size: 14pt; }
+.card--destaque p { color: var(--marca-100); font-size: 10pt; }
+.card--destaque .card__rotulo { color: var(--rosa-200); }
+.card--destaque .numero {
+  font-family: var(--f-titulo); font-weight: 800; font-stretch: 80%; font-size: 30pt; line-height: 1; color: #fff;
+}
+
+/* ==========================================================================
+   PÍLULAS DE STATUS (sempre ícone + rótulo)
+   ========================================================================== */
+.pill {
+  display: inline-flex; align-items: center; gap: 1.4mm;
+  font-family: var(--f-texto); font-size: 8pt; font-weight: 650; line-height: 1;
+  padding: 1.2mm 2.6mm 1.2mm 1.8mm; border-radius: 99px;
+  border: .7pt solid currentColor; white-space: nowrap; vertical-align: middle;
+}
+.pill::before {
+  content: ""; width: 3.2mm; height: 3.2mm; flex: none;
+  background: currentColor;
+  -webkit-mask: var(--pill-icone) center / contain no-repeat; mask: var(--pill-icone) center / contain no-repeat;
+}
+.pill--ok {
+  color: var(--ok); background: var(--ok-050);
+  --pill-icone: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='9.5'/%3E%3Cpath d='M7.8 12.4l2.9 2.9 5.6-5.8'/%3E%3C/svg%3E");
+}
+.pill--confirmar {
+  color: var(--atencao); background: var(--atencao-050);
+  border-style: dashed;
+  --pill-icone: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6.5 3h11M6.5 21h11'/%3E%3Cpath d='M8 3c0 5 8 4.5 8 9s-8 4-8 9M16 3c0 5-8 4.5-8 9s8 4 8 9'/%3E%3C/svg%3E");
+}
+.pill--info {
+  color: var(--marca); background: var(--marca-050);
+  --pill-icone: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.4' stroke-linecap='round'%3E%3Ccircle cx='12' cy='12' r='9.5'/%3E%3Cpath d='M12 11v6M12 7.5v.1'/%3E%3C/svg%3E");
+}
+
+/* Estados da marcação, como o colaborador vê no app */
+.estado {
+  display: inline-flex; align-items: center; gap: 1.4mm;
+  font-size: 8.5pt; font-weight: 650; padding: 1.2mm 2.8mm 1.2mm 2mm; border-radius: 1.6mm;
+  border-left: 1mm solid currentColor; white-space: nowrap; line-height: 1;
+}
+.estado::before {
+  content: ""; width: 3.6mm; height: 3.6mm; background: currentColor;
+  -webkit-mask: var(--estado-icone) center / contain no-repeat; mask: var(--estado-icone) center / contain no-repeat;
+}
+.estado--enviando { color: var(--atencao); background: var(--atencao-050);
+  --estado-icone: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M7 19h10a4 4 0 0 0 .6-7.95A6 6 0 0 0 6.1 10.2 4.4 4.4 0 0 0 7 19z'/%3E%3Cpath d='M12 17v-5.5M9.6 13.8L12 11.4l2.4 2.4'/%3E%3C/svg%3E"); }
+.estado--recebido { color: var(--info); background: var(--info-050);
+  --estado-icone: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M7 19h10a4 4 0 0 0 .6-7.95A6 6 0 0 0 6.1 10.2 4.4 4.4 0 0 0 7 19z'/%3E%3Cpath d='M9.3 14.6l2 2 3.6-3.9'/%3E%3C/svg%3E"); }
+.estado--registrado { color: var(--ok); background: var(--ok-050);
+  --estado-icone: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='9.5'/%3E%3Cpath d='M7.8 12.4l2.9 2.9 5.6-5.8'/%3E%3C/svg%3E"); }
+.estado--atencao { color: var(--erro); background: var(--erro-050);
+  --estado-icone: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 3.2l9.3 16.6H2.7z'/%3E%3Cpath d='M12 9.8v4.6M12 17.1v.2'/%3E%3C/svg%3E"); }
+
+/* ==========================================================================
+   CAMPO "A CONFIRMAR PELA NATCORP" (para preencher antes do envio)
+   ========================================================================== */
+.confirmar {
+  border: .9pt dashed var(--atencao);
+  background: var(--atencao-050);
+  border-radius: var(--raio);
+  padding: 3.5mm 4.5mm;
+  margin: var(--e-3) 0;
+  display: grid; grid-template-columns: 1fr auto; gap: 1.5mm 4mm; align-items: start;
+}
+.confirmar__pergunta { font-weight: 650; font-size: 9.5pt; color: var(--tinta); }
+.confirmar__resposta {
+  grid-column: 1 / -1;
+  min-height: 7mm; border-bottom: .7pt solid var(--atencao);
+  font-size: 9.5pt; color: var(--tinta-2); padding-top: 1.5mm;
+}
+.confirmar__resposta:empty::before { content: "Resposta:"; font-family: var(--f-mono); font-size: 7pt; letter-spacing: .1em; text-transform: uppercase; color: var(--atencao); }
+
+/* ==========================================================================
+   TABELA
+   ========================================================================== */
+.tabela { width: 100%; border-collapse: separate; border-spacing: 0; margin: var(--e-3) 0 var(--e-4); font-size: 8.8pt; line-height: 1.45; }
+.tabela thead { display: table-header-group; }
+.tabela th {
+  background: var(--marca); color: #fff; text-align: left; font-weight: 600;
+  font-family: var(--f-mono); font-size: 7pt; letter-spacing: .1em; text-transform: uppercase;
+  padding: 2.4mm 3mm;
+}
+.tabela th:first-child { border-top-left-radius: 2mm; }
+.tabela th:last-child { border-top-right-radius: 2mm; }
+.tabela td { padding: 2.4mm 3mm; vertical-align: top; border-bottom: .6pt solid var(--linha); }
+.tabela tbody tr:nth-child(even) td { background: var(--marca-050); }
+.tabela td:first-child { font-weight: 650; color: var(--marca); }
+.tabela caption { caption-side: bottom; text-align: left; font-size: 7.8pt; color: var(--tinta-2); padding-top: 2mm; }
+
+/* ==========================================================================
+   CALLOUT "VOCÊ SABIA?"
+   ========================================================================== */
+.callout {
+  position: relative;
+  background: var(--rosa-050);
+  border-radius: var(--raio);
+  padding: 4mm 5mm 4mm 19mm;
+  margin: var(--e-4) 0;
+  min-height: 18mm;
+}
+.callout::before {
+  content: ""; position: absolute; left: 4.5mm; top: 4mm; width: 10mm; height: 10mm; border-radius: 50%;
+  background: var(--rosa) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M9 18h6M10 21h4'/%3E%3Cpath d='M12 3a6 6 0 0 0-3.6 10.8c.7.6 1.1 1.4 1.1 2.2h5c0-.8.4-1.6 1.1-2.2A6 6 0 0 0 12 3z'/%3E%3C/svg%3E") center / 6mm no-repeat;
+}
+.callout__titulo { font-family: var(--f-titulo); font-weight: 700; font-size: 11pt; color: var(--rosa-texto); margin-bottom: 1mm; }
+.callout p { font-size: 9.3pt; margin: 0; }
+
+/* ==========================================================================
+   PASSOS NUMERADOS
+   ========================================================================== */
+.passos { list-style: none; padding: 0; margin: var(--e-3) 0 var(--e-4); counter-reset: passo; }
+.passos > li {
+  counter-increment: passo;
+  position: relative; padding: 0 0 4mm 13mm; margin: 0;
+}
+.passos > li::before {
+  content: counter(passo, decimal-leading-zero);
+  position: absolute; left: 0; top: -.4mm; width: 8.4mm; height: 8.4mm; border-radius: 50%;
+  background: var(--marca); color: #fff;
+  font-family: var(--f-mono); font-size: 8pt; font-weight: 600;
+  display: grid; place-items: center;
+}
+.passos > li::after { /* trilho entre os passos */
+  content: ""; position: absolute; left: 4.1mm; top: 8.6mm; bottom: .6mm; width: .6mm; background: var(--marca-200);
+}
+.passos > li:last-child::after { display: none; }
+.passos__titulo { display: block; font-family: var(--f-titulo); font-weight: 700; font-size: 10.5pt; color: var(--marca); line-height: 1.2; padding-top: 1.4mm; }
+.passos > li p { margin: .8mm 0 0; font-size: 9.2pt; }
+
+/* ==========================================================================
+   GLOSSÁRIO
+   ========================================================================== */
+.glossario { display: grid; grid-template-columns: 1fr 1fr; gap: 0 8mm; margin: var(--e-3) 0; }
+.glossario > div { padding: 2.6mm 0 2.4mm; border-top: .6pt solid var(--linha); }
+.glossario dt { font-family: var(--f-titulo); font-weight: 700; font-size: 10pt; color: var(--marca); }
+.glossario dt .sigla { font-family: var(--f-mono); font-size: 7pt; letter-spacing: .08em; color: var(--rosa-texto); margin-left: 1.5mm; font-weight: 500; }
+.glossario dd { margin: .6mm 0 0; font-size: 8.8pt; line-height: 1.45; color: var(--tinta); }
+
+/* ==========================================================================
+   FIGURAS (infográficos SVG inline)
+   ========================================================================== */
+figure.figura { margin: var(--e-4) 0; }
+figure.figura svg { width: 100%; height: auto; display: block; }
+figure.figura figcaption {
+  display: flex; gap: 3mm; align-items: baseline;
+  margin-top: 3mm; padding-top: 2mm; border-top: .6pt solid var(--linha);
+  font-size: 8.5pt; color: var(--tinta-2); line-height: 1.4;
+}
+figure.figura figcaption b {
+  font-family: var(--f-mono); font-size: 7pt; letter-spacing: .1em; text-transform: uppercase; color: var(--rosa-texto); font-weight: 700; white-space: nowrap;
+}
+.figura__titulo { font-family: var(--f-titulo); font-size: 13pt; font-weight: 700; color: var(--marca); margin: 0 0 3mm; }
+.pagina-figura { break-before: page; break-after: page; }
+
+/* ---------- utilitários ---------- */
+.legenda {
+  display: grid; grid-template-columns: max-content 1fr; gap: 2.6mm 5mm; align-items: center;
+  margin: var(--e-2) 0 var(--e-3); font-size: 9pt; color: var(--tinta-2);
+}
+.legenda-pills { display: flex; flex-wrap: wrap; gap: 3mm 5mm; align-items: center; margin: var(--e-2) 0 var(--e-3); font-size: 8.8pt; color: var(--tinta-2); }
+.dois { display: grid; grid-template-columns: 1fr 1fr; gap: 6mm; }
+
+/* marca do NatPonto na contracapa, ao lado do nome do documento */
+.contracapa__app { display: flex; align-items: center; gap: 4mm; }
+.contracapa__app img { width: 13mm; height: auto; }

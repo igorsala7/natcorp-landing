@@ -1,0 +1,10 @@
+{
+  "name": "documento-tecnico-natcorp",
+  "private": true,
+  "type": "module",
+  "description": "Motor dos documentos técnicos Natcorp (Markdown -> HTML -> PDF A4)",
+  "dependencies": {
+    "marked": "^14.1.4",
+    "playwright-core": "1.55.0"
+  }
+}

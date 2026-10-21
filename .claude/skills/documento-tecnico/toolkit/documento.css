@@ -1,0 +1,220 @@
+/* ==========================================================================
+   Extensões do estilo.css para o documento completo (montar.mjs)
+   ========================================================================== */
+
+/* aberturas: chips "nesta seção" mais compactos quando há muitos */
+.abertura__nesta span { white-space: nowrap; }
+
+/* lead logo após a abertura */
+.lead { margin-bottom: var(--e-3); }
+
+/* títulos de tabela (parágrafos só com negrito no texto-fonte) */
+h3.titulo-tabela { font-size: 10.5pt; margin: var(--e-4) 0 0; color: var(--marca); break-after: avoid; }
+h3.titulo-tabela + .tabela { margin-top: var(--e-2); }
+
+/* cartões */
+.card__icone { color: var(--marca); }
+.card--largo { grid-column: 1 / -1; }
+.card p + p { margin-top: 1.5mm; }
+.card__amostra { margin-top: 3mm; }
+.mini-callout {
+  display: inline-flex; align-items: center; gap: 1.6mm;
+  font-family: var(--f-titulo); font-weight: 700; font-size: 9pt; color: var(--rosa-texto);
+  background: var(--rosa-050); border-radius: 99px; padding: 1mm 3mm 1mm 1mm;
+}
+.mini-callout::before {
+  content: ""; width: 5mm; height: 5mm; border-radius: 50%;
+  background: var(--rosa) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M9 18h6M10 21h4'/%3E%3Cpath d='M12 3a6 6 0 0 0-3.6 10.8c.7.6 1.1 1.4 1.1 2.2h5c0-.8.4-1.6 1.1-2.2A6 6 0 0 0 12 3z'/%3E%3C/svg%3E") center / 3.2mm no-repeat;
+}
+.cards--3 .card p { font-size: 9pt; }
+
+/* passos só com texto (sem título) */
+.passos--texto > li { padding-bottom: 3mm; }
+.passos--texto > li p { margin: 0; padding-top: 1.3mm; font-size: 9.6pt; line-height: 1.5; }
+
+/* callout */
+.callout p:last-child { margin-bottom: 0; }
+
+/* ---------- tabelas ---------- */
+.tabela { table-layout: fixed; }
+.tabela td, .tabela th { overflow-wrap: break-word; hyphens: manual; }
+.tabela td p { margin: 0; }
+.tabela .pill { white-space: normal; line-height: 1.15; text-align: left; }
+.tabela--c5 { font-size: 8.2pt; }
+.tabela--c5 td, .tabela--c5 th { padding: 2.2mm 2.2mm; }
+.tabela--req td:first-child { font-family: var(--f-mono); font-size: 7.6pt; font-weight: 700; color: var(--rosa-texto); letter-spacing: .04em; }
+.tabela--req td:nth-child(2) { color: var(--tinta); }
+.tabela--estados td:first-child { font-weight: 400; }
+.tabela--estados .estado { white-space: nowrap; }
+.estado__cor { display: block; margin-top: 1.2mm; font-size: 7.6pt; }
+.tabela tr { break-inside: avoid; }
+
+/* campo a preencher dentro do texto ou da tabela */
+.preencher {
+  display: block; margin-top: 1mm;
+  border-bottom: .8pt dashed var(--atencao);
+  background: var(--atencao-050);
+  padding: 1mm 1.6mm 3.5mm;
+  border-radius: 1.2mm 1.2mm 0 0;
+}
+.preencher__dica { font-size: 7.4pt; color: var(--atencao); font-style: italic; line-height: 1.3; display: block; }
+.preencher__dica::before { content: "Preencher: "; font-style: normal; font-weight: 650; }
+
+/* ---------- caixa "A confirmar pela Natcorp" ---------- */
+.confirmar { display: block; padding: 4mm 5mm 4.5mm; }
+.confirmar__topo { display: flex; justify-content: space-between; align-items: center; gap: 4mm; margin-bottom: 1mm; }
+.confirmar__titulo { font-family: var(--f-titulo); font-weight: 700; font-size: 11pt; color: var(--atencao); }
+.confirmar__item { margin-top: 2.6mm; break-inside: avoid; }
+.confirmar__pergunta { font-weight: 600; font-size: 9.2pt; line-height: 1.4; }
+.confirmar__resposta { min-height: 6.5mm; border-bottom: .7pt solid var(--atencao); padding-top: 1mm; }
+.confirmar__dica { font-size: 7.6pt; color: var(--atencao); font-style: italic; }
+.confirmar__dica::before { content: "Preencher: "; font-style: normal; font-weight: 650; }
+.tabela--confirmar { margin: var(--e-3) 0 0; background: var(--card); }
+.tabela--confirmar .preencher { background: transparent; padding-bottom: 5mm; }
+
+/* ---------- figuras ---------- */
+figure.figura { break-inside: avoid; }
+figure.figura .figura__arte svg { width: var(--fig-largura, 100%); margin: 0 auto; }
+.figura--pagina { break-before: page; }
+figure.figura figcaption span { flex: 1; }
+
+/* glossário */
+.glossario dt { line-height: 1.2; }
+
+/* ==========================================================================
+   DENSIDADE: o documento completo tem ~13.600 palavras; o miolo é
+   compactado para caber em ~30 páginas sem perder legibilidade.
+   ========================================================================== */
+@page { margin: 14mm 15mm 17mm 15mm; }
+@page { @bottom-left { padding-top: 4mm; } @bottom-right { padding-top: 4mm; } }
+body { font-size: 9.3pt; line-height: 1.47; }
+h2 { font-size: 13.5pt; margin: 13pt 0 5pt; }
+h3 { font-size: 11pt; margin: 10pt 0 3pt; }
+p { margin: 0 0 5pt; }
+.lead { font-size: 10.6pt; line-height: 1.45; margin-bottom: 7pt; }
+
+/* abertura de capítulo mais baixa */
+.abertura { grid-template-columns: 34mm 1fr; column-gap: 7mm; padding: 1mm 0 0; margin-bottom: 11pt; }
+.abertura > .trilha { margin-top: 4.5mm; }
+.abertura__num { font-size: 70pt; padding-top: 2mm; }
+.abertura__olho { margin-bottom: 1.5mm; }
+.abertura__titulo { font-size: 23pt; }
+.abertura__sub { margin-top: 1.5mm; font-size: 10.8pt; line-height: 1.35; }
+.abertura__nesta { margin-top: 3mm; gap: 1.5mm; font-size: 7.8pt; }
+.abertura__nesta span { padding: .4mm 2.2mm; }
+
+/* cartões */
+.cards { gap: 3mm; margin: 7pt 0 9pt; }
+.card { padding: 3.2mm 3.8mm 3mm; }
+.card__icone { width: 7mm; height: 7mm; margin-bottom: 1.6mm; }
+.card__icone svg { width: 4.2mm; height: 4.2mm; }
+.card__titulo { font-size: 10.4pt; margin-bottom: 1mm; }
+.card p, .cards--3 .card p { font-size: 8.5pt; line-height: 1.45; }
+.card__rotulo { font-size: 6.6pt; margin-bottom: .8mm; }
+
+/* callout */
+.callout { padding: 3mm 4.5mm 3mm 16mm; margin: 9pt 0; min-height: 14mm; }
+.callout::before { left: 4mm; top: 3mm; width: 8.5mm; height: 8.5mm; background-size: 5mm; }
+.callout__titulo { font-size: 10pt; margin-bottom: .6mm; }
+.callout p { font-size: 8.8pt; line-height: 1.45; }
+
+/* passos */
+.passos { margin: 7pt 0 9pt; }
+.passos > li { padding-left: 11mm; }
+.passos > li::before { width: 7.2mm; height: 7.2mm; font-size: 7.4pt; }
+.passos > li::after { left: 3.5mm; top: 7.4mm; }
+.passos--texto > li { padding-bottom: 2.2mm; }
+.passos--texto > li p { padding-top: .9mm; font-size: 9pt; line-height: 1.45; }
+
+/* tabelas */
+.tabela { font-size: 8.1pt; line-height: 1.4; margin: 7pt 0 9pt; }
+.tabela th { padding: 1.8mm 2.2mm; font-size: 6.5pt; letter-spacing: .08em; }
+.tabela td { padding: 1.7mm 2.2mm; }
+.tabela--c5 { font-size: 7.7pt; }
+.tabela--c5 td, .tabela--c5 th { padding: 1.6mm 1.8mm; }
+.tabela .pill { font-size: 7.2pt; padding: .9mm 2mm .9mm 1.4mm; gap: 1mm; }
+.tabela .pill::before { width: 2.8mm; height: 2.8mm; }
+.preencher { padding: .8mm 1.4mm 2.6mm; }
+.preencher__dica { font-size: 7pt; }
+
+/* caixa âmbar: pode quebrar entre itens, nunca dentro de um item */
+.confirmar { break-inside: auto; padding: 3mm 4mm 3.5mm; margin: 8pt 0; }
+.confirmar__topo { break-after: avoid; }
+.confirmar__titulo { font-size: 10pt; }
+.confirmar__item { margin-top: 1.8mm; }
+.confirmar__pergunta { font-size: 8.6pt; line-height: 1.35; }
+.confirmar__resposta { min-height: 5.5mm; padding-top: .6mm; }
+
+/* figuras */
+figure.figura { margin: 9pt 0; }
+.figura__titulo { font-size: 11.5pt; margin-bottom: 2mm; }
+figure.figura figcaption { margin-top: 2mm; padding-top: 1.6mm; font-size: 8pt; }
+
+/* glossário */
+.glossario > div { padding: 1.8mm 0 1.6mm; }
+.glossario dd { font-size: 8.3pt; line-height: 1.4; }
+.glossario dt { font-size: 9.4pt; }
+
+.legenda, .legenda-pills { font-size: 8.5pt; }
+
+/* --- segunda passada de densidade --- */
+body { font-size: 9.1pt; line-height: 1.45; }
+.tabela { font-size: 7.9pt; line-height: 1.38; }
+.tabela td { padding: 1.4mm 2mm; }
+.tabela th { padding: 1.6mm 2mm; }
+.tabela--c5 { font-size: 7.5pt; }
+.tabela--req .pill { font-size: 6.9pt; }
+.preencher { display: block; margin-top: .6mm; padding: .6mm 1.4mm 2mm; }
+/* itens da caixa âmbar: pergunta à esquerda, linha de resposta à direita */
+.confirmar__item {
+  display: grid; grid-template-columns: 1fr 66mm; column-gap: 5mm; align-items: end;
+  margin-top: 1.4mm; padding-bottom: .4mm;
+}
+.confirmar__resposta { min-height: 5mm; }
+h2 { margin-top: 11pt; }
+.confirmar__item { grid-template-columns: 1fr 56mm; }
+.confirmar__item .confirmar__resposta { grid-column: auto; }
+
+/* frase de introdução nunca fica separada do bloco que ela apresenta */
+p:has(+ .cards), p:has(+ .tabela), p:has(+ .passos), p:has(+ .glossario),
+h3:has(+ .tabela), h2:has(+ p + .cards), h2:has(+ p + .tabela) { break-after: avoid; }
+
+/* legenda de selos dentro de um cartão */
+.legenda--card { grid-template-columns: max-content 1fr; gap: 2mm 3mm; margin: 1mm 0 0; font-size: 8.5pt; color: var(--tinta); }
+.legenda--card .pill { font-size: 7.4pt; }
+.tabela--curta { break-inside: avoid; }
+.confirmar__item { grid-template-columns: 1fr 62mm; }
+.confirmar__dica { font-size: 7.2pt; }
+tr.quebra-linha { break-before: page; }
+.legenda.legenda--card { display: grid; grid-template-columns: 1fr; gap: .8mm; margin-top: 1.5mm; }
+.legenda--card > span:nth-child(odd) { margin-top: 1.2mm; }
+.legenda--card > span:nth-child(even) { font-size: 8.5pt; line-height: 1.4; color: var(--tinta); }
+
+/* Capa e contracapa sangram até a borda num PDF próprio (capas.html, margem zero)
+   que o render.mjs troca pela primeira e pela última página. Aqui elas só reservam
+   a página: uma página nomeada com margem diferente muda a largura de layout do
+   documento inteiro no Chrome. */
+@page capa { margin: 14mm 15mm 17mm 15mm; }
+.capa, .contracapa { height: 266mm; padding: 0; }
+
+/* ==========================================================================
+   PAINEL DE DESTAQUE (mensagem central de um capítulo)
+   ========================================================================== */
+.destaque {
+  position: relative; overflow: hidden;
+  background: linear-gradient(135deg, #9A408A 0%, #511C76 50%, #2C1A63 100%);
+  color: #fff; border-radius: var(--raio);
+  padding: 6mm 6mm 5mm; margin: 10pt 0 12pt;
+  break-inside: avoid;
+}
+.destaque__titulo { font-family: var(--f-titulo); font-weight: 800; font-size: 17pt; line-height: 1.1; letter-spacing: -.02em; }
+.destaque__sub { margin: 2mm 0 0; font-size: 10pt; line-height: 1.45; color: #E9E5F1; max-width: 150mm; }
+.destaque__cols { display: grid; grid-template-columns: repeat(3, 1fr); gap: 3mm; margin-top: 4.5mm; }
+.destaque__col { background: rgba(255,255,255,.1); border: .6pt solid rgba(255,255,255,.22); border-radius: 2.4mm; padding: 3.2mm 3.4mm; }
+.destaque__icone { display: grid; place-items: center; width: 8mm; height: 8mm; border-radius: 50%; background: #fff; color: var(--marca); margin-bottom: 2mm; }
+.destaque__icone svg { width: 4.8mm; height: 4.8mm; }
+.destaque__h { font-family: var(--f-titulo); font-weight: 700; font-size: 10.5pt; line-height: 1.2; margin-bottom: 1.2mm; }
+.destaque__col p { margin: 0; font-size: 8.6pt; line-height: 1.45; color: #F4F2F7; }
+.destaque__pe { margin: 4mm 0 0; padding-top: 3mm; border-top: .6pt solid rgba(255,255,255,.28); font-size: 9.2pt; line-height: 1.45; color: #fff; }
+.destaque__pe + .destaque__pe { margin-top: 1.6mm; padding-top: 0; border-top: 0; }
+.destaque strong { color: #fff; font-weight: 800; }
