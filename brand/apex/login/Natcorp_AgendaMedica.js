@@ -624,6 +624,10 @@
     desenhar();
   }
 
+  /* a Grade padrão (Natcorp_Grade) fica de fora do grid da agenda: ele é o MOTOR escondido deste
+     desenho. Marcado já aqui (não no apexreadyend): a Grade pode ligar antes do iniciar(). */
+  (function () { var r = document.getElementById(IG_ID); if (r) r.classList.add('nc-grade-nao'); })();
+
   /* COMEÇO: quando o APEX termina de montar a página (o grid já existe). */
   var foi = false, vai = function () { if (foi) return; foi = true; setTimeout(function () { try { iniciar(); } catch (e) { if (window.console) console.warn('[Natcorp agenda médica]', e); } }, 0); };
   if (document.readyState === 'complete') vai();

@@ -28,53 +28,80 @@
 */
 
 /* ═══ [C1] O SELETOR TABELA · CARTÕES ═══════════════════════════════════════════════════════
-   Um controle segmentado, logo abaixo da pesquisa do relatório. O ativo em roxo cheio.
+   Um controle segmentado. No Interactive Report fica NA BARRA DE FERRAMENTAS, depois de "Ações"
+   (08/10); no relatório clássico, logo acima da tabela. O ativo em roxo cheio.
    ════════════════════════════════════════════════════════════════════════════════════════════ */
+/* 08/10: no MESMO padrão dos botões do relatório ("Ir", "Ações": 36 px, cantos de 8 px, fio
+   Névoa de 1 px, fundo branco, 13 px semibold Grafite) — os dois botões colados num grupo */
 html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-reg .nc-reg-modos {
   display: inline-flex !important;
-  gap: 2px !important;
+  box-sizing: border-box !important;
+  height: 36px !important;
   margin: 10px 0 12px !important;
-  padding: 3px !important;
-  border-radius: 12px !important;
-  background: var(--nc-off) !important;
-  box-shadow: inset 0 0 0 1px var(--nc-nevoa) !important;
+  padding: 0 !important;
+  border: 1px solid var(--nc-nevoa) !important;
+  border-radius: 8px !important;
+  background: #fff !important;
+  box-shadow: none !important;
+  overflow: hidden !important;
 }
 
 html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-reg .nc-reg-modos button {
   display: inline-flex !important;
   align-items: center !important;
-  gap: 7px !important;
-  height: 34px !important;
+  gap: 6px !important;
+  height: 100% !important;
   margin: 0 !important;
-  padding: 0 14px !important;
+  padding: 0 12px !important;
   border: 0 !important;
-  border-radius: 9px !important;
+  border-radius: 0 !important;
   background: transparent !important;
-  font-size: 13.5px !important;
+  font-size: 13px !important;
   font-weight: 600 !important;
   color: var(--nc-grafite) !important;
   cursor: pointer !important;
 }
 
-html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-reg .nc-reg-modos button:hover {
-  background: #fff !important;
-  color: var(--nc-tinta) !important;
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-reg .nc-reg-modos button + button {
+  border-left: 1px solid var(--nc-nevoa) !important;
 }
 
+/* dentro da barra de ferramentas do relatório (depois de "Ações"): sem margem própria e na altura
+   dos outros controles da barra (36 px) */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-reg .nc-reg-modos.nc-reg-modos--barra {
+  align-self: center !important;
+  margin: 0 0 0 4px !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-reg .nc-reg-modos button {
+  transition: background-color .25s cubic-bezier(.4, 0, .2, 1), color .25s cubic-bezier(.4, 0, .2, 1) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-reg .nc-reg-modos button:hover:not([aria-pressed="true"]) {
+  background: color-mix(in srgb, var(--nc-rosa) 8%, #fff) !important;
+  color: color-mix(in srgb, var(--nc-rosa) 62%, #2A0A1A) !important;
+}
+
+/* o modo escolhido em ROSA, como todo item marcado do sistema (rádios, caixas, chaves) */
 html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-reg .nc-reg-modos button[aria-pressed="true"] {
-  background: var(--nc-roxo) !important;
+  background: var(--nc-rosa) !important;
   color: #fff !important;
 }
 
 html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-reg .nc-reg-modos button:focus-visible,
 html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-reg .nc-reg-cartao:has(.nc-reg-tit:focus-visible) {
-  outline: 2px solid var(--nc-roxo) !important;
+  outline: 2px solid var(--nc-rosa) !important;
   outline-offset: 2px !important;
 }
 
+/* o grupo recorta (overflow hidden): o anel de foco dos dois botões vai para dentro */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-reg .nc-reg-modos button:focus-visible {
+  outline-offset: -3px !important;
+}
+
 html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-reg .nc-reg-ic {
-  width: 17px !important;
-  height: 17px !important;
+  width: 16px !important;
+  height: 16px !important;
   fill: none !important;
   stroke: currentColor !important;
   stroke-width: 1.8 !important;
@@ -379,9 +406,10 @@ html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):no
     padding: 12px 14px 10px !important;
   }
 
-  /* no celular os dois botões ficam com o dedo: 40px de altura */
-  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-reg .nc-reg-modos button {
-    height: 40px !important;
+  /* no celular, na barra, uma linha inteira (a altura segue a dos botões do relatório) */
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-reg .nc-reg-modos.nc-reg-modos--barra {
+    flex: 1 1 100% !important;
+    margin: 4px 0 0 !important;
   }
 }
 
@@ -398,6 +426,13 @@ html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):no
    ════════════════════════════════════════════════════════════════════════════════════════════ */
 html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-arrastavel {
   cursor: grab !important;
+}
+
+/* em cima das letras: o cursor de texto — ali, apertar e arrastar SELECIONA (para copiar). Os
+   links ficam com a mãozinha de link. */
+html.nc-sobre-texto .nc-arrastavel,
+html.nc-sobre-texto .nc-arrastavel :not(a, a *) {
+  cursor: text !important;
 }
 
 html.nc-arrastando,

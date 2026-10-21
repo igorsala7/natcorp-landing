@@ -25,9 +25,10 @@
 
    ── O QUE ELE NÃO FAZ ─────────────────────────────────────────────────────────────────────
      • Não grava nada por conta própria: o Salvar é o "save" do grid.
-     • Não mexe em página com DESENHO PRÓPRIO (um Natcorp_<X>.js que não é dos globais) nem em
-       grid com a classe nc-grade-nao. Para ligar numa página com desenho próprio: classe
-       nc-grade-sim no grid (ou no body).
+     • Vale para TODO grid, de todas as aplicações e páginas — também nas de desenho próprio
+       (19/10, pedido do usuário: "tem que ser pra tudo"). Fica de fora só o grid que um desenho
+       usa como MOTOR escondido (Agenda Médica, Lançamento de Exames, Lançamentos 9132:7): esse
+       desenho marca a região com nc-grade-nao (ou o body), antes de a página ficar pronta.
      • Sem este arquivo, os grids voltam ao visual padrão do APEX. Nada se perde.
 
    ── ÍNDICE ────────────────────────────────────────────────────────────────────────────────
@@ -78,22 +79,16 @@
   function lembrar(k) { try { return localStorage.getItem('nc-gr-' + k); } catch (e) { return null; } }
 
   /* ═══ [G2] QUEM ENTRA ═══════════════════════════════════════════════════════════════════
-     CUIDADO  GLOBAIS = os arquivos Natcorp_ que não são desenho de uma página. Qualquer outro
-              Natcorp_<X>.js na página = desenho próprio = os grids ficam como estão (a não ser
-              com nc-grade-sim). Acompanhe a lista PECAS do Natcorp_Temas.js.
+     Todo grid. Fica de fora: região (ou um ancestral, ou o body) com nc-grade-nao, e grid que já
+     está dentro da gaveta/motor de um desenho ([class*="-gaveta"], [class*="-motor"]).
+     CUIDADO  Até 19/10 página de desenho próprio (um Natcorp_<X>.js que não é global) ficava
+              inteira de fora; agora entra. Desenho que usa o grid escondido, como motor, marca
+              nc-grade-nao no começo do arquivo (não no apexreadyend: a Grade pode ligar antes).
      ════════════════════════════════════════════════════════════════════════════════════════ */
-  var GLOBAIS = /^Natcorp_(Allow_Unload_Iframes|Temas|Registros|Trilha|Editor|Lov|Colab|Grade|Carregando)(\.min)?\.js$/i;
-  function desenhoProprio() {
-    return [].some.call(document.scripts, function (s) {
-      var n = (s.src || '').split('/').pop().split('?')[0];
-      return /^Natcorp_.+\.js$/i.test(n) && !GLOBAIS.test(n);
-    });
-  }
   function entra(reg) {
     if (!reg || reg.classList.contains('nc-grade-nao') || reg.closest('.nc-grade-nao')) return false;
     if (reg.closest('[class*="-gaveta"], [class*="-motor"]')) return false;             /* já está na gaveta de um desenho */
-    if (reg.classList.contains('nc-grade-sim') || document.body.classList.contains('nc-grade-sim') || window.NC_GRADE_FORCAR) return true;
-    return !desenhoProprio();
+    return true;
   }
 
   /* ═══ [G3] A LEITURA DO GRID ════════════════════════════════════════════════════════════ */
@@ -181,9 +176,38 @@
     for (var k in TOM) if (TOM[k].test(x.trim())) return k;
     return null;
   }
-  function celulaHtml(t) {
+  /* a COR que a própria aplicação pôs no valor manda no tom (08/10, 2980:850: a lista de valores
+     devolve <p style="color:green">Sim</p> e <p style="color:red">Não</p>). A lista lê só o texto —
+     sem isto o Sim e o Não viravam selo cinza. Verde → bom, vermelho → ruim, laranja/amarelo → aviso;
+     cinza, preto ou azul → sem tom (o texto decide, pelo TOM acima). */
+  var TONS_COR = {};
+  function bruto(G, rec, col) {
+    var v; try { v = G.m.getValue(rec, col); } catch (e) { return ''; }
+    return v && typeof v === 'object' ? (v.d != null ? String(v.d) : '') : String(v == null ? '' : v);
+  }
+  function tomDaCor(html) {
+    var m = /color\s*[:=]\s*["']?\s*(#[0-9a-f]{3,8}|rgba?\([^)]*\)|hsla?\([^)]*\)|[a-z]+)/i.exec(html);
+    if (!m) return null;
+    var k = m[1].toLowerCase();
+    if (k in TONS_COR) return TONS_COR[k];
+    var t = null, s = document.createElement('i');
+    s.style.color = k;
+    if (s.style.color) {
+      document.body.appendChild(s);
+      var c = (getComputedStyle(s).color.match(/[\d.]+/g) || [0, 0, 0]).slice(0, 3).map(function (n) { return n / 255; });
+      s.remove();
+      var mx = Math.max.apply(null, c), mn = Math.min.apply(null, c), d = mx - mn, h = 0;
+      if (d >= 0.2) {
+        h = mx === c[0] ? ((c[1] - c[2]) / d) % 6 : mx === c[1] ? (c[2] - c[0]) / d + 2 : (c[0] - c[1]) / d + 4;
+        h = (h * 60 + 360) % 360;
+        t = h >= 75 && h <= 170 ? 'bom' : (h < 15 || h >= 330) ? 'ruim' : h < 60 ? 'aviso' : null;
+      }
+    }
+    return (TONS_COR[k] = t);
+  }
+  function celulaHtml(t, tomCor) {
     if (!t) return '<span class="nc-gr-nada">—</span>';
-    var tom = tomDe(t), cd = codDesc(t);
+    var tom = tomCor || tomDe(t), cd = codDesc(t);
     if (tom) return '<span class="nc-gr-selo nc-gr-selo--' + tom + '">' + esc(cd ? cd[1] : t) + '</span>';
     if (cd) return '<span class="nc-gr-cod">' + esc(cd[0]) + '</span>' + esc(cd[1]);
     return esc(t);
@@ -412,12 +436,43 @@
     guardar('exp-' + chave(G), G.expLista ? '1' : '');
     desenhar(G);
   }
+  /* CUIDADO  Cada setColumnWidth grava o relatório inteiro no servidor. Disparados juntos (10 colunas
+     = 10 gravações no mesmo instante), um deles às vezes voltava com "Ocorreu um erro ao tentar
+     processar as informações" (15/10). Gravar uma vez só não serve: o grid guarda só a coluna do
+     último comando. Por isso, EM FILA: uma coluna por vez, a próxima quando a gravação anterior
+     voltar ($.active = pedidos em andamento; até 4 s cada), pulando a que já está na largura. */
+  function larguraEmFila(G, lista, fim) {
+    var g = G.g, i = 0;
+    (function prox() {
+      if (i >= lista.length) { try { g.view$.grid('refreshColumns'); g.view$.grid('resize'); } catch (e) { /* ok */ } return fim(); }
+      var x = lista[i++];
+      try { g.view$.grid('setColumnWidth', x[0], x[1]); } catch (e) { /* ok */ }
+      var t0 = Date.now();
+      setTimeout(function espera() {
+        if ($.active > 0 && Date.now() - t0 < 4000) return setTimeout(espera, 40);
+        prox();
+      }, 30);
+    })();
+  }
   function expandirGrid(G) {
+    if (G.expOcupado) return;
     var g = G.g, cols; try { cols = g.view$.grid('getColumns').filter(function (c) { return !c.hidden && c.property && !/^APEX\$/.test(c.property); }); } catch (e) { return; }
     semEsticar(G);
+    var lista = [], atual = {};
+    cols.forEach(function (c) { atual[c.property] = Math.round(c.width || c.curWidth || 0); });
+    var muda = function (prop, w) { if (w && Math.round(w) !== atual[prop]) lista.push([prop, w]); };
+    var vai = function () {
+      var b = G.ctl && G.ctl.querySelector('[data-gr-expande]');
+      G.expOcupado = true; if (b) { b.disabled = true; b.setAttribute('aria-busy', 'true'); }
+      larguraEmFila(G, lista, function () {
+        G.expOcupado = false; if (b) { b.disabled = false; b.removeAttribute('aria-busy'); }
+        estadoExpande(G);
+      });
+    };
     if (G.expGrid && G.igAntes) {
-      cols.forEach(function (c) { if (G.igAntes[c.property]) try { g.view$.grid('setColumnWidth', c.property, G.igAntes[c.property]); } catch (e) { /* ok */ } });
+      cols.forEach(function (c) { muda(c.property, G.igAntes[c.property]); });
       G.expGrid = false;
+      return vai();
     } else {
       G.igAntes = {}; cols.forEach(function (c) { G.igAntes[c.property] = c.width || c.curWidth; });
       /* mede NA PRÓPRIA TELA: a largura do texto dentro de cada célula (Range — vale mesmo cortada com
@@ -443,12 +498,11 @@
         });
       });
       cols.forEach(function (c) {
-        if (!precisa[c.property]) return;
-        try { g.view$.grid('setColumnWidth', c.property, Math.max(60, Math.min(Math.ceil(precisa[c.property]), 900))); } catch (e) { /* ok */ }
+        if (precisa[c.property]) muda(c.property, Math.max(60, Math.min(Math.ceil(precisa[c.property]), 900)));
       });
       G.expGrid = true;
+      return vai();
     }
-    try { g.view$.grid('refreshColumns'); g.view$.grid('resize'); } catch (e) { /* ok */ }
   }
   function expandir(G) {
     if (G.modo === 'tabela') expandirGrid(G); else expandirLista(G);
@@ -821,7 +875,7 @@
         ' aria-label="' + esc((leitura ? 'Ver ' : 'Abrir ') + (t || 'registro')) + '">' +
         vis.map(function (x, i) {
           var v = valor(G, r.rec, x.c.p);
-          return '<span role="cell" class="nc-gr-td' + (i === 0 ? ' nc-gr-td--tit' : '') + (x.left != null ? ' is-cong' + (i === cong - 1 ? ' is-cong-fim' : '') : '') + '" data-h="' + esc(x.c.h) + '" data-p="' + esc(x.c.p) + '"' + (x.left != null ? ' style="left:' + x.left + 'px"' : '') + (v.length > 18 ? ' title="' + esc(v) + '"' : '') + '><span class="nc-gr-tx">' + celulaHtml(v) + '</span>' +
+          return '<span role="cell" class="nc-gr-td' + (i === 0 ? ' nc-gr-td--tit' : '') + (x.left != null ? ' is-cong' + (i === cong - 1 ? ' is-cong-fim' : '') : '') + '" data-h="' + esc(x.c.h) + '" data-p="' + esc(x.c.p) + '"' + (x.left != null ? ' style="left:' + x.left + 'px"' : '') + (v.length > 18 ? ' title="' + esc(v) + '"' : '') + '><span class="nc-gr-tx">' + celulaHtml(v, v && tomDaCor(bruto(G, r.rec, x.c.p))) + '</span>' +
             (i === 0 && md.inserted ? ' <em class="nc-gr-tag nc-gr-tag--novo">novo</em>' : i === 0 && md.updated ? ' <em class="nc-gr-tag nc-gr-tag--novo">alterado</em>' : '') + '</span>';
         }).join('') + '<span class="nc-gr-seta" aria-hidden="true">' + ic(leitura ? 'olho' : 'dir') + '</span></li>';
     }).join('');
@@ -906,6 +960,11 @@
     G.ig.parentNode.insertBefore(ED.lugar, G.ig);
     GAV.corpo.appendChild(G.ig);
     G.ig.classList.add('nc-gr-motor');
+    /* 09/10: fora da região, as listas das colunas que dependem de outra coluna (ex.: Evento que
+       depende da Empresa, 9132:7) perdiam o contexto da linha — o APEX acha a região subindo pelo
+       HTML — e o servidor respondia "Ocorreu um erro ao tentar processar as informações".
+       data-owning-region diz ao APEX a quem o grid pertence (apex.region.findClosest). */
+    G.ig.setAttribute('data-owning-region', G.reg.id);
     G.reg.classList.add('nc-gr-aberta');
     document.body.classList.add('nc-gr-editando');
     if (edita) { try { G.acoes.set('edit', true); } catch (e) { /* já em edição */ } }
@@ -1006,7 +1065,10 @@
     GAV.caixa.classList.remove('is-aberta', 'is-ocupada'); GAV.fundo.classList.remove('is-aberta');
     ED = null;
     if (G.caixa) G.caixa.style.paddingRight = '';
-    try { G.g.view$.grid('resize'); } catch (x) { /* ok */ }
+    /* o grid devolvido guarda a largura da gaveta (a parte que rola descia para baixo da coluna
+       fixa, 15/10): interactiveGrid('resize') em três tempos — só o grid('resize') não resolve */
+    var ajusta = function () { try { G.g.view$.grid('resize'); G.w.interactiveGrid('resize'); } catch (x) { /* ok */ } };
+    requestAnimationFrame(ajusta); setTimeout(ajusta, 120); setTimeout(ajusta, 400);
     desenhar(G);
     var alvo = e.volta && document.body.contains(e.volta) ? e.volta : G.caixa && G.caixa.querySelector('[data-gr-id="' + (e.id || '') + '"]');
     if (alvo && alvo.focus) alvo.focus({ preventScroll: true });
@@ -1128,6 +1190,7 @@
       if (d.querySelector('script[src*="Natcorp_Grade.js"]')) return;
       var sc = d.createElement('script');
       sc.src = EU;
+      sc.setAttribute('data-nc-peca', '');
       d.head.appendChild(sc);
     } catch (e) { /* iframe de outro endereço: não é nosso */ }
   }

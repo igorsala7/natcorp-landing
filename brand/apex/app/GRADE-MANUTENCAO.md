@@ -3,6 +3,7 @@
 Pedido 08/10: padronizar os Interactive Grids no jeito das páginas da Medicina (2937: 6, 10, 12) —
 o registro vira uma linha e tocar nela abre uma gaveta lateral para preencher os campos.
 Decidido: **global, com exceções** (página com desenho próprio e grid com `nc-grade-nao` ficam de fora).
+**Mudou em 19/10:** vale em TODA página, inclusive as de desenho próprio (pedido: "tem que ser pra tudo, todas as aplicações e páginas"). Só fica de fora o grid que um desenho usa como motor escondido (ver a seção de 19/10 no fim).
 
 ## Como funciona
 - **Lista**: um registro por linha; título = 1ª coluna de dados; ao lado, as 4 seguintes com o nome
@@ -110,3 +111,37 @@ Subir para o Workspace Images: `Natcorp_Style_Min.css`, `Natcorp_Temas.js`, `Nat
 
 Achado da 2937:6: em Doenças, as colunas Doença e Data Início são só leitura no APEX — nem no grid
 original dá para preencher uma doença nova.
+
+## Correção (09/10): listas que dependem de outra coluna, na gaveta
+- **O defeito:** a gaveta leva o `.a-IG` para fora da região. O APEX acha a região de um campo subindo pelo
+  HTML (`apex.region.findClosest`). Sem ela, a popup LOV de uma coluna em cascata ia ao servidor sem o
+  contexto da linha e voltava "Ocorreu um erro ao tentar processar as informações". Visto na 9132:7, no
+  Evento que depende da Empresa.
+- **A correção:** `data-owning-region="<id da região>"` no `.a-IG` movido. Está em [G5] `abrir`.
+- **Subir:** `Natcorp_Grade.js`.
+
+
+## 15/10 — grid devolvido da gaveta
+Ao voltar da gaveta (ou de uma aba escondida), o grid guardava a largura de onde estava e a parte que rola descia para baixo da coluna fixa (caixa e menu). Correção: `interactiveGrid('resize')` em três tempos (próximo quadro, 120 ms e 400 ms) ao fechar a gaveta e ao mostrar a tabela; só `grid('resize')` não resolve.
+
+## 15/10 — "Expandir colunas" em fila
+No modo Tabela, cada `setColumnWidth` grava o relatório inteiro; 10 colunas disparavam 10 gravações no mesmo instante e uma às vezes voltava com "Ocorreu um erro ao tentar processar as informações". Gravar uma vez só não serve (o grid guarda só a coluna do último comando). Agora `larguraEmFila`: uma coluna por vez, a próxima quando a anterior volta (`$.active`, até 4 s cada), pulando as que já estão na largura; o botão fica travado (`aria-busy`) até terminar. Medido: 10 colunas em ~1,4 s, sem erro.
+
+
+## 19/10 — em todo grid, também nas páginas de desenho próprio
+- `entra()` não olha mais se a página tem um `Natcorp_<X>.js` próprio (saíram `GLOBAIS` e `desenhoProprio`).
+  Fica de fora: `nc-grade-nao` na região, num ancestral ou no body; grid já dentro de `[class*="-gaveta"]`
+  ou `[class*="-motor"]`.
+- **Motores marcados com `nc-grade-nao` no começo do arquivo** (não no apexreadyend — a Grade pode ligar
+  antes): Agenda Médica 2937:10 (região `horarios`), Lançamento de Exames 2937:11 (o body, se há
+  P11_MATRICULA), Lançamentos 9132:7 (região `IGOCORR`). Desenho novo que esconde o grid e o usa como
+  motor: fazer o mesmo.
+- **Gaveta de outro desenho** (Histórico 2937:6, Manutenção de Atestados 2937:12, Acidente — região com
+  classe `*-motor`): o CSS traz o grid original de volta dentro dela e esconde a lista da Grade.
+- **Acidente (2943) e Dependentes/pensão**: o aviso "preencha na própria tabela e toque em Salvar lista"
+  some quando a Grade está ligada (quem preenche é a gaveta).
+- Conferido ao vivo: 2937:6 (Grade nas 3 grades, gaveta da linha do tempo com 14 campos, cancelar sem
+  pendência) e 2937:10 (grade da agenda com `nc-grade-nao`, nenhuma lista da Grade). NÃO conferido ao vivo:
+  2937:11, 2937:12, 9132:7, Acidente, Dependentes.
+- Sobe: `Natcorp_Grade.js`, `Natcorp_Style_Min.css`, `Natcorp_AgendaMedica.js`, `Natcorp_LancamentoExames.js`,
+  `Natcorp_LancFicha.js`, `Natcorp_HistoricoColaborador.js/.css`, `Natcorp_Acidente.css`, `Natcorp_Dependentes.css`.

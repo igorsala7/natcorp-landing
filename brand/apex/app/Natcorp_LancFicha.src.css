@@ -1,0 +1,1817 @@
+/* ╔════════════════════════════════════════════════════════════════════════════════════════╗
+   ║  NATCORP · LANÇAMENTOS (A FICHA) — o visual (CSS)                                        ║
+   ║  App 9132 · Página 7 · Lançamentos de Ocorrências                                        ║
+   ╚════════════════════════════════════════════════════════════════════════════════════════╝
+   O JS (Natcorp_LancFicha.src.js) monta o alto, a lista e a ficha; aqui está a cara de cada parte.
+   O que se ESCOLHE (cartão aberto, opção marcada, chave Ficha|Tabela) é ROSA; os botões, ROXO.
+   A borda do campo em foco segue a da aba NatPonto: 2 px rosa, 250 ms.
+   Toda declaração ganha !important no gerar-app (o @app vira o prefixo de prioridade).
+
+   ÍNDICE
+     [F1] Cores e medidas .................................................... PODE MEXER
+     [F2] A janela: uma tela só, sem rolagem dupla
+     [F3] O alto: onde se está lançando e os 3 passos
+     [F4] A lista de lançamentos
+     [F5] A ficha: cabeçalho, perguntas, campos ........................... CUIDADO
+     [F6] "Para quem?" e os avisos do "Quanto?"
+     [F7] Convite, salvo, aviso e espera
+     [F8] O pé da janela (Processar, Sair, caixas)
+     [F9] O resultado do processamento (LOG)
+     [F10] Tabela (a grade original)
+     [F11] Celular
+   ════════════════════════════════════════════════════════════════════════════════════════ */
+
+/* ═══ [F1] CORES E MEDIDAS ════════════════════════════════════════════════════════════════
+   PODE MEXER. O rosa e o roxo vêm do tema escolhido pelo usuário (--nc-rosa, --nc-roxo).
+   ════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-lf-ativo {
+  --lf-tinta: var(--nc-tinta, #1B1238);
+  --lf-texto: var(--nc-grafite, #4A4460);
+  --lf-fraco: #6A6479;
+  --lf-fio: #E7E3EF;
+  --lf-fio-forte: #D6D0E2;
+  --lf-fundo: #F7F5FB;
+  --lf-roxo: var(--nc-roxo, #511C76);
+  --lf-rosa: var(--nc-rosa, #C95788);
+  --lf-rosa-claro: color-mix(in srgb, var(--nc-rosa, #C95788) 10%, #fff);
+  --lf-rosa-medio: color-mix(in srgb, var(--nc-rosa, #C95788) 32%, #fff);
+  --lf-rosa-escuro: color-mix(in srgb, var(--nc-rosa, #C95788) 62%, #2A0A1A);
+  --lf-ok: #1D7A50;
+  --lf-ok-claro: #E7F5EE;
+  --lf-aviso: #8A5300;
+  --lf-aviso-claro: #FFF3DA;
+  --lf-ruim: #B42318;
+  --lf-ruim-claro: #FDEDEB;
+  --lf-raio: 14px;
+  --lf-sombra: 0 1px 2px rgba(27, 18, 56, .05), 0 6px 18px -10px rgba(27, 18, 56, .18);
+  --lf-curva: cubic-bezier(.4, 0, .2, 1);
+}
+
+@app.nc-lf-ativo ::selection {
+  background: var(--lf-rosa-medio);
+  color: var(--lf-tinta);
+}
+
+/* ═══ [F2] A JANELA: UMA TELA SÓ ═══════════════════════════════════════════════════════════
+   No modo ficha a janela não rola: a lista e a ficha rolam cada uma por dentro, e o pé da ficha
+   (Salvar) fica sempre à vista. --lf-pe = altura do rodapé da janela (medida pelo JS).
+   ════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-lf-ativo:not(.nc-lf-tabela):not(.nc-lf-com-log) .t-Dialog-bodyWrapperIn {
+  overflow: hidden;
+}
+
+@app.nc-lf-ativo .t-Dialog-body {
+  padding: 16px 20px 12px;
+}
+
+/* a região da grade fica no lugar (para a Tabela); no modo ficha, sem nada à vista */
+@app.nc-lf-ativo:not(.nc-lf-tabela) #IGOCORR {
+  display: none;
+}
+
+@app.nc-lf-ativo .nc-lf {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  height: calc(100vh - var(--lf-pe, 66px) - 28px);
+  min-height: 420px;
+  color: var(--lf-tinta);
+  font-variant-numeric: tabular-nums;
+}
+
+@app.nc-lf-ativo.nc-lf-tabela .nc-lf {
+  height: auto;
+  min-height: 0;
+  margin-bottom: 14px;
+}
+
+@app.nc-lf-ativo.nc-lf-tabela .nc-lf-area,
+@app.nc-lf-ativo.nc-lf-com-log .nc-lf {
+  display: none;
+}
+
+@app.nc-lf-ativo .nc-lf-area {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: minmax(300px, 380px) minmax(0, 1fr);
+  gap: 18px;
+}
+
+@app.nc-lf-ativo .nc-lf-ic {
+  width: 18px;
+  height: 18px;
+  flex: 0 0 auto;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* ═══ [F3] O ALTO ════════════════════════════════════════════════════════════════════════ */
+@app.nc-lf-ativo .nc-lf-topo {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  padding: 14px 18px;
+  border: 1px solid var(--lf-fio);
+  border-radius: var(--lf-raio);
+  background: #fff;
+  box-shadow: var(--lf-sombra);
+}
+
+@app.nc-lf-ativo .nc-lf-onde {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-width: 0;
+  flex: 0 1 auto;
+}
+
+@app.nc-lf-ativo .nc-lf-onde-ic {
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  flex: 0 0 auto;
+  border-radius: 12px;
+  background: var(--lf-rosa-claro);
+  color: var(--lf-rosa-escuro);
+}
+
+@app.nc-lf-ativo .nc-lf-onde-ic .nc-lf-ic {
+  width: 24px;
+  height: 24px;
+}
+
+@app.nc-lf-ativo .nc-lf-onde-txt h2 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -.01em;
+  color: var(--lf-tinta);
+}
+
+@app.nc-lf-ativo .nc-lf-onde-txt p {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 16px;
+  margin: 4px 0 0;
+  font-size: 14px;
+  color: var(--lf-texto);
+}
+
+@app.nc-lf-ativo .nc-lf-onde-txt p > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+@app.nc-lf-ativo .nc-lf-onde-txt p .nc-lf-ic {
+  width: 15px;
+  height: 15px;
+  color: var(--lf-fraco);
+}
+
+/* os 3 passos: o atual em destaque, os feitos com o check */
+@app.nc-lf-ativo .nc-lf-passos {
+  display: flex;
+  flex: 1 1 auto;
+  justify-content: flex-end;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+@app.nc-lf-ativo .nc-lf-passo {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  flex: 0 1 250px;
+  min-width: 0;
+  margin: 0;
+  padding: 10px 12px;
+  border-radius: 12px;
+  color: var(--lf-fraco);
+  transition: background-color .25s var(--lf-curva), color .25s var(--lf-curva);
+}
+
+@app.nc-lf-ativo .nc-lf-passo-n {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  flex: 0 0 auto;
+  border: 1.5px solid var(--lf-fio-forte);
+  border-radius: 50%;
+  font-size: 13px;
+  font-weight: 700;
+  background: #fff;
+  transition: background-color .25s var(--lf-curva), border-color .25s var(--lf-curva), color .25s var(--lf-curva);
+}
+
+@app.nc-lf-ativo .nc-lf-passo-txt {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+@app.nc-lf-ativo .nc-lf-passo-txt b {
+  font-size: 14px;
+  font-weight: 700;
+  color: inherit;
+}
+
+@app.nc-lf-ativo .nc-lf-passo-txt span {
+  font-size: 12.5px;
+  line-height: 1.35;
+}
+
+@app.nc-lf-ativo .nc-lf-passo.is-atual {
+  background: var(--lf-rosa-claro);
+  color: var(--lf-tinta);
+}
+
+@app.nc-lf-ativo .nc-lf-passo.is-atual .nc-lf-passo-n {
+  border-color: var(--lf-rosa);
+  background: var(--lf-rosa);
+  color: #fff;
+}
+
+@app.nc-lf-ativo .nc-lf-passo.is-atual .nc-lf-passo-txt span {
+  color: var(--lf-texto);
+}
+
+@app.nc-lf-ativo .nc-lf-passo-n .nc-lf-ic {
+  display: none;
+  width: 15px;
+  height: 15px;
+  stroke-width: 2.6;
+}
+
+@app.nc-lf-ativo .nc-lf-passo.is-feito .nc-lf-passo-n {
+  border-color: var(--lf-ok);
+  background: var(--lf-ok);
+  color: #fff;
+}
+
+@app.nc-lf-ativo .nc-lf-passo.is-feito .nc-lf-passo-n > span {
+  display: none;
+}
+
+@app.nc-lf-ativo .nc-lf-passo.is-feito .nc-lf-passo-n .nc-lf-ic {
+  display: block;
+}
+
+/* ═══ [F4] A LISTA DE LANÇAMENTOS ════════════════════════════════════════════════════════ */
+@app.nc-lf-ativo .nc-lf-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 2px 4px 12px 2px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--lf-fio-forte) transparent;
+}
+
+@app.nc-lf-ativo .nc-lf-lcab {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+@app.nc-lf-ativo .nc-lf-lcab h3 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--lf-tinta);
+}
+
+@app.nc-lf-ativo .nc-lf-conta {
+  min-width: 24px;
+  padding: 1px 8px;
+  border-radius: 99px;
+  background: var(--lf-fundo);
+  font-size: 13px;
+  font-weight: 700;
+  text-align: center;
+  color: var(--lf-texto);
+}
+
+/* a chave Ficha | Tabela: a opção escolhida é rosa */
+@app.nc-lf-ativo .nc-lf-vistas {
+  display: inline-flex;
+  padding: 3px;
+  border: 1px solid var(--lf-fio);
+  border-radius: 10px;
+  background: var(--lf-fundo);
+}
+
+@app.nc-lf-ativo .nc-lf-vistas button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 30px;
+  padding: 0 10px;
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--lf-texto);
+  cursor: pointer;
+  transition: background-color .25s var(--lf-curva), color .25s var(--lf-curva);
+}
+
+@app.nc-lf-ativo .nc-lf-vistas button .nc-lf-ic {
+  width: 15px;
+  height: 15px;
+}
+
+@app.nc-lf-ativo .nc-lf-vistas button:hover {
+  color: var(--lf-rosa-escuro);
+}
+
+@app.nc-lf-ativo .nc-lf-vistas button[aria-pressed="true"] {
+  background: var(--lf-rosa);
+  color: #fff;
+  box-shadow: 0 1px 2px rgba(27, 18, 56, .15);
+}
+
+/* o botão de começar um lançamento: largo, com o + */
+@app.nc-lf-ativo .nc-lf-novo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  min-height: 48px;
+  padding: 0 16px;
+  border: 1.5px dashed color-mix(in srgb, var(--lf-roxo) 45%, #fff);
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--lf-roxo) 4%, #fff);
+  font: inherit;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--lf-roxo);
+  cursor: pointer;
+  transition: background-color .2s var(--lf-curva), border-color .2s var(--lf-curva);
+}
+
+@app.nc-lf-ativo .nc-lf-novo:hover {
+  border-style: solid;
+  background: color-mix(in srgb, var(--lf-roxo) 8%, #fff);
+}
+
+@app.nc-lf-ativo .nc-lf-cartoes {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+@app.nc-lf-ativo .nc-lf-cartoes li {
+  margin: 0;
+}
+
+@app.nc-lf-ativo .nc-lf-cartao {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid var(--lf-fio);
+  border-radius: 12px;
+  background: #fff;
+  font: inherit;
+  text-align: left;
+  color: var(--lf-tinta);
+  cursor: pointer;
+  box-shadow: 0 1px 2px rgba(27, 18, 56, .04);
+  transition: border-color .25s var(--lf-curva), box-shadow .25s var(--lf-curva), background-color .25s var(--lf-curva);
+}
+
+@app.nc-lf-ativo .nc-lf-cartao:hover {
+  border-color: var(--lf-rosa-medio);
+  box-shadow: 0 2px 4px rgba(27, 18, 56, .05), 0 8px 18px -12px rgba(27, 18, 56, .25);
+}
+
+/* o lançamento aberto na ficha: rosa */
+@app.nc-lf-ativo .nc-lf-cartao.is-aberto {
+  border-color: var(--lf-rosa);
+  background: var(--lf-rosa-claro);
+  box-shadow: 0 0 0 1px var(--lf-rosa);
+}
+
+@app.nc-lf-ativo .nc-lf-c-topo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+@app.nc-lf-ativo .nc-lf-c-n {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--lf-fraco);
+}
+
+@app.nc-lf-ativo .nc-lf-sit {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 2px 9px;
+  border-radius: 99px;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.5;
+}
+
+@app.nc-lf-ativo .nc-lf-sit::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+@app.nc-lf-ativo .nc-lf-sit.is-ok {
+  background: var(--lf-ok-claro);
+  color: var(--lf-ok);
+}
+
+@app.nc-lf-ativo .nc-lf-sit.is-pendente {
+  background: var(--lf-aviso-claro);
+  color: var(--lf-aviso);
+}
+
+@app.nc-lf-ativo .nc-lf-sit.is-erro {
+  background: var(--lf-ruim-claro);
+  color: var(--lf-ruim);
+}
+
+@app.nc-lf-ativo .nc-lf-sit.is-branco {
+  background: var(--lf-fundo);
+  color: var(--lf-fraco);
+}
+
+@app.nc-lf-ativo .nc-lf-c-ev {
+  font-size: 15.5px;
+  font-weight: 700;
+  line-height: 1.3;
+  color: var(--lf-tinta);
+}
+
+@app.nc-lf-ativo .nc-lf-c-ev i {
+  margin-left: 4px;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 600;
+  color: var(--lf-fraco);
+}
+
+@app.nc-lf-ativo .nc-lf-c-ev em {
+  font-style: normal;
+  font-weight: 600;
+  color: var(--lf-fraco);
+}
+
+@app.nc-lf-ativo .nc-lf-c-q {
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: -.01em;
+  color: var(--lf-roxo);
+}
+
+@app.nc-lf-ativo .nc-lf-c-linha {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 14px;
+  font-size: 13px;
+  color: var(--lf-texto);
+}
+
+@app.nc-lf-ativo .nc-lf-c-linha:empty {
+  display: none;
+}
+
+@app.nc-lf-ativo .nc-lf-c-linha > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  min-width: 0;
+}
+
+@app.nc-lf-ativo .nc-lf-c-linha .nc-lf-ic {
+  width: 15px;
+  height: 15px;
+  color: var(--lf-fraco);
+}
+
+@app.nc-lf-ativo .nc-lf-c-linha .is-todos {
+  font-weight: 700;
+  color: var(--lf-aviso);
+}
+
+@app.nc-lf-ativo .nc-lf-c-linha .is-todos .nc-lf-ic {
+  color: currentColor;
+}
+
+@app.nc-lf-ativo .nc-lf-lvazio {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin: 0;
+  padding: 16px;
+  border-radius: 12px;
+  background: var(--lf-fundo);
+  font-size: 14px;
+  line-height: 1.45;
+  color: var(--lf-texto);
+}
+
+/* ═══ [F5] A FICHA ══════════════════════════════════════════════════════════════════════════
+   CUIDADO  Dentro dela mora o grid (.nc-lf-motor) com a vista de um registro. Some tudo do grid
+            que não é campo; quais campos aparecem, em que ordem e largura vêm da folha que o JS
+            monta pelo ID (#nc-lf-folha). O grid escreve largura/altura em px: o auto daqui vence.
+   ════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-lf-ativo .nc-lf-ficha {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+  border: 1px solid var(--lf-fio);
+  border-radius: var(--lf-raio);
+  background: #fff;
+  box-shadow: var(--lf-sombra);
+  overflow: hidden;
+}
+
+@app.nc-lf-ativo .nc-lf-fcab {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 16px 22px 14px;
+  border-bottom: 2px solid var(--lf-rosa);
+}
+
+@app.nc-lf-ativo .nc-lf-fcab:empty {
+  display: none;
+}
+
+@app.nc-lf-ativo .nc-lf-ftit {
+  min-width: 0;
+}
+
+@app.nc-lf-ativo .nc-lf-ftit h3 {
+  margin: 0;
+  font-size: 19px;
+  font-weight: 700;
+  line-height: 1.25;
+  color: var(--lf-tinta);
+}
+
+@app.nc-lf-ativo .nc-lf-ftit p {
+  margin: 2px 0 0;
+  font-size: 13.5px;
+  color: var(--lf-texto);
+}
+
+@app.nc-lf-ativo .nc-lf-fvolta {
+  display: none;
+}
+
+@app.nc-lf-ativo .nc-lf-fcorpo {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: var(--lf-fio-forte) transparent;
+}
+
+@app.nc-lf-ativo .nc-lf-ficha:not(.is-editando) .nc-lf-fgrade {
+  display: none;
+}
+
+/* a ficha e, ao lado, "Como vai ficar" (preso no alto enquanto a ficha rola) */
+@app.nc-lf-ativo .nc-lf-fgrade {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 320px;
+  align-items: start;
+  gap: 8px;
+}
+
+@app.nc-lf-ativo .nc-lf-fmotor {
+  min-width: 0;
+}
+
+@app.nc-lf-ativo .nc-lf-resumo {
+  position: sticky;
+  top: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 20px 22px 20px 0;
+  padding: 18px;
+  border-radius: 12px;
+  background: var(--lf-fundo);
+}
+
+@app.nc-lf-ativo .nc-lf-resumo:empty {
+  display: none;
+}
+
+@app.nc-lf-ativo .nc-lf-resumo h4 {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--lf-texto);
+}
+
+@app.nc-lf-ativo .nc-lf-frase {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.5;
+  color: var(--lf-tinta);
+  text-wrap: pretty;
+}
+
+@app.nc-lf-ativo .nc-lf-frase b {
+  font-weight: 700;
+}
+
+@app.nc-lf-ativo .nc-lf-falta {
+  padding: 0 6px;
+  border-radius: 6px;
+  background: #fff;
+  box-shadow: inset 0 0 0 1px var(--lf-fio-forte);
+  font-weight: 600;
+  color: var(--lf-fraco);
+  white-space: nowrap;
+}
+
+@app.nc-lf-ativo .nc-lf-confere {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin: 0;
+  padding: 10px 0 0;
+  border-top: 1px solid var(--lf-fio);
+  list-style: none;
+}
+
+@app.nc-lf-ativo .nc-lf-confere li {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin: 0;
+  padding: 6px 0;
+}
+
+@app.nc-lf-ativo .nc-lf-confere li > span:last-child {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+@app.nc-lf-ativo .nc-lf-confere i {
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 600;
+  color: var(--lf-fraco);
+}
+
+@app.nc-lf-ativo .nc-lf-confere b {
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.35;
+  color: var(--lf-tinta);
+  overflow-wrap: anywhere;
+}
+
+@app.nc-lf-ativo .nc-lf-confere li.is-info .nc-lf-marca {
+  border-color: transparent;
+  background: transparent;
+  color: var(--lf-fraco);
+}
+
+@app.nc-lf-ativo .nc-lf-confere li.is-falta b {
+  font-weight: 500;
+  color: var(--lf-fraco);
+}
+
+@app.nc-lf-ativo .nc-lf-marca {
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  flex: 0 0 auto;
+  margin-top: 2px;
+  border: 1.5px solid var(--lf-fio-forte);
+  border-radius: 50%;
+  background: #fff;
+  transition: background-color .25s var(--lf-curva), border-color .25s var(--lf-curva);
+}
+
+@app.nc-lf-ativo .nc-lf-confere li.is-ok .nc-lf-marca {
+  border-color: var(--lf-ok);
+  background: var(--lf-ok);
+  color: #fff;
+}
+
+@app.nc-lf-ativo .nc-lf-marca .nc-lf-ic {
+  width: 13px;
+  height: 13px;
+  stroke-width: 3;
+}
+
+@app.nc-lf-ativo .nc-lf-pronto {
+  margin: 0;
+  padding: 9px 12px;
+  border-radius: 10px;
+  background: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--lf-texto);
+}
+
+@app.nc-lf-ativo .nc-lf-pronto.is-ok {
+  background: var(--lf-ok-claro);
+  color: var(--lf-ok);
+}
+
+@media (max-width: 1280px) {
+  @app.nc-lf-ativo .nc-lf-fgrade {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  @app.nc-lf-ativo .nc-lf-resumo {
+    position: static;
+    order: 2;
+    margin: 0 24px 24px;
+  }
+}
+
+@app.nc-lf-ativo .nc-lf-fpe {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 18px;
+  border-top: 1px solid var(--lf-fio);
+  background: #fff;
+}
+
+@app.nc-lf-ativo .nc-lf-fpe:empty {
+  display: none;
+}
+
+@app.nc-lf-ativo .nc-lf-espaco {
+  flex: 1 1 auto;
+}
+
+@app.nc-lf-ativo .nc-lf-ficha.is-ocupada .nc-lf-fcorpo {
+  opacity: .6;
+  pointer-events: none;
+}
+
+/* botões da ficha: roxo */
+@app.nc-lf-ativo .nc-lf-bt {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  height: 42px;
+  padding: 0 16px;
+  border: 1px solid var(--nc-borda-botao, color-mix(in srgb, var(--lf-roxo) 34%, #fff));
+  border-radius: 10px;
+  background: #fff;
+  font: inherit;
+  font-size: 14.5px;
+  font-weight: 600;
+  color: var(--lf-roxo);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background-color .2s var(--lf-curva), border-color .2s var(--lf-curva), color .2s var(--lf-curva);
+}
+
+@app.nc-lf-ativo .nc-lf-bt:hover {
+  background: color-mix(in srgb, var(--lf-roxo) 6%, #fff);
+}
+
+@app.nc-lf-ativo .nc-lf-bt:disabled {
+  opacity: .55;
+  cursor: progress;
+}
+
+@app.nc-lf-ativo .nc-lf-bt--forte {
+  min-width: 132px;
+  border-color: var(--lf-roxo);
+  background: var(--lf-roxo);
+  color: #fff;
+}
+
+@app.nc-lf-ativo .nc-lf-bt--forte:hover {
+  background: color-mix(in srgb, var(--lf-roxo) 86%, #000);
+}
+
+@app.nc-lf-ativo .nc-lf-bt--claro {
+  border-color: transparent;
+  background: color-mix(in srgb, var(--lf-roxo) 8%, #fff);
+}
+
+@app.nc-lf-ativo .nc-lf-bt--claro:hover {
+  background: color-mix(in srgb, var(--lf-roxo) 13%, #fff);
+}
+
+@app.nc-lf-ativo .nc-lf-bt--perigo {
+  border-color: color-mix(in srgb, var(--lf-ruim) 35%, #fff);
+  color: var(--lf-ruim);
+}
+
+@app.nc-lf-ativo .nc-lf-bt--perigo:hover {
+  background: var(--lf-ruim-claro);
+}
+
+@app.nc-lf-ativo .nc-lf-bt--icone {
+  width: 40px;
+  padding: 0;
+}
+
+@app.nc-lf-ativo :is(.nc-lf-bt, .nc-lf-novo, .nc-lf-cartao, .nc-lf-vistas button, .nc-lf-quem button, .nc-lf-sec.is-recolhe):focus-visible {
+  outline: 2px solid var(--lf-rosa);
+  outline-offset: 2px;
+}
+
+/* o grid dentro da ficha: só o formulário */
+@app.nc-lf-ativo .nc-lf-motor:not(#nc-lf-x) {
+  display: block;
+  width: auto;
+  height: auto;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  overflow: hidden;
+  overflow: clip;
+}
+
+@app.nc-lf-ativo .nc-lf-motor :is(.a-IG-header, .js-stickyWidget-placeholder, .a-RV-toolbar, .a-RV-header, .a-RV-footer, .a-GV, .a-IG-footer):not(#nc-lf-x) {
+  display: none;
+}
+
+@app.nc-lf-ativo .nc-lf-motor:not(#nc-lf-x) :is(.a-IG-body, .a-IG-contentContainer, .a-RV, .a-RV-w-scroll, .a-RV-body):not(#nc-lf-y) {
+  width: auto;
+  height: auto;
+  min-height: 0;
+  margin: 0;
+  padding: 0;
+  overflow: visible;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+@app.nc-lf-ativo .nc-lf-ficha .a-RV .u-Form:not(#nc-lf-x) {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px 16px;
+  padding: 6px 24px 28px;
+}
+
+@app.nc-lf-ativo .nc-lf-ficha .a-RV .u-Form > :not(.nc-lf-sec):not(.nc-lf-quem):not(#nc-lf-x) {
+  display: none;
+}
+
+/* a pergunta: ícone + a pergunta + a explicação */
+@app.nc-lf-ativo .nc-lf-ficha .nc-lf-sec {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  width: 100%;
+  margin: 14px 0 -2px;
+  padding: 20px 0 0;
+  border: 0;
+  border-top: 1px solid var(--lf-fio);
+  border-radius: 0;
+  background: transparent;
+  font: inherit;
+  text-align: left;
+  color: var(--lf-tinta);
+}
+
+@app.nc-lf-ativo .nc-lf-ficha .nc-lf-sec[data-sec="quem"] {
+  margin-top: 4px;
+  border-top: 0;
+}
+
+@app.nc-lf-ativo .nc-lf-ficha .nc-lf-sec-ic {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  flex: 0 0 auto;
+  border-radius: 10px;
+  background: var(--lf-fundo);
+  color: var(--lf-roxo);
+}
+
+@app.nc-lf-ativo .nc-lf-ficha .nc-lf-sec-txt {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  flex: 1 1 auto;
+  min-width: 0;
+  padding-top: 1px;
+}
+
+@app.nc-lf-ativo .nc-lf-ficha .nc-lf-sec-txt b {
+  font-size: 16.5px;
+  font-weight: 700;
+  line-height: 1.3;
+  color: var(--lf-tinta);
+}
+
+@app.nc-lf-ativo .nc-lf-ficha .nc-lf-sec-dica {
+  font-size: 13.5px;
+  line-height: 1.45;
+  color: var(--lf-texto);
+}
+
+@app.nc-lf-ativo .nc-lf-ficha .nc-lf-sec-dica:empty {
+  display: none;
+}
+
+/* "Quanto?": a explicação do evento ganha peso — é o que guia o preenchimento */
+@app.nc-lf-ativo .nc-lf-ficha .nc-lf-sec[data-sec="quanto"] .nc-lf-sec-dica {
+  font-weight: 600;
+  color: var(--lf-rosa-escuro);
+}
+
+@app.nc-lf-ativo .nc-lf-ficha .nc-lf-sec.is-recolhe {
+  cursor: pointer;
+}
+
+@app.nc-lf-ativo .nc-lf-ficha .nc-lf-sec.is-recolhe:hover .nc-lf-sec-txt b {
+  color: var(--lf-rosa-escuro);
+}
+
+@app.nc-lf-ativo .nc-lf-ficha .nc-lf-sec-seta {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  flex: 0 0 auto;
+  border-radius: 8px;
+  color: var(--lf-fraco);
+  transition: transform .25s var(--lf-curva), background-color .2s var(--lf-curva);
+}
+
+@app.nc-lf-ativo .nc-lf-ficha .nc-lf-sec.is-recolhe:hover .nc-lf-sec-seta {
+  background: var(--lf-fundo);
+}
+
+@app.nc-lf-ativo .nc-lf-ficha .nc-lf-sec[aria-expanded="true"] .nc-lf-sec-seta {
+  transform: rotate(90deg);
+}
+
+/* os campos */
+@app.nc-lf-ativo .nc-lf-ficha .a-RV .u-Form > .u-Form-fieldContainer {
+  flex-direction: column;
+  align-items: stretch;
+  align-self: start;
+  gap: 6px;
+  min-width: 0;
+  width: auto;
+  margin: 0;
+  padding: 0;
+}
+
+@app.nc-lf-ativo .nc-lf-ficha .a-RV .u-Form > .u-Form-fieldContainer .u-Form-labelContainer {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: auto;
+  padding: 0;
+  text-align: left;
+}
+
+@app.nc-lf-ativo .nc-lf-ficha .a-RV .u-Form > .u-Form-fieldContainer .u-Form-label {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 8px;
+  font-size: 14.5px;
+  font-weight: 600;
+  text-transform: none;
+  letter-spacing: 0;
+  color: var(--lf-tinta);
+}
+
+/* o selo ao lado do nome (Preencha / Não se usa…): o texto vem da folha do JS */
+@app.nc-lf-ativo .nc-lf-ficha .a-RV .u-Form > .u-Form-fieldContainer .u-Form-label::after {
+  padding: 1px 8px;
+  border-radius: 99px;
+  font-size: 11.5px;
+  font-weight: 700;
+  line-height: 1.6;
+}
+
+@app.nc-lf-ativo .nc-lf-ficha .a-RV .u-Form > .u-Form-fieldContainer .js-itemHelp {
+  display: none;
+}
+
+@app.nc-lf-ativo .nc-lf-ficha .a-RV .u-Form > .u-Form-fieldContainer .u-Form-inputContainer {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  min-height: 46px;
+  padding: 0;
+  border: 1px solid var(--lf-fio-forte);
+  border-radius: 10px;
+  background: #fff;
+  transition: border-color .25s var(--lf-curva), box-shadow .25s var(--lf-curva), opacity .25s var(--lf-curva);
+}
+
+@app.nc-lf-ativo .nc-lf-ficha .a-RV .u-Form > .u-Form-fieldContainer .u-Form-inputContainer:hover {
+  border-color: color-mix(in srgb, var(--lf-rosa) 45%, #fff);
+}
+
+/* foco: o da aba NatPonto — 2 px rosa */
+@app.nc-lf-ativo .nc-lf-ficha .a-RV .u-Form > .u-Form-fieldContainer .u-Form-inputContainer:focus-within {
+  border-color: var(--lf-rosa);
+  box-shadow: 0 0 0 1px var(--lf-rosa);
+}
+
+@app.nc-lf-ativo .nc-lf-ficha .a-RV .u-Form > .u-Form-fieldContainer.is-error .u-Form-inputContainer {
+  border-color: var(--lf-ruim);
+  box-shadow: 0 0 0 1px var(--lf-ruim);
+}
+
+@app.nc-lf-ativo .nc-lf-ficha .a-RV .u-Form > .u-Form-fieldContainer :is(.a-Form-error, .u-Form-error, .a-GV-error) {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--lf-ruim);
+}
+
+@app.nc-lf-ativo .nc-lf-ficha .a-RV .u-Form > .u-Form-fieldContainer.is-readonly .u-Form-inputContainer {
+  border-color: transparent;
+  background: var(--lf-fundo);
+  padding: 0 12px;
+  font-size: 15px;
+  color: var(--lf-texto);
+}
+
+@app.nc-lf-ativo .nc-lf-ficha .a-RV .u-Form > .u-Form-fieldContainer .a-GV-columnItem:not(#nc-lf-x) {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  min-width: 0;
+  min-height: 44px;
+}
+
+@app.nc-lf-ativo .nc-lf-ficha .a-RV .u-Form > .u-Form-fieldContainer :is(select, input[type="text"], textarea):not(#nc-lf-x) {
+  flex: 1 1 auto;
+  width: 100%;
+  min-width: 0;
+  height: 44px;
+  min-height: 44px;
+  margin: 0;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 10px;
+  outline: 0;
+  box-shadow: none;
+  background-color: transparent;
+  font: inherit;
+  font-size: 15px;
+  color: var(--lf-tinta);
+  caret-color: var(--lf-rosa);
+}
+
+@app.nc-lf-ativo .nc-lf-ficha .a-RV .u-Form > .u-Form-fieldContainer textarea:not(#nc-lf-x) {
+  height: 88px;
+  padding: 10px 12px;
+  line-height: 1.45;
+  resize: vertical;
+}
+
+@app.nc-lf-ativo .nc-lf-ficha .a-RV .u-Form > .u-Form-fieldContainer ::placeholder {
+  color: #8C8699;
+  opacity: 1;
+}
+
+@app.nc-lf-ativo .nc-lf-ficha .a-RV .u-Form > .u-Form-fieldContainer select:not(#nc-lf-x) {
+  appearance: none;
+  padding-right: 38px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2377707f' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m7 15 5 5 5-5'/%3E%3Cpath d='m7 9 5-5 5 5'/%3E%3C/svg%3E");
+  background-position: calc(100% - 12px) 50%;
+  background-size: 16px 16px;
+  background-repeat: no-repeat;
+  cursor: pointer;
+}
+
+/* a lista que abre (evento, colaboradores, mês): o botão dentro do campo, à direita */
+@app.nc-lf-ativo .nc-lf-ficha .a-RV .u-Form > .u-Form-fieldContainer .apex-item-group--popup-lov {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  min-width: 0;
+}
+
+@app.nc-lf-ativo .nc-lf-ficha .a-RV .u-Form > .u-Form-fieldContainer :is(.a-Button--popupLOV, .ui-datepicker-trigger):not(#nc-lf-x) {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  margin: 0 3px 0 0;
+  padding: 0;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  box-shadow: none;
+  color: var(--lf-roxo);
+}
+
+@app.nc-lf-ativo .nc-lf-ficha .a-RV .u-Form > .u-Form-fieldContainer :is(.a-Button--popupLOV, .ui-datepicker-trigger):hover {
+  background: color-mix(in srgb, var(--lf-roxo) 8%, #fff);
+}
+
+/* colaboradores escolhidos: etiquetas rosa */
+@app.nc-lf-ativo .nc-lf-ficha .a-RV .u-Form > .u-Form-fieldContainer .apex-item-multi {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+  padding: 6px 8px;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+@app.nc-lf-ativo .nc-lf-ficha .a-RV .u-Form > .u-Form-fieldContainer .apex-item-multi-item:not(:last-child) {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin: 0;
+  padding: 3px 6px 3px 10px;
+  border: 0;
+  border-radius: 99px;
+  background: var(--lf-rosa-claro);
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--lf-rosa-escuro);
+}
+
+@app.nc-lf-ativo .nc-lf-ficha .a-RV .u-Form > .u-Form-fieldContainer .apex-item-multi-item:last-child {
+  flex: 1 1 140px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+@app.nc-lf-ativo .nc-lf-ficha .a-RV .u-Form > .u-Form-fieldContainer .apex-item-multi-item:last-child input {
+  height: 32px;
+  min-height: 32px;
+  padding: 0 4px;
+}
+
+@app.nc-lf-ativo .nc-lf-ficha .nc-lf-dica {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.4;
+  color: var(--lf-fraco);
+}
+
+@app.nc-lf-ativo .nc-lf-ficha .u-Form > .is-readonly .nc-lf-dica {
+  display: none;
+}
+
+/* ═══ [F6] "PARA QUEM?" E OS AVISOS DO "QUANTO?" ═══════════════════════════════════════════ */
+@app.nc-lf-ativo .nc-lf-ficha .nc-lf-quem {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+@app.nc-lf-ativo .nc-lf-ficha .nc-lf-quem-perg {
+  margin: 0;
+  font-size: 14.5px;
+  font-weight: 600;
+  color: var(--lf-tinta);
+}
+
+@app.nc-lf-ativo .nc-lf-ficha .nc-lf-quem-ops {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+@app.nc-lf-ativo .nc-lf-ficha .nc-lf-quem-ops button {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  min-height: 64px;
+  padding: 12px 14px;
+  border: 1px solid var(--lf-fio-forte);
+  border-radius: 12px;
+  background: #fff;
+  font: inherit;
+  text-align: left;
+  color: var(--lf-tinta);
+  cursor: pointer;
+  transition: border-color .25s var(--lf-curva), background-color .25s var(--lf-curva), box-shadow .25s var(--lf-curva);
+}
+
+@app.nc-lf-ativo .nc-lf-ficha .nc-lf-quem-ops button > .nc-lf-ic {
+  width: 22px;
+  height: 22px;
+  margin-top: 1px;
+  color: var(--lf-fraco);
+}
+
+@app.nc-lf-ativo .nc-lf-ficha .nc-lf-quem-ops button > span {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+@app.nc-lf-ativo .nc-lf-ficha .nc-lf-quem-ops b {
+  font-size: 14.5px;
+  font-weight: 700;
+}
+
+@app.nc-lf-ativo .nc-lf-ficha .nc-lf-quem-ops button > span > span {
+  font-size: 12.5px;
+  line-height: 1.35;
+  color: var(--lf-texto);
+}
+
+@app.nc-lf-ativo .nc-lf-ficha .nc-lf-quem-ops button:hover {
+  border-color: color-mix(in srgb, var(--lf-rosa) 45%, #fff);
+}
+
+/* a escolhida: rosa */
+@app.nc-lf-ativo .nc-lf-ficha .nc-lf-quem-ops button[aria-checked="true"] {
+  border-color: var(--lf-rosa);
+  background: var(--lf-rosa-claro);
+  box-shadow: 0 0 0 1px var(--lf-rosa);
+}
+
+@app.nc-lf-ativo .nc-lf-ficha .nc-lf-quem-ops button[aria-checked="true"] > .nc-lf-ic {
+  color: var(--lf-rosa-escuro);
+}
+
+/* "Todos da pesquisa" escolhido: o alcance fica escrito */
+@app.nc-lf-ativo .nc-lf-ficha[data-quem="todos"] .nc-lf-quem::after {
+  content: "Vale para todos os colaboradores que a pesquisa trouxe na tela anterior.";
+  padding: 9px 12px;
+  border-radius: 10px;
+  background: var(--lf-aviso-claro);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--lf-aviso);
+}
+
+/* ═══ [F7] CONVITE, SALVO, AVISO E ESPERA ══════════════════════════════════════════════════ */
+@app.nc-lf-ativo .nc-lf-fmsg:empty {
+  display: none;
+}
+
+@app.nc-lf-ativo .nc-lf-convite {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  max-width: 440px;
+  margin: 0 auto;
+  padding: 72px 24px;
+  text-align: center;
+}
+
+@app.nc-lf-ativo .nc-lf-convite > .nc-lf-ic {
+  width: 44px;
+  height: 44px;
+  color: var(--lf-rosa);
+  stroke-width: 1.4;
+}
+
+@app.nc-lf-ativo .nc-lf-convite h3 {
+  margin: 4px 0 0;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--lf-tinta);
+}
+
+@app.nc-lf-ativo .nc-lf-convite p {
+  margin: 0 0 8px;
+  font-size: 14.5px;
+  line-height: 1.5;
+  color: var(--lf-texto);
+}
+
+@app.nc-lf-ativo .nc-lf-ok {
+  display: grid;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: var(--lf-ok-claro);
+  color: var(--lf-ok);
+  animation: nc-lf-ok .5s cubic-bezier(.2, .9, .3, 1.25) both;
+}
+
+@app.nc-lf-ativo .nc-lf-ok .nc-lf-ic {
+  width: 28px;
+  height: 28px;
+  stroke-width: 2.4;
+}
+
+@keyframes nc-lf-ok {
+  from { transform: scale(.6); }
+}
+
+@app.nc-lf-ativo .nc-lf-aviso {
+  position: fixed;
+  left: 50%;
+  bottom: calc(var(--lf-pe, 66px) + 16px);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  max-width: min(520px, calc(100vw - 32px));
+  padding: 12px 18px;
+  border-radius: 12px;
+  background: var(--lf-tinta);
+  font-size: 14.5px;
+  font-weight: 600;
+  color: #fff;
+  box-shadow: 0 12px 32px -12px rgba(27, 18, 56, .5);
+  transform: translate(-50%, 12px);
+  opacity: 0;
+  pointer-events: none;
+  transition: transform .3s var(--lf-curva), opacity .3s var(--lf-curva);
+}
+
+@app.nc-lf-ativo .nc-lf-aviso.is-visivel {
+  transform: translate(-50%, 0);
+  opacity: 1;
+}
+
+@app.nc-lf-ativo .nc-lf-aviso .nc-lf-ic {
+  color: #8EE0B5;
+}
+
+@app.nc-lf-ativo .nc-lf-aviso.is-erro {
+  background: var(--lf-ruim);
+}
+
+@app.nc-lf-ativo .nc-lf-aviso.is-erro .nc-lf-ic {
+  color: #fff;
+}
+
+/* processando: cobre a janela com o aviso de espera */
+@app.nc-lf-ativo .nc-lf-espera {
+  position: fixed;
+  inset: 0;
+  z-index: 1001;
+  display: none;
+  place-items: center;
+  background: rgba(247, 245, 251, .86);
+  backdrop-filter: blur(3px);
+}
+
+@app.nc-lf-ativo .nc-lf-espera.is-visivel {
+  display: grid;
+}
+
+@app.nc-lf-ativo .nc-lf-espera-caixa {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  max-width: 380px;
+  padding: 32px 36px;
+  border: 1px solid var(--lf-fio);
+  border-radius: 18px;
+  background: #fff;
+  text-align: center;
+  box-shadow: 0 24px 60px -28px rgba(27, 18, 56, .45);
+}
+
+@app.nc-lf-ativo .nc-lf-espera-caixa h3 {
+  margin: 8px 0 0;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--lf-tinta);
+}
+
+@app.nc-lf-ativo .nc-lf-espera-caixa p {
+  margin: 0;
+  font-size: 14px;
+  color: var(--lf-texto);
+}
+
+@app.nc-lf-ativo .nc-lf-roda {
+  width: 40px;
+  height: 40px;
+  border: 3px solid var(--lf-rosa-claro);
+  border-top-color: var(--lf-rosa);
+  border-radius: 50%;
+  animation: nc-lf-gira .9s linear infinite;
+}
+
+@keyframes nc-lf-gira {
+  to { transform: rotate(360deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  @app.nc-lf-ativo .nc-lf-roda {
+    animation-duration: 2.4s;
+  }
+
+  @app.nc-lf-ativo :is(.nc-lf-ok, .nc-lf-aviso) {
+    animation: none;
+    transition: none;
+  }
+}
+
+/* ═══ [F8] O PÉ DA JANELA ══════════════════════════════════════════════════════════════════
+   Os botões e as caixas são os da página. Aqui: Sair à esquerda; as caixas com explicação no
+   meio; a frase do que falta e o Processar à direita.
+   ════════════════════════════════════════════════════════════════════════════════════════ */
+@app.nc-lf-ativo .t-Dialog-footer {
+  padding: 10px 88px 10px 20px;          /* 88: o balão de ajuda do portal, no canto */
+  border-top: 1px solid var(--lf-fio);
+  background: #fff;
+}
+
+@app.nc-lf-ativo .nc-lf-pe .t-ButtonRegion-wrap {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 0;
+}
+
+@app.nc-lf-ativo .nc-lf-pe .t-ButtonRegion-col--left,
+@app.nc-lf-ativo .nc-lf-pe .t-ButtonRegion-col--right {
+  flex: 0 0 auto;
+  width: auto;
+  padding: 0;
+}
+
+@app.nc-lf-ativo .nc-lf-pe :is(.t-ButtonRegion-col--left, .t-ButtonRegion-col--right) .t-ButtonRegion-buttons {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: auto;
+  padding: 0;
+}
+
+@app.nc-lf-ativo .nc-lf-pe .t-ButtonRegion-col--content > .t-ButtonRegion-buttons:empty {
+  display: none;
+}
+
+@app.nc-lf-ativo .nc-lf-pe .t-ButtonRegion-col--content .t-Form-inputContainer,
+@app.nc-lf-ativo .nc-lf-pe .t-ButtonRegion-col--content .t-Form-itemWrapper {
+  padding: 0;
+}
+
+@app.nc-lf-ativo .nc-lf-pe .t-ButtonRegion-col--content {
+  display: flex;
+  flex: 1 1 auto;
+  align-items: center;
+  gap: 18px;
+  min-width: 0;
+}
+
+@app.nc-lf-ativo .nc-lf-pe .t-Button {
+  height: 44px;
+  padding: 0 18px;
+  border-radius: 10px;
+  font-size: 14.5px;
+  font-weight: 600;
+}
+
+@app.nc-lf-ativo .nc-lf-pe .t-Button--hot {
+  min-width: 200px;
+}
+
+@app.nc-lf-ativo .nc-lf-pe .t-Button--hot:is(:disabled, .apex_disabled),
+@app.nc-lf-ativo .nc-lf-pe .t-Button--hot:is(:disabled, .apex_disabled) .t-Button-label {
+  border-color: var(--lf-fio-forte);
+  background: var(--lf-fundo);
+  color: #8C8699;
+  opacity: 1;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+@app.nc-lf-ativo .nc-lf-pe .t-Button--hot:is(:disabled, .apex_disabled) .t-Button-label {
+  border: 0;
+  background: transparent;
+}
+
+@app.nc-lf-ativo .nc-lf-pe-msg {
+  margin: 0;
+  max-width: 340px;
+  font-size: 13.5px;
+  line-height: 1.35;
+  text-align: right;
+  color: var(--lf-texto);
+}
+
+@app.nc-lf-ativo .nc-lf-pe-msg.is-aviso {
+  font-weight: 600;
+  color: var(--lf-aviso);
+}
+
+@app.nc-lf-ativo .nc-lf-pe-msg.is-ok {
+  font-weight: 600;
+  color: var(--lf-ok);
+}
+
+/* as caixas Incluir desligados / transferidos */
+@app.nc-lf-ativo .nc-lf-pe .nc-lf-caixa {
+  margin: 0;
+  padding: 0;
+}
+
+@app.nc-lf-ativo .nc-lf-pe .nc-lf-caixa .t-Form-labelContainer {
+  display: none;
+}
+
+@app.nc-lf-ativo .nc-lf-pe .nc-lf-caixa .apex-item-option {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+}
+
+@app.nc-lf-ativo .nc-lf-pe .nc-lf-caixa .apex-item-option input {
+  position: static;
+  flex: 0 0 auto;
+  margin: 2px 0 0;
+}
+
+@app.nc-lf-ativo .nc-lf-pe .nc-lf-caixa .apex-item-option label {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1px;
+  width: auto;
+  text-align: left;
+  margin: 0;
+  padding: 0;
+  font-size: 14px;
+  line-height: 1.3;
+  color: var(--lf-tinta);
+}
+
+@app.nc-lf-ativo .nc-lf-pe .nc-lf-caixa .apex-item-option label b {
+  font-weight: 600;
+}
+
+@app.nc-lf-ativo .nc-lf-pe .nc-lf-caixa-d {
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--lf-fraco);
+}
+
+@app.nc-lf-ativo .nc-lf-pe .nc-lf-caixa input:disabled + label {
+  opacity: .55;
+}
+
+@app.nc-lf-ativo .nc-lf-pe .t-ButtonRegion-title {
+  display: none;
+}
+
+/* ═══ [F9] O RESULTADO DO PROCESSAMENTO (LOG) ═════════════════════════════════════════════ */
+@app.nc-lf-com-log .nc-lf-pe-msg {
+  display: none;
+}
+
+@app.nc-lf-ativo .nc-lf-log {
+  margin: 0;
+  padding: 20px 22px;
+  border: 1px solid color-mix(in srgb, var(--lf-ruim) 22%, #fff);
+  border-radius: var(--lf-raio);
+  background: #fff;
+  box-shadow: var(--lf-sombra);
+}
+
+@app.nc-lf-ativo .nc-lf-log > .t-Region-header {
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+
+@app.nc-lf-ativo .nc-lf-log > .t-Region-header .t-Region-title {
+  font-size: 19px;
+  font-weight: 700;
+  color: var(--lf-ruim);
+}
+
+@app.nc-lf-ativo .nc-lf-log-exp {
+  margin: 6px 0 14px;
+  max-width: 70ch;
+  font-size: 14.5px;
+  line-height: 1.5;
+  color: var(--lf-texto);
+}
+
+@app.nc-lf-ativo .nc-lf-log .t-Report-report th {
+  padding: 10px 12px;
+  background: var(--lf-fundo);
+  font-size: 12.5px;
+  font-weight: 700;
+  text-transform: none;
+  color: var(--lf-texto);
+}
+
+@app.nc-lf-ativo .nc-lf-log .t-Report-report td {
+  padding: 12px;
+  font-size: 14px;
+  line-height: 1.4;
+  vertical-align: top;
+  color: var(--lf-tinta);
+}
+
+/* o motivo quebra linha (a página o escreve num <nobr>) */
+@app.nc-lf-ativo .nc-lf-log .t-Report-report td nobr {
+  white-space: normal;
+}
+
+@app.nc-lf-ativo .nc-lf-log .t-Report-report td[headers="ERRO"] {
+  min-width: 320px;
+  font-weight: 600;
+  color: var(--lf-ruim);
+}
+
+/* ═══ [F10] TABELA (A GRADE ORIGINAL) ═══════════════════════════════════════════════════════ */
+@app.nc-lf-ativo.nc-lf-tabela #IGOCORR {
+  border: 1px solid var(--lf-fio);
+  border-radius: var(--lf-raio);
+  overflow: hidden;
+}
+
+/* o título da região repete o que o alto já diz */
+@app.nc-lf-ativo.nc-lf-tabela #IGOCORR > .t-Region-header {
+  display: none;
+}
+
+@app.nc-lf-ativo.nc-lf-tabela .nc-lf-topo .nc-lf-passos {
+  display: none;
+}
+
+/* a chave Ficha | Tabela fica no alto, à direita (não muda de lugar entre os dois modos) */
+@app.nc-lf-ativo .nc-lf-topo .nc-lf-vistas {
+  flex: 0 0 auto;
+  margin-left: auto;
+}
+
+/* ═══ [F11] CELULAR ═════════════════════════════════════════════════════════════════════════
+   A lista ocupa a tela; tocar num cartão abre a ficha por cima, em tela cheia, com "voltar".
+   ════════════════════════════════════════════════════════════════════════════════════════ */
+@media (max-width: 1100px) {
+  @app.nc-lf-ativo .nc-lf-passo-txt span {
+    display: none;
+  }
+
+  @app.nc-lf-ativo .nc-lf-passo {
+    flex: 0 0 auto;
+    align-items: center;
+  }
+}
+
+@media (max-width: 760px) {
+  @app.nc-lf-ativo:not(.nc-lf-tabela):not(.nc-lf-com-log) .t-Dialog-bodyWrapperIn {
+    overflow: auto;
+  }
+
+  @app.nc-lf-ativo .t-Dialog-body {
+    padding: 12px 12px 10px;
+  }
+
+  @app.nc-lf-ativo .nc-lf {
+    height: auto;
+    min-height: 0;
+  }
+
+  @app.nc-lf-ativo .nc-lf-topo {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+    padding: 14px;
+  }
+
+  @app.nc-lf-ativo .nc-lf-passos {
+    justify-content: space-between;
+  }
+
+  @app.nc-lf-ativo .nc-lf-passo {
+    padding: 6px 8px;
+  }
+
+  @app.nc-lf-ativo .nc-lf-area {
+    display: block;
+  }
+
+  @app.nc-lf-ativo .nc-lf-lista {
+    overflow: visible;
+    padding: 0;
+  }
+
+  @app.nc-lf-ativo .nc-lf-ficha {
+    display: none;
+  }
+
+  @app.nc-lf-ativo.nc-lf-ficha-aberta .nc-lf-ficha {
+    position: fixed;
+    inset: 0;
+    z-index: 950;
+    display: flex;
+    border: 0;
+    border-radius: 0;
+    animation: nc-lf-sobe .25s cubic-bezier(.2, .8, .2, 1) both;
+  }
+
+  @keyframes nc-lf-sobe {
+    from { transform: translateY(24px); }
+  }
+
+  @app.nc-lf-ativo .nc-lf-fvolta {
+    display: inline-flex;
+  }
+
+  @app.nc-lf-ativo .nc-lf-fcab {
+    padding: 10px 12px;
+  }
+
+  @app.nc-lf-ativo .nc-lf-ficha .a-RV .u-Form:not(#nc-lf-x) {
+    grid-template-columns: minmax(0, 1fr);
+    padding: 4px 16px 24px;
+  }
+
+  @app.nc-lf-ativo .nc-lf-ficha .a-RV .u-Form > .u-Form-fieldContainer:not(#nc-lf-x):not(#nc-lf-y):not(#nc-lf-z) {
+    grid-column: 1 / -1;
+  }
+
+  @app.nc-lf-ativo .nc-lf-ficha .nc-lf-quem-ops {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  @app.nc-lf-ativo .nc-lf-fpe {
+    flex-wrap: wrap;
+    padding: 10px 76px calc(10px + env(safe-area-inset-bottom, 0px)) 12px;   /* 76: o balão de ajuda do portal */
+  }
+
+  @app.nc-lf-ativo .nc-lf-fpe [data-fsalvar=""] {
+    flex: 1 1 100%;
+    order: -1;
+  }
+
+  @app.nc-lf-ativo .nc-lf-fpe .nc-lf-espaco {
+    display: none;
+  }
+
+  @app.nc-lf-ativo .nc-lf-fpe .nc-lf-bt:not([data-fsalvar=""]) {
+    flex: 1 1 auto;
+  }
+
+  @app.nc-lf-ativo .nc-lf-pe .t-ButtonRegion-wrap,
+  @app.nc-lf-ativo .nc-lf-pe .t-ButtonRegion-col--content {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  @app.nc-lf-ativo .nc-lf-pe-msg {
+    flex: 1 1 100%;
+    max-width: none;
+    text-align: left;
+  }
+}

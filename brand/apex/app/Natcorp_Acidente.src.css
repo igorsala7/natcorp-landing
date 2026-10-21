@@ -2921,6 +2921,12 @@
   overflow: hidden;
 }
 
+/* com a Grade padrão (Natcorp_Grade, em todo grid desde 19/10) a lista é preenchida pela gaveta dela,
+   não "na própria tabela": o aviso de como preencher sai */
+@app.nc-aci-analise .nc-gr-on .nc-aci-grade-como {
+  display: none;
+}
+
 @app.nc-aci-analise .nc-aci-grade-como {
   display: flex;
   align-items: flex-start;

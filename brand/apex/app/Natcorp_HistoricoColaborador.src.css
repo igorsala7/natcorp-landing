@@ -767,6 +767,29 @@
   gap: 8px;
 }
 
+/* CABEÇALHO E RODAPÉ GRUDENTOS DO APEX, DESLIGADOS (19/10, "no Windows a linha do tempo e as
+   tabelas se misturam"). As grades e os relatórios prendem o cabeçalho e o rodapé na JANELA
+   (position: fixed), mas nesta janela quem rola é a caixa de dentro (.t-Dialog-bodyWrapperIn):
+   o rodapé da grade ("9 Total") ficava em cima do Salvar e o cabeçalho flutuava sobre o
+   conteúdo ao rolar — pior em tela baixa (notebook Windows). Aqui eles rolam com a tabela; o
+   espaço reservado (placeholder) some junto, senão sobra um buraco. */
+@app.nc-hc-ativo .nc-hc-abas .js-stickyWidget-toggle:not(#nc-hc-x) {
+  position: relative;
+  top: auto;
+  bottom: auto;
+  z-index: auto;
+}
+
+@app.nc-hc-ativo .nc-hc-abas .js-stickyWidget-placeholder:not(#nc-hc-x) {
+  display: none;
+}
+
+/* Doenças sem "Adicionar" também na Grade padrão (decisão de 04/10) */
+@app.nc-hc-ativo .nc-hc-sem-novo [data-gr-novo]:not(#nc-hc-x) {
+  display: none;
+}
+
+
 /* em "Tabelas" as grades são só para consultar: lançar e corrigir é na gaveta */
 @app.nc-hc-ativo .nc-hc-abas .a-IG-header :is([data-action="edit"], [data-action="save"], [data-action="selection-add-row"]):not(#nc-hc-x) {
   display: none;

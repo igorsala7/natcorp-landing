@@ -1493,6 +1493,12 @@
   box-shadow: none;
 }
 
+/* com a Grade padrão (Natcorp_Grade, em todo grid desde 19/10) a linha é preenchida pela gaveta
+   dela, não "na própria tabela": o aviso de como preencher sai */
+@app.nc-ben.nc-gr-ativo .nc-ben-grade-como {
+  display: none;
+}
+
 @app.nc-ben .nc-ben-grade-como {
   display: flex;
   align-items: flex-start;

@@ -1,0 +1,521 @@
+/* ╔════════════════════════════════════════════════════════════════════════════════════════╗
+   ║  NATCORP · LANÇAMENTOS DE OCORRÊNCIAS — duas colunas (CSS)                                ║
+   ║  App 9132 · Página 5                                                                      ║
+   ╚════════════════════════════════════════════════════════════════════════════════════════╝
+   Os grupos de filtros, as faixas De/Até, o pé e o contador vêm do Natcorp_HistFiltros.css (o mesmo
+   da 200:21). Aqui: a grade de duas colunas, os cartões do processo, o passo a passo, o cabeçalho
+   dos lançamentos e o recolhimento no celular. O que se ESCOLHE é rosa; os botões seguem no roxo.
+
+   ÍNDICE
+     [K1] As duas colunas ...................................................... PODE MEXER
+     [K2] Os cartões do processo ............................................... PODE MEXER
+     [K3] O passo a passo
+     [K4] Os lançamentos (região BLOCO)
+     [K5] Celular
+   ════════════════════════════════════════════════════════════════════════════════════════ */
+
+/* ═══ [K1] AS DUAS COLUNAS ════════════════════════════════════════════════════════════════
+   Filtros com 330 px à esquerda (presos no alto enquanto se rola, com rolagem própria) e os
+   lançamentos no resto. A coluna da esquerda nunca empurra os lançamentos para baixo.
+   ════════════════════════════════════════════════════════════════════════════════════════ */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-lc {
+  --lc-rosa: var(--nc-rosa, #C95788);
+  --lc-rosa-escuro: color-mix(in srgb, var(--nc-rosa, #C95788) 62%, #2A0A1A);
+  --lc-tinta: var(--nc-tinta, #1B1238);
+  --lc-texto: var(--nc-grafite, #4A4460);
+  --lc-fio: var(--nc-nevoa, #E9E5F1);
+  display: grid !important;
+  grid-template-columns: 330px minmax(0, 1fr) !important;
+  align-items: start !important;
+  gap: 16px !important;
+  margin: 0 0 16px !important;
+}
+
+/* UMA ROLAGEM SÓ (09/10): o tema põe overflow:hidden em t-Body, t-Body-main, t-Body-content e no
+   .container — isso impede o "preso no rodapé" e, dentro da moldura, a coluna precisava rolar por
+   dentro (duas rolagens: o topo dos filtros sumia). overflow:clip corta igual, mas NÃO vira um
+   contêiner de rolagem: a página rola e o pé (resumo + Pesquisar) fica preso no rodapé da tela.
+   Esta folha só entra na 9132:5. */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) :is(.t-Body, .t-Body-main, .t-Body-content, .t-Body-contentInner > .container) {
+  overflow: clip !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-lc-filtros {
+  min-width: 0 !important;
+  border-radius: 14px !important;
+}
+
+/* a moldura punha rolagem no corpo da região (scrollBody): tirada, quem rola é a coluna */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) #PSQ1 > .t-Region-bodyWrap > .t-Region-body {
+  overflow: visible !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-lc-filtros > .t-Region {
+  margin: 0 !important;
+}
+
+/* a região dos filtros: o corpo com respiro; as sub-regiões vazias (sobraram só itens escondidos) saem */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) #PSQ1 > .t-Region-bodyWrap > .t-Region-body {
+  padding: 4px 14px 14px !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) #PSQ1 .nc-lc-casca,
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-lc-vazia {
+  display: none !important;                       /* só some da vista: os campos escondidos lá dentro continuam indo no envio */
+}
+
+/* este app usa RÓTULO FLUTUANTE (o nome dentro do campo): nas faixas "De / Até" o rótulo continua
+   dentro do campo — sem a coluna de 34 px que a 200:21 (rótulo em cima) usa */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) #PSQ1 .nc-hf-faixa .t-Form-fieldContainer--floatingLabel {
+  display: block !important;
+  margin: 0 0 8px !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) #PSQ1 .nc-hf-corpo .t-Form-fieldContainer--floatingLabel {
+  width: 100% !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) #PSQ1 .t-Region :is(.t-Region-header) {
+  display: none !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) #PSQ1 .t-Region .t-Region-body {
+  padding: 0 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) #PSQ1 .t-Region {
+  margin: 0 !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  background: transparent !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-lc-principal {
+  min-width: 0 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-lc-principal > .t-Region {
+  margin-top: 0 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-lc-vis {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  overflow: hidden !important;
+  clip: rect(0 0 0 0) !important;
+  white-space: nowrap !important;
+}
+
+/* o Pesquisar é a ação principal da coluna: roxo cheio (a página o trazia "simple", só contornado) */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) #PSQ1 .nc-hf-pe .t-Button {
+  border-color: var(--nc-roxo, #511C76) !important;
+  background: var(--nc-roxo, #511C76) !important;
+  color: #fff !important;
+  font-weight: 650 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) #PSQ1 .nc-hf-pe .t-Button:hover {
+  background: var(--nc-roxo-hover, #2C1A63) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) #PSQ1 .nc-hf-pe .t-Button .t-Icon {
+  color: #fff !important;
+}
+
+/* ═══ [K2] OS CARTÕES DO PROCESSO ═════════════════════════════════════════════════════════
+   Uma lista de escolha única: o escolhido fica ROSA com o visto (o padrão dos itens marcados).
+   "Todos os processos" é só consulta: aparece separado, embaixo.
+   ════════════════════════════════════════════════════════════════════════════════════════ */
+/* duas colunas: os 6 processos de lançar em 3 linhas, e "Todos os processos" na linha inteira embaixo */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-lc-proc-lista {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 6px !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-lc-proc {
+  display: grid !important;
+  grid-template-columns: 20px minmax(0, 1fr) !important;
+  align-items: center !important;
+  gap: 10px !important;
+  width: 100% !important;
+  min-height: 56px !important;
+  margin: 0 !important;
+  padding: 8px 10px !important;
+  border: 1px solid var(--nc-borda-botao, #CBBBD9) !important;
+  border-radius: 12px !important;
+  background: #fff !important;
+  box-shadow: none !important;
+  font: inherit !important;
+  text-align: left !important;
+  color: var(--lc-tinta) !important;
+  cursor: pointer !important;
+  transition: background-color .25s cubic-bezier(.4, 0, .2, 1), border-color .25s cubic-bezier(.4, 0, .2, 1), color .25s cubic-bezier(.4, 0, .2, 1), box-shadow .25s cubic-bezier(.4, 0, .2, 1) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-lc-proc:hover {
+  border-color: color-mix(in srgb, var(--lc-rosa) 70%, #fff) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-lc-proc:focus-visible {
+  outline: 2px solid var(--lc-rosa) !important;
+  outline-offset: 2px !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-lc-proc > span {
+  display: grid !important;
+  gap: 1px !important;
+  min-width: 0 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-lc-proc b {
+  font-size: 13px !important;
+  font-weight: 650 !important;
+  line-height: 1.25 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-lc-proc small {
+  font-size: 11.5px !important;
+  line-height: 1.3 !important;
+  color: var(--lc-texto) !important;
+}
+
+/* a bolinha do rádio, com o visto quando escolhido */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-lc-proc > i {
+  display: grid !important;
+  place-items: center !important;
+  width: 20px !important;
+  height: 20px !important;
+  border: 1.5px solid #9A8FB0 !important;
+  border-radius: 50% !important;
+  background: #fff !important;
+  color: var(--lc-rosa) !important;
+  transition: border-color .25s, background-color .25s !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-lc-proc > i svg {
+  width: 12px !important;
+  height: 12px !important;
+  opacity: 0 !important;
+  transform: scale(.6) !important;
+  transition: opacity .2s, transform .25s cubic-bezier(.16, 1, .3, 1) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-lc-proc[aria-checked="true"] {
+  border-color: var(--lc-rosa) !important;
+  background: var(--lc-rosa) !important;
+  color: #fff !important;
+  box-shadow: 0 6px 14px -8px rgba(var(--nc-t-rosa-rgb, 201, 87, 136), .8) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-lc-proc[aria-checked="true"] small {
+  color: rgba(255, 255, 255, .88) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-lc-proc[aria-checked="true"] > i {
+  border-color: #fff !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-lc-proc[aria-checked="true"] > i svg {
+  opacity: 1 !important;
+  transform: none !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-lc-proc.is-consulta {
+  grid-column: 1 / -1 !important;
+  min-height: 48px !important;
+  margin-top: 4px !important;
+  border-style: dashed !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-lc-proc.is-consulta[aria-checked="true"] {
+  border-style: solid !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-lc-erro {
+  margin: 0 0 8px !important;
+  padding: 8px 10px !important;
+  border-radius: 8px !important;
+  background: #FDECEA !important;
+  font-size: 12.5px !important;
+  color: #B42318 !important;
+}
+
+/* ═══ [K3] O PASSO A PASSO (antes de pesquisar) ═══════════════════════════════════════════ */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-lc-guia {
+  padding: 28px 28px 30px !important;
+  border: 1px solid #E6E0EE !important;
+  border-radius: 14px !important;
+  background: linear-gradient(180deg, #FCFAFE 0%, #FFFFFF 60%) !important;
+  box-shadow: 0 1px 2px rgba(27, 18, 56, .05), 0 14px 32px -20px rgba(27, 18, 56, .28) !important;
+  color: var(--lc-tinta) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-lc-guia h2 {
+  margin: 0 0 6px !important;
+  font-size: 20px !important;
+  font-weight: 750 !important;
+  letter-spacing: -.01em !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-lc-guia-sub {
+  max-width: 62ch !important;
+  margin: 0 0 22px !important;
+  font-size: 14px !important;
+  line-height: 1.5 !important;
+  color: var(--lc-texto) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-lc-passos {
+  display: grid !important;
+  gap: 10px !important;
+  max-width: 560px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  list-style: none !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-lc-passos li {
+  display: grid !important;
+  grid-template-columns: 34px minmax(0, 1fr) !important;
+  align-items: center !important;
+  gap: 12px !important;
+  padding: 12px 14px !important;
+  border: 1px solid var(--lc-fio) !important;
+  border-radius: 12px !important;
+  background: #fff !important;
+  transition: border-color .25s, box-shadow .25s !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-lc-passos li > span:nth-child(2) {
+  display: grid !important;
+  gap: 2px !important;
+  min-width: 0 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-lc-passos b {
+  font-size: 14px !important;
+  font-weight: 650 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-lc-passos small {
+  font-size: 12.5px !important;
+  color: var(--lc-texto) !important;
+  overflow-wrap: anywhere !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-lc-marca {
+  display: grid !important;
+  place-items: center !important;
+  width: 34px !important;
+  height: 34px !important;
+  border-radius: 50% !important;
+  background: #F2EEF7 !important;
+  font-size: 14px !important;
+  font-weight: 700 !important;
+  color: var(--lc-texto) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-lc-marca svg {
+  width: 16px !important;
+  height: 16px !important;
+}
+
+/* o passo da vez: borda rosa (o campo "selecionado" do NatPonto) */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-lc-passos li.is-agora {
+  border-color: var(--lc-rosa) !important;
+  box-shadow: 0 0 0 1px var(--lc-rosa) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-lc-passos li.is-agora .nc-lc-marca {
+  background: var(--lc-rosa) !important;
+  color: #fff !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-lc-passos li.is-feito .nc-lc-marca {
+  background: #E6F4EC !important;
+  color: #17643F !important;
+}
+
+/* ═══ [K4] OS LANÇAMENTOS (região BLOCO) ══════════════════════════════════════════════════
+   O título é o processo escolhido; os botões Inserir · Alterar | Excluir · Calcular Folha ficam
+   no cabeçalho, grandes e juntos.
+   ════════════════════════════════════════════════════════════════════════════════════════ */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) #BLOCO {
+  border: 1px solid #E6E0EE !important;
+  border-radius: 14px !important;
+  background: #fff !important;
+  box-shadow: 0 1px 2px rgba(27, 18, 56, .05), 0 14px 32px -20px rgba(27, 18, 56, .28) !important;
+  overflow: hidden !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) #BLOCO > .t-Region-header {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  align-items: center !important;
+  gap: 10px 16px !important;
+  padding: 14px 18px !important;
+  border-bottom: 1px solid var(--lc-fio) !important;
+  background: linear-gradient(180deg, #FCFAFE 0%, #FFFFFF 100%) !important;
+}
+
+/* O CABEÇALHO EM TELAS MENORES (09/10): o título não tinha largura mínima — os botões grandes
+   tomavam o espaço e o título quebrava no meio da palavra ("rescis / ão"), com a etiqueta espremida
+   em quatro linhas. Agora: o título reserva a largura dele (mín. 260 px) e nunca parte palavra; a etiqueta
+   (empresa · mês) mora EMBAIXO do título, como selo; sem espaço para os dois, os botões descem para
+   a linha de baixo, ocupando a largura toda. */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) #BLOCO > .t-Region-header > .t-Region-headerItems--title:not(#nc-lc-x) {
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+  flex: 1 1 auto !important;                 /* reserva a largura real do título + etiqueta */
+  min-width: min(100%, 260px) !important;
+  width: auto !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) #BLOCO > .t-Region-header .t-Region-headerIcon {
+  flex: 0 0 auto !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) #BLOCO > .t-Region-header .t-Region-title:not(#nc-lc-x) {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-start !important;
+  gap: 5px !important;
+  min-width: 0 !important;
+  margin: 0 !important;
+  overflow: visible !important;
+  font-size: 18px !important;
+  font-weight: 750 !important;
+  font-style: normal !important;
+  line-height: 1.2 !important;
+  white-space: normal !important;
+  text-overflow: clip !important;
+  color: var(--lc-tinta) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) #BLOCO > .t-Region-header .t-Region-title i {
+  font-style: normal !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) #BLOCO .nc-lc-tit:not(#nc-lc-x) {
+  display: block !important;
+  max-width: 100% !important;
+  overflow-wrap: normal !important;
+  word-break: keep-all !important;
+  hyphens: none !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) #BLOCO .nc-lc-tit-sub:not(#nc-lc-x) {
+  display: inline-block !important;
+  max-width: 100% !important;
+  margin: 0 !important;
+  padding: 3px 10px !important;
+  border-radius: 99px !important;
+  background: #F3F0F8 !important;
+  font-size: 12.5px !important;
+  font-weight: 600 !important;
+  line-height: 1.4 !important;
+  letter-spacing: 0 !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  color: var(--lc-texto) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) #BLOCO > .t-Region-header > .t-Region-headerItems--buttons:not(#nc-lc-x) {
+  display: flex !important;
+  flex: 0 1 auto !important;
+  flex-wrap: wrap !important;
+  justify-content: flex-end !important;
+  gap: 8px !important;
+  margin-left: auto !important;
+  padding: 0 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) #BLOCO > .t-Region-header .t-Region-headerItems--buttons .t-Button {
+  min-height: 40px !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) #BLOCO > .t-Region-bodyWrap > .t-Region-body {
+  padding: 0 !important;
+}
+
+/* ═══ [K5] CELULAR ════════════════════════════════════════════════════════════════════════
+   Uma coluna: os filtros em cima. Depois de pesquisar, eles viram um resumo com "Mudar filtros",
+   para os lançamentos aparecerem logo.
+   ════════════════════════════════════════════════════════════════════════════════════════ */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-lc-cel {
+  display: none !important;
+}
+
+@media (max-width: 900px) {
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-lc {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-lc-cel {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    align-items: center !important;
+    gap: 8px 12px !important;
+    margin: 0 0 8px !important;
+    padding: 12px 14px !important;
+    border: 1px solid #E6E0EE !important;
+    border-radius: 12px !important;
+    background: #fff !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-lc-cel-resumo {
+    flex: 1 1 200px !important;
+    margin: 0 !important;
+    font-size: 13px !important;
+    line-height: 1.45 !important;
+    color: var(--lc-texto) !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-lc-filtros.is-recolhido > .t-Region {
+    display: none !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-lc-guia {
+    padding: 18px !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) #BLOCO > .t-Region-header > .t-Region-headerItems--buttons:not(#nc-lc-x):not(#nc-lc-y) {
+    flex: 1 1 100% !important;
+    justify-content: stretch !important;
+    margin-left: 0 !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) #BLOCO > .t-Region-header > .t-Region-headerItems--buttons .t-Button {
+    flex: 1 1 200px !important;
+    justify-content: center !important;
+  }
+
+  /* o tema esconde o nome dos botões no celular (t-Button--mobileHideLabel): só o ícone não diz
+     nada para quem lê pouco — o nome volta */
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) #BLOCO > .t-Region-header .t-Button--mobileHideLabel .t-Button-label:not(#nc-lc-x) {
+    display: inline !important;
+    position: static !important;
+    width: auto !important;
+    height: auto !important;
+    clip: auto !important;
+    overflow: visible !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) #BLOCO > .t-Region-header .t-Button--mobileHideLabel .t-Icon--left:not(#nc-lc-x) {
+    margin-right: 6px !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-lc-proc,
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-lc-proc > i,
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-lc-proc > i svg,
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .nc-lc-passos li {
+    transition: none !important;
+  }
+}

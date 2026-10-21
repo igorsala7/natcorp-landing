@@ -123,6 +123,7 @@
       if (document.querySelector('script[src*="' + nome + '"]')) return;   /* a página já trouxe */
       var s = document.createElement('script');
       s.src = pasta + nome;
+      s.setAttribute('data-nc-peca', '');   /* peça do sistema, não desenho de página (Registros/Grade ignoram) */
       (document.head || document.documentElement).appendChild(s);
     });
   })();

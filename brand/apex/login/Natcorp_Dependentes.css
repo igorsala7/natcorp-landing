@@ -1493,6 +1493,12 @@ html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):no
   box-shadow: none !important;
 }
 
+/* com a Grade padrão (Natcorp_Grade, em todo grid desde 19/10) a linha é preenchida pela gaveta
+   dela, não "na própria tabela": o aviso de como preencher sai */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ben.nc-gr-ativo .nc-ben-grade-como {
+  display: none !important;
+}
+
 html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-ben .nc-ben-grade-como {
   display: flex !important;
   align-items: flex-start !important;

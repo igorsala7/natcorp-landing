@@ -1,0 +1,521 @@
+/* ╔════════════════════════════════════════════════════════════════════════════════════════╗
+   ║  NATCORP · LANÇAMENTOS DE OCORRÊNCIAS — duas colunas (CSS)                                ║
+   ║  App 9132 · Página 5                                                                      ║
+   ╚════════════════════════════════════════════════════════════════════════════════════════╝
+   Os grupos de filtros, as faixas De/Até, o pé e o contador vêm do Natcorp_HistFiltros.css (o mesmo
+   da 200:21). Aqui: a grade de duas colunas, os cartões do processo, o passo a passo, o cabeçalho
+   dos lançamentos e o recolhimento no celular. O que se ESCOLHE é rosa; os botões seguem no roxo.
+
+   ÍNDICE
+     [K1] As duas colunas ...................................................... PODE MEXER
+     [K2] Os cartões do processo ............................................... PODE MEXER
+     [K3] O passo a passo
+     [K4] Os lançamentos (região BLOCO)
+     [K5] Celular
+   ════════════════════════════════════════════════════════════════════════════════════════ */
+
+/* ═══ [K1] AS DUAS COLUNAS ════════════════════════════════════════════════════════════════
+   Filtros com 330 px à esquerda (presos no alto enquanto se rola, com rolagem própria) e os
+   lançamentos no resto. A coluna da esquerda nunca empurra os lançamentos para baixo.
+   ════════════════════════════════════════════════════════════════════════════════════════ */
+@app .nc-lc {
+  --lc-rosa: var(--nc-rosa, #C95788);
+  --lc-rosa-escuro: color-mix(in srgb, var(--nc-rosa, #C95788) 62%, #2A0A1A);
+  --lc-tinta: var(--nc-tinta, #1B1238);
+  --lc-texto: var(--nc-grafite, #4A4460);
+  --lc-fio: var(--nc-nevoa, #E9E5F1);
+  display: grid;
+  grid-template-columns: 330px minmax(0, 1fr);
+  align-items: start;
+  gap: 16px;
+  margin: 0 0 16px;
+}
+
+/* UMA ROLAGEM SÓ (09/10): o tema põe overflow:hidden em t-Body, t-Body-main, t-Body-content e no
+   .container — isso impede o "preso no rodapé" e, dentro da moldura, a coluna precisava rolar por
+   dentro (duas rolagens: o topo dos filtros sumia). overflow:clip corta igual, mas NÃO vira um
+   contêiner de rolagem: a página rola e o pé (resumo + Pesquisar) fica preso no rodapé da tela.
+   Esta folha só entra na 9132:5. */
+@app :is(.t-Body, .t-Body-main, .t-Body-content, .t-Body-contentInner > .container) {
+  overflow: clip;
+}
+
+@app .nc-lc-filtros {
+  min-width: 0;
+  border-radius: 14px;
+}
+
+/* a moldura punha rolagem no corpo da região (scrollBody): tirada, quem rola é a coluna */
+@app #PSQ1 > .t-Region-bodyWrap > .t-Region-body {
+  overflow: visible;
+}
+
+@app .nc-lc-filtros > .t-Region {
+  margin: 0;
+}
+
+/* a região dos filtros: o corpo com respiro; as sub-regiões vazias (sobraram só itens escondidos) saem */
+@app #PSQ1 > .t-Region-bodyWrap > .t-Region-body {
+  padding: 4px 14px 14px;
+}
+
+@app #PSQ1 .nc-lc-casca,
+@app .nc-lc-vazia {
+  display: none;                       /* só some da vista: os campos escondidos lá dentro continuam indo no envio */
+}
+
+/* este app usa RÓTULO FLUTUANTE (o nome dentro do campo): nas faixas "De / Até" o rótulo continua
+   dentro do campo — sem a coluna de 34 px que a 200:21 (rótulo em cima) usa */
+@app #PSQ1 .nc-hf-faixa .t-Form-fieldContainer--floatingLabel {
+  display: block;
+  margin: 0 0 8px;
+}
+
+@app #PSQ1 .nc-hf-corpo .t-Form-fieldContainer--floatingLabel {
+  width: 100%;
+}
+
+@app #PSQ1 .t-Region :is(.t-Region-header) {
+  display: none;
+}
+
+@app #PSQ1 .t-Region .t-Region-body {
+  padding: 0;
+}
+
+@app #PSQ1 .t-Region {
+  margin: 0;
+  border: 0;
+  box-shadow: none;
+  background: transparent;
+}
+
+@app .nc-lc-principal {
+  min-width: 0;
+}
+
+@app .nc-lc-principal > .t-Region {
+  margin-top: 0;
+}
+
+@app .nc-lc-vis {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+/* o Pesquisar é a ação principal da coluna: roxo cheio (a página o trazia "simple", só contornado) */
+@app #PSQ1 .nc-hf-pe .t-Button {
+  border-color: var(--nc-roxo, #511C76);
+  background: var(--nc-roxo, #511C76);
+  color: #fff;
+  font-weight: 650;
+}
+
+@app #PSQ1 .nc-hf-pe .t-Button:hover {
+  background: var(--nc-roxo-hover, #2C1A63);
+}
+
+@app #PSQ1 .nc-hf-pe .t-Button .t-Icon {
+  color: #fff;
+}
+
+/* ═══ [K2] OS CARTÕES DO PROCESSO ═════════════════════════════════════════════════════════
+   Uma lista de escolha única: o escolhido fica ROSA com o visto (o padrão dos itens marcados).
+   "Todos os processos" é só consulta: aparece separado, embaixo.
+   ════════════════════════════════════════════════════════════════════════════════════════ */
+/* duas colunas: os 6 processos de lançar em 3 linhas, e "Todos os processos" na linha inteira embaixo */
+@app .nc-lc-proc-lista {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px;
+}
+
+@app .nc-lc-proc {
+  display: grid;
+  grid-template-columns: 20px minmax(0, 1fr);
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  min-height: 56px;
+  margin: 0;
+  padding: 8px 10px;
+  border: 1px solid var(--nc-borda-botao, #CBBBD9);
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: none;
+  font: inherit;
+  text-align: left;
+  color: var(--lc-tinta);
+  cursor: pointer;
+  transition: background-color .25s cubic-bezier(.4, 0, .2, 1), border-color .25s cubic-bezier(.4, 0, .2, 1), color .25s cubic-bezier(.4, 0, .2, 1), box-shadow .25s cubic-bezier(.4, 0, .2, 1);
+}
+
+@app .nc-lc-proc:hover {
+  border-color: color-mix(in srgb, var(--lc-rosa) 70%, #fff);
+}
+
+@app .nc-lc-proc:focus-visible {
+  outline: 2px solid var(--lc-rosa);
+  outline-offset: 2px;
+}
+
+@app .nc-lc-proc > span {
+  display: grid;
+  gap: 1px;
+  min-width: 0;
+}
+
+@app .nc-lc-proc b {
+  font-size: 13px;
+  font-weight: 650;
+  line-height: 1.25;
+}
+
+@app .nc-lc-proc small {
+  font-size: 11.5px;
+  line-height: 1.3;
+  color: var(--lc-texto);
+}
+
+/* a bolinha do rádio, com o visto quando escolhido */
+@app .nc-lc-proc > i {
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  border: 1.5px solid #9A8FB0;
+  border-radius: 50%;
+  background: #fff;
+  color: var(--lc-rosa);
+  transition: border-color .25s, background-color .25s;
+}
+
+@app .nc-lc-proc > i svg {
+  width: 12px;
+  height: 12px;
+  opacity: 0;
+  transform: scale(.6);
+  transition: opacity .2s, transform .25s cubic-bezier(.16, 1, .3, 1);
+}
+
+@app .nc-lc-proc[aria-checked="true"] {
+  border-color: var(--lc-rosa);
+  background: var(--lc-rosa);
+  color: #fff;
+  box-shadow: 0 6px 14px -8px rgba(var(--nc-t-rosa-rgb, 201, 87, 136), .8);
+}
+
+@app .nc-lc-proc[aria-checked="true"] small {
+  color: rgba(255, 255, 255, .88);
+}
+
+@app .nc-lc-proc[aria-checked="true"] > i {
+  border-color: #fff;
+}
+
+@app .nc-lc-proc[aria-checked="true"] > i svg {
+  opacity: 1;
+  transform: none;
+}
+
+@app .nc-lc-proc.is-consulta {
+  grid-column: 1 / -1;
+  min-height: 48px;
+  margin-top: 4px;
+  border-style: dashed;
+}
+
+@app .nc-lc-proc.is-consulta[aria-checked="true"] {
+  border-style: solid;
+}
+
+@app .nc-lc-erro {
+  margin: 0 0 8px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: #FDECEA;
+  font-size: 12.5px;
+  color: #B42318;
+}
+
+/* ═══ [K3] O PASSO A PASSO (antes de pesquisar) ═══════════════════════════════════════════ */
+@app .nc-lc-guia {
+  padding: 28px 28px 30px;
+  border: 1px solid #E6E0EE;
+  border-radius: 14px;
+  background: linear-gradient(180deg, #FCFAFE 0%, #FFFFFF 60%);
+  box-shadow: 0 1px 2px rgba(27, 18, 56, .05), 0 14px 32px -20px rgba(27, 18, 56, .28);
+  color: var(--lc-tinta);
+}
+
+@app .nc-lc-guia h2 {
+  margin: 0 0 6px;
+  font-size: 20px;
+  font-weight: 750;
+  letter-spacing: -.01em;
+}
+
+@app .nc-lc-guia-sub {
+  max-width: 62ch;
+  margin: 0 0 22px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--lc-texto);
+}
+
+@app .nc-lc-passos {
+  display: grid;
+  gap: 10px;
+  max-width: 560px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+@app .nc-lc-passos li {
+  display: grid;
+  grid-template-columns: 34px minmax(0, 1fr);
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border: 1px solid var(--lc-fio);
+  border-radius: 12px;
+  background: #fff;
+  transition: border-color .25s, box-shadow .25s;
+}
+
+@app .nc-lc-passos li > span:nth-child(2) {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+@app .nc-lc-passos b {
+  font-size: 14px;
+  font-weight: 650;
+}
+
+@app .nc-lc-passos small {
+  font-size: 12.5px;
+  color: var(--lc-texto);
+  overflow-wrap: anywhere;
+}
+
+@app .nc-lc-marca {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: #F2EEF7;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--lc-texto);
+}
+
+@app .nc-lc-marca svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* o passo da vez: borda rosa (o campo "selecionado" do NatPonto) */
+@app .nc-lc-passos li.is-agora {
+  border-color: var(--lc-rosa);
+  box-shadow: 0 0 0 1px var(--lc-rosa);
+}
+
+@app .nc-lc-passos li.is-agora .nc-lc-marca {
+  background: var(--lc-rosa);
+  color: #fff;
+}
+
+@app .nc-lc-passos li.is-feito .nc-lc-marca {
+  background: #E6F4EC;
+  color: #17643F;
+}
+
+/* ═══ [K4] OS LANÇAMENTOS (região BLOCO) ══════════════════════════════════════════════════
+   O título é o processo escolhido; os botões Inserir · Alterar | Excluir · Calcular Folha ficam
+   no cabeçalho, grandes e juntos.
+   ════════════════════════════════════════════════════════════════════════════════════════ */
+@app #BLOCO {
+  border: 1px solid #E6E0EE;
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: 0 1px 2px rgba(27, 18, 56, .05), 0 14px 32px -20px rgba(27, 18, 56, .28);
+  overflow: hidden;
+}
+
+@app #BLOCO > .t-Region-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 16px;
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--lc-fio);
+  background: linear-gradient(180deg, #FCFAFE 0%, #FFFFFF 100%);
+}
+
+/* O CABEÇALHO EM TELAS MENORES (09/10): o título não tinha largura mínima — os botões grandes
+   tomavam o espaço e o título quebrava no meio da palavra ("rescis / ão"), com a etiqueta espremida
+   em quatro linhas. Agora: o título reserva a largura dele (mín. 260 px) e nunca parte palavra; a etiqueta
+   (empresa · mês) mora EMBAIXO do título, como selo; sem espaço para os dois, os botões descem para
+   a linha de baixo, ocupando a largura toda. */
+@app #BLOCO > .t-Region-header > .t-Region-headerItems--title:not(#nc-lc-x) {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1 1 auto;                 /* reserva a largura real do título + etiqueta */
+  min-width: min(100%, 260px);
+  width: auto;
+}
+
+@app #BLOCO > .t-Region-header .t-Region-headerIcon {
+  flex: 0 0 auto;
+}
+
+@app #BLOCO > .t-Region-header .t-Region-title:not(#nc-lc-x) {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 5px;
+  min-width: 0;
+  margin: 0;
+  overflow: visible;
+  font-size: 18px;
+  font-weight: 750;
+  font-style: normal;
+  line-height: 1.2;
+  white-space: normal;
+  text-overflow: clip;
+  color: var(--lc-tinta);
+}
+
+@app #BLOCO > .t-Region-header .t-Region-title i {
+  font-style: normal;
+}
+
+@app #BLOCO .nc-lc-tit:not(#nc-lc-x) {
+  display: block;
+  max-width: 100%;
+  overflow-wrap: normal;
+  word-break: keep-all;
+  hyphens: none;
+}
+
+@app #BLOCO .nc-lc-tit-sub:not(#nc-lc-x) {
+  display: inline-block;
+  max-width: 100%;
+  margin: 0;
+  padding: 3px 10px;
+  border-radius: 99px;
+  background: #F3F0F8;
+  font-size: 12.5px;
+  font-weight: 600;
+  line-height: 1.4;
+  letter-spacing: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--lc-texto);
+}
+
+@app #BLOCO > .t-Region-header > .t-Region-headerItems--buttons:not(#nc-lc-x) {
+  display: flex;
+  flex: 0 1 auto;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-left: auto;
+  padding: 0;
+}
+
+@app #BLOCO > .t-Region-header .t-Region-headerItems--buttons .t-Button {
+  min-height: 40px;
+}
+
+@app #BLOCO > .t-Region-bodyWrap > .t-Region-body {
+  padding: 0;
+}
+
+/* ═══ [K5] CELULAR ════════════════════════════════════════════════════════════════════════
+   Uma coluna: os filtros em cima. Depois de pesquisar, eles viram um resumo com "Mudar filtros",
+   para os lançamentos aparecerem logo.
+   ════════════════════════════════════════════════════════════════════════════════════════ */
+@app .nc-lc-cel {
+  display: none;
+}
+
+@media (max-width: 900px) {
+  @app .nc-lc {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+
+  @app .nc-lc-cel {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 12px;
+    margin: 0 0 8px;
+    padding: 12px 14px;
+    border: 1px solid #E6E0EE;
+    border-radius: 12px;
+    background: #fff;
+  }
+
+  @app .nc-lc-cel-resumo {
+    flex: 1 1 200px;
+    margin: 0;
+    font-size: 13px;
+    line-height: 1.45;
+    color: var(--lc-texto);
+  }
+
+  @app .nc-lc-filtros.is-recolhido > .t-Region {
+    display: none;
+  }
+
+  @app .nc-lc-guia {
+    padding: 18px;
+  }
+
+  @app #BLOCO > .t-Region-header > .t-Region-headerItems--buttons:not(#nc-lc-x):not(#nc-lc-y) {
+    flex: 1 1 100%;
+    justify-content: stretch;
+    margin-left: 0;
+  }
+
+  @app #BLOCO > .t-Region-header > .t-Region-headerItems--buttons .t-Button {
+    flex: 1 1 200px;
+    justify-content: center;
+  }
+
+  /* o tema esconde o nome dos botões no celular (t-Button--mobileHideLabel): só o ícone não diz
+     nada para quem lê pouco — o nome volta */
+  @app #BLOCO > .t-Region-header .t-Button--mobileHideLabel .t-Button-label:not(#nc-lc-x) {
+    display: inline;
+    position: static;
+    width: auto;
+    height: auto;
+    clip: auto;
+    overflow: visible;
+  }
+
+  @app #BLOCO > .t-Region-header .t-Button--mobileHideLabel .t-Icon--left:not(#nc-lc-x) {
+    margin-right: 6px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  @app .nc-lc-proc,
+  @app .nc-lc-proc > i,
+  @app .nc-lc-proc > i svg,
+  @app .nc-lc-passos li {
+    transition: none;
+  }
+}

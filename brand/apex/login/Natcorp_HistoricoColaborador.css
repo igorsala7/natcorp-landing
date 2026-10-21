@@ -767,6 +767,29 @@ html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):no
   gap: 8px !important;
 }
 
+/* CABEÇALHO E RODAPÉ GRUDENTOS DO APEX, DESLIGADOS (19/10, "no Windows a linha do tempo e as
+   tabelas se misturam"). As grades e os relatórios prendem o cabeçalho e o rodapé na JANELA
+   (position: fixed), mas nesta janela quem rola é a caixa de dentro (.t-Dialog-bodyWrapperIn):
+   o rodapé da grade ("9 Total") ficava em cima do Salvar e o cabeçalho flutuava sobre o
+   conteúdo ao rolar — pior em tela baixa (notebook Windows). Aqui eles rolam com a tabela; o
+   espaço reservado (placeholder) some junto, senão sobra um buraco. */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-hc-ativo .nc-hc-abas .js-stickyWidget-toggle:not(#nc-hc-x) {
+  position: relative !important;
+  top: auto !important;
+  bottom: auto !important;
+  z-index: auto !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-hc-ativo .nc-hc-abas .js-stickyWidget-placeholder:not(#nc-hc-x) {
+  display: none !important;
+}
+
+/* Doenças sem "Adicionar" também na Grade padrão (decisão de 04/10) */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-hc-ativo .nc-hc-sem-novo [data-gr-novo]:not(#nc-hc-x) {
+  display: none !important;
+}
+
+
 /* em "Tabelas" as grades são só para consultar: lançar e corrigir é na gaveta */
 html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-hc-ativo .nc-hc-abas .a-IG-header :is([data-action="edit"], [data-action="save"], [data-action="selection-add-row"]):not(#nc-hc-x) {
   display: none !important;

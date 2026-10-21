@@ -674,6 +674,10 @@
     desenhar();
   }
 
+  /* a Grade padrão (Natcorp_Grade) fica de fora: o grid desta janela é o MOTOR escondido do
+     desenho. Marcado já aqui (não no apexreadyend): a Grade pode ligar antes do iniciar(). */
+  if (document.getElementById('P11_MATRICULA') && document.body) document.body.classList.add('nc-grade-nao');
+
   /* começa no que vier primeiro: o fim do "ready" do APEX ou a página já pronta */
   $(window).on('apexreadyend', function () { setTimeout(iniciar, 0); });
   if (document.readyState === 'complete') setTimeout(iniciar, 300);

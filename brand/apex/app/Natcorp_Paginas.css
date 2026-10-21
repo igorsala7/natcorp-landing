@@ -257,6 +257,31 @@ html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):no
   min-height: 72px !important;
 }
 
+/* A BARRA ENCOLHE DE VERDADE AO ROLAR (13/10, pedido: "a altura da região não diminui, ocupando
+   muito espaço"). O Natcorp_Registros.js ([R12]) põe no body a classe nc-bc-compacto depois de
+   72 px de rolagem e cuida do que o tema mede: o espaço do conteúdo (t_Body_content_offset) fica
+   SEMPRE na medida cheia — o conteúdo não pula —, e a coluna da esquerda e os cabeçalhos grudados
+   das tabelas sobem junto com a barra. Sem o JS, nada disto liga (a barra fica como antes).
+     • com a Trilha no alto (Voltar · Painel › Página), o nome da página já está nela: o breadcrumb
+       sozinho SOME na barra compacta (126 → 48 px);
+     • sem a Trilha, ou com botões na barra, a faixa fica baixa (72 → 40 px), em uma linha.
+   nc-bc-medir = o JS medindo a barra cheia (as regras compactas não valem por um instante). */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-bc-compacto:not(.nc-bc-medir) .t-Body-title .t-Region-body {
+  min-height: 40px !important;
+  padding-top: 4px !important;
+  padding-bottom: 4px !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-bc-compacto:not(.nc-bc-medir) .t-Body-title .t-ButtonRegion-col--content,
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-bc-compacto:not(.nc-bc-medir) .t-Body-title .nc-TituloPagina {
+  min-height: 44px !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-bc-compacto.nc-tr-no-titulo:not(.nc-bc-medir) .t-Body-title > .t-Region:has(.t-Breadcrumb):not(:has(.t-ButtonRegion, .t-Button, .t-Form-fieldContainer, .t-HeroRegion)),
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-bc-compacto.nc-tr-no-titulo:not(.nc-bc-medir) .t-Body-title > .nc-TituloPagina {
+  display: none !important;
+}
+
 html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .t-Breadcrumb {
   display: flex !important;
   flex-wrap: wrap !important;
@@ -1711,18 +1736,26 @@ html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):no
   opacity: 1 !important;
 }
 
+/* CAMPO SELECIONADO (09/10, como o NatPonto): parado, a borda de sempre; mouse em cima, um rosa claro;
+   com o foco, a borda fica ROSA e com 2 px (a 2ª é uma sombra de 1 px: o campo não muda de tamanho);
+   a cor entra em 250 ms. Os botões continuam no Roxo/Azul do tema — rosa é para o que se ESCOLHE. */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) :is(.t-Body-content, .t-Body-side, .t-Dialog-body, .t-DialogRegion, .t-Dialog-footer) :is(input.apex-item-text, select.selectlist, textarea.textarea),
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .apex-item-group--popup-lov .apex-item-multi {
+  transition: border-color .25s cubic-bezier(.4, 0, .2, 1), box-shadow .25s cubic-bezier(.4, 0, .2, 1) !important;
+}
+
 html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) :is(.t-Body-content, .t-Body-side, .t-Dialog-body, .t-DialogRegion, .t-Dialog-footer) input.apex-item-text:hover,
 html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) :is(.t-Body-content, .t-Body-side, .t-Dialog-body, .t-DialogRegion, .t-Dialog-footer) select.selectlist:hover,
 html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) :is(.t-Body-content, .t-Body-side, .t-Dialog-body, .t-DialogRegion, .t-Dialog-footer) textarea.textarea:hover {
-  border-color: #D3CBE3 !important;
+  border-color: color-mix(in srgb, var(--nc-rosa) 45%, #fff) !important;
 }
 
 html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) :is(.t-Body-content, .t-Body-side, .t-Dialog-body, .t-DialogRegion, .t-Dialog-footer) input.apex-item-text:focus,
 html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) :is(.t-Body-content, .t-Body-side, .t-Dialog-body, .t-DialogRegion, .t-Dialog-footer) select.selectlist:focus,
 html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) :is(.t-Body-content, .t-Body-side, .t-Dialog-body, .t-DialogRegion, .t-Dialog-footer) textarea.textarea:focus,
 html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .ui-dialog input.apex-item-text:focus {
-  border-color: var(--nc-roxo) !important;
-  box-shadow: var(--nc-anel) !important;
+  border-color: var(--nc-rosa) !important;
+  box-shadow: 0 0 0 1px var(--nc-rosa) !important;
   outline: none !important;
 }
 
@@ -2160,6 +2193,36 @@ html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):no
   box-shadow: 0 6px 14px -8px rgba(var(--nc-t-rosa-rgb, 201, 87, 136), .8) !important;
 }
 
+/* OPÇÃO COM COR DA APLICAÇÃO. A lista de valores pode trazer a cor no próprio texto
+   (<p style="color:green">Sim</p> · <p style="color:red">Não</p>, 2980:850). A cor pura sobre o
+   Rosa do escolhido sumia (vermelho 1,0:1, verde 1,3:1) e o vermelho puro no branco ficava em
+   4,0:1. Agora: solta, o texto no tom ESCURO daquela cor (≥ 6:1 no branco); escolhida, a pílula
+   inteira na cor (verde ou vermelho cheio, texto branco ≥ 5,9:1) — o Sim/Não se lê de longe. */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .apex-item-radio .apex-item-option > input[type="radio"] + label > :is(p, span, font)[style*="color"] {
+  margin: 0 !important;
+  color: inherit !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .apex-item-radio .apex-item-option > input[type="radio"]:not(:checked) + label:has(> [style*="color:green"], > [style*="color: green"]) {
+  color: #17643F !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .apex-item-radio .apex-item-option > input[type="radio"]:not(:checked) + label:has(> [style*="color:red"], > [style*="color: red"]) {
+  color: #B42318 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .apex-item-radio .apex-item-option > input[type="radio"]:checked + label:has(> [style*="color:green"], > [style*="color: green"]) {
+  background: #1C7A4C !important;
+  color: #fff !important;
+  box-shadow: 0 6px 14px -8px rgba(28, 122, 76, .8) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .apex-item-radio .apex-item-option > input[type="radio"]:checked + label:has(> [style*="color:red"], > [style*="color: red"]) {
+  background: #B42318 !important;
+  color: #fff !important;
+  box-shadow: 0 6px 14px -8px rgba(180, 35, 24, .8) !important;
+}
+
 html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .apex-item-radio .apex-item-option > input[type="radio"]:focus-visible + label {
   box-shadow: 0 0 0 3px rgba(var(--nc-t-rosa-rgb, 201, 87, 136), .28) !important;
 }
@@ -2402,8 +2465,8 @@ html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):no
 }
 
 html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .apex-item-group--popup-lov .apex-item-multi:focus-within {
-  border-color: var(--nc-roxo) !important;
-  box-shadow: var(--nc-anel) !important;
+  border-color: var(--nc-rosa) !important;
+  box-shadow: 0 0 0 1px var(--nc-rosa) !important;
 }
 
 html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) .apex-item-group--popup-lov .apex-item-multi input.apex-item-popup-lov {
@@ -2438,8 +2501,8 @@ html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):no
   padding: 4px 4px 4px 9px !important;
   border: 0 !important;
   border-radius: 6px !important;
-  background: var(--nc-nevoa2) !important;
-  color: var(--nc-roxo) !important;
+  background: color-mix(in srgb, var(--nc-rosa) 12%, #fff) !important;      /* valor ESCOLHIDO: rosa, como os outros itens marcados */
+  color: color-mix(in srgb, var(--nc-rosa) 62%, #2A0A1A) !important;         /* rosa escuro: contraste ≥ 4,5 sobre o rosa claro */
   font-size: 12.5px !important;
   font-weight: 600 !important;
 }
@@ -2539,8 +2602,8 @@ html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):no
 /* o foco do campo acende o botão junto: parecem uma peça só também no foco */
 html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) :is(.t-Body-content, .t-Body-side, .t-Dialog-body, .t-DialogRegion) input.apex-item-datepicker:focus + .ui-datepicker-trigger,
 html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) :is(.t-Body-content, .t-Body-side, .t-Dialog-body, .t-DialogRegion) input.apex-item-popup-lov:focus + .a-Button--popupLOV {
-  border-color: var(--nc-roxo) !important;
-  color: var(--nc-roxo) !important;
+  border-color: var(--nc-rosa) !important;
+  color: var(--nc-rosa) !important;
 }
 
 /* ═══ [C6] BOTÕES ════════════════════════════════════════════════════════════════════════════

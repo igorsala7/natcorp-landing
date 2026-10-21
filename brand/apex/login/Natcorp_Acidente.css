@@ -2921,6 +2921,12 @@ html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):no
   overflow: hidden !important;
 }
 
+/* com a Grade padrão (Natcorp_Grade, em todo grid desde 19/10) a lista é preenchida pela gaveta dela,
+   não "na própria tabela": o aviso de como preencher sai */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-aci-analise .nc-gr-on .nc-aci-grade-como {
+  display: none !important;
+}
+
 html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-aci-analise .nc-aci-grade-como {
   display: flex !important;
   align-items: flex-start !important;

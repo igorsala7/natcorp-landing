@@ -727,6 +727,90 @@ body.t-PageBody--login .t-Login-body .apex-item-icon {
   min-width: 0;
 }
 
+/* ---------- Ver a senha (Natcorp_Senha.js, páginas 900 e 901) -------
+   O olho à direita, dentro do campo de senha. O botão é posto pelo
+   Natcorp_Senha.js; sem ele, nada daqui aparece. O campo ganha folga à
+   direita para o texto não correr por baixo do olho. 40 px de toque,
+   dentro dos 48 px do campo. */
+
+body.t-PageBody--login .t-Login-body .nc-senha input.apex-item-text {
+  padding-right: 50px;
+}
+
+/* o Edge traz um olho próprio: sai, para não ficarem dois */
+body.t-PageBody--login .t-Login-body .nc-senha input::-ms-reveal {
+  display: none;
+}
+
+body.t-PageBody--login .t-Login-body .nc-senha-ver {
+  position: absolute;
+  top: 4px;
+  right: calc(var(--nc-senha-dir, 0px) + 4px);   /* a distância até a borda do campo vem do JS */
+  z-index: 3;
+  width: 40px;
+  height: 40px;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 9px;
+  background: transparent;
+  box-shadow: none;
+  color: var(--nc-cinza);
+  font-size: 16px;
+  line-height: 1;
+  cursor: pointer;
+  transition: color .15s, background-color .15s;
+}
+
+body.t-PageBody--login .t-Login-body .nc-senha-ver .fa {
+  font-size: 16px;
+  line-height: 1;
+}
+
+body.t-PageBody--login .t-Login-body .nc-senha-ver:hover {
+  color: var(--nc-roxo);
+  background: rgba(81, 28, 118, .07);
+}
+
+body.t-PageBody--login .t-Login-body .nc-senha-ver:focus {
+  outline: none;
+}
+
+body.t-PageBody--login .t-Login-body .nc-senha-ver:focus-visible {
+  color: var(--nc-roxo);
+  box-shadow: 0 0 0 2px var(--nc-roxo);
+}
+
+/* aberto: o olho riscado fica na cor da marca, para lembrar que a senha está à vista */
+body.t-PageBody--login .t-Login-body .nc-senha-ver[aria-pressed="true"] {
+  color: var(--nc-roxo);
+}
+
+/* O "?" de ajuda de um campo (na 901, a Nova Senha traz as regras da
+   senha): outra folha dá a ele flex 1 e 200 px de largura, e o campo
+   ficava com metade da linha. Aqui ele é um botão de 40 px ao lado do
+   campo, e o campo volta a ocupar o resto. */
+body.t-PageBody--login .t-Login-body .t-Form-itemWrapper .t-Button--helpButton {
+  flex: 0 0 40px;
+  width: 40px;
+  height: 48px;
+  min-width: 0;
+  margin: 0 0 0 4px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--nc-cinza);
+}
+
+body.t-PageBody--login .t-Login-body .t-Form-itemWrapper .t-Button--helpButton:hover {
+  color: var(--nc-roxo);
+}
+
 /* ---------- Celular e tablet: só o formulário ----------------------- */
 
 @media (max-width: 991px) {

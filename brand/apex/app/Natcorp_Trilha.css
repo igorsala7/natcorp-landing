@@ -21,7 +21,7 @@
    PODE MEXER: --nc-tr-alt (a altura; o iframe da casca encolhe o mesmo tanto) e as cores.
    ════════════════════════════════════════════════════════════════════════════════════════════ */
 html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-tr-ativo {
-  --nc-tr-alt: 40px;
+  --nc-tr-alt: 48px;   /* 08/10: 40 → 48, para o Voltar de 36 px (o dos botões do relatório) respirar */
 }
 
 html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-tr-ativo .nc-tr {
@@ -57,24 +57,24 @@ html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):no
   flex: 0 0 auto !important;
   align-items: center !important;
   gap: 4px !important;
-  height: 28px !important;
+  height: 36px !important;                                  /* 08/10: o padrão dos botões do relatório */
   margin: 0 !important;
-  padding: 0 11px 0 7px !important;
-  border: 1px solid #E2DCEB !important;
+  padding: 0 12px 0 8px !important;
+  border: 1px solid var(--nc-nevoa, #E9E5F1) !important;
   border-radius: 8px !important;
   background: #fff !important;
-  box-shadow: 0 1px 1px rgba(27, 18, 56, .04) !important;
+  box-shadow: none !important;
   font: inherit !important;
   font-size: 13px !important;
   font-weight: 600 !important;
-  color: var(--nc-roxo, #511C76) !important;
+  color: var(--nc-grafite, #4A4460) !important;
   cursor: pointer !important;
   transition: border-color .15s, background-color .15s !important;
 }
 
 html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-tr-ativo .nc-tr-voltar:hover:not(:disabled) {
-  border-color: color-mix(in srgb, var(--nc-roxo, #511C76) 40%, #fff) !important;
-  background: color-mix(in srgb, var(--nc-roxo, #511C76) 5%, #fff) !important;
+  background: var(--nc-off, #F4F2F7) !important;
+  color: var(--nc-roxo, #511C76) !important;
 }
 
 html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-tr-ativo .nc-tr-voltar:disabled {
@@ -159,7 +159,7 @@ html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):no
 html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-tr-ativo .nc-tr-sep {
   width: 12px !important;
   height: 12px !important;
-  color: #B7B1C8 !important;
+  color: var(--nc-rosa, #C95788) !important;   /* 08/10: o › entre as páginas na cor Rosa (a do tema) */
 }
 
 /* ═══ [C4] CASCA: O IFRAME ENCOLHE A ALTURA DA FAIXA ════════════════════════════════════════
@@ -197,7 +197,7 @@ html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):no
   }
 
   html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-tr-ativo .nc-tr-voltar {
-    padding: 0 7px !important;
+    padding: 0 10px !important;
   }
 
   html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-tr-ativo .nc-tr-voltar span {

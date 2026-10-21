@@ -1,0 +1,4984 @@
+/* ╔════════════════════════════════════════════════════════════════════════════════════════╗
+   ║  NATCORP · AFASTAMENTOS  —  a "roupa" do painel de indicadores (CSS)                      ║
+   ║  (a MESMA roupa do painel de FÉRIAS da 200:26: sai também como Natcorp_FeriasPainel.css)  ║
+   ║  App 200 · Página 25 (Controle de Funcionários Afastados)                                 ║
+   ╚════════════════════════════════════════════════════════════════════════════════════════╝
+
+   Guia: AFASTAMENTOS-MANUTENCAO.md. Quem monta é o Natcorp_Afastamentos.js; aqui é a aparência.
+   Edite ESTE arquivo (a fonte) e gere o que sobe com  node brand/apex/app/gerar-app.mjs.
+
+   A IDEIA  Quem abre a página quer saber, em poucos segundos: QUEM ESTÁ FORA HOJE e o que pede
+            atenção. Por isso o painel tem duas faixas:
+              HOJE         uma régua de 5 números, cada um uma pergunta respondida ("Volta
+                           atrasada: 2"). Tocar num número mostra QUEM são, logo abaixo.
+              NO PERÍODO   uma frase que resume o período e 4 quadros: mês a mês, por motivo,
+                           onde mais acontece, quem se afastou mais de uma vez.
+   CORES    neutros para quase tudo; o roxo do tema é o que se escolhe/toca. Cor de significado
+            SÓ onde tem significado: vermelho = atrasado (agir), âmbar = falta informação,
+            verde = vai voltar, rosa = 15 dias (a regra do INSS). Texto sempre ≥ 4,5:1.
+   CELULAR  a régua vira 2 colunas; os quadros do período um embaixo do outro.
+
+   ÍNDICE  [A1] a moldura e as cores · [A2] o título · [A3] a régua de HOJE · [A4] a lista
+           "quem são" · [A5] o período (frase e quadros) · [A6] barras e meses
+           [A7] carregando, vazio, erro · [A8] celular · [A9] acabamento · [A10] filtrar e cruzar
+   ════════════════════════════════════════════════════════════════════════════════════════ */
+
+/* ═══ [A1] A MOLDURA E AS CORES ════════════════════════════════════════════════════════════ */
+@app .nc-af {
+  --af-roxo: var(--nc-roxo, #511C76);
+  --af-sel: var(--nc-rosa, #C95788);               /* o que está ESCOLHIDO (número, aba, busca, foco): rosa, 09/10 */
+  --af-rosa: var(--nc-rosa, #C95788);
+  --af-tinta: var(--nc-tinta, #1B1238);
+  --af-texto: var(--nc-grafite, #4A4460);
+  --af-fio: var(--nc-nevoa, #E9E5F1);
+  --af-fundo2: #FAF8FC;
+  --af-vermelho: #B42318;
+  --af-vermelho-fundo: #FDECEA;
+  --af-ambar: #8A5300;
+  --af-ambar-fundo: #FFF3DC;
+  --af-verde: #17643F;
+  --af-verde-fundo: #E6F4EC;
+  margin: 0 0 16px;
+  border: 1px solid var(--af-fio);
+  border-radius: 14px;
+  background: #fff;
+  color: var(--af-tinta);
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+@app .nc-af :is(*, *::before, *::after) {
+  box-sizing: border-box;
+}
+
+@app .nc-af :is(h2, h3, p, ul, ol) {
+  margin: 0;
+  padding: 0;
+}
+
+@app .nc-af-ic {
+  flex: none;
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* ═══ [A2] O TÍTULO ════════════════════════════════════════════════════════════════════════ */
+@app .nc-af-cab {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 16px;
+  padding: 14px 18px 12px;
+  border-bottom: 1px solid var(--af-fio);
+}
+
+@app .nc-af-cab h2 {
+  font-size: 16px;
+  font-weight: 750;
+  letter-spacing: -.01em;
+  color: var(--af-tinta);
+}
+
+@app .nc-af-quando {
+  font-size: 13px;
+  color: var(--af-texto);
+}
+
+@app .nc-af-quando b {
+  font-weight: 650;
+  color: var(--af-tinta);
+}
+
+@app .nc-af-espaco {
+  flex: 1 1 auto;
+}
+
+@app .nc-af-bt {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 36px;
+  margin: 0;
+  padding: 0 12px;
+  border: 1px solid var(--af-fio);
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: none;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--af-texto);
+  cursor: pointer;
+  transition: background-color .15s, color .15s;
+}
+
+@app .nc-af-bt[hidden] {
+  display: none;
+}
+
+@app .nc-af-bt:hover {
+  background: var(--nc-off, #F4F2F7);
+  color: var(--af-roxo);
+}
+
+@app .nc-af-bt:focus-visible,
+@app .nc-af-num:focus-visible,
+@app .nc-af-mais:focus-visible {
+  outline: 2px solid var(--af-roxo);
+  outline-offset: 2px;
+}
+
+/* ═══ MODO COMPACTO (o padrão) ════════════════════════════════════════════════════════════
+   O RELATÓRIO É A FUNÇÃO PRINCIPAL DA PÁGINA: o painel nasce como uma FAIXA de números (~130 px) e a
+   tabela aparece logo abaixo, na primeira tela. A análise (gráficos, abas) abre em "Ver análise
+   completa"; tocar num número abre a lista de quem são mesmo no compacto. O navegador lembra.
+   ════════════════════════════════════════════════════════════════════════════════════════ */
+@app .nc-af.is-fechado {
+  margin-bottom: 12px;
+}
+
+@app .nc-af.is-fechado .nc-af-cab {
+  padding-top: 10px;
+  padding-bottom: 8px;
+  border-bottom: 0;
+}
+
+@app .nc-af.is-fechado .nc-af-periodo,
+@app .nc-af.is-fechado .nc-af-secao > .nc-af-rot,
+@app .nc-af.is-fechado .nc-af-dica,
+@app .nc-af.is-fechado [data-af-ir-tabela] {
+  display: none;
+}
+
+@app .nc-af.is-fechado .nc-af-secao {
+  padding-top: 0;
+  padding-bottom: 12px;
+}
+
+/* compacto: o "quando" quebra dentro do espaço dele e os botões ficam na mesma linha do título */
+@app .nc-af.is-fechado .nc-af-quando {
+  flex: 1 1 220px;
+  min-width: 0;
+}
+
+@app .nc-af.is-fechado .nc-af-espaco {
+  display: none;
+}
+
+@app .nc-af.is-fechado .nc-af-num {
+  flex-basis: 150px;                   /* compacto: os 5 numa linha só sempre que couber */
+  align-content: center;
+  min-height: 0;
+  padding: 9px 14px;
+}
+
+@app .nc-af.is-fechado .nc-af-num .nc-af-sinal {
+  grid-row: 1 / span 2;
+  width: 30px;
+  height: 30px;
+  margin-top: 0;
+  border-radius: 8px;
+}
+
+@app .nc-af.is-fechado .nc-af-num .nc-af-sinal .nc-af-ic {
+  width: 16px;
+  height: 16px;
+}
+
+@app .nc-af.is-fechado .nc-af-valor {
+  font-size: 21px;
+}
+
+@app .nc-af.is-fechado .nc-af-diz {
+  font-size: 12.5px;
+  font-weight: 600;
+  line-height: 1.25;                   /* quebra em 2 linhas; nunca "Recebem se…" */
+}
+
+/* ═══ [A3] A RÉGUA DE HOJE ═════════════════════════════════════════════════════════════════
+   Uma superfície só, dividida em 5 (não 5 cartões soltos). Cada número é um BOTÃO: o escolhido
+   ganha o contorno roxo e a lista abre logo abaixo da régua.
+   ════════════════════════════════════════════════════════════════════════════════════════ */
+@app .nc-af-secao {
+  padding: 14px 18px 16px;
+}
+
+@app .nc-af-secao + .nc-af-secao {
+  border-top: 1px solid var(--af-fio);
+}
+
+@app .nc-af-rot {
+  margin: 0 0 10px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .02em;
+  color: var(--af-texto);
+}
+
+@app .nc-af-regua {
+  display: flex;
+  flex-wrap: wrap;                     /* 5 lado a lado no painel largo; 3 + 2, 2 + 2 + 1… no estreito */
+  gap: 1px;                            /* o fio entre os números é o fundo aparecendo no vão */
+  border: 1px solid var(--af-fio);
+  border-radius: 12px;
+  background: var(--af-fio);
+  overflow: hidden;
+}
+
+@app .nc-af-num {
+  position: relative;
+  flex: 1 1 220px;                     /* cada número pede ~220 px; sem espaço, desce (5 → 3 + 2, nunca 4 + 1) */
+  min-width: 0;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  grid-template-rows: auto auto;
+  align-content: start;
+  column-gap: 10px;
+  row-gap: 2px;
+  min-height: 92px;
+  margin: 0;
+  padding: 14px 16px 16px;
+  border: 0;
+  border-radius: 0;
+  background: #fff;
+  box-shadow: none;
+  font: inherit;
+  text-align: left;
+  color: var(--af-tinta);
+  cursor: pointer;
+  transition: background-color .15s;
+}
+
+@app .nc-af-num:hover {
+  background: var(--af-fundo2);
+}
+
+/* o número escolhido (a lista aberta é dele): contorno roxo por dentro e fundo levemente tingido */
+@app .nc-af-num[aria-pressed="true"] {
+  background: color-mix(in srgb, var(--af-sel) 7%, #fff);
+  box-shadow: inset 0 0 0 2px var(--af-sel);
+}
+
+/* zero é notícia boa: o quadro não toca (não há lista), mas se lê normalmente — nada de cinza
+   apagado de botão desligado */
+@app .nc-af-num:disabled {
+  opacity: 1;
+  color: var(--af-tinta);
+  cursor: default;
+}
+
+@app .nc-af-num:disabled .nc-af-dica {
+  color: var(--af-texto);
+}
+
+@app .nc-af-num:disabled:hover {
+  background: #fff;
+}
+
+/* o ícone num quadradinho com a cor do significado */
+@app .nc-af-num .nc-af-sinal {
+  grid-row: 1 / span 2;
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  margin-top: 2px;
+  border-radius: 10px;
+  background: var(--nc-off, #F4F2F7);
+  color: var(--af-roxo);
+}
+
+@app .nc-af-valor {
+  display: flex;
+  flex-wrap: wrap;                     /* "pessoas" desce para baixo do número em vez de ser cortado */
+  align-items: baseline;
+  column-gap: 6px;
+  row-gap: 0;
+  min-width: 0;
+  font-size: 28px;
+  font-weight: 750;
+  line-height: 1.05;
+  letter-spacing: -.02em;
+  font-variant-numeric: tabular-nums;
+}
+
+@app .nc-af-valor small {
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0;
+  color: var(--af-texto);
+}
+
+@app .nc-af-diz {
+  grid-column: 2;
+  font-size: 13px;
+  font-weight: 650;
+  color: var(--af-tinta);
+}
+
+@app .nc-af-dica {
+  grid-column: 2;
+  margin-top: 1px;
+  font-size: 12.5px;
+  color: var(--af-texto);
+}
+
+@app .nc-af-num--vermelho .nc-af-sinal { background: var(--af-vermelho-fundo); color: var(--af-vermelho); }
+@app .nc-af-num--ambar .nc-af-sinal    { background: var(--af-ambar-fundo); color: var(--af-ambar); }
+@app .nc-af-num--verde .nc-af-sinal    { background: var(--af-verde-fundo); color: var(--af-verde); }
+@app .nc-af-num--rosa .nc-af-sinal     { background: #FBEFF4; color: #A63D6B; }
+
+/* número que pede ação (atrasado / sem data) com valor > 0: o número na cor */
+@app .nc-af-num--vermelho.is-alerta .nc-af-valor { color: var(--af-vermelho); }
+@app .nc-af-num--ambar.is-alerta .nc-af-valor    { color: var(--af-ambar); }
+
+/* zero: o quadro fica calmo (nada a fazer) */
+@app .nc-af-num.is-zero .nc-af-sinal {
+  background: var(--nc-off, #F4F2F7);
+  color: var(--af-texto);
+}
+
+/* ═══ [A4] A LISTA "QUEM SÃO" ══════════════════════════════════════════════════════════════ */
+@app .nc-af-quem {
+  margin-top: 12px;
+  border: 1px solid var(--af-fio);
+  border-radius: 12px;
+  background: #fff;
+}
+
+@app .nc-af-quem[hidden] {
+  display: none;
+}
+
+@app .nc-af-quem-cab {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 2px 10px;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--af-fio);
+}
+
+@app .nc-af-quem-cab h3 {
+  font-size: 14px;
+  font-weight: 700;
+}
+
+@app .nc-af-quem-cab p {
+  font-size: 12.5px;
+  color: var(--af-texto);
+}
+
+@app .nc-af-lista {
+  list-style: none;
+}
+
+@app .nc-af-lista > li {
+  border-bottom: 1px solid #F1EEF5;
+}
+
+@app .nc-af-lista > li:last-child {
+  border-bottom: 0;
+}
+
+@app .nc-af-quem .nc-af-rolo {
+  max-height: 380px;
+}
+
+/* cada pessoa é um botão: tocar mostra os afastamentos dela na tabela */
+@app .nc-af-p {
+  display: grid;
+  grid-template-columns: minmax(200px, 1.4fr) minmax(160px, 1fr) minmax(140px, .8fr) minmax(170px, .9fr) 20px;
+  align-items: center;
+  gap: 4px 18px;
+  width: 100%;
+  margin: 0;
+  padding: 10px 14px;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  font: inherit;
+  text-align: left;
+  color: inherit;
+  cursor: pointer;
+}
+
+/* a lista das FÉRIAS (200:26) tem uma coluna a menos: quem · situação · selo · seta */
+@app .nc-af-p.nc-fp-p {
+  grid-template-columns: minmax(220px, 1.4fr) minmax(160px, 1fr) minmax(220px, 1fr) 20px;
+}
+
+@app .nc-af-p:hover {
+  background: var(--af-fundo2);
+}
+
+@app .nc-af-p:focus-visible {
+  outline: 2px solid var(--af-sel);
+  outline-offset: -2px;
+}
+
+@app .nc-af-p-ir {
+  display: grid;
+  place-items: center;
+  color: var(--af-texto);
+  opacity: .45;
+  transition: opacity .15s, color .15s;
+}
+
+@app .nc-af-p:hover .nc-af-p-ir,
+@app .nc-af-p:focus-visible .nc-af-p-ir {
+  color: var(--af-roxo);
+  opacity: 1;
+}
+
+@app .nc-af-p-quem,
+@app .nc-af-p-tipo,
+@app .nc-af-p-desde {
+  min-width: 0;
+}
+
+/* procurar dentro da lista */
+@app .nc-af-procura {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1 1 260px;
+  max-width: 380px;
+  height: 36px;
+  margin: 0 0 0 auto;
+  padding: 0 10px;
+  border: 1px solid var(--af-fio);
+  border-radius: 8px;
+  background: #fff;
+  color: var(--af-texto);
+}
+
+@app .nc-af-procura:focus-within {
+  border-color: var(--af-sel);
+  box-shadow: 0 0 0 1px var(--af-sel);
+}
+
+@app .nc-af-procura input {
+  flex: 1 1 auto;
+  min-width: 0;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  font: inherit;
+  font-size: 13px;
+  color: var(--af-tinta);
+  outline: 0;
+}
+
+@app .nc-af-vis {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+@app .nc-af-nada {
+  padding: 18px 14px;
+  font-size: 13px;
+  color: var(--af-texto);
+}
+
+/* A CAIXA QUE ROLA (listas e quadros): altura máxima, rola por dentro, sombra em cima/embaixo só
+   quando há mais para ver (o truque das 4 camadas de fundo: as "local" cobrem a sombra no começo e
+   no fim do conteúdo) */
+@app .nc-af-rolo {
+  position: relative;
+  overflow: auto;
+  overscroll-behavior-y: auto;         /* no fim da lista, a página continua (13/10: "contain" segurava o gesto e
+                                          o scroll parecia travar ao passar de um quadro para outra região) */
+  scrollbar-width: thin;
+  scrollbar-color: #D9D2E3 transparent;
+  background:
+    linear-gradient(var(--af-rolo-fundo, #fff) 30%, rgba(255, 255, 255, 0)) top / 100% 24px no-repeat local,
+    linear-gradient(rgba(255, 255, 255, 0), var(--af-rolo-fundo, #fff) 70%) bottom / 100% 24px no-repeat local,
+    radial-gradient(farthest-side at 50% 0, rgba(30, 21, 48, .14), transparent) top / 100% 8px no-repeat scroll,
+    radial-gradient(farthest-side at 50% 100%, rgba(30, 21, 48, .14), transparent) bottom / 100% 8px no-repeat scroll;
+}
+
+@app .nc-af-sentinela {
+  display: block;
+  height: 1px;
+}
+
+@app .nc-af-p-quem b {
+  display: block;
+  font-size: 14px;
+  font-weight: 650;
+  color: var(--af-tinta);
+}
+
+@app .nc-af-p-quem span,
+@app .nc-af-p-desde span {
+  display: block;
+  font-size: 12.5px;
+  color: var(--af-texto);
+}
+
+@app .nc-af-p-tipo {
+  font-size: 13px;
+  color: var(--af-tinta);
+}
+
+@app .nc-af-p-desde {
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+}
+
+@app .nc-af-volta {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  justify-self: start;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: var(--nc-off, #F4F2F7);
+  font-size: 12.5px;
+  font-weight: 650;
+  font-variant-numeric: tabular-nums;
+  color: var(--af-tinta);
+}
+
+@app .nc-af-volta--atrasada { background: var(--af-vermelho-fundo); color: var(--af-vermelho); }
+@app .nc-af-volta--sem      { background: var(--af-ambar-fundo); color: var(--af-ambar); }
+@app .nc-af-volta--logo     { background: var(--af-verde-fundo); color: var(--af-verde); }
+
+@app .nc-af-mais {
+  display: block;
+  flex: none;
+  width: 100%;
+  margin: 0;
+  padding: 10px;
+  border: 0;
+  border-top: 1px solid var(--af-fio);
+  border-radius: 0 0 12px 12px;
+  background: #fff;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 650;
+  color: var(--af-roxo);
+  cursor: pointer;
+}
+
+@app .nc-af-mais:hover {
+  background: var(--af-fundo2);
+}
+
+@app .nc-af-mais[hidden] {
+  display: none;
+}
+
+/* dentro do quadro do período: o botão encosta no pé do quadro */
+@app .nc-af-q .nc-af-mais {
+  margin: 8px -14px -14px;
+  width: calc(100% + 28px);
+  padding: 9px;
+  border-radius: 0 0 12px 12px;
+  background: transparent;
+  font-size: 12.5px;
+}
+
+@app .nc-af-nota {
+  padding: 10px 14px;
+  font-size: 12.5px;
+  color: var(--af-texto);
+}
+
+/* ═══ [A5] O PERÍODO: A FRASE E OS QUADROS ═════════════════════════════════════════════════ */
+@app .nc-af-frase {
+  max-width: 90ch;
+  margin: 0 0 14px;
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--af-tinta);
+}
+
+@app .nc-af-frase b {
+  font-weight: 750;
+  font-variant-numeric: tabular-nums;
+}
+
+@app .nc-af-frase .nc-af-taxa {
+  display: block;
+  margin-top: 2px;
+  font-size: 13.5px;
+  color: var(--af-texto);
+}
+
+@app .nc-af-quadros {
+  display: grid;
+  grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr);   /* o mês a mês precisa de largura */
+  gap: 14px;
+}
+
+@app .nc-af-q {
+  --af-rolo-fundo: var(--af-fundo2);
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  height: 360px;                       /* os 4 do mesmo tamanho; o que passa rola dentro */
+  padding: 12px 14px 14px;
+  border-radius: 12px;
+  background: var(--af-fundo2);
+}
+
+@app .nc-af-q > .nc-af-rolo {
+  flex: 1 1 auto;
+  min-height: 0;
+  margin: 0 -6px;
+  padding: 0 6px;
+}
+
+@app .nc-af-q h3 {
+  margin: 0 0 2px;
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--af-tinta);
+}
+
+@app .nc-af-q > p {
+  margin-bottom: 10px;
+  font-size: 12.5px;
+  color: var(--af-texto);
+}
+
+/* ═══ [A6] BARRAS E MESES ══════════════════════════════════════════════════════════════════ */
+@app .nc-af-barras {
+  display: grid;
+  gap: 2px;
+  list-style: none;
+}
+
+/* linha 1: o nome (com o código) e, ao passar o mouse, "Ver na tabela" · linha 2: a barra e os
+   números. A linha inteira é um botão. */
+@app .nc-af-b {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 4px 10px;
+  width: 100%;
+  margin: 0;
+  padding: 7px 8px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  box-shadow: none;
+  font: inherit;
+  font-size: 13px;
+  text-align: left;
+  color: inherit;
+  cursor: pointer;
+  transition: background-color .15s;
+}
+
+@app .nc-af-b:hover {
+  background: #fff;
+}
+
+/* barra SÓ DE LEITURA (o "Como tiram as férias" da 200:26): não é botão, não muda ao passar o mouse */
+@app .nc-af-b.nc-af-b--fixa {
+  cursor: default;
+}
+
+@app .nc-af-b.nc-af-b--fixa:hover {
+  background: transparent;
+}
+
+@app .nc-af-b.is-separa {
+  margin-top: 6px;
+  padding-top: 13px;
+  border-top: 1px dashed #DCD5E6;
+  border-radius: 0;
+}
+
+@app .nc-af-b:focus-visible {
+  outline: 2px solid var(--af-sel);
+  outline-offset: -2px;
+}
+
+@app .nc-af-b {
+  position: relative;
+}
+
+/* "Ver na tabela" aparece POR CIMA do fim do nome, só ao passar o mouse / com o foco: o nome usa a
+   linha inteira (cortar o nome para reservar o lugar dele deixava "14 Apo…") */
+@app .nc-af-b-ir {
+  position: absolute;
+  top: 5px;
+  right: 6px;
+  padding: 2px 4px 2px 18px;
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0), #fff 16px);
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 12px;
+  font-weight: 650;
+  color: var(--af-roxo);
+  opacity: 0;
+  transition: opacity .15s;
+}
+
+@app .nc-af-b-ir .nc-af-ic {
+  width: 14px;
+  height: 14px;
+}
+
+@app .nc-af-b:hover .nc-af-b-ir,
+@app .nc-af-b:focus-visible .nc-af-b-ir {
+  opacity: 1;
+}
+
+@app .nc-af-b-nome {
+  grid-column: 1 / -1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--af-tinta);
+}
+
+@app .nc-af-b-nome em {
+  margin-right: 6px;
+  font-style: normal;
+  font-size: 12px;
+  font-weight: 650;
+  font-variant-numeric: tabular-nums;
+  color: var(--af-texto);
+}
+
+@app .nc-af-b-num {
+  white-space: nowrap;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--af-tinta);
+}
+
+@app .nc-af-b-num small {
+  font-weight: 500;
+  color: var(--af-texto);
+}
+
+@app .nc-af-b-trilho {
+  height: 6px;
+  border-radius: 99px;
+  background: #ECE7F2;
+  overflow: hidden;
+}
+
+@app .nc-af-b-trilho i {
+  display: block;
+  height: 100%;
+  border-radius: 99px;
+  background: var(--af-roxo);
+}
+
+@app .nc-af-b.is-maior .nc-af-b-trilho i {
+  background: var(--af-rosa);
+}
+
+/* mês a mês: colunas com o número em cima */
+@app .nc-af-meses {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(0, 1fr);
+  align-items: end;
+  gap: 4px;
+  height: 170px;
+  list-style: none;
+}
+
+@app .nc-af-mes {
+  position: relative;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  align-items: end;
+  justify-items: center;
+  height: 100%;
+  min-width: 0;
+  border-radius: 6px;
+  outline: 0;
+  cursor: default;
+}
+
+@app .nc-af-mes:hover,
+@app .nc-af-mes:focus-visible {
+  background: rgba(81, 28, 118, .06);
+}
+
+@app .nc-af-mes:focus-visible {
+  box-shadow: inset 0 0 0 2px var(--af-sel);
+}
+
+/* a dica: "mai/2025: 3 afastamentos" em cima da coluna */
+@app .nc-af-mes:hover::after,
+@app .nc-af-mes:focus-visible::after {
+  content: attr(data-dica);
+  position: absolute;
+  bottom: calc(100% + 4px);
+  left: 50%;
+  z-index: 3;
+  padding: 5px 9px;
+  border-radius: 7px;
+  background: var(--af-tinta);
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+  color: #fff;
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+
+/* as primeiras e as últimas colunas: a dica não sai da caixa */
+@app .nc-af-mes:nth-child(-n+2):hover::after,
+@app .nc-af-mes:nth-child(-n+2):focus-visible::after {
+  left: 0;
+  transform: none;
+}
+
+@app .nc-af-mes:nth-last-child(-n+2):hover::after,
+@app .nc-af-mes:nth-last-child(-n+2):focus-visible::after {
+  left: auto;
+  right: 0;
+  transform: none;
+}
+
+/* muitos meses (coluna < 34 px): nome só nos marcos (jan, abr, jul, out, o 1º); número só no pico */
+@app .nc-af-meses.is-denso .nc-af-mes:not(.is-marco) > span:not(.nc-af-par),
+@app .nc-af-meses.is-denso .nc-af-mes:not(.is-pico) b {
+  visibility: hidden;
+}
+
+@app .nc-af-meses.is-denso .nc-af-mes span {
+  overflow: visible;
+}
+
+/* ── ENTRADAS E SAÍDAS (200:16): duas colunas por mês, entraram (roxo) e saíram (rosa) ── */
+@app .nc-af-mes .nc-af-par {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 2px;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+}
+
+@app .nc-af-mes .nc-af-par i {
+  flex: 0 1 10px;
+  width: auto;
+  min-width: 3px;
+  border-radius: 4px 4px 1px 1px;
+}
+
+@app .nc-af-mes .nc-af-par .nc-af-par-e {
+  background: var(--af-roxo);
+}
+
+@app .nc-af-mes .nc-af-par .nc-af-par-s {
+  background: var(--af-rosa);
+}
+
+@app .nc-af-legenda {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--af-texto);
+}
+
+@app .nc-af-leg {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+}
+
+@app .nc-af-leg + .nc-af-leg,
+@app .nc-af-legenda .nc-af-leg--s {
+  margin-left: 10px;
+}
+
+@app .nc-af-leg--e { background: var(--af-roxo); }
+@app .nc-af-leg--s { background: var(--af-rosa); }
+
+/* 6 quadros (200:16): 3 por linha */
+@app .nc-af-quadros.nc-af-quadros--3 {
+  grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr) minmax(0, 1fr);
+}
+
+/* a cota de PCD por empresa: linha só de leitura (não é botão) */
+@app .nc-af-p.nc-qd-cota {
+  cursor: default;
+}
+
+@app .nc-af-p.nc-qd-cota:hover {
+  background: transparent;
+}
+
+/* ── AS ABAS DA ANÁLISE (200:16): no padrão dos botões do relatório; a escolhida em roxo ── */
+@app .nc-qd-abas {
+  display: inline-flex;
+  flex-wrap: wrap;
+  box-sizing: border-box;
+  margin: 0 0 14px;
+  border: 1px solid var(--af-fio);
+  border-radius: 8px;
+  background: #fff;
+  overflow: hidden;
+}
+
+@app .nc-qd-abas button {
+  height: 36px;
+  margin: 0;
+  padding: 0 16px;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 650;
+  color: var(--af-texto);
+  cursor: pointer;
+}
+
+@app .nc-qd-abas button + button {
+  border-left: 1px solid var(--af-fio);
+}
+
+@app .nc-qd-abas button {
+  transition: background-color .25s cubic-bezier(.4, 0, .2, 1), color .25s cubic-bezier(.4, 0, .2, 1);
+}
+
+@app .nc-qd-abas button:hover:not([aria-selected="true"]) {
+  background: color-mix(in srgb, var(--af-sel) 8%, #fff);
+  color: color-mix(in srgb, var(--af-sel) 62%, #2A0A1A);
+}
+
+/* a aba escolhida em rosa, como o Tabela | Cartões e todo item marcado */
+@app .nc-qd-abas button[aria-selected="true"] {
+  background: var(--af-sel);
+  color: #fff;
+}
+
+@app .nc-qd-abas button:focus-visible {
+  outline: 2px solid var(--af-sel);
+  outline-offset: -3px;
+}
+
+/* a faixa de números de cada aba: 4 colunas, no tamanho compacto */
+@app .nc-af-regua.nc-af-regua--mini {
+  margin-bottom: 4px;
+}
+
+@app .nc-af-regua--mini .nc-af-num {
+  flex-basis: 240px;                   /* 4 números: 4 lado a lado ou 2 + 2 (nunca 3 + 1 sozinho) */
+  min-height: 0;
+  padding: 11px 14px 12px;
+}
+
+@app .nc-af-regua--mini .nc-af-valor {
+  font-size: 22px;
+}
+
+@app .nc-af-regua--mini .nc-af-num .nc-af-sinal {
+  width: 30px;
+  height: 30px;
+}
+
+@app .nc-qd-subquem {
+  margin-bottom: 12px;
+}
+
+@app .nc-qd-painel > .nc-af-frase {
+  margin-top: 12px;
+}
+
+@app .nc-qd-cinza {
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--af-texto);
+}
+
+/* o quadro LARGO (a dispersão) ocupa 2 colunas */
+@app .nc-af-q.nc-af-q--largo {
+  grid-column: span 2;
+}
+
+/* ── DISPERSÃO SALARIAL: a régua comum, a linha (menor→maior), a caixa (1º→3º quartil), o ponto (mediana) ── */
+@app .nc-qd-disp {
+  display: grid;
+  gap: 4px;
+  list-style: none;
+}
+
+@app .nc-qd-disp-l {
+  padding: 8px;
+  border-radius: 8px;
+}
+
+@app .nc-qd-disp-l:hover {
+  background: #fff;
+}
+
+@app .nc-qd-disp-cab {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 6px;
+  font-size: 13px;
+}
+
+@app .nc-qd-disp-cab .nc-af-b-nome {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+@app .nc-qd-disp-cab .nc-af-volta {
+  flex: none;
+  padding: 2px 8px;
+  font-size: 11.5px;
+}
+
+@app .nc-qd-faixa {
+  position: relative;
+  display: block;
+  height: 16px;
+  margin: 0 2px;
+  border-radius: 99px;
+  background: #ECE7F2;
+}
+
+@app .nc-qd-faixa i {
+  position: absolute;
+  top: 50%;
+  display: block;
+}
+
+@app .nc-qd-faixa .nc-qd-f-linha {
+  height: 2px;
+  margin-top: -1px;
+  background: #A99BBD;
+}
+
+@app .nc-qd-faixa .nc-qd-f-caixa {
+  height: 10px;
+  margin-top: -5px;
+  border-radius: 3px;
+  background: rgba(81, 28, 118, .32);
+}
+
+@app .nc-qd-faixa .nc-qd-f-med {
+  width: 12px;
+  height: 12px;
+  margin: -6px 0 0 -6px;
+  border: 2px solid #fff;
+  border-radius: 50%;
+  background: var(--af-roxo);
+  box-shadow: 0 1px 2px rgba(30, 21, 48, .35);
+}
+
+@app .nc-qd-disp-txt {
+  margin: 6px 0 0;
+  font-size: 12.5px;
+  color: var(--af-texto);
+}
+
+@app .nc-qd-disp-txt b {
+  font-weight: 700;
+  color: var(--af-tinta);
+}
+
+/* ── MULHERES x HOMENS: a frase e as duas barras ── */
+@app .nc-af-b.nc-qd-gen {
+  row-gap: 5px;
+}
+
+@app .nc-qd-gen .nc-qd-gen-frase {
+  grid-column: 1 / -1;
+  justify-self: start;
+  padding: 2px 8px;
+  font-size: 11.5px;
+}
+
+@app .nc-qd-gen-l {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: 96px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 8px;
+  font-size: 12.5px;
+}
+
+@app .nc-qd-gen-l small {
+  font-size: 12px;
+  color: var(--af-texto);
+}
+
+@app .nc-qd-gen-l b {
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+@app .nc-qd-gen-l .nc-af-b-trilho i.nc-qd-gen-f {
+  background: var(--af-rosa);
+}
+
+/* antes do "Pesquisar" da 200:16: o convite */
+@app .nc-af-aviso.nc-qd-convite .nc-af-ic {
+  color: var(--af-roxo);
+}
+
+@app .nc-af-por {
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: .02em;
+  color: var(--af-texto);
+}
+
+@app .nc-af-pico {
+  margin-top: auto;
+  padding-top: 10px;
+  font-size: 12.5px;
+  color: var(--af-texto);
+}
+
+@app .nc-af-pico b {
+  font-weight: 700;
+  color: var(--af-tinta);
+}
+
+@app .nc-af-q--meses .nc-af-meses {
+  margin-top: 34px;               /* lugar para a dica em cima da coluna mais alta */
+}
+
+@app .nc-af-mes b {
+  font-size: 11.5px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--af-tinta);
+}
+
+@app .nc-af-mes i {
+  display: block;
+  width: min(22px, 100%);
+  min-height: 2px;
+  border-radius: 5px 5px 2px 2px;
+  background: var(--af-roxo);
+}
+
+@app .nc-af-mes.is-atual i {
+  background: var(--af-rosa);
+}
+
+@app .nc-af-mes span {
+  display: grid;
+  justify-items: center;
+  height: 30px;
+  margin-top: 5px;
+  font-size: 11.5px;
+  line-height: 1.25;
+  color: var(--af-texto);
+  white-space: nowrap;
+}
+
+@app .nc-af-mes em {
+  font-style: normal;
+  font-size: 10.5px;
+  font-weight: 650;
+  color: var(--af-tinta);
+}
+
+@app .nc-af-vazio-q {
+  font-size: 13px;
+  color: var(--af-texto);
+}
+
+/* ═══ [A7] CARREGANDO, VAZIO, ERRO ═════════════════════════════════════════════════════════ */
+@app .nc-af-esq {
+  display: block;
+  height: 14px;
+  border-radius: 6px;
+  background: linear-gradient(90deg, #F1EEF5 0%, #F8F6FA 50%, #F1EEF5 100%);
+  background-size: 200% 100%;
+  animation: nc-af-brilho 1.2s ease-in-out infinite;
+}
+
+@keyframes nc-af-brilho {
+  from { background-position: 100% 0; }
+  to   { background-position: -100% 0; }
+}
+
+@app .nc-af-num.is-carregando .nc-af-valor {
+  width: 56px;
+}
+
+@app .nc-af-aviso {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 14px 18px;
+  font-size: 13.5px;
+  color: var(--af-texto);
+}
+
+@app .nc-af-aviso b {
+  display: block;
+  color: var(--af-tinta);
+}
+
+@app .nc-af-aviso .nc-af-ic {
+  margin-top: 1px;
+  color: var(--af-ambar);
+}
+
+/* pessoas DENTRO de um quadro (maiores valores, titulares): o quadro é estreito — nome e detalhe
+   numa coluna, o valor à direita, sem a seta (a linha inteira continua sendo o botão) */
+@app .nc-af-q .nc-af-p.nc-fp-p {
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 2px 12px;
+  padding: 8px 10px;
+}
+
+@app .nc-af-q .nc-af-p-quem { grid-column: 1; grid-row: 1; }
+@app .nc-af-q .nc-af-p-tipo { grid-column: 1; grid-row: 2; font-size: 12.5px; }
+@app .nc-af-q .nc-af-p-tipo:empty { display: none; }
+@app .nc-af-q .nc-af-p .nc-af-volta { grid-column: 2; grid-row: 1 / span 2; align-self: center; margin-top: 0; }
+@app .nc-af-q .nc-af-p-ir { display: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  @app .nc-af-esq {
+    animation: none;
+  }
+}
+
+/* ═══ [A9] ACABAMENTO E MOVIMENTO (09/10) ══════════════════════════════════════════════════
+   O mesmo painel nas 5 páginas (16, 21, 25, 26, 164): moldura com profundidade, análise em cartões
+   brancos sobre fundo tingido, e dois movimentos com propósito —
+     CALCULANDO  faixa que corre no topo, ponto que pulsa ao lado do "o que está fazendo · 12 s",
+                 números e cartões "fantasma" com brilho (o desenho do que vem);
+     CHEGOU      os números sobem 6 px até o lugar e as barras crescem da esquerda, UMA vez
+                 (classe is-novo por 1,2 s — escolher um número depois não repete).
+   Quem pediu menos movimento no sistema (prefers-reduced-motion) vê tudo parado.
+   ════════════════════════════════════════════════════════════════════════════════════════ */
+@app .nc-af {
+  position: relative;
+  border-color: #E6E0EE;
+  box-shadow: 0 1px 2px rgba(27, 18, 56, .05), 0 14px 32px -20px rgba(27, 18, 56, .28);
+}
+
+@app .nc-af-cab {
+  border-radius: 14px 14px 0 0;
+  background: linear-gradient(180deg, #FCFAFE 0%, #FFFFFF 100%);
+}
+
+@app .nc-af-cab h2 {
+  font-size: 16.5px;
+}
+
+/* os números de hoje: o valor com peso, o nome logo abaixo, a dica mais calma */
+@app .nc-af-num {
+  transition: background-color .18s, box-shadow .18s;
+}
+
+@app .nc-af-num:not(:disabled):hover {
+  background: #FBF9FD;
+}
+
+@app .nc-af-diz {
+  font-size: 13.5px;
+  font-weight: 650;
+  color: var(--af-tinta);
+}
+
+/* a análise: fundo levemente tingido, cada quadro um cartão branco */
+@app .nc-af-periodo {
+  border-radius: 0 0 14px 14px;
+  background: #FBFAFD;
+}
+
+@app .nc-af-q {
+  --af-rolo-fundo: #FFFFFF;
+  border: 1px solid #ECE7F3;
+  background: #FFFFFF;
+  box-shadow: 0 1px 2px rgba(27, 18, 56, .04);
+}
+
+@app .nc-af-q h3 {
+  font-size: 14px;
+  letter-spacing: -.005em;
+}
+
+@app .nc-af-q > p {
+  padding-bottom: 10px;
+  border-bottom: 1px solid #F1EDF6;
+}
+
+@app .nc-af-b-trilho {
+  height: 8px;
+  background: #EFEAF5;
+}
+
+@app .nc-af-frase {
+  font-size: 15px;
+}
+
+/* ── CHEGOU: uma vez, quando os números aparecem ── */
+@keyframes nc-af-sobe {
+  from { transform: translateY(6px); opacity: 0; }
+  to   { transform: none; opacity: 1; }
+}
+
+@keyframes nc-af-cresce {
+  from { transform: scaleX(0); }
+  to   { transform: scaleX(1); }
+}
+
+@keyframes nc-af-coluna {
+  from { transform: scaleY(0); }
+  to   { transform: scaleY(1); }
+}
+
+@app .nc-af.is-novo .nc-af-num .nc-af-valor,
+@app .nc-af.is-novo .nc-af-num .nc-af-diz {
+  animation: nc-af-sobe .5s cubic-bezier(.16, 1, .3, 1) both;
+}
+
+@app .nc-af.is-novo .nc-af-num:nth-child(2) :is(.nc-af-valor, .nc-af-diz) { animation-delay: .04s; }
+@app .nc-af.is-novo .nc-af-num:nth-child(3) :is(.nc-af-valor, .nc-af-diz) { animation-delay: .08s; }
+@app .nc-af.is-novo .nc-af-num:nth-child(4) :is(.nc-af-valor, .nc-af-diz) { animation-delay: .12s; }
+@app .nc-af.is-novo .nc-af-num:nth-child(5) :is(.nc-af-valor, .nc-af-diz) { animation-delay: .16s; }
+
+@app .nc-af.is-novo .nc-af-b-trilho i {
+  transform-origin: left center;
+  animation: nc-af-cresce .8s cubic-bezier(.16, 1, .3, 1) .1s both;
+}
+
+@app .nc-af.is-novo .nc-af-mes i {
+  transform-origin: center bottom;
+  animation: nc-af-coluna .7s cubic-bezier(.16, 1, .3, 1) .1s both;
+}
+
+/* ── CALCULANDO ── */
+@keyframes nc-af-corre {
+  from { transform: translateX(-100%); }
+  to   { transform: translateX(250%); }
+}
+
+@keyframes nc-af-pulsa {
+  0%   { box-shadow: 0 0 0 0 rgba(201, 87, 136, .45); }
+  70%  { box-shadow: 0 0 0 7px rgba(201, 87, 136, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(201, 87, 136, 0); }
+}
+
+/* a faixa fina que corre no topo do painel enquanto o servidor calcula */
+@app .nc-af.is-calculando::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 14px;
+  right: 14px;
+  height: 3px;
+  border-radius: 0 0 3px 3px;
+  background: #F1E8F4;
+  overflow: hidden;
+}
+
+@app .nc-af.is-calculando::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 14px;
+  width: 30%;
+  height: 3px;
+  border-radius: 3px;
+  background: linear-gradient(90deg, transparent, var(--af-rosa), var(--af-roxo), transparent);
+  animation: nc-af-corre 1.6s cubic-bezier(.45, 0, .2, 1) infinite;
+}
+
+@app .nc-af-pulso {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  margin-right: 8px;
+  border-radius: 50%;
+  background: var(--af-rosa);
+  vertical-align: 1px;
+  animation: nc-af-pulsa 1.4s ease-out infinite;
+}
+
+@app .nc-af-seg {
+  margin-left: 6px;
+  padding: 1px 7px;
+  border-radius: 99px;
+  background: #F4F0F8;
+  font-size: 12px;
+  font-weight: 650;
+  font-variant-numeric: tabular-nums;
+  color: var(--af-texto);
+}
+
+/* o ícone do número também "respira" enquanto calcula */
+@app .nc-af-num.is-carregando .nc-af-sinal {
+  background: linear-gradient(90deg, #F1EEF5 0%, #F9F7FB 50%, #F1EEF5 100%);
+  background-size: 200% 100%;
+  color: #B9AEC9;
+  animation: nc-af-brilho 1.2s ease-in-out infinite;
+}
+
+@app .nc-af-num.is-carregando .nc-af-diz {
+  color: #9A90AC;
+}
+
+/* compacto calculando: só a faixa de números fantasma (os cartões da análise não empurram a tabela) */
+@app .nc-af.is-fechado .nc-af-secao[aria-busy="true"] ~ .nc-af-secao {
+  display: none;
+}
+
+/* cartão "fantasma" da análise: o desenho de barras que vem, com brilho por cima */
+@app .nc-af-q:empty {
+  position: relative;
+  overflow: hidden;
+  background:
+    linear-gradient(#EFEAF5, #EFEAF5) 14px 16px / 45% 12px no-repeat,
+    linear-gradient(#F4F1F8, #F4F1F8) 14px 36px / 65% 10px no-repeat,
+    linear-gradient(#EFEAF5, #EFEAF5) 14px 72px / 88% 8px no-repeat,
+    linear-gradient(#EFEAF5, #EFEAF5) 14px 100px / 66% 8px no-repeat,
+    linear-gradient(#EFEAF5, #EFEAF5) 14px 128px / 48% 8px no-repeat,
+    linear-gradient(#EFEAF5, #EFEAF5) 14px 156px / 30% 8px no-repeat,
+    #FFFFFF;
+}
+
+@app .nc-af-q:empty::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(100deg, transparent 20%, rgba(255, 255, 255, .75) 50%, transparent 80%);
+  animation: nc-af-corre 1.4s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  @app .nc-af.is-novo :is(.nc-af-valor, .nc-af-diz, .nc-af-b-trilho i, .nc-af-mes i),
+  @app .nc-af.is-calculando::after,
+  @app .nc-af-pulso,
+  @app .nc-af-num.is-carregando .nc-af-sinal,
+  @app .nc-af-q:empty::after {
+    animation: none;
+  }
+}
+
+/* ═══ [A8] CELULAR E TELA ESTREITA ═════════════════════════════════════════════════════════
+   O painel divide a tela com o menu e os filtros: numa janela de 1280 px ele tem ~700 px. Por isso
+   quadros e listas seguem a largura do PAINEL (@container), e a janela (@media) só para o celular.
+   ════════════════════════════════════════════════════════════════════════════════════════ */
+@app .nc-af {
+  container: ncaf / inline-size;
+}
+
+@container ncaf (max-width: 1040px) {
+  @app .nc-af-quadros,
+  @app .nc-af-quadros.nc-af-quadros--3 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@container ncaf (max-width: 640px) {
+  @app .nc-af-quadros,
+  @app .nc-af-quadros.nc-af-quadros--3 {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  @app .nc-af-q.nc-af-q--largo {
+    grid-column: auto;
+  }
+}
+
+/* a lista "quem são" em colunas precisa de ~800 px; menos que isso, uma coluna (o selo embaixo) */
+@container ncaf (max-width: 860px) {
+  @app .nc-af-p,
+  @app .nc-af-p.nc-fp-p {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 3px;
+  }
+
+  @app .nc-af-p .nc-af-volta {
+    justify-self: start;
+    margin-top: 4px;
+  }
+
+  @app .nc-af-p-ir {
+    display: none;
+  }
+}
+
+/* palavra no lugar do número ("Ninguém", "Em dia"): um pouco menor que um número */
+@app .nc-af-valor.is-texto {
+  font-size: .8em;
+}
+@app .nc-af-num .nc-af-valor.is-texto {
+  font-size: 22px;
+}
+@app .nc-af.is-fechado .nc-af-num .nc-af-valor.is-texto {
+  font-size: 18px;
+}
+@media (max-width: 1180px) {
+  @app .nc-af-quadros,
+  @app .nc-af-quadros.nc-af-quadros--3 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 900px) {
+  /* no celular o 1º número (o principal) fica na linha inteira; os outros 4, 2 a 2 */
+  @app .nc-af-regua:not(.nc-af-regua--mini) .nc-af-num:first-child {
+    flex-basis: 100%;
+  }
+
+  @app .nc-af-num {
+    flex-basis: 140px;
+  }
+
+  /* uma coluna só: quem, motivo, desde e, embaixo, o selo da volta */
+  @app .nc-af-p,
+  @app .nc-af-p.nc-fp-p {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 3px;
+  }
+
+  @app .nc-af-p .nc-af-volta {
+    margin-top: 4px;
+  }
+
+  @app .nc-af-p-ir {
+    display: none;
+  }
+
+  @app .nc-af-procura {
+    flex-basis: 100%;
+    max-width: none;
+    margin: 4px 0 0;
+  }
+}
+
+@media (max-width: 640px) {
+  @app .nc-af-quadros,
+  @app .nc-af-quadros.nc-af-quadros--3 {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  @app .nc-af-q.nc-af-q--largo {
+    grid-column: auto;
+  }
+
+  /* as 3 abas dividem a largura (texto em até 2 linhas): nada de uma aba sozinha na 2ª linha */
+  @app .nc-qd-abas {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    width: 100%;
+  }
+
+  @app .nc-qd-abas button {
+    height: auto;
+    min-height: 44px;
+    padding: 6px 8px;
+    line-height: 1.2;
+    white-space: normal;
+  }
+
+  /* um quadro embaixo do outro: altura MÁXIMA (sem buraco quando a lista é curta) */
+  @app .nc-af-q {
+    height: auto;
+    max-height: 360px;
+  }
+
+  @app .nc-af-cab,
+  @app .nc-af-secao {
+    padding-left: 14px;
+    padding-right: 14px;
+  }
+
+  @app .nc-af-valor {
+    font-size: 24px;
+  }
+
+  @app .nc-af-num {
+    min-height: 0;
+    padding: 12px;
+  }
+
+  @app .nc-af-num .nc-af-sinal {
+    width: 30px;
+    height: 30px;
+  }
+}
+
+/* ═══ [A10] FILTRAR E CRUZAR (12/10) ══════════════════════════════════════════════════════
+   Pedido do cliente: filtrar direto no resumo e escolher o cruzamento do "Onde mais acontece".
+     FAIXA       "Filtrar este resumo" logo abaixo do título: um botão por coluna da tabela, que abre a
+                 LISTA DE MARCAR (vários valores, busca, "Pronto"). Coluna filtrada = botão rosa com
+                 "+N" (o que está ESCOLHIDO é rosa, como no resto do painel).
+     COMPACTO    a faixa some; com filtro, fica só a linha "Resumo só de: [Filial 3 ×]" — quem
+                 fechou o painel não esquece que os números estão filtrados.
+     BARRAS      a linha inteira filtra (aria-pressed); a escolhida ganha o ✓ e a borda rosa, as
+                 outras ficam apagadas (não somem: dá para trocar). "Ver na tabela" virou o botão
+                 pequeno à direita (aparece ao passar o mouse; no celular, sempre).
+   Só entra no painel de afastamentos (as outras páginas que usam esta roupa não têm estas classes).
+   ════════════════════════════════════════════════════════════════════════════════════════ */
+@app .nc-af-filtros {
+  padding: 12px 18px 14px;
+  border-bottom: 1px solid var(--af-fio);
+  background: #FFFFFF;
+}
+
+@app .nc-af-filtros-cab {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 10px;
+  margin-bottom: 10px;
+}
+
+@app .nc-af-filtros-cab > .nc-af-ic {
+  width: 16px;
+  height: 16px;
+  color: var(--af-roxo);
+}
+
+@app .nc-af-filtros-tit {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--af-tinta);
+}
+
+@app .nc-af-filtros-nota {
+  flex: 1 1 220px;
+  min-width: 0;
+  font-size: 12.5px;
+  color: var(--af-texto);
+}
+
+@app .nc-af-limpa {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 30px;
+  margin: 0;
+  padding: 0 10px;
+  border: 1px solid var(--nc-borda-botao, #D9CDE6);
+  border-radius: 8px;
+  background: #FFFFFF;
+  box-shadow: none;
+  font: inherit;
+  font-size: 12.5px;
+  font-weight: 650;
+  color: var(--af-roxo);
+  cursor: pointer;
+}
+
+@app .nc-af-limpa:hover {
+  background: #FAF7FC;
+}
+
+@app .nc-af-limpa .nc-af-ic {
+  width: 14px;
+  height: 14px;
+}
+
+@app .nc-af-filtros-campos {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(176px, 1fr));
+  gap: 8px 10px;
+}
+
+@app .nc-af-campo {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+  margin: 0;
+}
+
+@app .nc-af-campo-rot {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 11.5px;
+  font-weight: 650;
+  color: var(--af-texto);
+}
+
+/* o "por" é uma caixa de escolha nativa (teclado, leitor de tela e a lista do celular de graça), com a
+   roupa do painel e a seta desenhada */
+@app .nc-af-ver-por select {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  min-width: 0;
+  height: 34px;
+  margin: 0;
+  padding: 0 30px 0 10px;
+  border: 1px solid #DDD5E8;
+  border-radius: 8px;
+  background: #FFFFFF url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23511C76' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E") no-repeat right 9px center / 13px 13px;
+  box-shadow: none;
+  font: inherit;
+  font-size: 13px;
+  text-overflow: ellipsis;
+  color: var(--af-tinta);
+  cursor: pointer;
+}
+
+@app .nc-af-ver-por select:hover {
+  border-color: #C7B9D8;
+}
+
+@app :is(.nc-af-ver-por select, .nc-af-escolha):focus-visible {
+  outline: 2px solid var(--af-sel);
+  outline-offset: 1px;
+}
+
+/* o botão de cada coluna: parece uma caixa de escolha; mostra "Todas", o escolhido, ou o 1º + "+2" */
+@app .nc-af-escolha {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  min-width: 0;
+  height: 34px;
+  margin: 0;
+  padding: 0 9px 0 10px;
+  border: 1px solid #DDD5E8;
+  border-radius: 8px;
+  background: #FFFFFF;
+  box-shadow: none;
+  font: inherit;
+  font-size: 13px;
+  text-align: left;
+  color: var(--af-tinta);
+  cursor: pointer;
+}
+
+@app .nc-af-escolha:hover {
+  border-color: #C7B9D8;
+}
+
+@app .nc-af-escolha-txt {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@app .nc-af-escolha > .nc-af-ic {
+  width: 14px;
+  height: 14px;
+  color: var(--af-roxo);
+  stroke-width: 2.4;
+  transition: transform .15s;
+}
+
+@app .nc-af-escolha[aria-expanded="true"] > .nc-af-ic {
+  transform: rotate(180deg);
+}
+
+@app .nc-af-mais-n {
+  flex: none;
+  padding: 1px 7px;
+  border-radius: 99px;
+  background: var(--af-sel);
+  font-size: 11.5px;
+  font-weight: 700;
+  color: #FFFFFF;
+}
+
+@app .nc-af-campo.is-ativo .nc-af-campo-rot {
+  color: var(--af-sel);
+}
+
+@app .nc-af-campo.is-ativo .nc-af-escolha {
+  border-color: var(--af-sel);
+  background: #FDF5F9;
+  box-shadow: inset 0 0 0 1px var(--af-sel);
+  font-weight: 650;
+}
+
+@app .nc-af-escolha[aria-expanded="true"] {
+  border-color: var(--af-roxo);
+  box-shadow: 0 0 0 3px rgba(81, 28, 118, .12);
+}
+
+/* a LISTA DE MARCAR: flutua embaixo do botão, por cima do painel */
+@app .nc-af-pop {
+  position: absolute;
+  z-index: 30;
+  display: flex;
+  flex-direction: column;
+  max-height: min(440px, 70vh);
+  border: 1px solid #E2DAEC;
+  border-radius: 12px;
+  background: #FFFFFF;
+  box-shadow: 0 18px 40px -12px rgba(27, 18, 56, .35), 0 2px 6px rgba(27, 18, 56, .08);
+  overflow: hidden;
+}
+
+@app .nc-af-pop-cab {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  padding: 11px 14px 6px;
+  font-size: 13.5px;
+}
+
+@app .nc-af-pop-cab span {
+  font-size: 12px;
+  color: var(--af-texto);
+}
+
+/* flex: none — a busca solta herda "flex: 1 1 260px"; numa coluna isso vira ALTURA e a caixa
+   crescia quando a lista encolhia ao escrever */
+@app .nc-af-pop .nc-af-pop-busca {
+  flex: none;
+  max-width: none;
+  margin: 4px 12px 6px;
+}
+
+@app .nc-af-pop-lista {
+  flex: 1 1 auto;
+  min-height: 0;
+  margin: 0;
+  padding: 2px 6px 6px;
+  list-style: none;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+@app .nc-af-pop-lista label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+  padding: 8px 8px;
+  border-radius: 8px;
+  font-size: 13px;
+  line-height: 1.3;
+  color: var(--af-tinta);
+  cursor: pointer;
+}
+
+@app .nc-af-pop-lista label:hover {
+  background: #F8F5FB;
+}
+
+@app .nc-af-pop-lista input[type="checkbox"] {
+  -webkit-appearance: auto;
+  appearance: auto;
+  position: static;
+  flex: none;
+  width: 17px;
+  height: 17px;
+  margin: 0;
+  opacity: 1;
+  accent-color: var(--af-sel);
+  cursor: pointer;
+}
+
+@app .nc-af-pop-lista span {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+@app .nc-af-pop-lista input:checked + span {
+  font-weight: 650;
+}
+
+@app .nc-af-pop-lista small {
+  flex: none;
+  font-size: 11.5px;
+  font-variant-numeric: tabular-nums;
+  color: var(--af-texto);
+}
+
+@app .nc-af-pop-nada {
+  padding: 4px 14px 12px;
+  font-size: 12.5px;
+  color: var(--af-texto);
+}
+
+@app .nc-af-pop-pe {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  border-top: 1px solid var(--af-fio);
+  background: #FCFBFD;
+}
+
+@app .nc-af-bt.nc-af-bt--cheio {
+  border-color: var(--af-roxo);
+  background: var(--af-roxo);
+  color: #FFFFFF;
+}
+
+@app .nc-af-bt.nc-af-bt--cheio:hover {
+  filter: brightness(1.08);
+}
+
+/* "Resumo só de:" — só no modo compacto (aberto, as caixas já mostram o que está filtrado) */
+@app .nc-af-filtros-chips {
+  display: none;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+
+@app .nc-af-filtros-chips-rot {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--af-texto);
+}
+
+@app .nc-af-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  max-width: 100%;
+  height: 28px;
+  margin: 0;
+  padding: 0 7px 0 10px;
+  border: 1px solid var(--af-sel);
+  border-radius: 99px;
+  background: #FDF5F9;
+  box-shadow: none;
+  font: inherit;
+  font-size: 12.5px;
+  color: var(--af-tinta);
+  cursor: pointer;
+}
+
+@app .nc-af-chip span {
+  font-weight: 600;
+  color: var(--af-texto);
+}
+
+@app .nc-af-chip b {
+  overflow: hidden;
+  max-width: 260px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 700;
+}
+
+@app .nc-af-chip em {
+  font-style: normal;
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--af-sel);
+}
+
+@app .nc-af-chip .nc-af-ic {
+  width: 14px;
+  height: 14px;
+  color: var(--af-sel);
+}
+
+@app .nc-af-chip:focus-visible,
+@app .nc-af-limpa:focus-visible {
+  outline: 2px solid var(--af-sel);
+  outline-offset: 1px;
+}
+
+@app .nc-af.is-fechado .nc-af-filtros:not(.is-ativo) {
+  display: none;
+}
+
+@app .nc-af.is-fechado .nc-af-filtros {
+  padding: 0 18px 10px;
+  border-bottom: 0;
+}
+
+@app .nc-af.is-fechado :is(.nc-af-filtros-cab, .nc-af-filtros-campos) {
+  display: none;
+}
+
+@app .nc-af.is-fechado .nc-af-filtros-chips {
+  display: flex;
+}
+
+/* o "por" do quadro "Onde mais acontece" */
+@app .nc-af-ver-por {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 5px 0 6px;
+  font-size: 12.5px;
+  color: var(--af-texto);
+}
+
+@app .nc-af-ver-por select {
+  flex: 1 1 auto;
+  width: auto;
+  height: 30px;
+  font-weight: 650;
+  color: var(--af-roxo);
+}
+
+/* as barras que filtram */
+@app .nc-af-bl {
+  position: relative;
+}
+
+@app .nc-af-b.nc-af-b--filtra:hover {
+  background: #FAF7FC;
+}
+
+@app .nc-af-b.nc-af-b--filtra.is-escolhido {
+  background: #FDF5F9;
+  box-shadow: inset 3px 0 0 var(--af-sel);
+}
+
+@app .nc-af-b.nc-af-b--filtra.is-escolhido .nc-af-b-nome {
+  font-weight: 700;
+}
+
+@app .nc-af-b.nc-af-b--filtra.is-escolhido .nc-af-b-trilho i {
+  background: var(--af-sel);
+}
+
+@app .nc-af-b-nome > .nc-af-ic {
+  width: 14px;
+  height: 14px;
+  margin-right: 4px;
+  vertical-align: -2px;
+  stroke-width: 2.6;
+  color: var(--af-sel);
+}
+
+@app .nc-af-b.nc-af-b--filtra.is-apagado :is(.nc-af-b-nome, .nc-af-b-num, .nc-af-b-trilho) {
+  opacity: .5;
+  transition: opacity .15s;
+}
+
+@app .nc-af-b.nc-af-b--filtra.is-apagado:is(:hover, :focus-visible) :is(.nc-af-b-nome, .nc-af-b-num, .nc-af-b-trilho) {
+  opacity: 1;
+}
+
+@app .nc-af-b-tab {
+  position: absolute;
+  top: 3px;
+  right: 3px;
+  display: inline-grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  margin: 0;
+  padding: 0;
+  border: 1px solid var(--nc-borda-botao, #D9CDE6);
+  border-radius: 7px;
+  background: #FFFFFF;
+  box-shadow: none;
+  color: var(--af-roxo);
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity .15s;
+}
+
+@app .nc-af-b-tab .nc-af-ic {
+  width: 15px;
+  height: 15px;
+}
+
+@app .nc-af-b-tab:hover {
+  background: #F6F1FA;
+}
+
+@app .nc-af-bl:is(:hover, :focus-within) .nc-af-b-tab {
+  opacity: 1;
+}
+
+@app .nc-af-b-tab:focus-visible {
+  outline: 2px solid var(--af-sel);
+  outline-offset: 1px;
+}
+
+/* o nome dá lugar ao botão (nunca por baixo dele) */
+@app .nc-af-bl:is(:hover, :focus-within) .nc-af-b-nome {
+  padding-right: 30px;
+}
+
+/* tela de toque: sem "passar o mouse", o botão da tabela fica sempre à vista */
+@media (hover: none) {
+  @app .nc-af-b-tab {
+    opacity: 1;
+  }
+
+  @app .nc-af-b.nc-af-b--filtra .nc-af-b-nome {
+    padding-right: 30px;
+  }
+}
+
+@media (max-width: 640px) {
+  @app .nc-af-filtros {
+    padding-left: 14px;
+    padding-right: 14px;
+  }
+
+  @app .nc-af-filtros-campos {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* ═══ [A11] ACIDENTES DE TRABALHO (200:150, 13/10) ═════════════════════════════════════════
+   O painel "Resumo dos acidentes de trabalho" (Natcorp_AcidPainel.js) veste esta mesma roupa; aqui
+   só as peças dele (.nc-ac-*):
+     PERÍODO     o seletor "12 meses · 2 anos · 5 anos · Tudo" ao lado do rótulo do período
+     LISTA       o acidente é um LINK (abre a análise na 151): sem sublinhado, como os botões
+     DIA E HORA  a tabela 7 dias × 4 partes do dia; a cor da casa (roxo do tema) é a quantidade
+     SELOS       estabilidade (roxo; âmbar quando faltam 30 dias ou menos), melhor/pior que antes
+   ════════════════════════════════════════════════════════════════════════════════════════ */
+@app .nc-af-num--roxo .nc-af-sinal {
+  background: color-mix(in srgb, var(--af-roxo) 10%, #fff);
+  color: var(--af-roxo);
+}
+
+@app .nc-ac-per-cab {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 16px;
+  margin: 0 0 10px;
+}
+
+@app .nc-ac-per-cab .nc-af-rot {
+  margin: 0;
+}
+
+@app .nc-ac-per {
+  display: inline-flex;
+  padding: 3px;
+  border: 1px solid var(--af-fio);
+  border-radius: 10px;
+  background: var(--af-fundo2);
+}
+
+@app .nc-ac-per button {
+  height: 30px;
+  margin: 0;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  box-shadow: none;
+  font: inherit;
+  font-size: 12.5px;
+  font-weight: 600;
+  white-space: nowrap;
+  color: var(--af-texto);
+  cursor: pointer;
+  transition: background-color .15s, color .15s;
+}
+
+@app .nc-ac-per button:hover {
+  color: var(--af-tinta);
+}
+
+@app .nc-ac-per button[aria-pressed="true"] {
+  background: #fff;
+  box-shadow: 0 1px 2px rgba(27, 18, 56, .08), inset 0 0 0 1.5px var(--af-sel);
+  color: var(--af-tinta);
+}
+
+@app .nc-ac-per button:focus-visible {
+  outline: 2px solid var(--af-sel);
+  outline-offset: 1px;
+}
+
+/* o acidente na lista é um link para a análise */
+@app a.nc-af-p,
+@app a.nc-af-p:hover,
+@app a.nc-af-p:focus {
+  text-decoration: none;
+  color: inherit;
+}
+
+@app .nc-ac-trat {
+  display: block;
+  margin-top: 1px;
+  font-size: 12px;
+  color: var(--af-texto);
+}
+
+@app .nc-af-volta.nc-ac-selo-estab {
+  background: color-mix(in srgb, var(--af-roxo) 9%, #fff);
+  color: var(--af-roxo);
+}
+
+@app .nc-af-volta.nc-ac-selo-estab.is-acabando {
+  background: var(--af-ambar-fundo);
+  color: var(--af-ambar);
+}
+
+@app .nc-af-frase .nc-ac-melhor {
+  color: var(--af-verde);
+}
+
+@app .nc-af-frase .nc-ac-pior {
+  color: var(--af-vermelho);
+}
+
+/* DIA E HORA */
+@app .nc-ac-calor {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 4px;
+  margin: -4px -4px 0;
+  table-layout: fixed;
+  font-variant-numeric: tabular-nums;
+}
+
+@app .nc-ac-calor th {
+  padding: 0 0 2px;
+  border: 0;
+  background: none;
+  font-size: 11.5px;
+  font-weight: 650;
+  line-height: 1.15;
+  text-align: center;
+  color: var(--af-tinta);
+}
+
+@app .nc-ac-calor thead th:first-child {
+  width: 34px;
+}
+
+@app .nc-ac-calor th small {
+  display: block;
+  font-size: 10.5px;
+  font-weight: 500;
+  color: var(--af-texto);
+  white-space: nowrap;
+}
+
+@app .nc-ac-calor tbody th {
+  padding: 0 4px 0 0;
+  text-align: left;
+  color: var(--af-texto);
+}
+
+@app .nc-ac-calor td {
+  height: 28px;
+  padding: 0;
+  border: 0;
+  border-radius: 7px;
+  background: color-mix(in srgb, var(--af-roxo) calc(var(--v, 0) * 78% + 8%), #fff);
+  text-align: center;
+  vertical-align: middle;
+  color: var(--af-tinta);
+}
+
+@app .nc-ac-calor td.is-zero {
+  background: #fff;
+  box-shadow: inset 0 0 0 1px var(--af-fio);
+}
+
+@app .nc-ac-calor td.is-forte {
+  color: #fff;
+}
+
+@app .nc-ac-calor td.is-topo {
+  box-shadow: 0 0 0 2px var(--af-sel);
+}
+
+@app .nc-ac-calor td b {
+  font-size: 12.5px;
+  font-weight: 700;
+}
+
+@app .nc-ac-semhora {
+  display: block;
+  margin-top: 2px;
+  font-size: 12px;
+}
+
+@media (max-width: 640px) {
+  @app .nc-ac-per {
+    width: 100%;
+  }
+
+  @app .nc-ac-per button {
+    flex: 1 1 0;
+    padding: 0 6px;
+  }
+}
+
+/* os 5 números dos acidentes numa linha só no painel de ~1100 px (220 px cada não cabia: ficava 4 + 1) */
+@app .nc-ac .nc-af-num {
+  flex-basis: 190px;
+}
+
+/* ═══ [A12] TELA CHEIA (todos os resumos, 13/10) ═══════════════════════════════════════════
+   O botão "Tela cheia" vem do Natcorp_Registros.js ([R11]): o painel vai para um envelope
+   (.nc-af-tela) que cobre a página, como o "maximizar" do Interactive Report (não é a tela cheia
+   do navegador).
+   Na tela cheia: fundo tingido em volta, o painel centrado (até 1680 px), o título grudado no alto
+   enquanto se rola, e somem "Ir para a tabela" e "Mostrar menos" (a tabela não está à vista e a
+   análise fica sempre aberta).
+   ════════════════════════════════════════════════════════════════════════════════════════ */
+html.nc-af-travado,
+html.nc-af-travado body {
+  overflow: hidden;
+}
+
+@app .nc-af-tela {
+  position: fixed;
+  inset: 0;
+  z-index: 2147483000;
+  overflow: auto;
+  overscroll-behavior: contain;
+  padding: clamp(12px, 2.2vw, 32px);
+  background: var(--nc-off, #F4F2F7);
+  scrollbar-gutter: stable;
+  visibility: visible;                 /* o "maximizar" do Interactive Report deixa o body invisível
+                                          (visibility: hidden) e mostra só a região dele: sem isto a
+                                          tela cheia herdava o invisível e só a tabela aparecia (13/10) */
+}
+
+@app .nc-af-tela > .nc-af {
+  max-width: 1680px;
+  margin: 0 auto;
+}
+
+@app .nc-af-tela .nc-af-cab {
+  position: sticky;
+  top: calc(-1 * clamp(12px, 2.2vw, 32px));   /* gruda na borda da tela, não no recuo do envelope */
+  z-index: 6;
+  background: #FFFFFF;
+  box-shadow: 0 1px 0 var(--af-fio), 0 10px 18px -16px rgba(27, 18, 56, .35);
+}
+
+@app .nc-af-tela .nc-af-cab h2 {
+  font-size: 18px;
+}
+
+@app .nc-af-tela [data-af-ir-tabela],
+@app .nc-af-tela .nc-af-cab button[aria-controls$="-corpo"] {
+  display: none;
+}
+
+@app .nc-af-bt.nc-af-bt--tela[aria-pressed="true"] {
+  border-color: var(--af-roxo);
+  background: var(--af-roxo);
+  color: #FFFFFF;
+}
+
+/* painel fechado (só os números): o botão vira só o ícone, para o título caber em uma linha */
+@app .nc-af.is-fechado .nc-af-bt--tela {
+  width: 36px;
+  padding: 0;
+  justify-content: center;
+}
+
+@app .nc-af.is-fechado .nc-af-bt--tela span {
+  display: none;
+}
+
+@app .nc-af-bt.nc-af-bt--tela:focus-visible {
+  outline: 2px solid var(--af-sel);
+  outline-offset: 2px;
+}
+
+/* com tela de sobra, os quadros do período respiram: 4 por linha onde eram 2 ou 3 */
+@container ncaf (min-width: 1400px) {
+  @app .nc-af-tela .nc-af-quadros.nc-af-quadros--3 {
+    grid-template-columns: minmax(0, 1.4fr) repeat(2, minmax(0, 1fr));
+  }
+
+  @app .nc-af-tela .nc-af-q {
+    height: 400px;
+  }
+}
+
+/* ═══ [A13] HEADCOUNT — QUADRO DE POSIÇÕES (200:30, 13/10) ═══════════════════════════════════
+   O painel "Resumo do quadro de posições" (Natcorp_Posicoes.js) veste esta roupa; aqui só as
+   peças dele (.nc-hc-*):
+     OCUPAÇÃO      a barrinha "82% preenchido" no 1º número
+     APROVADO      a barra de cada linha é o aprovado: cheia = ocupada (roxo), clara = vaga (verde),
+                   vermelho depois do fim = gente a mais em posição não compartilhada
+     SELOS         posição de gestor, sem requisição, o motivo do "a conferir" (quebra linha)
+   ════════════════════════════════════════════════════════════════════════════════════════ */
+@app .nc-hc-ocupa {
+  grid-column: 2;
+  display: block;
+  height: 6px;
+  margin-top: 8px;
+  border-radius: 99px;
+  background: var(--af-verde-fundo);
+  overflow: hidden;
+}
+
+@app .nc-hc-ocupa i {
+  display: block;
+  height: 100%;
+  border-radius: 99px;
+  background: var(--af-roxo);
+}
+
+@app .nc-hc-ocupa-txt {
+  grid-column: 2;
+  margin-top: 3px;
+  font-size: 12px;
+  font-weight: 650;
+  font-variant-numeric: tabular-nums;
+  color: var(--af-texto);
+}
+
+@app .nc-af.is-fechado .nc-hc-ocupa-txt {
+  display: none;
+}
+
+@app .nc-hc-legenda {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 14px;
+  margin: -4px 0 10px;
+  font-size: 12px;
+  color: var(--af-texto);
+}
+
+@app .nc-hc-legenda span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+@app .nc-hc-legenda i {
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+}
+
+@app .nc-hc-legenda i.is-ocup,
+@app .nc-hc-trilho i.is-ocup { background: var(--af-roxo); }
+@app .nc-hc-legenda i.is-vaga,
+@app .nc-hc-trilho i.is-vaga { background: #8FD1AE; }
+@app .nc-hc-legenda i.is-ex,
+@app .nc-hc-trilho i.is-ex { background: var(--af-vermelho); }
+
+@app .nc-hc-trilho {
+  grid-column: 1;
+  display: flex;
+  height: 8px;
+  border-radius: 99px;
+  background: #F1EEF5;
+  overflow: hidden;
+}
+
+@app .nc-hc-trilho i {
+  display: block;
+  height: 100%;
+}
+
+@app .nc-hc-trilho i + i {
+  box-shadow: inset 2px 0 0 #fff;
+}
+
+@app .nc-af-b-num .nc-hc-num-vaga {
+  color: var(--af-verde);
+  font-weight: 650;
+}
+
+@app .nc-af-b-num .nc-hc-num-ex {
+  color: var(--af-vermelho);
+  font-weight: 650;
+}
+
+@app .nc-af.is-novo .nc-hc-trilho i {
+  animation: nc-af-cresce .7s cubic-bezier(.22, 1, .36, 1) both;
+  transform-origin: left center;
+}
+
+@app a.nc-af-p.nc-hc-p,
+@app a.nc-af-p.nc-hc-p:hover {
+  text-decoration: none;
+  color: inherit;
+}
+
+@app .nc-af-p.nc-hc-p.is-leitura {
+  cursor: default;
+}
+
+@app .nc-af-p.nc-hc-p.is-leitura:hover {
+  background: transparent;
+}
+
+@app .nc-hc-gestor,
+@app .nc-hc-semreq {
+  display: inline-block;
+  margin-top: 2px;
+  padding: 1px 8px;
+  border-radius: 99px;
+  font-size: 11.5px;
+  font-weight: 650;
+}
+
+@app .nc-hc-gestor {
+  display: table;
+  background: color-mix(in srgb, var(--af-roxo) 9%, #fff);
+  color: var(--af-roxo);
+}
+
+@app .nc-hc-semreq {
+  background: var(--nc-off, #F4F2F7);
+  color: var(--af-texto);
+}
+
+@app .nc-af-volta.nc-hc-motivo {
+  white-space: normal;
+  line-height: 1.3;
+  border-radius: 10px;
+}
+
+@app .nc-hc-gente span {
+  display: block;
+  font-size: 12.5px;
+  color: var(--af-tinta);
+}
+
+@app .nc-hc-lider {
+  margin: 0 0 10px;
+  font-size: 13.5px;
+  line-height: 1.45;
+  color: var(--af-tinta);
+}
+
+@app .nc-hc-lider .nc-ac-pior,
+@app .nc-af-frase .nc-ac-pior {
+  color: var(--af-vermelho);
+}
+
+/* ═══ [A14] CONSOLIDAÇÃO DO HISTÓRICO FINANCEIRO (9181:50, 13/10) ══════════════════════════════
+   Natcorp_ConsolFolha.js. Duas peças:
+     COMO VER A FOLHA  o "Histórico Por" vira o botão "Ver a folha por: Empresa › Filial…" e a lista
+                       das 18 formas em 3 assuntos (flutua presa ao botão, position: fixed). O campo
+                       original fica escondido (.nc-cf-orig), mas é ele que vai no Pesquisar.
+     RESUMO            os números em dinheiro (R$ é longo: fonte um pouco menor), a comparação com o mês
+                       anterior em selo, e "Conferir a folha em 3 passos" antes da 1ª pesquisa.
+   ════════════════════════════════════════════════════════════════════════════════════════ */
+@app .nc-cf-orig {
+  display: none;
+}
+
+@app .nc-cf-por {
+  margin: 0 0 12px;
+}
+
+@app .nc-cf-por-rot {
+  display: block;
+  margin: 0 0 6px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .02em;
+  color: var(--nc-grafite, #4A4460);
+}
+
+@app .nc-cf-por-bt {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  min-height: 48px;
+  margin: 0;
+  padding: 8px 10px 8px 12px;
+  border: 1px solid var(--nc-borda-botao, #D9D2E3);
+  border-radius: 10px;
+  background: #fff;
+  box-shadow: none;
+  font: inherit;
+  text-align: left;
+  color: var(--nc-tinta, #1B1238);
+  cursor: pointer;
+  transition: border-color .15s, box-shadow .15s;
+}
+
+@app .nc-cf-por-bt:hover {
+  border-color: var(--nc-roxo, #511C76);
+}
+
+@app .nc-cf-por-bt[aria-expanded="true"],
+@app .nc-cf-por-bt:focus-visible {
+  border-color: var(--nc-rosa, #C95788);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--nc-rosa, #C95788) 18%, transparent);
+  outline: 0;
+}
+
+@app .nc-cf-por-val b {
+  font-size: 13.5px;
+  font-weight: 650;
+  line-height: 1.35;
+}
+
+@app .nc-cf-por-val i,
+@app .nc-cf-caminho i {
+  margin: 0 5px;
+  font-style: normal;
+  color: var(--nc-cinza, #8B8399);
+}
+
+@app .nc-cf-por.is-vazio .nc-cf-por-val b {
+  color: var(--nc-rosa, #C95788);
+}
+
+@app .nc-cf-por-troca {
+  padding: 3px 9px;
+  border-radius: 99px;
+  background: color-mix(in srgb, var(--nc-roxo, #511C76) 8%, #fff);
+  font-size: 12px;
+  font-weight: 650;
+  color: var(--nc-roxo, #511C76);
+}
+
+@app .nc-cf-nota {
+  margin: 8px 0 0;
+  padding: 7px 10px;
+  border-radius: 8px;
+  background: #FFF3DC;
+  font-size: 12.5px;
+  font-weight: 600;
+  line-height: 1.35;
+  color: #8A5300;
+}
+
+@keyframes nc-cf-pede {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(201, 87, 136, 0); }
+  50% { box-shadow: 0 0 0 5px rgba(201, 87, 136, .28); }
+}
+
+@app .nc-cf-pede {
+  animation: nc-cf-pede 1.6s ease-in-out 3;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  @app .nc-cf-pede {
+    animation: none;
+  }
+}
+
+@app .nc-cf-formas {
+  position: fixed;
+  z-index: 1000;
+  overflow: auto;
+  overscroll-behavior: contain;
+  padding: 14px 14px 10px;
+  border: 1px solid #E2DAEC;
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: 0 22px 48px -14px rgba(27, 18, 56, .38), 0 2px 6px rgba(27, 18, 56, .08);
+}
+
+@app .nc-cf-formas[hidden] {
+  display: none;
+}
+
+@app .nc-cf-formas-tit {
+  margin: 0 4px 10px;
+  font-size: 15px;
+  font-weight: 750;
+  color: var(--nc-tinta, #1B1238);
+}
+
+@app .nc-cf-grupo + .nc-cf-grupo {
+  margin-top: 12px;
+}
+
+@app .nc-cf-grupo h3 {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin: 0 4px 6px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .02em;
+  color: var(--nc-grafite, #4A4460);
+}
+
+@app .nc-cf-grupo h3 .nc-af-ic {
+  width: 16px;
+  height: 16px;
+  color: var(--nc-roxo, #511C76);
+}
+
+@app .nc-cf-grupo ul {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+@app .nc-cf-forma {
+  position: relative;
+  display: grid;
+  gap: 2px;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 9px 30px 9px 11px;
+  border: 1px solid #ECE7F2;
+  border-radius: 10px;
+  background: #FCFBFD;
+  box-shadow: none;
+  font: inherit;
+  text-align: left;
+  color: var(--nc-tinta, #1B1238);
+  cursor: pointer;
+  transition: border-color .15s, background-color .15s;
+}
+
+@app .nc-cf-forma:hover {
+  border-color: var(--nc-roxo, #511C76);
+  background: #fff;
+}
+
+@app .nc-cf-forma:focus-visible {
+  outline: 2px solid var(--nc-rosa, #C95788);
+  outline-offset: 1px;
+}
+
+@app .nc-cf-forma.is-atual {
+  border-color: var(--nc-rosa, #C95788);
+  background: color-mix(in srgb, var(--nc-rosa, #C95788) 7%, #fff);
+}
+
+@app .nc-cf-forma > .nc-af-ic {
+  position: absolute;
+  top: 10px;
+  right: 9px;
+  width: 16px;
+  height: 16px;
+  color: var(--nc-rosa, #C95788);
+}
+
+@app .nc-cf-caminho {
+  font-size: 13px;
+  font-weight: 650;
+  line-height: 1.3;
+}
+
+@app .nc-cf-d {
+  font-size: 12px;
+  line-height: 1.3;
+  color: var(--nc-grafite, #4A4460);
+}
+
+@media (max-width: 640px) {
+  @app .nc-cf-grupo ul {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* o resumo: dinheiro é longo. O cartão é um contêiner (cqi = 1% da largura dele) e o JS diz quantos
+   caracteres o número tem (--n): a fonte é a largura ÷ caracteres — "R$ 17.065.059" cabe em qualquer
+   largura, sem cortar e sem descer de linha. Ícone + nome em cima, o valor na linha inteira. */
+@app .nc-cf .nc-af-num {
+  flex-basis: 196px;
+  container-type: inline-size;
+  grid-template-columns: auto minmax(0, 1fr);
+  grid-template-rows: none;
+  align-items: center;
+  row-gap: 0;
+}
+
+@app .nc-cf .nc-af-num .nc-af-sinal,
+@app .nc-af.nc-cf.is-fechado .nc-af-num .nc-af-sinal {
+  grid-row: auto;
+  width: 30px;
+  height: 30px;
+  margin-top: 0;
+  border-radius: 9px;
+}
+
+@app .nc-cf .nc-af-num .nc-af-sinal .nc-af-ic {
+  width: 17px;
+  height: 17px;
+}
+
+@app .nc-cf .nc-af-num .nc-af-diz {
+  grid-column: 2;
+  line-height: 1.25;
+}
+
+@app .nc-cf .nc-af-valor.nc-cf-valor {
+  grid-column: 1 / -1;
+  flex-wrap: nowrap;
+  margin-top: 10px;
+  white-space: nowrap;
+  font-size: clamp(15px, calc(100cqi / (var(--n, 10) * .6)), 27px);
+}
+
+@app .nc-af.nc-cf.is-fechado .nc-af-valor.nc-cf-valor {
+  margin-top: 6px;
+  font-size: clamp(14px, calc(100cqi / (var(--n, 10) * .6)), 21px);
+}
+
+@app .nc-cf .nc-af-valor .nc-cf-moeda {
+  margin-right: -2px;
+  font-size: max(11px, .5em);
+  font-weight: 650;
+}
+
+@app .nc-cf .nc-af-num .nc-af-dica {
+  grid-column: 1 / -1;
+  margin-top: 4px;
+  line-height: 1.35;
+}
+
+@app .nc-cf .nc-cf-soma {
+  display: block;
+  font-variant-numeric: tabular-nums;
+}
+
+@app .nc-cf .nc-af-num.nc-af-num--verde.nc-cf-fixo .nc-af-valor {
+  color: var(--af-verde);
+}
+
+@app .nc-cf .nc-af-num.nc-cf-fixo {
+  cursor: default;
+}
+
+@app .nc-cf .nc-af-num.nc-cf-fixo:hover {
+  background: #fff;
+}
+
+@app .nc-cf-comp {
+  grid-column: 1 / -1;
+  justify-self: start;
+  margin-top: 6px;
+  padding: 2px 8px;
+  border-radius: 99px;
+  background: var(--nc-off, #F4F2F7);
+  font-size: 12px;
+  font-weight: 650;
+  font-variant-numeric: tabular-nums;
+  color: var(--af-texto);
+}
+
+@app .nc-cf-comp.is-sobe { background: #FFF3DC; color: #8A5300; }
+@app .nc-cf-comp.is-desce { background: #E6F4EC; color: #17643F; }
+
+@app .nc-af.is-fechado .nc-cf-comp {
+  display: none;
+}
+
+@app .nc-af-frase .nc-cf-sobe { color: #8A5300; }
+@app .nc-af-frase .nc-cf-desce { color: #17643F; }
+
+/* ── 2 meses ou mais: cada quadro é uma tabela, uma coluna por mês ──────────────────────────
+   --cf-n = quantos meses (o JS põe na grade). Os quadros se arrumam pela largura que a tabela pede:
+   2 por linha com 3 meses num painel de ~1000 px; 1 por linha com 6 meses ou mais. Com mais meses
+   do que cabe, a tabela rola de lado e o nome fica parado na esquerda. */
+@app .nc-cf .nc-af-quadros.nc-af-quadros--3.nc-cf-grade {
+  --cf-min: calc(150px + var(--cf-n, 3) * var(--cf-col) + var(--cf-var) + 42px);
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, var(--cf-min)), 1fr));
+}
+
+@app .nc-cf .nc-cf-grade .nc-af-q {
+  height: auto;
+  max-height: none;
+}
+
+@app .nc-cf-tab {
+  margin: 0 -6px;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scrollbar-width: thin;
+  scrollbar-color: #D9D2E3 transparent;
+}
+
+@app .nc-cf-tab-in {
+  min-width: calc(150px + var(--cf-n, 3) * var(--cf-col, 120px) + var(--cf-var, 72px) + 12px);
+  padding: 0 6px;
+}
+
+@app .nc-cf-tab .nc-af-rolo {
+  max-height: none;
+  overflow: visible;
+}
+
+@app .nc-cf-tls {
+  display: grid;
+  gap: 1px;
+  list-style: none;
+}
+
+@app .nc-cf-tl {
+  display: grid;
+  grid-template-columns: minmax(150px, 1fr) repeat(var(--cf-n, 3), var(--cf-col, 120px)) var(--cf-var, 72px);
+  align-items: center;
+  width: 100%;
+  margin: 0;
+  padding: 6px 0;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  box-shadow: none;
+  font: inherit;
+  font-size: 12.5px;
+  text-align: left;
+  color: var(--af-tinta);
+}
+
+@app button.nc-cf-tl {
+  cursor: pointer;
+  transition: background-color .15s;
+}
+
+@app button.nc-cf-tl:hover,
+@app button.nc-cf-tl:hover .nc-cf-tl-nome {
+  background: #F7F4FA;
+}
+
+@app button.nc-cf-tl:focus-visible {
+  outline: 2px solid var(--af-sel);
+  outline-offset: -2px;
+}
+
+/* o nome: parado na esquerda quando a tabela rola de lado */
+@app .nc-cf-tl-nome {
+  position: sticky;
+  left: 0;
+  z-index: 1;
+  align-self: stretch;                 /* a célula toda (mesmo vazia, no cabeçalho) cobre o que rola por baixo */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-width: 0;
+  padding: 0 10px 0 6px;
+  transition: box-shadow .15s;
+  background: #fff;
+  font-weight: 600;
+  line-height: 1.3;
+  overflow-wrap: anywhere;
+}
+
+/* rolou de lado: uma sombra na borda do nome mostra que há números passando por baixo */
+@app .nc-cf-tab.is-rolando .nc-cf-tl-nome {
+  box-shadow: 8px 0 8px -8px rgba(27, 18, 56, .16);
+}
+
+@app .nc-cf-tl-nome em {
+  margin-right: 5px;
+  font-style: normal;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--nc-cinza, #8B8399);
+}
+
+@app .nc-cf-tl-nome small {
+  display: block;
+  order: 2;
+  margin-top: 1px;
+  font-size: 11.5px;
+  font-weight: 500;
+  color: var(--af-texto);
+}
+
+@app .nc-cf-tl-v {
+  padding: 0 6px;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+@app .nc-cf-tl-v.is-nada { color: #B9B2C6; }
+@app .nc-cf-tl-v.is-neg { color: var(--af-vermelho); }
+
+/* o MÊS CONFERIDO: a coluna inteira levemente tingida, o valor em negrito */
+@app .nc-cf-tl-v.is-ref {
+  align-self: stretch;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  background: color-mix(in srgb, var(--nc-roxo, #511C76) 5%, transparent);
+  font-weight: 700;
+}
+
+@app .nc-cf-tl--cab .nc-cf-th.is-ref {
+  border-radius: 6px 6px 0 0;
+  color: var(--af-tinta);
+}
+
+/* o mês que foge da média dos outros meses da linha: fundo âmbar (a legenda fica acima das tabelas) */
+@app .nc-cf-tl-v.is-fora {
+  align-self: center;
+  margin: 0 2px;
+  padding: 2px 5px;
+  border-radius: 6px;
+  background: var(--af-ambar-fundo);
+  color: var(--af-ambar);
+}
+
+@app .nc-cf-tl-v.is-ref.is-fora {
+  align-self: stretch;
+  margin: 0;
+  border-radius: 0;
+  box-shadow: inset 0 0 0 2px #F5D9A6;
+}
+
+@app .nc-cf-var {
+  justify-self: end;
+  min-width: 0;
+  padding: 1px 6px;
+  border-radius: 99px;
+  font-size: 11.5px;
+  font-weight: 650;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  color: var(--af-texto);
+}
+
+/* mudou muito (≥ 20%, nova ou sumiu): o selo âmbar chama para conferir */
+@app .nc-cf-var.is-forte {
+  background: var(--af-ambar-fundo);
+  color: var(--af-ambar);
+}
+
+@app .nc-cf-tl--cab {
+  padding: 0;
+  border-bottom: 1px solid #F1EDF6;
+  border-radius: 0;
+  font-size: 11.5px;
+  font-weight: 650;
+  color: var(--af-texto);
+}
+
+@app .nc-cf-th {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 3px;
+  min-height: 34px;
+  margin: 0;
+  padding: 0 6px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  box-shadow: none;
+  font: inherit;
+  font-size: 11.5px;
+  font-weight: 650;
+  color: var(--af-texto);
+  cursor: pointer;
+}
+
+@app .nc-cf-th.nc-cf-tl-nome {
+  justify-content: flex-start;
+  flex-direction: row;
+  background: #fff;                    /* parado na esquerda: cobre os meses que rolam por baixo */
+}
+
+@app .nc-cf-th.nc-cf-tl-nome:hover {
+  background: #F4F0F8;
+}
+
+@app .nc-cf-th:hover {
+  background: #F4F0F8;
+  color: var(--af-tinta);
+}
+
+@app .nc-cf-th:focus-visible {
+  outline: 2px solid var(--af-sel);
+  outline-offset: -2px;
+}
+
+@app .nc-cf-th.is-ord {
+  color: var(--nc-roxo, #511C76);
+}
+
+@app .nc-cf-th .nc-af-ic {
+  width: 13px;
+  height: 13px;
+  flex: none;
+}
+
+@app .nc-cf-tl--cab .nc-cf-tl-v em {
+  margin-left: 0;
+  font-style: normal;
+  font-weight: 500;
+  color: var(--nc-cinza, #8B8399);
+}
+
+@app .nc-cf-tl--cab .nc-cf-tl-v.is-ult {
+  color: var(--af-tinta);
+}
+
+@app .nc-cf-tl--cab .nc-cf-var {
+  padding-right: 6px;
+  font-size: 11.5px;
+}
+
+@app .nc-cf-tl--total {
+  margin-bottom: 2px;
+  border-bottom: 1px solid #F1EDF6;
+  border-radius: 0;
+  font-weight: 700;
+}
+
+@app .nc-cf-tl--total .nc-cf-tl-nome {
+  font-weight: 750;
+}
+
+/* o "Mostrar mais" da tabela fica DENTRO do que rola de lado: preso à esquerda, sem encostar no pé */
+@app .nc-af-q .nc-cf-tab .nc-af-mais {
+  position: sticky;
+  left: 0;
+  width: auto;
+  margin: 4px 0 2px;
+  padding: 8px 10px;
+  border: 0;
+  border-radius: 8px;
+  text-align: left;
+}
+
+@app .nc-af-q .nc-cf-tab .nc-af-mais:hover {
+  background: #F7F4FA;
+}
+
+/* ── "Para conferir": os grupos (verbas · locais · negativos), cada um com "ver todas na tabela" ── */
+@app .nc-cf-sec {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 14px;
+  padding: 12px 14px 8px;
+  background: #FCFBFD;
+}
+
+@app .nc-cf-sec > div {
+  flex: 1 1 260px;
+  min-width: 0;
+}
+
+@app .nc-cf-sec b {
+  display: block;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--af-tinta);
+}
+
+@app .nc-cf-sec span {
+  font-size: 12px;
+  color: var(--af-texto);
+}
+
+@app .nc-cf-sec .nc-cf-sec-bt span {
+  font-size: inherit;
+  color: inherit;
+}
+
+@app .nc-cf-p .nc-af-p-quem b em {
+  margin-right: 5px;
+  font-style: normal;
+  font-weight: 600;
+  color: var(--nc-cinza, #8B8399);
+}
+
+/* ── as cores das 3 séries (cartões, gráfico, leitura) ── */
+@app .nc-cf {
+  --cf-col: 120px;                     /* uma coluna de mês: "R$123.456.789,90" */
+  --cf-var: 72px;                      /* a variação em % (em R$: 124px, .is-var-rs) */
+  --cf-g: #2F8F5B;
+  --cf-d: #C95788;
+  --cf-l: #511C76;
+}
+
+/* ── MÊS CONFERIDO: um botão por mês da pesquisa (acima dos números) ─────────────────────── */
+@app .nc-cf-mesref {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+  margin: 0 0 12px;
+}
+
+@app .nc-cf-mesref[hidden] {
+  display: none;
+}
+
+@app .nc-cf-mesref-rot {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--af-tinta);
+}
+
+@app .nc-cf-mesref-rot .nc-af-ic {
+  width: 16px;
+  height: 16px;
+  color: var(--nc-roxo, #511C76);
+}
+
+@app .nc-cf-mesref-l {
+  display: flex;
+  gap: 2px;
+  max-width: 100%;
+  padding: 3px;
+  overflow-x: auto;
+  border-radius: 10px;
+  background: #F1EEF6;
+  scrollbar-width: thin;
+}
+
+@app .nc-cf-mesref-l button {
+  flex: none;
+  height: 32px;
+  margin: 0;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  box-shadow: none;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--af-texto);
+  cursor: pointer;
+  transition: background-color .15s, color .15s;
+}
+
+@app .nc-cf-mesref-l button:hover {
+  color: var(--af-tinta);
+}
+
+@app .nc-cf-mesref-l button[aria-pressed="true"] {
+  background: #fff;
+  box-shadow: 0 1px 3px rgba(27, 18, 56, .14);
+  font-weight: 750;
+  color: var(--nc-roxo, #511C76);
+}
+
+@app .nc-cf-mesref-l button:focus-visible,
+@app .nc-cf-seg button:focus-visible,
+@app .nc-cf-leg button:focus-visible,
+@app .nc-cf-ferr-bt:focus-visible,
+@app .nc-cf-mini-b:focus-visible,
+@app .nc-cf-gm:focus-visible {
+  outline: 2px solid var(--af-sel);
+  outline-offset: 1px;
+}
+
+@app .nc-cf-mesref-d {
+  flex: 1 1 260px;
+  font-size: 12.5px;
+  color: var(--af-texto);
+}
+
+/* ── MÊS A MÊS EM NÚMEROS: logo abaixo dos cartões, os outros meses lado a lado ──────────── */
+@app .nc-cf-mt:empty {
+  display: none;
+}
+
+@app .nc-cf-mt {
+  margin-top: 12px;
+  padding: 12px 14px 8px;
+  border: 1px solid var(--af-fio);
+  border-radius: 12px;
+  background: #fff;
+}
+
+@app .nc-cf-mt-cab {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 2px 12px;
+  margin-bottom: 6px;
+}
+
+@app .nc-cf-mt-cab h3 {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--af-tinta);
+}
+
+@app .nc-cf-mt-cab p {
+  font-size: 12.5px;
+  color: var(--af-texto);
+}
+
+@app .nc-cf-mt .nc-cf-tl-nome i {
+  display: inline-block;
+  width: 9px;
+  height: 9px;
+  margin-right: 7px;
+  border-radius: 2px;
+  vertical-align: 0;
+}
+
+@app .nc-cf-mt-g { background: var(--cf-g); }
+@app .nc-cf-mt-d { background: var(--cf-d); }
+@app .nc-cf-mt-l { background: var(--cf-l); }
+@app .nc-cf-mt-p { background: #B9AECB; }
+
+/* a coluna "Média" do período: cinza, separada dos meses por um fio */
+@app .nc-cf-tl-v.nc-cf-mt-med {
+  align-self: stretch;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  border-left: 1px solid #EEE9F4;
+  font-style: normal;
+  color: var(--af-texto);
+}
+
+@app .nc-cf-mt .nc-cf-tl + .nc-cf-tl:not(.nc-cf-tl--cab) {
+  border-top: 1px solid #F4F1F8;
+  border-radius: 0;
+}
+
+@app .nc-af.is-fechado .nc-cf-mt {
+  display: none;
+}
+
+@app .nc-cf.is-var-rs {
+  --cf-var: 124px;
+}
+
+/* ── MÊS A MÊS: o gráfico na largura toda ─────────────────────────────────────────────── */
+@app .nc-cf .nc-cf-grade .nc-af-q.nc-cf-q--graf {
+  grid-column: 1 / -1;
+}
+
+@app .nc-cf-q-cab {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px 16px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #F1EDF6;
+}
+
+@app .nc-cf-q-cab p {
+  margin-top: 2px;
+  font-size: 12.5px;
+  color: var(--af-texto);
+}
+
+@app .nc-cf-leg {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+@app .nc-cf-leg button {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  height: 30px;
+  margin: 0;
+  padding: 0 11px;
+  border: 1px solid #E6E0EE;
+  border-radius: 99px;
+  background: #fff;
+  box-shadow: none;
+  font: inherit;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--af-tinta);
+  cursor: pointer;
+}
+
+@app .nc-cf-leg button i {
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+}
+
+@app .nc-cf-leg-g i { background: var(--cf-g); box-shadow: inset 0 0 0 2px var(--cf-g); }
+@app .nc-cf-leg-d i { background: var(--cf-d); box-shadow: inset 0 0 0 2px var(--cf-d); }
+@app .nc-cf-leg-l i { background: var(--cf-l); box-shadow: inset 0 0 0 2px var(--cf-l); }
+
+@app .nc-cf-leg .nc-cf-leg-media i {
+  width: 16px;
+  height: 0;
+  border-top: 2px dashed var(--af-texto);
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+}
+
+/* série desligada: a bolinha fica vazada e o texto, apagado */
+@app .nc-cf-leg button[aria-pressed="false"] {
+  border-style: dashed;
+  color: var(--nc-cinza, #8B8399);
+}
+
+@app .nc-cf-leg button[aria-pressed="false"] i {
+  background: transparent;
+}
+
+@app .nc-cf-leg .nc-cf-leg-media[aria-pressed="false"] i {
+  border-top-color: #C9C2D4;
+}
+
+@app .nc-cf-graf {
+  margin-top: 16px;
+}
+
+@app .nc-cf-graf-area {
+  position: relative;
+  height: 210px;
+  margin-bottom: 30px;
+  border-bottom: 1px solid #E2DCEA;
+  background: repeating-linear-gradient(to top, transparent 0, transparent calc(25% - 1px), #F3F0F7 calc(25% - 1px), #F3F0F7 25%);
+}
+
+@app .nc-cf-graf-area ol {
+  display: grid;
+  grid-template-columns: repeat(var(--cf-n, 3), minmax(0, 1fr));
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+@app .nc-cf-graf-area li {
+  min-width: 0;
+  height: 100%;
+}
+
+@app .nc-cf-gm {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0 12%;
+  border: 0;
+  border-radius: 8px 8px 0 0;
+  background: transparent;
+  box-shadow: none;
+  font: inherit;
+  cursor: pointer;
+  transition: background-color .15s;
+}
+
+@app .nc-cf-gm:hover {
+  background: rgba(81, 28, 118, .045);
+}
+
+@app .nc-cf-gm.is-ref {
+  background: rgba(81, 28, 118, .075);
+}
+
+@app .nc-cf-gm-b {
+  display: flex;
+  align-items: flex-end;
+  gap: 3px;
+  width: 100%;
+  max-width: 84px;
+  height: 100%;
+}
+
+@app .nc-cf-gm-b i {
+  flex: 1 1 0;
+  min-width: 3px;
+  border-radius: 3px 3px 0 0;
+  opacity: .5;
+  transition: opacity .15s;
+}
+
+@app .nc-cf-gm-b i.is-g { background: var(--cf-g); }
+@app .nc-cf-gm-b i.is-d { background: var(--cf-d); }
+@app .nc-cf-gm-b i.is-l { background: var(--cf-l); }
+
+@app .nc-cf-gm.is-ref .nc-cf-gm-b i,
+@app .nc-cf-gm:hover .nc-cf-gm-b i,
+@app .nc-cf-gm:focus-visible .nc-cf-gm-b i {
+  opacity: 1;
+}
+
+@app .nc-cf-gm-m {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -25px;
+  font-size: 12px;
+  font-weight: 600;
+  text-align: center;
+  white-space: nowrap;
+  color: var(--af-texto);
+}
+
+@app .nc-cf-gm-m em {
+  font-style: normal;
+  font-weight: 500;
+  color: var(--nc-cinza, #8B8399);
+}
+
+@app .nc-cf-gm.is-ref .nc-cf-gm-m {
+  font-weight: 750;
+  color: var(--nc-roxo, #511C76);
+}
+
+/* muitos meses em pouco espaço: o nome de 1 mês a cada 3 (e o do mês conferido), sem o ano */
+@app .nc-cf-graf-area ol.is-denso li:not(:nth-child(3n+1)) .nc-cf-gm:not(.is-ref) .nc-cf-gm-m {
+  visibility: hidden;
+}
+
+@app .nc-cf-graf-area ol.is-denso .nc-cf-gm-m em {
+  display: none;
+}
+
+@app .nc-cf-graf-med {
+  position: absolute;
+  left: 0;
+  right: 0;
+  z-index: 1;
+  border-top: 2px dashed rgba(74, 68, 96, .55);
+  pointer-events: none;
+}
+
+@app .nc-cf-graf-med span {
+  position: absolute;
+  right: 4px;
+  bottom: 4px;
+  padding: 1px 7px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, .92);
+  font-size: 11.5px;
+  font-weight: 650;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  color: var(--af-texto);
+}
+
+/* a leitura do mês apontado, embaixo do gráfico */
+@app .nc-cf-graf-le {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 6px 18px;
+  min-height: 42px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: #FAF8FC;
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+  color: var(--af-tinta);
+}
+
+@app .nc-cf-le-mes {
+  font-size: 13.5px;
+  font-weight: 750;
+}
+
+@app .nc-cf-graf-le i {
+  display: inline-block;
+  width: 9px;
+  height: 9px;
+  margin-right: 6px;
+  border-radius: 2px;
+}
+
+@app .nc-cf-le-g i { background: var(--cf-g); }
+@app .nc-cf-le-d i { background: var(--cf-d); }
+@app .nc-cf-le-l i { background: var(--cf-l); }
+
+@app .nc-cf-graf-le small,
+@app .nc-cf-le-obs {
+  font-size: 12px;
+  color: var(--af-texto);
+}
+
+/* ── as ferramentas das tabelas ───────────────────────────────────────────────────────── */
+@app .nc-cf-ferr-g {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+  margin: 0 0 14px;
+  padding: 8px 12px;
+  border: 1px solid #ECE7F3;
+  border-radius: 10px;
+  background: #fff;
+}
+
+@app .nc-cf-ferr-rot {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--af-tinta);
+}
+
+@app .nc-cf-seg {
+  display: inline-flex;
+  padding: 2px;
+  border-radius: 8px;
+  background: #F1EEF6;
+}
+
+@app .nc-cf-seg button {
+  min-width: 42px;
+  height: 28px;
+  margin: 0;
+  padding: 0 10px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  box-shadow: none;
+  font: inherit;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--af-texto);
+  cursor: pointer;
+}
+
+@app .nc-cf-seg button[aria-pressed="true"] {
+  background: #fff;
+  box-shadow: 0 1px 3px rgba(27, 18, 56, .14);
+  color: var(--nc-roxo, #511C76);
+}
+
+@app .nc-cf-ferr-d {
+  font-size: 12.5px;
+  color: var(--af-texto);
+}
+
+@app .nc-cf-legfora {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  margin-left: auto;
+  font-size: 12px;
+  color: var(--af-texto);
+}
+
+@app .nc-cf-legfora i {
+  width: 16px;
+  height: 12px;
+  border-radius: 3px;
+  background: var(--af-ambar-fundo);
+  box-shadow: inset 0 0 0 1px #F0D4A0;
+}
+
+@app .nc-cf-ferr {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0 0 8px;
+}
+
+@app .nc-cf-ferr-bt {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 30px;
+  margin: 0;
+  padding: 0 10px;
+  border: 1px solid var(--nc-borda-botao, #D9D2E3);
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: none;
+  font: inherit;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--af-tinta);
+  cursor: pointer;
+  transition: border-color .15s, background-color .15s;
+}
+
+@app .nc-cf-ferr-bt:hover {
+  border-color: var(--nc-roxo, #511C76);
+}
+
+@app .nc-cf-ferr-bt .nc-af-ic {
+  width: 15px;
+  height: 15px;
+}
+
+@app .nc-cf-ferr-bt[aria-pressed="true"] {
+  border-color: var(--af-sel);
+  background: color-mix(in srgb, var(--af-sel) 8%, #fff);
+  color: #8A2E57;
+}
+
+@app .nc-cf-ferr-bt.is-ok {
+  border-color: var(--af-verde);
+  color: var(--af-verde);
+}
+
+@app .nc-af-q .nc-af-ver-por + .nc-cf-ferr {
+  margin-top: 8px;
+}
+
+/* ── MODO COMPARAÇÃO (9181:55): Período 1 → Período 2 ───────────────────────────────────── */
+@app .nc-cf-duelo {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+@app .nc-cf-duelo > span {
+  display: inline-flex;
+  flex-direction: column;
+  padding: 4px 12px;
+  border-radius: 10px;
+  background: #F1EEF6;
+  font-size: 11.5px;
+  font-weight: 600;
+  line-height: 1.25;
+  color: var(--af-texto);
+}
+
+@app .nc-cf-duelo > span b {
+  font-size: 14px;
+  font-weight: 750;
+  color: var(--af-tinta);
+}
+
+@app .nc-cf-duelo > span.is-p2 {
+  background: color-mix(in srgb, var(--nc-roxo, #511C76) 10%, #fff);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--nc-roxo, #511C76) 25%, #fff);
+}
+
+@app .nc-cf-duelo > span.is-p2 b {
+  color: var(--nc-roxo, #511C76);
+}
+
+@app .nc-cf-duelo > .nc-af-ic {
+  width: 18px;
+  height: 18px;
+  color: var(--nc-cinza, #8B8399);
+}
+
+@app .nc-cf-duelo-av {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  flex: 1 1 100%;
+  margin: 2px 0 0;
+  padding: 9px 12px;
+  border-radius: 10px;
+  background: var(--af-ambar-fundo);
+  font-size: 13px;
+  line-height: 1.4;
+  color: var(--af-ambar);
+}
+
+@app .nc-cf-duelo-av .nc-af-ic {
+  flex: none;
+  width: 18px;
+  height: 18px;
+  margin-top: 1px;
+}
+
+/* a coluna Diferença (R$): sem vermelho/verde — subir um desconto não é erro, é para conferir */
+@app .nc-cf-tl-v.nc-cf-tl-dif {
+  color: var(--af-tinta);
+  font-weight: 600;
+}
+
+/* títulos de período em duas linhas: "Período 1" miúdo, o mês embaixo */
+@app .nc-cf-th.nc-cf-th--2l {
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 0;
+  min-height: 40px;
+  line-height: 1.2;
+}
+
+@app .nc-cf-th--2l small {
+  font-size: 10.5px;
+  font-weight: 600;
+  color: var(--nc-cinza, #8B8399);
+}
+
+@app .nc-cf-th--2l .nc-af-ic {
+  position: absolute;
+  margin: 0 -14px 0 0;
+}
+
+@app .nc-cf-gm-m small {
+  display: block;
+  font-size: 10.5px;
+  font-weight: 600;
+  color: var(--nc-cinza, #8B8399);
+}
+
+@app .nc-cf-graf-area.is-2l {
+  margin-bottom: 44px;
+}
+
+@app .nc-cf-graf-area.is-2l .nc-cf-gm-m {
+  bottom: -40px;
+}
+
+/* verba nova: existe só no Período 2, a tabela comparativa não a mostra */
+@app .nc-cf-fora-tab {
+  display: block;
+  margin-top: 2px;
+  font-size: 11.5px;
+  font-style: italic;
+  color: var(--af-ambar);
+}
+
+@app .nc-af-p.nc-cf-p:disabled {
+  cursor: default;
+}
+
+@app .nc-af-p.nc-cf-p:disabled:hover {
+  background: transparent;
+}
+
+@app .nc-af-p.nc-cf-p:disabled .nc-af-p-ir {
+  visibility: hidden;
+}
+
+/* ── os atalhos de período, nos filtros (embaixo do Período 2) ── */
+@app .nc-cf-dica-campo {
+  margin: 4px 2px 0;
+  font-size: 12px;
+  line-height: 1.35;
+  color: var(--nc-grafite, #4A4460);
+}
+
+@app .nc-cf-per {
+  margin: 4px 0 12px;
+  padding: 10px;
+  border: 1px solid #ECE7F2;
+  border-radius: 10px;
+  background: #FCFBFD;
+}
+
+@app .nc-cf-per.is-alerta {
+  border-color: #F0D4A0;
+  background: #FFFBF2;
+}
+
+@app .nc-cf-per-rot {
+  display: block;
+  margin: 0 2px 6px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .02em;
+  color: var(--nc-grafite, #4A4460);
+}
+
+@app .nc-cf-per-l {
+  display: grid;
+  gap: 6px;
+}
+
+@app .nc-cf-per-bt {
+  display: grid;
+  gap: 1px;
+  width: 100%;
+  margin: 0;
+  padding: 8px 10px;
+  border: 1px solid var(--nc-borda-botao, #D9D2E3);
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: none;
+  font: inherit;
+  text-align: left;
+  color: var(--nc-tinta, #1B1238);
+  cursor: pointer;
+  transition: border-color .15s;
+}
+
+@app .nc-cf-per-bt:hover {
+  border-color: var(--nc-roxo, #511C76);
+}
+
+@app .nc-cf-per-bt:focus-visible {
+  outline: 2px solid var(--nc-rosa, #C95788);
+  outline-offset: 1px;
+}
+
+@app .nc-cf-per-bt b {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 650;
+}
+
+@app .nc-cf-per-bt b .nc-af-ic {
+  width: 15px;
+  height: 15px;
+  color: var(--nc-roxo, #511C76);
+}
+
+@app .nc-cf-per-bt span {
+  font-size: 12px;
+  color: var(--nc-grafite, #4A4460);
+}
+
+@app .nc-cf-per-av {
+  margin: 8px 2px 0;
+  font-size: 12.5px;
+  font-weight: 600;
+  line-height: 1.4;
+  color: #8A5300;
+}
+
+@app .nc-cf-per-av[hidden] {
+  display: none;
+}
+
+/* antes da 1ª pesquisa, no lugar da tabela */
+@app .nc-cf-comousar {
+  margin: 0 0 16px;
+  padding: 20px 22px;
+  border: 1px solid #E6E0EE;
+  border-radius: 14px;
+  background: #fff;
+}
+
+@app .nc-cf-comousar h2 {
+  margin: 0 0 14px;
+  font-size: 17px;
+  font-weight: 750;
+  color: var(--nc-tinta, #1B1238);
+}
+
+@app .nc-cf-comousar ol {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: passo;
+}
+
+@app .nc-cf-comousar li {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 10px;
+  padding: 12px;
+  border-radius: 12px;
+  background: #FAF8FC;
+}
+
+@app .nc-cf-comousar li > .nc-af-ic {
+  width: 34px;
+  height: 34px;
+  padding: 8px;
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--nc-roxo, #511C76) 9%, #fff);
+  color: var(--nc-roxo, #511C76);
+}
+
+@app .nc-cf-comousar b {
+  display: block;
+  font-size: 14px;
+  color: var(--nc-tinta, #1B1238);
+}
+
+@app .nc-cf-comousar span {
+  display: block;
+  margin-top: 2px;
+  font-size: 13px;
+  line-height: 1.4;
+  color: var(--nc-grafite, #4A4460);
+}
+
+@media (max-width: 900px) {
+  @app .nc-cf-comousar ol {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* o resumo dentro da região do relatório (a página maximiza a tabela depois do Pesquisar) */
+@app .t-IRR-region > .nc-af.nc-cf {
+  margin: 12px 12px 16px;
+}
+
+/* painel estreito (com a coluna de filtros ao lado): os cartões pedem menos largura; o tamanho do
+   número já se ajusta sozinho ao cartão (--n, acima) */
+@container ncaf (max-width: 1000px) {
+  @app .nc-cf .nc-af-num {
+    flex-basis: 168px;
+  }
+}
+
+@app .nc-cf-p .nc-af-p-tipo span {
+  display: block;
+  font-size: 12.5px;
+  color: var(--af-texto);
+}
+
+/* ═══ [A15] MEDICINA DO TRABALHO — RESUMO DAS CONSULTAS (2937:39, 13/10) ═══════════════════
+   Natcorp_SesmtPainel.js. Peças só dele (.nc-sm-*): o selo da comparação com o período anterior nos
+   números da semana e do mês, a explicação miúda embaixo do nome da barra ("ASO periódico"), e a
+   divisão da semana/mês em 2 quadros com a MARCA do "antes" em cada barra.
+   ════════════════════════════════════════════════════════════════════════════════════════ */
+@app .nc-sm-sub {
+  display: block;
+  margin-top: 1px;
+  font-size: 11.5px;
+  font-weight: 500;
+  color: var(--af-texto);
+}
+
+@app .nc-sm-comp {
+  grid-column: 1 / -1;
+  justify-self: start;
+  margin-top: 6px;
+  padding: 2px 8px;
+  border-radius: 99px;
+  background: var(--nc-off, #F4F2F7);
+  font-size: 12px;
+  font-weight: 650;
+  font-variant-numeric: tabular-nums;
+  color: var(--af-texto);
+}
+
+@app .nc-sm-comp.is-sobe { background: #FFF3DC; color: #8A5300; }
+@app .nc-sm-comp.is-desce { background: #E6F4EC; color: #17643F; }
+
+@app .nc-af.is-fechado .nc-sm-comp {
+  display: none;
+}
+
+@app .nc-sm .nc-af-num {
+  flex-basis: 210px;
+}
+
+@app .nc-sm .nc-af-num.nc-sm-fixo {
+  cursor: default;
+}
+
+@app .nc-sm .nc-af-num.nc-sm-fixo:hover {
+  background: #fff;
+}
+
+/* a semana / o mês abertos: 2 quadros lado a lado (1 no celular) */
+@app .nc-sm-quebra .nc-sm-quebra-q {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  padding: 12px 14px 14px;
+}
+
+@app .nc-sm-quebra .nc-af-q {
+  height: auto;
+  max-height: 420px;
+}
+
+@container ncaf (max-width: 640px) {
+  @app .nc-sm-quebra .nc-sm-quebra-q {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* a barra com a marca do período anterior (uma linha fina onde o "antes" chegava) */
+@app .nc-sm-duplo {
+  position: relative;
+}
+
+@app .nc-sm-duplo b {
+  position: absolute;
+  top: -3px;
+  bottom: -3px;
+  width: 2px;
+  margin-left: -1px;
+  border-radius: 2px;
+  background: var(--af-tinta);
+  opacity: .55;
+}
+
+/* ═══ [A16] CONFERÊNCIA DO PONTO (9503:204, 19/10) ═════════════════════════════════════════
+   Natcorp_PontoPainel.js. Peças só dele (.nc-pp-*):
+     · a linha da lista "quem são" com o botão ABRIR O PONTO (vai para a Tratativa de Abono, 203);
+       a frase do meio leva a cor do assunto (batida faltando = vermelho, esperando = âmbar…);
+     · a etiqueta do tipo de cada evento da apuração (Crédito no banco / Débito no banco / Vai
+       para a folha) e a cor da barra do mesmo jeito;
+     · o DIA A DIA (é o "mês a mês" do .nc-af-meses, uma coluna por dia): fim de semana mais
+       claro, dia que ainda não chegou sem barra;
+     · o BANCO DE HORAS: a barra do saldo (vermelho = devendo, verde = horas a mais).
+   Cor de significado só onde tem significado; texto sempre ≥ 4,5:1 (o rosa de texto é o escuro).
+   ════════════════════════════════════════════════════════════════════════════════════════ */
+@app .nc-af-p.nc-pp-linha {
+  grid-template-columns: minmax(200px, 1.2fr) minmax(220px, 1.6fr) auto;
+  cursor: default;
+}
+
+@app .nc-af-p.nc-pp-linha:hover {
+  background: var(--af-fundo2);
+}
+
+@app .nc-af-p-quem b {
+  display: block;
+  font-size: 13.5px;
+  font-weight: 650;
+  color: var(--af-tinta);
+}
+
+@app .nc-af-p-quem > span {
+  display: block;
+  margin-top: 1px;
+  overflow: hidden;
+  font-size: 12.5px;
+  color: var(--af-texto);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@app .nc-pp-p-diz {
+  min-width: 0;
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+  color: var(--af-tinta);
+}
+
+@app .nc-pp-p-diz b {
+  font-weight: 750;
+}
+
+@app .nc-pp-p-diz--vermelho { color: var(--af-vermelho); }
+@app .nc-pp-p-diz--ambar { color: var(--af-ambar); }
+@app .nc-pp-p-diz--verde { color: var(--af-verde); }
+@app .nc-pp-p-diz--rosa { color: #9E3A66; }
+
+/* ABRIR O PONTO: a ação da linha. Botão sem fundo com a borda da casa (var(--nc-borda-botao)) */
+@app .nc-pp-abre {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 36px;
+  margin: 0;
+  padding: 0 12px;
+  border: 1px solid var(--nc-borda-botao, #D9CDE6);
+  border-radius: 9px;
+  background: #fff;
+  box-shadow: none;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 650;
+  white-space: nowrap;
+  color: var(--af-roxo);
+  cursor: pointer;
+  transition: background-color .15s, border-color .15s, color .15s;
+}
+
+@app .nc-pp-abre .nc-af-ic {
+  width: 16px;
+  height: 16px;
+}
+
+@app .nc-pp-abre:hover {
+  border-color: var(--af-roxo);
+  background: var(--af-roxo);
+  color: #fff;
+}
+
+@app .nc-pp-abre:focus-visible {
+  outline: 2px solid var(--af-sel);
+  outline-offset: 2px;
+}
+
+/* o tipo do evento, logo depois do nome */
+@app .nc-pp-tipo {
+  display: inline-block;
+  margin-right: 7px;
+  padding: 1px 7px;
+  border-radius: 99px;
+  font-size: 11px;
+  font-style: normal;
+  font-weight: 650;
+  line-height: 1.5;
+  vertical-align: 1px;
+  white-space: nowrap;
+}
+
+@app .nc-pp-tipo--credito { background: var(--af-verde-fundo); color: var(--af-verde); }
+@app .nc-pp-tipo--debito { background: var(--af-vermelho-fundo); color: var(--af-vermelho); }
+@app .nc-pp-tipo--folha { background: #EFE8F6; color: var(--af-roxo); }
+
+@app .nc-pp-b-trilho--credito i { background: #2E8B57; }
+@app .nc-pp-b-trilho--debito i { background: #C4453A; }
+
+/* a lista de quem tem o evento escolhido, embaixo dos quadros */
+@app .nc-pp-quem--ev {
+  margin-top: 14px;
+}
+
+/* DIA A DIA: o 1º quadro (o largo), uma coluna por dia */
+@app .nc-pp-dias .nc-af-mes.is-fds i {
+  opacity: .5;
+}
+
+@app .nc-pp-dias .nc-af-mes.is-fds > span {
+  color: #8E88A3;
+}
+
+@app .nc-pp-dias .nc-af-mes.is-futuro > span {
+  opacity: .55;
+}
+
+@app .nc-pp-dias .nc-af-mes.is-futuro:not(.is-atual) i {
+  visibility: hidden;                  /* o dia ainda não chegou: sem linha de base */
+}
+
+@app .nc-pp-dias .nc-af-mes.is-pico i {
+  background: var(--af-vermelho);
+}
+
+/* BANCO DE HORAS: quantos devem e quantos têm a mais; cada pessoa com a barra do saldo */
+@app .nc-pp-banco-resumo {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: -4px 0 8px;
+}
+
+@app .nc-pp-banco-resumo > span {
+  padding: 2px 9px;
+  border-radius: 99px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+@app .nc-pp-banco-resumo b {
+  font-weight: 750;
+  font-variant-numeric: tabular-nums;
+}
+
+@app .nc-pp-banco-neg { background: var(--af-vermelho-fundo); color: var(--af-vermelho); }
+@app .nc-pp-banco-pos { background: var(--af-verde-fundo); color: var(--af-verde); }
+
+@app .nc-pp-saldo {
+  display: block;
+  height: 8px;
+  border-radius: 99px;
+  background: #EEEAF3;
+  overflow: hidden;
+}
+
+@app .nc-pp-saldo i {
+  display: block;
+  height: 100%;
+  border-radius: 99px;
+}
+
+@app .nc-pp-saldo--neg i { background: #C4453A; }
+@app .nc-pp-saldo--pos i { background: #2E8B57; }
+
+@app .nc-pp-b-num--neg { color: var(--af-vermelho); }
+@app .nc-pp-b-num--pos { color: var(--af-verde); }
+
+@app .nc-pp-b--banco .nc-af-b-nome {
+  padding-right: 34px;               /* lugar do botão "abrir o ponto" que aparece por cima */
+}
+
+@media (max-width: 900px) {
+  /* uma coluna: quem, a frase e o botão na largura toda (dedo) */
+  @app .nc-af-p.nc-pp-linha {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 6px;
+  }
+
+  @app .nc-pp-abre {
+    justify-content: center;
+    width: 100%;
+    height: 40px;
+  }
+}
+
+/* ═══ [A17] CONFERÊNCIA DO PONTO v2 (9503:204, 19/10) ══════════════════════════════════════
+   O período no painel (De/Até + atalhos), as duas réguas (Para conferir · Indicadores de gestão),
+   os quadros com controle do que mostrar e "Ampliar", o trecho escolhido no Dia a dia e o quadro
+   ampliado por cima da página.
+   VOLUME  números grandes não estouram: o número principal fica ao lado da barra (curto, "1,2 mil h";
+           o exato na dica) e o detalhe desce para uma linha própria (.nc-pp-b-det) que corta com "…".
+   ════════════════════════════════════════════════════════════════════════════════════════ */
+
+/* ── o período ── */
+@app .nc-pp-datas {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 14px;
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--af-fio);
+  background: var(--af-fundo2);
+}
+
+@app .nc-pp-datas-rot {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--af-tinta);
+}
+
+@app .nc-pp-datas-rot .nc-af-ic {
+  width: 16px;
+  height: 16px;
+  color: var(--af-roxo);
+}
+
+@app .nc-pp-atalhos,
+@app .nc-pp-seg {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  min-width: 0;
+}
+
+@app :is(.nc-pp-atalho, .nc-pp-seg-b) {
+  height: 32px;
+  margin: 0;
+  padding: 0 12px;
+  border: 1px solid var(--nc-borda-botao, #D9CDE6);
+  border-radius: 99px;
+  background: #fff;
+  box-shadow: none;
+  font: inherit;
+  font-size: 12.5px;
+  font-weight: 600;
+  white-space: nowrap;
+  color: var(--af-texto);
+  cursor: pointer;
+  transition: background-color .15s, border-color .15s, color .15s;
+}
+
+@app :is(.nc-pp-atalho, .nc-pp-seg-b):hover:not(:disabled) {
+  border-color: var(--af-roxo);
+  color: var(--af-roxo);
+}
+
+@app :is(.nc-pp-atalho, .nc-pp-seg-b).is-on {
+  border-color: var(--af-roxo);
+  background: var(--af-roxo);
+  color: #fff;
+}
+
+@app :is(.nc-pp-atalho, .nc-pp-seg-b):focus-visible {
+  outline: 2px solid var(--af-sel);
+  outline-offset: 2px;
+}
+
+@app .nc-pp-atalho:disabled {
+  opacity: .45;
+  cursor: default;
+}
+
+@app .nc-pp-seg-b {
+  height: 28px;
+  padding: 0 10px;
+  font-size: 12px;
+}
+
+@app .nc-pp-de-ate {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+@app .nc-pp-de-ate label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--af-texto);
+}
+
+@app .nc-pp-de-ate input[type="date"] {
+  height: 34px;
+  padding: 0 8px;
+  border: 1px solid var(--af-fio);
+  border-radius: 8px;
+  background: #fff;
+  font: inherit;
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+  color: var(--af-tinta);
+}
+
+@app .nc-pp-de-ate input[type="date"]:focus {
+  border-color: var(--af-sel);
+  box-shadow: 0 0 0 1px var(--af-sel);
+  outline: 0;
+}
+
+@app .nc-pp-de-ate .nc-af-bt {
+  height: 34px;
+}
+
+@app .nc-pp-datas-msg {
+  flex-basis: 100%;
+  font-size: 12.5px;
+  color: var(--af-ambar);
+}
+
+@app .nc-pp-datas-msg:empty {
+  display: none;
+}
+
+/* ── as duas réguas: Gestão logo abaixo de Para conferir ── */
+@app .nc-pp-gestao {
+  padding-top: 0;
+}
+
+@app .nc-pp-base {
+  max-width: 120ch;
+  margin-top: 8px;
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--af-texto);
+}
+
+@app .nc-af.is-fechado .nc-pp-base {
+  display: none;
+}
+
+/* o valor de um número não estoura o cartão (horas grandes, porcentagens) */
+@app .nc-pp .nc-af-num .nc-af-valor {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@app .nc-pp .nc-af-dica b {
+  font-weight: 700;
+  color: var(--af-vermelho);
+}
+
+/* ── os quadros: 3 por linha; Dia a dia ocupa 2; Mês a mês a linha toda ── */
+@app .nc-pp-quadros .nc-af-q {
+  height: 440px;
+}
+
+@app .nc-pp-quadros .nc-pp-q--largo {
+  grid-column: span 2;
+}
+
+@app .nc-pp-quadros .nc-pp-q--todo {
+  grid-column: 1 / -1;
+  height: 300px;
+}
+
+@app .nc-pp-q-cab {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 2px;
+}
+
+@app .nc-pp-q-cab h3 {
+  flex: 1 1 auto;
+  min-width: 0;
+  margin: 0;
+}
+
+@app .nc-pp-ampliar {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 28px;
+  margin: 0;
+  padding: 0 9px;
+  border: 1px solid var(--nc-borda-botao, #D9CDE6);
+  border-radius: 7px;
+  background: #fff;
+  box-shadow: none;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 650;
+  color: var(--af-roxo);
+  cursor: pointer;
+}
+
+@app .nc-pp-ampliar .nc-af-ic {
+  width: 14px;
+  height: 14px;
+}
+
+@app .nc-pp-ampliar:hover {
+  border-color: var(--af-roxo);
+  background: #F6F1FA;
+}
+
+@app .nc-pp-ampliar:focus-visible {
+  outline: 2px solid var(--af-sel);
+  outline-offset: 2px;
+}
+
+@app .nc-pp-q .nc-pp-seg,
+@app .nc-pp-onde-ctl {
+  margin: 6px 0 4px;
+}
+
+@app .nc-pp-onde-ctl {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 12px;
+}
+
+@app .nc-pp-onde-ctl .nc-af-ver-por {
+  flex: 1 1 160px;
+  min-width: 0;
+}
+
+@app .nc-pp-onde-ctl select {
+  min-width: 0;
+  max-width: 100%;
+}
+
+/* a linha de barra: o número ao lado da barra, sem estourar; o detalhe numa linha própria */
+@app .nc-pp-b.nc-af-b {
+  grid-template-columns: minmax(48px, 1fr) auto;   /* a barra cede; o número (curto) fica inteiro */
+}
+
+@app .nc-pp-b-det {
+  grid-column: 1 / -1;
+  min-width: 0;
+  margin-top: -2px;
+  overflow: hidden;
+  font-size: 12px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--af-texto);
+}
+
+@app .nc-pp-b.nc-af-b--fixa .nc-af-b-nome {
+  padding-right: 34px;               /* lugar do botão "abrir o ponto" que aparece por cima */
+}
+
+@app .nc-pp-banco-alto {
+  background: var(--af-ambar-fundo);
+  color: var(--af-ambar);
+}
+
+/* ── dia a dia: arrastar escolhe um trecho ── */
+@app .nc-pp-dias {
+  touch-action: pan-y;               /* rolar a página na vertical continua; o arrasto lateral escolhe */
+  user-select: none;
+  cursor: crosshair;
+}
+
+@app .nc-pp-dias .nc-af-mes.is-sel {
+  background: rgba(81, 28, 118, .12);
+}
+
+@app .nc-pp-dias .nc-af-mes.is-sel i {
+  background: var(--af-roxo);
+  opacity: 1;
+}
+
+@app .nc-pp-q--dias .nc-af-meses {
+  flex: 1 1 auto;
+  height: auto;
+  min-height: 150px;
+}
+
+@app .nc-pp-trecho {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 10px;
+  margin-top: 8px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  background: #EFE8F6;
+  font-size: 13px;
+  color: var(--af-tinta);
+}
+
+@app .nc-pp-trecho > span {
+  flex: 1 1 200px;
+}
+
+@app .nc-pp-trecho .nc-af-bt {
+  height: 32px;
+}
+
+/* ── riscos à CLT: os 3 contadores ── */
+@app .nc-pp-riscos {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px;
+  margin: 2px 0 10px;
+  list-style: none;
+}
+
+@app .nc-pp-riscos li {
+  display: grid;
+  gap: 1px;
+  min-width: 0;
+  padding: 8px 9px;
+  border-radius: 9px;
+  background: #fff;
+}
+
+@app .nc-pp-riscos li.is-ha {
+  background: var(--af-vermelho-fundo);
+}
+
+@app .nc-pp-riscos b {
+  font-size: 18px;
+  font-weight: 750;
+  font-variant-numeric: tabular-nums;
+  color: var(--af-tinta);
+}
+
+@app .nc-pp-riscos li.is-ha b {
+  color: var(--af-vermelho);
+}
+
+@app .nc-pp-riscos span {
+  font-size: 12px;
+  font-weight: 650;
+  line-height: 1.25;
+  color: var(--af-tinta);
+}
+
+@app .nc-pp-riscos small {
+  overflow: hidden;
+  font-size: 11px;
+  line-height: 1.3;
+  color: var(--af-texto);
+}
+
+/* ── AMPLIAR: o quadro por cima da página ── */
+@app .nc-pp-zoom {
+  position: fixed;
+  inset: 0;
+  z-index: 2147483100;
+  display: grid;
+  place-items: center;
+  padding: clamp(8px, 3vw, 40px);
+}
+
+@app .nc-pp-zoom[hidden] {
+  display: none;
+}
+
+@app .nc-pp-zoom-fundo {
+  position: absolute;
+  inset: 0;
+  background: rgba(27, 18, 56, .55);
+}
+
+@app .nc-pp-zoom-caixa {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: min(1180px, 100%);
+  max-height: 100%;
+  overflow: auto;
+  overscroll-behavior: contain;
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: 0 24px 60px -20px rgba(27, 18, 56, .55);
+}
+
+@app .nc-pp-zoom-fecha {
+  position: sticky;
+  top: 10px;
+  z-index: 2;
+  align-self: flex-end;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 34px;
+  margin: 10px 10px -44px 0;
+  padding: 0 12px;
+  border: 1px solid var(--nc-borda-botao, #D9CDE6);
+  border-radius: 9px;
+  background: #fff;
+  box-shadow: none;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 650;
+  color: var(--af-roxo);
+  cursor: pointer;
+}
+
+@app .nc-pp-zoom-fecha:focus-visible {
+  outline: 2px solid var(--af-sel);
+  outline-offset: 2px;
+}
+
+@app .nc-pp-zoom .nc-pp-q.nc-af-q.is-grande {
+  height: auto;
+  max-height: none;                  /* no celular a roupa prende os quadros em 360 px: aqui não */
+  padding: 18px 22px 22px;
+  background: #fff;
+}
+
+@app .nc-pp-zoom .nc-af-q.is-grande h3 {
+  padding-right: 110px;              /* o "Fechar" fica por cima, à direita */
+  font-size: 17px;
+}
+
+@app .nc-pp-zoom .nc-af-q.is-grande > .nc-af-rolo,
+@app .nc-pp-zoom .nc-af-quem .nc-af-rolo {
+  max-height: none;
+}
+
+@app .nc-pp-zoom .nc-pp-dias.is-grande {
+  height: min(52vh, 460px);
+  margin-top: 40px;
+}
+
+@app .nc-pp-zoom .nc-af-meses--par {
+  height: min(52vh, 460px);
+}
+
+@app .nc-pp-zoom .nc-af-quem {
+  margin: 0 22px 22px;
+}
+
+@media (max-width: 1180px) {
+  @app .nc-pp-quadros .nc-pp-q--largo,
+  @app .nc-pp-quadros .nc-pp-q--todo {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 640px) {
+  @app .nc-pp-datas {
+    padding: 10px 12px;
+  }
+
+  @app .nc-pp-de-ate {
+    width: 100%;
+  }
+
+  @app .nc-pp-de-ate label {
+    flex: 1 1 130px;
+  }
+
+  @app .nc-pp-de-ate input[type="date"] {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  @app .nc-pp-riscos {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  @app .nc-pp-quadros .nc-af-q {
+    height: auto;
+    max-height: 560px;
+  }
+
+  @app .nc-pp-zoom {
+    padding: 0;
+  }
+
+  @app .nc-pp-zoom-caixa {
+    height: 100%;
+    border-radius: 0;
+  }
+
+  @app .nc-pp-ampliar span {
+    display: none;
+  }
+}
+
+/* ═══ [A18] SAÚDE E SEGURANÇA DO TRABALHO (2937:5, 19/10) ═══════════════════════════════════
+   O painel da lista "Dados de Funcionário" (Natcorp_SaudePainel.js) usa as peças do painel do ponto
+   ([A16]/[A17]: datas, quadros, Ampliar, linhas com botão) e mais estas:
+     · a nota ao lado do rótulo das réguas ("a situação de hoje, em qualquer período");
+     · o número que não abre lista ("Dias sem acidente"): sem cara de botão;
+     · os CONTADORES do PCMSO e dos acidentes (4 caixas: vermelho = vencido, âmbar = perto);
+     · as cores âmbar e rosa das barras; a linha "dias sem acidente"; o botão do histórico abrindo.
+   ════════════════════════════════════════════════════════════════════════════════════════ */
+@app .nc-sp .nc-sp-rot-nota {
+  margin-left: 6px;
+  font-weight: 500;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--af-texto);
+}
+
+/* as RÉGUAS em grade, pela largura do PAINEL (não da janela: na 2937:5 os Filtros ficam ao lado):
+   "Para agir hoje" (7) = 7 lado a lado, ou 4 + 3, ou 2 por linha; "No período" (6) = 6, 3 + 3 ou 2.
+   O último número ocupa o que sobra da linha — sem a caixa sozinha nem buraco cinza. */
+@app .nc-sp .nc-af-secao {
+  container: nc-sp-secao / inline-size;
+}
+
+@app .nc-sp .nc-sp-regua-hoje,
+@app .nc-sp .nc-sp-regua-per {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+}
+
+@app .nc-sp .nc-sp-regua-per {
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+}
+
+@app .nc-sp :is(.nc-sp-regua-hoje, .nc-sp-regua-per) > .nc-af-num {
+  min-width: 0;
+}
+
+@container nc-sp-secao (max-width: 1180px) {
+  @app .nc-sp .nc-sp-regua-hoje { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  @app .nc-sp .nc-sp-regua-hoje > .nc-af-num:last-child { grid-column: span 2; }
+  @app .nc-sp .nc-sp-regua-per { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+
+@container nc-sp-secao (max-width: 620px) {
+  @app .nc-sp .nc-sp-regua-hoje,
+  @app .nc-sp .nc-sp-regua-per { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  @app .nc-sp .nc-sp-regua-hoje > .nc-af-num:last-child { grid-column: span 2; }
+}
+
+@app .nc-sp .nc-af-num.nc-sp-num--fixo {
+  cursor: default;
+}
+
+@app .nc-sp .nc-af-num.nc-sp-num--fixo:hover {
+  transform: none;
+  box-shadow: none;
+}
+
+@app .nc-sp .nc-sp-cont {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+/* as caixas do PCMSO são botões (a escolha da faixa): mesma cara das caixas dos acidentes */
+@app .nc-sp .nc-sp-cont > button {
+  display: grid;
+  align-content: start;
+  gap: 2px;
+  min-width: 0;
+  margin: 0;
+  padding: 8px 9px;
+  border: 0;
+  border-radius: 9px;
+  background: #fff;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+@app .nc-sp .nc-sp-cont > button:hover {
+  box-shadow: 0 1px 4px rgba(27, 18, 56, .12);
+}
+
+@app .nc-sp .nc-sp-cont > button:focus-visible {
+  outline: 2px solid var(--af-sel);
+  outline-offset: 2px;
+}
+
+@app .nc-sp .nc-sp-cont > button.is-ha { background: var(--af-vermelho-fundo); }
+@app .nc-sp .nc-sp-cont > button.is-ha b { color: var(--af-vermelho); }
+@app .nc-sp .nc-sp-cont > button.is-ambar { background: var(--af-ambar-fundo); }
+@app .nc-sp .nc-sp-cont > button.is-ambar b { color: var(--af-ambar); }
+
+@app .nc-sp .nc-sp-cont > button.is-on {
+  outline: 2px solid var(--af-sel);
+  outline-offset: -2px;
+}
+
+@app .nc-sp .nc-sp-cont > button b {
+  font-size: 18px;
+  font-weight: 750;
+  font-variant-numeric: tabular-nums;
+  color: var(--af-tinta);
+}
+
+@app .nc-sp .nc-sp-cont > button span {
+  font-size: 12px;
+  font-weight: 650;
+  line-height: 1.25;
+  color: var(--af-tinta);
+}
+
+@app .nc-sp .nc-sp-afast {
+  font-weight: 700;
+  color: var(--af-vermelho);
+}
+
+@app .nc-sp .nc-sp-cont li.is-ambar {
+  background: var(--af-ambar-fundo);
+}
+
+@app .nc-sp .nc-sp-cont li.is-ambar b {
+  color: var(--af-ambar);
+}
+
+@app .nc-sp .nc-sp-cont li.is-on {
+  outline: 2px solid var(--af-sel);
+  outline-offset: -2px;
+}
+
+@app .nc-sp .nc-sp-trilho--ambar i { background: #C98A1B; }
+@app .nc-sp .nc-sp-trilho--rosa i { background: var(--af-rosa); }
+
+@app .nc-sp .nc-sp-semacid {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 10px;
+  padding: 8px 10px;
+  border-radius: 9px;
+  background: var(--af-verde-fundo);
+  font-size: 12.5px;
+  line-height: 1.35;
+  color: var(--af-verde);
+}
+
+@app .nc-sp .nc-sp-semacid .nc-af-ic {
+  flex: none;
+  width: 18px;
+  height: 18px;
+}
+
+@app .nc-sp .nc-sp-semacid b {
+  font-weight: 750;
+  font-variant-numeric: tabular-nums;
+}
+
+@app .nc-sp .nc-sp-acid .nc-af-b-nome em {
+  margin-right: 6px;
+  font-style: normal;
+  font-variant-numeric: tabular-nums;
+}
+
+@app .nc-sp .is-abrindo {
+  opacity: .6;
+  cursor: progress;
+}
+
+@media (max-width: 760px) {
+  @app .nc-sp .nc-sp-cont {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  @app .nc-sp .nc-sp-rot-nota {
+    display: block;
+    margin: 2px 0 0;
+  }
+}

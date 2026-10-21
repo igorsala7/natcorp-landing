@@ -57,6 +57,9 @@
      [R7]  Espalhar para as janelas e iframes das outras aplicações        CUIDADO
      [R8]  O começo
      [R9]  Arrastar para rolar (IR, CR, IG e o Gantt da Linha do Tempo)    PODE MEXER
+     [R10] A rolagem segue o mouse (de uma região/moldura para outra)      CUIDADO
+     [R11] Tela cheia nos resumos (painéis .nc-af das páginas 16, 21, 25…)  PODE MEXER
+     [R12] A barra do título encolhe ao rolar (sem o conteúdo pular)     CUIDADO
 
    ── RECEITAS RÁPIDAS ──────────────────────────────────────────────────────────────────────
      Quero outro dado no alto do cartão     → mude a ORDEM das colunas do relatório (o cartão segue).
@@ -476,6 +479,10 @@
   var GLOBAIS = /^Natcorp_(Allow_Unload_Iframes|Temas|Registros|Trilha|Editor|Lov|Colab|Grade)\.js$/i;   /* Grade: 08/10 */
   function paginaPropria() {
     return [].some.call(document.scripts, function (s) {
+      /* data-nc-peca = trazido pelo Natcorp_Temas.js (ou repassado a um iframe): peça do sistema.
+         08/10: o Temas novo trouxe o Natcorp_Grade.js e o Registros antigo (sem "Grade" na lista)
+         tomou TODA página por "de desenho próprio" — os Cartões sumiram do sistema inteiro. */
+      if (s.hasAttribute('data-nc-peca')) return false;
       var n = (s.getAttribute('src') || '').split('?')[0].split('/').pop();
       return /^Natcorp_\w+\.js$/i.test(n) && !GLOBAIS.test(n);
     }) || !!window.__ncLinhaTempo || document.body.classList.contains('nc-lt');
@@ -490,7 +497,15 @@
         ir: true,
         lugar: function () { return r.querySelector('.a-IRR-tableContainer'); },
         tabela: function () { return [].slice.call(r.querySelectorAll('.a-IRR-tableContainer .a-IRR-table')).sort(function (a, b) { return b.rows.length - a.rows.length; })[0] || null; },
-        porBarra: function (b) { var t = r.querySelector('.a-IRR-toolbar'); if (t && t.parentNode) t.parentNode.insertBefore(b, t.nextSibling); else r.insertBefore(b, r.firstChild); }
+        /* 08/10: o seletor mora NA BARRA DE FERRAMENTAS do relatório (busca · Ir · relatório ·
+           Ações · Tabela|Cartões), não numa linha só dele. Sem barra à vista: logo abaixo dela. */
+        porBarra: function (b) {
+          var t = r.querySelector('.a-IRR-toolbar'), c = t && t.querySelector('.a-IRR-controls');
+          var vista = t && getComputedStyle(t).display !== 'none';
+          b.classList.toggle('nc-reg-modos--barra', !!(c && vista));
+          if (c && vista) c.appendChild(b);
+          else if (t && t.parentNode) t.parentNode.insertBefore(b, t.nextSibling); else r.insertBefore(b, r.firstChild);
+        }
       });
     });
     [].forEach.call(document.querySelectorAll('.t-Report'), function (rep) {
@@ -532,6 +547,7 @@
       if (d.querySelector('script[src*="Natcorp_Registros.js"]')) return;
       var s = d.createElement('script');
       s.src = EU;
+      s.setAttribute('data-nc-peca', '');
       d.head.appendChild(s);
     } catch (e) { /* iframe de outro endereço: não é nosso */ }
   }
@@ -549,6 +565,7 @@
           [].forEach.call(m.addedNodes, function (n) {
             if (n.nodeType !== 1) return;
             if (n.tagName === 'IFRAME') vigiar(n); else if (n.querySelector) [].forEach.call(n.querySelectorAll('iframe'), vigiar);
+            telaCheiaEm(n);
           });
         });
       }).observe(document.documentElement, { childList: true, subtree: true });
@@ -560,13 +577,27 @@
                 Gantt da Linha do Tempo: quando a tabela (ou o gráfico) tem barra de rolagem,
                 clicar e arrastar com o mouse move o conteúdo — como pegar uma folha e puxar.
                 O cursor vira a "mãozinha" onde dá para arrastar.
+                • para os LADOS (a tabela) e para CIMA e BAIXO (a tabela, se ela rola; senão a
+                  página) — 08/10;
+                • apertar EM CIMA DO TEXTO seleciona o texto (para copiar), como sempre; arrastar
+                  é apertando no ESPAÇO VAZIO da célula. O cursor avisa antes: "I" sobre o texto,
+                  mãozinha no vazio — 08/10 (com o arrasto em tudo, ninguém mais copiava nada);
                 • só com o MOUSE (no celular e no tablet o dedo já rola sozinho);
                 • só começa depois de 6px de movimento: um clique normal continua abrindo o
                   link, marcando a linha, tocando a barra do Gantt;
                 • quem arrastou não "clica" ao soltar (soltar em cima de um link não o abre);
                 • não começa em campo nem em botão (no Gantt, sim: as barras são o gráfico);
                 • no Interactive Grid, enquanto arrasta, a grade não fica marcando células;
-                • ao soltar, um pouco de embalo (sem embalo para quem pediu menos movimento).
+                • ao soltar, um pouco de embalo (sem embalo para quem pediu menos movimento);
+                • 13/10 "o scroll para de funcionar até clicar": se o SOLTAR se perde (botão solto
+                  sobre outra moldura/iframe, fora da janela, numa barra de rolagem), o arrasto
+                  ficava ligado e cada movimento do mouse, mesmo sem botão, puxava a página de
+                  volta. Agora mexer SEM o botão apertado encerra o arrasto, e a rodinha/trackpad
+                  para o embalo;
+                • 13/10 rodinha sobre tabela LARGA: no trackpad o gesto vertical vem com um pouco
+                  de lado, e o Chrome prendia o gesto inteiro na tabela (que só rola para os lados):
+                  a página não descia. Gesto mais vertical que lateral vai para quem rola para
+                  cima/baixo; só quando há desvio lateral (a rodinha do mouse segue nativa).
                 Vale também nas páginas de desenho próprio (não muda o desenho de nada).
      PODE MEXER ONDE (os lugares que podem ser arrastados), LIMIAR e EMBALO.
      CUIDADO    O que rola de verdade é achado subindo do ponto clicado: o primeiro elemento
@@ -582,38 +613,94 @@
     if (ov !== 'auto' && ov !== 'scroll') return false;
     return eixo === 'x' ? e.scrollWidth > e.clientWidth + 1 : e.scrollHeight > e.clientHeight + 1;
   }
-  /* o elemento que rola, subindo do ponto até a região (no máximo alguns níveis além dela) */
+  /* quem rola para os lados (subindo do ponto até a região) e quem rola para cima e baixo
+     (subindo até a página inteira). { lugar, x, y } — sem nenhum dos dois, não há o que arrastar */
   function quemRola(alvo) {
     var lugar = alvo.closest && alvo.closest(ONDE);
     if (!lugar) return null;
     var limite = lugar.closest('.t-IRR-region, .a-IG, .t-Region, .nc-lt-painel') || document.body;
-    for (var e = alvo; e && e !== limite.parentElement; e = e.parentElement) {
-      if (e.nodeType === 1 && (rolavel(e, 'x') || (e !== document.body && rolavel(e, 'y') && e.closest(ONDE)))) return e;
-    }
-    return null;
+    var x = null, y = null, e;
+    for (e = alvo; e && e !== limite.parentElement; e = e.parentElement) { if (e.nodeType === 1 && rolavel(e, 'x')) { x = e; break; } }
+    for (e = alvo; e && e !== document.body && e !== document.documentElement; e = e.parentElement) { if (e.nodeType === 1 && rolavel(e, 'y')) { y = e; break; } }
+    if (!y) { var pg = document.scrollingElement || document.documentElement; if (pg.scrollHeight > pg.clientHeight + 1) y = pg; }
+    return x || y ? { lugar: lugar, x: x, y: y } : null;
+  }
+  /* o ponto está EM CIMA de letras? (não só dentro da célula: o espaço vazio dela não conta) */
+  function sobreTexto(x, y) {
+    var no = null;
+    try {
+      if (document.caretPositionFromPoint) { var cp = document.caretPositionFromPoint(x, y); no = cp && cp.offsetNode; }
+      else if (document.caretRangeFromPoint) { var cr = document.caretRangeFromPoint(x, y); no = cr && cr.startContainer; }
+    } catch (e) { return false; }
+    if (!no || no.nodeType !== 3 || !/\S/.test(no.data)) return false;
+    var rg = document.createRange(); rg.selectNodeContents(no);
+    return [].some.call(rg.getClientRects(), function (q) { return x >= q.left - 1 && x <= q.right + 1 && y >= q.top && y <= q.bottom; });
   }
   function ativarArrasto() {
     if (window.__ncArrasto) return;
     window.__ncArrasto = true;
     var menos = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     var A = null, embalo = 0;
-    /* a mãozinha: marca o lugar quando o mouse passa e ele tem rolagem */
+    /* a mãozinha: marca o lugar quando o mouse passa e ele tem rolagem; sobre as letras, o
+       cursor de texto (html.nc-sobre-texto) — no máximo uma conta por quadro */
     document.addEventListener('pointerover', function (ev) {
       if (ev.pointerType !== 'mouse' || A) return;
       var r = quemRola(ev.target);
-      if (r && !r.classList.contains('nc-arrastavel')) r.classList.add('nc-arrastavel');
+      if (r && !r.lugar.classList.contains('nc-arrastavel')) {
+        r.lugar.classList.add('nc-arrastavel');
+        /* a rodinha só neste lugar (não na página toda: ouvinte não passivo na página inteira
+           deixaria toda rolagem esperando o JavaScript) */
+        r.lugar.addEventListener('wheel', rodaNaTabela, { passive: false, capture: true });
+      }
     }, true);
+    /* gesto mais VERTICAL que lateral, sobre uma tabela que só rola para os lados: a rolagem vai
+       para quem rola para cima/baixo (a página, ou a coluna que rola por dentro). Rodinha sem
+       desvio lateral (deltaX 0, o mouse comum) e gesto lateral: o navegador cuida, como sempre.
+       Se quem rola para cima/baixo já está no fim, também o navegador (passa para a moldura de fora).
+       O CABEÇALHO FIXO do relatório (.t-fht-thead) não rola sozinho: o APEX o move junto com a tabela
+       e, com a rodinha em cima dele, só usava o lado — por isso este ouvinte é de CAPTURA (vem antes
+       do APEX) e, quando trata o gesto, não o deixa seguir. */
+    function rodaNaTabela(ev) {
+      if (!ev.deltaX || ev.ctrlKey || ev.shiftKey || Math.abs(ev.deltaY) <= Math.abs(ev.deltaX)) return;
+      var r = quemRola(ev.target);
+      if (!r) return;
+      var cab = !r.x && ev.target.closest && ev.target.closest('.t-fht-thead');
+      if (cab) r.x = cab.parentElement && cab.parentElement.querySelector('.t-fht-tbody');
+      if (!r.x || !r.y || rolavel(r.x, 'y') || r.x.contains(r.y)) return;
+      var dy = ev.deltaY * (ev.deltaMode === 1 ? 40 : ev.deltaMode === 2 ? r.y.clientHeight : 1);
+      var pode = dy > 0 ? r.y.scrollTop + r.y.clientHeight < r.y.scrollHeight - 1 : r.y.scrollTop > 0;
+      if (!pode) return;
+      ev.preventDefault();
+      ev.stopPropagation();
+      r.y.scrollTop += dy;
+    }
+    /* a rodinha/trackpad para o embalo de um arrasto (os dois brigavam pela posição) */
+    document.addEventListener('wheel', function () { if (embalo) { cancelAnimationFrame(embalo); embalo = 0; } }, { capture: true, passive: true });
+    var qCursor = 0, ultimo = null;
+    document.addEventListener('pointermove', function (ev) {
+      if (ev.pointerType !== 'mouse' || A) return;
+      ultimo = ev;
+      if (qCursor) return;
+      qCursor = requestAnimationFrame(function () {
+        qCursor = 0;
+        var e = ultimo, dentro = e.target.closest && e.target.closest('.nc-arrastavel');
+        document.documentElement.classList.toggle('nc-sobre-texto', !!dentro && sobreTexto(e.clientX, e.clientY));
+      });
+    }, { capture: true, passive: true });
     document.addEventListener('pointerdown', function (ev) {
       if (ev.pointerType !== 'mouse' || ev.button !== 0 || ev.ctrlKey || ev.metaKey || ev.shiftKey) return;
       var r = quemRola(ev.target);
       if (!r) return;
       if (ev.target.closest(NAO_COMECA) && !(ev.target.closest(LIVRE_NO_GANTT) && !ev.target.closest('input, select, textarea'))) return;
+      if (!ev.target.closest(LIVRE_NO_GANTT) && sobreTexto(ev.clientX, ev.clientY)) return;   /* nas letras: selecionar */
       cancelAnimationFrame(embalo);
-      A = { r: r, x: ev.clientX, y: ev.clientY, l: r.scrollLeft, t: r.scrollTop, mexeu: false, vx: 0, vy: 0, tempo: ev.timeStamp, px: ev.clientX, py: ev.clientY, y2: rolavel(r, 'y') };
+      A = { rx: r.x, ry: r.y, x: ev.clientX, y: ev.clientY, l: r.x ? r.x.scrollLeft : 0, t: r.y ? r.y.scrollTop : 0, mexeu: false, vx: 0, vy: 0, tempo: ev.timeStamp, px: ev.clientX, py: ev.clientY };
     }, true);
     /* enquanto arrasta, ninguém mais recebe o movimento (a grade não marca células) */
     document.addEventListener('pointermove', function (ev) {
       if (!A) return;
+      /* sem o botão apertado não há arrasto: o "soltar" se perdeu (iframe, fora da janela) */
+      if (!(ev.buttons & 1)) { soltar(); return; }
       var dx = ev.clientX - A.x, dy = ev.clientY - A.y;
       if (!A.mexeu) {
         if (Math.abs(dx) < LIMIAR && Math.abs(dy) < LIMIAR) return;
@@ -623,8 +710,8 @@
       }
       ev.preventDefault();
       ev.stopPropagation();
-      A.r.scrollLeft = A.l - dx;
-      if (A.y2) A.r.scrollTop = A.t - dy;
+      if (A.rx) A.rx.scrollLeft = A.l - dx;
+      if (A.ry) A.ry.scrollTop = A.t - dy;
       var dt = Math.max(1, ev.timeStamp - A.tempo);
       A.vx = (ev.clientX - A.px) / dt; A.vy = (ev.clientY - A.py) / dt;
       A.px = ev.clientX; A.py = ev.clientY; A.tempo = ev.timeStamp;
@@ -643,10 +730,11 @@
       window.addEventListener('click', engole, true);
       setTimeout(function () { window.removeEventListener('click', engole, true); }, 0);
       if (menos) return;
-      var vx = a.vx * 16, vy = a.y2 ? a.vy * 16 : 0;
+      var vx = a.rx ? a.vx * 16 : 0, vy = a.ry ? a.vy * 16 : 0;
       (function passo() {
         if (Math.abs(vx) < 0.5 && Math.abs(vy) < 0.5) return;
-        a.r.scrollLeft -= vx; a.r.scrollTop -= vy;
+        if (a.rx) a.rx.scrollLeft -= vx;
+        if (a.ry) a.ry.scrollTop -= vy;
         vx *= EMBALO; vy *= EMBALO;
         embalo = requestAnimationFrame(passo);
       })();
@@ -654,6 +742,241 @@
     document.addEventListener('pointerup', soltar, true);
     document.addEventListener('pointercancel', soltar, true);
     window.addEventListener('blur', soltar);
+  }
+
+  /* ═══ [R10] A ROLAGEM SEGUE O MOUSE ═════════════════════════════════════════════════════
+     O QUE FAZ  13/10 "o scroll para de funcionar quando sai de uma região e vai para outra
+                enquanto continua o scroll; precisa clicar onde parou". No trackpad (e no
+                embalo da rodinha) o navegador PRENDE o gesto inteiro em quem começou a rolar:
+                o menu lateral, uma lista, a página dentro da moldura (iframe) da casca. Se o
+                mouse passa para outra região e o primeiro já chegou ao fim (ou nem rola, como a
+                faixa do alto), o gesto continua indo para ele e nada se mexe.
+                Aqui: quando NINGUÉM na corrente de quem recebeu o gesto pode rolar naquele
+                sentido, a rolagem vai para quem está DEBAIXO DO MOUSE, inclusive em outra
+                moldura (casca → página, página → menu da casca, janela de diálogo).
+                • Quando o navegador consegue rolar, ele rola: este ouvinte não faz nada.
+                • Passivo e na ÚLTIMA fase (bolha na window): nunca atrasa a rolagem e respeita
+                  quem já tratou a rodinha (Gantt, mapa, a tabela larga do [R9], o APEX).
+                • Caixa que segura a rolagem de propósito (overscroll-behavior: contain — as
+                  gavetas e janelas) continua segurando: nada passa através dela.
+                • Ctrl (zoom) e Shift (rolar para o lado) ficam com o navegador.
+     CUIDADO    A moldura de fora só é alcançada no mesmo endereço (casca e páginas do sistema);
+                moldura de outro site fica de fora sozinha (o navegador não deixa ler).
+                Isto roda em CADA documento (casca, iframes, janelas): o [R7] espalha o arquivo.
+     ════════════════════════════════════════════════════════════════════════════════════════ */
+  function ativarRodinha() {
+    if (window.__ncRodinha) return;
+    window.__ncRodinha = true;
+    /* o documento inteiro rola? (overflow do <html>, ou do <body> quando o <html> é visible) */
+    function raizRola(doc, eixo) {
+      var r = doc.scrollingElement || doc.documentElement, w = doc.defaultView;
+      var ov = function (e) { var cs = w.getComputedStyle(e); return eixo === 'x' ? cs.overflowX : cs.overflowY; };
+      var o = ov(doc.documentElement);
+      if (o === 'visible' && doc.body) o = ov(doc.body);
+      if (o === 'hidden' || o === 'clip') return null;
+      return eixo === 'x' ? (r.scrollWidth > r.clientWidth + 1 ? r : null) : (r.scrollHeight > r.clientHeight + 1 ? r : null);
+    }
+    function anda(e, eixo, d) {
+      return eixo === 'x' ? (d > 0 ? e.scrollLeft + e.clientWidth < e.scrollWidth - 1 : e.scrollLeft > 0)
+        : (d > 0 ? e.scrollTop + e.clientHeight < e.scrollHeight - 1 : e.scrollTop > 0);
+    }
+    /* quem rola, subindo a partir de "el" (e passando para a moldura de fora, como o navegador):
+       devolve { e } quando alguém pode andar, { preso } quando uma caixa "contain" segura, ou null */
+    function quemAnda(el, eixo, d) {
+      for (var doc = el && el.ownerDocument; el && doc;) {
+        var w = doc.defaultView;
+        for (var e = el; e && e.nodeType === 1 && e !== doc.body && e !== doc.documentElement; e = e.parentElement) {
+          var big = eixo === 'x' ? e.scrollWidth > e.clientWidth + 1 : e.scrollHeight > e.clientHeight + 1;
+          if (!big) continue;
+          var cs = w.getComputedStyle(e), ov = eixo === 'x' ? cs.overflowX : cs.overflowY;
+          if (ov !== 'auto' && ov !== 'scroll') continue;
+          if (anda(e, eixo, d)) return { e: e };
+          if ((eixo === 'x' ? cs.overscrollBehaviorX : cs.overscrollBehaviorY) !== 'auto') return { preso: true };
+        }
+        var r = raizRola(doc, eixo);
+        if (r && anda(r, eixo, d)) return { e: r };
+        try { el = w.frameElement; doc = el && el.ownerDocument; } catch (x) { return null; }
+      }
+      return null;
+    }
+    /* o elemento debaixo do mouse, na janela de cima, descendo pelas molduras do mesmo endereço */
+    function debaixoDoMouse(ev) {
+      var w = ev.view || window, x = ev.clientX, y = ev.clientY, fe, r, cs;
+      try {
+        while (w !== w.parent && (fe = w.frameElement)) {
+          r = fe.getBoundingClientRect(); cs = w.parent.getComputedStyle(fe);
+          x += r.left + fe.clientLeft + parseFloat(cs.paddingLeft); y += r.top + fe.clientTop + parseFloat(cs.paddingTop);
+          w = w.parent;
+        }
+        var el = w.document.elementFromPoint(x, y);
+        while (el && el.tagName === 'IFRAME' && el.contentDocument) {
+          r = el.getBoundingClientRect(); cs = el.ownerDocument.defaultView.getComputedStyle(el);
+          x -= r.left + el.clientLeft + parseFloat(cs.paddingLeft); y -= r.top + el.clientTop + parseFloat(cs.paddingTop);
+          el = el.contentDocument.elementFromPoint(x, y);
+        }
+        return el;
+      } catch (e) { return null; }
+    }
+    window.addEventListener('wheel', function (ev) {
+      if (ev.defaultPrevented || ev.ctrlKey || ev.shiftKey) return;
+      var eixo = Math.abs(ev.deltaX) > Math.abs(ev.deltaY) ? 'x' : 'y', d = eixo === 'x' ? ev.deltaX : ev.deltaY;
+      if (!d || !ev.target || ev.target.nodeType !== 1) return;
+      var ali = quemAnda(ev.target, eixo, d);
+      if (ali && ali.e) return;                                   /* o navegador rola */
+      var el = debaixoDoMouse(ev), aqui = el && quemAnda(el, eixo, d);
+      if (!aqui || !aqui.e) return;
+      var e = aqui.e, alto = eixo === 'x' ? e.clientWidth : e.clientHeight;
+      var passo = d * (ev.deltaMode === 1 ? 40 : ev.deltaMode === 2 ? alto : 1);
+      if (eixo === 'x') e.scrollLeft += passo; else e.scrollTop += passo;
+    }, { passive: true });
+  }
+
+  /* ═══ [R11] TELA CHEIA NOS RESUMOS ════════════════════════════════════════════════════════
+     O QUE FAZ  Todo painel de resumo (section.nc-af: afastamentos, férias, quadro, benefícios, folha,
+                acidentes… e os que vierem com a mesma roupa) ganha no título o botão "Tela cheia".
+                Ele abre a análise completa (se o painel estava fechado), leva o painel para a tela
+                inteira e vira "Sair da tela cheia". Esc também sai; ao sair, o painel volta para o
+                lugar e para como estava (fechado, se estava).
+     COMO       Dentro da PÁGINA, como o "maximizar" do Interactive Report (position: fixed cobrindo o
+                body da página — na casca, a área da moldura); NÃO usa a tela cheia do navegador
+                (pedido do usuário, 13/10). O painel MUDA de lugar (vai para o fim do body, dentro do envelope) e volta depois:
+                assim nenhum "transform" do tema prende o position: fixed, e as listas que abrem
+                embaixo dos botões (posição relativa ao painel) continuam certas.
+     CUIDADO    O botão de abrir/fechar do painel é achado por aria-controls="…-corpo" no título: um
+                painel novo precisa manter esse combinado. A aparência está no Natcorp_Afastamentos.src.css
+                ([A12]), que todos os painéis copiam.
+     ════════════════════════════════════════════════════════════════════════════════════════ */
+  var TELA_IC = {
+    abre: '<path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/>',
+    sai: '<path d="M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5"/>'
+  };
+  var tela = null;   /* { caixa, envelope, lugar, botao, fechou } enquanto um painel está em tela cheia */
+  function telaBotao(b, dentro) {
+    b.setAttribute('aria-pressed', String(dentro));
+    b.title = dentro ? 'Voltar o resumo para a página (Esc)' : 'Ver o resumo na tela inteira';
+    b.setAttribute('aria-label', dentro ? 'Sair da tela cheia' : 'Ver o resumo em tela cheia');
+    b.innerHTML = '<svg class="nc-af-ic" viewBox="0 0 24 24" aria-hidden="true" focusable="false">' + TELA_IC[dentro ? 'sai' : 'abre'] +
+      '</svg><span>' + (dentro ? 'Sair da tela cheia' : 'Tela cheia') + '</span>';
+  }
+  function telaCheiaEm(raiz) {
+    if (!raiz || !raiz.querySelectorAll) return;
+    var cabs = raiz.matches && raiz.matches('.nc-af > .nc-af-cab') ? [raiz] : raiz.querySelectorAll('.nc-af > .nc-af-cab');
+    [].forEach.call(cabs, function (cab) {
+      if (cab.querySelector('[data-nc-tela]')) return;
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'nc-af-bt nc-af-bt--tela';
+      b.setAttribute('data-nc-tela', '');
+      telaBotao(b, false);
+      var alterna = cab.querySelector('button[aria-controls$="-corpo"]');
+      if (alterna) cab.insertBefore(b, alterna); else cab.appendChild(b);
+    });
+  }
+  function alternaDoPainel(caixa) { return caixa.querySelector('.nc-af-cab button[aria-controls$="-corpo"]'); }
+  function entrarTela(caixa, botao) {
+    if (tela) sairTela();
+    var env = document.createElement('div'), lugar = document.createComment('nc-tela');
+    env.className = 'nc-af-tela';
+    env.setAttribute('role', 'dialog');
+    env.setAttribute('aria-modal', 'true');
+    /* o Esc é tratado AQUI, no envelope, antes de chegar ao documento: o "maximizar" do Interactive
+       Report também escuta o Esc no documento e restaurava a tabela por trás, deixando a tela cheia
+       aberta (9181:50, 13/10). As listas do painel que usam o Esc marcam defaultPrevented antes. */
+    env.addEventListener('keydown', function (e) {
+      if (e.key !== 'Escape' || e.defaultPrevented) return;
+      e.preventDefault();
+      e.stopPropagation();
+      sairTela();
+    });
+    var h2 = caixa.querySelector('.nc-af-cab h2');
+    if (h2) env.setAttribute('aria-label', h2.textContent + ' (tela cheia)');
+    caixa.parentNode.insertBefore(lugar, caixa);
+    env.appendChild(caixa);
+    document.body.appendChild(env);
+    document.documentElement.classList.add('nc-af-travado');
+    tela = { caixa: caixa, envelope: env, lugar: lugar, botao: botao, fechou: false };
+    /* a análise completa: quem pede tela cheia quer ver tudo */
+    var alt = alternaDoPainel(caixa);
+    if (caixa.classList.contains('is-fechado') && alt) { alt.click(); tela.fechou = true; }
+    telaBotao(botao, true);
+    botao.focus({ preventScroll: true });
+    window.dispatchEvent(new Event('resize'));   /* os painéis medem gráficos e reposicionam as listas */
+  }
+  function sairTela() {
+    if (!tela) return;
+    var t = tela;
+    tela = null;
+    t.lugar.parentNode.insertBefore(t.caixa, t.lugar);
+    t.lugar.remove();
+    t.envelope.remove();
+    document.documentElement.classList.remove('nc-af-travado');
+    var alt = alternaDoPainel(t.caixa);
+    if (t.fechou && alt && !t.caixa.classList.contains('is-fechado')) alt.click();
+    telaBotao(t.botao, false);
+    t.botao.focus({ preventScroll: true });
+    window.dispatchEvent(new Event('resize'));
+  }
+  function ativarTelaCheia() {
+    if (window.__ncTela) return;
+    window.__ncTela = true;
+    telaCheiaEm(document);
+    document.addEventListener('click', function (e) {
+      var b = e.target.closest && e.target.closest('[data-nc-tela]');
+      if (!b) return;
+      var caixa = b.closest('.nc-af');
+      if (!caixa) return;
+      if (tela && tela.caixa === caixa) sairTela(); else entrarTela(caixa, b);
+    });
+    /* Esc sai. Quem usou o Esc antes (a lista de marcar aberta) marca defaultPrevented: aí o Esc
+       fecha só a lista. */
+    window.addEventListener('keydown', function (e) {
+      if (e.key !== 'Escape' || !tela || e.defaultPrevented) return;
+      e.preventDefault();
+      sairTela();
+    });
+  }
+
+  /* ═══ [R12] A BARRA DO TÍTULO ENCOLHE AO ROLAR ═════════════════════════════════════════════
+     O QUE FAZ  Depois de 72 px de rolagem, o body ganha nc-bc-compacto e o CSS (Natcorp_Paginas,
+                "A BARRA ENCOLHE DE VERDADE") baixa a barra do título: com a Trilha, o breadcrumb some
+                (o nome da página já está na Trilha); sem ela, a faixa fica em uma linha.
+     CUIDADO    O tema mede a barra e usa a medida em três lugares: o espaço vazio no alto do conteúdo
+                (#t_Body_content_offset), o "top" da coluna da esquerda e o "top" dos cabeçalhos
+                grudados das tabelas (apex.theme.defaultStickyTop). A cada troca de estado chamamos o
+                apexwindowresized do tema (a coluna e os cabeçalhos sobem/descem com a barra) e, logo
+                depois, devolvemos ao espaço do conteúdo a medida da barra CHEIA (medida com a classe
+                nc-bc-medir, que desliga o compacto por um instante): o conteúdo nunca pula, e a página
+                aberta já rolada (recarregar mantém a rolagem) não fica com a barra cobrindo o 1º cartão.
+                72 é o mesmo número do CSS (animation-range do breadcrumb).
+     ════════════════════════════════════════════════════════════════════════════════════════ */
+  var BC_LIMITE = 72;
+  function ativarBarraTitulo() {
+    if (window.__ncBarraTitulo) return;
+    var titulo = document.querySelector('.t-Body-title'), espaco = document.getElementById('t_Body_content_offset');
+    if (!titulo || !espaco || !document.body || !window.apex || !apex.jQuery) return;
+    window.__ncBarraTitulo = true;
+    var corpo = document.body, compacto = null, cheio = 0;
+    function medirCheio() {
+      corpo.classList.add('nc-bc-medir');
+      var r = titulo.getBoundingClientRect();
+      corpo.classList.remove('nc-bc-medir');
+      return Math.round(r.top + r.height);           /* o cabeçalho + a barra cheia */
+    }
+    function firmarEspaco() {
+      cheio = medirCheio();
+      if (cheio > 0 && espaco.style.height !== cheio + 'px') espaco.style.height = cheio + 'px';
+    }
+    /* depois do tema (ligado depois dele): o espaço volta à medida cheia */
+    apex.jQuery(window).on('apexwindowresized', firmarEspaco);
+    function aplicar() {
+      var c = (window.pageYOffset || document.documentElement.scrollTop || 0) >= BC_LIMITE;
+      if (c === compacto) return;
+      compacto = c;
+      corpo.classList.toggle('nc-bc-compacto', c);
+      apex.jQuery(window).trigger('apexwindowresized');
+    }
+    window.addEventListener('scroll', aplicar, { passive: true });
+    aplicar();
   }
 
   /* ═══ [R8] O COMEÇO ══════════════════════════════════════════════════════════════════════
@@ -671,6 +994,9 @@
   quandoPronto(function () {
     try { espalhar(); } catch (e) { /* ok */ }
     try { ativarArrasto(); } catch (e) { /* ok */ }
+    try { ativarRodinha(); } catch (e) { /* ok */ }
+    try { ativarTelaCheia(); } catch (e) { /* ok */ }
+    try { ativarBarraTitulo(); } catch (e) { /* ok */ }
     if (window.apex && window.apex.jQuery && document.body) { try { iniciar(); } catch (e) { if (window.console) console.warn('[Natcorp registros]', e); } }
   });
 })();

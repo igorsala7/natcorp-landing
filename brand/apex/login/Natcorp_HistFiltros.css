@@ -1,0 +1,328 @@
+/* ╔════════════════════════════════════════════════════════════════════════════════════════╗
+   ║  NATCORP · HISTÓRICO FINANCEIRO — a coluna de FILTROS (CSS)                               ║
+   ║  App 200 · Página 21                                                                      ║
+   ╚════════════════════════════════════════════════════════════════════════════════════════╝
+   Os campos são os ORIGINAIS da página (as ações dinâmicas, as listas em cascata e o Pesquisar
+   continuam os mesmos). Vale para DUAS páginas: 200:21 (região PARAMETROS) e 9132:5 Lançamentos
+   (região PSQ1, com o Natcorp_LancOcorr.js) — mesma roupa, mesmos nomes de classe. O Natcorp_HistFin.js só os reúne por assunto:
+     Quando · O que somar (as origens viram botões de marcar) · De quem · Quais verbas · Mais opções
+   e põe no pé da coluna o resumo do que vai ser pesquisado + o Pesquisar.
+   Sobe junto com a roupa do painel: gerar-histfin.py junta este CSS com o Natcorp_Afastamentos.css
+   no Natcorp_HistFin.css.
+
+   ÍNDICE
+     [H1] A coluna e os grupos ................................................ PODE MEXER
+     [H2] Faixas "de / até" ...................................................
+     [H3] Os botões de marcar (origens e "esconder totais") .................. PODE MEXER
+     [H4] O pé: resumo + Pesquisar ............................................
+   ════════════════════════════════════════════════════════════════════════════════════════ */
+
+/* ═══ [H1] A COLUNA E OS GRUPOS ═══════════════════════════════════════════════════════════ */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) :is(#PARAMETROS, #PSQ1) {
+  --hf-roxo: var(--nc-roxo, #511C76);
+  --hf-rosa: var(--nc-rosa, #C95788);              /* o que se ESCOLHE é rosa (09/10); botões seguem no roxo */
+  --hf-rosa-escuro: color-mix(in srgb, var(--nc-rosa, #C95788) 62%, #2A0A1A);
+  --hf-tinta: var(--nc-tinta, #1B1238);
+  --hf-texto: var(--nc-grafite, #4A4460);
+  --hf-fio: var(--nc-nevoa, #E9E5F1);
+  --hf-claro: #F6F1FA;
+}
+
+/* a grade do APEX (uma linha por campo) dá lugar aos grupos: as linhas vazias somem */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) :is(#PARAMETROS, #PSQ1) .nc-hf-grupos .row,
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) :is(#PARAMETROS, #PSQ1) .nc-hf-grupos .col {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) :is(#PARAMETROS, #PSQ1) .nc-hf-grupo {
+  border-bottom: 1px solid var(--hf-fio) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) :is(#PARAMETROS, #PSQ1) .nc-hf-grupo:last-child {
+  border-bottom: 0 !important;
+}
+
+/* o título do grupo é um botão: abre e fecha; o número diz quantos filtros estão em uso */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) :is(#PARAMETROS, #PSQ1) .nc-hf-cab {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  width: 100% !important;
+  min-height: 44px !important;
+  margin: 0 !important;
+  padding: 10px 2px !important;
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  font: inherit !important;
+  font-size: 13.5px !important;
+  font-weight: 700 !important;
+  color: var(--hf-tinta) !important;
+  text-align: left !important;
+  cursor: pointer !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) :is(#PARAMETROS, #PSQ1) .nc-hf-cab:focus-visible {
+  outline: 2px solid var(--hf-rosa) !important;
+  outline-offset: 2px !important;
+  border-radius: 6px !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) :is(#PARAMETROS, #PSQ1) .nc-hf-cab[aria-disabled="true"] {
+  cursor: default !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) :is(#PARAMETROS, #PSQ1) .nc-hf-cab .nc-hf-seta {
+  width: 16px !important;
+  height: 16px !important;
+  margin-left: auto !important;
+  flex: none !important;
+  color: var(--hf-texto) !important;
+  transition: transform .18s !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) :is(#PARAMETROS, #PSQ1) .nc-hf-cab[aria-expanded="false"] .nc-hf-seta {
+  transform: rotate(-90deg) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) :is(#PARAMETROS, #PSQ1) .nc-hf-uso {
+  display: inline-grid !important;
+  place-items: center !important;
+  min-width: 20px !important;
+  height: 20px !important;
+  padding: 0 6px !important;
+  border-radius: 999px !important;
+  background: var(--hf-rosa) !important;
+  color: #fff !important;
+  font-size: 11.5px !important;
+  font-weight: 700 !important;
+  font-variant-numeric: tabular-nums !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) :is(#PARAMETROS, #PSQ1) .nc-hf-uso[hidden] {
+  display: none !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) :is(#PARAMETROS, #PSQ1) .nc-hf-corpo {
+  padding: 0 0 14px !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) :is(#PARAMETROS, #PSQ1) .nc-hf-corpo[hidden] {
+  display: none !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) :is(#PARAMETROS, #PSQ1) .nc-hf-dica {
+  margin: -2px 0 10px !important;
+  font-size: 12.5px !important;
+  line-height: 1.4 !important;
+  color: var(--hf-texto) !important;
+}
+
+/* os campos dentro do grupo: um embaixo do outro, perto */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) :is(#PARAMETROS, #PSQ1) .nc-hf-corpo .t-Form-fieldContainer {
+  margin: 0 0 10px !important;
+  padding: 0 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) :is(#PARAMETROS, #PSQ1) .nc-hf-corpo .t-Form-fieldContainer:last-child {
+  margin-bottom: 0 !important;
+}
+
+/* campo original que virou botão de marcar: continua na página (o valor vai com o Pesquisar) */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) :is(#PARAMETROS, #PSQ1) .nc-hf-guardado {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  overflow: hidden !important;
+  clip: rect(0 0 0 0) !important;
+  white-space: nowrap !important;
+}
+
+/* ═══ [H2] FAIXAS "DE / ATÉ" ══════════════════════════════════════════════════════════════
+   Os dois campos de uma faixa (Filial inicial / final…) num bloco só, com o nome em cima e "De"
+   e "Até" na frente de cada campo. Datas ficam lado a lado; listas, uma embaixo da outra.
+   ════════════════════════════════════════════════════════════════════════════════════════ */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) :is(#PARAMETROS, #PSQ1) .nc-hf-faixa {
+  margin: 0 0 12px !important;
+  padding: 0 !important;
+  border: 0 !important;
+  min-width: 0 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) :is(#PARAMETROS, #PSQ1) .nc-hf-faixa > legend {
+  margin: 0 0 6px !important;
+  padding: 0 !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  color: var(--hf-tinta) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) :is(#PARAMETROS, #PSQ1) .nc-hf-faixa .t-Form-fieldContainer {
+  display: grid !important;
+  grid-template-columns: 34px minmax(0, 1fr) !important;
+  align-items: center !important;
+  margin: 0 0 6px !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) :is(#PARAMETROS, #PSQ1) .nc-hf-faixa .t-Form-labelContainer {
+  padding: 0 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) :is(#PARAMETROS, #PSQ1) .nc-hf-faixa .t-Form-label {
+  margin: 0 !important;
+  padding: 0 !important;
+  font-size: 12.5px !important;
+  font-weight: 600 !important;
+  color: var(--hf-texto) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) :is(#PARAMETROS, #PSQ1) .nc-hf-faixa--datas {
+  display: grid !important;
+  grid-template-columns: 1fr 1fr !important;
+  column-gap: 8px !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) :is(#PARAMETROS, #PSQ1) .nc-hf-faixa--datas > legend {
+  grid-column: 1 / -1 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) :is(#PARAMETROS, #PSQ1) .nc-hf-faixa--datas .t-Form-fieldContainer {
+  grid-template-columns: minmax(0, 1fr) !important;
+  margin: 0 !important;
+}
+
+/* ═══ [H3] OS BOTÕES DE MARCAR ════════════════════════════════════════════════════════════
+   Cada origem (Folha do mês, Férias, 13º…) é um botão que liga e desliga: marcado = roxo com o
+   visto. Por baixo, a lista "Sim / Não" original recebe o valor.
+   ════════════════════════════════════════════════════════════════════════════════════════ */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) :is(#PARAMETROS, #PSQ1) .nc-hf-marcas {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 6px !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) :is(#PARAMETROS, #PSQ1) .nc-hf-marca {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  min-height: 34px !important;
+  margin: 0 !important;
+  padding: 6px 12px 6px 9px !important;
+  border: 1px solid var(--nc-borda-botao, #CBBBD9) !important;
+  border-radius: 999px !important;
+  background: #fff !important;
+  box-shadow: none !important;
+  font: inherit !important;
+  font-size: 12.5px !important;
+  font-weight: 600 !important;
+  line-height: 1.2 !important;
+  color: var(--hf-tinta) !important;
+  text-align: left !important;
+  cursor: pointer !important;
+  transition: background-color .25s cubic-bezier(.4, 0, .2, 1), border-color .25s cubic-bezier(.4, 0, .2, 1), color .25s cubic-bezier(.4, 0, .2, 1), box-shadow .25s cubic-bezier(.4, 0, .2, 1) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) :is(#PARAMETROS, #PSQ1) .nc-hf-marca:hover {
+  border-color: color-mix(in srgb, var(--hf-rosa) 70%, #fff) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) :is(#PARAMETROS, #PSQ1) .nc-hf-marca:focus-visible {
+  outline: 2px solid var(--hf-rosa) !important;
+  outline-offset: 2px !important;
+}
+
+/* o quadradinho do visto */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) :is(#PARAMETROS, #PSQ1) .nc-hf-marca i {
+  display: grid !important;
+  place-items: center !important;
+  width: 16px !important;
+  height: 16px !important;
+  flex: none !important;
+  border: 1.5px solid #9A8FB0 !important;
+  border-radius: 4px !important;
+  background: #fff !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) :is(#PARAMETROS, #PSQ1) .nc-hf-marca i svg {
+  width: 12px !important;
+  height: 12px !important;
+  opacity: 0 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) :is(#PARAMETROS, #PSQ1) .nc-hf-marca[aria-pressed="true"] {
+  border-color: var(--hf-rosa) !important;
+  background: var(--hf-rosa) !important;
+  color: #fff !important;
+  box-shadow: 0 6px 14px -8px rgba(var(--nc-t-rosa-rgb, 201, 87, 136), .8) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) :is(#PARAMETROS, #PSQ1) .nc-hf-marca[aria-pressed="true"] i {
+  border-color: #fff !important;
+  background: #fff !important;
+  color: var(--hf-rosa) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) :is(#PARAMETROS, #PSQ1) .nc-hf-marca[aria-pressed="true"] i svg {
+  opacity: 1 !important;
+}
+
+/* "esconder as linhas de total" ocupa a linha inteira */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) :is(#PARAMETROS, #PSQ1) .nc-hf-marca--larga {
+  width: 100% !important;
+  border-radius: 10px !important;
+}
+
+/* ═══ [H4] O PÉ: RESUMO + PESQUISAR ═══════════════════════════════════════════════════════
+   Fica preso no pé da coluna enquanto se rola os filtros: a pessoa sempre vê O QUE vai pesquisar
+   e o botão. Se mudou um filtro, o pé avisa (a tabela fica velha até o Pesquisar).
+   ════════════════════════════════════════════════════════════════════════════════════════ */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) :is(#PARAMETROS, #PSQ1) .nc-hf-pe {
+  position: sticky !important;
+  bottom: 0 !important;
+  z-index: 2 !important;
+  margin: 4px -12px -12px !important;
+  padding: 12px !important;
+  border-top: 1px solid var(--hf-fio) !important;
+  background: #fff !important;
+  box-shadow: 0 -6px 14px -10px rgba(27, 18, 56, .35) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) :is(#PARAMETROS, #PSQ1) .nc-hf-resumo {
+  margin: 0 0 10px !important;
+  font-size: 12.5px !important;
+  line-height: 1.45 !important;
+  color: var(--hf-texto) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) :is(#PARAMETROS, #PSQ1) .nc-hf-resumo b {
+  color: var(--hf-tinta) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) :is(#PARAMETROS, #PSQ1) .nc-hf-resumo.is-mudou {
+  padding: 8px 10px !important;
+  border-radius: 8px !important;
+  background: #FFF3DC !important;
+  color: #6B4100 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) :is(#PARAMETROS, #PSQ1) .nc-hf-resumo.is-mudou b {
+  color: #6B4100 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) :is(#PARAMETROS, #PSQ1) .nc-hf-pe .t-Button {
+  width: 100% !important;
+  min-height: 42px !important;
+  justify-content: center !important;
+}
+
+/* o lugar original do botão (cabeçalho da região) fica vazio */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) :is(#PARAMETROS, #PSQ1) .t-Region-headerItems--buttons:empty {
+  display: none !important;
+}
+
+/* a região "Totais" repete o que o resumo já mostra: sai quando o resumo montou com valores
+   (a classe vai na própria região: o gerador põe "html body…" na frente, então "body.x #TOTAIS" não casaria) */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2) #TOTAIS.nc-hf-repetida {
+  display: none !important;
+}

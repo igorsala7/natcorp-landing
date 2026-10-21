@@ -103,3 +103,36 @@ geradores que rodam antes do bundler. `filme/` e `material-interno/` estão no `
    `dist/` à mão.
 
 Arquitetura detalhada, fluxos e 19 armadilhas em [docs/CODEBASE_MAP.md](docs/CODEBASE_MAP.md).
+
+
+## Agentes Trabalho em Equipe
+
+## Seleção de skills: varrer, aprender, reavaliar
+Você tem acesso a muitas skills (do projeto, do usuário, de plugins). Para cada tipo de tarefa, a skill certa faz diferença grande na qualidade. Regras:
+
+1. **Consulte primeiro o mapa** em `.claude/skill-map.md` (importado abaixo). Se houver uma entrada para o tipo da tarefa com resultado `bom` ou `excelente`, use aquela skill diretamente — não gaste tempo varrendo de novo.
+2. **Se não houver entrada**, ou a entrada estiver marcada `fraco`/`regular`, faça a varredura: leia as descrições de todas as skills disponíveis, liste as 2–3 candidatas, escolha a que melhor cobre a tarefa (critérios no `task-router`) e registre a escolha no mapa ao final, com a avaliação honesta do resultado.
+3. **Mantenha o discernimento.** Mesmo com entrada `bom`, reavalie se: a tarefa tem traços diferentes dos registrados; o resultado anterior deixou ressalvas; o inventário da sessão indicar skills novas desde o último registro; ou a entrada tiver mais de ~10 usos sem revisão. Reavaliar custa uma leitura de descrições; usar a skill errada custa uma entrega ruim.
+4. **Uma skill boa não é a única boa.** Se durante a execução perceber que outra skill cobriria melhor (ex.: uma de plugin mais específica que a genérica do projeto), troque, termine, e registre as duas no mapa com a comparação.
+5. **Nunca carregue skill "por precaução".** Descrições ficam no contexto; o conteúdo completo só entra quando invocado.
+
+## Trabalho em equipe
+Para tarefas de risco médio/alto, multi-superfície ou com decisão de arquitetura, o `task-router` convoca a skill `team-huddle`: os especialistas (`architect`, `backend-dev`, `frontend-dev`, `infra-dev`, `qa-engineer`, `reviewer`) analisam independentemente, debatem com evidência, e o tech lead (sessão principal) arbitra e registra a decisão antes de executar. Cada especialista tem sua skill de domínio pré-carregada e memória de projeto em `.claude/agent-memory/<nome>/`.
+
+## Regras de qualidade (definition of done)
+Uma tarefa só é "concluída" quando:
+1. Lint e type-check passam (comandos no `.claude/skills/*-patterns` ou descobertos no `package.json`/`Makefile`/equivalente).
+2. Testes relevantes foram escritos ou atualizados e passam.
+3. Não há segredo, credencial ou PII hardcoded.
+4. Mudanças em schema vieram com migração reversível.
+5. O subagente `reviewer` aprovou (mudanças em auth, billing, tenancy, infra ou dados).
+6. O resumo final lista: o que mudou, como foi verificado, o que ficou pendente, e **qual skill foi usada e como se saiu** (atualizando o mapa).
+
+## Convenções gerais
+- Antes de escrever, leia como o código existente faz; siga o padrão vigente, proponha mudança só com justificativa.
+- Commits: Conventional Commits (`feat:`, `fix:`, `chore:`...).
+- Nunca editar `.env*`; documentar variáveis em `.env.example`.
+- Comandos destrutivos (drop, reset, rm -rf, force-push, delete remoto): parar e pedir confirmação explícita.
+
+@.claude/rules/security.md
+@.claude/skill-map.md

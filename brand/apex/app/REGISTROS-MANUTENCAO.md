@@ -15,6 +15,56 @@ continua abrindo links e tocando barras; soltar depois de arrastar não clica; n
 nem em botão (no Gantt, sim). Vale em todas as páginas, até nas de desenho próprio. `[R9]` do
 `.src.js` (listas `ONDE`, `NAO_COMECA`, `LIMIAR`, `EMBALO`); visual em `[C5]` do `.src.css`.
 
+## A rolagem não trava ao passar de uma região para outra (13/10)
+
+Relato: "o scroll para de funcionar quando sai de uma região e vai para outra enquanto continua
+o scroll; precisa clicar onde parou" — no **sistema inteiro**. Três correções, todas neste arquivo
+(que roda na casca, em cada iframe e em cada janela, então valem em toda página de todo app):
+
+1. **Arrasto preso** (`[R9]`): se o botão era solto sobre outra moldura ou fora da janela, o
+   arrasto ficava ligado e cada movimento do mouse puxava a página de volta, até um clique.
+   Agora mexer sem o botão apertado encerra o arrasto.
+2. **Trackpad sobre tabela larga** (`[R9]`): gesto mais vertical que lateral rola a página, não
+   fica preso na tabela que só anda para os lados (nem no cabeçalho fixo do relatório).
+3. **A rolagem segue o mouse** (`[R10]`): o navegador prende o gesto (trackpad, embalo da
+   rodinha) em quem começou a rolar — o menu lateral, uma lista, a página da moldura. Se o mouse
+   passa para outra região e o primeiro já está no fim (ou nem rola, como a faixa do alto), a
+   rolagem passa para quem está debaixo do mouse, inclusive em outra moldura. Quando o navegador
+   consegue rolar, ele rola (o ouvinte é passivo e não faz nada); gaveta e janela com
+   `overscroll-behavior: contain` continuam segurando.
+
+Teste: na casca, role o menu lateral até o fim e, sem tirar os dedos do trackpad, leve o mouse
+para a página — ela deve rolar. A simulação automática não reproduz o "gesto preso" do trackpad
+(o Playwright manda cada rodinha como um gesto novo); a lógica foi testada com eventos montados.
+
+## Tela cheia nos resumos (13/10)
+
+Todo painel de resumo (`section.nc-af`: Quadro 16, Folha 21, Afastamentos 25, Férias 26, Benefícios
+164, Acidentes 150 — e qualquer painel novo com a mesma roupa) ganha no título o botão **Tela cheia**
+(`[R11]` do `.src.js`). Ele abre a análise completa, leva o painel para a tela inteira e vira **Sair
+da tela cheia**; Esc também sai, e o painel volta para o lugar e para o estado de antes (fechado, se
+estava). É dentro da página, como o "maximizar" do Interactive Report (cobre o body; na casca, a
+área da moldura) — não usa a tela cheia do navegador. Aparência: `[A12]` do
+`Natcorp_Afastamentos.src.css`. Painel novo: manter `.nc-af > .nc-af-cab` e o botão de abrir/fechar
+com `aria-controls="…-corpo"`.
+
+Painel DENTRO de um Interactive Report maximizado (9181:50): o maximizar deixa o body com
+`visibility: hidden`, então o envelope `.nc-af-tela` declara `visibility: visible` (senão herdava e só a
+tabela aparecia); e o Esc é tratado no próprio envelope, antes do documento, onde o IR também escuta o
+Esc para restaurar a tabela (corrigido 13/10).
+
+## A barra do título encolhe ao rolar (13/10)
+
+Depois de 72 px de rolagem o body ganha `nc-bc-compacto` (`[R12]` do `.src.js`; CSS no
+`Natcorp_Paginas.src.css`, "A BARRA ENCOLHE DE VERDADE"). Com a Trilha no alto, o breadcrumb some
+(o nome da página já está na Trilha): a barra vai de 126 para 54 px. Sem a Trilha ou com botões na
+barra, a faixa fica em uma linha (40–44 px). A coluna da esquerda e os cabeçalhos grudados das tabelas
+sobem junto (o `apexwindowresized` do tema), e o espaço do conteúdo (`#t_Body_content_offset`) fica
+sempre na medida da barra CHEIA: nada pula, e a página recarregada já rolada não fica com a barra
+cobrindo o 1º cartão. Conferido na 200:150: rolado = barra 54, filtros e cabeçalho da tabela a 102/101,
+espaço 174; de volta ao topo = 126/174.
+CUIDADO: a marca da janela é `window.__ncBarraTitulo` — `__ncBarra` já é usada pelo iframe_handling.js da equipe.
+
 ## Como chega a todas as páginas (sem URL em página nenhuma)
 
 | Peça | Onde está | Como chega |

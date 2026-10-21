@@ -101,3 +101,36 @@ próprio clique no Salvar; antes, o valor que a ação traz podia ficar de fora 
 
 **Decidido (04/10, cliente):** "Nova doença" fica como no original — sem o botão de novo
 (`SEM_NOVO = ['doenca']`); abrir e corrigir uma doença existente continua.
+
+## 15/10 — grid devolvido da gaveta
+Ao voltar da gaveta (ou de uma aba escondida), o grid guardava a largura de onde estava e a parte que rola descia para baixo da coluna fixa (caixa e menu). Correção: `interactiveGrid('resize')` em três tempos (próximo quadro, 120 ms e 400 ms) ao fechar a gaveta e ao mostrar a tabela; só `grid('resize')` não resolve.
+
+## 19/10 — linha do tempo vazia e tabelas por cima da janela
+Conferido ao vivo com um colaborador com 61 registros (11 consultas, 29 exames, 9 atestados, 4 doenças,
+7 vacinas, 1 acidente).
+- **Linha do tempo vazia**: a grade de Exames não tem chave primária; o registro vem SEM id (null) e o
+  `getRecordMetadata(null)` do APEX 19.2 lança erro. O erro derrubava a montagem inteira (nem a Atenção
+  aparecia). `novoNaoGravado` agora aceita registro sem id, e cada fonte é lida por conta própria
+  (`cada()`): uma fonte que falhar sai sozinha, as outras continuam.
+- **IR com cabeçalho fixo** vem em duas tabelas (a do título, sem linhas, e a dos dados): fica a que tem linhas.
+- **Tabelas misturadas com a janela** (visto no Windows, tela baixa): o cabeçalho e o rodapé "grudentos"
+  das grades e relatórios se prendem à janela (`position: fixed`), mas aqui quem rola é
+  `.t-Dialog-bodyWrapperIn` — o "9 Total" ficava sobre o Salvar e o cabeçalho flutuava ao rolar. No CSS
+  [C7] eles passam a rolar com a tabela (`.js-stickyWidget-toggle` relative; placeholder escondido).
+- **Vacina**: a Atenção olha só a ÚLTIMA dose de cada vacina (a 1ª dose com "próxima" vencida não é
+  atraso se a 2ª já foi tomada).
+Sobe: `login/Natcorp_HistoricoColaborador.js` e `.css`. A página não muda (a exportação de 19/10 16:44
+já tem as URLs).
+
+## 19/10 — Grade padrão ligada nas três grades (pedido: "ligar completo")
+A página tem desenho próprio, e por isso a `Natcorp_Grade` não entrava. Primeiro o JS marcou `nc-grade-sim`;
+no mesmo dia a Grade passou a valer em TODA página (ver GRADE-MANUTENCAO.md) e a marca saiu. Em "Tabelas":
+lista com cabeçalho de colunas, busca, Lista | Tabela, Expandir colunas e a gaveta da Grade.
+- **Dois caminhos de edição, mesma grade**: a gaveta da Grade (em Tabelas) e a da linha do tempo
+  ("Editar" / "Novo atestado"). Exames continua só consulta (a Grade mostra "só consulta").
+- **Doenças sem "Adicionar"** também na Grade (decisão de 04/10): a região leva `nc-hc-sem-novo`.
+- **Gaveta da linha do tempo com a Grade ligada**: no modo Lista a Grade joga o grid original para
+  `left: -20000px`; dentro de região `*-motor` o CSS da Grade (Style_Min) o traz de volta e esconde a lista.
+- **Horas**: a máscara 00:00 é ligada no próprio campo ao abrir a página (vale nas duas gavetas). O
+  "1100" → "11:00" ao abrir e a trava de hora inválida ao salvar continuam só na gaveta da linha do tempo.
+Testado ao vivo (205818): abrir e cancelar as duas gavetas, sem gravar; nada pendente nas grades.

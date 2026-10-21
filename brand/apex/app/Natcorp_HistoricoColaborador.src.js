@@ -200,7 +200,15 @@
       if (x && typeof x === 'object') return { v: x.v == null ? '' : String(x.v), d: limpo(x.d == null ? x.v : x.d) };
       return { v: x == null ? '' : String(x), d: limpo(x) };
     }
-    function novoNaoGravado(v, rec) { var m = v.model.getRecordMetadata(v.model.getRecordId(rec)); return !!(m && (m.inserted || m.deleted)); }
+    /* CUIDADO  A grade de Exames não tem chave primária: o registro vem SEM id (null) e o
+       getRecordMetadata(null) do APEX 19.2 lança erro — derrubava a linha do tempo inteira
+       (19/10, "a linha do tempo não retorna nada"). Sem id = registro que veio do banco. */
+    function novoNaoGravado(v, rec) {
+      try {
+        var id = v.model.getRecordId(rec); if (id == null) return false;
+        var m = v.model.getRecordMetadata(id); return !!(m && (m.inserted || m.deleted));
+      } catch (x) { return false; }
+    }
     function relatorios() {
       var out = {};
       [].forEach.call(abas.querySelectorAll('table.t-Report-report, table.a-IRR-table'), function (t) {
@@ -226,7 +234,8 @@
         });
         /* há mais páginas do que a tela mostra? (o relatório tem "próximo") */
         var mais = !!(reg && reg.querySelector('.t-Report-paginationLink--next, .a-IRR-button--pagination[title*="Próx"], a.t-Report-paginationLink[href*="next"], button[data-pagination="next"]:not([disabled])'));
-        out[tipo] = { reg: reg, linhas: linhas, mais: mais };
+        /* o IR com cabeçalho fixo vem em DUAS tabelas: a do título (sem linhas) e a dos dados — fica a que tem linhas */
+        if (!out[tipo] || linhas.length >= out[tipo].linhas.length) out[tipo] = { reg: reg, linhas: linhas, mais: mais || !!(out[tipo] && out[tipo].mais) };
       });
       return out;
     }
@@ -235,53 +244,56 @@
 
     /* junta tudo em registros: { tipo, data, titulo, sub[], tom, det[[rótulo, valor]], links[] } */
     var FONTES = null;
+    /* cada fonte por conta própria: uma que falha (grade diferente, relatório mudado) sai da linha do
+       tempo sozinha — antes um erro numa fonte apagava a linha do tempo inteira (19/10) */
+    function cada(f) { try { f(); } catch (x) { if (window.console) console.warn('Natcorp_HistoricoColaborador: fonte', x); } }
     function registros() {
       var g = grades(), r = relatorios(), out = [];
       FONTES = { g: g, r: r };
-      if (g.exame) g.exame.v.model.forEach(function (rec) {
+      cada(function () { if (g.exame) g.exame.v.model.forEach(function (rec) {
         if (novoNaoGravado(g.exame.v, rec)) return;
         var v = g.exame.v, ex = val(v, rec, 'COD_EXAME'), res = val(v, rec, 'RESULTADO').d || val(v, rec, 'COD_RESULTADO').d, prox = dataBR(val(v, rec, 'DT_PROX_EXAME_PERIOD').v);
         out.push({ tipo: 'exame', rid: v.model.getRecordId(rec), data: dataBR(val(v, rec, 'DT_EXAME').v), titulo: ex.d.replace(/^\S+\s+-\s+/, '') || ex.v, cod: ex.v, res: res.replace(/^\d+\s*-\s*/, ''), prox: prox,
           sub: [val(v, rec, 'TIPO_EXAME').d, codDesc(val(v, rec, 'COD_PREST_SERV').d)].filter(Boolean),
           det: [['Exame', ex.d], ['Resultado', res], ['Próximo exame', prox ? dd(prox) : ''], ['Tipo', val(v, rec, 'TIPO_EXAME').d], ['Ocupacional', val(v, rec, 'OCUPACIONAL').d], ['Médico', codDesc(val(v, rec, 'COD_PREST_SERV').d)], ['Entidade', codDesc(val(v, rec, 'ENTIDADE').d)], ['Origem', codDesc(val(v, rec, 'COD_PREST_SERV_ORIGEM').d)]] });
-      });
-      if (g.atestado) g.atestado.v.model.forEach(function (rec) {
+      }); });
+      cada(function () { if (g.atestado) g.atestado.v.model.forEach(function (rec) {
         if (novoNaoGravado(g.atestado.v, rec)) return;
         var v = g.atestado.v, ini = dataBR(val(v, rec, 'DT_INICIO_AFASTAMENTO').v), fim = dataBR(val(v, rec, 'DT_TERMINO_AFASTAMENTO').v), qd = val(v, rec, 'QTDE_DIAS_AFASTAMENTO').d, hs = val(v, rec, 'QTDE_HORAS_ABONADAS').d;
         var cid = val(v, rec, 'COD_DOENCA').d, tipoA = codDesc(val(v, rec, 'COD_ATESTADO_MEDICO').d), mot = limpo(val(v, rec, 'DESC_MOTIVO').d) || codDesc(val(v, rec, 'COD_MOTIVO').d);
         out.push({ tipo: 'atestado', rid: v.model.getRecordId(rec), data: dataBR(val(v, rec, 'DT_ATESTADO_MEDICO').v), titulo: (tipoA.replace(/^\S+\s+-\s+/, '') || 'Atestado') + (cid ? ' · ' + cid.replace(/\s+-\s+.*/, '') : ''), ini: ini, fim: fim,
           sub: [ini ? 'Afastamento ' + dd(ini) + (fim ? ' a ' + dd(fim) : '') + (qd ? ' (' + qd + (qd === '1' ? ' dia' : ' dias') + ')' : '') : '', hs ? hs + ' h abonadas' : '', cid].filter(Boolean),
           det: [['Atestado', tipoA], ['Motivo', mot], ['CID', cid], ['Ocupacional', val(v, rec, 'OCUPACIONAL').d], ['Afastamento', ini ? dd(ini) + (fim ? ' a ' + dd(fim) : '') : ''], ['Dias', qd], ['Horas abonadas', hs], ['Médico', codDesc(val(v, rec, 'COD_PREST_SERV').d)], ['Entidade', codDesc(val(v, rec, 'COD_ENTIDADE').d)]] });
-      });
-      if (g.doenca) g.doenca.v.model.forEach(function (rec) {
+      }); });
+      cada(function () { if (g.doenca) g.doenca.v.model.forEach(function (rec) {
         if (novoNaoGravado(g.doenca.v, rec)) return;
         var v = g.doenca.v, d = val(v, rec, 'COD_DOENCA'), ini = dataBR(val(v, rec, 'DT_INICIO').v), fim = dataBR(val(v, rec, 'DT_TERMINO').v);
         out.push({ tipo: 'doenca', rid: v.model.getRecordId(rec), data: ini, titulo: d.d || d.v, ini: ini, fim: fim, aberta: !fim,
           sub: [ini ? (fim ? dd(ini) + ' a ' + dd(fim) + ' (' + quanto(dias(ini, fim)) + ')' : 'Desde ' + dd(ini) + ', sem término') : ''].filter(Boolean),
           det: [['CID', d.d], ['Início', ini ? dd(ini) : ''], ['Término', fim ? dd(fim) : 'Em aberto']] });
-      });
-      if (r.consulta) r.consulta.linhas.forEach(function (l) {
+      }); });
+      cada(function () { if (r.consulta) r.consulta.linhas.forEach(function (l) {
         var lk = l._links.VISUALIZAR;
         out.push({ tipo: 'consulta', data: dataBR(l.DT_CONSULTA), hora: (l.HORA || '').replace(/\s/g, ''), titulo: codDesc(l.TIPO_CONSULTA).replace(/^\S+\s+-\s+/, '') || 'Consulta',
           sub: [codDesc(l.MEDICO), codDesc(l.ESPECIALIDADE).replace(/^\S+\s+-\s+/, '')].filter(Boolean), det: campos(l).filter(function (c) { return !/empresa|matr/i.test(c[0]); }),
           links: lk ? [{ rot: 'Ver consulta', href: lk.href, alvo: lk.alvo, ic: 'seta' }] : [] });
-      });
-      if (r.acidente) r.acidente.linhas.forEach(function (l) {
+      }); });
+      cada(function () { if (r.acidente) r.acidente.linhas.forEach(function (l) {
         var lk = l._links.VISUALIZAR, qd = l.QUANTIDADE_DIAS_AFASTAMENTO;
         out.push({ tipo: 'acidente', data: dataBR(l.DT_ACIDENTE), titulo: 'Acidente ' + (l.TIPO || '').toLowerCase(),
           sub: [l.IND_AFASTAMENTO === 'Sim' ? 'Afastado' + (qd ? ' ' + qd + (qd === '1' ? ' dia' : ' dias') : '') : 'Sem afastamento', l.CID ? 'CID ' + l.CID : '', l.ESPEC_LOCAL_ACIDENTE].filter(Boolean),
           det: campos(l).filter(function (c) { return !/empresa|colaborador|hora acidente/i.test(c[0]); }),
           links: lk ? [{ rot: 'Abrir análise', href: lk.href, alvo: lk.alvo || '_blank', ic: 'fora' }] : [] });
-      });
-      if (r.cmo) r.cmo.linhas.forEach(function (l) {
+      }); });
+      cada(function () { if (r.cmo) r.cmo.linhas.forEach(function (l) {
         out.push({ tipo: 'cmo', data: dataBR(porRotulo(l, /data agd/i)), titulo: codDesc(porRotulo(l, /tipo consulta/i)).replace(/^\S+\s+-\s+/, '') || 'Consulta ocupacional',
           sub: [porRotulo(l, /resultado aso/i) ? 'ASO ' + porRotulo(l, /resultado aso/i) : '', porRotulo(l, /validade/i) ? 'válido até ' + porRotulo(l, /validade/i) : ''].filter(Boolean), det: campos(l).filter(function (c) { return !/^(cod empresa|matricula)$/i.test(c[0]); }) });
-      });
-      if (r.vacina) r.vacina.linhas.forEach(function (l) {
+      }); });
+      cada(function () { if (r.vacina) r.vacina.linhas.forEach(function (l) {
         var prox = dataBR(porRotulo(l, /pr[oó]x/i));
         out.push({ tipo: 'vacina', data: dataBR(porRotulo(l, /^data$/i)), titulo: porRotulo(l, /^vacina$/i) || 'Vacina', prox: prox,
           sub: [porRotulo(l, /^dose$/i), prox ? 'próxima dose ' + dd(prox) : ''].filter(Boolean), det: campos(l) });
-      });
+      }); });
       out.sort(function (a, b) { return (b.data || 0) - (a.data || 0); });
       return out;
     }
@@ -305,7 +317,12 @@
         if (n < 0) itens.push({ tom: 'ruim', tit: e.titulo + ' vencido', txt: 'Venceu há ' + quanto(n) + ' (' + dd(e.prox) + ')' });
         else if (n <= PERTO) itens.push({ tom: 'atencao', tit: e.titulo + ' vence em breve', txt: (n ? 'Em ' + quanto(n) : 'Hoje') + ' (' + dd(e.prox) + ')' });
       });
-      lista.filter(function (e) { return e.tipo === 'vacina' && e.prox; }).forEach(function (e) {
+      /* vacinas: só a ÚLTIMA dose de cada vacina conta — a 1ª dose com "próxima" vencida não é
+         atraso se a 2ª já foi tomada (19/10: Covid "atrasada" com a 2ª dose de 2023 na tabela) */
+      var vacVistas = {};
+      lista.filter(function (e) { return e.tipo === 'vacina'; }).forEach(function (e) {
+        var k = e.titulo.toLowerCase(); if (vacVistas[k]) return; vacVistas[k] = true;
+        if (!e.prox) return;
         var n = dias(h, e.prox); if (n <= PERTO) itens.push({ tom: n < 0 ? 'ruim' : 'atencao', tit: e.titulo + (n < 0 ? ': dose atrasada' : ': próxima dose'), txt: dd(e.prox) });
       });
       lista.filter(function (e) { return e.tipo === 'acidente' && e.data && dias(e.data, h) <= RECENTE; }).forEach(function (e) { itens.push({ tom: 'atencao', tit: e.titulo + ' recente', txt: dd(e.data) + (e.sub[0] ? ' · ' + e.sub[0] : '') }); });
@@ -406,16 +423,33 @@
        [H9]). "Ver na tabela" abre a aba do tipo.
        ════════════════════════════════════════════════════════════════════════════════════ */
     principal.appendChild(abas); abas.classList.add('nc-hc-abas');
+    /* 19/10: a Grade padrão (Natcorp_Grade) vale em toda página — em "Tabelas" as grades ganham a
+       lista e a gaveta dela. A gaveta da linha do tempo ([H9]) continua: as duas editam pela mesma
+       grade. A regra que traz o grid de volta dentro da nossa gaveta mora no Natcorp_Grade.css. */
+    /* Doenças: sem "Adicionar" também na Grade (decisão do cliente de 04/10 — CID e início são só
+       leitura na grade, a doença nova ficaria sem CID). Editar a que existe continua. */
+    var gIni = grades(); if (gIni.doenca) gIni.doenca.reg.classList.add('nc-hc-sem-novo');
+    /* a máscara 00:00 das horas fica no PRÓPRIO campo da grade: vale também na gaveta da Grade */
+    if (gIni.atestado) setTimeout(function () { try { prepararHoras(gIni.atestado.v, null); } catch (x) { /* ok */ } }, 0);
+    /* CUIDADO  O grid que volta da gaveta ([H9]) ou de uma aba escondida guarda a largura de onde
+       estava: a parte que rola descia para BAIXO da coluna fixa (caixa e menu) — 15/10, print do
+       usuário. interactiveGrid('resize') em três tempos (o navegador pode ainda não ter assentado a
+       região); o grid('resize') da vista não resolve (mesma lição da 9132:7). */
+    function ajustarGrades() {
+      var vai = function () { [].forEach.call(abas.querySelectorAll('.a-IG'), function (e) { try { $(e).interactiveGrid('resize'); } catch (x) { /* ok */ } }); };
+      requestAnimationFrame(vai); setTimeout(vai, 120); setTimeout(vai, 400);
+    }
+    abas.addEventListener('click', function (ev) { if (ev.target.closest('.t-Tabs-item, .a-Tabs-item')) ajustarGrades(); });
     function vista(v) {
       document.body.classList.toggle('nc-hc-tabelas', v === 'tabelas');
       [].forEach.call(principal.querySelectorAll('[data-vista]'), function (b) { b.setAttribute('aria-selected', b.getAttribute('data-vista') === v ? 'true' : 'false'); });
-      if (v === 'tabelas') $(window).trigger('resize');   /* grades que estavam escondidas se ajustam */
+      if (v === 'tabelas') ajustarGrades();   /* grades que estavam escondidas se ajustam */
       else atualizar();
     }
     function irParaAba(re) {
       vista('tabelas');
       var a = [].filter.call(abas.querySelectorAll('.t-Tabs-item a, .a-Tabs-item a'), function (x) { return re.test(x.textContent.trim()); })[0];
-      if (a) { a.click(); setTimeout(function () { $(window).trigger('resize'); abas.scrollIntoView({ block: 'start' }); }, 60); }
+      if (a) { a.click(); setTimeout(function () { abas.scrollIntoView({ block: 'start' }); }, 60); }
     }
     /* rodapé: Voltar e Salvar (os originais, da região de dados) */
     var pe = el('div', 'nc-hc-pe'), peEsq = el('div', 'nc-hc-pe-esq'), peDir = el('div', 'nc-hc-pe-dir');
@@ -553,7 +587,7 @@
     }
     function valorDe(m, rec, col) { var x = m.getValue(rec, col); return x && typeof x === 'object' ? x.v : x; }
     function prepararHoras(v, rid) {
-      var rec = v.model.getRecord(rid);
+      var rec = null; try { rec = rid == null ? null : v.model.getRecord(rid); } catch (x) { /* ok */ }
       HORAS.forEach(function (col) {
         var mc = v.modelColumns[col], inp = mc && $id(mc.elementId);
         if (!inp || inp.tagName !== 'INPUT') return;
@@ -633,6 +667,7 @@
       if (e.lugar.parentNode) { e.lugar.parentNode.insertBefore(e.g.reg, e.lugar); e.lugar.parentNode.removeChild(e.lugar); }
       document.body.classList.remove('nc-hc-editando');
       EDIT = null;
+      ajustarGrades();
       atualizar();
       if (e.volta && document.body.contains(e.volta)) e.volta.focus();
     }

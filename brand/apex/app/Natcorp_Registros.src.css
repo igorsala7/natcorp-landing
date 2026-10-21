@@ -28,53 +28,80 @@
 */
 
 /* ═══ [C1] O SELETOR TABELA · CARTÕES ═══════════════════════════════════════════════════════
-   Um controle segmentado, logo abaixo da pesquisa do relatório. O ativo em roxo cheio.
+   Um controle segmentado. No Interactive Report fica NA BARRA DE FERRAMENTAS, depois de "Ações"
+   (08/10); no relatório clássico, logo acima da tabela. O ativo em roxo cheio.
    ════════════════════════════════════════════════════════════════════════════════════════════ */
+/* 08/10: no MESMO padrão dos botões do relatório ("Ir", "Ações": 36 px, cantos de 8 px, fio
+   Névoa de 1 px, fundo branco, 13 px semibold Grafite) — os dois botões colados num grupo */
 @app.nc-reg .nc-reg-modos {
   display: inline-flex;
-  gap: 2px;
+  box-sizing: border-box;
+  height: 36px;
   margin: 10px 0 12px;
-  padding: 3px;
-  border-radius: 12px;
-  background: var(--nc-off);
-  box-shadow: inset 0 0 0 1px var(--nc-nevoa);
+  padding: 0;
+  border: 1px solid var(--nc-nevoa);
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: none;
+  overflow: hidden;
 }
 
 @app.nc-reg .nc-reg-modos button {
   display: inline-flex;
   align-items: center;
-  gap: 7px;
-  height: 34px;
+  gap: 6px;
+  height: 100%;
   margin: 0;
-  padding: 0 14px;
+  padding: 0 12px;
   border: 0;
-  border-radius: 9px;
+  border-radius: 0;
   background: transparent;
-  font-size: 13.5px;
+  font-size: 13px;
   font-weight: 600;
   color: var(--nc-grafite);
   cursor: pointer;
 }
 
-@app.nc-reg .nc-reg-modos button:hover {
-  background: #fff;
-  color: var(--nc-tinta);
+@app.nc-reg .nc-reg-modos button + button {
+  border-left: 1px solid var(--nc-nevoa);
 }
 
+/* dentro da barra de ferramentas do relatório (depois de "Ações"): sem margem própria e na altura
+   dos outros controles da barra (36 px) */
+@app.nc-reg .nc-reg-modos.nc-reg-modos--barra {
+  align-self: center;
+  margin: 0 0 0 4px;
+}
+
+@app.nc-reg .nc-reg-modos button {
+  transition: background-color .25s cubic-bezier(.4, 0, .2, 1), color .25s cubic-bezier(.4, 0, .2, 1);
+}
+
+@app.nc-reg .nc-reg-modos button:hover:not([aria-pressed="true"]) {
+  background: color-mix(in srgb, var(--nc-rosa) 8%, #fff);
+  color: color-mix(in srgb, var(--nc-rosa) 62%, #2A0A1A);
+}
+
+/* o modo escolhido em ROSA, como todo item marcado do sistema (rádios, caixas, chaves) */
 @app.nc-reg .nc-reg-modos button[aria-pressed="true"] {
-  background: var(--nc-roxo);
+  background: var(--nc-rosa);
   color: #fff;
 }
 
 @app.nc-reg .nc-reg-modos button:focus-visible,
 @app.nc-reg .nc-reg-cartao:has(.nc-reg-tit:focus-visible) {
-  outline: 2px solid var(--nc-roxo);
+  outline: 2px solid var(--nc-rosa);
   outline-offset: 2px;
 }
 
+/* o grupo recorta (overflow hidden): o anel de foco dos dois botões vai para dentro */
+@app.nc-reg .nc-reg-modos button:focus-visible {
+  outline-offset: -3px;
+}
+
 @app.nc-reg .nc-reg-ic {
-  width: 17px;
-  height: 17px;
+  width: 16px;
+  height: 16px;
   fill: none;
   stroke: currentColor;
   stroke-width: 1.8;
@@ -379,9 +406,10 @@
     padding: 12px 14px 10px;
   }
 
-  /* no celular os dois botões ficam com o dedo: 40px de altura */
-  @app.nc-reg .nc-reg-modos button {
-    height: 40px;
+  /* no celular, na barra, uma linha inteira (a altura segue a dos botões do relatório) */
+  @app.nc-reg .nc-reg-modos.nc-reg-modos--barra {
+    flex: 1 1 100%;
+    margin: 4px 0 0;
   }
 }
 
@@ -398,6 +426,13 @@
    ════════════════════════════════════════════════════════════════════════════════════════════ */
 @app .nc-arrastavel {
   cursor: grab;
+}
+
+/* em cima das letras: o cursor de texto — ali, apertar e arrastar SELECIONA (para copiar). Os
+   links ficam com a mãozinha de link. */
+html.nc-sobre-texto .nc-arrastavel,
+html.nc-sobre-texto .nc-arrastavel :not(a, a *) {
+  cursor: text;
 }
 
 html.nc-arrastando,

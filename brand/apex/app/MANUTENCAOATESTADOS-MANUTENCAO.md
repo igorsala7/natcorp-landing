@@ -83,3 +83,6 @@ valor que elas trazem (término pelos dias, justificativa…) podia ficar de for
   reescrever um valor antigo sem ":" (campo desligado).
 - Em "Tabela" o Salvar da grade fica escondido e a página não tem outro botão de salvar: o que for
   editado direto na tabela só grava ao salvar alguma ficha na gaveta (que salva o modelo todo).
+
+## 15/10 — grid devolvido da gaveta
+Ao voltar da gaveta (ou de uma aba escondida), o grid guardava a largura de onde estava e a parte que rola descia para baixo da coluna fixa (caixa e menu). Correção: `interactiveGrid('resize')` em três tempos (próximo quadro, 120 ms e 400 ms) ao fechar a gaveta e ao mostrar a tabela; só `grid('resize')` não resolve.

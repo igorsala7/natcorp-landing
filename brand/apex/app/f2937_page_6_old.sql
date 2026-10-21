@@ -57,6 +57,20 @@ wwv_flow_api.create_page(
 ,p_page_mode=>'MODAL'
 ,p_step_title=>unistr('Cadastro de Dados de Funcion\00E1rios')
 ,p_autocomplete_on_off=>'OFF'
+,p_page_comment=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'DESENHO DA TELA (Natcorp_HistoricoColaborador.css / Natcorp_HistoricoColaborador.js)',
+'',
+unistr('As abas viram o HIST\00D3RICO do colaborador: quem \00E9 (fixo no alto); \00E0 esquerda o que pede aten\00E7\00E3o (restri\00E7\00F5es,'),
+unistr('doen\00E7a sem t\00E9rmino, atestado em vigor, exame vencido ou vencendo, vacina atrasada, acidente recente), o sangue'),
+unistr('(tipo e fator RH, edit\00E1veis) e o que a fun\00E7\00E3o faz; \00E0 direita a LINHA DO TEMPO com consultas, exames, atestados,'),
+unistr('doen\00E7as, vacinas, consulta ocupacional e acidentes juntos, por ano, com filtro por tipo e busca; tocar abre os'),
+unistr('detalhes, com "Ver consulta" e "Abrir an\00E1lise". LAN\00C7AR E CORRIGIR: "Novo atestado", "Nova doen\00E7a" e "Editar"'),
+unistr('abrem uma gaveta com a ficha da pr\00F3pria grade (Single Row View) \2014 Salvar \00E9 o salvar da grade, pelo processo'),
+unistr('"Save Interactive Grid Data". Por isso as regi\00F5es Doen\00E7as e Atestados N\00C3O s\00E3o mais "Read Only: Always"'),
+unistr('(Exames continua: a grade n\00E3o tem chave prim\00E1ria). "Tabelas" mostra as abas originais, s\00F3 para consultar.'),
+'Para desligar: tire as duas URLs de arquivo. Guia: brand/apex/app/HISTORICOCOLABORADOR-MANUTENCAO.md.'))
+,p_javascript_file_urls=>'#WORKSPACE_IMAGES#Natcorp_HistoricoColaborador.js'
+,p_css_file_urls=>'#WORKSPACE_IMAGES#Natcorp_HistoricoColaborador.css'
 ,p_page_template_options=>'#DEFAULT#:ui-dialog--stretch'
 ,p_dialog_chained=>'N'
 ,p_last_updated_by=>'FERNANDO.SANTOS'
@@ -881,7 +895,6 @@ wwv_flow_api.create_page_plug(
 ,p_plug_source_type=>'NATIVE_IG'
 ,p_ajax_items_to_submit=>'P6_COD_EMPRESA,P6_MATRICULA'
 ,p_plug_query_options=>'DERIVED_REPORT_COLUMNS'
-,p_plug_read_only_when_type=>'ALWAYS'
 );
 wwv_flow_api.create_region_column(
  p_id=>wwv_flow_api.id(166662431437461082931)
@@ -1492,7 +1505,6 @@ wwv_flow_api.create_page_plug(
 ,p_plug_source_type=>'NATIVE_IG'
 ,p_ajax_items_to_submit=>'P6_COD_EMPRESA,P6_MATRICULA'
 ,p_plug_query_options=>'DERIVED_REPORT_COLUMNS'
-,p_plug_read_only_when_type=>'ALWAYS'
 );
 wwv_flow_api.create_region_column(
  p_id=>wwv_flow_api.id(166663102862853768649)

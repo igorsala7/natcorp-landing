@@ -27,6 +27,10 @@ import sys
 AQUI = os.path.dirname(os.path.abspath(__file__))
 BASE = os.path.join(AQUI, 'f9503_page_714.ORIGINAL.sql')
 SAIDA = os.path.join(AQUI, 'f9503_page_715.sql')
+# 09/10: para o app inteiro (montar-f9503.py) os modelos vêm da 714 DO PRÓPRIO APP:
+#   python3 gerar-pagina715.py <714 de referência> <saída>
+if len(sys.argv) == 3:
+    BASE, SAIDA = sys.argv[1], sys.argv[2]
 PAG = 715
 
 ref = open(BASE, encoding='utf-8').read()

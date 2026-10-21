@@ -322,10 +322,17 @@
        Os botões de editar, salvar e adicionar da grade ficam escondidos (CSS): lançar e
        corrigir é na gaveta.
        ════════════════════════════════════════════════════════════════════════════════════ */
+    /* CUIDADO  O grid que volta da gaveta ([M8]) guarda a largura de lá: a parte que rola descia
+       para BAIXO da coluna fixa (15/10). interactiveGrid('resize') em três tempos; o
+       grid('resize') da vista não resolve (mesma lição da 9132:7). */
+    function ajustarGrade() {
+      var vai = function () { try { $(G.ig).interactiveGrid('resize'); } catch (x) { /* ok */ } };
+      requestAnimationFrame(vai); setTimeout(vai, 120); setTimeout(vai, 400);
+    }
     function vista(v) {
       document.body.classList.toggle('nc-ma-tabela', v === 'tabela');
       [].forEach.call(app.querySelectorAll('[data-vista]'), function (b) { b.setAttribute('aria-selected', b.getAttribute('data-vista') === v ? 'true' : 'false'); });
-      if (v === 'tabela') $(window).trigger('resize'); else atualizar();
+      if (v === 'tabela') ajustarGrade(); else atualizar();
     }
 
     /* ═══ [M8] LANÇAR E CORRIGIR (A FICHA DA GRADE NUMA GAVETA) ═══════════════════════════
@@ -547,6 +554,7 @@
       if (e.lugar.parentNode) { e.lugar.parentNode.insertBefore(G.reg, e.lugar); e.lugar.parentNode.removeChild(e.lugar); }
       document.body.classList.remove('nc-ma-editando');
       EDIT = null;
+      ajustarGrade();
       atualizar();
       if (e.volta && document.body.contains(e.volta)) e.volta.focus();
     }

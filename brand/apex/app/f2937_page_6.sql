@@ -28,7 +28,7 @@ prompt APPLICATION 2937 - Medicina Ocupacional - Atendimento
 -- Application Export:
 --   Application:     2937
 --   Name:            Medicina Ocupacional - Atendimento
---   Date and Time:   03:01 Saturday October 3, 2026
+--   Date and Time:   16:44 Monday October 19, 2026
 --   Exported By:     IGOR
 --   Flashback:       0
 --   Export Type:     Page Export
@@ -57,6 +57,10 @@ wwv_flow_api.create_page(
 ,p_page_mode=>'MODAL'
 ,p_step_title=>unistr('Cadastro de Dados de Funcion\00E1rios')
 ,p_autocomplete_on_off=>'OFF'
+,p_javascript_file_urls=>'#WORKSPACE_IMAGES#Natcorp_HistoricoColaborador.js'
+,p_css_file_urls=>'#WORKSPACE_IMAGES#Natcorp_HistoricoColaborador.css'
+,p_page_template_options=>'#DEFAULT#:ui-dialog--stretch'
+,p_dialog_chained=>'N'
 ,p_page_comment=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'DESENHO DA TELA (Natcorp_HistoricoColaborador.css / Natcorp_HistoricoColaborador.js)',
 '',
@@ -65,14 +69,10 @@ unistr('doen\00E7a sem t\00E9rmino, atestado em vigor, exame vencido ou vencendo
 unistr('(tipo e fator RH, edit\00E1veis) e o que a fun\00E7\00E3o faz; \00E0 direita a LINHA DO TEMPO com consultas, exames, atestados,'),
 unistr('doen\00E7as, vacinas, consulta ocupacional e acidentes juntos, por ano, com filtro por tipo e busca; tocar abre os'),
 unistr('detalhes, com "Ver consulta" e "Abrir an\00E1lise". LAN\00C7AR E CORRIGIR: "Novo atestado", "Nova doen\00E7a" e "Editar"'),
-unistr('abrem uma gaveta com a ficha da pr\00F3pria grade (Single Row View) \2014 Salvar \00E9 o salvar da grade, pelo processo'),
+unistr('abrem uma gaveta com a ficha da pr\00F3pria grade (Single Row View) \00BF Salvar \00E9 o salvar da grade, pelo processo'),
 unistr('"Save Interactive Grid Data". Por isso as regi\00F5es Doen\00E7as e Atestados N\00C3O s\00E3o mais "Read Only: Always"'),
 unistr('(Exames continua: a grade n\00E3o tem chave prim\00E1ria). "Tabelas" mostra as abas originais, s\00F3 para consultar.'),
 'Para desligar: tire as duas URLs de arquivo. Guia: brand/apex/app/HISTORICOCOLABORADOR-MANUTENCAO.md.'))
-,p_javascript_file_urls=>'#WORKSPACE_IMAGES#Natcorp_HistoricoColaborador.js'
-,p_css_file_urls=>'#WORKSPACE_IMAGES#Natcorp_HistoricoColaborador.css'
-,p_page_template_options=>'#DEFAULT#:ui-dialog--stretch'
-,p_dialog_chained=>'N'
 ,p_last_updated_by=>'FERNANDO.SANTOS'
 ,p_last_upd_yyyymmddhh24miss=>'20260901151413'
 );
@@ -959,6 +959,9 @@ wwv_flow_api.create_region_column(
 ,p_duplicate_value=>true
 ,p_include_in_export=>false
 );
+end;
+/
+begin
 wwv_flow_api.create_region_column(
  p_id=>wwv_flow_api.id(166662431746289082934)
 ,p_name=>'DC_MATRICULA'
@@ -1020,9 +1023,6 @@ wwv_flow_api.create_region_column(
 ,p_readonly_condition_type=>'ALWAYS'
 ,p_readonly_for_each_row=>false
 );
-end;
-/
-begin
 wwv_flow_api.create_region_column(
  p_id=>wwv_flow_api.id(166662431900154082936)
 ,p_name=>'DT_INICIO'
@@ -2059,6 +2059,9 @@ wwv_flow_api.create_region_column(
 ,p_duplicate_value=>true
 ,p_include_in_export=>true
 );
+end;
+/
+begin
 wwv_flow_api.create_region_column(
  p_id=>wwv_flow_api.id(166663104835150768668)
 ,p_name=>'USUARIO'
@@ -2124,9 +2127,6 @@ wwv_flow_api.create_region_column(
 ,p_display_sequence=>20
 ,p_enable_hide=>true
 );
-end;
-/
-begin
 wwv_flow_api.create_region_column(
  p_id=>wwv_flow_api.id(166663259815198578922)
 ,p_name=>'APEX$ROW_SELECTOR'
@@ -3157,6 +3157,9 @@ wwv_flow_api.create_ig_report_column(
 ,p_is_frozen=>false
 ,p_width=>122
 );
+end;
+/
+begin
 wwv_flow_api.create_ig_report_column(
  p_id=>wwv_flow_api.id(166663198854969081578)
 ,p_view_id=>wwv_flow_api.id(166663190412032081543)
@@ -3229,9 +3232,6 @@ wwv_flow_api.create_page_plug(
 ,p_prn_page_header_alignment=>'CENTER'
 ,p_prn_page_footer_alignment=>'CENTER'
 );
-end;
-/
-begin
 wwv_flow_api.create_worksheet(
  p_id=>wwv_flow_api.id(166664363606198913422)
 ,p_max_row_count=>'1000000'

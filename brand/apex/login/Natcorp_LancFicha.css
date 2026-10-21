@@ -1,0 +1,1817 @@
+/* ╔════════════════════════════════════════════════════════════════════════════════════════╗
+   ║  NATCORP · LANÇAMENTOS (A FICHA) — o visual (CSS)                                        ║
+   ║  App 9132 · Página 7 · Lançamentos de Ocorrências                                        ║
+   ╚════════════════════════════════════════════════════════════════════════════════════════╝
+   O JS (Natcorp_LancFicha.src.js) monta o alto, a lista e a ficha; aqui está a cara de cada parte.
+   O que se ESCOLHE (cartão aberto, opção marcada, chave Ficha|Tabela) é ROSA; os botões, ROXO.
+   A borda do campo em foco segue a da aba NatPonto: 2 px rosa, 250 ms.
+   Toda declaração ganha !important no gerar-app (o @app vira o prefixo de prioridade).
+
+   ÍNDICE
+     [F1] Cores e medidas .................................................... PODE MEXER
+     [F2] A janela: uma tela só, sem rolagem dupla
+     [F3] O alto: onde se está lançando e os 3 passos
+     [F4] A lista de lançamentos
+     [F5] A ficha: cabeçalho, perguntas, campos ........................... CUIDADO
+     [F6] "Para quem?" e os avisos do "Quanto?"
+     [F7] Convite, salvo, aviso e espera
+     [F8] O pé da janela (Processar, Sair, caixas)
+     [F9] O resultado do processamento (LOG)
+     [F10] Tabela (a grade original)
+     [F11] Celular
+   ════════════════════════════════════════════════════════════════════════════════════════ */
+
+/* ═══ [F1] CORES E MEDIDAS ════════════════════════════════════════════════════════════════
+   PODE MEXER. O rosa e o roxo vêm do tema escolhido pelo usuário (--nc-rosa, --nc-roxo).
+   ════════════════════════════════════════════════════════════════════════════════════════ */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo {
+  --lf-tinta: var(--nc-tinta, #1B1238);
+  --lf-texto: var(--nc-grafite, #4A4460);
+  --lf-fraco: #6A6479;
+  --lf-fio: #E7E3EF;
+  --lf-fio-forte: #D6D0E2;
+  --lf-fundo: #F7F5FB;
+  --lf-roxo: var(--nc-roxo, #511C76);
+  --lf-rosa: var(--nc-rosa, #C95788);
+  --lf-rosa-claro: color-mix(in srgb, var(--nc-rosa, #C95788) 10%, #fff);
+  --lf-rosa-medio: color-mix(in srgb, var(--nc-rosa, #C95788) 32%, #fff);
+  --lf-rosa-escuro: color-mix(in srgb, var(--nc-rosa, #C95788) 62%, #2A0A1A);
+  --lf-ok: #1D7A50;
+  --lf-ok-claro: #E7F5EE;
+  --lf-aviso: #8A5300;
+  --lf-aviso-claro: #FFF3DA;
+  --lf-ruim: #B42318;
+  --lf-ruim-claro: #FDEDEB;
+  --lf-raio: 14px;
+  --lf-sombra: 0 1px 2px rgba(27, 18, 56, .05), 0 6px 18px -10px rgba(27, 18, 56, .18);
+  --lf-curva: cubic-bezier(.4, 0, .2, 1);
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo ::selection {
+  background: var(--lf-rosa-medio) !important;
+  color: var(--lf-tinta) !important;
+}
+
+/* ═══ [F2] A JANELA: UMA TELA SÓ ═══════════════════════════════════════════════════════════
+   No modo ficha a janela não rola: a lista e a ficha rolam cada uma por dentro, e o pé da ficha
+   (Salvar) fica sempre à vista. --lf-pe = altura do rodapé da janela (medida pelo JS).
+   ════════════════════════════════════════════════════════════════════════════════════════ */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo:not(.nc-lf-tabela):not(.nc-lf-com-log) .t-Dialog-bodyWrapperIn {
+  overflow: hidden !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .t-Dialog-body {
+  padding: 16px 20px 12px !important;
+}
+
+/* a região da grade fica no lugar (para a Tabela); no modo ficha, sem nada à vista */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo:not(.nc-lf-tabela) #IGOCORR {
+  display: none !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 14px !important;
+  height: calc(100vh - var(--lf-pe, 66px) - 28px) !important;
+  min-height: 420px !important;
+  color: var(--lf-tinta) !important;
+  font-variant-numeric: tabular-nums !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo.nc-lf-tabela .nc-lf {
+  height: auto !important;
+  min-height: 0 !important;
+  margin-bottom: 14px !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo.nc-lf-tabela .nc-lf-area,
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo.nc-lf-com-log .nc-lf {
+  display: none !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-area {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  display: grid !important;
+  grid-template-columns: minmax(300px, 380px) minmax(0, 1fr) !important;
+  gap: 18px !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-ic {
+  width: 18px !important;
+  height: 18px !important;
+  flex: 0 0 auto !important;
+  fill: none !important;
+  stroke: currentColor !important;
+  stroke-width: 1.8 !important;
+  stroke-linecap: round !important;
+  stroke-linejoin: round !important;
+}
+
+/* ═══ [F3] O ALTO ════════════════════════════════════════════════════════════════════════ */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-topo {
+  flex: 0 0 auto !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 24px !important;
+  padding: 14px 18px !important;
+  border: 1px solid var(--lf-fio) !important;
+  border-radius: var(--lf-raio) !important;
+  background: #fff !important;
+  box-shadow: var(--lf-sombra) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-onde {
+  display: flex !important;
+  align-items: center !important;
+  gap: 14px !important;
+  min-width: 0 !important;
+  flex: 0 1 auto !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-onde-ic {
+  display: grid !important;
+  place-items: center !important;
+  width: 46px !important;
+  height: 46px !important;
+  flex: 0 0 auto !important;
+  border-radius: 12px !important;
+  background: var(--lf-rosa-claro) !important;
+  color: var(--lf-rosa-escuro) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-onde-ic .nc-lf-ic {
+  width: 24px !important;
+  height: 24px !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-onde-txt h2 {
+  margin: 0 !important;
+  font-size: 20px !important;
+  font-weight: 700 !important;
+  line-height: 1.2 !important;
+  letter-spacing: -.01em !important;
+  color: var(--lf-tinta) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-onde-txt p {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 4px 16px !important;
+  margin: 4px 0 0 !important;
+  font-size: 14px !important;
+  color: var(--lf-texto) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-onde-txt p > span {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-onde-txt p .nc-lf-ic {
+  width: 15px !important;
+  height: 15px !important;
+  color: var(--lf-fraco) !important;
+}
+
+/* os 3 passos: o atual em destaque, os feitos com o check */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-passos {
+  display: flex !important;
+  flex: 1 1 auto !important;
+  justify-content: flex-end !important;
+  gap: 8px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  list-style: none !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-passo {
+  display: flex !important;
+  align-items: flex-start !important;
+  gap: 10px !important;
+  flex: 0 1 250px !important;
+  min-width: 0 !important;
+  margin: 0 !important;
+  padding: 10px 12px !important;
+  border-radius: 12px !important;
+  color: var(--lf-fraco) !important;
+  transition: background-color .25s var(--lf-curva), color .25s var(--lf-curva) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-passo-n {
+  display: grid !important;
+  place-items: center !important;
+  width: 26px !important;
+  height: 26px !important;
+  flex: 0 0 auto !important;
+  border: 1.5px solid var(--lf-fio-forte) !important;
+  border-radius: 50% !important;
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  background: #fff !important;
+  transition: background-color .25s var(--lf-curva), border-color .25s var(--lf-curva), color .25s var(--lf-curva) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-passo-txt {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 2px !important;
+  min-width: 0 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-passo-txt b {
+  font-size: 14px !important;
+  font-weight: 700 !important;
+  color: inherit !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-passo-txt span {
+  font-size: 12.5px !important;
+  line-height: 1.35 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-passo.is-atual {
+  background: var(--lf-rosa-claro) !important;
+  color: var(--lf-tinta) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-passo.is-atual .nc-lf-passo-n {
+  border-color: var(--lf-rosa) !important;
+  background: var(--lf-rosa) !important;
+  color: #fff !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-passo.is-atual .nc-lf-passo-txt span {
+  color: var(--lf-texto) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-passo-n .nc-lf-ic {
+  display: none !important;
+  width: 15px !important;
+  height: 15px !important;
+  stroke-width: 2.6 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-passo.is-feito .nc-lf-passo-n {
+  border-color: var(--lf-ok) !important;
+  background: var(--lf-ok) !important;
+  color: #fff !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-passo.is-feito .nc-lf-passo-n > span {
+  display: none !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-passo.is-feito .nc-lf-passo-n .nc-lf-ic {
+  display: block !important;
+}
+
+/* ═══ [F4] A LISTA DE LANÇAMENTOS ════════════════════════════════════════════════════════ */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-lista {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 12px !important;
+  min-height: 0 !important;
+  overflow-y: auto !important;
+  overscroll-behavior: contain !important;
+  padding: 2px 4px 12px 2px !important;
+  scrollbar-width: thin !important;
+  scrollbar-color: var(--lf-fio-forte) transparent !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-lcab {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 10px !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-lcab h3 {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  margin: 0 !important;
+  font-size: 16px !important;
+  font-weight: 700 !important;
+  color: var(--lf-tinta) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-conta {
+  min-width: 24px !important;
+  padding: 1px 8px !important;
+  border-radius: 99px !important;
+  background: var(--lf-fundo) !important;
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  text-align: center !important;
+  color: var(--lf-texto) !important;
+}
+
+/* a chave Ficha | Tabela: a opção escolhida é rosa */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-vistas {
+  display: inline-flex !important;
+  padding: 3px !important;
+  border: 1px solid var(--lf-fio) !important;
+  border-radius: 10px !important;
+  background: var(--lf-fundo) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-vistas button {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  height: 30px !important;
+  padding: 0 10px !important;
+  border: 0 !important;
+  border-radius: 7px !important;
+  background: transparent !important;
+  font: inherit !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  color: var(--lf-texto) !important;
+  cursor: pointer !important;
+  transition: background-color .25s var(--lf-curva), color .25s var(--lf-curva) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-vistas button .nc-lf-ic {
+  width: 15px !important;
+  height: 15px !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-vistas button:hover {
+  color: var(--lf-rosa-escuro) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-vistas button[aria-pressed="true"] {
+  background: var(--lf-rosa) !important;
+  color: #fff !important;
+  box-shadow: 0 1px 2px rgba(27, 18, 56, .15) !important;
+}
+
+/* o botão de começar um lançamento: largo, com o + */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-novo {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  width: 100% !important;
+  min-height: 48px !important;
+  padding: 0 16px !important;
+  border: 1.5px dashed color-mix(in srgb, var(--lf-roxo) 45%, #fff) !important;
+  border-radius: 12px !important;
+  background: color-mix(in srgb, var(--lf-roxo) 4%, #fff) !important;
+  font: inherit !important;
+  font-size: 15px !important;
+  font-weight: 700 !important;
+  color: var(--lf-roxo) !important;
+  cursor: pointer !important;
+  transition: background-color .2s var(--lf-curva), border-color .2s var(--lf-curva) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-novo:hover {
+  border-style: solid !important;
+  background: color-mix(in srgb, var(--lf-roxo) 8%, #fff) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-cartoes {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 8px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  list-style: none !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-cartoes li {
+  margin: 0 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-cartao {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 6px !important;
+  width: 100% !important;
+  padding: 12px 14px !important;
+  border: 1px solid var(--lf-fio) !important;
+  border-radius: 12px !important;
+  background: #fff !important;
+  font: inherit !important;
+  text-align: left !important;
+  color: var(--lf-tinta) !important;
+  cursor: pointer !important;
+  box-shadow: 0 1px 2px rgba(27, 18, 56, .04) !important;
+  transition: border-color .25s var(--lf-curva), box-shadow .25s var(--lf-curva), background-color .25s var(--lf-curva) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-cartao:hover {
+  border-color: var(--lf-rosa-medio) !important;
+  box-shadow: 0 2px 4px rgba(27, 18, 56, .05), 0 8px 18px -12px rgba(27, 18, 56, .25) !important;
+}
+
+/* o lançamento aberto na ficha: rosa */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-cartao.is-aberto {
+  border-color: var(--lf-rosa) !important;
+  background: var(--lf-rosa-claro) !important;
+  box-shadow: 0 0 0 1px var(--lf-rosa) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-c-topo {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 8px !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-c-n {
+  font-size: 12px !important;
+  font-weight: 700 !important;
+  color: var(--lf-fraco) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-sit {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 5px !important;
+  padding: 2px 9px !important;
+  border-radius: 99px !important;
+  font-size: 12px !important;
+  font-weight: 700 !important;
+  line-height: 1.5 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-sit::before {
+  content: "" !important;
+  width: 6px !important;
+  height: 6px !important;
+  border-radius: 50% !important;
+  background: currentColor !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-sit.is-ok {
+  background: var(--lf-ok-claro) !important;
+  color: var(--lf-ok) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-sit.is-pendente {
+  background: var(--lf-aviso-claro) !important;
+  color: var(--lf-aviso) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-sit.is-erro {
+  background: var(--lf-ruim-claro) !important;
+  color: var(--lf-ruim) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-sit.is-branco {
+  background: var(--lf-fundo) !important;
+  color: var(--lf-fraco) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-c-ev {
+  font-size: 15.5px !important;
+  font-weight: 700 !important;
+  line-height: 1.3 !important;
+  color: var(--lf-tinta) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-c-ev i {
+  margin-left: 4px !important;
+  font-size: 12px !important;
+  font-style: normal !important;
+  font-weight: 600 !important;
+  color: var(--lf-fraco) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-c-ev em {
+  font-style: normal !important;
+  font-weight: 600 !important;
+  color: var(--lf-fraco) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-c-q {
+  font-size: 18px !important;
+  font-weight: 700 !important;
+  letter-spacing: -.01em !important;
+  color: var(--lf-roxo) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-c-linha {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 4px 14px !important;
+  font-size: 13px !important;
+  color: var(--lf-texto) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-c-linha:empty {
+  display: none !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-c-linha > span {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 5px !important;
+  min-width: 0 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-c-linha .nc-lf-ic {
+  width: 15px !important;
+  height: 15px !important;
+  color: var(--lf-fraco) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-c-linha .is-todos {
+  font-weight: 700 !important;
+  color: var(--lf-aviso) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-c-linha .is-todos .nc-lf-ic {
+  color: currentColor !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-lvazio {
+  display: flex !important;
+  align-items: flex-start !important;
+  gap: 10px !important;
+  margin: 0 !important;
+  padding: 16px !important;
+  border-radius: 12px !important;
+  background: var(--lf-fundo) !important;
+  font-size: 14px !important;
+  line-height: 1.45 !important;
+  color: var(--lf-texto) !important;
+}
+
+/* ═══ [F5] A FICHA ══════════════════════════════════════════════════════════════════════════
+   CUIDADO  Dentro dela mora o grid (.nc-lf-motor) com a vista de um registro. Some tudo do grid
+            que não é campo; quais campos aparecem, em que ordem e largura vêm da folha que o JS
+            monta pelo ID (#nc-lf-folha). O grid escreve largura/altura em px: o auto daqui vence.
+   ════════════════════════════════════════════════════════════════════════════════════════ */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-ficha {
+  display: flex !important;
+  flex-direction: column !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  border: 1px solid var(--lf-fio) !important;
+  border-radius: var(--lf-raio) !important;
+  background: #fff !important;
+  box-shadow: var(--lf-sombra) !important;
+  overflow: hidden !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-fcab {
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  padding: 16px 22px 14px !important;
+  border-bottom: 2px solid var(--lf-rosa) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-fcab:empty {
+  display: none !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-ftit {
+  min-width: 0 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-ftit h3 {
+  margin: 0 !important;
+  font-size: 19px !important;
+  font-weight: 700 !important;
+  line-height: 1.25 !important;
+  color: var(--lf-tinta) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-ftit p {
+  margin: 2px 0 0 !important;
+  font-size: 13.5px !important;
+  color: var(--lf-texto) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-fvolta {
+  display: none !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-fcorpo {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+  overscroll-behavior: contain !important;
+  scrollbar-width: thin !important;
+  scrollbar-color: var(--lf-fio-forte) transparent !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-ficha:not(.is-editando) .nc-lf-fgrade {
+  display: none !important;
+}
+
+/* a ficha e, ao lado, "Como vai ficar" (preso no alto enquanto a ficha rola) */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-fgrade {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) 320px !important;
+  align-items: start !important;
+  gap: 8px !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-fmotor {
+  min-width: 0 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-resumo {
+  position: sticky !important;
+  top: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 12px !important;
+  margin: 20px 22px 20px 0 !important;
+  padding: 18px !important;
+  border-radius: 12px !important;
+  background: var(--lf-fundo) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-resumo:empty {
+  display: none !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-resumo h4 {
+  margin: 0 !important;
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  color: var(--lf-texto) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-frase {
+  margin: 0 !important;
+  font-size: 16px !important;
+  line-height: 1.5 !important;
+  color: var(--lf-tinta) !important;
+  text-wrap: pretty !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-frase b {
+  font-weight: 700 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-falta {
+  padding: 0 6px !important;
+  border-radius: 6px !important;
+  background: #fff !important;
+  box-shadow: inset 0 0 0 1px var(--lf-fio-forte) !important;
+  font-weight: 600 !important;
+  color: var(--lf-fraco) !important;
+  white-space: nowrap !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-confere {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 2px !important;
+  margin: 0 !important;
+  padding: 10px 0 0 !important;
+  border-top: 1px solid var(--lf-fio) !important;
+  list-style: none !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-confere li {
+  display: flex !important;
+  align-items: flex-start !important;
+  gap: 10px !important;
+  margin: 0 !important;
+  padding: 6px 0 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-confere li > span:last-child {
+  display: flex !important;
+  flex-direction: column !important;
+  min-width: 0 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-confere i {
+  font-size: 12px !important;
+  font-style: normal !important;
+  font-weight: 600 !important;
+  color: var(--lf-fraco) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-confere b {
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  line-height: 1.35 !important;
+  color: var(--lf-tinta) !important;
+  overflow-wrap: anywhere !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-confere li.is-info .nc-lf-marca {
+  border-color: transparent !important;
+  background: transparent !important;
+  color: var(--lf-fraco) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-confere li.is-falta b {
+  font-weight: 500 !important;
+  color: var(--lf-fraco) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-marca {
+  display: grid !important;
+  place-items: center !important;
+  width: 20px !important;
+  height: 20px !important;
+  flex: 0 0 auto !important;
+  margin-top: 2px !important;
+  border: 1.5px solid var(--lf-fio-forte) !important;
+  border-radius: 50% !important;
+  background: #fff !important;
+  transition: background-color .25s var(--lf-curva), border-color .25s var(--lf-curva) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-confere li.is-ok .nc-lf-marca {
+  border-color: var(--lf-ok) !important;
+  background: var(--lf-ok) !important;
+  color: #fff !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-marca .nc-lf-ic {
+  width: 13px !important;
+  height: 13px !important;
+  stroke-width: 3 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-pronto {
+  margin: 0 !important;
+  padding: 9px 12px !important;
+  border-radius: 10px !important;
+  background: #fff !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  color: var(--lf-texto) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-pronto.is-ok {
+  background: var(--lf-ok-claro) !important;
+  color: var(--lf-ok) !important;
+}
+
+@media (max-width: 1280px) {
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-fgrade {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-resumo {
+    position: static !important;
+    order: 2 !important;
+    margin: 0 24px 24px !important;
+  }
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-fpe {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  padding: 12px 18px !important;
+  border-top: 1px solid var(--lf-fio) !important;
+  background: #fff !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-fpe:empty {
+  display: none !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-espaco {
+  flex: 1 1 auto !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-ficha.is-ocupada .nc-lf-fcorpo {
+  opacity: .6 !important;
+  pointer-events: none !important;
+}
+
+/* botões da ficha: roxo */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-bt {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 7px !important;
+  height: 42px !important;
+  padding: 0 16px !important;
+  border: 1px solid var(--nc-borda-botao, color-mix(in srgb, var(--lf-roxo) 34%, #fff)) !important;
+  border-radius: 10px !important;
+  background: #fff !important;
+  font: inherit !important;
+  font-size: 14.5px !important;
+  font-weight: 600 !important;
+  color: var(--lf-roxo) !important;
+  cursor: pointer !important;
+  white-space: nowrap !important;
+  transition: background-color .2s var(--lf-curva), border-color .2s var(--lf-curva), color .2s var(--lf-curva) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-bt:hover {
+  background: color-mix(in srgb, var(--lf-roxo) 6%, #fff) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-bt:disabled {
+  opacity: .55 !important;
+  cursor: progress !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-bt--forte {
+  min-width: 132px !important;
+  border-color: var(--lf-roxo) !important;
+  background: var(--lf-roxo) !important;
+  color: #fff !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-bt--forte:hover {
+  background: color-mix(in srgb, var(--lf-roxo) 86%, #000) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-bt--claro {
+  border-color: transparent !important;
+  background: color-mix(in srgb, var(--lf-roxo) 8%, #fff) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-bt--claro:hover {
+  background: color-mix(in srgb, var(--lf-roxo) 13%, #fff) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-bt--perigo {
+  border-color: color-mix(in srgb, var(--lf-ruim) 35%, #fff) !important;
+  color: var(--lf-ruim) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-bt--perigo:hover {
+  background: var(--lf-ruim-claro) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-bt--icone {
+  width: 40px !important;
+  padding: 0 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo :is(.nc-lf-bt, .nc-lf-novo, .nc-lf-cartao, .nc-lf-vistas button, .nc-lf-quem button, .nc-lf-sec.is-recolhe):focus-visible {
+  outline: 2px solid var(--lf-rosa) !important;
+  outline-offset: 2px !important;
+}
+
+/* o grid dentro da ficha: só o formulário */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-motor:not(#nc-lf-x) {
+  display: block !important;
+  width: auto !important;
+  height: auto !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  overflow: hidden !important;
+  overflow: clip !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-motor :is(.a-IG-header, .js-stickyWidget-placeholder, .a-RV-toolbar, .a-RV-header, .a-RV-footer, .a-GV, .a-IG-footer):not(#nc-lf-x) {
+  display: none !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-motor:not(#nc-lf-x) :is(.a-IG-body, .a-IG-contentContainer, .a-RV, .a-RV-w-scroll, .a-RV-body):not(#nc-lf-y) {
+  width: auto !important;
+  height: auto !important;
+  min-height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: visible !important;
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-ficha .a-RV .u-Form:not(#nc-lf-x) {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 16px 16px !important;
+  padding: 6px 24px 28px !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-ficha .a-RV .u-Form > :not(.nc-lf-sec):not(.nc-lf-quem):not(#nc-lf-x) {
+  display: none !important;
+}
+
+/* a pergunta: ícone + a pergunta + a explicação */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-ficha .nc-lf-sec {
+  grid-column: 1 / -1 !important;
+  display: flex !important;
+  align-items: flex-start !important;
+  gap: 12px !important;
+  width: 100% !important;
+  margin: 14px 0 -2px !important;
+  padding: 20px 0 0 !important;
+  border: 0 !important;
+  border-top: 1px solid var(--lf-fio) !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  font: inherit !important;
+  text-align: left !important;
+  color: var(--lf-tinta) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-ficha .nc-lf-sec[data-sec="quem"] {
+  margin-top: 4px !important;
+  border-top: 0 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-ficha .nc-lf-sec-ic {
+  display: grid !important;
+  place-items: center !important;
+  width: 34px !important;
+  height: 34px !important;
+  flex: 0 0 auto !important;
+  border-radius: 10px !important;
+  background: var(--lf-fundo) !important;
+  color: var(--lf-roxo) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-ficha .nc-lf-sec-txt {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 3px !important;
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+  padding-top: 1px !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-ficha .nc-lf-sec-txt b {
+  font-size: 16.5px !important;
+  font-weight: 700 !important;
+  line-height: 1.3 !important;
+  color: var(--lf-tinta) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-ficha .nc-lf-sec-dica {
+  font-size: 13.5px !important;
+  line-height: 1.45 !important;
+  color: var(--lf-texto) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-ficha .nc-lf-sec-dica:empty {
+  display: none !important;
+}
+
+/* "Quanto?": a explicação do evento ganha peso — é o que guia o preenchimento */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-ficha .nc-lf-sec[data-sec="quanto"] .nc-lf-sec-dica {
+  font-weight: 600 !important;
+  color: var(--lf-rosa-escuro) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-ficha .nc-lf-sec.is-recolhe {
+  cursor: pointer !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-ficha .nc-lf-sec.is-recolhe:hover .nc-lf-sec-txt b {
+  color: var(--lf-rosa-escuro) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-ficha .nc-lf-sec-seta {
+  display: grid !important;
+  place-items: center !important;
+  width: 30px !important;
+  height: 30px !important;
+  flex: 0 0 auto !important;
+  border-radius: 8px !important;
+  color: var(--lf-fraco) !important;
+  transition: transform .25s var(--lf-curva), background-color .2s var(--lf-curva) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-ficha .nc-lf-sec.is-recolhe:hover .nc-lf-sec-seta {
+  background: var(--lf-fundo) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-ficha .nc-lf-sec[aria-expanded="true"] .nc-lf-sec-seta {
+  transform: rotate(90deg) !important;
+}
+
+/* os campos */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-ficha .a-RV .u-Form > .u-Form-fieldContainer {
+  flex-direction: column !important;
+  align-items: stretch !important;
+  align-self: start !important;
+  gap: 6px !important;
+  min-width: 0 !important;
+  width: auto !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-ficha .a-RV .u-Form > .u-Form-fieldContainer .u-Form-labelContainer {
+  display: flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  width: auto !important;
+  padding: 0 !important;
+  text-align: left !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-ficha .a-RV .u-Form > .u-Form-fieldContainer .u-Form-label {
+  display: inline-flex !important;
+  flex-wrap: wrap !important;
+  align-items: center !important;
+  gap: 4px 8px !important;
+  font-size: 14.5px !important;
+  font-weight: 600 !important;
+  text-transform: none !important;
+  letter-spacing: 0 !important;
+  color: var(--lf-tinta) !important;
+}
+
+/* o selo ao lado do nome (Preencha / Não se usa…): o texto vem da folha do JS */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-ficha .a-RV .u-Form > .u-Form-fieldContainer .u-Form-label::after {
+  padding: 1px 8px !important;
+  border-radius: 99px !important;
+  font-size: 11.5px !important;
+  font-weight: 700 !important;
+  line-height: 1.6 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-ficha .a-RV .u-Form > .u-Form-fieldContainer .js-itemHelp {
+  display: none !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-ficha .a-RV .u-Form > .u-Form-fieldContainer .u-Form-inputContainer {
+  display: flex !important;
+  align-items: center !important;
+  width: 100% !important;
+  min-height: 46px !important;
+  padding: 0 !important;
+  border: 1px solid var(--lf-fio-forte) !important;
+  border-radius: 10px !important;
+  background: #fff !important;
+  transition: border-color .25s var(--lf-curva), box-shadow .25s var(--lf-curva), opacity .25s var(--lf-curva) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-ficha .a-RV .u-Form > .u-Form-fieldContainer .u-Form-inputContainer:hover {
+  border-color: color-mix(in srgb, var(--lf-rosa) 45%, #fff) !important;
+}
+
+/* foco: o da aba NatPonto — 2 px rosa */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-ficha .a-RV .u-Form > .u-Form-fieldContainer .u-Form-inputContainer:focus-within {
+  border-color: var(--lf-rosa) !important;
+  box-shadow: 0 0 0 1px var(--lf-rosa) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-ficha .a-RV .u-Form > .u-Form-fieldContainer.is-error .u-Form-inputContainer {
+  border-color: var(--lf-ruim) !important;
+  box-shadow: 0 0 0 1px var(--lf-ruim) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-ficha .a-RV .u-Form > .u-Form-fieldContainer :is(.a-Form-error, .u-Form-error, .a-GV-error) {
+  margin: 0 !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  color: var(--lf-ruim) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-ficha .a-RV .u-Form > .u-Form-fieldContainer.is-readonly .u-Form-inputContainer {
+  border-color: transparent !important;
+  background: var(--lf-fundo) !important;
+  padding: 0 12px !important;
+  font-size: 15px !important;
+  color: var(--lf-texto) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-ficha .a-RV .u-Form > .u-Form-fieldContainer .a-GV-columnItem:not(#nc-lf-x) {
+  display: flex !important;
+  align-items: center !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  min-height: 44px !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-ficha .a-RV .u-Form > .u-Form-fieldContainer :is(select, input[type="text"], textarea):not(#nc-lf-x) {
+  flex: 1 1 auto !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  height: 44px !important;
+  min-height: 44px !important;
+  margin: 0 !important;
+  padding: 0 12px !important;
+  border: 0 !important;
+  border-radius: 10px !important;
+  outline: 0 !important;
+  box-shadow: none !important;
+  background-color: transparent !important;
+  font: inherit !important;
+  font-size: 15px !important;
+  color: var(--lf-tinta) !important;
+  caret-color: var(--lf-rosa) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-ficha .a-RV .u-Form > .u-Form-fieldContainer textarea:not(#nc-lf-x) {
+  height: 88px !important;
+  padding: 10px 12px !important;
+  line-height: 1.45 !important;
+  resize: vertical !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-ficha .a-RV .u-Form > .u-Form-fieldContainer ::placeholder {
+  color: #8C8699 !important;
+  opacity: 1 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-ficha .a-RV .u-Form > .u-Form-fieldContainer select:not(#nc-lf-x) {
+  appearance: none !important;
+  padding-right: 38px !important;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2377707f' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m7 15 5 5 5-5'/%3E%3Cpath d='m7 9 5-5 5 5'/%3E%3C/svg%3E") !important;
+  background-position: calc(100% - 12px) 50% !important;
+  background-size: 16px 16px !important;
+  background-repeat: no-repeat !important;
+  cursor: pointer !important;
+}
+
+/* a lista que abre (evento, colaboradores, mês): o botão dentro do campo, à direita */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-ficha .a-RV .u-Form > .u-Form-fieldContainer .apex-item-group--popup-lov {
+  display: flex !important;
+  align-items: center !important;
+  width: 100% !important;
+  min-width: 0 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-ficha .a-RV .u-Form > .u-Form-fieldContainer :is(.a-Button--popupLOV, .ui-datepicker-trigger):not(#nc-lf-x) {
+  flex: 0 0 auto !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 38px !important;
+  height: 38px !important;
+  margin: 0 3px 0 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 8px !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  color: var(--lf-roxo) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-ficha .a-RV .u-Form > .u-Form-fieldContainer :is(.a-Button--popupLOV, .ui-datepicker-trigger):hover {
+  background: color-mix(in srgb, var(--lf-roxo) 8%, #fff) !important;
+}
+
+/* colaboradores escolhidos: etiquetas rosa */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-ficha .a-RV .u-Form > .u-Form-fieldContainer .apex-item-multi {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 6px !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  margin: 0 !important;
+  padding: 6px 8px !important;
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-ficha .a-RV .u-Form > .u-Form-fieldContainer .apex-item-multi-item:not(:last-child) {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+  margin: 0 !important;
+  padding: 3px 6px 3px 10px !important;
+  border: 0 !important;
+  border-radius: 99px !important;
+  background: var(--lf-rosa-claro) !important;
+  font-size: 13.5px !important;
+  font-weight: 600 !important;
+  color: var(--lf-rosa-escuro) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-ficha .a-RV .u-Form > .u-Form-fieldContainer .apex-item-multi-item:last-child {
+  flex: 1 1 140px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-ficha .a-RV .u-Form > .u-Form-fieldContainer .apex-item-multi-item:last-child input {
+  height: 32px !important;
+  min-height: 32px !important;
+  padding: 0 4px !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-ficha .nc-lf-dica {
+  margin: 0 !important;
+  font-size: 13px !important;
+  line-height: 1.4 !important;
+  color: var(--lf-fraco) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-ficha .u-Form > .is-readonly .nc-lf-dica {
+  display: none !important;
+}
+
+/* ═══ [F6] "PARA QUEM?" E OS AVISOS DO "QUANTO?" ═══════════════════════════════════════════ */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-ficha .nc-lf-quem {
+  grid-column: 1 / -1 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 8px !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-ficha .nc-lf-quem-perg {
+  margin: 0 !important;
+  font-size: 14.5px !important;
+  font-weight: 600 !important;
+  color: var(--lf-tinta) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-ficha .nc-lf-quem-ops {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 10px !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-ficha .nc-lf-quem-ops button {
+  display: flex !important;
+  align-items: flex-start !important;
+  gap: 12px !important;
+  min-height: 64px !important;
+  padding: 12px 14px !important;
+  border: 1px solid var(--lf-fio-forte) !important;
+  border-radius: 12px !important;
+  background: #fff !important;
+  font: inherit !important;
+  text-align: left !important;
+  color: var(--lf-tinta) !important;
+  cursor: pointer !important;
+  transition: border-color .25s var(--lf-curva), background-color .25s var(--lf-curva), box-shadow .25s var(--lf-curva) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-ficha .nc-lf-quem-ops button > .nc-lf-ic {
+  width: 22px !important;
+  height: 22px !important;
+  margin-top: 1px !important;
+  color: var(--lf-fraco) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-ficha .nc-lf-quem-ops button > span {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 2px !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-ficha .nc-lf-quem-ops b {
+  font-size: 14.5px !important;
+  font-weight: 700 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-ficha .nc-lf-quem-ops button > span > span {
+  font-size: 12.5px !important;
+  line-height: 1.35 !important;
+  color: var(--lf-texto) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-ficha .nc-lf-quem-ops button:hover {
+  border-color: color-mix(in srgb, var(--lf-rosa) 45%, #fff) !important;
+}
+
+/* a escolhida: rosa */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-ficha .nc-lf-quem-ops button[aria-checked="true"] {
+  border-color: var(--lf-rosa) !important;
+  background: var(--lf-rosa-claro) !important;
+  box-shadow: 0 0 0 1px var(--lf-rosa) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-ficha .nc-lf-quem-ops button[aria-checked="true"] > .nc-lf-ic {
+  color: var(--lf-rosa-escuro) !important;
+}
+
+/* "Todos da pesquisa" escolhido: o alcance fica escrito */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-ficha[data-quem="todos"] .nc-lf-quem::after {
+  content: "Vale para todos os colaboradores que a pesquisa trouxe na tela anterior." !important;
+  padding: 9px 12px !important;
+  border-radius: 10px !important;
+  background: var(--lf-aviso-claro) !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  color: var(--lf-aviso) !important;
+}
+
+/* ═══ [F7] CONVITE, SALVO, AVISO E ESPERA ══════════════════════════════════════════════════ */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-fmsg:empty {
+  display: none !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-convite {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  gap: 10px !important;
+  max-width: 440px !important;
+  margin: 0 auto !important;
+  padding: 72px 24px !important;
+  text-align: center !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-convite > .nc-lf-ic {
+  width: 44px !important;
+  height: 44px !important;
+  color: var(--lf-rosa) !important;
+  stroke-width: 1.4 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-convite h3 {
+  margin: 4px 0 0 !important;
+  font-size: 20px !important;
+  font-weight: 700 !important;
+  color: var(--lf-tinta) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-convite p {
+  margin: 0 0 8px !important;
+  font-size: 14.5px !important;
+  line-height: 1.5 !important;
+  color: var(--lf-texto) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-ok {
+  display: grid !important;
+  place-items: center !important;
+  width: 56px !important;
+  height: 56px !important;
+  border-radius: 50% !important;
+  background: var(--lf-ok-claro) !important;
+  color: var(--lf-ok) !important;
+  animation: nc-lf-ok .5s cubic-bezier(.2, .9, .3, 1.25) both !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-ok .nc-lf-ic {
+  width: 28px !important;
+  height: 28px !important;
+  stroke-width: 2.4 !important;
+}
+
+@keyframes nc-lf-ok {
+  from { transform: scale(.6); }
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-aviso {
+  position: fixed !important;
+  left: 50% !important;
+  bottom: calc(var(--lf-pe, 66px) + 16px) !important;
+  z-index: 1000 !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  max-width: min(520px, calc(100vw - 32px)) !important;
+  padding: 12px 18px !important;
+  border-radius: 12px !important;
+  background: var(--lf-tinta) !important;
+  font-size: 14.5px !important;
+  font-weight: 600 !important;
+  color: #fff !important;
+  box-shadow: 0 12px 32px -12px rgba(27, 18, 56, .5) !important;
+  transform: translate(-50%, 12px) !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  transition: transform .3s var(--lf-curva), opacity .3s var(--lf-curva) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-aviso.is-visivel {
+  transform: translate(-50%, 0) !important;
+  opacity: 1 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-aviso .nc-lf-ic {
+  color: #8EE0B5 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-aviso.is-erro {
+  background: var(--lf-ruim) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-aviso.is-erro .nc-lf-ic {
+  color: #fff !important;
+}
+
+/* processando: cobre a janela com o aviso de espera */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-espera {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 1001 !important;
+  display: none !important;
+  place-items: center !important;
+  background: rgba(247, 245, 251, .86) !important;
+  backdrop-filter: blur(3px) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-espera.is-visivel {
+  display: grid !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-espera-caixa {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  gap: 8px !important;
+  max-width: 380px !important;
+  padding: 32px 36px !important;
+  border: 1px solid var(--lf-fio) !important;
+  border-radius: 18px !important;
+  background: #fff !important;
+  text-align: center !important;
+  box-shadow: 0 24px 60px -28px rgba(27, 18, 56, .45) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-espera-caixa h3 {
+  margin: 8px 0 0 !important;
+  font-size: 18px !important;
+  font-weight: 700 !important;
+  color: var(--lf-tinta) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-espera-caixa p {
+  margin: 0 !important;
+  font-size: 14px !important;
+  color: var(--lf-texto) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-roda {
+  width: 40px !important;
+  height: 40px !important;
+  border: 3px solid var(--lf-rosa-claro) !important;
+  border-top-color: var(--lf-rosa) !important;
+  border-radius: 50% !important;
+  animation: nc-lf-gira .9s linear infinite !important;
+}
+
+@keyframes nc-lf-gira {
+  to { transform: rotate(360deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-roda {
+    animation-duration: 2.4s !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo :is(.nc-lf-ok, .nc-lf-aviso) {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+/* ═══ [F8] O PÉ DA JANELA ══════════════════════════════════════════════════════════════════
+   Os botões e as caixas são os da página. Aqui: Sair à esquerda; as caixas com explicação no
+   meio; a frase do que falta e o Processar à direita.
+   ════════════════════════════════════════════════════════════════════════════════════════ */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .t-Dialog-footer {
+  padding: 10px 88px 10px 20px !important;          /* 88: o balão de ajuda do portal, no canto */
+  border-top: 1px solid var(--lf-fio) !important;
+  background: #fff !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-pe .t-ButtonRegion-wrap {
+  display: flex !important;
+  align-items: center !important;
+  gap: 18px !important;
+  padding: 0 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-pe .t-ButtonRegion-col--left,
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-pe .t-ButtonRegion-col--right {
+  flex: 0 0 auto !important;
+  width: auto !important;
+  padding: 0 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-pe :is(.t-ButtonRegion-col--left, .t-ButtonRegion-col--right) .t-ButtonRegion-buttons {
+  display: flex !important;
+  align-items: center !important;
+  gap: 14px !important;
+  width: auto !important;
+  padding: 0 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-pe .t-ButtonRegion-col--content > .t-ButtonRegion-buttons:empty {
+  display: none !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-pe .t-ButtonRegion-col--content .t-Form-inputContainer,
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-pe .t-ButtonRegion-col--content .t-Form-itemWrapper {
+  padding: 0 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-pe .t-ButtonRegion-col--content {
+  display: flex !important;
+  flex: 1 1 auto !important;
+  align-items: center !important;
+  gap: 18px !important;
+  min-width: 0 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-pe .t-Button {
+  height: 44px !important;
+  padding: 0 18px !important;
+  border-radius: 10px !important;
+  font-size: 14.5px !important;
+  font-weight: 600 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-pe .t-Button--hot {
+  min-width: 200px !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-pe .t-Button--hot:is(:disabled, .apex_disabled),
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-pe .t-Button--hot:is(:disabled, .apex_disabled) .t-Button-label {
+  border-color: var(--lf-fio-forte) !important;
+  background: var(--lf-fundo) !important;
+  color: #8C8699 !important;
+  opacity: 1 !important;
+  cursor: not-allowed !important;
+  box-shadow: none !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-pe .t-Button--hot:is(:disabled, .apex_disabled) .t-Button-label {
+  border: 0 !important;
+  background: transparent !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-pe-msg {
+  margin: 0 !important;
+  max-width: 340px !important;
+  font-size: 13.5px !important;
+  line-height: 1.35 !important;
+  text-align: right !important;
+  color: var(--lf-texto) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-pe-msg.is-aviso {
+  font-weight: 600 !important;
+  color: var(--lf-aviso) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-pe-msg.is-ok {
+  font-weight: 600 !important;
+  color: var(--lf-ok) !important;
+}
+
+/* as caixas Incluir desligados / transferidos */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-pe .nc-lf-caixa {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-pe .nc-lf-caixa .t-Form-labelContainer {
+  display: none !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-pe .nc-lf-caixa .apex-item-option {
+  display: flex !important;
+  align-items: flex-start !important;
+  gap: 10px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-pe .nc-lf-caixa .apex-item-option input {
+  position: static !important;
+  flex: 0 0 auto !important;
+  margin: 2px 0 0 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-pe .nc-lf-caixa .apex-item-option label {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-start !important;
+  gap: 1px !important;
+  width: auto !important;
+  text-align: left !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  font-size: 14px !important;
+  line-height: 1.3 !important;
+  color: var(--lf-tinta) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-pe .nc-lf-caixa .apex-item-option label b {
+  font-weight: 600 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-pe .nc-lf-caixa-d {
+  font-size: 12px !important;
+  font-weight: 400 !important;
+  color: var(--lf-fraco) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-pe .nc-lf-caixa input:disabled + label {
+  opacity: .55 !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-pe .t-ButtonRegion-title {
+  display: none !important;
+}
+
+/* ═══ [F9] O RESULTADO DO PROCESSAMENTO (LOG) ═════════════════════════════════════════════ */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-com-log .nc-lf-pe-msg {
+  display: none !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-log {
+  margin: 0 !important;
+  padding: 20px 22px !important;
+  border: 1px solid color-mix(in srgb, var(--lf-ruim) 22%, #fff) !important;
+  border-radius: var(--lf-raio) !important;
+  background: #fff !important;
+  box-shadow: var(--lf-sombra) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-log > .t-Region-header {
+  padding: 0 !important;
+  border: 0 !important;
+  background: transparent !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-log > .t-Region-header .t-Region-title {
+  font-size: 19px !important;
+  font-weight: 700 !important;
+  color: var(--lf-ruim) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-log-exp {
+  margin: 6px 0 14px !important;
+  max-width: 70ch !important;
+  font-size: 14.5px !important;
+  line-height: 1.5 !important;
+  color: var(--lf-texto) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-log .t-Report-report th {
+  padding: 10px 12px !important;
+  background: var(--lf-fundo) !important;
+  font-size: 12.5px !important;
+  font-weight: 700 !important;
+  text-transform: none !important;
+  color: var(--lf-texto) !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-log .t-Report-report td {
+  padding: 12px !important;
+  font-size: 14px !important;
+  line-height: 1.4 !important;
+  vertical-align: top !important;
+  color: var(--lf-tinta) !important;
+}
+
+/* o motivo quebra linha (a página o escreve num <nobr>) */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-log .t-Report-report td nobr {
+  white-space: normal !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-log .t-Report-report td[headers="ERRO"] {
+  min-width: 320px !important;
+  font-weight: 600 !important;
+  color: var(--lf-ruim) !important;
+}
+
+/* ═══ [F10] TABELA (A GRADE ORIGINAL) ═══════════════════════════════════════════════════════ */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo.nc-lf-tabela #IGOCORR {
+  border: 1px solid var(--lf-fio) !important;
+  border-radius: var(--lf-raio) !important;
+  overflow: hidden !important;
+}
+
+/* o título da região repete o que o alto já diz */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo.nc-lf-tabela #IGOCORR > .t-Region-header {
+  display: none !important;
+}
+
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo.nc-lf-tabela .nc-lf-topo .nc-lf-passos {
+  display: none !important;
+}
+
+/* a chave Ficha | Tabela fica no alto, à direita (não muda de lugar entre os dois modos) */
+html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-topo .nc-lf-vistas {
+  flex: 0 0 auto !important;
+  margin-left: auto !important;
+}
+
+/* ═══ [F11] CELULAR ═════════════════════════════════════════════════════════════════════════
+   A lista ocupa a tela; tocar num cartão abre a ficha por cima, em tela cheia, com "voltar".
+   ════════════════════════════════════════════════════════════════════════════════════════ */
+@media (max-width: 1100px) {
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-passo-txt span {
+    display: none !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-passo {
+    flex: 0 0 auto !important;
+    align-items: center !important;
+  }
+}
+
+@media (max-width: 760px) {
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo:not(.nc-lf-tabela):not(.nc-lf-com-log) .t-Dialog-bodyWrapperIn {
+    overflow: auto !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .t-Dialog-body {
+    padding: 12px 12px 10px !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf {
+    height: auto !important;
+    min-height: 0 !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-topo {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 12px !important;
+    padding: 14px !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-passos {
+    justify-content: space-between !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-passo {
+    padding: 6px 8px !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-area {
+    display: block !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-lista {
+    overflow: visible !important;
+    padding: 0 !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-ficha {
+    display: none !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo.nc-lf-ficha-aberta .nc-lf-ficha {
+    position: fixed !important;
+    inset: 0 !important;
+    z-index: 950 !important;
+    display: flex !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    animation: nc-lf-sobe .25s cubic-bezier(.2, .8, .2, 1) both !important;
+  }
+
+  @keyframes nc-lf-sobe {
+    from { transform: translateY(24px); }
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-fvolta {
+    display: inline-flex !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-fcab {
+    padding: 10px 12px !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-ficha .a-RV .u-Form:not(#nc-lf-x) {
+    grid-template-columns: minmax(0, 1fr) !important;
+    padding: 4px 16px 24px !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-ficha .a-RV .u-Form > .u-Form-fieldContainer:not(#nc-lf-x):not(#nc-lf-y):not(#nc-lf-z) {
+    grid-column: 1 / -1 !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-ficha .nc-lf-quem-ops {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-fpe {
+    flex-wrap: wrap !important;
+    padding: 10px 76px calc(10px + env(safe-area-inset-bottom, 0px)) 12px !important;   /* 76: o balão de ajuda do portal */
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-fpe [data-fsalvar=""] {
+    flex: 1 1 100% !important;
+    order: -1 !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-fpe .nc-lf-espaco {
+    display: none !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-fpe .nc-lf-bt:not([data-fsalvar=""]) {
+    flex: 1 1 auto !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-pe .t-ButtonRegion-wrap,
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-pe .t-ButtonRegion-col--content {
+    flex-wrap: wrap !important;
+    gap: 10px !important;
+  }
+
+  html body:is(.t-PageBody:not(.t-PageBody--login), .t-Dialog-page):not(#nc-a1):not(#nc-a2).nc-lf-ativo .nc-lf-pe-msg {
+    flex: 1 1 100% !important;
+    max-width: none !important;
+    text-align: left !important;
+  }
+}

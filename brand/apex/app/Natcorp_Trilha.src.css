@@ -21,7 +21,7 @@
    PODE MEXER: --nc-tr-alt (a altura; o iframe da casca encolhe o mesmo tanto) e as cores.
    ════════════════════════════════════════════════════════════════════════════════════════════ */
 @app.nc-tr-ativo {
-  --nc-tr-alt: 40px;
+  --nc-tr-alt: 48px;   /* 08/10: 40 → 48, para o Voltar de 36 px (o dos botões do relatório) respirar */
 }
 
 @app.nc-tr-ativo .nc-tr {
@@ -57,24 +57,24 @@
   flex: 0 0 auto;
   align-items: center;
   gap: 4px;
-  height: 28px;
+  height: 36px;                                  /* 08/10: o padrão dos botões do relatório */
   margin: 0;
-  padding: 0 11px 0 7px;
-  border: 1px solid #E2DCEB;
+  padding: 0 12px 0 8px;
+  border: 1px solid var(--nc-nevoa, #E9E5F1);
   border-radius: 8px;
   background: #fff;
-  box-shadow: 0 1px 1px rgba(27, 18, 56, .04);
+  box-shadow: none;
   font: inherit;
   font-size: 13px;
   font-weight: 600;
-  color: var(--nc-roxo, #511C76);
+  color: var(--nc-grafite, #4A4460);
   cursor: pointer;
   transition: border-color .15s, background-color .15s;
 }
 
 @app.nc-tr-ativo .nc-tr-voltar:hover:not(:disabled) {
-  border-color: color-mix(in srgb, var(--nc-roxo, #511C76) 40%, #fff);
-  background: color-mix(in srgb, var(--nc-roxo, #511C76) 5%, #fff);
+  background: var(--nc-off, #F4F2F7);
+  color: var(--nc-roxo, #511C76);
 }
 
 @app.nc-tr-ativo .nc-tr-voltar:disabled {
@@ -159,7 +159,7 @@
 @app.nc-tr-ativo .nc-tr-sep {
   width: 12px;
   height: 12px;
-  color: #B7B1C8;
+  color: var(--nc-rosa, #C95788);   /* 08/10: o › entre as páginas na cor Rosa (a do tema) */
 }
 
 /* ═══ [C4] CASCA: O IFRAME ENCOLHE A ALTURA DA FAIXA ════════════════════════════════════════
@@ -197,7 +197,7 @@
   }
 
   @app.nc-tr-ativo .nc-tr-voltar {
-    padding: 0 7px;
+    padding: 0 10px;
   }
 
   @app.nc-tr-ativo .nc-tr-voltar span {
